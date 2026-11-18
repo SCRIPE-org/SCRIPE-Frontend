@@ -1,4 +1,5 @@
 import { getModuleApiService } from "@core/services/api-factory";
+import { useAppStore } from "@core/store/useAppStore";
 import { DataExchangeRepository } from "@core/data-exchange/data/repositories/DataExchangeRepository";
 import { DataExchangeService } from "@core/data-exchange/data/services/DataExchangeService";
 import type { IDataExchangeRepository } from "@core/data-exchange/domain/interfaces/IDataExchangeRepository";
@@ -20,6 +21,29 @@ export interface IDataTransferContainer {
   readonly jobsRepository: IJobsRepository;
   readonly presetsRepository: IPresetsRepository;
   readonly dataExchangeRepository?: IDataExchangeRepository;
+}
+
+/**
+ * Resolves a tenant-and-user scoped cache key for the Data Transfer module repository,
+ * ensuring SuperAdmin tenant switches and user logouts isolate cached metadata.
+ */
+export function resolveDataTransferContextKey(api: unknown): string {
+  const apiTenant = (
+    api as { getTenantContext?: () => string | null } | null
+  )?.getTenantContext?.();
+  let storeTenant: string | null | undefined;
+  let userId = "anon";
+
+  try {
+    const state = useAppStore?.getState?.();
+    storeTenant = state?.user?.tenantId ?? state?.tenantCode;
+    userId = state?.user?.id ?? "anon";
+  } catch {
+    // Ignore store access errors in isolated test environments
+  }
+
+  const tenant = apiTenant || storeTenant || "platform";
+  return `${tenant}:${userId}`;
 }
 
 class DataTransferContainer implements IDataTransferContainer {
@@ -59,7 +83,9 @@ class DataTransferContainer implements IDataTransferContainer {
     if (!this._dataExchangeRepo) {
       const api = getModuleApiService();
       const service = new DataExchangeService(api);
-      this._dataExchangeRepo = new DataExchangeRepository(service);
+      this._dataExchangeRepo = new DataExchangeRepository(service, () =>
+        resolveDataTransferContextKey(api)
+      );
     }
     return this._dataExchangeRepo;
   }

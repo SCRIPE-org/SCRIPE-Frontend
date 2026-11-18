@@ -13,7 +13,8 @@ import {
 } from "@core/ui/dropdown-menu";
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@core/common/utils";
-import { getEntityDisplayName, type EntityNameSource } from "@core/data-exchange/presentation/utils/entity-display-names";
+import { getEntityDisplayName } from "@core/data-exchange";
+import type { DataExchangeEntitySummaryView } from "../../../../entities/src/domain/entities/DataExchangeEntity";
 import type { DataExchangePreset } from "../../domain/entities/DataExchangePreset";
 
 /**
@@ -23,7 +24,7 @@ export interface MappingPresetCardProps {
   /** The saved column mapping preset */
   preset: DataExchangePreset;
   /** Optional live catalog entry for resolving dynamic localized entity display names */
-  entitySummary?: EntityNameSource;
+  entitySummary?: DataExchangeEntitySummaryView;
   /** Callback to delete the mapping preset */
   onDeletePreset: (preset: DataExchangePreset) => void;
   /** Callback to open preset in Import Studio */
@@ -72,7 +73,7 @@ export const MappingPresetCard = memo(function MappingPresetCard({
               {preset.name}
             </h3>
             {preset.isDefault && (
-              <Badge variant="secondary" className="text-[10px] font-medium bg-nx-accent/15 text-nx-accent border-nx-accent/30 py-0 px-1.5">
+              <Badge variant="default" className="text-[10px] font-medium py-0 px-1.5">
                 {t("adminDataTransferPresets.status.isDefaultBadge") || "Default"}
               </Badge>
             )}
@@ -83,7 +84,7 @@ export const MappingPresetCard = memo(function MappingPresetCard({
             </span>
             <code
               dir="ltr"
-              className="text-[11px] font-mono text-nx-ink-3 bg-nx-raised/60 px-1.5 py-0.5 rounded-sm border border-nx-line w-fit"
+              className="text-[11px] font-mono text-nx-ink-3 bg-nx-raised px-1.5 py-0.5 rounded-sm border border-nx-line w-fit"
             >
               {preset.entityKey}
             </code>
@@ -135,7 +136,7 @@ export const MappingPresetCard = memo(function MappingPresetCard({
       </div>
 
       {/* Structured Capability Strip: Import Mode & Mapped Columns */}
-      <div className="space-y-2 rounded-nx-control bg-nx-raised/40 p-3 border border-nx-line/60 text-xs">
+      <div className="space-y-2 rounded-nx-control bg-nx-raised p-3 border border-nx-line text-xs">
         <div className="flex items-center justify-between gap-2">
           <span className="text-[11px] font-medium text-nx-ink-3">
             {t("adminDataTransferPresets.columns.importMode")}
@@ -145,7 +146,7 @@ export const MappingPresetCard = memo(function MappingPresetCard({
           </Badge>
         </div>
 
-        <div className="flex items-center justify-between gap-2 pt-1 border-t border-nx-line/40">
+        <div className="flex items-center justify-between gap-2 pt-1 border-t border-nx-line">
           <span className="text-[11px] font-medium text-nx-ink-3">
             {t("adminDataTransferPresets.columns.mappingsCount")}
           </span>
@@ -185,7 +186,7 @@ export const MappingPresetCard = memo(function MappingPresetCard({
             size="sm"
             onClick={() => onDeletePreset(preset)}
             disabled={isDeleting}
-            className="h-7 px-2 text-xs text-nx-danger hover:bg-nx-danger/10"
+            className="h-7 px-2 text-xs text-nx-danger hover:bg-destructive/10"
           >
             <Trash2 className="h-3 w-3 me-1" aria-hidden="true" />
             {t("adminDataTransferPresets.actions.delete")}

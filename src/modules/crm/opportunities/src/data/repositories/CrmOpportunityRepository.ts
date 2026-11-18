@@ -13,7 +13,7 @@ import type {
   PagedOpportunitiesResult,
   PipelineDefinition,
   UpdateDefaultPipelineInput,
-  DealContactRoleDto,
+  DealContactRole,
   AddDealContactRoleInput,
 } from "../../domain/entities/OpportunityEntity";
 
@@ -96,25 +96,15 @@ export class CrmOpportunityRepository implements ICrmOpportunityRepository {
       : Promise.resolve({ migratedRecordCount: 0 });
   }
 
-  getContactRoles(opportunityId: string): Promise<DealContactRoleDto[]> {
+  getContactRoles(opportunityId: string): Promise<DealContactRole[]> {
     return this.service.getContactRoles ? this.service.getContactRoles(opportunityId) : Promise.resolve([]);
   }
 
-  addContactRole(input: AddDealContactRoleInput): Promise<DealContactRoleDto> {
-    if (this.service.addContactRole) {
-      return this.service.addContactRole(input);
+  addContactRole(input: AddDealContactRoleInput): Promise<DealContactRole> {
+    if (!this.service.addContactRole) {
+      return Promise.reject(new Error("Contact role service not configured"));
     }
-    return Promise.resolve({
-      id: `role-${Date.now()}`,
-      opportunityId: input.opportunityId,
-      contactPartyId: input.contactPartyId || `party-${Date.now()}`,
-      contactName: input.contactName,
-      contactEmail: input.contactEmail,
-      stakeholderRole: input.stakeholderRole,
-      isPrimary: Boolean(input.isPrimary),
-      influenceNotes: input.influenceNotes,
-      createdAtUtc: new Date().toISOString(),
-    });
+    return this.service.addContactRole(input);
   }
 
   removeContactRole(opportunityId: string, roleId: string): Promise<boolean> {

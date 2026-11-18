@@ -47,6 +47,7 @@ vi.mock("next/navigation", () => ({
     prefetch: vi.fn(),
   }),
   usePathname: () => "/crm/accounts",
+  useSearchParams: () => new URLSearchParams(),
 }));
 
 describe("AccountsView Component", () => {

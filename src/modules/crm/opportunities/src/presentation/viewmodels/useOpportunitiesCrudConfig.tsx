@@ -2,17 +2,17 @@
 
 import React, { useMemo, useCallback } from "react";
 import type { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
-import { Input } from "@core/ui/input";
 import { EmptyState } from "@core/ui/empty-state";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
-import { Search, ArrowRight, RotateCcw, CheckCircle, XCircle, ArrowUpRight, UserCheck } from "lucide-react";
+import { ArrowRight, RotateCcw, CheckCircle, XCircle, ArrowUpRight, UserCheck } from "lucide-react";
 import {
   CRM_PERMISSIONS,
   STAGE_COLOR_PALETTE,
   resolveDefaultStageColor,
-  useCrmWorkflowsStore,
   type CrmWorkflowDefinition,
 } from "@modules/crm";
+import { KanbanStageValueSummary } from "../components/kanban/KanbanStageValueSummary";
+import { OpportunitiesToolbarContent } from "../components/OpportunitiesToolbarContent";
+import { evaluateDealStageTransition } from "../utils/opportunityTransitionHelpers";
 import type { CrudConfig, CrudAction, CrudViewMode, DropEvaluationResult } from "@core/crud/components/generic-crud-view";
 import { buildOpportunityColumns, renderOpportunityCardGridItem, renderOpportunitySplitDetail } from "../components/OpportunitiesTable";
 import { KanbanCard } from "../components/kanban/KanbanCard";
@@ -104,36 +104,21 @@ export function useOpportunitiesCrudConfig(params: UseOpportunitiesCrudConfigPar
       canDelete: false,
     },
     toolbarContent: (
-      <div className="flex flex-wrap items-center gap-2 flex-1" dir={isRtl ? "rtl" : "ltr"}>
-        <div className="relative flex-1 min-w-[200px] max-w-sm">
-          <Search className="absolute start-3 top-1/2 -translate-y-1/2 size-3.5 text-nx-ink-3 pointer-events-none" />
-          <Input placeholder={t("crmOpportunities.actions.searchPlaceholder")} value={search} onChange={(e) => handleSearchChange(e.target.value)} className="ps-8 h-8 text-xs border-nx-line bg-nx-surface text-nx-ink" />
-        </div>
-        <div className="w-48">
-          <Select value={activeDealWorkflowId} onValueChange={(id) => setActiveWorkflow("deal", id)}>
-            <SelectTrigger className="h-8 text-xs" data-testid="deal-pipeline-selector"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              {dealWorkflows.map((wf) => <SelectItem key={wf.id} value={wf.id} className="text-xs">{isRtl ? wf.nameAr : wf.nameEn}</SelectItem>)}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="w-36">
-          <Select value={stageFilter || "all"} onValueChange={(val) => handleStageFilterChange(val === "all" ? undefined : val)}>
-            <SelectTrigger className="h-8 text-xs"><SelectValue placeholder={t("crmOpportunities.actions.filterByStage")} /></SelectTrigger>
-            <SelectContent>
-              {stages.map((stg) => <SelectItem key={stg.key || "all"} value={stg.key || "all"}>{stg.label}</SelectItem>)}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="w-32">
-          <Select value={statusFilter || "all"} onValueChange={(val) => handleStatusFilterChange(val === "all" ? undefined : (val as OpportunityStatus))}>
-            <SelectTrigger className="h-8 text-xs"><SelectValue placeholder={t("crmOpportunities.actions.filterByStatus")} /></SelectTrigger>
-            <SelectContent>
-              {statuses.map((st) => <SelectItem key={st.key || "all"} value={st.key || "all"}>{st.label}</SelectItem>)}
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
+      <OpportunitiesToolbarContent
+        t={t}
+        isRtl={isRtl}
+        search={search}
+        onSearchChange={handleSearchChange}
+        activeDealWorkflowId={activeDealWorkflowId}
+        onSelectWorkflow={(id) => setActiveWorkflow("deal", id)}
+        dealWorkflows={dealWorkflows}
+        stageFilter={stageFilter}
+        onStageFilterChange={handleStageFilterChange}
+        stages={stages}
+        statusFilter={statusFilter}
+        onStatusFilterChange={handleStatusFilterChange}
+        statuses={statuses}
+      />
     ),
     kanbanGroupField: "stageKey",
     workflowKanbanConfig: {
@@ -154,24 +139,7 @@ export function useOpportunitiesCrudConfig(params: UseOpportunitiesCrudConfigPar
       }),
       stageField: "stageKey",
       evaluateDropTarget: (opp: CrmOpportunity, targetStageKey: string) => {
-        const isRtl = language === "ar";
-        const oppExtras = opp as unknown as {
-          solutionFitConfirmed?: boolean;
-          primaryContactRole?: string | null;
-          customFields?: Record<string, unknown>;
-        };
-        const evalResult = useCrmWorkflowsStore.getState().evaluateTransition("deal", opp.stageKey, targetStageKey, {
-          hasVerifiedParty: Boolean(opp.partyId || opp.accountId),
-          partyId: opp.partyId || opp.accountId || null,
-          estimatedAmount: opp.estimatedAmount ?? null,
-          targetCloseDate: opp.targetCloseDate ?? null,
-          lossReasonCode: opp.lossReasonCode ?? null,
-          solutionFitConfirmed: Boolean(oppExtras.solutionFitConfirmed),
-          primaryContactRole: oppExtras.primaryContactRole ?? null,
-          contactRoles: oppExtras.primaryContactRole ? [oppExtras.primaryContactRole] : undefined,
-          fields: oppExtras.customFields,
-          locale: isRtl ? "ar" : "en",
-        });
+        const evalResult = evaluateDealStageTransition(opp, targetStageKey, language === "ar");
         const parallelCount = evalResult.matchedTransitions?.length ?? 1;
         return {
           state: evalResult.status,
@@ -210,26 +178,14 @@ export function useOpportunitiesCrudConfig(params: UseOpportunitiesCrudConfigPar
           />
         );
       },
-      renderStageHeaderExtra: (stage, items) => {
-        const sum = items.reduce((acc, curr) => acc + (Number(curr?.estimatedAmount) || 0), 0);
-        return (
-          <div
-            data-testid={`kanban-column-${stage.stageKey}`}
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={(e) => {
-              e.preventDefault();
-              const oppId = e.dataTransfer.getData("text/plain") || e.dataTransfer.getData("application/json");
-              const opp = state.items.find((item) => item.id === oppId);
-              if (opp) {
-                handleOpportunityStageTransition(opp, stage.stageKey);
-              }
-            }}
-            className="flex items-center justify-between text-[11px] font-mono text-nx-ink-3 pt-0.5"
-          >
-            <span>{sum > 0 ? `${sum.toLocaleString()} SAR` : "—"}</span>
-          </div>
-        );
-      },
+      renderStageHeaderExtra: (stage, items) => (
+        <KanbanStageValueSummary
+          stageKey={stage.stageKey}
+          items={items}
+          allItems={state.items}
+          onDropStage={handleOpportunityStageTransition}
+        />
+      ),
       onMoveItem: (opp: CrmOpportunity, targetStageKey: string, evalResult?: DropEvaluationResult) => {
         handleOpportunityStageTransition(opp, targetStageKey, evalResult);
       },

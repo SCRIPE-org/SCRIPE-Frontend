@@ -23,6 +23,7 @@ import {
   SelectValue,
 } from "@core/ui/select";
 import { Badge } from "@core/ui/badge";
+import { Skeleton } from "@core/ui/skeleton";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useDataExchangeExportViewModel } from "../viewmodels/useDataExchangeExportViewModel";
 import type {
@@ -123,6 +124,11 @@ export function DataExchangeExportDialog({
                   type="button"
                   variant="ghost"
                   size="sm"
+                  disabled={
+                    vm.isLoadingDescriptor ||
+                    vm.exportableColumns.length === 0 ||
+                    vm.selectedColumns.length === vm.exportableColumns.length
+                  }
                   onClick={vm.selectAllColumns}
                   className="h-7 text-xs text-nx-ink-2 hover:text-nx-ink"
                 >
@@ -132,6 +138,7 @@ export function DataExchangeExportDialog({
                   type="button"
                   variant="ghost"
                   size="sm"
+                  disabled={vm.isLoadingDescriptor || vm.selectedColumns.length === 0}
                   onClick={vm.clearSelection}
                   className="h-7 text-xs text-nx-ink-2 hover:text-nx-ink"
                 >
@@ -141,26 +148,40 @@ export function DataExchangeExportDialog({
             </div>
 
             <ScrollArea className="h-56 rounded-nx-md border border-nx-line bg-nx-ground p-3">
-              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                {vm.exportableColumns.map((col) => {
-                  const checked = vm.selectedColumns.includes(col.key);
-                  const colLabel = vm.isAr ? col.displayNameAr : col.displayNameEn;
-                  return (
-                    <div
-                      key={col.key}
-                      className="flex items-center gap-2.5 rounded-nx-sm border border-nx-line bg-nx-surface px-3 py-2 hover:border-nx-line-hi"
-                    >
-                      <Checkbox
-                        id={`export-col-${col.key}`}
-                        checked={checked}
-                        onCheckedChange={(val) => vm.toggleColumn(col.key, val === true)}
-                      />
-                      <Label
-                        htmlFor={`export-col-${col.key}`}
-                        className="flex flex-1 cursor-pointer items-center justify-between gap-2 text-xs text-nx-ink"
+              {vm.isLoadingDescriptor ? (
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2" aria-busy="true">
+                  {Array.from({ length: 6 }).map((_, idx) => (
+                    <Skeleton key={idx} className="h-9 w-full rounded-nx-sm" />
+                  ))}
+                </div>
+              ) : vm.exportableColumns.length === 0 ? (
+                <div className="flex h-44 items-center justify-center text-center text-xs text-nx-ink-3 px-4">
+                  {t("dataExchange.exportDialog.noExportableColumns")}
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  {vm.exportableColumns.map((col) => {
+                    const checked = vm.selectedColumns.includes(col.key);
+                    const colLabel = vm.isAr ? col.displayNameAr : col.displayNameEn;
+                    return (
+                      <div
+                        key={col.key}
+                        className="flex items-center justify-between gap-2.5 rounded-nx-sm border border-nx-line bg-nx-surface px-3 py-2 hover:border-nx-line-hi"
                       >
-                        <span className="truncate">{colLabel}</span>
-                        <div className="flex items-center gap-1.5">
+                        <div className="flex min-w-0 flex-1 items-center gap-2.5">
+                          <Checkbox
+                            id={`export-col-${col.key}`}
+                            checked={checked}
+                            onCheckedChange={(val) => vm.toggleColumn(col.key, val === true)}
+                          />
+                          <Label
+                            htmlFor={`export-col-${col.key}`}
+                            className="min-w-0 flex-1 cursor-pointer truncate text-xs text-nx-ink"
+                          >
+                            {colLabel}
+                          </Label>
+                        </div>
+                        <div className="flex shrink-0 items-center gap-1.5">
                           {(col.key.startsWith("cf:") || col.dataType === "CustomField") && (
                             <Badge variant="secondary" className="text-[10px]">
                               {t("dataExchange.customFieldBadge")}
@@ -170,11 +191,11 @@ export function DataExchangeExportDialog({
                             {col.dataType}
                           </Badge>
                         </div>
-                      </Label>
-                    </div>
-                  );
-                })}
-              </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </ScrollArea>
             <p className="text-xs text-nx-ink-3">{t("dataExchange.exportDialog.restrictedNote")}</p>
           </div>
@@ -211,7 +232,7 @@ export function DataExchangeExportDialog({
                 vm.selectedColumns.length === 0 || vm.isExporting || vm.isEnqueuingBackground
               }
               onClick={vm.handleExport}
-              className="bg-nx-accent-fill text-nx-on-fill hover:opacity-90 font-medium text-xs h-8"
+              className="font-medium text-xs h-8"
             >
               <Download className="me-2 h-4 w-4" />
               {t("dataExchange.actions.downloadExport")}

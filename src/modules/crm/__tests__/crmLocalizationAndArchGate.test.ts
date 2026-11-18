@@ -81,18 +81,21 @@ describe("CRM Frontend Localization & Architecture Gate", () => {
     expect(violations).toEqual([]);
   });
 
-  it("enforces <= 300 lines per production source file and < 200 lines per workflow .tsx component", () => {
-    const allProdFiles = walkFiles(
-      CRM_ROOT,
-      (p) => isProdSourceFile(p) && !p.includes(`${path.sep}locales${path.sep}`),
-    );
-    const over300: string[] = [];
+  it("enforces <= 260 lines per production source file across CRM & Kanban and < 200 lines per workflow .tsx component", () => {
+    const kanbanRoot = path.resolve(CRM_ROOT, "../../core/crud/kanban");
+    const srcRoot = path.resolve(CRM_ROOT, "../..");
+    const includeFilter = (p: string) => isProdSourceFile(p) && !p.includes(`${path.sep}locales${path.sep}`);
+    const allProdFiles = [
+      ...walkFiles(CRM_ROOT, includeFilter),
+      ...walkFiles(kanbanRoot, includeFilter),
+    ];
+    const over260: string[] = [];
     const over200Workflow: string[] = [];
 
     for (const file of allProdFiles) {
       const lineCount = fs.readFileSync(file, "utf8").split(/\r?\n/).length;
-      if (lineCount > 300) {
-        over300.push(`${path.relative(CRM_ROOT, file)} (${lineCount} lines)`);
+      if (lineCount > 260) {
+        over260.push(`${path.relative(srcRoot, file)} (${lineCount} lines)`);
       }
       if (
         file.endsWith(".tsx") &&
@@ -103,7 +106,7 @@ describe("CRM Frontend Localization & Architecture Gate", () => {
       }
     }
 
-    expect(over300).toEqual([]);
+    expect(over260).toEqual([]);
     expect(over200Workflow).toEqual([]);
   });
 

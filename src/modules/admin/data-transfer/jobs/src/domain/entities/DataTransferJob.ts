@@ -1,7 +1,17 @@
-import type {
-  DataTransferJobKind,
-  DataTransferJobStatus,
-} from "@core/data-exchange/domain/types";
+/** Kind of executed data transfer job. */
+export type DataTransferJobKind = "Import" | "Export" | "MultiSheetMigration";
+
+/** Execution lifecycle status of a data transfer job. */
+export type DataTransferJobStatus =
+  | "Queued"
+  | "Running"
+  | "Completed"
+  | "CompletedWithErrors"
+  | "Failed"
+  | "Cancelled";
+
+/** Downloadable artifact kinds produced by a data transfer job. */
+export type DataTransferArtifactKind = "rejected" | "export";
 
 /**
  * Domain entity representing a data transfer execution job.

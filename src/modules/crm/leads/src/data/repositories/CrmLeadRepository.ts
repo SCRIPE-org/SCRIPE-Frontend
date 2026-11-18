@@ -4,6 +4,7 @@ import type {
   CrmLead,
   CreateLeadInput,
   UpdateLeadInput,
+  AssignLeadOwnerInput,
   QualifyLeadInput,
   LinkPartyToLeadInput,
   ConvertLeadInput,
@@ -30,6 +31,13 @@ export class CrmLeadRepository implements ICrmLeadRepository {
 
   updateLead(input: UpdateLeadInput): Promise<CrmLead> {
     return this.service.updateLead(input);
+  }
+
+  assignOwner(input: AssignLeadOwnerInput): Promise<CrmLead> {
+    if (!this.service.assignOwner) {
+      return Promise.reject(new Error("Lead owner assignment service not configured"));
+    }
+    return this.service.assignOwner(input);
   }
 
   qualifyLead(input: QualifyLeadInput): Promise<CrmLead> {

@@ -17,6 +17,7 @@ import {
   DialogFooter,
 } from "@core/ui/dialog";
 import { AlertCircle, FileText, Phone, Users, ShieldAlert } from "lucide-react";
+import { CrmEntitySearchSelect } from "@modules/crm";
 import type { SalesActivityKind } from "../../domain/entities/CrmActivityEntity";
 
 interface CreateActivityModalProps {
@@ -27,10 +28,13 @@ interface CreateActivityModalProps {
     summary: string;
     bodyText?: string;
     containsPii?: boolean;
+    accountId?: string;
   }) => Promise<boolean>;
   readonly isSubmitting: boolean;
   readonly error: string | null;
   readonly targetLabel?: string;
+  readonly allowAccountSelect?: boolean;
+  readonly initialAccountId?: string;
 }
 
 export function CreateActivityModal({
@@ -40,11 +44,14 @@ export function CreateActivityModal({
   isSubmitting,
   error,
   targetLabel,
+  allowAccountSelect = false,
+  initialAccountId = "",
 }: CreateActivityModalProps) {
   const { t, language } = useI18n();
   const isRtl = language === "ar";
 
   const [kind, setKind] = useState<SalesActivityKind>("Note");
+  const [accountId, setAccountId] = useState(initialAccountId);
   const [summary, setSummary] = useState("");
   const [bodyText, setBodyText] = useState("");
   const [containsPii, setContainsPii] = useState(false);
@@ -58,6 +65,7 @@ export function CreateActivityModal({
       summary: summary.trim(),
       bodyText: bodyText.trim() || undefined,
       containsPii,
+      accountId: accountId || undefined,
     });
 
     if (success) {
@@ -65,6 +73,7 @@ export function CreateActivityModal({
       setBodyText("");
       setContainsPii(false);
       setKind("Note");
+      setAccountId(initialAccountId);
     }
   };
 
@@ -115,6 +124,24 @@ export function CreateActivityModal({
           )}
 
           <div className="space-y-4 py-4 text-xs">
+            {allowAccountSelect && (
+              <div className="space-y-1.5">
+                <Label className="text-nx-ink font-semibold">
+                  {t("crmActivities.form.accountLabel")}
+                </Label>
+                <CrmEntitySearchSelect
+                  entityKind="account"
+                  valueMode="id"
+                  value={accountId}
+                  initialLabel={targetLabel || undefined}
+                  onChange={(val) => setAccountId(val)}
+                  placeholder={t("crmActivities.form.accountPlaceholder")}
+                  enableQuickCreate
+                  quickCreateDefaultKind="account"
+                  allowClear
+                />
+              </div>
+            )}
             {/* Kind Selector */}
             <div className="space-y-1.5">
               <Label className="text-nx-ink font-semibold">
@@ -152,10 +179,10 @@ export function CreateActivityModal({
                 onChange={(e) => setSummary(e.target.value)}
                 placeholder={
                   kind === "CallLog"
-                    ? "Inbound qualification call with director..."
+                    ? t("crmActivities.executionDesk.callSummaryPlaceholder")
                     : kind === "MeetingLog"
-                    ? "Contract review and pricing negotiation..."
-                    : "Key takeaways from commercial alignment..."
+                    ? t("crmActivities.executionDesk.meetingSummaryPlaceholder")
+                    : t("crmActivities.executionDesk.noteSummaryPlaceholder")
                 }
                 required
                 className="h-8 text-xs bg-nx-ground border-nx-line text-nx-ink"

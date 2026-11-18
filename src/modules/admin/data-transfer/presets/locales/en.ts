@@ -9,6 +9,13 @@ export const en = {
     empty: {
       title: "No mapping presets found",
       description: "No saved presets match the current filter criteria.",
+      unfilteredTitle: "No mapping presets yet",
+      unfilteredDescription:
+        "Create a preset in Import Studio to save reusable column mappings for this tenant.",
+    },
+    error: {
+      title: "Unable to load mapping presets",
+      description: "An unexpected error occurred while fetching saved mapping presets.",
     },
     kpis: {
       totalPresets: "Total Presets",
@@ -62,8 +69,8 @@ export const en = {
     tenantRequired: {
       title: "Tenant Workspace Required",
       description: "Saved column mapping presets belong to an active tenant workspace. Select or impersonate a tenant before managing presets.",
-      switchHint: "Use the Tenant Workspace switcher in the top header bar or open Tenants to switch into a tenant workspace.",
-      goToTenants: "Go to Tenants",
+      switchHint: "Use the Tenant Workspace switcher in the top header bar or click Select Tenant Workspace to enter a tenant context in place.",
+      goToTenants: "Select Tenant Workspace",
       retry: "Check Context Again",
     },
     filters: {

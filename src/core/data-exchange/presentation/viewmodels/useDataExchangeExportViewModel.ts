@@ -2,10 +2,15 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getCoreContainer } from "@core/di";
+import { useAdminContext } from "@core/hooks/useAdminContext";
 import { toast } from "@core/ui/sileo-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useDataExchangeJobsStore } from "../store/useDataExchangeJobsStore";
 import { getEntityDisplayName } from "../utils/entity-display-names";
+import {
+  getStudioErrorMessage,
+  isAbortOrInterceptedError,
+} from "./studio/studio-viewmodel.helpers";
 import type {
   DataExchangeColumnDescriptor,
   DataExchangeDescriptorResponseDto,
@@ -26,6 +31,7 @@ export interface UseDataExchangeExportReturn {
   isAr: boolean;
   entityTitle: string;
   exportableColumns: DataExchangeColumnDescriptor[];
+  isLoadingDescriptor: boolean;
   format: DataExchangeFileFormat;
   setFormat: (format: DataExchangeFileFormat) => void;
   selectedColumns: string[];
@@ -37,6 +43,16 @@ export interface UseDataExchangeExportReturn {
   clearSelection: () => void;
   handleExport: () => Promise<void>;
   handleExportInBackground: () => Promise<void>;
+}
+
+function getExportableColumnsForDescriptor(
+  descriptor: DataExchangeDescriptorResponseDto | null | undefined
+): DataExchangeColumnDescriptor[] {
+  if (!descriptor) return [];
+  const restrictedSet = new Set(descriptor.restrictedFieldKeys ?? []);
+  return (descriptor.descriptor.columns ?? []).filter(
+    (col) => col.direction !== "ImportOnly" && !restrictedSet.has(col.key)
+  );
 }
 
 /**
@@ -53,40 +69,82 @@ export function useDataExchangeExportViewModel({
 }: UseDataExchangeExportOptions): UseDataExchangeExportReturn {
   const { direction, language, t } = useI18n();
   const isAr = language === "ar";
+  const { activeTenantId } = useAdminContext();
 
-  const [fetchedDescriptor, setFetchedDescriptor] =
-    useState<DataExchangeDescriptorResponseDto | null>(null);
+  const [fetchedEntry, setFetchedEntry] = useState<{
+    tenantId: string | null;
+    entityKey: string;
+    data: DataExchangeDescriptorResponseDto;
+  } | null>(null);
+  const [settledRequestKey, setSettledRequestKey] = useState<string | null>(null);
   const [format, setFormat] = useState<DataExchangeFileFormat>("xlsx");
   const [selectedColumns, setSelectedColumns] = useState<string[]>([]);
   const [isExporting, setIsExporting] = useState(false);
   const [isEnqueuingBackground, setIsEnqueuingBackground] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const lastInitializedRef = useRef<string>("");
+  const tRef = useRef(t);
+  useEffect(() => {
+    tRef.current = t;
+  }, [t]);
 
-  const descriptor = initialDescriptor ?? fetchedDescriptor;
+  const matchingFetchedDescriptor =
+    fetchedEntry &&
+    fetchedEntry.tenantId === activeTenantId &&
+    fetchedEntry.entityKey === entityKey.toLowerCase()
+      ? fetchedEntry.data
+      : null;
+
+  const descriptor = initialDescriptor ?? matchingFetchedDescriptor;
+  const activeFetchKey =
+    open && entityKey && !initialDescriptor
+      ? `${activeTenantId ?? "platform"}:${entityKey.toLowerCase()}`
+      : null;
+  const isLoadingDescriptor = Boolean(activeFetchKey && settledRequestKey !== activeFetchKey);
 
   useEffect(() => {
-    if (!open || !entityKey || initialDescriptor) return;
+    if (!open || !entityKey || initialDescriptor || !activeFetchKey) {
+      return;
+    }
     const controller = new AbortController();
     let cancelled = false;
-    getCoreContainer()
-      .dataExchangeRepository.getEntityDescriptor(entityKey, controller.signal)
+    const requestedTenantId = activeTenantId;
+    const requestedEntityKey = entityKey.toLowerCase();
+    const currentFetchKey = activeFetchKey;
+
+    Promise.resolve(
+      getCoreContainer().dataExchangeRepository.getEntityDescriptor(entityKey, controller.signal)
+    )
       .then((res) => {
-        if (!cancelled && res) setFetchedDescriptor(res);
+        if (!cancelled && res) {
+          setFetchedEntry({
+            tenantId: requestedTenantId,
+            entityKey: requestedEntityKey,
+            data: res,
+          });
+          setErrorMessage(null);
+        }
       })
-      .catch(() => {
-        // Error surfaced on export if needed
+      .catch((err) => {
+        if (!cancelled && !isAbortOrInterceptedError(err)) {
+          setErrorMessage(
+            getStudioErrorMessage(err, tRef.current("dataExchange.errors.loadMetaFailed"))
+          );
+        }
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setSettledRequestKey(currentFetchKey);
+        }
       });
+
     return () => {
       cancelled = true;
       controller.abort();
     };
-  }, [open, entityKey, initialDescriptor]);
+  }, [open, entityKey, initialDescriptor, activeTenantId, activeFetchKey]);
 
-  const restrictedSet = new Set(descriptor?.restrictedFieldKeys ?? []);
-  const exportableColumns = (descriptor?.descriptor.columns ?? []).filter(
-    (col) => col.direction !== "ImportOnly" && !restrictedSet.has(col.key)
-  );
+  const exportableColumns = getExportableColumnsForDescriptor(descriptor);
   const descriptorEntityKey = descriptor?.descriptor.entityKey ?? "";
 
   useEffect(() => {
@@ -94,13 +152,14 @@ export function useDataExchangeExportViewModel({
       lastInitializedRef.current = "";
       return;
     }
-    if (!descriptorEntityKey || exportableColumns.length === 0) return;
-    const initKey = `${entityKey}:${descriptorEntityKey}`;
+    if (!descriptorEntityKey || !descriptor) return;
+    const columns = getExportableColumnsForDescriptor(descriptor);
+    const initKey = `${activeTenantId ?? "platform"}:${entityKey.toLowerCase()}:${descriptorEntityKey}`;
     if (lastInitializedRef.current === initKey) return;
     lastInitializedRef.current = initKey;
-    setSelectedColumns(exportableColumns.map((c) => c.key));
+    setSelectedColumns(columns.map((c) => c.key));
     setErrorMessage(null);
-  }, [open, entityKey, descriptorEntityKey, exportableColumns]);
+  }, [open, activeTenantId, entityKey, descriptorEntityKey, descriptor]);
 
   const toggleColumn = useCallback((key: string, checked: boolean) => {
     setSelectedColumns((prev) =>
@@ -109,14 +168,16 @@ export function useDataExchangeExportViewModel({
   }, []);
 
   const selectAllColumns = useCallback(() => {
-    setSelectedColumns(exportableColumns.map((c) => c.key));
-  }, [exportableColumns]);
+    const cols = getExportableColumnsForDescriptor(descriptor);
+    setSelectedColumns(cols.map((c) => c.key));
+  }, [descriptor]);
 
   const clearSelection = useCallback(() => {
     setSelectedColumns([]);
   }, []);
 
   const handleExport = useCallback(async () => {
+    if (selectedColumns.length === 0) return;
     setIsExporting(true);
     setErrorMessage(null);
     try {
@@ -125,14 +186,14 @@ export function useDataExchangeExportViewModel({
         format,
         locale: isAr ? "ar" : "en",
         search: activeSearch || null,
-        selectedColumns: selectedColumns.length > 0 ? selectedColumns : null,
+        selectedColumns,
         filters: activeFilters ?? null,
       });
       onOpenChange(false);
     } catch (err) {
-      setErrorMessage(
-        err instanceof Error && err.message ? err.message : t("dataExchange.errors.exportFailed")
-      );
+      if (!isAbortOrInterceptedError(err)) {
+        setErrorMessage(getStudioErrorMessage(err, t("dataExchange.errors.exportFailed")));
+      }
     } finally {
       setIsExporting(false);
     }
@@ -148,7 +209,7 @@ export function useDataExchangeExportViewModel({
         format,
         locale: isAr ? "ar" : "en",
         search: activeSearch || null,
-        selectedColumns: selectedColumns.length > 0 ? selectedColumns : null,
+        selectedColumns,
         filters: activeFilters ?? null,
       });
       useDataExchangeJobsStore.getState().trackJob(job);
@@ -160,9 +221,9 @@ export function useDataExchangeExportViewModel({
       });
       onOpenChange(false);
     } catch (err) {
-      setErrorMessage(
-        err instanceof Error && err.message ? err.message : t("dataExchange.errors.exportFailed")
-      );
+      if (!isAbortOrInterceptedError(err)) {
+        setErrorMessage(getStudioErrorMessage(err, t("dataExchange.errors.exportFailed")));
+      }
     } finally {
       setIsEnqueuingBackground(false);
     }
@@ -185,6 +246,7 @@ export function useDataExchangeExportViewModel({
     isAr,
     entityTitle,
     exportableColumns,
+    isLoadingDescriptor,
     format,
     setFormat,
     selectedColumns,

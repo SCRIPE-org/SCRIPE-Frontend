@@ -13,13 +13,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@core/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@core/ui/select";
+import { CrmEntitySearchSelect } from "@modules/crm";
 import { AlertCircle } from "lucide-react";
 
 interface ContactEditDialogProps {
@@ -107,19 +101,16 @@ export function ContactEditDialog({
               <Label htmlFor="edit-primary-account" className="text-nx-ink-2 font-medium">
                 {t("crmContacts.create.primaryAccount")}
               </Label>
-              <Select value={primaryAccount || "__none__"} onValueChange={setPrimaryAccount}>
-                <SelectTrigger id="edit-primary-account" className="h-8 text-xs bg-nx-ground border-nx-line text-nx-ink">
-                  <SelectValue placeholder={t("crmContacts.create.selectAccountPlaceholder")} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="__none__">{t("crmContacts.create.noPrimaryAccount")}</SelectItem>
-                  {accountOptions.map((acc) => (
-                    <SelectItem key={acc.id} value={acc.id}>
-                      {acc.displayName}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <CrmEntitySearchSelect
+                id="edit-primary-account"
+                entityKind="account"
+                valueMode="id"
+                value={primaryAccount === "__none__" ? "" : primaryAccount}
+                onChange={(val) => setPrimaryAccount(val || "__none__")}
+                initialLabel={accountOptions.find((acc) => acc.id === primaryAccount)?.displayName}
+                placeholder={t("crmContacts.create.selectAccountPlaceholder")}
+                allowClear
+              />
             </div>
 
             <div className="grid grid-cols-2 gap-3">

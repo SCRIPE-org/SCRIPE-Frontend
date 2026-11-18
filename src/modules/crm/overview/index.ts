@@ -1,4 +1,5 @@
 export * from "./src/domain/constants/permission-constants";
+export type { CrmCustomFieldValueType } from "./src/domain/constants/crmSettingsDefaults";
 export * from "./locales";
 export * from "./src/domain/models/crm-overview.types";
 export * from "./src/domain/interfaces/ICrmOverviewService";
@@ -22,5 +23,8 @@ export * from "./src/presentation/views/CrmReportsView";
 export * from "./src/presentation/views/CrmSettingsView";
 export * from "./src/presentation/components/CrmWorkflowTransitionDialog";
 export * from "./src/presentation/components/crmTransitionTypes";
+export * from "./src/presentation/components/CrmEntitySearchSelect";
+export * from "./src/presentation/components/CrmEntityQuickCreateDialog";
+export * from "./src/presentation/viewmodels/useCrmEntitySearchViewModel";
 
 

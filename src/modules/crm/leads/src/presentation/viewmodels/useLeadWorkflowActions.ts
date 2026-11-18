@@ -14,27 +14,7 @@ import type {
   LeadStatus,
 } from "../../domain/models/crm-lead.types";
 
-function toLeadStageKey(statusOrKey: string): string {
-  const wf = useCrmWorkflowsStore.getState().getActiveWorkflow("lead");
-  const matchedStage = wf?.stages?.find(
-    (s) =>
-      s.stageKey.toLowerCase() === statusOrKey.toLowerCase() ||
-      s.labelEn.toLowerCase() === statusOrKey.toLowerCase() ||
-      s.labelAr === statusOrKey
-  );
-  if (matchedStage) return matchedStage.stageKey;
-  if (statusOrKey.startsWith("lead.")) return statusOrKey;
-  return `lead.${statusOrKey.trim().toLowerCase().replace(/[^a-z0-9]+/g, "_")}`;
-}
-
-function stageKeyToLeadStatus(stageKey: string, labelEn: string, fallback: LeadStatus): LeadStatus {
-  if (stageKey === "lead.new") return "New";
-  if (stageKey === "lead.working") return "Working";
-  if (stageKey === "lead.qualified") return "Qualified";
-  if (stageKey === "lead.converted") return "Converted";
-  if (stageKey === "lead.disqualified") return "Disqualified";
-  return (labelEn || fallback || stageKey.replace(/^lead\./, "")) as LeadStatus;
-}
+import { stageKeyToLeadStatus, toLeadStageKey } from "../utils/leadTransitionHelpers";
 
 const STANDARD_LEAD_STATUSES = new Set(["New", "Working", "Qualified", "Converted", "Disqualified"]);
 
@@ -198,67 +178,58 @@ export function useLeadWorkflowActions(
     [items, page, pageSize, search, statusFilter, loadLeads, openConvertDialog, setStateError, setStateItemsAndError, setSubmitError, t],
   );
 
-  const handleQualifyLead = useCallback(
-    async (input: QualifyLeadInput): Promise<boolean> => {
+  const runDialogMutation = useCallback(
+    async <T,>(op: () => Promise<T>, closeDialog: () => void, fallbackError: string): Promise<T | null> => {
       setIsSubmitting(true);
       setSubmitError(null);
       try {
-        const container = getCrmContainer();
-        await container.leadRepository.qualifyLead(input);
+        const result = await op();
         setIsSubmitting(false);
-        setIsQualifyOpen(false);
-        setActiveLead(null);
-        loadLeads(page, search, statusFilter, pageSize);
-        return true;
-      } catch (err) {
-        setIsSubmitting(false);
-        setSubmitError(err instanceof Error ? err.message : "Failed to qualify lead");
-        return false;
-      }
-    },
-    [loadLeads, page, pageSize, search, statusFilter, setIsSubmitting, setSubmitError],
-  );
-
-  const handleLinkParty = useCallback(
-    async (input: LinkPartyToLeadInput): Promise<boolean> => {
-      setIsSubmitting(true);
-      setSubmitError(null);
-      try {
-        const container = getCrmContainer();
-        await container.leadRepository.linkParty(input);
-        setIsSubmitting(false);
-        setIsLinkPartyOpen(false);
-        setActiveLead(null);
-        loadLeads(page, search, statusFilter, pageSize);
-        return true;
-      } catch (err) {
-        setIsSubmitting(false);
-        setSubmitError(err instanceof Error ? err.message : "Failed to link contact or organization");
-        return false;
-      }
-    },
-    [loadLeads, page, pageSize, search, statusFilter, setIsSubmitting, setSubmitError],
-  );
-
-  const handleConvertLead = useCallback(
-    async (input: ConvertLeadInput): Promise<ConvertLeadResult | null> => {
-      setIsSubmitting(true);
-      setSubmitError(null);
-      try {
-        const container = getCrmContainer();
-        const result = await container.leadRepository.convertLead(input);
-        setIsSubmitting(false);
-        setIsConvertOpen(false);
+        closeDialog();
         setActiveLead(null);
         loadLeads(page, search, statusFilter, pageSize);
         return result;
       } catch (err) {
         setIsSubmitting(false);
-        setSubmitError(err instanceof Error ? err.message : "Failed to convert lead");
+        setSubmitError(err instanceof Error ? err.message : fallbackError);
         return null;
       }
     },
     [loadLeads, page, pageSize, search, statusFilter, setIsSubmitting, setSubmitError],
+  );
+
+  const handleQualifyLead = useCallback(
+    async (input: QualifyLeadInput): Promise<boolean> => {
+      const res = await runDialogMutation(
+        () => getCrmContainer().leadRepository.qualifyLead(input),
+        () => setIsQualifyOpen(false),
+        "Failed to qualify lead",
+      );
+      return res !== null;
+    },
+    [runDialogMutation],
+  );
+
+  const handleLinkParty = useCallback(
+    async (input: LinkPartyToLeadInput): Promise<boolean> => {
+      const res = await runDialogMutation(
+        () => getCrmContainer().leadRepository.linkParty(input),
+        () => setIsLinkPartyOpen(false),
+        "Failed to link contact or organization",
+      );
+      return res !== null;
+    },
+    [runDialogMutation],
+  );
+
+  const handleConvertLead = useCallback(
+    (input: ConvertLeadInput): Promise<ConvertLeadResult | null> =>
+      runDialogMutation(
+        () => getCrmContainer().leadRepository.convertLead(input),
+        () => setIsConvertOpen(false),
+        "Failed to convert lead",
+      ),
+    [runDialogMutation],
   );
 
   const lookupCandidateParties = useCallback(

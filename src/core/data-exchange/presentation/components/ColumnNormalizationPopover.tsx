@@ -79,6 +79,7 @@ export function ColumnNormalizationPopover({
 
   const preview = previewNormalizedSample(sampleValue, currentRule, targetDataType);
   const activeCount = countActiveTransforms(currentRule);
+  const isCompactViewport = typeof window !== "undefined" && window.innerWidth < 768;
 
   const update = (patch: Partial<DataExchangeTransformRule>) => {
     onChange({ ...currentRule, ...patch });
@@ -123,11 +124,11 @@ export function ColumnNormalizationPopover({
       </PopoverTrigger>
       <PopoverContent
         dir={direction}
-        side={direction === "rtl" ? "right" : "left"}
+        side={isCompactViewport ? "bottom" : direction === "rtl" ? "right" : "left"}
         align="start"
         sideOffset={8}
         collisionPadding={16}
-        className="w-[440px] max-w-[calc(100vw-2rem)] max-h-[min(600px,82vh)] p-0 flex flex-col overflow-hidden bg-nx-surface border-nx-line text-nx-ink"
+        className="w-[min(440px,calc(100vw-2rem))] max-h-[min(600px,82vh)] p-0 flex flex-col overflow-hidden bg-nx-surface border-nx-line text-nx-ink"
       >
         {/* Sticky Header */}
         <div className="shrink-0 flex items-center justify-between border-b border-nx-line bg-nx-surface p-3.5">
@@ -142,8 +143,21 @@ export function ColumnNormalizationPopover({
                 </Badge>
               )}
             </div>
-            <p className="text-[11px] text-nx-ink-3 truncate mt-0.5">
-              {sourceColumnHeader} {targetFieldKey ? `→ ${targetFieldKey}` : ""}
+            <p className="text-[11px] text-nx-ink-3 truncate mt-0.5 flex items-center gap-1">
+              <bdi dir="ltr" className="font-mono truncate">
+                {sourceColumnHeader}
+              </bdi>
+              {targetFieldKey ? (
+                <>
+                  <ArrowRight
+                    className="h-3 w-3 shrink-0 rtl:rotate-180"
+                    aria-hidden="true"
+                  />
+                  <bdi dir="ltr" className="font-mono truncate">
+                    {targetFieldKey}
+                  </bdi>
+                </>
+              ) : null}
             </p>
           </div>
           <Button
@@ -165,6 +179,7 @@ export function ColumnNormalizationPopover({
           </span>
           <div className="mt-1.5 flex items-center gap-2 text-xs">
             <span
+              dir="auto"
               className="flex-1 truncate rounded bg-nx-surface px-2 py-1 text-nx-ink-2 border border-nx-line"
               title={sampleValue}
             >
@@ -172,6 +187,7 @@ export function ColumnNormalizationPopover({
             </span>
             <ArrowRight className="h-3.5 w-3.5 shrink-0 text-nx-accent rtl:rotate-180" />
             <span
+              dir="auto"
               className="flex-1 truncate rounded bg-nx-surface px-2 py-1 font-mono font-medium text-nx-ink border border-nx-accent"
               title={preview}
             >
@@ -199,9 +215,10 @@ export function ColumnNormalizationPopover({
           </Badge>
           <Button
             type="button"
+            variant="default"
             size="sm"
             onClick={() => setOpen(false)}
-            className="h-7 px-3 text-xs bg-nx-accent-fill text-nx-on-fill hover:opacity-90 font-medium"
+            className="h-7 px-3 text-xs font-medium"
           >
             {t("dataExchange.normalization.done")}
           </Button>

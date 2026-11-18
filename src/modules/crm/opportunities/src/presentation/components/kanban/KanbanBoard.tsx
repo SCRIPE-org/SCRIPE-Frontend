@@ -10,6 +10,7 @@ import { Skeleton } from "@core/ui/skeleton";
 import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 import { KanbanColumn } from "./KanbanColumn";
+import { buildKanbanSwimlaneGroups } from "./kanbanSwimlaneHelpers";
 import { useKanbanBoardViewModel } from "../../viewmodels/useKanbanBoardViewModel";
 import type { CrmOpportunity, PipelineStageConfig } from "../../../domain/entities/OpportunityEntity";
 import type { BoardSettingsConfig } from "../BoardSettingsDialog";
@@ -47,38 +48,7 @@ export function KanbanBoard({
   const swimlaneMode = boardSettings?.swimlaneMode ?? "none";
   const cardDensity = boardSettings?.cardDensity ?? "Standard";
 
-  const swimlaneGroups = (() => {
-    if (swimlaneMode === "none") return [];
-    const map = new Map<string, { key: string; label: string; deals: CrmOpportunity[]; dealIds: Set<string> }>();
-    for (const opp of opportunities) {
-      let key = "default";
-      let label = t("crmOpportunities.kanban.swimlaneGeneral");
-      if (swimlaneMode === "assignee") {
-        key = opp.ownerUserId || "unassigned";
-        label = opp.ownerUserId
-          ? `${t("crmOpportunities.kanban.swimlaneOwnerPrefix")} ${opp.ownerUserId.slice(0, 8)}`
-          : t("crmOpportunities.kanban.swimlaneUnassigned");
-      } else if (swimlaneMode === "account") {
-        key = opp.accountId || opp.partyId || "unlinked";
-        label = opp.accountId
-          ? `${t("crmOpportunities.kanban.swimlaneAccountPrefix")} ${opp.accountId.slice(0, 8)}`
-          : opp.partyId
-            ? `${t("crmOpportunities.kanban.swimlanePartyPrefix")} ${opp.partyId.slice(0, 8)}`
-            : t("crmOpportunities.kanban.swimlaneUnlinkedAccount");
-      } else if (swimlaneMode === "dealType") {
-        key = `${opp.dealKind || "NewBusiness"}-${opp.currencyCode || "SAR"}`;
-        label = `${opp.dealKind || "NewBusiness"} • ${opp.currencyCode || "SAR"}`;
-      }
-      const existing = map.get(key);
-      if (existing) {
-        existing.deals.push(opp);
-        existing.dealIds.add(opp.id);
-      } else {
-        map.set(key, { key, label, deals: [opp], dealIds: new Set([opp.id]) });
-      }
-    }
-    return Array.from(map.values());
-  })();
+  const swimlaneGroups = buildKanbanSwimlaneGroups(opportunities, swimlaneMode, t);
 
   const activeLane = swimlaneMode !== "none" && selectedLaneKey
     ? swimlaneGroups.find((g) => g.key === selectedLaneKey) ?? null

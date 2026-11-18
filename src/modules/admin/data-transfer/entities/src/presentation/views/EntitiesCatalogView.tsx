@@ -2,8 +2,6 @@
 
 import React from "react";
 import { GenericCrudView, type CrudConfig } from "@core/crud/components/generic-crud-view";
-import { EmptyState } from "@core/ui/empty-state";
-import { Building2, Layers } from "lucide-react";
 import {
   DataExchangeExportDialog,
   DataExchangeStudioOverlay,
@@ -11,7 +9,12 @@ import {
 } from "@core/data-exchange";
 import { useEntitiesViewModel } from "../viewmodels/useEntitiesViewModel";
 import type { DataExchangeEntity } from "../../domain/entities/DataExchangeEntity";
+import {
+  DataTransferEmptyState,
+  DataTransferErrorBanner,
+} from "../components/DataTransferStateFeedback";
 import { EntityCatalogCard } from "../components/EntityCatalogCard";
+import { EntitiesFilterToolbar } from "../components/EntitiesFilterToolbar";
 import { EntitiesKpiHeader } from "../components/EntitiesKpiHeader";
 import {
   createEntitiesActions,
@@ -32,6 +35,14 @@ export function EntitiesCatalogView(): React.ReactElement {
   const isAr = language === "ar";
 
   const columns = createEntitiesColumns({ t, isAr });
+  const errorMessage =
+    !vm.isTenantRequired && vm.isError
+      ? (vm.error as Error)?.message || t("dataTransferEntities.error.description")
+      : null;
+
+  const handleRetry = () => {
+    void vm.refetch();
+  };
 
   const launchSingleStudio = (entityKey: string) => {
     vm.setActiveMultiSheetKeys(null);
@@ -50,10 +61,27 @@ export function EntitiesCatalogView(): React.ReactElement {
       switchHint={t("dataTransferEntities.tenantRequired.switchHint")}
       goToTenantsLabel={t("dataTransferEntities.tenantRequired.goToTenants")}
       retryLabel={t("dataTransferEntities.tenantRequired.retry")}
-      onRetry={() => void vm.refetch()}
+      onRetry={handleRetry}
     />
   ) : (
-    <EntitiesKpiHeader kpis={vm.kpis} />
+    <div className="mb-4 space-y-3">
+      <EntitiesKpiHeader kpis={vm.kpis} />
+      {errorMessage && (
+        <DataTransferErrorBanner
+          title={t("dataTransferEntities.error.title")}
+          message={errorMessage}
+          onRetry={handleRetry}
+          testIdPrefix="entities"
+        />
+      )}
+      <EntitiesFilterToolbar
+        selectedModule={vm.selectedModule}
+        availableModules={vm.availableModules}
+        onModuleChange={vm.setSelectedModule}
+        hasActiveFilters={vm.hasActiveFilters}
+        onResetFilters={vm.resetFilters}
+      />
+    </div>
   );
 
   const config: CrudConfig<DataExchangeEntity> = {
@@ -97,11 +125,7 @@ export function EntitiesCatalogView(): React.ReactElement {
   const crudViewModel = {
     items: vm.entities,
     loading: vm.isLoading,
-    error: vm.isTenantRequired
-      ? null
-      : vm.error
-        ? (vm.error as Error)?.message || String(vm.error)
-        : null,
+    error: null,
     refreshItems: vm.refetch,
     refetch: vm.refetch,
     pagination: vm.pagination,
@@ -109,35 +133,38 @@ export function EntitiesCatalogView(): React.ReactElement {
     changePageSize: vm.setPageSize,
   };
 
-  const emptyStateNode = (
-    <EmptyState
-      bare
-      icon={vm.isTenantRequired ? Building2 : Layers}
-      title={t(
-        vm.isTenantRequired
-          ? "dataTransferEntities.tenantRequired.title"
-          : "dataTransferEntities.empty.title"
-      )}
-      description={t(
-        vm.isTenantRequired
-          ? "dataTransferEntities.tenantRequired.switchHint"
-          : "dataTransferEntities.empty.description"
-      )}
-    />
-  );
-
   return (
     <>
       <GenericCrudView<DataExchangeEntity>
         config={config}
         viewModel={crudViewModel}
-        emptyState={emptyStateNode}
+        emptyState={
+          <DataTransferEmptyState
+            isTenantRequired={vm.isTenantRequired}
+            errorMessage={errorMessage}
+            hasActiveFilters={vm.hasActiveFilters}
+            tenantTitle={t("dataTransferEntities.tenantRequired.title")}
+            tenantDescription={t("dataTransferEntities.tenantRequired.switchHint")}
+            errorTitle={t("dataTransferEntities.error.title")}
+            filteredTitle={t("dataTransferEntities.empty.title")}
+            filteredDescription={t("dataTransferEntities.empty.description")}
+            unfilteredTitle={t("dataTransferEntities.empty.unfilteredTitle")}
+            unfilteredDescription={t("dataTransferEntities.empty.unfilteredDescription")}
+            onRetry={handleRetry}
+            onResetFilters={vm.resetFilters}
+            testIdPrefix="entities"
+          />
+        }
         pagination={{
           ...vm.pagination,
           onPageChange: vm.setPage,
           onPageSizeChange: vm.setPageSize,
         }}
-        search={{ value: vm.search, onChange: vm.setSearch }}
+        search={{
+          value: vm.search,
+          onChange: vm.setSearch,
+          placeholder: t("dataTransferEntities.searchPlaceholder"),
+        }}
       />
       {vm.activeStudioEntity && (
         <DataExchangeStudioOverlay

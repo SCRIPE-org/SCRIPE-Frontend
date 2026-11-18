@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
+import { CrmEntitySearchSelect } from "@modules/crm";
 import {
   Dialog,
   DialogContent,
@@ -14,29 +15,8 @@ import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
 import { Alert, AlertDescription } from "@core/ui/alert";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@core/ui/select";
 import { AlertCircle, UserCheck } from "lucide-react";
 import type { CrmOpportunity, AssignOpportunityOwnerInput } from "../../domain/entities/OpportunityEntity";
-
-const COMMERCIAL_REPRESENTATIVES: Array<{ id: string; key: string }> = [
-  { id: "11111111-1111-1111-1111-111111111111", key: "rep1" },
-  { id: "22222222-2222-2222-2222-222222222222", key: "rep2" },
-  { id: "33333333-3333-3333-3333-333333333333", key: "rep3" },
-  { id: "44444444-4444-4444-4444-444444444444", key: "rep4" },
-];
-
-const COMMERCIAL_TEAMS: Array<{ id: string; key: string }> = [
-  { id: "aaaa1111-1111-1111-1111-111111111111", key: "team1" },
-  { id: "bbbb2222-2222-2222-2222-222222222222", key: "team2" },
-  { id: "cccc3333-3333-3333-3333-333333333333", key: "team3" },
-  { id: "dddd4444-4444-4444-4444-444444444444", key: "team4" },
-];
 
 /**
  * Properties for AssignOwnerDialog.
@@ -64,49 +44,23 @@ export function AssignOwnerDialog({
   const { t, language } = useI18n();
   const isRtl = language === "ar";
 
-  const [ownerUserId, setOwnerUserId] = useState<string>(COMMERCIAL_REPRESENTATIVES[0].id);
-  const [ownerTeamId, setOwnerTeamId] = useState<string>("__none__");
+  const [ownerUserId, setOwnerUserId] = useState<string>("");
+  const [ownerTeamId, setOwnerTeamId] = useState<string>("");
   const [assignmentReason, setAssignmentReason] = useState<string>("");
   const [validationError, setValidationError] = useState<string | null>(null);
   const currentOwnerUserId = opportunity?.ownerUserId;
   const currentOwnerTeamId = opportunity?.ownerTeamId;
+  const currentOwnerDisplayName = opportunity?.ownerDisplayName;
+  const currentOwnerTeamName = opportunity?.ownerTeamDisplayName;
 
   useEffect(() => {
     if (opportunity) {
-      setOwnerUserId(opportunity.ownerUserId || COMMERCIAL_REPRESENTATIVES[0].id);
-      setOwnerTeamId(opportunity.ownerTeamId || "__none__");
+      setOwnerUserId(opportunity.ownerUserId || "");
+      setOwnerTeamId(opportunity.ownerTeamId || "");
       setAssignmentReason("");
       setValidationError(null);
     }
   }, [opportunity]);
-
-  const repOptions = useMemo(() => {
-    const base = COMMERCIAL_REPRESENTATIVES.map((r) => ({
-      id: r.id,
-      label: t(`crmOpportunities.dialogs.assign.reps.${r.key}`),
-    }));
-    if (currentOwnerUserId && !base.some((b) => b.id === currentOwnerUserId)) {
-      base.unshift({
-        id: currentOwnerUserId,
-        label: t("crmOpportunities.dialogs.assign.currentOwnerOption"),
-      });
-    }
-    return base;
-  }, [currentOwnerUserId, t]);
-
-  const teamOptions = useMemo(() => {
-    const base = COMMERCIAL_TEAMS.map((tm) => ({
-      id: tm.id,
-      label: t(`crmOpportunities.dialogs.assign.teams.${tm.key}`),
-    }));
-    if (currentOwnerTeamId && !base.some((b) => b.id === currentOwnerTeamId)) {
-      base.unshift({
-        id: currentOwnerTeamId,
-        label: t("crmOpportunities.dialogs.assign.currentTeamOption"),
-      });
-    }
-    return base;
-  }, [currentOwnerTeamId, t]);
 
   if (!opportunity) return null;
 
@@ -119,8 +73,7 @@ export function AssignOwnerDialog({
       return;
     }
 
-    const resolvedTeamId =
-      ownerTeamId && ownerTeamId !== "__none__" ? ownerTeamId.trim() : undefined;
+    const resolvedTeamId = ownerTeamId.trim() || undefined;
 
     const payload: AssignOpportunityOwnerInput = {
       opportunityId: opportunity.id,
@@ -164,37 +117,38 @@ export function AssignOwnerDialog({
               {t("crmOpportunities.dialogs.assign.ownerLabel")}{" "}
               <span className="text-destructive">*</span>
             </Label>
-            <Select value={ownerUserId} onValueChange={setOwnerUserId}>
-              <SelectTrigger id="assign-owner-id">
-                <SelectValue placeholder={t("crmOpportunities.dialogs.assign.ownerPlaceholder")} />
-              </SelectTrigger>
-              <SelectContent>
-                {repOptions.map((rep) => (
-                  <SelectItem key={rep.id} value={rep.id}>
-                    {rep.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <CrmEntitySearchSelect
+              id="assign-owner-id"
+              entityKind="user"
+              value={ownerUserId}
+              initialLabel={
+                currentOwnerDisplayName ||
+                (currentOwnerUserId ? t("crmOpportunities.dialogs.assign.currentOwnerOption") : undefined)
+              }
+              onChange={(val) => {
+                setOwnerUserId(val);
+                if (validationError) setValidationError(null);
+              }}
+              placeholder={t("crmOpportunities.dialogs.assign.ownerPlaceholder")}
+              allowClear={false}
+              required
+            />
           </div>
 
           <div className="space-y-1.5">
             <Label htmlFor="assign-team-id">{t("crmOpportunities.dialogs.assign.teamLabel")}</Label>
-            <Select value={ownerTeamId} onValueChange={setOwnerTeamId}>
-              <SelectTrigger id="assign-team-id">
-                <SelectValue placeholder={t("crmOpportunities.dialogs.assign.teamPlaceholder")} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="__none__">
-                  {t("crmOpportunities.dialogs.assign.noTeamOption")}
-                </SelectItem>
-                {teamOptions.map((team) => (
-                  <SelectItem key={team.id} value={team.id}>
-                    {team.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <CrmEntitySearchSelect
+              id="assign-team-id"
+              entityKind="team"
+              value={ownerTeamId}
+              initialLabel={
+                currentOwnerTeamName ||
+                (currentOwnerTeamId ? t("crmOpportunities.dialogs.assign.currentTeamOption") : undefined)
+              }
+              onChange={(val) => setOwnerTeamId(val)}
+              placeholder={t("crmOpportunities.dialogs.assign.teamPlaceholder")}
+              allowClear
+            />
           </div>
 
           <div className="space-y-1.5">

@@ -24,11 +24,10 @@ export type CrmStageColorToken =
   | "violet"
   | "indigo";
 
-/** Ordered list of 19 semantic stage color tokens for the Status Inspector swatch picker. */
-export const CRM_STAGE_COLOR_TOKENS: CrmStageColorToken[] = [
-  "slate", "zinc", "blue", "sky", "cyan", "teal", "emerald", "green", "lime", "amber",
-  "orange", "coral", "rose", "crimson", "pink", "fuchsia", "purple", "violet", "indigo",
-];
+export {
+  CRM_STAGE_COLOR_TOKENS,
+  resolveDefaultStageColor,
+} from "./crmStageColorResolver";
 
 /** Semantic styling classes for each of the 19 stage color tokens (Dark & Light safe). */
 export const STAGE_COLOR_PALETTE: Record<
@@ -59,13 +58,13 @@ export const STAGE_COLOR_PALETTE: Record<
   zinc: {
     labelEn: "Zinc",
     labelAr: "زنك",
-    swatchClass: "bg-zinc-500",
-    borderClass: "border-zinc-500/45 bg-zinc-500/[0.04] hover:border-zinc-500/70",
-    badgeClass: "border-zinc-500/40 bg-zinc-500/15 text-zinc-700 dark:text-zinc-300",
-    headerBorderClass: "border-t-2 border-t-zinc-400/80",
-    dotClass: "bg-zinc-400",
-    minimapClass: "border-zinc-400/60 bg-zinc-500/25",
-    accentBarClass: "bg-zinc-400",
+    swatchClass: "bg-nx-ink-3",
+    borderClass: "border-nx-line-hi bg-nx-raised/40 hover:border-nx-ink-3",
+    badgeClass: "border-nx-line bg-nx-raised text-nx-ink-2",
+    headerBorderClass: "border-t-2 border-t-nx-ink-3",
+    dotClass: "bg-nx-ink-3",
+    minimapClass: "border-nx-line-hi bg-nx-raised/60",
+    accentBarClass: "bg-nx-ink-3",
   },
   blue: {
     labelEn: "Blue",
@@ -255,29 +254,3 @@ export const STAGE_COLOR_PALETTE: Record<
     accentBarClass: "bg-indigo-500",
   },
 };
-
-/** Resolves a deterministic semantic color token for a stage key or category. */
-export function resolveDefaultStageColor(
-  stageKey?: string | null,
-  category?: string | null,
-  sortOrder?: number | null,
-  explicitColor?: string | null
-): CrmStageColorToken {
-  if (explicitColor && (CRM_STAGE_COLOR_TOKENS as string[]).includes(explicitColor)) {
-    return explicitColor as CrmStageColorToken;
-  }
-  const norm = (stageKey || "").toLowerCase();
-  if (norm.includes("won") || norm.includes("converted") || norm.includes("deal")) return "emerald";
-  if (norm.includes("lost") || norm.includes("disqualified")) return "rose";
-  if (norm.includes("discovery") || norm.includes("new")) return "blue";
-  if (norm.includes("qualification") || norm.includes("working")) return "cyan";
-  if (norm.includes("solution_fit") || norm.includes("qualified")) return "indigo";
-  if (norm.includes("proposal")) return "violet";
-  if (norm.includes("negotiation")) return "amber";
-  if (category === "done") return "emerald";
-  if (category === "lost") return "rose";
-  if (category === "todo") return "blue";
-  const cycle: CrmStageColorToken[] = ["blue", "cyan", "indigo", "violet", "amber", "teal", "purple"];
-  const idx = Math.max(0, (sortOrder ?? 1) - 1) % cycle.length;
-  return cycle[idx];
-}

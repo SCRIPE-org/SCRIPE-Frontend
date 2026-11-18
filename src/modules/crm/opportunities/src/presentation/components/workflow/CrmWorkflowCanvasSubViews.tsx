@@ -44,7 +44,12 @@ export function formatExitFieldLabel(
   }
   const map: Record<string, string> = {
     partyId: t("crmOpportunities.pipelinesPage.exitFieldPartyId"),
+    contactId: t("crm.transitionDialog.contactLabel"),
+    accountId: t("crm.transitionDialog.accountLabel"),
+    ownerUserId: t("crm.transitionDialog.ownerUserLabel"),
     estimatedAmount: t("crmOpportunities.pipelinesPage.exitFieldEstimatedAmount"),
+    discountPercent: t("crm.transitionDialog.discountPercentLabel"),
+    nextStepSummary: t("crm.transitionDialog.nextStepSummaryLabel"),
     targetCloseDate: t("crmOpportunities.pipelinesPage.exitFieldTargetCloseDate"),
     primaryContactRole: t("crmOpportunities.pipelinesPage.exitFieldPrimaryContactRole"),
     solutionFitConfirmed: t("crmOpportunities.pipelinesPage.exitFieldSolutionFitConfirmed"),

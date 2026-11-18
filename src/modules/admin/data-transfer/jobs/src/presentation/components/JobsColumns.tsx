@@ -4,12 +4,13 @@ import React from "react";
 import { FileDown, FileWarning, XCircle } from "lucide-react";
 import type { CrudAction, CrudColumn } from "@core/crud";
 import { Badge } from "@core/ui/badge";
-import { Button } from "@core/ui/button";
 import { Progress } from "@core/ui/progress";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@core/ui/tooltip";
-import type { DataExchangeArtifactKind } from "@core/data-exchange/domain/types";
-import type { DataTransferJob } from "../../domain/entities/DataTransferJob";
+import type {
+  DataTransferArtifactKind,
+  DataTransferJob,
+} from "../../domain/entities/DataTransferJob";
 import { formatJobTimestamp, getJobProgressVariant } from "../utils/job-presentation";
+import { JobIdCopyChip } from "./JobIdCopyChip";
 import { JobStatusBadge } from "./JobStatusBadge";
 
 export interface JobsColumnsOptions {
@@ -33,24 +34,11 @@ export function createJobsColumns({
       sortable: true,
       render: (_value: unknown, job: DataTransferJob) => (
         <div className="flex flex-col gap-0.5">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                dir="ltr"
-                aria-label={job.jobId}
-                data-testid={`job-table-id-tooltip-${job.jobId}`}
-                className="h-auto w-fit cursor-help rounded-sm px-1 py-0.5 font-mono text-xs font-semibold text-nx-ink hover:bg-nx-raised"
-              >
-                <code>{job.jobId.slice(0, 8)}...</code>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent dir="ltr" className="font-mono text-xs">
-              {job.jobId}
-            </TooltipContent>
-          </Tooltip>
+          <JobIdCopyChip
+            jobId={job.jobId}
+            testId={`job-table-id-tooltip-${job.jobId}`}
+            className="px-1 text-xs font-semibold text-nx-ink"
+          />
           {job.originalFileName && (
             <span
               dir="ltr"
@@ -155,7 +143,7 @@ export interface JobsActionsOptions {
   tFn: (key: string) => string;
   isDownloading: boolean;
   isCancelling: boolean;
-  onDownloadArtifact: (job: DataTransferJob, kind: DataExchangeArtifactKind) => void;
+  onDownloadArtifact: (job: DataTransferJob, kind: DataTransferArtifactKind) => void;
   onCancelJob: (job: DataTransferJob) => void;
 }
 

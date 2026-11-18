@@ -117,15 +117,17 @@ export function OpportunityOverviewCard({ opp }: OpportunityOverviewCardProps) {
           <span className="text-nx-ink-3 block">
             {t("crmOpportunities.detail.accountVerification")}
           </span>
-          {opp.partyId ? (
+          {opp.partyId || opp.accountId ? (
             <span className="font-medium text-success flex items-center gap-1">
-              <ShieldCheck className="size-3.5" />{" "}
-              {t("crmOpportunities.detail.verifiedAccountLinked", { defaultValue: "Verified Account / Contact Linked" })}
+              <ShieldCheck className="size-3.5 shrink-0" />{" "}
+              <span className="truncate">
+                {opp.accountDisplayName || opp.partyDisplayName || opp.primaryContactName || t("crmOpportunities.detail.verifiedAccountLinked")}
+              </span>
             </span>
           ) : (
             <span className="font-medium text-nx-warning-strong flex items-center gap-1">
-              <ShieldAlert className="size-3.5" />{" "}
-              {t("crmOpportunities.detail.unlinkedPreProposal", { defaultValue: "Unlinked (Pre-Proposal)" })}
+              <ShieldAlert className="size-3.5 shrink-0" />{" "}
+              {t("crmOpportunities.detail.unlinkedPreProposal")}
             </span>
           )}
         </div>
@@ -134,15 +136,23 @@ export function OpportunityOverviewCard({ opp }: OpportunityOverviewCardProps) {
             {t("crmOpportunities.detail.targetCloseDate")}
           </span>
           <span className="font-medium text-nx-ink">
-            {opp.targetCloseDate
-              ? new Date(opp.targetCloseDate).toLocaleDateString()
-              : t("crmOpportunities.detail.notSet")}
+            {(() => {
+              const d = opp.targetCloseDate ? new Date(opp.targetCloseDate) : null;
+              return d && !Number.isNaN(d.getTime()) && d.getFullYear() > 1900
+                ? d.toLocaleDateString()
+                : t("crmOpportunities.detail.notSet");
+            })()}
           </span>
         </div>
         <div>
           <span className="text-nx-ink-3 block">{t("crmOpportunities.detail.createdAt")}</span>
           <span className="font-medium text-nx-ink">
-            {new Date(opp.createdAt).toLocaleDateString()}
+            {(() => {
+              const d = opp.createdAt ? new Date(opp.createdAt) : null;
+              return d && !Number.isNaN(d.getTime()) && d.getFullYear() > 1900
+                ? d.toLocaleDateString()
+                : t("crmOpportunities.detail.notSet");
+            })()}
           </span>
         </div>
       </div>

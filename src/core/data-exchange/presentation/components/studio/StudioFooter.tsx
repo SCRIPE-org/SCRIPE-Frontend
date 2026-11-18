@@ -49,12 +49,12 @@ export function StudioFooter({
   const missingFieldNames = activeMissingRequired.map((c) => (isAr ? c.displayNameAr : c.displayNameEn));
 
   return (
-    <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-nx-line bg-nx-surface px-6 py-3.5 shrink-0">
+    <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-nx-line bg-nx-surface px-4 py-3.5 sm:px-6 shrink-0">
       <div dir="ltr" className="font-mono text-xs text-nx-ink-3">
         {owningModule ? `${owningModule} · ${entityKey}` : entityKey}
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         {step !== "results" && (
           <Button
             type="button"
@@ -77,7 +77,7 @@ export function StudioFooter({
                     type="button"
                     variant="default"
                     disabled
-                    className="pointer-events-none opacity-50 bg-nx-accent-fill text-nx-on-fill font-medium h-8 text-xs"
+                    className="pointer-events-none font-medium h-8 text-xs"
                     data-testid="studio-dryrun-btn"
                   >
                     {t("dataExchange.actions.nextDryRun")}
@@ -106,7 +106,7 @@ export function StudioFooter({
               variant="default"
               loading={isDryRunning}
               onClick={runDryRun}
-              className="bg-nx-accent-fill text-nx-on-fill hover:opacity-90 font-medium h-8 text-xs"
+              className="font-medium h-8 text-xs"
               data-testid="studio-dryrun-btn"
             >
               {t("dataExchange.actions.nextDryRun")}
@@ -133,7 +133,7 @@ export function StudioFooter({
               loading={isExecuting}
               disabled={commitDisabled}
               onClick={() => commitImport()}
-              className="bg-nx-accent-fill text-nx-on-fill hover:opacity-90 font-medium text-xs h-8"
+              className="font-medium text-xs h-8"
               data-testid="studio-commit-btn"
             >
               {t("dataExchange.actions.executeImport")}
@@ -157,7 +157,7 @@ export function StudioFooter({
               type="button"
               variant="default"
               onClick={onCloseStudio}
-              className="bg-nx-accent-fill text-nx-on-fill hover:opacity-90 font-medium text-xs h-8"
+              className="font-medium text-xs h-8"
               data-testid="studio-results-close-btn"
             >
               {t("dataExchange.actions.close")}

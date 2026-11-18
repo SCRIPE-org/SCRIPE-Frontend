@@ -2,16 +2,16 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useCrmSettingsStore, useCrmWorkflowsStore, type CrmStageColorToken, type CrmWorkflowEntityType } from "@modules/crm";
-import { CANONICAL_TERMINAL_LABELS } from "../../domain/constants/crmCanonicalStages";
+import { useCrmSettingsStore, useCrmWorkflowsStore, type CrmWorkflowEntityType } from "@modules/crm";
 import type { CrmWorkflowStageNode, CrmWorkflowTransition } from "../components/workflow/CrmWorkflowCanvas2D";
 import type { StagePortId } from "../components/workflow/CrmWorkflowCanvasSubViews";
 import {
   buildStageNodesFromWorkflow, buildTransitionsFromWorkflow,
-  computeBalanced2DStagePosition, serializeStudioDraftToWorkflow,
+  serializeStudioDraftToWorkflow,
 } from "../components/workflow/crmWorkflowStudioMappers";
 import { useWorkflowHistoryStack } from "./useWorkflowHistoryStack";
 import { useWorkflowKeyboardShortcuts } from "./useWorkflowKeyboardShortcuts";
+import { usePipelineStudioModals } from "./usePipelineStudioModals";
 
 export type StudioViewMode = "diagram" | "classic" | "text";
 
@@ -52,34 +52,23 @@ export function usePipelineStudioViewModel(defaultOpenStudio = false) {
   const setSelectedStageKey = (key: string | null) => { setSelectedStageKeyState(key); if (key !== null) setOpenRuleCatalogSignal(0); };
   const setSelectedTransitionId = (id: string | null) => { setSelectedTransitionIdState(id); setOpenRuleCatalogSignal(0); };
 
-  const [addStageModalOpen, setAddStageModalOpen] = useState(false);
-  const [newStageNameEn, setNewStageNameEn] = useState(""); const [newStageNameAr, setNewStageNameAr] = useState("");
-  const [newStageProb, setNewStageProb] = useState(50); const [newStageSla, setNewStageSla] = useState(5);
-  const [newStageColorToken, setNewStageColorToken] = useState<CrmStageColorToken>("blue");
-  const [newStageCustomHex, setNewStageCustomHex] = useState("");
-  const [newStageConvertsLead, setNewStageConvertsLead] = useState(false);
-  const [newStageAutoConnect, setNewStageAutoConnect] = useState(true);
-  const [newStageAllowFromAny, setNewStageAllowFromAny] = useState(true);
-
-  const [addTransitionModalOpen, setAddTransitionModalOpen] = useState(false);
-  const [newTransFrom, setNewTransFrom] = useState(""); const [newTransTo, setNewTransTo] = useState("");
-  const [newTransNameEn, setNewTransNameEn] = useState(""); const [newTransNameAr, setNewTransNameAr] = useState("");
-  const [newTransSourcePort, setNewTransSourcePort] = useState<StagePortId | undefined>(undefined);
-  const [newTransTargetPort, setNewTransTargetPort] = useState<StagePortId | undefined>(undefined);
-
-  const [createWorkflowModalOpen, setCreateWorkflowModalOpen] = useState(false);
-  const [newWfEntityType, setNewWfEntityType] = useState<CrmWorkflowEntityType>("deal");
-  const [newWfNameEn, setNewWfNameEn] = useState(""); const [newWfNameAr, setNewWfNameAr] = useState("");
-  const [newWfDescEn, setNewWfDescEn] = useState(""); const [newWfDescAr, setNewWfDescAr] = useState("");
+  const [prevWorkflowId, setPrevWorkflowId] = useState(selectedWorkflow?.id ?? "");
+  if (selectedWorkflow && selectedWorkflow.id !== prevWorkflowId) {
+    setPrevWorkflowId(selectedWorkflow.id);
+    const iStages = buildStageNodesFromWorkflow(selectedWorkflow);
+    const iTransitions = buildTransitionsFromWorkflow(selectedWorkflow);
+    setStages(iStages);
+    setTransitions(iTransitions);
+    setSelectedStageKeyState(null);
+    setSelectedTransitionIdState(null);
+    setOpenRuleCatalogSignal(0);
+    setHasChanges(false);
+    setValidationBanner(null);
+  }
 
   useEffect(() => {
     if (!selectedWorkflow) return;
-    const iStages = buildStageNodesFromWorkflow(selectedWorkflow);
-    const iTransitions = buildTransitionsFromWorkflow(selectedWorkflow);
-    setStages(iStages); setTransitions(iTransitions);
-    resetHistory(iStages, iTransitions);
-    setSelectedStageKeyState(null); setSelectedTransitionIdState(null);
-    setOpenRuleCatalogSignal(0); setHasChanges(false); setValidationBanner(null);
+    resetHistory(buildStageNodesFromWorkflow(selectedWorkflow), buildTransitionsFromWorkflow(selectedWorkflow));
   }, [selectedWorkflow, resetHistory]);
 
   const commitDraft = (nextStages: CrmWorkflowStageNode[], nextTransitions: CrmWorkflowTransition[]) => {
@@ -183,69 +172,11 @@ export function usePipelineStudioViewModel(defaultOpenStudio = false) {
     commitDraft(nextStages, nextTransitions); setSelectedStageKey(replacementStageKey);
   };
 
-  const handleAddStageSubmit = () => {
-    if (!newStageNameEn.trim()) return;
-    const prefix = activeEntity === "lead" ? "lead" : "default";
-    const slug = newStageNameEn.trim().toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
-    const stageKey = `${prefix}.${slug}`;
-    const nonTerm = stages.filter((s) => !s.isTerminalWon && !s.isTerminalLost);
-    const nextOrder = nonTerm.length + 1;
-    const pos = computeBalanced2DStagePosition(nextOrder - 1);
-    const customHexClean = newStageCustomHex.trim() || undefined;
-    const newNode: CrmWorkflowStageNode = {
-      stageKey, labelEn: newStageNameEn.trim(), labelAr: newStageNameAr.trim() || newStageNameEn.trim(),
-      probability: newStageProb, slaDays: newStageSla, order: nextOrder, allowInboundFromAny: newStageAllowFromAny,
-      color: newStageColorToken, customColorHex: customHexClean,
-      properties: customHexClean ? { customColorHex: customHexClean } : { color: newStageColorToken },
-      isTerminalWon: false, isTerminalLost: false, convertsToDeal: activeEntity === "lead" ? newStageConvertsLead : false,
-      requiredExitFields: [], x: pos.x, y: pos.y,
-    };
-    const nextStages = [...stages.map((s) => (s.isTerminalWon || s.isTerminalLost ? { ...s, order: s.order + 1 } : s)), newNode];
-    const addedTr: CrmWorkflowTransition[] = [];
-    if (newStageAutoConnect && nonTerm.length > 0) {
-      const last = [...nonTerm].sort((a, b) => a.order - b.order)[nonTerm.length - 1];
-      addedTr.push({ id: `tr-auto-${Date.now()}`, nameEn: `${CANONICAL_TERMINAL_LABELS.moveToPrefixEn} ${newNode.labelEn}`, nameAr: `${CANONICAL_TERMINAL_LABELS.moveToPrefixAr} ${newNode.labelAr}`, fromStageKey: last.stageKey, fromStageKeys: [last.stageKey], toStageKey: stageKey, direction: "forward", requiredFields: [] });
-    }
-    if (newStageAllowFromAny) {
-      addedTr.push({ id: `tr-any-${stageKey}-${Date.now() + 1}`, nameEn: newNode.labelEn, nameAr: newNode.labelAr, fromStageKey: "*", fromStageKeys: ["*"], toStageKey: stageKey, direction: "global", requiredFields: [] });
-    }
-    commitDraft(nextStages, addedTr.length > 0 ? [...transitions, ...addedTr] : transitions);
-    setNewStageNameEn(""); setNewStageNameAr(""); setNewStageColorToken("blue"); setNewStageCustomHex(""); setAddStageModalOpen(false); setSelectedStageKey(stageKey);
-  };
-
-  const openAddTransitionWithPreselect = (fromKey?: string, toKey?: string, sourcePort?: StagePortId, targetPort?: StagePortId) => {
-    const first = stages[0]?.stageKey ?? "";
-    const resFrom = fromKey ?? (toKey ? "*" : selectedStageKey ?? first);
-    const resTo = toKey ?? stages.find((s) => s.stageKey !== resFrom)?.stageKey ?? first;
-    const tgt = stages.find((s) => s.stageKey === resTo);
-    setNewTransFrom(resFrom); setNewTransTo(resTo); setNewTransSourcePort(sourcePort); setNewTransTargetPort(targetPort);
-    setNewTransNameEn(tgt ? `${CANONICAL_TERMINAL_LABELS.moveToPrefixEn} ${tgt.labelEn}` : "");
-    setNewTransNameAr(tgt ? `${CANONICAL_TERMINAL_LABELS.moveToPrefixAr} ${tgt.labelAr}` : "");
-    setAddTransitionModalOpen(true);
-  };
-  const handleAddTransitionSubmit = () => {
-    if (!newTransFrom || !newTransTo || newTransFrom === newTransTo) return;
-    const tgt = stages.find((s) => s.stageKey === newTransTo);
-    const fbEn = tgt ? `${CANONICAL_TERMINAL_LABELS.moveToPrefixEn} ${tgt.labelEn}` : newTransTo;
-    const fbAr = tgt ? `${CANONICAL_TERMINAL_LABELS.moveToPrefixAr} ${tgt.labelAr}` : fbEn;
-    const fNameEn = newTransNameEn.trim() || fbEn; const fNameAr = newTransNameAr.trim() || (newTransNameEn.trim() ? newTransNameEn.trim() : fbAr);
-    const fromOrd = stages.find((s) => s.stageKey === newTransFrom)?.order ?? 0; const toOrd = tgt?.order ?? 0;
-    const dir = newTransFrom === "*" ? "global" : toOrd < fromOrd ? "backward" : "forward";
-    const created: CrmWorkflowTransition = { id: `tr-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`, nameEn: fNameEn, nameAr: fNameAr, fromStageKey: newTransFrom, fromStageKeys: [newTransFrom], toStageKey: newTransTo, direction: dir, sourcePort: newTransSourcePort, targetPort: newTransTargetPort, requiredFields: [] };
-    commitTransitions((prev) => [...prev, created]);
-    setAddTransitionModalOpen(false); setSelectedTransitionId(created.id); setSelectedStageKey(null);
-  };
-
   const handleOpenRuleForStage = (key: string) => {
     if (selectedTransitionId) { setSelectedStageKeyState(null); setOpenRuleCatalogSignal((prev) => prev + 1); return; }
     const m = transitions.find((tr) => tr.fromStageKey === key || (tr.fromStageKeys && tr.fromStageKeys.includes(key))) ?? transitions[0];
     if (m) { setSelectedTransitionIdState(m.id); setSelectedStageKeyState(null); setOpenRuleCatalogSignal((prev) => prev + 1); }
     else { setSelectedStageKey(key); setSelectedTransitionId(null); }
-  };
-  const handleCreateWorkflowSubmit = () => {
-    if (!newWfNameEn.trim()) return;
-    const c = createWorkflow({ entityType: newWfEntityType, nameEn: newWfNameEn.trim(), nameAr: newWfNameAr.trim() || newWfNameEn.trim(), descriptionEn: newWfDescEn.trim(), descriptionAr: newWfDescAr.trim() });
-    setCreateWorkflowModalOpen(false); setNewWfNameEn(""); setNewWfNameAr(""); setNewWfDescEn(""); setNewWfDescAr(""); openStudioForWorkflow(c.id);
   };
   const handleSave = () => { if (selectedWorkflow) { saveWorkflow(serializeStudioDraftToWorkflow(selectedWorkflow, stages, transitions)); setHasChanges(false); } };
   const handleDeleteTransition = (id: string) => { commitTransitions((prev) => prev.filter((t) => t.id !== id)); setSelectedTransitionId(null); };
@@ -254,11 +185,16 @@ export function usePipelineStudioViewModel(defaultOpenStudio = false) {
     setValidationBanner(t("crmOpportunities.pipelinesPage.workflowVerifiedBanner", { activeCount, transitionCount: transitions.length, defaultValue: `Workflow verified: ${activeCount} active statuses, ${transitions.length} transitions, and 0 cyclic deadlocks.` }));
   };
 
+  const studioModals = usePipelineStudioModals({
+    activeEntity, stages, transitions, selectedStageKey, setSelectedStageKey, setSelectedTransitionId,
+    commitDraft, commitTransitions, createWorkflow, openStudioForWorkflow,
+  });
+
   useWorkflowKeyboardShortcuts({
     enabled: isStudioOpen, canUndo: historyStack.canUndo, canRedo: historyStack.canRedo, onUndo: handleUndo, onRedo: handleRedo,
     selectedStageKey, selectedTransitionId, onDeleteSelectedStage: handleRemoveStage, onDeleteSelectedTransition: handleDeleteTransition,
     onClearSelection: () => { setSelectedStageKey(null); setSelectedTransitionId(null); },
-    isAnyModalOpen: addStageModalOpen || addTransitionModalOpen || createWorkflowModalOpen,
+    isAnyModalOpen: studioModals.addStageModalOpen || studioModals.addTransitionModalOpen || studioModals.createWorkflowModalOpen,
   });
 
   return {
@@ -268,20 +204,12 @@ export function usePipelineStudioViewModel(defaultOpenStudio = false) {
     activeStages: stages, transitions, selectedStage, selectedTransition, selectedStageKey, selectedTransitionId,
     setSelectedStageKey, setSelectedTransitionId, openRuleCatalogSignal, handleOpenRuleForStage,
     hasChanges, validationBanner, setValidationBanner, crmCustomFields, addCrmCustomField,
-    addStageModalOpen, setAddStageModalOpen, newStageNameEn, setNewStageNameEn, newStageNameAr, setNewStageNameAr,
-    newStageProb, setNewStageProb, newStageSla, setNewStageSla,
-    newStageColorToken, setNewStageColorToken, newStageCustomHex, setNewStageCustomHex,
-    newStageConvertsLead, setNewStageConvertsLead,
-    newStageAutoConnect, setNewStageAutoConnect, newStageAllowFromAny, setNewStageAllowFromAny,
-    addTransitionModalOpen, setAddTransitionModalOpen, newTransFrom, setNewTransFrom, newTransTo, setNewTransTo,
-    newTransNameEn, setNewTransNameEn, newTransNameAr, setNewTransNameAr,
-    createWorkflowModalOpen, setCreateWorkflowModalOpen, newWfEntityType, setNewWfEntityType,
-    newWfNameEn, setNewWfNameEn, newWfNameAr, setNewWfNameAr, newWfDescEn, setNewWfDescEn, newWfDescAr, setNewWfDescAr,
+    ...studioModals,
     openStudioForWorkflow, handleSwitchEntity, handleNodeMove, handleApplyLayoutPositions, handleReconnectTransition, handleStageChange, handleToggleAllowAnyTransition,
-    handleMoveStageOrder, handleRemoveStage, handleReplaceStage, handleAddStageSubmit, openAddTransitionWithPreselect, handleAddTransitionSubmit,
+    handleMoveStageOrder, handleRemoveStage, handleReplaceStage,
     handleTransitionChange: (u: CrmWorkflowTransition) => commitTransitions((prev) => prev.map((t) => (t.id === u.id ? u : t))),
     handleDeleteTransition,
-    handleCreateWorkflowSubmit, handleCloneWorkflow: (id: string) => openStudioForWorkflow(cloneWorkflow(id).id),
+    handleCloneWorkflow: (id: string) => openStudioForWorkflow(cloneWorkflow(id).id),
     handleActivateWorkflow: (_entity: CrmWorkflowEntityType, id: string) => setActiveWorkflow(id),
     handleDeleteWorkflow: deleteWorkflow,
     handleResetDraft: () => {

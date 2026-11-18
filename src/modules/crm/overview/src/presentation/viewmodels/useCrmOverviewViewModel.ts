@@ -9,6 +9,7 @@ import type {
   CrmStageSummary,
 } from "../../domain/models/crm-overview.types";
 import { useCrmWorkflowsStore } from "../stores/useCrmWorkflowsStore";
+import { useCrmCurrency } from "./useCrmCurrency";
 
 /**
  * State contract for the top-level CRM overview dashboard.
@@ -43,6 +44,7 @@ export function useCrmOverviewViewModel(
   const [isPending, startTransition] = useTransition();
 
   const workflows = useCrmWorkflowsStore((s) => s.workflows);
+  const { baseCurrency, autoConvertToBase, convertAmount } = useCrmCurrency();
 
   const loadData = useCallback(async (query?: string) => {
     setState((prev) => ({ ...prev, stage: "loading", error: null }));
@@ -100,10 +102,19 @@ export function useCrmOverviewViewModel(
 
     const sortedStages = [...selectedWf.stages].sort((a, b) => a.sortOrder - b.sortOrder);
     const stageKeySet = new Set(sortedStages.map((s) => s.stageKey));
+    const fallbackCurr = state.data.pipeline.currency || "SAR";
+    const targetCurrency = autoConvertToBase ? baseCurrency : fallbackCurr;
 
     const stageSummaries: CrmStageSummary[] = sortedStages.map((st) => {
       const stageDeals = state.data!.recentDeals.filter((d) => d.stageKey === st.stageKey);
-      const stageValue = stageDeals.reduce((sum, d) => sum + (d.amount || 0), 0);
+      const stageValue = stageDeals.reduce((sum, d) => {
+        const dealCurr = (d.currency || fallbackCurr).toUpperCase();
+        const amt = d.amount || 0;
+        if (autoConvertToBase) {
+          return sum + Math.round(convertAmount(amt, dealCurr, targetCurrency));
+        }
+        return dealCurr === targetCurrency.toUpperCase() ? sum + amt : sum;
+      }, 0);
       return {
         key: st.stageKey as CrmStageKey,
         name: isRtl ? (st.labelAr || st.labelEn) : st.labelEn,
@@ -123,13 +134,13 @@ export function useCrmOverviewViewModel(
       stages: stageSummaries,
       totalDeals,
       totalPipelineValue,
-      currency: state.data.pipeline.currency || "SAR",
+      currency: targetCurrency,
     };
 
     const deals = state.data.recentDeals.filter((d) => stageKeySet.has(d.stageKey));
 
     return { effectivePipeline: pipeline, pipelineDeals: deals };
-  }, [state.data, selectedPipelineId, workflows, isRtl]);
+  }, [state.data, selectedPipelineId, workflows, isRtl, autoConvertToBase, baseCurrency, convertAmount]);
 
   // Filter deals by stage if a stage is selected
   const filteredDeals = useMemo(() => {

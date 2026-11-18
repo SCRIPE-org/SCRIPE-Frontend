@@ -22,6 +22,7 @@ let mockDockState: {
   activeCount: number;
   isCollapsed: boolean;
   cancellingJobIds: Record<string, boolean>;
+  downloadingJobIds: Record<string, "export" | "rejected" | null>;
   hasFinishedJobs: boolean;
   toggleCollapsed: ReturnType<typeof vi.fn>;
   clearFinished: ReturnType<typeof vi.fn>;
@@ -60,6 +61,7 @@ let mockDockState: {
   activeCount: 1,
   isCollapsed: false,
   cancellingJobIds: {},
+  downloadingJobIds: {},
   hasFinishedJobs: false,
   toggleCollapsed: vi.fn(),
   clearFinished: vi.fn(),
@@ -156,7 +158,9 @@ describe("Data Exchange contrast, semantic tokens, and a11y", () => {
     const goBtn = screen.getByTestId("tenant-required-go-tenants");
     expect(goBtn.className).toContain("bg-nx-accent-fill");
     expect(goBtn.className).toContain("text-nx-on-fill");
-    expect(container.innerHTML).toContain("border-nx-warning-strong/35");
+    expect(container.innerHTML).toContain("border-warning-strong/40");
+    expect(container.innerHTML).toContain("bg-warning/15");
+    expect(container.innerHTML).not.toMatch(/\b[a-z-]+-nx-[a-z0-9-]+\/\d+\b/);
     expect(container.innerHTML).toContain("text-nx-warning-strong");
     expect(container.querySelector("svg.lucide-arrow-right")?.getAttribute("class")).toContain(
       "rtl:rotate-180"
@@ -190,7 +194,9 @@ describe("Data Exchange contrast, semantic tokens, and a11y", () => {
     };
 
     const dryRunView = render(<StudioDryRunStep dryRunResult={dryRunResult} />);
-    expect(dryRunView.container.innerHTML).toContain("border-nx-warning-strong/35");
+    expect(dryRunView.container.innerHTML).toContain("border-warning-strong/40");
+    expect(dryRunView.container.innerHTML).toContain("bg-warning/15");
+    expect(dryRunView.container.innerHTML).not.toMatch(/\b[a-z-]+-nx-[a-z0-9-]+\/\d+\b/);
     expect(dryRunView.container.innerHTML).toContain("text-nx-warning-strong");
     expect(dryRunView.container.innerHTML).toContain("text-nx-danger");
     expect(dryRunView.container.innerHTML).not.toContain("border-warning/");
@@ -232,7 +238,9 @@ describe("Data Exchange contrast, semantic tokens, and a11y", () => {
       />
     );
 
-    expect(resultsView.container.innerHTML).toContain("border-nx-warning-strong/35");
+    expect(resultsView.container.innerHTML).toContain("border-warning-strong/40");
+    expect(resultsView.container.innerHTML).toContain("bg-warning/15");
+    expect(resultsView.container.innerHTML).not.toMatch(/\b[a-z-]+-nx-[a-z0-9-]+\/\d+\b/);
     expect(resultsView.container.innerHTML).toContain("text-nx-danger");
     expect(resultsView.container.innerHTML).toContain("tabular-nums");
     const downloadRejectedBtn = screen.getByRole("button", {
@@ -248,8 +256,9 @@ describe("Data Exchange contrast, semantic tokens, and a11y", () => {
         onDismissCredentials={vi.fn()}
       />
     );
-    expect(credsView.container.innerHTML).toContain("border-nx-danger/35");
-    expect(credsView.container.innerHTML).toContain("bg-nx-danger/10");
+    expect(credsView.container.innerHTML).toContain("border-destructive/35");
+    expect(credsView.container.innerHTML).toContain("bg-destructive/10");
+    expect(credsView.container.innerHTML).not.toMatch(/\b[a-z-]+-nx-[a-z0-9-]+\/\d+\b/);
   });
 
   it("StudioStepper dismiss buttons and DataExchangeFloatingDock omit shadows and add accessible labels + tabular-nums", () => {
@@ -298,8 +307,12 @@ describe("Data Exchange contrast, semantic tokens, and a11y", () => {
       </>
     );
 
-    const dismissButtons = screen.getAllByRole("button", { name: "dataExchange.actions.close" });
-    expect(dismissButtons).toHaveLength(2);
+    expect(
+      screen.getByRole("button", { name: "dataExchange.actions.dismissError" })
+    ).toBeTruthy();
+    expect(
+      screen.getByRole("button", { name: "dataExchange.actions.dismissNotice" })
+    ).toBeTruthy();
 
     const dockRegion = screen.getByRole("complementary", { name: "dataExchange.dock.title" });
     expect(dockRegion.innerHTML).not.toContain("shadow-nx-dropdown");

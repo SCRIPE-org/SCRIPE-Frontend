@@ -95,3 +95,36 @@ export async function fetchAggregatedActivities(
 
   return { items: pagedItems, totalCount: allItems.length };
 }
+
+export async function executeCreateDeskActivity(
+  repository: ICrmActivityRepository | undefined,
+  selectedAccountId: string,
+  accounts: ExecutionDeskAccountSummary[],
+  data: {
+    activityKind: SalesActivityKind;
+    summary: string;
+    bodyText?: string;
+    containsPii?: boolean;
+    occurredAtUtc?: string;
+    accountId?: string;
+  }
+): Promise<void> {
+  if (!repository) throw new Error("Activities repository not configured");
+  const targetAccId =
+    data.accountId || (selectedAccountId !== "all" ? selectedAccountId : accounts[0]?.id);
+  await repository.createActivity({
+    ...data,
+    accountId: targetAccId,
+    containsPii: data.containsPii ?? false,
+  });
+}
+
+export async function executeCreateDeskFollowUp(
+  repository: ICrmActivityRepository | undefined,
+  activityId: string,
+  data: { title: string; description?: string; assigneeUserId: string; dueAtUtc?: string }
+): Promise<void> {
+  if (!repository) throw new Error("Activities repository not configured");
+  await repository.createFollowUp(activityId, data);
+}
+

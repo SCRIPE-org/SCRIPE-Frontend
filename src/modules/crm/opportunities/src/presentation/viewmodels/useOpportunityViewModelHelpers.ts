@@ -1,6 +1,10 @@
 import { getCrmContainer } from "@modules/crm/di";
 import { useCrmWorkflowsStore } from "@modules/crm";
-import type { CrmOpportunity } from "../../domain/entities/OpportunityEntity";
+import type {
+  CrmOpportunity,
+  DealContactRole,
+  OpportunityDetailResult,
+} from "../../domain/entities/OpportunityEntity";
 
 export async function lookupOpportunityPartyOptions(searchQuery?: string): Promise<
   Array<{
@@ -124,6 +128,71 @@ export function evaluateOptimisticDealStageMove(
   }
 
   return { status: "needs_modal" };
+}
+
+/** Builds the GenericCrudView-compatible pagination descriptor for opportunities. */
+export function buildOpportunitiesPagination(
+  page: number,
+  pageSize: number,
+  totalCount: number,
+  onPageChange: (nextPage: number) => void,
+  onPageSizeChange: (nextSize: number) => void,
+) {
+  const safePage = page || 1;
+  const safeSize = pageSize || 20;
+  const pagesCount = Math.max(1, Math.ceil(totalCount / safeSize));
+  return {
+    page: safePage,
+    currentPage: safePage,
+    pageSize: safeSize,
+    itemsCount: totalCount,
+    pagesCount,
+    totalCount,
+    totalPages: pagesCount,
+    hasNextPage: safePage * safeSize < totalCount,
+    hasPreviousPage: safePage > 1,
+    onPageChange,
+    onPageSizeChange,
+  };
+}
+
+/** Persists a deal stakeholder role via repository and refreshes the opportunity detail payload. */
+export async function persistOpportunityContactRole(
+  opportunityId: string,
+  input: {
+    contactPartyId: string;
+    contactName: string;
+    stakeholderRole: DealContactRole["stakeholderRole"];
+    isPrimary: boolean;
+    influenceNotes?: string;
+  },
+): Promise<{ normalizedRole: DealContactRole; refreshed: OpportunityDetailResult | null } | null> {
+  const repo = getCrmContainer().opportunityRepository;
+  if (typeof repo?.addContactRole !== "function") return null;
+  const created = await repo.addContactRole({
+    opportunityId,
+    contactPartyId: input.contactPartyId,
+    contactName: input.contactName,
+    stakeholderRole: input.stakeholderRole,
+    isPrimary: input.isPrimary,
+    influenceNotes: input.influenceNotes,
+  });
+  const normalizedRole: DealContactRole = {
+    ...created,
+    id: created?.id || `role-${Date.now()}`,
+    opportunityId,
+    contactPartyId: created?.contactPartyId || input.contactPartyId,
+    contactName: created?.contactName || input.contactName,
+    stakeholderRole: created?.stakeholderRole || input.stakeholderRole,
+    isPrimary: created?.isPrimary ?? input.isPrimary,
+    influenceNotes: created?.influenceNotes ?? input.influenceNotes ?? null,
+    createdAtUtc: created?.createdAtUtc ?? new Date().toISOString(),
+  };
+  const refreshed =
+    typeof repo.getOpportunityById === "function"
+      ? await repo.getOpportunityById(opportunityId).catch(() => null)
+      : null;
+  return { normalizedRole, refreshed };
 }
 
 export function useOpportunityViewModelHelpers() {

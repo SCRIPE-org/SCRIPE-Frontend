@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { Filter } from "lucide-react";
+import { Filter, RotateCcw } from "lucide-react";
+import { Button } from "@core/ui/button";
 import {
   Select,
   SelectContent,
@@ -17,6 +18,8 @@ export interface PresetsFilterToolbarProps {
   entityFilter: string;
   options: PresetEntityFilterOption[];
   onEntityFilterChange: (value: string) => void;
+  hasActiveFilters?: boolean;
+  onResetFilters?: () => void;
 }
 
 /**
@@ -26,11 +29,13 @@ export function PresetsFilterToolbar({
   entityFilter,
   options,
   onEntityFilterChange,
+  hasActiveFilters = false,
+  onResetFilters,
 }: PresetsFilterToolbarProps): React.ReactElement {
   const { t } = useI18n();
 
   return (
-    <div className="flex items-center gap-2" data-testid="presets-entity-filter-bar">
+    <div className="flex flex-wrap items-center gap-2" data-testid="presets-entity-filter-bar">
       <Filter className="h-4 w-4 shrink-0 text-nx-ink-3" aria-hidden="true" />
       <Select value={entityFilter} onValueChange={onEntityFilterChange}>
         <SelectTrigger
@@ -56,6 +61,19 @@ export function PresetsFilterToolbar({
           ))}
         </SelectContent>
       </Select>
+      {hasActiveFilters && onResetFilters && (
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={onResetFilters}
+          className="h-9 px-2.5 text-xs text-nx-ink-2 hover:text-nx-ink"
+          data-testid="presets-reset-filters-btn"
+        >
+          <RotateCcw className="h-3.5 w-3.5 me-1" aria-hidden="true" />
+          {t("common.reset")}
+        </Button>
+      )}
     </div>
   );
 }

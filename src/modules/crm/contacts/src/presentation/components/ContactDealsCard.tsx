@@ -98,7 +98,7 @@ export function ContactDealsCard({
                     ? `${opp.estimatedAmount.toLocaleString(isAr ? "ar-SA" : "en-US")} ${opp.currencyCode}`
                     : "••••••"}
                 </span>
-                {opp.targetCloseDate && (
+                {opp.targetCloseDate && new Date(opp.targetCloseDate).getFullYear() > 1900 && (
                   <span className="text-[10px] text-nx-ink-3 flex items-center gap-1 justify-end mt-0.5">
                     <Calendar className="size-2.5" />
                     {new Date(opp.targetCloseDate).toLocaleDateString(isAr ? "ar-SA" : "en-US", {

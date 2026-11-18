@@ -1,14 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermission } from "@core/hooks/use-permission";
 import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
 import { Button } from "@core/ui/button";
-import { Input } from "@core/ui/input";
-import { AlertCircle, RefreshCw, Plus, Search, Eye } from "lucide-react";
-import { cn } from "@core/common/utils";
+import { AlertCircle, RefreshCw, Plus, Eye } from "lucide-react";
 import { CRM_PERMISSIONS, CrmShell, CrmSectionHeader, CRM_TAB_ROUTES } from "@modules/crm";
 import type { CrmTabId, CrmAccount } from "@modules/crm";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
@@ -17,6 +15,7 @@ import { DataExchangeToolbarActions } from "@core/data-exchange";
 import { CreateContactDialog } from "../components/CreateContactDialog";
 import { ContactCardGridItem } from "../components/ContactCardGridItem";
 import { ContactSplitDetail } from "../components/ContactSplitDetail";
+import { ContactsToolbarContent } from "../components/ContactsToolbarContent";
 import { useContactsViewModel } from "../viewmodels/useContactsViewModel";
 import { useContactsCrudColumns } from "../viewmodels/useContactsCrudColumns";
 import type { CrmContact } from "../../domain/entities/ContactEntity";
@@ -27,6 +26,8 @@ import type { CrmContact } from "../../domain/entities/ContactEntity";
  */
 export function ContactsView() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const queryAccountId = searchParams?.get("accountId") ?? "";
   const { t, language } = useI18n();
   const isRtl = language === "ar";
   const canCreateContact = usePermission(CRM_PERMISSIONS.CONTACTS_CREATE);
@@ -47,6 +48,12 @@ export function ContactsView() {
   } = viewModel;
 
   const [accountsList, setAccountsList] = useState<CrmAccount[]>([]);
+  const [autoOpenedCreate, setAutoOpenedCreate] = useState(false);
+
+  if (searchParams?.get("create") === "1" && canCreateContact && !autoOpenedCreate) {
+    setAutoOpenedCreate(true);
+    setIsCreateOpen(true);
+  }
 
   useEffect(() => {
     lookupAccounts().then((accs) => {
@@ -81,56 +88,15 @@ export function ContactsView() {
       canDelete: false,
     },
     toolbarContent: (
-      <div className="flex flex-col sm:flex-row sm:items-center gap-3 flex-1" dir={isRtl ? "rtl" : "ltr"}>
-        <div className="relative w-full sm:w-72">
-          <Search className="absolute start-2.5 top-1/2 -translate-y-1/2 size-3.5 text-nx-ink-3 pointer-events-none" />
-          <Input
-            type="text"
-            placeholder={t("crmContacts.searchPlaceholder")}
-            value={search}
-            onChange={(e) => handleSearchChange(e.target.value)}
-            className="h-8 ps-8 pe-3 text-xs bg-nx-surface border-nx-line text-nx-ink"
-          />
-        </div>
-
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => handleAccountFilterChange(undefined)}
-            className={cn(
-              "h-7 px-2.5 text-xs rounded-nx-md shrink-0 transition-all",
-              !accountId
-                ? "border-nx-accent/40 bg-nx-accent-wash text-nx-accent font-semibold"
-                : "border-nx-line bg-nx-surface text-nx-ink-2 hover:bg-nx-raised hover:text-nx-ink"
-            )}
-          >
-            {t("crmContacts.filters.allAccounts")}
-          </Button>
-          {accountsList.slice(0, 5).map((acc) => {
-            const isSelected = accountId === acc.id;
-            const name = isRtl && acc.partyLegalNameAr ? acc.partyLegalNameAr : acc.partyLegalNameEn;
-            return (
-              <Button
-                key={acc.id}
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => handleAccountFilterChange(isSelected ? undefined : acc.id)}
-                className={cn(
-                  "h-7 px-2.5 text-xs rounded-nx-md shrink-0 transition-all",
-                  isSelected
-                    ? "border-nx-accent/40 bg-nx-accent-wash text-nx-accent font-semibold"
-                    : "border-nx-line bg-nx-surface text-nx-ink-2 hover:bg-nx-raised hover:text-nx-ink"
-                )}
-              >
-                {name}
-              </Button>
-            );
-          })}
-        </div>
-      </div>
+      <ContactsToolbarContent
+        t={t}
+        isRtl={isRtl}
+        search={search}
+        onSearchChange={handleSearchChange}
+        accountId={accountId}
+        onAccountFilterChange={handleAccountFilterChange}
+        accountsList={accountsList}
+      />
     ),
     columns,
     getActions: (_vm, tFn): CrudAction<CrmContact>[] => [
@@ -250,6 +216,7 @@ export function ContactsView() {
           onSubmit={handleCreateContact}
           onLookupPeople={viewModel.lookupCandidatePeople}
           onLookupAccounts={viewModel.lookupAccounts}
+          defaultAccountId={queryAccountId}
         />
       </div>
     </CrmShell>

@@ -32,7 +32,7 @@ export function StudioEphemeralCredentialsCard({
   const { t } = useI18n();
 
   return (
-    <Card className="space-y-3 border-nx-danger/35 bg-nx-danger/10 p-5 text-nx-ink">
+    <Card className="space-y-3 border-destructive/35 bg-destructive/10 p-5 text-nx-ink">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <KeyRound className="h-5 w-5 text-nx-danger shrink-0" />
@@ -51,7 +51,7 @@ export function StudioEphemeralCredentialsCard({
             variant="secondary"
             size="sm"
             onClick={onCopyCredentials}
-            className="h-8 text-xs border border-nx-line bg-nx-raised hover:bg-nx-raised/80"
+            className="h-8 text-xs border border-nx-line bg-nx-raised hover:bg-nx-raised-2"
           >
             <Copy className="me-1.5 h-3.5 w-3.5" />
             <span>{t("dataExchange.actions.copyCredentials")}</span>

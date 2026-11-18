@@ -6,6 +6,19 @@ export const en = {
     catalogInfo: "Entities and quotas are auto-discovered from registered backend providers, tenant Custom Fields, and Edition entitlements.",
     searchPlaceholder: "Search entities by key, name, or module...",
     filterModule: "All Modules",
+    filters: {
+      moduleLabel: "Module",
+    },
+    modules: {
+      CRM: "CRM",
+      Identity: "Identity & Access",
+      PartyKernel: "Contacts & Parties",
+      Academy: "Academy",
+      Venue: "Venue & Facilities",
+      Finance: "Finance",
+      HRMS: "HRMS",
+      WorkManagement: "Work Management",
+    },
     kpi: {
       totalEntities: "Total Entities",
       importable: "Import Capable",
@@ -45,12 +58,20 @@ export const en = {
     empty: {
       title: "No Exchange Entities Found",
       description: "No entities match the active search and module filters.",
+      unfilteredTitle: "No Exchange Entities Available",
+      unfilteredDescription:
+        "No Data Exchange entities are currently enabled for this tenant workspace.",
+    },
+    error: {
+      title: "Unable to load entities catalog",
+      description: "An unexpected error occurred while fetching entity metadata and quotas.",
+      templateDownloadFailed: "Failed to download template workbook.",
     },
     tenantRequired: {
       title: "Tenant Workspace Required",
       description: "Data Exchange entity descriptors, quotas, and templates are scoped to an active tenant workspace. Select a tenant before running imports or exports.",
-      switchHint: "Use the Tenant Workspace switcher in the top header bar or open Tenants to enter and manage a club workspace.",
-      goToTenants: "Go to Tenants",
+      switchHint: "Use the Tenant Workspace switcher in the top header bar or click Select Tenant Workspace to enter a tenant context in place.",
+      goToTenants: "Select Tenant Workspace",
       retry: "Check Context Again",
     },
     detail: {

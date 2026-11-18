@@ -4,6 +4,7 @@ import React from "react";
 import { Badge } from "@core/ui/badge";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { DataExchangeEntity } from "../../domain/entities/DataExchangeEntity";
+import { resolveModuleDisplayName } from "../utils/module-display-name";
 
 export interface EntitiesSplitListItemProps {
   entity: DataExchangeEntity;
@@ -32,7 +33,7 @@ export function EntitiesSplitListItem({
           </p>
         </div>
         <Badge variant="outline" className="shrink-0 text-[10px] font-medium uppercase">
-          {entity.owningModule}
+          {resolveModuleDisplayName(entity.owningModule, t)}
         </Badge>
       </div>
       <div className="flex items-center justify-between gap-2 text-[11px] text-nx-ink-3">
@@ -87,7 +88,7 @@ export function EntitiesSplitDetail({
         <div className="min-w-0 space-y-1.5">
           <div className="flex flex-wrap items-center gap-2">
             <Badge variant="outline" className="text-[10px] font-medium uppercase">
-              {entity.owningModule}
+              {resolveModuleDisplayName(entity.owningModule, t)}
             </Badge>
             <Badge variant={isExhausted ? "danger" : "info"} className="text-[10px] font-mono tabular-nums">
               {typeof entity.remainingQuotaSlots !== "number"
@@ -113,7 +114,7 @@ export function EntitiesSplitDetail({
       </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <div className="rounded-nx-control border border-nx-line bg-nx-raised/40 p-3 text-xs">
+        <div className="rounded-nx-control border border-nx-line bg-nx-raised p-3 text-xs">
           <p className="text-nx-ink-3">{t("dataTransferEntities.columns.supportedModes")}</p>
           <div className="mt-1.5 flex flex-wrap gap-1">
             {entity.supportedModes.map((mode) => (
@@ -124,35 +125,35 @@ export function EntitiesSplitDetail({
           </div>
         </div>
 
-        <div className="rounded-nx-control border border-nx-line bg-nx-raised/40 p-3 text-xs">
+        <div className="rounded-nx-control border border-nx-line bg-nx-raised p-3 text-xs">
           <p className="text-nx-ink-3">{t("dataTransferEntities.detail.importEntitlement")}</p>
           <p className="mt-1 font-medium text-nx-ink">
             {entity.isImportFeatureEnabled ? t("common.enabled") : t("common.disabled")}
           </p>
         </div>
 
-        <div className="rounded-nx-control border border-nx-line bg-nx-raised/40 p-3 text-xs">
+        <div className="rounded-nx-control border border-nx-line bg-nx-raised p-3 text-xs">
           <p className="text-nx-ink-3">{t("dataTransferEntities.detail.exportEntitlement")}</p>
           <p className="mt-1 font-medium text-nx-ink">
             {entity.isExportFeatureEnabled ? t("common.enabled") : t("common.disabled")}
           </p>
         </div>
 
-        <div className="rounded-nx-control border border-nx-line bg-nx-raised/40 p-3 text-xs">
+        <div className="rounded-nx-control border border-nx-line bg-nx-raised p-3 text-xs">
           <p className="text-nx-ink-3">{t("dataTransferEntities.detail.autoCreateLookups")}</p>
           <p className="mt-1 font-medium text-nx-ink">
             {entity.supportsBulkAutoCreateLookup ? t("common.yes") : t("common.no")}
           </p>
         </div>
 
-        <div className="rounded-nx-control border border-nx-line bg-nx-raised/40 p-3 text-xs">
+        <div className="rounded-nx-control border border-nx-line bg-nx-raised p-3 text-xs">
           <p className="text-nx-ink-3">{t("dataTransferEntities.detail.identityOnboarding")}</p>
           <p className="mt-1 font-medium text-nx-ink">
             {entity.supportsIdentityOnboardingModes ? t("common.yes") : t("common.no")}
           </p>
         </div>
 
-        <div className="rounded-nx-control border border-nx-line bg-nx-raised/40 p-3 text-xs">
+        <div className="rounded-nx-control border border-nx-line bg-nx-raised p-3 text-xs">
           <p className="text-nx-ink-3">{t("dataTransferEntities.detail.parentEntities")}</p>
           <div className="mt-1.5 flex flex-wrap gap-1">
             {entity.parentEntityKeys.length > 0 ? (
@@ -173,7 +174,7 @@ export function EntitiesSplitDetail({
       </div>
 
       {entity.relatedMultiSheetEntityKeys.length > 0 && (
-        <div className="rounded-nx-control border border-nx-line bg-nx-raised/40 p-3 text-xs">
+        <div className="rounded-nx-control border border-nx-line bg-nx-raised p-3 text-xs">
           <p className="text-nx-ink-3">{t("dataTransferEntities.detail.multiSheetGroup")}</p>
           <div className="mt-1.5 flex flex-wrap gap-1">
             {entity.relatedMultiSheetEntityKeys.map((key) => (

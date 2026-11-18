@@ -44,10 +44,12 @@ export function useDataExchangeStudioViewModel(options: UseDataExchangeStudioOpt
   } = options;
   const { language, t } = useI18n();
   const isAr = language === "ar";
-  const repo = getCoreContainer().dataExchangeRepository;
+  const [repo] = useState(() => getCoreContainer().dataExchangeRepository);
 
   const appliedInitialPresetRef = useRef<string | null>(null);
   const pollTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const pollAbortRef = useRef<AbortController | null>(null);
+  const pollInFlightRef = useRef<boolean>(false);
 
   const [step, setStep] = useState<StudioStep>("upload");
   const [isMultiSheet, setIsMultiSheet] = useState(initialMultiSheet);
@@ -84,6 +86,20 @@ export function useDataExchangeStudioViewModel(options: UseDataExchangeStudioOpt
       clearInterval(pollTimerRef.current);
       pollTimerRef.current = null;
     }
+    if (pollAbortRef.current) {
+      pollAbortRef.current.abort();
+      pollAbortRef.current = null;
+    }
+    pollInFlightRef.current = false;
+  }, []);
+
+  const dismissCredentials = useCallback(() => {
+    setCredentialsDismissed(true);
+    setExecuteResult((prev) =>
+      prev && prev.ephemeralCredentials
+        ? { ...prev, ephemeralCredentials: null }
+        : prev
+    );
   }, []);
 
   const resetWorkflow = useCallback(() => {
@@ -102,7 +118,7 @@ export function useDataExchangeStudioViewModel(options: UseDataExchangeStudioOpt
     setCredentialsDismissed(false);
   }, [stopPolling]);
 
-  const { inspectUploadedFile } = useStudioMetadataAndInspection({
+  const { inspectUploadedFile, retryLoadMetadata } = useStudioMetadataAndInspection({
     open,
     entityKey,
     initialMultiSheet,
@@ -195,6 +211,8 @@ export function useDataExchangeStudioViewModel(options: UseDataExchangeStudioOpt
     setInfoBanner,
     setCredentialsDismissed,
     pollTimerRef,
+    pollAbortRef,
+    pollInFlightRef,
     stopPolling,
     onImportComplete,
   });
@@ -247,8 +265,10 @@ export function useDataExchangeStudioViewModel(options: UseDataExchangeStudioOpt
     setInfoBanner,
     credentialsDismissed,
     setCredentialsDismissed,
+    dismissCredentials,
     resetWorkflow,
     inspectUploadedFile,
+    retryLoadMetadata,
     ...validation,
     ...mappingControls,
     ...executionControls,

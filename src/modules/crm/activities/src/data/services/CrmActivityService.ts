@@ -64,4 +64,32 @@ export class CrmActivityService implements ICrmActivityService {
     }
     return response as FollowUpCreatedResponse;
   }
+
+  async completeFollowUpWorkItem(workItemId: string): Promise<void> {
+    interface WorkItemSnapshot {
+      title?: string;
+      description?: string | null;
+      priority?: number;
+      dueAt?: string | null;
+      assignedToId?: string | null;
+      isActive?: boolean;
+    }
+    const response = await this.api.get<ApiSuccessResponse<WorkItemSnapshot> | WorkItemSnapshot>(
+      CRM_ACTIVITY_ENDPOINTS.WORK_ITEM_BY_ID(workItemId)
+    );
+    const existing: WorkItemSnapshot =
+      response && typeof response === "object" && "data" in response && response.data
+        ? response.data
+        : (response as WorkItemSnapshot);
+
+    await this.api.put(CRM_ACTIVITY_ENDPOINTS.WORK_ITEM_BY_ID(workItemId), {
+      title: existing?.title || "Follow-Up Task",
+      description: existing?.description ?? null,
+      status: 3,
+      priority: existing?.priority ?? 1,
+      dueAt: existing?.dueAt ?? null,
+      assignedToId: existing?.assignedToId ?? null,
+      isActive: existing?.isActive ?? true,
+    });
+  }
 }

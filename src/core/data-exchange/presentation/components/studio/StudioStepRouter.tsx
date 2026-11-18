@@ -47,7 +47,7 @@ export function StudioStepRouter({
   }, [vm.inspectResult]);
 
   return (
-    <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-6 py-5">
+    <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 py-4 sm:px-6 sm:py-5">
       {vm.isLoadingMeta && (
         <div className="flex h-64 items-center justify-center gap-2 text-sm text-nx-ink-2">
           <Loader2 className="h-5 w-5 animate-spin text-nx-accent" />
@@ -100,7 +100,9 @@ export function StudioStepRouter({
           onResetWorkflow={onPromptReplaceFile}
           onDownloadRejected={vm.downloadRejectedWorkbook}
           onCopyCredentials={onCopyCredentials}
-          onDismissCredentials={() => vm.setCredentialsDismissed(true)}
+          onDismissCredentials={() =>
+            vm.dismissCredentials ? vm.dismissCredentials() : vm.setCredentialsDismissed(true)
+          }
         />
       )}
     </div>

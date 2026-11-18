@@ -1,6 +1,7 @@
-import { render, screen, waitFor, fireEvent } from "@testing-library/react";
+import { render, renderHook, act, screen, waitFor, fireEvent } from "@testing-library/react";
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { OpportunityDetailView } from "./OpportunityDetailView";
+import { useOpportunityDetailViewModel } from "../viewmodels/useOpportunityDetailViewModel";
 import { setCrmContainer } from "@modules/crm/di";
 import type { CrmContainer } from "@modules/crm/di";
 import { useCrmSettingsStore } from "@modules/crm";
@@ -56,6 +57,7 @@ vi.mock("next/navigation", () => ({
     prefetch: vi.fn(),
   }),
   usePathname: () => "/crm/opportunities/opp-123",
+  useSearchParams: () => new URLSearchParams(),
 }));
 
 describe("OpportunityDetailView Component", () => {
@@ -128,6 +130,7 @@ describe("OpportunityDetailView Component", () => {
 
   let mockRepo: any;
   let mockOverviewRepo: any;
+  let mockActivityRepo: any;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -150,6 +153,15 @@ describe("OpportunityDetailView Component", () => {
       updateUserPreferences: vi.fn().mockResolvedValue({}),
     };
 
+    // Required so ActivityTimeline (force-mounted in the activity tab) doesn't throw
+    // when useCrmActivitiesViewModel checks container.activityRepository.
+    mockActivityRepo = {
+      getActivities: vi.fn().mockResolvedValue({ items: [], totalCount: 0, page: 1, pageSize: 20 }),
+      createActivity: vi.fn().mockResolvedValue({}),
+      createFollowUp: vi.fn().mockResolvedValue({}),
+      completeFollowUpWorkItem: vi.fn().mockResolvedValue({}),
+    };
+
     const container: CrmContainer = {
       overviewService: {} as any,
       overviewRepository: mockOverviewRepo,
@@ -161,6 +173,8 @@ describe("OpportunityDetailView Component", () => {
       accountRepository: {} as any,
       contactService: {} as any,
       contactRepository: {} as any,
+      activityService: {} as any,
+      activityRepository: mockActivityRepo,
     };
 
     setCrmContainer(container);
@@ -177,7 +191,7 @@ describe("OpportunityDetailView Component", () => {
 
     await waitFor(() => {
       expect(screen.getByText("Saudi Pro League Broadcast Rights Extension")).toBeDefined();
-      expect(screen.getByText("SAR 1,200,000")).toBeDefined();
+      expect(screen.getAllByText("SAR 1,200,000").length).toBeGreaterThanOrEqual(1);
       expect(screen.getByText("Renewal")).toBeDefined();
       expect(screen.getByText("Verified Account / Contact Linked")).toBeDefined();
     });
@@ -230,6 +244,56 @@ describe("OpportunityDetailView Component", () => {
     expect(parsedEnvelope.dealCommercialPackages["opp-123"].venueHoldStatus).toBe("reserved");
     expect(parsedEnvelope.dealCommercialPackages["opp-123"].academyCohortStatus).toBe("provisioned");
     expect(parsedEnvelope.dealCommercialPackages["opp-123"].quoteItems).toHaveLength(3);
+  });
+
+  it("silently refreshes opportunity rowVersion via getOpportunityById after addContactRole and removeContactRole", async () => {
+    mockRepo.addContactRole = vi.fn().mockResolvedValue({
+      id: "role-new-1",
+      opportunityId: "opp-123",
+      contactPartyId: "party-contact-9",
+      contactName: "Khalid Al-Subaie",
+      stakeholderRole: "DecisionMaker",
+      isPrimary: true,
+      createdAtUtc: "2026-11-18T08:00:00Z",
+    });
+    mockRepo.removeContactRole = vi.fn().mockResolvedValue(undefined);
+
+    const { result } = renderHook(() => useOpportunityDetailViewModel("opp-123"));
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+    expect(mockRepo.getOpportunityById).toHaveBeenCalledTimes(1);
+
+    mockRepo.getOpportunityById.mockResolvedValueOnce({
+      ...mockDetailData,
+      opportunity: { ...mockDetailData.opportunity, rowVersion: "rv-after-add", primaryContactRole: "DecisionMaker" },
+    });
+
+    await act(async () => {
+      await result.current.handleAddContactRole({
+        contactPartyId: "party-contact-9",
+        contactName: "Khalid Al-Subaie",
+        stakeholderRole: "DecisionMaker",
+        isPrimary: true,
+      });
+    });
+
+    expect(result.current.loading).toBe(false);
+    expect(mockRepo.getOpportunityById).toHaveBeenCalledTimes(2);
+    expect(result.current.data?.opportunity.rowVersion).toBe("rv-after-add");
+
+    mockRepo.getOpportunityById.mockResolvedValueOnce({
+      ...mockDetailData,
+      opportunity: { ...mockDetailData.opportunity, rowVersion: "rv-after-remove", primaryContactRole: null },
+    });
+
+    await act(async () => {
+      await result.current.handleRemoveContactRole("role-new-1");
+    });
+
+    expect(result.current.loading).toBe(false);
+    expect(mockRepo.getOpportunityById).toHaveBeenCalledTimes(3);
+    expect(result.current.data?.opportunity.rowVersion).toBe("rv-after-remove");
   });
 });
 

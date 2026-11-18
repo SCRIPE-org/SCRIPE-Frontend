@@ -13,6 +13,8 @@ import { TENANTS_ENDPOINTS } from "@core/config/api-endpoints/tenants.endpoints"
 import { IDENTITY_ENDPOINTS } from "@core/config/api-endpoints/identity.endpoints";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { broadcastTenantContext } from "@core/services/api-factory";
+import { clearAllDataExchangeCaches } from "@core/data-exchange/data/repositories/DataExchangeRepository";
+import { useDataExchangeJobsStore } from "@core/data-exchange/presentation/store/useDataExchangeJobsStore";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { clearNavigationCaches } from "@modules/auth/core/data/utils/auth-storage-cleanup";
 import { appLogger } from "@core/common/logger";
@@ -318,6 +320,8 @@ export function useTenantContextSwitcher(options?: UseTenantContextSwitcherOptio
           broadcastTenantContext(tenantInfo.id);
           clearNavigationCaches();
           useNavigationStore.getState().reset();
+          clearAllDataExchangeCaches();
+          useDataExchangeJobsStore.getState().reset();
           queryClient.invalidateQueries();
           if (redirectTo !== null && typeof window !== "undefined") {
             try {
@@ -368,6 +372,8 @@ export function useTenantContextSwitcher(options?: UseTenantContextSwitcherOptio
         broadcastTenantContext(null);
         clearNavigationCaches();
         useNavigationStore.getState().reset();
+        clearAllDataExchangeCaches();
+        useDataExchangeJobsStore.getState().reset();
         queryClient.invalidateQueries();
         if (redirectTo !== null && typeof window !== "undefined") {
           try {

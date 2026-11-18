@@ -1,4 +1,5 @@
 import type { PagedResult } from "@core/interfaces/common.interface";
+import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { useAppStore } from "@core/store/useAppStore";
 import {
   clearEntityDisplayNameCache,
@@ -39,7 +40,55 @@ function triggerBrowserDownload(blob: Blob, fileName: string): void {
   setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
 }
 
+function extractHttpStatus(error: unknown): number | undefined {
+  if (!error || typeof error !== "object") return undefined;
+  const err = error as Record<string, unknown>;
+  if (typeof err.status === "number") return err.status;
+  if (typeof err.statusCode === "number") return err.statusCode;
+  const response = err.response as Record<string, unknown> | undefined;
+  if (response && typeof response.status === "number") return response.status;
+  const details = err.details as Record<string, unknown> | undefined;
+  if (details && typeof details.statusCode === "number") return details.statusCode;
+  if (details && typeof details.status === "number") return details.status;
+  return undefined;
+}
+
+function resolveArtifactExtension(blob: Blob, artifactKind: DataExchangeArtifactKind): string {
+  if (artifactKind === "rejected") return "xlsx";
+  const mime = (blob?.type || "").toLowerCase();
+  if (mime.includes("tab-separated-values") || mime.includes("tsv")) return "tsv";
+  if (mime.includes("csv")) return "csv";
+  return "xlsx";
+}
+
+function readSessionTenantContextId(): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = sessionStorage.getItem(STORAGE_KEYS.tenant_context);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as { id?: unknown } | null;
+    return typeof parsed?.id === "string" && parsed.id.trim().length > 0 ? parsed.id : null;
+  } catch {
+    return null;
+  }
+}
+
 export type ContextKeyProvider = () => string;
+
+const POSITIVE_CACHE_TTL_MS = 30_000;
+const NEGATIVE_CACHE_TTL_MS = 30_000;
+
+const repositoryRegistry = new Set<DataExchangeRepository>();
+
+/**
+ * Clears all active DataExchangeRepository caches and display-name registries across the app.
+ */
+export function clearAllDataExchangeCaches(): void {
+  for (const repo of repositoryRegistry) {
+    repo.clearCache();
+  }
+  clearEntityDisplayNameCache();
+}
 
 /**
  * Repository implementation of {@link IDataExchangeRepository} coordinating DataExchangeService calls
@@ -54,11 +103,17 @@ export class DataExchangeRepository implements IDataExchangeRepository {
     string,
     { data: DataExchangeEntitySummaryDto[]; expiresAt: number }
   >();
+  private readonly entitiesErrorCache = new Map<
+    string,
+    { error: unknown; expiresAt: number }
+  >();
 
   constructor(
     private readonly service: IDataExchangeService,
     private readonly contextKeyProvider?: ContextKeyProvider
-  ) {}
+  ) {
+    repositoryRegistry.add(this);
+  }
 
   private getContextKey(): string {
     if (this.contextKeyProvider) {
@@ -71,7 +126,12 @@ export class DataExchangeRepository implements IDataExchangeRepository {
     }
     try {
       const state = useAppStore?.getState?.();
-      const tenant = state?.user?.tenantId ?? state?.tenantCode ?? "platform";
+      const sessionTenant = readSessionTenantContextId();
+      const tenant =
+        sessionTenant ??
+        state?.user?.tenantId ??
+        (state?.user === undefined ? state?.tenantCode : null) ??
+        "platform";
       const user = state?.user?.id ?? "anon";
       return `${tenant}:${user}`;
     } catch {
@@ -81,11 +141,15 @@ export class DataExchangeRepository implements IDataExchangeRepository {
 
   clearCache(entityKey?: string): void {
     if (entityKey) {
-      const cacheKey = `${this.getContextKey()}:${entityKey.toLowerCase()}`;
+      const contextKey = this.getContextKey();
+      const cacheKey = `${contextKey}:${entityKey.toLowerCase()}`;
       this.descriptorCache.delete(cacheKey);
+      this.entitiesCache.delete(contextKey);
+      this.entitiesErrorCache.delete(contextKey);
     } else {
       this.descriptorCache.clear();
       this.entitiesCache.clear();
+      this.entitiesErrorCache.clear();
       clearEntityDisplayNameCache();
     }
   }
@@ -98,10 +162,29 @@ export class DataExchangeRepository implements IDataExchangeRepository {
       return cached.data;
     }
 
-    const data = await this.service.listEntities(signal);
-    this.entitiesCache.set(contextKey, { data, expiresAt: now + 30_000 });
-    registerEntityDisplayNames(data);
-    return data;
+    const cachedError = this.entitiesErrorCache.get(contextKey);
+    if (cachedError && cachedError.expiresAt > now) {
+      throw cachedError.error;
+    }
+    if (cachedError) {
+      this.entitiesErrorCache.delete(contextKey);
+    }
+
+    try {
+      const data = await this.service.listEntities(signal);
+      this.entitiesCache.set(contextKey, { data, expiresAt: Date.now() + POSITIVE_CACHE_TTL_MS });
+      registerEntityDisplayNames(data);
+      return data;
+    } catch (error) {
+      const status = extractHttpStatus(error);
+      if (!signal?.aborted && (status === 403 || status === 400)) {
+        this.entitiesErrorCache.set(contextKey, {
+          error,
+          expiresAt: Date.now() + NEGATIVE_CACHE_TTL_MS,
+        });
+      }
+      throw error;
+    }
   }
 
   async getEntityDescriptor(
@@ -117,7 +200,7 @@ export class DataExchangeRepository implements IDataExchangeRepository {
     }
 
     const data = await this.service.getEntityDescriptor(entityKey, signal);
-    this.descriptorCache.set(cacheKey, { data, expiresAt: now + 30_000 });
+    this.descriptorCache.set(cacheKey, { data, expiresAt: Date.now() + POSITIVE_CACHE_TTL_MS });
     registerEntityDisplayName(data);
     return data;
   }
@@ -151,7 +234,10 @@ export class DataExchangeRepository implements IDataExchangeRepository {
     signal?: AbortSignal
   ): Promise<DataExchangeExecuteImportResponseDto> {
     const res = await this.service.executeImport(request, signal);
-    // Invalidate descriptor cache so that updated quota and remaining slots are immediately refreshed
+    // Invalidate descriptor and entities caches so updated quota and remaining slots refresh immediately
+    const contextKey = this.getContextKey();
+    this.entitiesCache.delete(contextKey);
+    this.entitiesErrorCache.delete(contextKey);
     this.clearCache(request.entityKey);
     if (request.sheetMappings && request.sheetMappings.length > 0) {
       for (const sm of request.sheetMappings) {
@@ -219,8 +305,9 @@ export class DataExchangeRepository implements IDataExchangeRepository {
     signal?: AbortSignal
   ): Promise<void> {
     const blob = await this.service.downloadArtifact(jobId, artifactKind, signal);
+    const ext = resolveArtifactExtension(blob, artifactKind);
     const fallbackName =
-      suggestedName ?? `data-exchange-${artifactKind}-${jobId.slice(0, 8)}.xlsx`;
+      suggestedName ?? `data-exchange-${artifactKind}-${jobId.slice(0, 8)}.${ext}`;
     triggerBrowserDownload(blob, fallbackName);
   }
 }

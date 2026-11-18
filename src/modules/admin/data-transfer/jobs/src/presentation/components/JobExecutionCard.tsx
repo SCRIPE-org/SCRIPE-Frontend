@@ -20,17 +20,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@core/ui/dropdown-menu";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@core/ui/tooltip";
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@core/common/utils";
-import { getEntityDisplayName, type EntityNameSource } from "@core/data-exchange/presentation/utils/entity-display-names";
-import type { DataTransferJob } from "../../domain/entities/DataTransferJob";
+import { getEntityDisplayName } from "@core/data-exchange";
+import type { DataExchangeEntitySummaryView } from "../../../../entities/src/domain/entities/DataExchangeEntity";
+import type {
+  DataTransferArtifactKind,
+  DataTransferJob,
+} from "../../domain/entities/DataTransferJob";
 import { getJobProgressVariant } from "../utils/job-presentation";
+import { JobIdCopyChip } from "./JobIdCopyChip";
 import { JobStatusBadge } from "./JobStatusBadge";
 
 /**
@@ -40,13 +39,13 @@ export interface JobExecutionCardProps {
   /** The data transfer background job */
   job: DataTransferJob;
   /** Optional live catalog entry for resolving dynamic localized entity display names */
-  entitySummary?: EntityNameSource;
+  entitySummary?: DataExchangeEntitySummaryView;
   /** Callback to initiate cooperative cancellation */
   onCancelJob: (job: DataTransferJob) => void;
   /** Whether job cancellation is currently pending */
   isCancelling?: boolean;
   /** Callback to download job artifacts */
-  onDownloadArtifact: (job: DataTransferJob, kind: "export" | "rejected") => void;
+  onDownloadArtifact: (job: DataTransferJob, kind: DataTransferArtifactKind) => void;
   /** Whether artifact download is in flight */
   isDownloading?: boolean;
   /** Optional custom class name */
@@ -69,6 +68,8 @@ export const JobExecutionCard = memo(function JobExecutionCard({
   const { language, t } = useI18n();
   const isAr = language === "ar";
   const isCancellable = job.status === "Queued" || job.status === "Running";
+  const hasDownloadAction = Boolean(job.hasExportWorkbook || job.hasRejectedWorkbook);
+  const hasAnyAction = hasDownloadAction || isCancellable;
   const localizedEntityName = getEntityDisplayName(job.entityKey, t, isAr, entitySummary);
 
   return (
@@ -95,26 +96,11 @@ export const JobExecutionCard = memo(function JobExecutionCard({
               {localizedEntityName}
             </h3>
             <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
-              <TooltipProvider delayDuration={200}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      dir="ltr"
-                      aria-label={job.jobId}
-                      data-testid="job-card-id-tooltip-trigger"
-                      className="h-auto max-w-full cursor-help rounded-sm border border-nx-line bg-nx-raised/60 px-1.5 py-0.5 font-mono text-[11px] font-medium text-nx-ink-2"
-                    >
-                      <code className="truncate">{job.jobId.slice(0, 8)}...</code>
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent dir="ltr" className="font-mono text-xs">
-                    {job.jobId}
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <JobIdCopyChip
+                jobId={job.jobId}
+                testId="job-card-id-tooltip-trigger"
+                className="border border-nx-line bg-nx-raised"
+              />
               <span className="text-nx-ink-3 text-xs">/</span>
               <code dir="ltr" className="text-[11px] font-mono text-nx-ink-3 truncate">
                 {job.entityKey}
@@ -132,60 +118,63 @@ export const JobExecutionCard = memo(function JobExecutionCard({
           )}
         </div>
 
-        {/* Canonical ⋯ Actions Dropdown */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 shrink-0 text-nx-ink-2 hover:text-nx-ink hover:bg-nx-raised"
-              aria-label={t("adminDataTransferJobs.columns.actions")}
-            >
-              <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align={isAr ? "start" : "end"} className="w-52">
-            {job.hasExportWorkbook && (
-              <DropdownMenuItem
-                onClick={() => onDownloadArtifact(job, "export")}
-                disabled={isDownloading}
-                className="cursor-pointer gap-2"
+        {/* Canonical ⋯ Actions Dropdown (hidden when no actions are available) */}
+        {hasAnyAction && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 shrink-0 text-nx-ink-2 hover:text-nx-ink hover:bg-nx-raised"
+                aria-label={t("adminDataTransferJobs.columns.actions")}
+                data-testid="job-card-actions-trigger"
               >
-                <FileDown className="h-4 w-4 text-nx-success" aria-hidden="true" />
-                <span>{t("adminDataTransferJobs.actions.downloadExport")}</span>
-              </DropdownMenuItem>
-            )}
-
-            {job.hasRejectedWorkbook && (
-              <DropdownMenuItem
-                onClick={() => onDownloadArtifact(job, "rejected")}
-                disabled={isDownloading}
-                className="cursor-pointer gap-2"
-              >
-                <FileWarning className="h-4 w-4 text-nx-danger" aria-hidden="true" />
-                <span>{t("adminDataTransferJobs.actions.downloadRejected")}</span>
-              </DropdownMenuItem>
-            )}
-
-            {isCancellable && (
-              <>
-                <DropdownMenuSeparator />
+                <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align={isAr ? "start" : "end"} className="w-52">
+              {job.hasExportWorkbook && (
                 <DropdownMenuItem
-                  onClick={() => onCancelJob(job)}
-                  disabled={isCancelling}
-                  className="cursor-pointer gap-2 text-nx-danger focus:text-nx-danger"
+                  onClick={() => onDownloadArtifact(job, "export")}
+                  disabled={isDownloading}
+                  className="cursor-pointer gap-2"
                 >
-                  <XCircle className="h-4 w-4 text-nx-danger" aria-hidden="true" />
-                  <span>{t("adminDataTransferJobs.actions.cancel")}</span>
+                  <FileDown className="h-4 w-4 text-nx-success" aria-hidden="true" />
+                  <span>{t("adminDataTransferJobs.actions.downloadExport")}</span>
                 </DropdownMenuItem>
-              </>
-            )}
-          </DropdownMenuContent>
-        </DropdownMenu>
+              )}
+
+              {job.hasRejectedWorkbook && (
+                <DropdownMenuItem
+                  onClick={() => onDownloadArtifact(job, "rejected")}
+                  disabled={isDownloading}
+                  className="cursor-pointer gap-2"
+                >
+                  <FileWarning className="h-4 w-4 text-nx-danger" aria-hidden="true" />
+                  <span>{t("adminDataTransferJobs.actions.downloadRejected")}</span>
+                </DropdownMenuItem>
+              )}
+
+              {isCancellable && (
+                <>
+                  {hasDownloadAction && <DropdownMenuSeparator />}
+                  <DropdownMenuItem
+                    onClick={() => onCancelJob(job)}
+                    disabled={isCancelling}
+                    className="cursor-pointer gap-2 text-nx-danger focus:text-nx-danger"
+                  >
+                    <XCircle className="h-4 w-4 text-nx-danger" aria-hidden="true" />
+                    <span>{t("adminDataTransferJobs.actions.cancel")}</span>
+                  </DropdownMenuItem>
+                </>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </div>
 
       {/* Structured Telemetry Strip: Progress & Row Metrics */}
-      <div className="space-y-2.5 rounded-nx-control bg-nx-raised/40 p-3 border border-nx-line/60 text-xs">
+      <div className="space-y-2.5 rounded-nx-control bg-nx-raised p-3 border border-nx-line text-xs">
         {/* Progress Bar */}
         <div className="space-y-1">
           <div className="flex items-center justify-between text-[11px] font-mono tabular-nums text-nx-ink-2">
@@ -202,7 +191,7 @@ export const JobExecutionCard = memo(function JobExecutionCard({
         </div>
 
         {/* Row Metrics Grid */}
-        <div className="grid grid-cols-2 gap-2 pt-1 border-t border-nx-line/40 text-[11px]">
+        <div className="grid grid-cols-2 gap-2 pt-1 border-t border-nx-line text-[11px]">
           <div>
             <span className="text-nx-ink-3">{t("adminDataTransferJobs.columns.rowsSummary")}:</span>
             <p dir="ltr" className="font-mono font-medium text-nx-ink w-fit tabular-nums">
@@ -242,7 +231,7 @@ export const JobExecutionCard = memo(function JobExecutionCard({
             size="sm"
             onClick={() => onCancelJob(job)}
             disabled={isCancelling}
-            className="h-7 px-2 text-xs text-nx-danger hover:bg-nx-danger/10"
+            className="h-7 px-2 text-xs text-nx-danger hover:bg-destructive/10"
           >
             <XCircle className="h-3 w-3 me-1" aria-hidden="true" />
             {t("adminDataTransferJobs.actions.cancel")}
@@ -253,7 +242,7 @@ export const JobExecutionCard = memo(function JobExecutionCard({
             size="sm"
             onClick={() => onDownloadArtifact(job, "export")}
             disabled={isDownloading}
-            className="h-7 px-2 text-xs text-nx-success hover:bg-nx-success/10"
+            className="h-7 px-2 text-xs text-nx-success hover:bg-success/10"
           >
             <Download className="h-3 w-3 me-1" aria-hidden="true" />
             {t("adminDataTransferJobs.actions.downloadExport")}

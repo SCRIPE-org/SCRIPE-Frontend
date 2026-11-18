@@ -2,9 +2,16 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { getCoreContainer } from "@core/di";
+import { DATA_TRANSFER_PERMISSIONS } from "@core/common/types/permissions";
+import { useAdminContext } from "@core/hooks/useAdminContext";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermissions } from "@core/providers/permission-provider";
+import { toast } from "@core/ui/sileo-toast";
 import type { DataExchangeDescriptorResponseDto } from "../../domain/types";
+import {
+  getStudioErrorMessage,
+  isAbortOrInterceptedError,
+} from "./studio/studio-viewmodel.helpers";
 
 export interface UseDataExchangeToolbarOptions {
   entityKey: string;
@@ -43,16 +50,21 @@ export function useDataExchangeToolbarViewModel({
   multiSheetEntityKeys,
   onOverlayOpenChange,
 }: UseDataExchangeToolbarOptions): UseDataExchangeToolbarReturn {
-  const { language } = useI18n();
+  const { language, t } = useI18n();
   const { hasPermission } = usePermissions();
+  const { activeTenantId } = useAdminContext();
 
-  const canViewJobs = hasPermission("datatransfer.jobs.view");
-  const canManageJobs = hasPermission("datatransfer.jobs.manage");
+  const canViewJobs = hasPermission(DATA_TRANSFER_PERMISSIONS.DATATRANSFER_JOBS_VIEW);
+  const canManageJobs = hasPermission(DATA_TRANSFER_PERMISSIONS.DATATRANSFER_JOBS_MANAGE);
   const canExecuteMultiSheet =
-    hasPermission("datatransfer.migrations.execute") ||
+    hasPermission(DATA_TRANSFER_PERMISSIONS.DATATRANSFER_MIGRATIONS_EXECUTE) ||
     hasPermission("datatransfer.migration.execute");
 
-  const [descriptor, setDescriptor] = useState<DataExchangeDescriptorResponseDto | null>(null);
+  const [descriptorEntry, setDescriptorEntry] = useState<{
+    tenantId: string | null;
+    entityKey: string;
+    data: DataExchangeDescriptorResponseDto;
+  } | null>(null);
   const [studioOpen, setStudioOpen] = useState(false);
   const [studioMultiSheet, setStudioMultiSheet] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
@@ -66,6 +78,8 @@ export function useDataExchangeToolbarViewModel({
     const controller = new AbortController();
     let cancelled = false;
     const repo = getCoreContainer().dataExchangeRepository;
+    const requestedEntityKey = entityKey;
+    const requestedTenantId = activeTenantId;
 
     async function loadDescriptor() {
       try {
@@ -74,18 +88,24 @@ export function useDataExchangeToolbarViewModel({
         if (cancelled) return;
 
         const exists = (entities ?? []).some(
-          (e) => e.entityKey.toLowerCase() === entityKey.toLowerCase()
+          (e) => e.entityKey.toLowerCase() === requestedEntityKey.toLowerCase()
         );
         if (!exists) {
-          setDescriptor(null);
+          setDescriptorEntry(null);
           return;
         }
 
-        const res = await repo.getEntityDescriptor(entityKey, controller.signal);
-        if (!cancelled) setDescriptor(res);
+        const res = await repo.getEntityDescriptor(requestedEntityKey, controller.signal);
+        if (!cancelled) {
+          setDescriptorEntry({
+            tenantId: requestedTenantId,
+            entityKey: requestedEntityKey.toLowerCase(),
+            data: res,
+          });
+        }
       } catch {
         // Handles 422 tenant-required, 403 forbidden, or network failures gracefully
-        if (!cancelled) setDescriptor(null);
+        if (!cancelled) setDescriptorEntry(null);
       }
     }
 
@@ -95,7 +115,7 @@ export function useDataExchangeToolbarViewModel({
       cancelled = true;
       controller.abort();
     };
-  }, [entityKey, canViewJobs]);
+  }, [entityKey, canViewJobs, activeTenantId]);
 
   useEffect(() => {
     onOverlayOpenChange?.(studioOpen || exportOpen);
@@ -104,9 +124,12 @@ export function useDataExchangeToolbarViewModel({
   const effectiveDescriptor =
     canViewJobs &&
     entityKey &&
-    descriptor &&
-    (!descriptor.descriptor?.entityKey || descriptor.descriptor.entityKey === entityKey)
-      ? descriptor
+    descriptorEntry &&
+    descriptorEntry.tenantId === activeTenantId &&
+    descriptorEntry.entityKey === entityKey.toLowerCase() &&
+    (!descriptorEntry.data.descriptor?.entityKey ||
+      descriptorEntry.data.descriptor.entityKey.toLowerCase() === entityKey.toLowerCase())
+      ? descriptorEntry.data
       : null;
 
   const showImport = Boolean(
@@ -166,13 +189,22 @@ export function useDataExchangeToolbarViewModel({
           locale: language === "ar" ? "ar" : "en",
           multiSheet: false,
         });
-      } catch {
-        // Silently ignored if user lacks permission or aborted
+      } catch (err) {
+        if (!isAbortOrInterceptedError(err)) {
+          toast.error({
+            id: `dx-template-err-${entityKey}`,
+            title: t("dataExchange.errors.templateDownloadFailed"),
+            description: getStudioErrorMessage(
+              err,
+              t("dataExchange.errors.templateDownloadFailed")
+            ),
+          });
+        }
       } finally {
         setIsDownloadingTemplate(false);
       }
     },
-    [entityKey, language]
+    [entityKey, language, t]
   );
 
   return {

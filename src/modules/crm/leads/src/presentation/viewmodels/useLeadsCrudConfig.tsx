@@ -2,22 +2,19 @@
 
 import React, { useMemo, useCallback } from "react";
 import type { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
-import { Button } from "@core/ui/button";
-import { Input } from "@core/ui/input";
 import { EmptyState } from "@core/ui/empty-state";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
-import { Search, CheckCircle2, Link as LinkIcon, ArrowUpRight, XCircle } from "lucide-react";
-import { cn } from "@core/common/utils";
+import { CheckCircle2, Link as LinkIcon, ArrowUpRight, XCircle, UserCheck } from "lucide-react";
 import {
   CRM_PERMISSIONS,
   STAGE_COLOR_PALETTE,
   resolveDefaultStageColor,
-  useCrmWorkflowsStore,
   type CrmWorkflowDefinition,
 } from "@modules/crm";
 import type { CrudConfig, CrudAction, CrudViewMode, DropEvaluationResult } from "@core/crud/components/generic-crud-view";
 import { LeadsKanbanCardItem } from "../components/LeadsKanbanCardItem";
+import { LeadsToolbarContent } from "../components/LeadsToolbarContent";
 import { buildLeadsTableColumns, renderLeadsCardGridItemCard, renderLeadsSplitDetailCard } from "../components/LeadsTableColumns";
+import { evaluateLeadStageTransition } from "../utils/leadTransitionHelpers";
 import type { CrmLead, LeadStatus } from "../../domain/entities/LeadEntity";
 
 /** Parameters for useLeadsCrudConfig hook. */
@@ -45,6 +42,8 @@ export interface UseLeadsCrudConfigParams {
   openQualifyDialog: (lead: CrmLead) => void;
   openLinkPartyDialog: (lead: CrmLead) => void;
   openConvertDialog: (lead: CrmLead) => void;
+  openAssignOwnerDialog?: (lead: CrmLead) => void;
+  canAssignOwner?: boolean;
   setIsCreateOpen: (open: boolean) => void;
 }
 
@@ -54,7 +53,7 @@ export function useLeadsCrudConfig(params: UseLeadsCrudConfigParams) {
     router, t, language, baseCurrency, autoConvertToBase, convertAmount, showOriginalCurrencyBadge,
     activeLeadWorkflow, leadWorkflows, activeLeadWorkflowId, setActiveWorkflow, defaultDealViewMode,
     search, handleSearchChange, statusFilter, handleStatusFilterChange, statuses, sumLeadsInBaseCurrency,
-    handleLeadStageTransition, openQualifyDialog, openLinkPartyDialog, openConvertDialog, setIsCreateOpen,
+    handleLeadStageTransition, openQualifyDialog, openLinkPartyDialog, openConvertDialog, openAssignOwnerDialog, canAssignOwner, setIsCreateOpen,
   } = params;
 
   const isRtl = language === "ar";
@@ -87,46 +86,19 @@ export function useLeadsCrudConfig(params: UseLeadsCrudConfigParams) {
     searchConfig: { enabled: false },
     viewSwitchPosition: "toolbar",
     toolbarContent: (
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 flex-1" dir={isRtl ? "rtl" : "ltr"}>
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute start-3 top-2.5 size-3.5 text-nx-ink-3 pointer-events-none" />
-          <Input value={search} onChange={(e) => handleSearchChange(e.target.value)} placeholder={t("crmLeads.actions.searchPlaceholder")} className="h-8 ps-8 pe-3 text-xs border-nx-line bg-nx-surface text-nx-ink" />
-        </div>
-        <div className="w-auto min-w-[12.5rem] max-w-[17rem] shrink-0">
-          <Select value={matchedLeadWorkflow?.id ?? ""} onValueChange={(id) => { if (id) setActiveWorkflow("lead", id); }}>
-            <SelectTrigger className="h-8 w-full min-w-[12.5rem] gap-2 border-nx-line bg-nx-surface text-xs text-nx-ink" data-testid="lead-pipeline-selector" aria-label={t("crmLeads.actions.filterPipelineLabel")}>
-              <SelectValue placeholder={t("crmLeads.actions.allPipelines")}>{selectedLeadPipelineLabel || undefined}</SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              {leadWorkflows.map((wf) => (
-                <SelectItem key={wf.id} value={wf.id} className="text-xs">{isRtl ? wf.nameAr || wf.nameEn : wf.nameEn || wf.nameAr}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-          {statuses.map((item) => {
-            const isSelected = statusFilter === item.key;
-            return (
-              <Button
-                key={item.label}
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => handleStatusFilterChange(item.key)}
-                className={cn(
-                  "h-7 px-2.5 text-xs font-medium rounded-nx-md transition-all select-none whitespace-nowrap",
-                  isSelected
-                    ? "border-nx-accent/40 bg-nx-accent-wash text-nx-accent font-semibold"
-                    : "border-nx-line bg-nx-surface text-nx-ink-2 hover:bg-nx-raised hover:text-nx-ink",
-                )}
-              >
-                {item.label}
-              </Button>
-            );
-          })}
-        </div>
-      </div>
+      <LeadsToolbarContent
+        t={t}
+        isRtl={isRtl}
+        search={search}
+        onSearchChange={handleSearchChange}
+        matchedLeadWorkflow={matchedLeadWorkflow}
+        selectedLeadPipelineLabel={selectedLeadPipelineLabel}
+        leadWorkflows={leadWorkflows}
+        onSelectPipeline={(id) => setActiveWorkflow("lead", id)}
+        statuses={statuses}
+        statusFilter={statusFilter}
+        onStatusFilterChange={handleStatusFilterChange}
+      />
     ),
     permissions: {
       canView: CRM_PERMISSIONS.LEADS_READ,
@@ -186,18 +158,7 @@ export function useLeadsCrudConfig(params: UseLeadsCrudConfigParams) {
       stageField: "stageKey",
       evaluateDropTarget: (lead: CrmLead, targetStageKey: string) => {
         const fromKey = lead.stageKey || `lead.${lead.status.toLowerCase()}`;
-        const isRtl = language === "ar";
-        const evalResult = useCrmWorkflowsStore.getState().evaluateTransition("lead", fromKey, targetStageKey, {
-          hasVerifiedParty: Boolean(lead.organizationPartyId || lead.personPartyId || lead.verifiedPartyId),
-          partyId: lead.verifiedPartyId || lead.organizationPartyId || lead.personPartyId || null,
-          estimatedAmount: lead.estimatedValue ?? null,
-          estimatedValue: lead.estimatedValue ?? null,
-          targetCloseDate: null,
-          disqualificationReason: lead.disqualificationReason ?? null,
-          qualificationNotes: (lead as unknown as { qualificationNotes?: string }).qualificationNotes ?? null,
-          fields: (lead as unknown as { customFields?: Record<string, unknown> }).customFields,
-          locale: isRtl ? "ar" : "en",
-        });
+        const evalResult = evaluateLeadStageTransition(lead, fromKey, targetStageKey, language === "ar");
         const parallelCount = evalResult.matchedTransitions?.length ?? 1;
         return {
           state: evalResult.status,
@@ -223,6 +184,7 @@ export function useLeadsCrudConfig(params: UseLeadsCrudConfigParams) {
           lead={lead} activeLeadWorkflow={activeLeadWorkflow} baseCurrency={baseCurrency}
           autoConvertToBase={autoConvertToBase} showOriginalCurrencyBadge={showOriginalCurrencyBadge} convertAmount={convertAmount}
           onOpenLinkParty={openLinkPartyDialog} onOpenConvert={openConvertDialog}
+          onOpenAssignOwner={canAssignOwner ? openAssignOwnerDialog : undefined}
           onUpdateLeadStatus={(ld, target) => { void handleLeadStageTransition(ld, target); }}
         />
       ),
@@ -233,6 +195,7 @@ export function useLeadsCrudConfig(params: UseLeadsCrudConfigParams) {
         lead={lead} activeLeadWorkflow={activeLeadWorkflow} baseCurrency={baseCurrency}
         autoConvertToBase={autoConvertToBase} showOriginalCurrencyBadge={showOriginalCurrencyBadge} convertAmount={convertAmount}
         onOpenLinkParty={openLinkPartyDialog} onOpenConvert={openConvertDialog}
+        onOpenAssignOwner={canAssignOwner ? openAssignOwnerDialog : undefined}
         onUpdateLeadStatus={(ld, target) => { void handleLeadStageTransition(ld, target); }}
       />
     ),
@@ -259,6 +222,12 @@ export function useLeadsCrudConfig(params: UseLeadsCrudConfigParams) {
         show: (lead: CrmLead) => lead.status !== "Converted" && lead.status !== "Disqualified",
       },
       {
+        label: t("crmLeads.actions.assignOwner"),
+        icon: <UserCheck className="size-3.5" />,
+        onClick: (lead: CrmLead) => openAssignOwnerDialog?.(lead),
+        show: (lead: CrmLead) => Boolean(canAssignOwner && openAssignOwnerDialog && lead.status !== "Converted" && lead.status !== "Disqualified"),
+      },
+      {
         label: t("crmLeads.actions.linkParty"),
         icon: <LinkIcon className="size-3.5" />,
         onClick: (lead: CrmLead) => openLinkPartyDialog(lead),
@@ -282,7 +251,7 @@ export function useLeadsCrudConfig(params: UseLeadsCrudConfigParams) {
     router, t, language, baseCurrency, autoConvertToBase, convertAmount, showOriginalCurrencyBadge,
     activeLeadWorkflow, leadWorkflows, activeLeadWorkflowId, setActiveWorkflow, defaultDealViewMode,
     search, handleSearchChange, statusFilter, handleStatusFilterChange, statuses, sumLeadsInBaseCurrency,
-    handleLeadStageTransition, getStageDisplayLabel, openQualifyDialog, openLinkPartyDialog, openConvertDialog, setIsCreateOpen,
+    handleLeadStageTransition, getStageDisplayLabel, openQualifyDialog, openLinkPartyDialog, openConvertDialog, openAssignOwnerDialog, canAssignOwner, setIsCreateOpen,
     columns, isRtl,
   ]);
 

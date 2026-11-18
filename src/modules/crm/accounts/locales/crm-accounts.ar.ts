@@ -30,6 +30,9 @@ export const ar = {
     },
     tiers: {
       Enterprise: "مؤسسات كبرى (Enterprise)",
+      Platinum: "بلاتيني (Platinum)",
+      Gold: "ذهبي (Gold)",
+      Silver: "فضي (Silver)",
       KeyAccount: "حساب رئيسي (Key Account)",
       Strategic: "شريك استراتيجي (Strategic)",
       MidMarket: "شركات متوسطة (Mid-Market)",
@@ -87,7 +90,9 @@ export const ar = {
       organizationNameRequired: "اسم المنظمة مطلوب.",
       organizationSelectRequired: "يرجى اختيار منظمة مسجلة.",
       email: "البريد الإلكتروني الرئيسي",
+      emailPlaceholder: "partnerships@club.sa",
       phone: "رقم الهاتف الرئيسي",
+      phonePlaceholder: "5X XXX XXXX",
       selectOrganization: "اختر المنظمة",
       searchOrganizations: "تصفية المنظمات بالاسم...",
       chooseOrganization: "اختر منظمة مسجلة...",
@@ -117,6 +122,8 @@ export const ar = {
       viewContactsBtn: "عرض جهات الاتصال",
       viewOpportunitiesBtn: "عرض الصفقات",
       logActivityBtn: "تسجيل نشاط",
+      createDealBtn: "إنشاء صفقة",
+      createContactBtn: "إضافة جهة اتصال",
     },
   },
 };

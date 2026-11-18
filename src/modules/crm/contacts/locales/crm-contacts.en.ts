@@ -108,6 +108,7 @@ export const en = {
       viewDealsBtn: "View Deals",
       viewAccountsBtn: "View Accounts",
       logActivityBtn: "Log Activity",
+      createDealBtn: "Create Deal",
     },
   },
 };

@@ -19,6 +19,8 @@ import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { useAppStore } from "@core/store/useAppStore";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { broadcastTenantContext } from "@core/services/api-factory";
+import { clearAllDataExchangeCaches } from "@core/data-exchange/data/repositories/DataExchangeRepository";
+import { useDataExchangeJobsStore } from "@core/data-exchange/presentation/store/useDataExchangeJobsStore";
 import { appLogger } from "../common/logger";
 import { clearNavigationCaches } from "@modules/auth/core/data/utils/auth-storage-cleanup";
 
@@ -225,6 +227,8 @@ export function TenantContextProvider({ children }: TenantContextProviderProps) 
       broadcastTenantContext(null);
       clearNavigationCaches();
       useNavigationStore.getState().reset();
+      clearAllDataExchangeCaches();
+      useDataExchangeJobsStore.getState().reset();
       queryClient.invalidateQueries();
 
       let cancelled = false;
@@ -278,6 +282,8 @@ export function TenantContextProvider({ children }: TenantContextProviderProps) 
 
       clearNavigationCaches();
       useNavigationStore.getState().reset();
+      clearAllDataExchangeCaches();
+      useDataExchangeJobsStore.getState().reset();
       queryClient.invalidateQueries();
 
       navigateAfterSwitch(options?.redirectTo, options?.defaultRedirect ?? "/");

@@ -22,9 +22,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@core/ui/select";
-import { getEntityDisplayName } from "@core/data-exchange/presentation/utils/entity-display-names";
-import type { DataExchangeEntitySummaryDto } from "@core/data-exchange/domain/types";
+import { getEntityDisplayName } from "@core/data-exchange";
 import { useI18n } from "@core/providers/i18n-provider";
+import type { DataExchangeEntitySummaryView } from "../../../../entities/src/domain/entities/DataExchangeEntity";
 
 /**
  * Props for StudioEntityPickerDialog component.
@@ -32,7 +32,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 export interface StudioEntityPickerDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  entities: DataExchangeEntitySummaryDto[];
+  entities: DataExchangeEntitySummaryView[];
   isLoading: boolean;
   defaultEntityKey?: string;
   onConfirm: (entityKey: string) => void;
@@ -80,7 +80,7 @@ export function StudioEntityPickerDialog({
 }
 
 interface StudioEntityPickerBodyProps {
-  entities: DataExchangeEntitySummaryDto[];
+  entities: DataExchangeEntitySummaryView[];
   isLoading: boolean;
   defaultEntityKey?: string;
   onClose: () => void;

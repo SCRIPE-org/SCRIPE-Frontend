@@ -1,10 +1,25 @@
 "use client";
 
 import { useState, useEffect, useCallback, useTransition } from "react";
-import { getCrmContainer } from "@modules/crm/di";
 import type { CrmWorkflowTransitionSubmitPayload } from "@modules/crm";
-import type { CrmLead, CreateLeadInput, LeadStatus } from "../../domain/models/crm-lead.types";
+import type {
+  CrmLead,
+  CreateLeadInput,
+  LeadStatus,
+  AssignLeadOwnerInput,
+  LinkPartyToLeadInput,
+} from "../../domain/models/crm-lead.types";
+import { buildLeadsPagination } from "../utils/leadTransitionHelpers";
+import {
+  INITIAL_LEADS_STATE,
+  executeAssignLeadOwnerMutation,
+  executeCreateLeadMutation,
+  executeLeadTransitionMutation,
+  executeLinkLeadPartyMutation,
+  fetchLeadsPageMutation,
+} from "../utils/leadMutationHelpers";
 import { useLeadWorkflowActions } from "./useLeadWorkflowActions";
+import { useLeadModalState } from "./useLeadModalState";
 
 export interface LeadsState {
   stage: "idle" | "loading" | "success" | "failed";
@@ -16,51 +31,19 @@ export interface LeadsState {
 }
 
 export function useLeadsViewModel(initialSearch?: string) {
-  const [state, setState] = useState<LeadsState>({
-    stage: "loading",
-    items: [],
-    totalCount: 0,
-    page: 1,
-    pageSize: 20,
-    error: null,
-  });
+  const [state, setState] = useState<LeadsState>(INITIAL_LEADS_STATE);
 
   const [search, setSearch] = useState<string>(initialSearch ?? "");
   const [statusFilter, setStatusFilter] = useState<LeadStatus | undefined>(undefined);
-  const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [viewModalOpen, setViewModalOpen] = useState(false);
-  const [editingItem, setEditingItem] = useState<CrmLead | null>(null);
-  const [viewItem, setViewItem] = useState<CrmLead | null>(null);
-
-  const handleSetIsCreateOpen = useCallback((open: boolean) => {
-    setIsCreateOpen(open);
-    if (!open) setSubmitError(null);
-  }, []);
+  const modalState = useLeadModalState();
+  const { handleSetIsCreateOpen, setIsAssignOwnerOpen, setIsSubmitting, setSubmitError } = modalState;
 
   const loadLeads = useCallback(
     async (pageToLoad = 1, searchQuery?: string, status?: LeadStatus, sizeToLoad = 20) => {
       setState((prev) => ({ ...prev, stage: "loading", error: null }));
       try {
-        const container = getCrmContainer();
-        const result = await container.leadRepository.getLeads({
-          page: pageToLoad,
-          pageSize: sizeToLoad,
-          search: searchQuery,
-          status,
-        });
-        setState({
-          stage: "success",
-          items: result.items,
-          totalCount: result.totalCount,
-          page: result.page,
-          pageSize: result.pageSize || sizeToLoad,
-          error: null,
-        });
+        setState(await fetchLeadsPageMutation(pageToLoad, sizeToLoad, searchQuery, status));
       } catch (err) {
         setState((prev) => ({
           ...prev,
@@ -101,20 +84,7 @@ export function useLeadsViewModel(initialSearch?: string) {
       setIsSubmitting(true);
       setSubmitError(null);
       try {
-        const container = getCrmContainer();
-        const created = await container.leadRepository.createLead(input);
-        if (created?.id && customFieldValues && Object.keys(customFieldValues).length > 0) {
-          try {
-            const { getCustomFieldsExtension, normalizeCustomFieldValuesForSave } = await import(
-              "@core/crud/customFieldsExtension"
-            );
-            const ext = getCustomFieldsExtension();
-            const normalized = normalizeCustomFieldValuesForSave(customFieldValues);
-            if (ext?.saveValues && Object.keys(normalized).length > 0) {
-              await ext.saveValues("crm.lead", created.id, normalized);
-            }
-          } catch {}
-        }
+        await executeCreateLeadMutation(input, customFieldValues);
         setIsSubmitting(false);
         loadLeads(1, search, statusFilter, state.pageSize);
         return true;
@@ -126,7 +96,7 @@ export function useLeadsViewModel(initialSearch?: string) {
         return false;
       }
     },
-    [loadLeads, search, statusFilter, state.pageSize],
+    [loadLeads, search, statusFilter, state.pageSize, setIsSubmitting, setSubmitError],
   );
 
   const setStateItemsAndError = useCallback((items: CrmLead[], error: string | null) => {
@@ -155,72 +125,86 @@ export function useLeadsViewModel(initialSearch?: string) {
       setIsSubmitting(true);
       setSubmitError(null);
       try {
-        const container = getCrmContainer();
-        const serializedCustomFields = payload.customFields
-          ? Object.fromEntries(
-              Object.entries(payload.customFields)
-                .filter(([, val]) => val !== undefined && val !== null && val !== "")
-                .map(([key, val]) => [key, String(val)]),
-            )
-          : undefined;
-        await container.leadRepository.moveLeadStage({
-          leadId: payload.entityId,
-          targetStageKey: payload.targetStageKey,
-          transitionId: payload.transitionId,
-          expectedRowVersion: payload.expectedRowVersion,
-          partyId: payload.partyId,
-          accountId: payload.accountId,
-          estimatedValue: payload.estimatedAmount,
-          closeNotes: payload.closeNotes,
-          qualificationNotes: payload.qualificationNotes,
-          disqualificationReasonCode: payload.disqualificationReasonCode,
-          reopenReason: payload.reopenReason,
-          reason: payload.reason,
-          auditNote: payload.auditNote,
-          convertDealTitle: payload.convertDealTitle,
-          targetDealPipelineId: payload.targetDealPipelineId,
-          customFields:
-            serializedCustomFields && Object.keys(serializedCustomFields).length > 0
-              ? serializedCustomFields
-              : undefined,
-        });
+        await executeLeadTransitionMutation(payload);
         setIsSubmitting(false);
         refresh();
         return true;
       } catch (err) {
         setIsSubmitting(false);
-        const msg = err instanceof Error ? err.message : "Failed to move stage";
-        setSubmitError(msg);
+        setSubmitError(err instanceof Error ? err.message : "Failed to move stage");
         return false;
       }
     },
-    [refresh],
+    [refresh, setIsSubmitting, setSubmitError],
+  );
+
+  const openAssignOwnerDialog = useCallback(
+    (lead: CrmLead) => {
+      setSubmitError(null);
+      wfActions.setActiveLead(lead);
+      setIsAssignOwnerOpen(true);
+    },
+    [wfActions, setSubmitError, setIsAssignOwnerOpen],
+  );
+
+  const handleAssignLeadOwner = useCallback(
+    async (input: AssignLeadOwnerInput): Promise<boolean> => {
+      setIsSubmitting(true);
+      setSubmitError(null);
+      try {
+        await executeAssignLeadOwnerMutation(input);
+        setIsSubmitting(false);
+        setIsAssignOwnerOpen(false);
+        wfActions.setActiveLead(null);
+        refresh();
+        return true;
+      } catch (err) {
+        setIsSubmitting(false);
+        setSubmitError(err instanceof Error ? err.message : "Failed to assign lead owner");
+        return false;
+      }
+    },
+    [refresh, wfActions, setIsSubmitting, setSubmitError, setIsAssignOwnerOpen],
+  );
+
+  const linkPartyBeforeConvert = useCallback(
+    async (input: LinkPartyToLeadInput): Promise<CrmLead | null> => {
+      setIsSubmitting(true);
+      setSubmitError(null);
+      try {
+        const updated = await executeLinkLeadPartyMutation(input);
+        setIsSubmitting(false);
+        return updated;
+      } catch (err) {
+        setIsSubmitting(false);
+        setSubmitError(err instanceof Error ? err.message : "Failed to link account or contact");
+        return null;
+      }
+    },
+    [setIsSubmitting, setSubmitError],
   );
 
   const clearError = useCallback(() => {
     setSubmitError(null);
     setState((prev) => ({ ...prev, error: null }));
-  }, []);
+  }, [setSubmitError]);
 
   return {
+    ...modalState,
     state,
     search,
     statusFilter,
-    isCreateOpen,
+    isPending,
     isQualifyOpen: wfActions.isQualifyOpen,
     qualifyDefaultDecision: wfActions.qualifyDefaultDecision,
     isLinkPartyOpen: wfActions.isLinkPartyOpen,
     isConvertOpen: wfActions.isConvertOpen,
     activeLead: wfActions.activeLead,
-    isSubmitting,
-    submitError,
-    isPending,
     setIsCreateOpen: handleSetIsCreateOpen,
     setIsQualifyOpen: wfActions.setIsQualifyOpen,
     setIsLinkPartyOpen: wfActions.setIsLinkPartyOpen,
     setIsConvertOpen: wfActions.setIsConvertOpen,
     setActiveLead: wfActions.setActiveLead,
-    setSubmitError,
     handleSearchChange,
     handleStatusFilterChange,
     handlePageChange,
@@ -228,9 +212,12 @@ export function useLeadsViewModel(initialSearch?: string) {
     handleQualifyLead: wfActions.handleQualifyLead,
     handleLinkParty: wfActions.handleLinkParty,
     handleConvertLead: wfActions.handleConvertLead,
+    handleAssignLeadOwner,
+    linkPartyBeforeConvert,
     openQualifyDialog: wfActions.openQualifyDialog,
     openLinkPartyDialog: wfActions.openLinkPartyDialog,
     openConvertDialog: wfActions.openConvertDialog,
+    openAssignOwnerDialog,
     handleUpdateLeadStatus: wfActions.handleUpdateLeadStatus,
     handleTransitionSubmit,
     lookupCandidateParties: wfActions.lookupCandidateParties,
@@ -238,46 +225,10 @@ export function useLeadsViewModel(initialSearch?: string) {
     items: state.items,
     loading: state.stage === "loading",
     error: state.error,
-    pagination: {
-      page: state.page || 1,
-      currentPage: state.page || 1,
-      pageSize: state.pageSize || 20,
-      itemsCount: state.totalCount,
-      pagesCount: Math.max(1, Math.ceil(state.totalCount / (state.pageSize || 20))),
-      totalCount: state.totalCount,
-      totalPages: Math.max(1, Math.ceil(state.totalCount / (state.pageSize || 20))),
-      hasNextPage: state.page * state.pageSize < state.totalCount,
-      hasPreviousPage: state.page > 1,
-      onPageChange: handlePageChange,
-      onPageSizeChange: handlePageSizeChange,
-    },
+    pagination: buildLeadsPagination(state.page, state.pageSize, state.totalCount, handlePageChange, handlePageSizeChange),
     searchValue: search,
-    selectedItems,
-    setSelectedItems,
     isCreateModalOpen: false,
     setIsCreateModalOpen: handleSetIsCreateOpen,
-    isEditModalOpen,
-    setIsEditModalOpen,
-    viewModalOpen,
-    setViewModalOpen,
-    editingItem,
-    viewItem,
-    openEditModal: (item: CrmLead) => {
-      setEditingItem(item);
-      setIsEditModalOpen(true);
-    },
-    closeEditModal: () => {
-      setIsEditModalOpen(false);
-      setEditingItem(null);
-    },
-    openViewModal: (item: CrmLead) => {
-      setViewItem(item);
-      setViewModalOpen(true);
-    },
-    closeViewModal: () => {
-      setViewModalOpen(false);
-      setViewItem(null);
-    },
     changePage: handlePageChange,
     changePageSize: handlePageSizeChange,
     refreshItems: refresh,

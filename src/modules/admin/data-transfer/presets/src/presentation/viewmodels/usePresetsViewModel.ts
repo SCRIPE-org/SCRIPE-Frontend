@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@core/ui/sileo-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useAdminContext } from "@core/hooks/useAdminContext";
-import { isTenantRequiredError } from "@core/data-exchange/domain/tenant-errors";
+import { isTenantRequiredError } from "@core/data-exchange";
 import { getDataTransferContainer } from "../../../../di";
 import type { DataExchangePreset } from "../../domain/entities/DataExchangePreset";
 import {
@@ -55,6 +55,12 @@ export function usePresetsViewModel(): UsePresetsViewModelReturn {
     setPageState(1);
   }, []);
 
+  const resetFilters = useCallback(() => {
+    setSearchState("");
+    setEntityFilterState("all");
+    setPageState(1);
+  }, []);
+
   const setPageSize = useCallback((nextSize: number) => {
     const valid = Number.isFinite(nextSize) && nextSize > 0 ? Math.floor(nextSize) : 10;
     setPageSizeState(valid);
@@ -96,7 +102,8 @@ export function usePresetsViewModel(): UsePresetsViewModelReturn {
     retry: (failureCount, err) => !isTenantRequiredError(err) && failureCount < 2,
   });
 
-  const isTenantRequired = isTenantRequiredError(error);
+  const isTenantRequired = !activeTenantId || isTenantRequiredError(error);
+  const hasActiveFilters = Boolean(search.trim()) || entityFilter !== "all";
 
   const observedEntityKeys = rawPresets.map((p: DataExchangePreset) => p.entityKey);
   const entityFilterOptions = buildPresetEntityFilterOptions(
@@ -174,7 +181,7 @@ export function usePresetsViewModel(): UsePresetsViewModelReturn {
     mutationFn: async (id: string) => {
       return repo.deletePreset(id);
     },
-    onSuccess: () => {
+    onSuccess: (_data, id) => {
       toast.success({
         title: t("adminDataTransferPresets.deleteDialog.title"),
         description: t("adminDataTransferPresets.toast.deleteSuccess", {
@@ -182,7 +189,7 @@ export function usePresetsViewModel(): UsePresetsViewModelReturn {
         }),
       });
       setIsDeleteDialogOpen(false);
-      setPresetToDelete(null);
+      setPresetToDelete((current) => (current?.id === id ? null : current));
       void queryClient.invalidateQueries({ queryKey: ["data-transfer", "presets"] });
     },
     onError: () => {
@@ -260,6 +267,8 @@ export function usePresetsViewModel(): UsePresetsViewModelReturn {
     search,
     entityFilter,
     entityFilterOptions,
+    hasActiveFilters,
+    resetFilters,
     setSearch,
     setEntityFilter,
     refetch,

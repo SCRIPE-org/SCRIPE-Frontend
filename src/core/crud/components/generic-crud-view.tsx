@@ -41,6 +41,12 @@ import { ErrorMessage } from "@core/ui/error-message";
 import { EmptyState } from "@core/ui/empty-state";
 import { PageHeader } from "@core/ui/page-header";
 import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@core/ui/tooltip";
 import { useEnhancedDelete } from "@core/hooks/use-enhanced-delete";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useSettings } from "@core/providers/settings-provider";
@@ -505,6 +511,7 @@ interface GenericCrudViewProps<T> {
     value: string;
     onChange: (term: string) => void;
     inputRef?: React.RefObject<HTMLInputElement | null>;
+    placeholder?: string;
   };
 
   // New configuration-based props
@@ -965,15 +972,19 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
       })()
     : undefined;
 
-  const search =
-    propSearch ||
-    (config && config.searchConfig?.enabled !== false
+  const search = propSearch
+    ? {
+        ...propSearch,
+        placeholder: propSearch.placeholder ?? config?.searchConfig?.placeholder,
+      }
+    : config && config.searchConfig?.enabled !== false
       ? {
           value: viewModel.searchValue,
           onChange: viewModel.handleSearchChange,
           inputRef: viewModel.searchInputRef,
+          placeholder: config.searchConfig?.placeholder,
         }
-      : undefined);
+      : undefined;
 
   // ========================================
   // PERMISSION CHECKING LOGIC
@@ -1485,24 +1496,49 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
               ?.filter(
                 (action) => !action.requiredPermission || hasPermission(action.requiredPermission)
               )
-              .map((action, index) => (
-                <Button
-                  key={index}
-                  onClick={() => handleCustomAction(action)}
-                  variant={action.variant || "default"}
-                  size={getButtonSize()}
-                  className={cn("flex-1 sm:flex-none", action.className)}
-                  loading={action.loading}
-                  disabled={action.disabled}
-                >
-                  {!action.loading && action.icon && (
-                    <span className="me-2" aria-hidden="true">
-                      {action.icon}
-                    </span>
-                  )}
-                  {action.label}
-                </Button>
-              ))}
+              .map((action, index) => {
+                const buttonNode = (
+                  <Button
+                    key={action.tooltip ? undefined : index}
+                    onClick={() => handleCustomAction(action)}
+                    variant={action.variant || "default"}
+                    size={getButtonSize()}
+                    className={cn(
+                      action.tooltip ? "w-full sm:w-auto" : "flex-1 sm:flex-none",
+                      action.className
+                    )}
+                    loading={action.loading}
+                    disabled={action.disabled}
+                  >
+                    {!action.loading && action.icon && (
+                      <span className="me-2" aria-hidden="true">
+                        {action.icon}
+                      </span>
+                    )}
+                    {action.label}
+                  </Button>
+                );
+
+                if (!action.tooltip) {
+                  return buttonNode;
+                }
+
+                return (
+                  <TooltipProvider key={index} delayDuration={200}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span
+                          className="inline-flex flex-1 sm:flex-none"
+                          tabIndex={action.disabled ? 0 : undefined}
+                        >
+                          {buttonNode}
+                        </span>
+                      </TooltipTrigger>
+                      <TooltipContent>{action.tooltip}</TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                );
+              })}
             {config?.enableBulkActions === true &&
               viewModel.selectedItems.length > 0 &&
               config?.bulkActions
@@ -1756,6 +1792,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
           onSearch={search?.onChange}
           searchValue={search?.value}
           searchInputRef={search?.inputRef}
+          searchPlaceholder={search?.placeholder}
           // The empty branch routes through the core EmptyState, so every CRUD
           // list inherits the nexus empty anatomy. `bare` because the table
           // container already draws the surface; customTableProps can still

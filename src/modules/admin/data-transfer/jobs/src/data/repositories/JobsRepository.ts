@@ -1,6 +1,8 @@
 import type { PagedResult } from "@core/interfaces/common.interface";
-import type { DataExchangeArtifactKind } from "@core/data-exchange/domain/types";
-import { DataTransferJob } from "../../domain/entities/DataTransferJob";
+import {
+  DataTransferJob,
+  type DataTransferArtifactKind,
+} from "../../domain/entities/DataTransferJob";
 import type {
   IJobsRepository,
   JobsQueryParams,
@@ -90,7 +92,7 @@ export class JobsRepository implements IJobsRepository {
    */
   async downloadArtifact(
     jobId: string,
-    artifactKind: DataExchangeArtifactKind,
+    artifactKind: DataTransferArtifactKind,
     signal?: AbortSignal
   ): Promise<Blob> {
     return this.service.fetchArtifactBlob(jobId, artifactKind, signal);

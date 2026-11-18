@@ -1,7 +1,9 @@
 "use client";
 
 import React from "react";
+import { AlertCircle } from "lucide-react";
 import { Badge } from "@core/ui/badge";
+import { Button } from "@core/ui/button";
 import {
   Select,
   SelectContent,
@@ -51,7 +53,9 @@ export function getIssueMessage(
     case "RESTRICTED":
       return t("dataExchange.tooltips.issueRestricted");
     default:
-      return issue.reasonCode;
+      return t("dataExchange.tooltips.issueGeneric", {
+        code: issue.reasonCode,
+      });
   }
 }
 
@@ -92,13 +96,17 @@ export function StudioMappingRow({
   return (
     <TableRow
       id={rowId}
-      className={cn(issue ? "bg-nx-danger/5 border-s-2 border-s-nx-danger" : "")}
+      className={cn(
+        issue
+          ? "border-nx-line bg-destructive/5 hover:bg-destructive/10 ltr:[&>td:first-child]:shadow-[inset_2px_0_0_var(--nx-danger)] rtl:[&>td:first-child]:shadow-[inset_-2px_0_0_var(--nx-danger)]"
+          : undefined
+      )}
     >
       <TableCell className="font-medium text-nx-ink">
         <div className="flex flex-col gap-1">
-          <span dir="ltr" className="w-fit font-mono text-xs">
+          <bdi dir="ltr" className="w-fit font-mono text-xs">
             {header}
-          </span>
+          </bdi>
           {isDiag && (
             <Badge variant="secondary" className="w-fit text-[10px]">
               {t("dataExchange.mapping.diagnosticAutoIgnored")}
@@ -113,11 +121,10 @@ export function StudioMappingRow({
               <Badge
                 key={`${header}-${i}`}
                 variant="secondary"
-                dir="ltr"
                 className="font-mono text-xs max-w-[120px] truncate"
                 title={s}
               >
-                {s}
+                <bdi dir="auto">{s}</bdi>
               </Badge>
             ))
           ) : (
@@ -132,58 +139,7 @@ export function StudioMappingRow({
           </span>
         ) : (
           <div className="space-y-1">
-            {issue ? (
-              <Tooltip>
-                <Select
-                  value={currentMapping?.targetFieldKey || UNMAPPED_SENTINEL}
-                  onValueChange={(val) =>
-                    onUpdateMapping({
-                      targetFieldKey: val === UNMAPPED_SENTINEL ? "" : val,
-                    })
-                  }
-                >
-                  <TooltipTrigger asChild>
-                    <SelectTrigger
-                      aria-label={`${t("dataExchange.mapping.targetField")}: ${header}`}
-                      className="border-nx-danger text-nx-danger font-medium h-8 text-xs"
-                      aria-invalid="true"
-                    >
-                      <SelectValue />
-                    </SelectTrigger>
-                  </TooltipTrigger>
-                  <SelectContent>
-                    <SelectItem value={UNMAPPED_SENTINEL}>
-                      {t("dataExchange.mapping.unmappedOption")}
-                    </SelectItem>
-                    {mappableTargets.map((col) => (
-                      <SelectItem key={col.key} value={col.key}>
-                        {(isAr ? col.displayNameAr : col.displayNameEn) +
-                          (col.isRequired ? ` *` : "")}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <TooltipContent
-                  side="top"
-                  className="max-w-sm border-nx-danger/35 bg-nx-surface text-nx-ink p-3 space-y-1"
-                >
-                  <p className="font-semibold text-nx-danger text-xs">
-                    {t("dataExchange.tooltips.incompatibleHeader")}: {issue.reasonCode}
-                  </p>
-                  <p className="text-[11px] text-nx-ink-2">{issueText}</p>
-                  {issue.sampleValue && (
-                    <p className="text-[11px] text-nx-ink-2">
-                      {t("dataExchange.tooltips.incompatibleSample", {
-                        sample: issue.sampleValue,
-                      })}
-                    </p>
-                  )}
-                  <p className="text-[11px] text-nx-ink-3">
-                    {t("dataExchange.tooltips.incompatibleSuggestion")}
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            ) : (
+            <div className="flex items-center gap-1.5">
               <Select
                 value={currentMapping?.targetFieldKey || UNMAPPED_SENTINEL}
                 onValueChange={(val) =>
@@ -194,7 +150,13 @@ export function StudioMappingRow({
               >
                 <SelectTrigger
                   aria-label={`${t("dataExchange.mapping.targetField")}: ${header}`}
-                  className="h-8 text-xs border-nx-line"
+                  className={cn(
+                    "h-8 text-xs",
+                    issue
+                      ? "border-destructive text-nx-danger font-medium"
+                      : "border-nx-line"
+                  )}
+                  aria-invalid={issue ? "true" : undefined}
                 >
                   <SelectValue />
                 </SelectTrigger>
@@ -210,10 +172,50 @@ export function StudioMappingRow({
                   ))}
                 </SelectContent>
               </Select>
-            )}
+              {issue && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      aria-label={`${t("dataExchange.tooltips.incompatibleHeader")}: ${header}`}
+                      className="h-7 w-7 p-0 text-nx-danger hover:bg-destructive/15 shrink-0"
+                    >
+                      <AlertCircle className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side="top"
+                    className="max-w-sm border-destructive/35 bg-nx-surface text-nx-ink p-3 space-y-1"
+                  >
+                    <p className="font-semibold text-nx-danger text-xs">
+                      {t("dataExchange.tooltips.incompatibleHeader")}:{" "}
+                      <bdi dir="ltr" className="font-mono">
+                        {issue.reasonCode}
+                      </bdi>
+                    </p>
+                    <p className="text-[11px] text-nx-ink-2">{issueText}</p>
+                    {issue.sampleValue && (
+                      <p className="text-[11px] text-nx-ink-2">
+                        {t("dataExchange.tooltips.incompatibleSample", {
+                          sample: issue.sampleValue,
+                        })}
+                      </p>
+                    )}
+                    <p className="text-[11px] text-nx-ink-3">
+                      {t("dataExchange.tooltips.incompatibleSuggestion")}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              )}
+            </div>
             {issue && (
               <p className="text-[11px] text-nx-danger font-medium">
-                {issueText} ({issue.reasonCode})
+                {issueText}{" "}
+                <bdi dir="ltr" className="font-mono">
+                  ({issue.reasonCode})
+                </bdi>
               </p>
             )}
           </div>

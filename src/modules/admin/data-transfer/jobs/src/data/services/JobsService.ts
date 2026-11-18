@@ -1,7 +1,7 @@
 import type { IApiService } from "@core/interfaces/api.interface";
 import { DATA_EXCHANGE_ENDPOINTS } from "@core/data-exchange/data/services/data-exchange.endpoints";
 import type { PagedResult } from "@core/interfaces/common.interface";
-import type { DataExchangeArtifactKind } from "@core/data-exchange/domain/types";
+import type { DataTransferArtifactKind } from "../../domain/entities/DataTransferJob";
 import type { DataTransferJobModel } from "../models/DataTransferJobModel";
 import type {
   IJobsService,
@@ -62,7 +62,7 @@ export class JobsService implements IJobsService {
    */
   async fetchArtifactBlob(
     jobId: string,
-    artifactKind: DataExchangeArtifactKind,
+    artifactKind: DataTransferArtifactKind,
     signal?: AbortSignal
   ): Promise<Blob> {
     return this.apiService.getBlob(

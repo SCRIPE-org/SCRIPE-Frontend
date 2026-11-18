@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -49,8 +49,20 @@ export function DataExchangeStudioOverlay({
   const { direction, language, t } = useI18n();
   const isAr = language === "ar";
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const clipboardTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastCopiedCsvRef = useRef<string | null>(null);
   const [confirmExitOpen, setConfirmExitOpen] = useState(false);
   const [confirmAction, setConfirmAction] = useState<"close" | "reset">("close");
+
+  const clearClipboardCleanupTimer = useCallback(() => {
+    if (clipboardTimerRef.current) {
+      clearTimeout(clipboardTimerRef.current);
+      clipboardTimerRef.current = null;
+    }
+    lastCopiedCsvRef.current = null;
+  }, []);
+
+  useEffect(() => clearClipboardCleanupTimer, [clearClipboardCleanupTimer]);
 
   const vm = useDataExchangeStudioViewModel({
     open,
@@ -70,10 +82,11 @@ export function DataExchangeStudioOverlay({
     (vm.step !== "results" || hasUnacknowledgedCredentials);
 
   const handleDirectClose = useCallback(() => {
+    clearClipboardCleanupTimer();
     setConfirmExitOpen(false);
     vm.resetWorkflow();
     onOpenChange(false);
-  }, [vm, onOpenChange]);
+  }, [clearClipboardCleanupTimer, vm, onOpenChange]);
 
   const handleRequestClose = useCallback(() => {
     if (hasUnsavedProgress) {
@@ -121,8 +134,35 @@ export function DataExchangeStudioOverlay({
   const handleCopyCredentials = async () => {
     const creds = vm.executeResult?.ephemeralCredentials;
     if (!creds || creds.length === 0) return;
-    await navigator.clipboard.writeText(buildCredentialsCsv(creds));
-    vm.setInfoBanner(t("dataExchange.results.credentialsCopied"));
+    const csvText = buildCredentialsCsv(creds);
+    const clipboard = typeof navigator !== "undefined" ? navigator.clipboard : undefined;
+    if (!clipboard || typeof clipboard.writeText !== "function") {
+      vm.setErrorBanner(t("dataExchange.errors.clipboardUnavailable"));
+      return;
+    }
+    try {
+      await clipboard.writeText(csvText);
+      vm.setInfoBanner(t("dataExchange.results.credentialsCopied"));
+      clearClipboardCleanupTimer();
+      lastCopiedCsvRef.current = csvText;
+      clipboardTimerRef.current = setTimeout(() => {
+        clipboardTimerRef.current = null;
+        const copied = lastCopiedCsvRef.current;
+        lastCopiedCsvRef.current = null;
+        const targetClipboard = typeof navigator !== "undefined" ? navigator.clipboard : undefined;
+        if (!copied || !targetClipboard?.writeText) return;
+        if (typeof targetClipboard.readText === "function") {
+          void targetClipboard
+            .readText()
+            .then((current) => (current === copied ? targetClipboard.writeText("") : undefined))
+            .catch(() => targetClipboard.writeText("").catch(() => undefined));
+        } else {
+          void targetClipboard.writeText("").catch(() => undefined);
+        }
+      }, 60_000);
+    } catch {
+      vm.setErrorBanner(t("dataExchange.errors.clipboardUnavailable"));
+    }
   };
 
   const handleCommitBackground = async () => {
@@ -198,7 +238,7 @@ export function DataExchangeStudioOverlay({
               setConfirmExitOpen(true);
             }
           }}
-          className="fixed inset-0 left-0 top-0 translate-x-0 translate-y-0 flex flex-col w-screen max-w-none h-screen max-h-none overflow-hidden rounded-none border-0 bg-nx-ground text-nx-ink p-0 gap-0 shadow-none data-[state=open]:slide-in-from-left-0 data-[state=open]:slide-in-from-top-0 data-[state=closed]:slide-out-to-left-0 data-[state=closed]:slide-out-to-top-0 data-[state=open]:zoom-in-100 data-[state=closed]:zoom-out-100 [&>button:last-child]:hidden"
+          className="fixed inset-0 translate-x-0 translate-y-0 flex flex-col w-full max-w-none h-[100dvh] max-h-none overflow-hidden rounded-none border-0 bg-nx-ground text-nx-ink p-0 gap-0 shadow-none data-[state=open]:slide-in-from-left-0 data-[state=open]:slide-in-from-top-0 data-[state=closed]:slide-out-to-left-0 data-[state=closed]:slide-out-to-top-0 data-[state=open]:zoom-in-100 data-[state=closed]:zoom-out-100 [&>button:last-child]:hidden"
         >
           <DialogTitle className="sr-only">{t("dataExchange.title")}</DialogTitle>
           <DialogDescription className="sr-only">{entityLabel}</DialogDescription>
@@ -238,6 +278,7 @@ export function DataExchangeStudioOverlay({
             infoBanner={vm.infoBanner}
             onDismissError={() => vm.setErrorBanner(null)}
             onDismissInfo={() => vm.setInfoBanner(null)}
+            onRetryError={!vm.primaryDescriptor && vm.step === "upload" ? vm.retryLoadMetadata : undefined}
           />
 
           <StudioStepRouter
@@ -264,6 +305,11 @@ export function DataExchangeStudioOverlay({
         open={confirmExitOpen}
         onConfirm={handleConfirmDialogAction}
         onCancel={() => setConfirmExitOpen(false)}
+        title={confirmAction === "reset" ? t("dataExchange.confirmExit.replaceFileTitle") : undefined}
+        description={
+          confirmAction === "reset" ? t("dataExchange.confirmExit.replaceFileDesc") : undefined
+        }
+        confirmText={confirmAction === "reset" ? t("dataExchange.actions.changeFile") : undefined}
       />
     </TooltipProvider>
   );

@@ -107,7 +107,7 @@ export function JobsSplitDetail({
         </Alert>
       )}
 
-      <div className="space-y-2 rounded-nx-control border border-nx-line bg-nx-raised/40 p-3">
+      <div className="space-y-2 rounded-nx-control border border-nx-line bg-nx-raised p-3">
         <div className="flex items-center justify-between text-xs">
           <span className="font-medium text-nx-ink-2">
             {t("adminDataTransferJobs.columns.progress")}
@@ -125,7 +125,7 @@ export function JobsSplitDetail({
       </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <div className="rounded-nx-control border border-nx-line bg-nx-raised/40 p-3 text-xs">
+        <div className="rounded-nx-control border border-nx-line bg-nx-raised p-3 text-xs">
           <p className="text-nx-ink-3">{t("adminDataTransferJobs.columns.metrics")}</p>
           <p dir="ltr" className="mt-1 font-mono text-sm font-semibold tabular-nums w-fit">
             <span className="text-nx-success">{job.committedRows.toLocaleString()}</span>
@@ -136,37 +136,49 @@ export function JobsSplitDetail({
           </p>
         </div>
 
-        <div className="rounded-nx-control border border-nx-line bg-nx-raised/40 p-3 text-xs">
+        <div className="rounded-nx-control border border-nx-line bg-nx-raised p-3 text-xs">
           <p className="text-nx-ink-3">{t("adminDataTransferJobs.detail.createdUpdatedRows")}</p>
           <p dir="ltr" className="mt-1 font-mono text-sm font-semibold text-nx-ink tabular-nums w-fit">
             {job.createdRows.toLocaleString()} / {job.updatedRows.toLocaleString()}
           </p>
         </div>
 
-        <div className="rounded-nx-control border border-nx-line bg-nx-raised/40 p-3 text-xs">
+        <div className="rounded-nx-control border border-nx-line bg-nx-raised p-3 text-xs">
           <p className="text-nx-ink-3">{t("adminDataTransferJobs.detail.validRows")}</p>
           <p dir="ltr" className="mt-1 font-mono text-sm font-semibold text-nx-ink tabular-nums w-fit">
             {job.validRows.toLocaleString()}
           </p>
         </div>
 
-        <div className="rounded-nx-control border border-nx-line bg-nx-raised/40 p-3 text-xs">
+        <div className="rounded-nx-control border border-nx-line bg-nx-raised p-3 text-xs">
           <p className="text-nx-ink-3">{t("adminDataTransferJobs.detail.fileName")}</p>
           <p dir="ltr" className="mt-1 font-mono text-xs font-medium text-nx-ink truncate">
             {job.originalFileName || t("common.none")}
           </p>
         </div>
 
-        <div className="rounded-nx-control border border-nx-line bg-nx-raised/40 p-3 text-xs">
+        <div className="rounded-nx-control border border-nx-line bg-nx-raised p-3 text-xs">
           <p className="text-nx-ink-3">{t("adminDataTransferJobs.detail.importMode")}</p>
-          <p className="mt-1 font-mono text-xs font-medium text-nx-ink">
-            {job.importMode} · {job.fileFormat.toUpperCase()}
+          <p className="mt-1 text-xs font-medium text-nx-ink">
+            {t(`adminDataTransferJobs.modes.${job.importMode}`, {
+              defaultValue: job.importMode,
+            })}{" "}
+            <span aria-hidden="true">·</span>{" "}
+            <bdi dir="ltr" className="font-mono">
+              {job.fileFormat.toUpperCase()}
+            </bdi>
           </p>
         </div>
 
-        <div className="rounded-nx-control border border-nx-line bg-nx-raised/40 p-3 text-xs">
+        <div className="rounded-nx-control border border-nx-line bg-nx-raised p-3 text-xs">
           <p className="text-nx-ink-3">{t("adminDataTransferJobs.detail.onboardingMode")}</p>
-          <p className="mt-1 font-mono text-xs font-medium text-nx-ink">{job.onboardingMode}</p>
+          <p className="mt-1 text-xs font-medium text-nx-ink">
+            {job.onboardingMode
+              ? t(`adminDataTransferJobs.onboardingModes.${job.onboardingMode}`, {
+                  defaultValue: job.onboardingMode,
+                })
+              : t("common.none")}
+          </p>
         </div>
       </div>
 

@@ -1,7 +1,34 @@
-import type {
-  DataExchangeColumnMapping,
-  DataExchangeImportMode,
-} from "@core/data-exchange/domain/types";
+/** Import mode assigned to a saved mapping preset. */
+export type PresetImportMode = "Insert" | "Update" | "Upsert";
+
+/** Column normalization rules attached to a preset mapping entry. */
+export interface PresetTransformRule {
+  trim?: boolean;
+  uppercase?: boolean;
+  lowercase?: boolean;
+  defaultValue?: string | null;
+  dateFormat?: string | null;
+  sourceTimeZoneId?: string | null;
+  canonicalizeNullTokens?: boolean;
+  collapseWhitespace?: boolean;
+  normalizeUnicodeCompatibility?: boolean;
+  stripArabicDiacritics?: boolean;
+  normalizeArabicLetters?: boolean;
+  caseMode?: "None" | "Lower" | "Upper" | "Title";
+  stripCurrencyAndGrouping?: boolean;
+  convertAccountingNegatives?: boolean;
+  defaultCountryDialCode?: string | null;
+  normalizeEmailAddress?: boolean;
+  multiValueDelimiter?: string | null;
+}
+
+/** Single column mapping definition inside a saved preset. */
+export interface PresetColumnMapping {
+  sourceColumnHeader: string;
+  targetFieldKey: string;
+  transform?: PresetTransformRule | null;
+  resolveByField?: string | null;
+}
 
 /**
  * Domain entity representing a saved column mapping preset.
@@ -10,8 +37,8 @@ export class DataExchangePreset {
   readonly id: string;
   readonly entityKey: string;
   readonly name: string;
-  readonly importMode: DataExchangeImportMode;
-  readonly mappings: DataExchangeColumnMapping[];
+  readonly importMode: PresetImportMode;
+  readonly mappings: PresetColumnMapping[];
   readonly isDefault: boolean;
   readonly createdAt: string;
 
@@ -19,8 +46,8 @@ export class DataExchangePreset {
     id: string;
     entityKey: string;
     name: string;
-    importMode?: DataExchangeImportMode;
-    mappings?: DataExchangeColumnMapping[];
+    importMode?: PresetImportMode;
+    mappings?: PresetColumnMapping[];
     isDefault?: boolean;
     createdAt?: string;
   }) {

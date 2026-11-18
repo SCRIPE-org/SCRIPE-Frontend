@@ -14,6 +14,8 @@ import {
   type CrmDealQuoteLineItem,
   type CrmDealCommercialPackage,
 } from "../../domain/constants/crmSettingsDefaults";
+import { getCrmContainer } from "@modules/crm/di";
+import { serializeCrmTenantCustomConfig } from "./crmWorkflowsAuthAndConfigHelpers";
 import {
   useCrmWorkflowsStore,
   DEFAULT_CRM_SCOPED_ROLES,
@@ -95,6 +97,71 @@ export function parseCustomGovernanceConfigJson(
     configuredLossReasons,
     configuredActivityTypes,
     dealCommercialPackages,
+  };
+}
+
+export function syncCrmTenantSettingsToServer(st: any, baseOverride?: string) {
+  const base = (baseOverride || st.tenantBaseCurrency || "SAR").toUpperCase();
+  try {
+    const repo = getCrmContainer()?.overviewRepository;
+    if (typeof repo?.updateTenantSettings === "function") {
+      void repo.updateTenantSettings({
+        baseCurrencyCode: base, defaultDealCurrencyCode: baseOverride ? base : st.defaultDealCurrency,
+        autoConvertAmountsToBase: st.autoConvertToBase, showDualCurrencyBadges: st.showOriginalCurrencyOnConverted,
+        allowUserCurrencyOverride: st.allowUserCurrencyOverride, snapshotExchangeRateOnDealCreation: st.snapshotExchangeRateOnDealCreation,
+        stageGateStrictness: st.stageGateStrictness, requireVerifiedPartyOnProposal: st.requirePartyOnProposal,
+        requireCloseNotesOnWin: st.requireCloseNotesOnWin, defaultLeadSource: st.defaultLeadSource,
+        slaLeadResponseHours: st.slaLeadResponseHours, stalledDealThresholdDays: st.stalledDealThresholdDays,
+        duplicateDetectionMode: st.duplicateDetectionMode, leadAutoAssignmentRule: st.leadAutoAssignmentRule,
+        enableCatalogPricingQuoteHandoff: st.enableCatalogPricingQuoteHandoff, enableVenueAcademyCommercialHandoff: st.enableVenueAcademyCommercialHandoff,
+        autoCreateWorkItemsOnStageMove: st.autoCreateWorkItemsOnStageMove, defaultCommunicationChannel: st.defaultCommunicationChannel,
+        autoSyncPartyKernelOnConvert: st.autoSyncPartyKernelOnConvert, defaultDealViewMode: st.defaultDealViewMode,
+        defaultPipelineCode: st.defaultPipelineCode, cardDensity: st.cardDensity,
+        customFieldsConfigJson: serializeCrmTenantCustomConfig(
+          st.crmCustomFields, st.crmRoles, st.buyingCommitteeRoles, st.configuredLossReasons, st.configuredActivityTypes, st.dealCommercialPackages,
+        ),
+      }).catch(() => undefined);
+    }
+  } catch { /* noop */ }
+}
+
+export function mapHydratedSettingsResponse(data: any, parsed: ReturnType<typeof parseCustomGovernanceConfigJson>) {
+  const t = data.tenantSettings, u = data.userPreferences;
+  return {
+    baseCurrency: (data.effectiveBaseCurrencyCode || "SAR").toUpperCase(),
+    tenantBaseCurrency: (t.baseCurrencyCode || "SAR").toUpperCase(),
+    userOverrideCurrency: u.overrideCurrencyCode ? u.overrideCurrencyCode.toUpperCase() : null,
+    defaultDealCurrency: (t.defaultDealCurrencyCode || "SAR").toUpperCase(),
+    autoConvertToBase: data.effectiveAutoConvertToBase,
+    showOriginalCurrencyOnConverted: data.effectiveShowDualCurrencyBadges,
+    allowUserCurrencyOverride: t.allowUserCurrencyOverride,
+    snapshotExchangeRateOnDealCreation: t.snapshotExchangeRateOnDealCreation,
+    stageGateStrictness: t.stageGateStrictness,
+    requirePartyOnProposal: t.requireVerifiedPartyOnProposal,
+    requireCloseNotesOnWin: t.requireCloseNotesOnWin,
+    defaultLeadSource: t.defaultLeadSource,
+    slaLeadResponseHours: t.slaLeadResponseHours,
+    stalledDealThresholdDays: t.stalledDealThresholdDays,
+    duplicateDetectionMode: t.duplicateDetectionMode,
+    leadAutoAssignmentRule: t.leadAutoAssignmentRule,
+    enableCatalogPricingQuoteHandoff: t.enableCatalogPricingQuoteHandoff,
+    enableVenueAcademyCommercialHandoff: t.enableVenueAcademyCommercialHandoff,
+    autoCreateWorkItemsOnStageMove: t.autoCreateWorkItemsOnStageMove,
+    defaultCommunicationChannel: t.defaultCommunicationChannel,
+    autoSyncPartyKernelOnConvert: t.autoSyncPartyKernelOnConvert,
+    defaultDealViewMode: u.defaultDealViewMode,
+    defaultPipelineCode: u.defaultPipelineCode,
+    cardDensity: u.cardDensity,
+    dailyDigestEnabled: u.dailyDigestEnabled,
+    stageMoveNotificationsEnabled: u.stageMoveNotificationsEnabled,
+    crmCustomFields: parsed.customFields,
+    crmRoles: parsed.crmRoles,
+    buyingCommitteeRoles: parsed.buyingCommitteeRoles,
+    configuredLossReasons: parsed.configuredLossReasons,
+    configuredActivityTypes: parsed.configuredActivityTypes,
+    dealCommercialPackages: parsed.dealCommercialPackages,
+    isHydrating: false,
+    isServerHydrated: true,
   };
 }
 

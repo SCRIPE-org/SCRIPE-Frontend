@@ -30,8 +30,14 @@ export function DataExchangeFloatingDock() {
     <aside
       aria-label={t("dataExchange.dock.title")}
       dir={vm.direction}
-      className="fixed bottom-4 end-4 z-40 w-96 max-w-[calc(100vw-2rem)] select-none"
+      className="fixed bottom-4 end-4 z-overlay w-96 max-w-[calc(100vw-2rem)] select-none"
     >
+      <div aria-live="polite" className="sr-only">
+        {t("dataExchange.dock.activeSummarySr", {
+          active: vm.activeCount,
+          total: vm.jobs.length,
+        })}
+      </div>
       <Card className="border border-nx-line bg-nx-surface text-nx-ink">
         <CardHeader className="flex flex-row items-center justify-between p-3 border-b border-nx-line">
           <div className="flex items-center gap-2">
@@ -89,6 +95,7 @@ export function DataExchangeFloatingDock() {
                 key={job.id}
                 job={job}
                 isCancelling={vm.cancellingJobIds[job.id] || false}
+                downloadingKind={vm.downloadingJobIds?.[job.id] ?? null}
                 onCancelJob={vm.handleCancelJob}
                 onDownload={vm.handleDownload}
                 onDismiss={vm.dismissJob}

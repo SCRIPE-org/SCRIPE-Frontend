@@ -3,6 +3,7 @@ import { PublicApiService } from "./services/public-api.service";
 import { NavigationRepository } from "./navigation";
 import { DataExchangeService } from "./data-exchange/data/services/DataExchangeService";
 import { DataExchangeRepository } from "./data-exchange/data/repositories/DataExchangeRepository";
+import { useAppStore } from "./store/useAppStore";
 import type { IApiService } from "./interfaces/api.interface";
 import type { IPublicApiService } from "./interfaces/public-api.interface";
 import type { INavigationRepository } from "./navigation";
@@ -41,7 +42,19 @@ function initContainer(): CoreContainer {
   const publicApiService = new PublicApiService(apiService);
   const navigationRepository = new NavigationRepository(apiService);
   const dataExchangeService = new DataExchangeService(apiService);
-  const dataExchangeRepository = new DataExchangeRepository(dataExchangeService);
+  const tenantAwareApi = apiService as IApiService & {
+    getTenantContext?: () => string | null;
+  };
+  const dataExchangeRepository = new DataExchangeRepository(dataExchangeService, () => {
+    const state = useAppStore?.getState?.();
+    const tenant =
+      tenantAwareApi.getTenantContext?.() ??
+      state?.user?.tenantId ??
+      (state?.user === undefined ? state?.tenantCode : null) ??
+      "platform";
+    const user = state?.user?.id ?? "anon";
+    return `${tenant}:${user}`;
+  });
 
   return {
     apiService,
@@ -59,5 +72,12 @@ export function getCoreContainer(): CoreContainer {
   if (!container) {
     container = initContainer();
   }
+  return container;
+}
+
+/**
+ * Returns the initialized core container without forcing instantiation, or null if not yet created.
+ */
+export function peekCoreContainer(): CoreContainer | null {
   return container;
 }

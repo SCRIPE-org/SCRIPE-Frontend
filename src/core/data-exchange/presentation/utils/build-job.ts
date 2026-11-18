@@ -19,7 +19,7 @@ export function buildJobFromExecution(
   if (polledJob) return polledJob;
   return {
     id: result.jobId,
-    kind: "Import",
+    kind: isMultiSheet ? "MultiSheetMigration" : "Import",
     entityKey: inspectResult?.entityKey ?? entityKey,
     isMultiSheet,
     importMode,

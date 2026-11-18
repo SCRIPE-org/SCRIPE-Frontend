@@ -7,7 +7,12 @@ import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { cn } from "@core/common/utils";
-import { CRM_CURRENCY_OPTIONS } from "@modules/crm";
+import {
+  CRM_CURRENCY_OPTIONS,
+  CrmEntitySearchSelect,
+  type CrmEntityQuickCreateInitialValues,
+  type CrmEntitySearchItem,
+} from "@modules/crm";
 import type { DealKind } from "../../domain/entities/LeadEntity";
 
 export interface ConvertLeadFormFieldsProps {
@@ -28,6 +33,15 @@ export interface ConvertLeadFormFieldsProps {
   dealKind: DealKind;
   onDealKindChange: (val: DealKind) => void;
   dealKinds: Array<{ key: DealKind; label: string }>;
+  accountPartyId: string;
+  accountId: string;
+  initialAccountLabel?: string;
+  accountQuickCreateDefaults?: CrmEntityQuickCreateInitialValues;
+  onAccountChange: (partyId: string, item?: CrmEntitySearchItem) => void;
+  contactPartyId: string;
+  initialContactLabel?: string;
+  contactQuickCreateDefaults?: CrmEntityQuickCreateInitialValues;
+  onContactChange: (partyId: string) => void;
   rationale: string;
   onRationaleChange: (val: string) => void;
 }
@@ -50,6 +64,15 @@ export function ConvertLeadFormFields({
   dealKind,
   onDealKindChange,
   dealKinds,
+  accountPartyId,
+  accountId,
+  initialAccountLabel,
+  accountQuickCreateDefaults,
+  onAccountChange,
+  contactPartyId,
+  initialContactLabel,
+  contactQuickCreateDefaults,
+  onContactChange,
   rationale,
   onRationaleChange,
 }: ConvertLeadFormFieldsProps) {
@@ -163,6 +186,41 @@ export function ConvertLeadFormFields({
             );
           })}
         </div>
+      </div>
+
+      <div className="space-y-1.5">
+        <Label className="text-xs font-semibold text-nx-ink">{t("crmLeads.conversion.existingAccountLabel")}</Label>
+        <CrmEntitySearchSelect
+          data-testid="convert-lead-account-select"
+          entityKind="account"
+          valueMode="partyId"
+          value={accountPartyId}
+          initialLabel={initialAccountLabel}
+          onChange={onAccountChange}
+          placeholder={t("crmLeads.conversion.existingAccountPlaceholder")}
+          enableQuickCreate
+          quickCreateDefaultKind="account"
+          quickCreateInitialValues={accountQuickCreateDefaults}
+          allowClear
+        />
+      </div>
+
+      <div className="space-y-1.5">
+        <Label className="text-xs font-semibold text-nx-ink">{t("crmLeads.conversion.existingContactLabel")}</Label>
+        <CrmEntitySearchSelect
+          data-testid="convert-lead-contact-select"
+          entityKind="contact"
+          valueMode="partyId"
+          accountId={accountId || undefined}
+          value={contactPartyId}
+          initialLabel={initialContactLabel}
+          onChange={(val: string) => onContactChange(val)}
+          placeholder={t("crmLeads.conversion.existingContactPlaceholder")}
+          enableQuickCreate
+          quickCreateDefaultKind="contact"
+          quickCreateInitialValues={contactQuickCreateDefaults}
+          allowClear
+        />
       </div>
 
       <div className="sm:col-span-2 space-y-1.5">

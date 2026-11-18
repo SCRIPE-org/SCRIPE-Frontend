@@ -11,6 +11,14 @@ import { useCrmCurrency } from "./useCrmCurrency";
 
 export type { CrmCurrencyPipelineBreakdown, CrmPipelineReport as CrmCommercialReport };
 
+/** Neutralizes spreadsheet formula injection (`=`, `+`, `-`, `@`, `\t`, `\r`, `\n`) and applies RFC4180 quoting. */
+export function formatSafeCsvCell(value: unknown): string {
+  const str = value === null || value === undefined ? "" : String(value);
+  const needsPrefix = /^[=+\-@\t\r\n]/.test(str) || /^[ \t\r\n]*[=+\-@]/.test(str);
+  const safe = needsPrefix ? `'${str}` : str;
+  return `"${safe.replace(/"/g, '""')}"`;
+}
+
 export interface CrmReportsState {
   stage: "idle" | "loading" | "success" | "failed";
   report: CrmPipelineReport | null;
@@ -134,44 +142,47 @@ export function useCrmReportsViewModel() {
     const lines: string[] = [
       "Section,Metric,Currency,Count,TotalValue,WeightedForecast,ProbabilityPercent",
     ];
+    const pushCsvRow = (cells: unknown[]) => {
+      lines.push(cells.map(formatSafeCsvCell).join(","));
+    };
 
     if (breakdown) {
-      lines.push(
-        `Pipeline Summary,Active Open Deals,${breakdown.currencyCode},${breakdown.openDealsCount},${breakdown.totalOpenValue ?? 0},${breakdown.totalWeightedForecastValue ?? 0},`
-      );
-      lines.push(
-        `Pipeline Summary,Closed Won Deals,${breakdown.currencyCode},${breakdown.wonDealsCount},${breakdown.totalWonValue ?? 0},,100`
-      );
-      lines.push(
-        `Pipeline Summary,Closed Lost Deals,${breakdown.currencyCode},${breakdown.lostDealsCount},${breakdown.totalLostValue ?? 0},,0`
-      );
+      pushCsvRow(["Pipeline Summary", "Active Open Deals", breakdown.currencyCode, breakdown.openDealsCount, breakdown.totalOpenValue ?? 0, breakdown.totalWeightedForecastValue ?? 0, ""]);
+      pushCsvRow(["Pipeline Summary", "Closed Won Deals", breakdown.currencyCode, breakdown.wonDealsCount, breakdown.totalWonValue ?? 0, "", 100]);
+      pushCsvRow(["Pipeline Summary", "Closed Lost Deals", breakdown.currencyCode, breakdown.lostDealsCount, breakdown.totalLostValue ?? 0, "", 0]);
       for (const st of breakdown.stages) {
-        lines.push(
-          `Stage Breakdown,"${st.labelEn}",${breakdown.currencyCode},${st.dealCount},${st.totalAmount ?? 0},${st.weightedForecastAmount ?? 0},${st.probabilityPercent}`
-        );
+        pushCsvRow([
+          "Stage Breakdown",
+          st.labelEn,
+          breakdown.currencyCode,
+          st.dealCount,
+          st.totalAmount ?? 0,
+          st.weightedForecastAmount ?? 0,
+          st.probabilityPercent,
+        ]);
       }
     }
 
     const f = report.leadFunnel;
-    lines.push(`Lead Funnel,Total Leads,,${f.totalLeads},,,`);
-    lines.push(`Lead Funnel,New Intake,,${f.newCount},,,`);
-    lines.push(`Lead Funnel,Working,,${f.workingCount},,,`);
-    lines.push(`Lead Funnel,Qualified,,${f.qualifiedCount},,,`);
-    lines.push(`Lead Funnel,Converted,,${f.convertedCount},,,${f.conversionRatePercent}`);
-    lines.push(`Lead Funnel,Disqualified,,${f.disqualifiedCount},,,`);
+    pushCsvRow(["Lead Funnel", "Total Leads", "", f.totalLeads, "", "", ""]);
+    pushCsvRow(["Lead Funnel", "New Intake", "", f.newCount, "", "", ""]);
+    pushCsvRow(["Lead Funnel", "Working", "", f.workingCount, "", "", ""]);
+    pushCsvRow(["Lead Funnel", "Qualified", "", f.qualifiedCount, "", "", ""]);
+    pushCsvRow(["Lead Funnel", "Converted", "", f.convertedCount, "", "", f.conversionRatePercent]);
+    pushCsvRow(["Lead Funnel", "Disqualified", "", f.disqualifiedCount, "", "", ""]);
 
     const w = report.winLoss;
-    lines.push(`Win/Loss Velocity,Total Closed,,${w.totalClosedDeals},,,${w.winRatePercent}`);
-    lines.push(`Win/Loss Velocity,Won Count,,${w.wonCount},,,`);
-    lines.push(`Win/Loss Velocity,Lost Count,,${w.lostCount},,,`);
-    lines.push(`Win/Loss Velocity,Avg Days to Close,,${w.avgCycleDays},,,`);
+    pushCsvRow(["Win/Loss Velocity", "Total Closed", "", w.totalClosedDeals, "", "", w.winRatePercent]);
+    pushCsvRow(["Win/Loss Velocity", "Won Count", "", w.wonCount, "", "", ""]);
+    pushCsvRow(["Win/Loss Velocity", "Lost Count", "", w.lostCount, "", "", ""]);
+    pushCsvRow(["Win/Loss Velocity", "Avg Days to Close", "", w.avgCycleDays, "", "", ""]);
 
     const a = report.activities;
-    lines.push(`Activities,Total Activities,,${a.totalActivitiesCount},,,`);
-    lines.push(`Activities,Calls Logged,,${a.callsCount},,,`);
-    lines.push(`Activities,Meetings Logged,,${a.meetingsCount},,,`);
-    lines.push(`Activities,Communications Sent,,${a.communicationsSentCount},,,`);
-    lines.push(`Activities,Follow-Ups Linked,,${a.followUpsCreatedCount},,,`);
+    pushCsvRow(["Activities", "Total Activities", "", a.totalActivitiesCount, "", "", ""]);
+    pushCsvRow(["Activities", "Calls Logged", "", a.callsCount, "", "", ""]);
+    pushCsvRow(["Activities", "Meetings Logged", "", a.meetingsCount, "", "", ""]);
+    pushCsvRow(["Activities", "Communications Sent", "", a.communicationsSentCount, "", "", ""]);
+    pushCsvRow(["Activities", "Follow-Ups Linked", "", a.followUpsCreatedCount, "", "", ""]);
 
     try {
       if (typeof window !== "undefined" && typeof URL?.createObjectURL === "function") {

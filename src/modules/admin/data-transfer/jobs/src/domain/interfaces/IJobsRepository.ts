@@ -1,6 +1,8 @@
 import type { PagedResult } from "@core/interfaces/common.interface";
-import type { DataExchangeArtifactKind } from "@core/data-exchange/domain/types";
-import type { DataTransferJob } from "../entities/DataTransferJob";
+import type {
+  DataTransferArtifactKind,
+  DataTransferJob,
+} from "../entities/DataTransferJob";
 
 /**
  * Filter parameters for querying data transfer jobs.
@@ -40,7 +42,7 @@ export interface IJobsRepository {
    */
   downloadArtifact(
     jobId: string,
-    artifactKind: DataExchangeArtifactKind,
+    artifactKind: DataTransferArtifactKind,
     signal?: AbortSignal
   ): Promise<Blob>;
 }

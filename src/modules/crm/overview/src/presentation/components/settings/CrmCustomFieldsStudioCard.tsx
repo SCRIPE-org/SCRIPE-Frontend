@@ -11,6 +11,8 @@ import { Checkbox } from "@core/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { Layers, Plus, Trash2, CheckCircle2 } from "lucide-react";
 import type { CrmEntityTypeKey, CrmModuleSettingsState, CrmCustomFieldDefinition } from "../../stores/useCrmSettingsStore";
+import { useCrmWorkflowsStore } from "../../stores/useCrmWorkflowsStore";
+import { CrmIntegrationsToggleGrid } from "./CrmIntegrationsToggleGrid";
 
 /** Props for CrmCustomFieldsStudioCard. */
 export interface CrmCustomFieldsStudioCardProps {
@@ -40,6 +42,8 @@ const STAGE_OPTIONS = [
 /** Domain 3 Card: Cross-Module SCRIPE Sports OS Integrations Hub & Custom Fields Studio. */
 export function CrmCustomFieldsStudioCard({ settings, onCreateCustomField, onNotifySaved }: CrmCustomFieldsStudioCardProps) {
   const { t, language } = useI18n();
+  const isRtl = language === "ar";
+  const workflows = useCrmWorkflowsStore((s) => s.workflows);
   const [cfEntityType, setCfEntityType] = useState<CrmEntityTypeKey>("crm.opportunity");
   const [cfKey, setCfKey] = useState("");
   const [cfLabelEn, setCfLabelEn] = useState("");
@@ -50,17 +54,54 @@ export function CrmCustomFieldsStudioCard({ settings, onCreateCustomField, onNot
   const [cfStageGate, setCfStageGate] = useState("default.proposal");
   const [isCreatingCf, setIsCreatingCf] = useState(false);
 
+  const supportsStageGate = cfEntityType === "crm.opportunity" || cfEntityType === "crm.lead";
+  const matchingWorkflowStages = workflows
+    .filter((wf) => (cfEntityType === "crm.lead" ? wf.entityType === "lead" : wf.entityType !== "lead"))
+    .flatMap((wf) => wf.stages ?? [])
+    .filter((stage) => stage.category !== "done" && stage.category !== "lost");
+
+  const stageOptions = (() => {
+    const seen = new Set<string>();
+    const dynamic: { key: string; label: string }[] = [];
+    for (const st of matchingWorkflowStages) {
+      if (!st.stageKey || seen.has(st.stageKey)) continue;
+      seen.add(st.stageKey);
+      dynamic.push({ key: st.stageKey, label: (isRtl && st.labelAr ? st.labelAr : st.labelEn) || st.stageKey });
+    }
+    if (dynamic.length > 0) {
+      return [{ key: "none", label: t("crm.settings.integrations.stageOptionNone") }, ...dynamic];
+    }
+    return STAGE_OPTIONS.map((st) => ({ key: st.key, label: t(st.labelKey) }));
+  })();
+
+  const effectiveStageGate = stageOptions.some((st) => st.key === cfStageGate) ? cfStageGate : "none";
+
   const handleSubmitField = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!cfKey.trim() || !cfLabelEn.trim()) return;
     setIsCreatingCf(true);
     try {
       const created = await onCreateCustomField({
-        entityTypeKey: cfEntityType, key: cfKey, labelEn: cfLabelEn, labelAr: cfLabelAr,
-        valueType: cfValueType, isRequired: cfRequired, optionsCsv: cfOptionsCsv, defaultStageGateKey: cfStageGate,
+        entityTypeKey: cfEntityType,
+        key: cfKey,
+        labelEn: cfLabelEn,
+        labelAr: cfLabelAr,
+        valueType: cfValueType,
+        isRequired: cfRequired,
+        optionsCsv: cfValueType === "Select" ? cfOptionsCsv : undefined,
+        defaultStageGateKey: supportsStageGate ? effectiveStageGate : "none",
       });
-      setCfKey(""); setCfLabelEn(""); setCfLabelAr(""); setCfOptionsCsv(""); setCfRequired(false);
-      onNotifySaved(`Custom field "${created.labelEn}" (${created.key}) created & bound.`);
+      setCfKey("");
+      setCfLabelEn("");
+      setCfLabelAr("");
+      setCfOptionsCsv("");
+      setCfRequired(false);
+      onNotifySaved(
+        t("crm.settings.integrations.customFieldCreatedToast", {
+          label: (isRtl && created.labelAr ? created.labelAr : created.labelEn) || created.key,
+          key: created.key,
+        })
+      );
     } finally {
       setIsCreatingCf(false);
     }
@@ -79,36 +120,7 @@ export function CrmCustomFieldsStudioCard({ settings, onCreateCustomField, onNot
       </div>
 
       {/* Cross-Module SCRIPE Sports OS Integrations Toggles */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <div className="rounded-nx-md border border-nx-line bg-nx-ground p-3.5 flex items-start gap-3">
-          <Checkbox id="crm-int-catalog" checked={settings.enableCatalogPricingQuoteHandoff} onCheckedChange={(c) => settings.updateSettings({ enableCatalogPricingQuoteHandoff: Boolean(c) })} className="mt-0.5" />
-          <div className="space-y-0.5">
-            <Label htmlFor="crm-int-catalog" className="text-xs font-semibold text-nx-ink cursor-pointer">{t("crm.settings.integrations.catalogPricingTitle")}</Label>
-            <p className="text-[11px] text-nx-ink-3">{t("crm.settings.integrations.catalogPricingDesc")}</p>
-          </div>
-        </div>
-        <div className="rounded-nx-md border border-nx-line bg-nx-ground p-3.5 flex items-start gap-3">
-          <Checkbox id="crm-int-venue" checked={settings.enableVenueAcademyCommercialHandoff} onCheckedChange={(c) => settings.updateSettings({ enableVenueAcademyCommercialHandoff: Boolean(c) })} className="mt-0.5" />
-          <div className="space-y-0.5">
-            <Label htmlFor="crm-int-venue" className="text-xs font-semibold text-nx-ink cursor-pointer">{t("crm.settings.integrations.venueAcademyTitle")}</Label>
-            <p className="text-[11px] text-nx-ink-3">{t("crm.settings.integrations.venueAcademyDesc")}</p>
-          </div>
-        </div>
-        <div className="rounded-nx-md border border-nx-line bg-nx-ground p-3.5 flex items-start gap-3">
-          <Checkbox id="crm-int-work" checked={settings.autoCreateWorkItemsOnStageMove} onCheckedChange={(c) => settings.updateSettings({ autoCreateWorkItemsOnStageMove: Boolean(c) })} className="mt-0.5" />
-          <div className="space-y-0.5">
-            <Label htmlFor="crm-int-work" className="text-xs font-semibold text-nx-ink cursor-pointer">{t("crm.settings.integrations.workManagementTitle")}</Label>
-            <p className="text-[11px] text-nx-ink-3">{t("crm.settings.integrations.workManagementDesc")}</p>
-          </div>
-        </div>
-        <div className="rounded-nx-md border border-nx-line bg-nx-ground p-3.5 flex items-start gap-3">
-          <Checkbox id="crm-int-party" checked={settings.autoSyncPartyKernelOnConvert} onCheckedChange={(c) => settings.updateSettings({ autoSyncPartyKernelOnConvert: Boolean(c) })} className="mt-0.5" />
-          <div className="space-y-0.5">
-            <Label htmlFor="crm-int-party" className="text-xs font-semibold text-nx-ink cursor-pointer">{t("crm.settings.integrations.partyKernelTitle")}</Label>
-            <p className="text-[11px] text-nx-ink-3">{t("crm.settings.integrations.partyKernelDesc")}</p>
-          </div>
-        </div>
-      </div>
+      <CrmIntegrationsToggleGrid t={t} settings={settings} />
 
       {/* Custom Fields Studio Form */}
       <form onSubmit={handleSubmitField} className="rounded-nx-md border border-nx-line bg-nx-raised/25 p-4 space-y-3" data-testid="crm-settings-create-cf-form">
@@ -160,20 +172,28 @@ export function CrmCustomFieldsStudioCard({ settings, onCreateCustomField, onNot
             </Select>
           </div>
 
-          {cfEntityType === "crm.opportunity" ? (
-            <div className="space-y-1">
-              <Label className="text-[11px] font-semibold text-nx-ink">{t("crm.settings.integrations.bindStageGateLabel")}</Label>
-              <Select value={cfStageGate} onValueChange={setCfStageGate}>
-                <SelectTrigger data-testid="crm-cf-stage-gate-select" className="h-8 text-xs bg-nx-ground border-nx-line text-nx-ink"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {STAGE_OPTIONS.map((st) => (<SelectItem key={st.key} value={st.key}>{t(st.labelKey)}</SelectItem>))}
-                </SelectContent>
-              </Select>
-            </div>
-          ) : (
+          {cfValueType === "Select" && (
             <div className="space-y-1">
               <Label className="text-[11px] font-semibold text-nx-ink">{t("crm.settings.integrations.selectOptionsCsvLabel")}</Label>
-              <Input value={cfOptionsCsv} onChange={(e) => setCfOptionsCsv(e.target.value)} placeholder="Option A, Option B" className="h-8 text-xs bg-nx-ground border-nx-line text-nx-ink" />
+              <Input
+                value={cfOptionsCsv}
+                onChange={(e) => setCfOptionsCsv(e.target.value)}
+                placeholder={t("crm.settings.integrations.selectOptionsPlaceholder")}
+                data-testid="crm-cf-options-csv-input"
+                className="h-8 text-xs bg-nx-ground border-nx-line text-nx-ink"
+              />
+            </div>
+          )}
+
+          {supportsStageGate && (
+            <div className="space-y-1">
+              <Label className="text-[11px] font-semibold text-nx-ink">{t("crm.settings.integrations.bindStageGateLabel")}</Label>
+              <Select value={effectiveStageGate} onValueChange={setCfStageGate}>
+                <SelectTrigger data-testid="crm-cf-stage-gate-select" className="h-8 text-xs bg-nx-ground border-nx-line text-nx-ink"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {stageOptions.map((st) => (<SelectItem key={st.key} value={st.key}>{st.label}</SelectItem>))}
+                </SelectContent>
+              </Select>
             </div>
           )}
 

@@ -14,6 +14,8 @@ import { secureTokenService } from "@core/common/secure-token-service";
 import { STORAGE_KEYS, AUTH_STORAGE_KEYS_TO_CLEAR } from "@core/config/storage-keys";
 import { appLogger } from "@core/common/logger";
 import { useAppStore } from "@core/store/useAppStore";
+import { clearAllDataExchangeCaches } from "@core/data-exchange/data/repositories/DataExchangeRepository";
+import { useDataExchangeJobsStore } from "@core/data-exchange/presentation/store/useDataExchangeJobsStore";
 
 /**
  * Purge the navigation store and its localStorage cache.
@@ -62,6 +64,10 @@ export function clearAllLocalStorage(): void {
   // Clear tenant drill-down context so subsequent logins start un-scoped
   sessionStorage.removeItem(STORAGE_KEYS.tenant_context);
 
+  // Purge Data Exchange entity/descriptor caches and scoped background jobs
+  clearAllDataExchangeCaches();
+  useDataExchangeJobsStore.getState().reset();
+
   appLogger.auth(
     "[auth-storage-cleanup] Auth data, settings, and cache cleared (drill-down state cleared)"
   );
@@ -103,6 +109,10 @@ export function clearSessionOnLoginMount(): void {
   // Purge navigation store cache — prevents stale menus from a previous
   // (possibly impersonated) session bleeding into the next login.
   clearNavigationCaches();
+
+  // Purge Data Exchange caches & scoped jobs store on login mount
+  clearAllDataExchangeCaches();
+  useDataExchangeJobsStore.getState().reset();
 
   appLogger.auth(
     "[auth-storage-cleanup] Login page mounted: stale flags, tokens, auth state, and navigation cache cleared"

@@ -53,11 +53,12 @@ export function KanbanCard({
   const convertedInBase = showConvertedBadge ? Math.round(convertAmount(Number(opportunity.estimatedAmount), currencyCode, baseCurrency)) : null;
 
   const closeDateObj = opportunity.targetCloseDate ? new Date(opportunity.targetCloseDate) : null;
-  const formattedCloseDate = closeDateObj && !isNaN(closeDateObj.getTime())
-    ? closeDateObj.toLocaleDateString(isRtl ? "ar-SA" : "en-US", { month: "short", day: "numeric" })
-    : null;
+  const formattedCloseDate =
+    closeDateObj && !isNaN(closeDateObj.getTime()) && closeDateObj.getFullYear() > 1900
+      ? closeDateObj.toLocaleDateString(isRtl ? "ar-SA" : "en-US", { month: "short", day: "numeric" })
+      : null;
 
-  const hasParty = Boolean(opportunity.partyId);
+  const hasParty = Boolean(opportunity.partyId || opportunity.accountId);
   const canMoveBackward = currentStageIndex > 0;
   const canMoveForward = currentStageIndex < totalStages - 1;
 
@@ -112,7 +113,7 @@ export function KanbanCard({
               defaultValue: opportunity.dealKind === "NewBusiness" ? "New Business" : opportunity.dealKind,
             })}
           </Badge>
-          {isRotting && (
+          {isRotting ? (
             <Badge
               variant="outline"
               data-testid="kanban-card-rotting-badge"
@@ -122,7 +123,15 @@ export function KanbanCard({
               <Flame className="size-2.5" />
               <span>{ageDays}d</span>
             </Badge>
-          )}
+          ) : effectiveSlaDays > 0 && ageDays >= Math.floor(effectiveSlaDays * 0.7) ? (
+            <Badge
+              variant="outline"
+              title={t("crmOpportunities.kanban.approachingSlaTooltip", { ageDays, slaDays: effectiveSlaDays })}
+              className="shrink-0 text-[9px] px-1.5 py-0 font-semibold border-warning-strong/40 text-nx-warning-strong bg-warning/10"
+            >
+              {ageDays}d/{effectiveSlaDays}d
+            </Badge>
+          ) : null}
         </div>
 
         {hasParty ? (
@@ -141,6 +150,19 @@ export function KanbanCard({
       <h4 className="text-xs font-bold text-nx-ink group-hover:text-nx-accent transition-colors line-clamp-2 text-start leading-snug" title={opportunity.title}>
         {opportunity.title}
       </h4>
+
+      {(opportunity.accountDisplayName || opportunity.partyDisplayName || opportunity.primaryContactName || opportunity.ownerDisplayName) && (
+        <div className="flex items-center justify-between gap-1.5 text-[10px] text-nx-ink-2">
+          <span className="truncate font-medium">
+            {opportunity.accountDisplayName || opportunity.partyDisplayName || opportunity.primaryContactName || ""}
+          </span>
+          {opportunity.ownerDisplayName && (
+            <span className="shrink-0 rounded bg-nx-raised px-1.5 py-0.5 text-[9px] font-semibold text-nx-ink-3 truncate max-w-24">
+              {opportunity.ownerDisplayName}
+            </span>
+          )}
+        </div>
+      )}
 
       <div
         className={cn(

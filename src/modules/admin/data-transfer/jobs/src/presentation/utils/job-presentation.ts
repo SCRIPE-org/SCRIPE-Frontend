@@ -1,4 +1,4 @@
-import type { DataTransferJobStatus } from "@core/data-exchange/domain/types";
+import type { DataTransferJobStatus } from "../../domain/entities/DataTransferJob";
 
 /** Semantic Progress bar variants supported by @core/ui/progress. */
 export type JobProgressVariant = "default" | "success" | "warning" | "danger";

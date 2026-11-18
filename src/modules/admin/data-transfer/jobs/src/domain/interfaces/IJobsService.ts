@@ -1,5 +1,5 @@
 import type { PagedResult } from "@core/interfaces/common.interface";
-import type { DataExchangeArtifactKind } from "@core/data-exchange/domain/types";
+import type { DataTransferArtifactKind } from "../entities/DataTransferJob";
 import type { DataTransferJobModel } from "../../data/models/DataTransferJobModel";
 import type { JobsQueryParams } from "./IJobsRepository";
 
@@ -30,7 +30,7 @@ export interface IJobsService {
    */
   fetchArtifactBlob(
     jobId: string,
-    artifactKind: DataExchangeArtifactKind,
+    artifactKind: DataTransferArtifactKind,
     signal?: AbortSignal
   ): Promise<Blob>;
 }

@@ -78,7 +78,7 @@ export function CrmRecentDealsTable({ deals, className }: CrmRecentDealsTablePro
               <TableHead className="px-4 py-3 text-start">{t("crm.recentDeals.party")}</TableHead>
               <TableHead className="px-4 py-3 text-start">{t("crm.recentDeals.stage")}</TableHead>
               <TableHead className="px-4 py-3 text-start">
-                {t("crm.recentDeals.value")} ({autoConvertToBase ? baseCurrency : "Native"})
+                {t("crm.recentDeals.value")} ({autoConvertToBase ? baseCurrency : t("crm.recentDeals.nativeCurrency")})
               </TableHead>
               <TableHead className="px-4 py-3 text-start">{t("crm.recentDeals.owner")}</TableHead>
               <TableHead className="px-4 py-3 text-end">{t("crm.recentDeals.actions")}</TableHead>
@@ -107,7 +107,7 @@ export function CrmRecentDealsTable({ deals, className }: CrmRecentDealsTablePro
                   <TableCell className="px-4 py-3">
                     <div className="flex items-center gap-1.5">
                       <span className="font-medium text-nx-ink-2 truncate max-w-[180px]">
-                        {deal.partyName}
+                        {deal.partyName || t("crm.recentDeals.unlinkedParty")}
                       </span>
                       {deal.partyVerified ? (
                         <span
@@ -147,7 +147,9 @@ export function CrmRecentDealsTable({ deals, className }: CrmRecentDealsTablePro
                       <div className="size-5 rounded-full bg-nx-raised border border-nx-line flex items-center justify-center shrink-0">
                         <User className="size-3 text-nx-ink-3" />
                       </div>
-                      <span className="truncate max-w-[120px]">{deal.ownerName}</span>
+                      <span className="truncate max-w-[120px]">
+                        {deal.ownerName || t("crm.recentDeals.unassignedOwner")}
+                      </span>
                     </div>
                   </TableCell>
 

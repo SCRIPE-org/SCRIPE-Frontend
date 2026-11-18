@@ -112,7 +112,7 @@ export function StudioResultsStep({
           </AlertDescription>
         </Alert>
       ) : liveJobStatus === "Failed" || liveJobStatus === "Cancelled" ? (
-        <Alert variant="destructive" className="border-nx-danger/35 bg-nx-danger/10 text-nx-danger">
+        <Alert variant="destructive" className="border-destructive/35 bg-destructive/10 text-nx-danger">
           <XCircle className="h-4 w-4 text-nx-danger shrink-0" />
           <AlertTitle className="text-sm font-semibold">{t("dataExchange.results.failedTitle")}</AlertTitle>
           <AlertDescription className="text-xs text-nx-ink-2 mt-1">
@@ -120,7 +120,7 @@ export function StudioResultsStep({
           </AlertDescription>
         </Alert>
       ) : finalRejected > 0 ? (
-        <Alert variant="warning" className="border-nx-warning-strong/35 bg-nx-warning/10 text-nx-warning-strong">
+        <Alert variant="warning" className="border-warning-strong/40 bg-warning/15 text-nx-warning-strong">
           <AlertTriangle className="h-4 w-4 text-nx-warning-strong shrink-0" />
           <AlertTitle className="text-sm font-semibold text-nx-ink">
             {t("dataExchange.results.completedWithErrorsTitle")}
@@ -174,7 +174,7 @@ export function StudioResultsStep({
 
       {/* Rejected Rows Workbook Download */}
       {finalHasRejected && !isAsyncRunning && (
-        <Card className="flex flex-wrap items-center justify-between gap-4 border-nx-warning-strong/35 bg-nx-warning/10 p-5">
+        <Card className="flex flex-wrap items-center justify-between gap-4 border-warning-strong/40 bg-warning/15 p-5">
           <div>
             <h4 className="text-sm font-semibold text-nx-ink">
               {t("dataExchange.results.rejectedHelpTitle")}
@@ -200,7 +200,7 @@ export function StudioResultsStep({
               size="sm"
               loading={isDownloading}
               onClick={onDownloadRejected}
-              className="bg-nx-accent-fill text-nx-on-fill hover:opacity-90 text-xs font-medium"
+              className="text-xs font-medium"
             >
               <Download className="me-1.5 h-3.5 w-3.5" />
               <span>{t("dataExchange.actions.downloadRejected")}</span>

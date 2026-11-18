@@ -39,6 +39,8 @@ export type CrmEntityTypeKey =
   | "crm.account"
   | "crm.contact";
 
+export type CrmCustomFieldValueType = "Text" | "Number" | "Currency" | "Date" | "Select" | "Boolean";
+
 /** Custom field definition bound to CRM entities and optional stage exit gates. */
 export interface CrmCustomFieldDefinition {
   id: string;
@@ -46,7 +48,7 @@ export interface CrmCustomFieldDefinition {
   key: string;
   labelEn: string;
   labelAr: string;
-  valueType: "Text" | "Number" | "Currency" | "Date" | "Select" | "Boolean";
+  valueType: CrmCustomFieldValueType;
   isRequired: boolean;
   options?: string[];
   defaultStageGateKey?: string;

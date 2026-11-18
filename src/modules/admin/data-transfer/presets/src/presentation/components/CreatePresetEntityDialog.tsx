@@ -22,15 +22,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@core/ui/select";
-import { getEntityDisplayName } from "@core/data-exchange/presentation/utils/entity-display-names";
-import type { DataExchangeEntitySummaryDto } from "@core/data-exchange/domain/types";
+import { getEntityDisplayName } from "@core/data-exchange";
 import { useI18n } from "@core/providers/i18n-provider";
+import type { DataExchangeEntitySummaryView } from "../../../../entities/src/domain/entities/DataExchangeEntity";
 
 /** Props for CreatePresetEntityDialog component. */
 export interface CreatePresetEntityDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  entities: DataExchangeEntitySummaryDto[];
+  entities: DataExchangeEntitySummaryView[];
   isLoading: boolean;
   activeEntityFilter?: string;
   onConfirm: (entityKey: string) => void;
@@ -78,7 +78,7 @@ export function CreatePresetEntityDialog({
 }
 
 interface CreatePresetEntityBodyProps {
-  entities: DataExchangeEntitySummaryDto[];
+  entities: DataExchangeEntitySummaryView[];
   isLoading: boolean;
   activeEntityFilter?: string;
   onClose: () => void;

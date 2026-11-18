@@ -28,7 +28,7 @@ export function SchemaWarningsBanner({
   return (
     <Alert
       variant="warning"
-      className={cn("border-nx-warning-strong/35 bg-nx-warning/10 text-nx-ink", className)}
+      className={cn("border-warning-strong/40 bg-warning/15 text-nx-ink", className)}
       data-testid="schema-warnings-banner"
     >
       <AlertTriangle className="h-4 w-4 text-nx-warning-strong shrink-0" />
@@ -64,13 +64,13 @@ export function SchemaWarningsBanner({
                 {w.items && w.items.length > 0 && (
                   <div className="flex flex-wrap items-center gap-1.5 pt-1">
                     {w.items.map((item, itemIdx) => (
-                      <span
+                      <bdi
                         key={itemIdx}
                         dir="ltr"
-                        className="inline-flex items-center rounded border border-nx-warning-strong/35 bg-nx-warning/15 px-1.5 py-0.5 font-mono text-[11px] text-nx-ink font-medium"
+                        className="inline-flex items-center rounded border border-warning-strong/40 bg-warning/15 px-1.5 py-0.5 font-mono text-[11px] text-nx-ink font-medium"
                       >
                         {item}
-                      </span>
+                      </bdi>
                     ))}
                   </div>
                 )}

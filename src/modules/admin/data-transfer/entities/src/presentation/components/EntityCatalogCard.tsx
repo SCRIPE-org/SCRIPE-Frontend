@@ -15,6 +15,7 @@ import {
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@core/common/utils";
 import type { DataExchangeEntity } from "../../domain/entities/DataExchangeEntity";
+import { resolveModuleDisplayName } from "../utils/module-display-name";
 
 /**
  * Props for the EntityCatalogCard component.
@@ -74,12 +75,12 @@ export const EntityCatalogCard = memo(function EntityCatalogCard({
           <div className="flex flex-wrap items-center gap-1.5">
             <code
               dir="ltr"
-              className="text-[11px] font-mono font-medium text-nx-ink-2 bg-nx-raised/60 px-1.5 py-0.5 rounded-sm border border-nx-line"
+              className="text-[11px] font-mono font-medium text-nx-ink-2 bg-nx-raised px-1.5 py-0.5 rounded-sm border border-nx-line"
             >
               {entity.entityKey}
             </code>
             <Badge variant="outline" className="text-[10px] font-medium uppercase tracking-wider py-0 px-1.5">
-              {entity.owningModule}
+              {resolveModuleDisplayName(entity.owningModule, t)}
             </Badge>
           </div>
         </div>
@@ -150,7 +151,7 @@ export const EntityCatalogCard = memo(function EntityCatalogCard({
       </div>
 
       {/* Structured Capability & Quota Strip */}
-      <div className="space-y-2.5 rounded-nx-control bg-nx-raised/40 p-3 border border-nx-line/60 text-xs">
+      <div className="space-y-2.5 rounded-nx-control bg-nx-raised p-3 border border-nx-line text-xs">
         {/* Supported Import Modes */}
         <div className="flex items-center justify-between gap-2">
           <span className="text-[11px] font-medium text-nx-ink-3">
@@ -169,7 +170,7 @@ export const EntityCatalogCard = memo(function EntityCatalogCard({
         </div>
 
         {/* Quota Status */}
-        <div className="flex items-center justify-between gap-2 pt-1 border-t border-nx-line/40">
+        <div className="flex items-center justify-between gap-2 pt-1 border-t border-nx-line">
           <span className="text-[11px] font-medium text-nx-ink-3">
             {t("dataTransferEntities.columns.quota")}
           </span>
@@ -203,7 +204,7 @@ export const EntityCatalogCard = memo(function EntityCatalogCard({
             variant="ghost"
             size="sm"
             onClick={() => onLaunchStudio(entity.entityKey)}
-            className="h-7 px-2 text-xs text-nx-accent hover:text-nx-accent hover:bg-nx-accent/10"
+            className="h-7 px-2 text-xs text-nx-accent hover:text-nx-accent hover:bg-nx-accent-wash"
           >
             <Upload className="h-3 w-3 me-1" aria-hidden="true" />
             {t("dataTransferEntities.actions.launchStudio")}

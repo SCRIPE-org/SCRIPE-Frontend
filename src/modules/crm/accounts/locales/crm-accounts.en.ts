@@ -30,6 +30,9 @@ export const en = {
     },
     tiers: {
       Enterprise: "Enterprise",
+      Platinum: "Platinum",
+      Gold: "Gold",
+      Silver: "Silver",
       KeyAccount: "Key Account",
       Strategic: "Strategic",
       MidMarket: "Mid-Market",
@@ -87,7 +90,9 @@ export const en = {
       organizationNameRequired: "Organization name is required.",
       organizationSelectRequired: "Please select an existing organization.",
       email: "Primary Email",
+      emailPlaceholder: "partnerships@club.sa",
       phone: "Primary Phone",
+      phonePlaceholder: "5X XXX XXXX",
       selectOrganization: "Select Organization",
       searchOrganizations: "Filter organizations by name...",
       chooseOrganization: "Choose an existing organization...",
@@ -117,6 +122,8 @@ export const en = {
       viewContactsBtn: "View Contacts",
       viewOpportunitiesBtn: "View Deals",
       logActivityBtn: "Log Activity",
+      createDealBtn: "Create Deal",
+      createContactBtn: "Add Contact",
     },
   },
 };

@@ -1,3 +1,23 @@
+import type {
+  PipelineStageConfig,
+  PipelineDefinition,
+  UpdatePipelineStageItem,
+  UpdateDefaultPipelineInput,
+  DealStakeholderRole,
+  DealContactRole,
+  AddDealContactRoleInput,
+} from "../models/crm-pipeline-and-roles.types";
+
+export type {
+  PipelineStageConfig,
+  PipelineDefinition,
+  UpdatePipelineStageItem,
+  UpdateDefaultPipelineInput,
+  DealStakeholderRole,
+  DealContactRole,
+  AddDealContactRoleInput,
+};
+
 export type OpportunityStatus = "Open" | "Won" | "Lost";
 export type DealKind = "NewBusiness" | "Expansion" | "Renewal" | "Services";
 export type HqOutcomeKind = "CustomerContract" | "InternalTransfer" | "SubsidiaryAllocation";
@@ -17,7 +37,11 @@ export interface CrmOpportunity {
   title: string;
   leadId?: string | null;
   accountId?: string | null;
+  accountDisplayName?: string | null;
   partyId?: string | null;
+  partyDisplayName?: string | null;
+  contactId?: string | null;
+  primaryContactName?: string | null;
   pipelineId: string;
   stageId: string;
   stageKey: string;
@@ -26,11 +50,15 @@ export interface CrmOpportunity {
   pipelineVersionSnapshot: number;
   lastActiveStageKey?: string | null;
   ownerUserId?: string | null;
+  ownerDisplayName?: string | null;
   ownerTeamId?: string | null;
+  ownerTeamDisplayName?: string | null;
   dealKind: DealKind;
   hqOutcomeKind?: HqOutcomeKind | null;
   targetExistingTenantId?: string | null;
   estimatedAmount?: number | null;
+  discountPercent?: number | null;
+  nextStepSummary?: string | null;
   currencyCode: string;
   targetCloseDate?: string | null;
   status: OpportunityStatus;
@@ -127,8 +155,12 @@ export interface MoveOpportunityStageInput {
   idempotencyKey?: string;
   partyId?: string;
   accountId?: string;
+  contactId?: string;
+  ownerUserId?: string;
   estimatedAmount?: number;
   actualAmount?: number;
+  discountPercent?: number;
+  nextStepSummary?: string;
   targetCloseDate?: string;
   primaryContactRole?: string;
   solutionFitConfirmed?: boolean;
@@ -197,96 +229,4 @@ export class OpportunityEntity {
   copyWith(updates: Partial<CrmOpportunity>): OpportunityEntity {
     return new OpportunityEntity({ ...this.data, ...updates });
   }
-}
-
-export interface PipelineStageConfig {
-  stageId?: string;
-  stageKey: string;
-  labelEn: string;
-  labelAr?: string | null;
-  sortOrder: number;
-  statusCategory?: string;
-  color?: string;
-  winProbabilityPercent?: number | null;
-  probabilityPercent?: number | null;
-  slaTargetDays?: number | null;
-  slaDays?: number | null;
-  requiredExitFields?: string[];
-  requiresVerifiedParty?: boolean;
-  triggerDealConversion?: boolean;
-  propertiesJson?: string | null;
-  canvasX?: number | null;
-  canvasY?: number | null;
-  rowVersion?: string | null;
-}
-
-export interface PipelineDefinition {
-  id?: string;
-  pipelineId?: string;
-  tenantId?: string;
-  key?: string;
-  code?: string;
-  entityType?: string;
-  name?: string;
-  nameEn?: string;
-  nameAr?: string | null;
-  version: number;
-  isDefault?: boolean;
-  isActive?: boolean;
-  propertiesJson?: string | null;
-  stages: PipelineStageConfig[];
-  transitionsJson?: string | null;
-  rowVersion: string;
-}
-
-export interface UpdatePipelineStageItem {
-  stageKey: string;
-  labelEn: string;
-  labelAr?: string | null;
-  sortOrder: number;
-  statusCategory?: string;
-  color?: string;
-  winProbabilityPercent?: number | null;
-  probabilityPercent?: number | null;
-  slaTargetDays?: number | null;
-  slaDays?: number | null;
-  requiredExitFields?: string[];
-  triggerDealConversion?: boolean;
-  propertiesJson?: string | null;
-  canvasX?: number | null;
-  canvasY?: number | null;
-  expectedRowVersion?: string | null;
-}
-
-export interface UpdateDefaultPipelineInput {
-  nameEn?: string;
-  nameAr?: string | null;
-  stages: UpdatePipelineStageItem[];
-  transitionsJson?: string | null;
-  expectedRowVersion: string;
-  allowDynamicStages?: boolean;
-  idempotencyKey?: string;
-}
-
-export interface DealContactRoleDto {
-  id: string;
-  opportunityId: string;
-  contactPartyId: string;
-  contactName: string;
-  contactEmail?: string | null;
-  stakeholderRole: "DecisionMaker" | "Champion" | "Finance" | "Legal" | "Technical";
-  isPrimary: boolean;
-  influenceNotes?: string | null;
-  createdAtUtc: string;
-}
-
-export interface AddDealContactRoleInput {
-  opportunityId: string;
-  contactPartyId?: string;
-  contactName: string;
-  contactEmail?: string;
-  stakeholderRole: "DecisionMaker" | "Champion" | "Finance" | "Legal" | "Technical";
-  isPrimary?: boolean;
-  influenceNotes?: string;
-  idempotencyKey?: string;
 }

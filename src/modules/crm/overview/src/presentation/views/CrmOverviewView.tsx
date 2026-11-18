@@ -50,8 +50,8 @@ export function CrmOverviewView() {
       onTabChange={handleTabChange}
       searchQuery={searchQuery}
       onSearchChange={handleSearchChange}
-      onCreateDeal={() => router.push("/crm/opportunities")}
-      onCreateLead={() => router.push("/crm/leads")}
+      onCreateDeal={() => router.push("/crm/opportunities?create=1")}
+      onCreateLead={() => router.push("/crm/leads?create=1")}
     >
       <CrmSectionHeader
         title={t("crm.title")}
@@ -108,7 +108,16 @@ export function CrmOverviewView() {
       {state.data && activePipeline && (
         <div className="space-y-6">
           {/* 4 Primary KPI Stat Cards */}
-          <CrmKpiStrip stats={state.data.stats} />
+          <CrmKpiStrip
+            stats={state.data.stats}
+            onSelectKpi={(statId) => {
+              if (statId === "win-rate" || statId === "avg-cycle") {
+                router.push("/crm/reports");
+                return;
+              }
+              router.push("/crm/opportunities");
+            }}
+          />
 
           {/* Pipeline velocity strip with Party Verification Gate indicators */}
           <CrmPipelineOverviewStrip

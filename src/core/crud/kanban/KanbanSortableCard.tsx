@@ -4,8 +4,6 @@ import React, { memo } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Card } from "@core/ui/card";
-import { Button } from "@core/ui/button";
-import { GripVertical } from "lucide-react";
 import { useCrudI18n } from "../hooks/useCrudI18n";
 import { cn } from "@core/common/utils";
 import type { CardDensity } from "./types";
@@ -41,7 +39,6 @@ export const KanbanSortableCard = memo(function KanbanSortableCard({
     attributes,
     listeners,
     setNodeRef,
-    setActivatorNodeRef,
     transform,
     transition,
     isDragging,
@@ -52,6 +49,10 @@ export const KanbanSortableCard = memo(function KanbanSortableCard({
       item,
       stageKey,
       index,
+    },
+    attributes: {
+      role: "group",
+      roleDescription: "sortable",
     },
     disabled,
   });
@@ -88,38 +89,24 @@ export const KanbanSortableCard = memo(function KanbanSortableCard({
   const resolvedTitle =
     displayName || rawItem?.title || rawItem?.name || rawItem?.id || `Item #${index + 1}`;
 
-  const dragHandle = (
-    <Button
-      type="button"
-      variant="ghost"
-      size="icon"
-      ref={setActivatorNodeRef}
-      {...attributes}
-      {...(!disabled ? listeners : {})}
-      disabled={disabled}
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      data-testid="kanban-sortable-card"
       aria-label={t("crud.kanban.dragCard", {
         name: String(resolvedTitle),
-        defaultValue: `Drag ${String(resolvedTitle)}`,
+        defaultValue: String(resolvedTitle),
       })}
+      {...attributes}
+      {...(!disabled ? listeners : {})}
       className={cn(
-        "h-8 w-8 shrink-0 p-0 text-nx-ink-3 select-none",
-        "focus-visible:outline-none focus-visible:shadow-nx-focus",
-        disabled
-          ? "cursor-default opacity-50"
-          : "cursor-grab hover:bg-nx-hover hover:text-nx-ink active:cursor-grabbing"
+        "group relative rounded-nx-md transition-colors duration-nx-micro focus-visible:outline-none focus-visible:shadow-nx-focus",
+        disabled ? "cursor-default" : "cursor-grab active:cursor-grabbing"
       )}
     >
-      <GripVertical className="size-4" aria-hidden="true" />
-    </Button>
-  );
-
-  return (
-    <div ref={setNodeRef} style={style} className="group relative">
       {renderCard ? (
-        <div className="flex items-start gap-1.5 rounded-nx-md border border-nx-line bg-nx-surface p-1.5 hover:border-nx-line-hi transition-colors">
-          {!disabled && <div className="pt-1 shrink-0">{dragHandle}</div>}
-          <div className="min-w-0 flex-1">{renderCard(item, actionButtons, index)}</div>
-        </div>
+        renderCard(item, actionButtons, index)
       ) : (
         <Card
           className={cn(
@@ -129,7 +116,6 @@ export const KanbanSortableCard = memo(function KanbanSortableCard({
         >
           <div className="space-y-1.5">
             <div className="flex items-center gap-1.5">
-              {dragHandle}
               <span className="font-semibold text-nx-ink truncate flex-1">{resolvedTitle}</span>
             </div>
             {columns && columns.length > 0 && (
@@ -156,7 +142,10 @@ export const KanbanSortableCard = memo(function KanbanSortableCard({
             )}
           </div>
           {actionButtons && (
-            <div className="border-t border-nx-line/60 pt-2 mt-2 flex items-center justify-end gap-1">
+            <div
+              className="border-t border-nx-line/60 pt-2 mt-2 flex items-center justify-end gap-1"
+              onPointerDown={(e) => e.stopPropagation()}
+            >
               {actionButtons}
             </div>
           )}

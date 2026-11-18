@@ -22,6 +22,8 @@ import {
   parseCustomGovernanceConfigJson,
   convertCrmCurrencyAmount,
   getCrossExchangeRate,
+  syncCrmTenantSettingsToServer,
+  mapHydratedSettingsResponse,
   type CrmStageGateStrictness,
   type CrmEntityTypeKey,
   type CrmCustomFieldDefinition,
@@ -38,6 +40,8 @@ export {
   parseCustomGovernanceConfigJson,
   convertCrmCurrencyAmount,
   getCrossExchangeRate,
+  syncCrmTenantSettingsToServer,
+  mapHydratedSettingsResponse,
   type CrmStageGateStrictness,
   type CrmEntityTypeKey,
   type CrmCustomFieldDefinition,
@@ -97,31 +101,7 @@ export interface CrmModuleSettingsState {
 }
 
 let serverHydrationInFlight = false;
-
-function syncTenantToServer(st: CrmModuleSettingsState, baseOverride?: string) {
-  const base = (baseOverride || st.tenantBaseCurrency || "SAR").toUpperCase();
-  try {
-    const repo = getCrmContainer()?.overviewRepository;
-    if (typeof repo?.updateTenantSettings === "function") {
-      void repo.updateTenantSettings({
-        baseCurrencyCode: base, defaultDealCurrencyCode: baseOverride ? base : st.defaultDealCurrency,
-        autoConvertAmountsToBase: st.autoConvertToBase, showDualCurrencyBadges: st.showOriginalCurrencyOnConverted,
-        allowUserCurrencyOverride: st.allowUserCurrencyOverride, snapshotExchangeRateOnDealCreation: st.snapshotExchangeRateOnDealCreation,
-        stageGateStrictness: st.stageGateStrictness, requireVerifiedPartyOnProposal: st.requirePartyOnProposal,
-        requireCloseNotesOnWin: st.requireCloseNotesOnWin, defaultLeadSource: st.defaultLeadSource,
-        slaLeadResponseHours: st.slaLeadResponseHours, stalledDealThresholdDays: st.stalledDealThresholdDays,
-        duplicateDetectionMode: st.duplicateDetectionMode, leadAutoAssignmentRule: st.leadAutoAssignmentRule,
-        enableCatalogPricingQuoteHandoff: st.enableCatalogPricingQuoteHandoff, enableVenueAcademyCommercialHandoff: st.enableVenueAcademyCommercialHandoff,
-        autoCreateWorkItemsOnStageMove: st.autoCreateWorkItemsOnStageMove, defaultCommunicationChannel: st.defaultCommunicationChannel,
-        autoSyncPartyKernelOnConvert: st.autoSyncPartyKernelOnConvert, defaultDealViewMode: st.defaultDealViewMode,
-        defaultPipelineCode: st.defaultPipelineCode, cardDensity: st.cardDensity,
-        customFieldsConfigJson: serializeCrmTenantCustomConfig(
-          st.crmCustomFields, st.crmRoles, st.buyingCommitteeRoles, st.configuredLossReasons, st.configuredActivityTypes, st.dealCommercialPackages,
-        ),
-      }).catch(() => undefined);
-    }
-  } catch { /* noop */ }
-}
+const syncTenantToServer = syncCrmTenantSettingsToServer;
 
 /** Zustand store for CRM module settings with automatic server-side synchronization. */
 export const useCrmSettingsStore = create<CrmModuleSettingsState>()(
@@ -245,29 +225,11 @@ export const useCrmSettingsStore = create<CrmModuleSettingsState>()(
               ? container.opportunityRepository.getPipelines().catch(() => [])
               : Promise.resolve([]),
           ]);
-          const t = data.tenantSettings, u = data.userPreferences;
-          const parsed = parseCustomGovernanceConfigJson(t.customFieldsConfigJson, get());
+          const parsed = parseCustomGovernanceConfigJson(data.tenantSettings.customFieldsConfigJson, get());
           if (Array.isArray(relationalPipelines) && relationalPipelines.length > 0) {
             useCrmWorkflowsStore.getState().hydrateFromBackendPipelines(relationalPipelines);
           }
-          set({
-            baseCurrency: (data.effectiveBaseCurrencyCode || "SAR").toUpperCase(), tenantBaseCurrency: (t.baseCurrencyCode || "SAR").toUpperCase(),
-            userOverrideCurrency: u.overrideCurrencyCode ? u.overrideCurrencyCode.toUpperCase() : null, defaultDealCurrency: (t.defaultDealCurrencyCode || "SAR").toUpperCase(),
-            autoConvertToBase: data.effectiveAutoConvertToBase, showOriginalCurrencyOnConverted: data.effectiveShowDualCurrencyBadges,
-            allowUserCurrencyOverride: t.allowUserCurrencyOverride, snapshotExchangeRateOnDealCreation: t.snapshotExchangeRateOnDealCreation,
-            stageGateStrictness: t.stageGateStrictness, requirePartyOnProposal: t.requireVerifiedPartyOnProposal, requireCloseNotesOnWin: t.requireCloseNotesOnWin,
-            defaultLeadSource: t.defaultLeadSource, slaLeadResponseHours: t.slaLeadResponseHours, stalledDealThresholdDays: t.stalledDealThresholdDays,
-            duplicateDetectionMode: t.duplicateDetectionMode, leadAutoAssignmentRule: t.leadAutoAssignmentRule,
-            enableCatalogPricingQuoteHandoff: t.enableCatalogPricingQuoteHandoff, enableVenueAcademyCommercialHandoff: t.enableVenueAcademyCommercialHandoff,
-            autoCreateWorkItemsOnStageMove: t.autoCreateWorkItemsOnStageMove, defaultCommunicationChannel: t.defaultCommunicationChannel,
-            autoSyncPartyKernelOnConvert: t.autoSyncPartyKernelOnConvert, defaultDealViewMode: u.defaultDealViewMode,
-            defaultPipelineCode: u.defaultPipelineCode, cardDensity: u.cardDensity, dailyDigestEnabled: u.dailyDigestEnabled,
-            stageMoveNotificationsEnabled: u.stageMoveNotificationsEnabled,
-            crmCustomFields: parsed.customFields, crmRoles: parsed.crmRoles, buyingCommitteeRoles: parsed.buyingCommitteeRoles,
-            configuredLossReasons: parsed.configuredLossReasons, configuredActivityTypes: parsed.configuredActivityTypes,
-            dealCommercialPackages: parsed.dealCommercialPackages,
-            isHydrating: false, isServerHydrated: true,
-          });
+          set(mapHydratedSettingsResponse(data, parsed));
         } catch { /* fallback to local state */ }
         finally { set({ isHydrating: false }); serverHydrationInFlight = false; }
       },

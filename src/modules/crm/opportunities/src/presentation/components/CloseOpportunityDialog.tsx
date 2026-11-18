@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import {
   Dialog,
@@ -16,9 +16,10 @@ import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
 import { Alert, AlertDescription } from "@core/ui/alert";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
-import { AlertCircle, AlertTriangle, CheckCircle, XCircle } from "lucide-react";
+import { AlertCircle, AlertTriangle } from "lucide-react";
 import { useCrmSettingsStore, DEFAULT_CONFIGURED_LOSS_REASONS } from "@modules/crm";
 import type { CrmOpportunity, CloseOpportunityInput, OpportunityStatus, DealKind } from "../../domain/entities/OpportunityEntity";
+import { CloseOutcomeToggle } from "./CloseOutcomeToggle";
 
 /**
  * Properties for CloseOpportunityDialog.
@@ -55,17 +56,20 @@ export function CloseOpportunityDialog({
   const [competitorName, setCompetitorName] = useState<string>("");
   const [dealKind, setDealKind] = useState<DealKind>("NewBusiness");
   const [validationError, setValidationError] = useState<string | null>(null);
+  const [prevSyncKey, setPrevSyncKey] = useState("");
 
-  useEffect(() => {
-    if (opportunity) {
-      setOutcome(initialOutcome);
-      setCloseNotes("");
-      setLossReasonCode("budget_cut");
-      setCompetitorName("");
-      setDealKind(opportunity.dealKind || "NewBusiness");
-      setValidationError(null);
-    }
-  }, [opportunity, initialOutcome]);
+  const syncKey = open && opportunity ? `${opportunity.id}:${initialOutcome}` : "";
+  if (syncKey && syncKey !== prevSyncKey && opportunity) {
+    setPrevSyncKey(syncKey);
+    setOutcome(initialOutcome);
+    setCloseNotes("");
+    setLossReasonCode("budget_cut");
+    setCompetitorName("");
+    setDealKind(opportunity.dealKind || "NewBusiness");
+    setValidationError(null);
+  } else if (!open && prevSyncKey !== "") {
+    setPrevSyncKey("");
+  }
 
   if (!opportunity) return null;
 
@@ -133,37 +137,13 @@ export function CloseOpportunityDialog({
             </Alert>
           )}
 
-          <div className="space-y-2">
-            <Label>{t("crmOpportunities.dialogs.close.outcomeLabel")}</Label>
-            <div className="grid grid-cols-2 gap-3">
-              <Button
-                type="button"
-                variant="outline"
-                className={`flex items-center justify-center gap-2 p-3 h-auto text-sm font-semibold transition-colors ${
-                  outcome === "Won"
-                    ? "border-success bg-success/15 text-success hover:bg-success/20"
-                    : "border-nx-line bg-nx-surface text-nx-ink-2 hover:text-nx-ink"
-                }`}
-                onClick={() => setOutcome("Won")}
-              >
-                <CheckCircle className="size-4" />
-                {t("crmOpportunities.dialogs.close.outcomeWon")}
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                className={`flex items-center justify-center gap-2 p-3 h-auto text-sm font-semibold transition-colors ${
-                  outcome === "Lost"
-                    ? "border-destructive bg-destructive/15 text-destructive hover:bg-destructive/20"
-                    : "border-nx-line bg-nx-surface text-nx-ink-2 hover:text-nx-ink"
-                }`}
-                onClick={() => setOutcome("Lost")}
-              >
-                <XCircle className="size-4" />
-                {t("crmOpportunities.dialogs.close.outcomeLost")}
-              </Button>
-            </div>
-          </div>
+          <CloseOutcomeToggle
+            outcome={outcome}
+            onOutcomeChange={setOutcome}
+            label={t("crmOpportunities.dialogs.close.outcomeLabel")}
+            wonLabel={t("crmOpportunities.dialogs.close.outcomeWon")}
+            lostLabel={t("crmOpportunities.dialogs.close.outcomeLost")}
+          />
 
           {isWon && lacksPartyForWon && (
             <Alert variant="destructive">

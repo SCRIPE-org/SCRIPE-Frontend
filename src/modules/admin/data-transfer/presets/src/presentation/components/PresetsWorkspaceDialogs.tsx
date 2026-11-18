@@ -2,11 +2,12 @@
 
 import React from "react";
 import { DataExchangeStudioOverlay } from "@core/data-exchange";
-import type { DataExchangeEntitySummaryDto } from "@core/data-exchange/domain/types";
+import type { DataExchangeEntitySummaryView } from "../../../../entities/src/domain/entities/DataExchangeEntity";
 import type { DataExchangePreset } from "../../domain/entities/DataExchangePreset";
 import { CreatePresetEntityDialog } from "./CreatePresetEntityDialog";
 import { DeletePresetDialog } from "./DeletePresetDialog";
 
+/** Props for PresetsWorkspaceDialogs component. */
 export interface PresetsWorkspaceDialogsProps {
   presetToDelete: DataExchangePreset | null;
   resolveEntityName: (entityKey: string) => string;
@@ -16,7 +17,7 @@ export interface PresetsWorkspaceDialogsProps {
   isDeleting: boolean;
   isCreatePickerOpen: boolean;
   setIsCreatePickerOpen: (open: boolean) => void;
-  importableEntities: DataExchangeEntitySummaryDto[];
+  importableEntities: DataExchangeEntitySummaryView[];
   isCatalogLoading: boolean;
   entityFilter: string;
   launchCreateStudio: (entityKey: string) => void;

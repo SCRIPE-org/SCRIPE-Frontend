@@ -15,11 +15,11 @@ import {
   type RecordTransitionContext,
 } from "../../domain/constants/crmWorkflowDefaults";
 import {
-  CANONICAL_DEFAULT_STAGE_META,
   hasAuthenticatedCrmSession,
   mergeBackendPipelinesIntoState,
   syncWorkflowsToBackend,
 } from "../utils/crmWorkflowsStoreHelpers";
+import { applyBackendDefaultDealPipelineSync } from "../utils/crmWorkflowsAuthAndConfigHelpers";
 import {
   buildClonedWorkflowDef,
   buildNewWorkflowDef,
@@ -199,35 +199,7 @@ export const useCrmWorkflowsStore = create<CrmWorkflowsState>()(
 
       syncBackendDealPipeline: (backendPipe) => {
         if (!backendPipe.stages || backendPipe.stages.length < 2) return;
-        set((state) => ({
-          workflows: state.workflows.map((w) => {
-            if (w.id !== "wf-deal-default") return w;
-            const allUniform50OrNull = backendPipe.stages.length >= 3 && backendPipe.stages.every((st: any) => (st.winProbabilityPercent ?? st.probabilityPercent ?? 50) === 50);
-            const syncedStages: CrmWorkflowStage[] = backendPipe.stages.slice().sort((a, b) => a.sortOrder - b.sortOrder).map((s: any, idx) => {
-              const prevStage = w.stages.find((ps) => ps.stageKey === s.stageKey);
-              const canonicalMeta = CANONICAL_DEFAULT_STAGE_META[s.stageKey];
-              const rawProb = s.winProbabilityPercent ?? s.probabilityPercent;
-              const resolvedProb = rawProb == null || allUniform50OrNull ? Number(prevStage?.winProbabilityPercent ?? canonicalMeta?.prob ?? 50) : Number(rawProb);
-              const resolvedSla = s.slaDays ?? s.slaTargetDays ?? prevStage?.slaDays ?? canonicalMeta?.sla;
-              return {
-                stageKey: s.stageKey, labelEn: s.labelEn, labelAr: s.labelAr || s.labelEn, sortOrder: s.sortOrder || idx + 1,
-                category: s.statusCategory || prevStage?.category || (idx === 0 ? "todo" : "in_progress"), color: s.color || prevStage?.color,
-                winProbabilityPercent: resolvedProb, slaDays: resolvedSla, requiredExitFields: s.requiredExitFields ? [...s.requiredExitFields] : [],
-                requiresVerifiedParty: Boolean(s.requiredExitFields?.includes("partyId")), triggerDealConversion: Boolean(s.triggerDealConversion),
-              };
-            });
-            let syncedTransitions = w.transitions;
-            if (backendPipe.transitionsJson) {
-              try {
-                const parsed = JSON.parse(backendPipe.transitionsJson);
-                if (Array.isArray(parsed)) {
-                  syncedTransitions = parsed as CrmWorkflowTransition[];
-                }
-              } catch { /* keep */ }
-            }
-            return { ...w, nameEn: backendPipe.nameEn || w.nameEn, nameAr: backendPipe.nameAr || w.nameAr, version: backendPipe.version ?? w.version, stages: syncedStages, transitions: syncedTransitions };
-          }),
-        }));
+        set((state) => ({ workflows: applyBackendDefaultDealPipelineSync(state.workflows, backendPipe) }));
       },
 
       fetchPipelinesFromBackend: async () => {

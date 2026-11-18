@@ -1,8 +1,8 @@
+import type { DataExchangeEntitySummaryView } from "../../../../entities/src/domain/entities/DataExchangeEntity";
 import type {
-  DataExchangeArtifactKind,
-  DataExchangeEntitySummaryDto,
-} from "@core/data-exchange/domain/types";
-import type { DataTransferJob } from "../../domain/entities/DataTransferJob";
+  DataTransferArtifactKind,
+  DataTransferJob,
+} from "../../domain/entities/DataTransferJob";
 
 /**
  * Finite pagination metadata exposed by the jobs ViewModel.
@@ -46,7 +46,7 @@ export interface UseJobsViewModelReturn {
   hasActiveFilters: boolean;
   resetFilters: () => void;
   refetch: () => Promise<unknown>;
-  importableEntities: DataExchangeEntitySummaryDto[];
+  importableEntities: DataExchangeEntitySummaryView[];
   isCatalogLoading: boolean;
   isStudioPickerOpen: boolean;
   setIsStudioPickerOpen: (open: boolean) => void;
@@ -54,7 +54,7 @@ export interface UseJobsViewModelReturn {
   setActiveStudioEntityKey: (entityKey: string | null) => void;
   openStudioPicker: () => void;
   launchStudioForEntity: (entityKey: string) => void;
-  getCatalogEntry: (entityKey: string) => DataExchangeEntitySummaryDto | undefined;
+  getCatalogEntry: (entityKey: string) => DataExchangeEntitySummaryView | undefined;
   resolveEntityName: (entityKey: string) => string;
   isStudioOpen: boolean;
   setIsStudioOpen: (open: boolean) => void;
@@ -64,7 +64,7 @@ export interface UseJobsViewModelReturn {
   promptCancelJob: (job: DataTransferJob) => void;
   closeCancelDialog: () => void;
   confirmCancelJob: () => Promise<void>;
-  downloadArtifact: (job: DataTransferJob, kind: DataExchangeArtifactKind) => Promise<void>;
+  downloadArtifact: (job: DataTransferJob, kind: DataTransferArtifactKind) => Promise<void>;
   isDownloading: boolean;
   kpis: {
     totalJobs: number;

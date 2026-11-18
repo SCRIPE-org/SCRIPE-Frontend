@@ -1,4 +1,5 @@
-const CSV_FORMULA_PREFIX_RE = /^[=+\-@\t\r]/;
+const CSV_FORMULA_PREFIX_RE =
+  /^[\s\u00AD\u200B-\u200F\u2060\uFEFF\u202A-\u202E\u2066-\u2069]*[=+\-@\t\r\n]/;
 
 export interface EphemeralCredentialCsvRow {
   rowNumber: number;

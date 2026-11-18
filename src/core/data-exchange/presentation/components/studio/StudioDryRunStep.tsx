@@ -34,7 +34,7 @@ export function StudioDryRunStep({ dryRunResult }: StudioDryRunStepProps) {
     <div className="space-y-5">
       {/* Quota / Readiness Alert */}
       {!dryRunResult.quotaPassed ? (
-        <Alert variant="destructive" className="border-nx-danger/35 bg-nx-danger/10 text-nx-danger">
+        <Alert variant="destructive" className="border-destructive/35 bg-destructive/10 text-nx-danger">
           <XCircle className="h-4 w-4 text-nx-danger shrink-0" />
           <AlertTitle className="text-sm font-semibold text-nx-ink">{t("dataExchange.dryRun.quotaBlockedTitle")}</AlertTitle>
           <AlertDescription className="text-xs text-nx-ink-2 mt-1">
@@ -42,7 +42,7 @@ export function StudioDryRunStep({ dryRunResult }: StudioDryRunStepProps) {
           </AlertDescription>
         </Alert>
       ) : dryRunResult.validRows === 0 ? (
-        <Alert variant="destructive" className="border-nx-danger/35 bg-nx-danger/10 text-nx-danger">
+        <Alert variant="destructive" className="border-destructive/35 bg-destructive/10 text-nx-danger">
           <XCircle className="h-4 w-4 text-nx-danger shrink-0" />
           <AlertTitle className="text-sm font-semibold text-nx-ink">{t("dataExchange.dryRun.zeroValidTitle")}</AlertTitle>
           <AlertDescription className="text-xs text-nx-ink-2 mt-1">
@@ -50,7 +50,7 @@ export function StudioDryRunStep({ dryRunResult }: StudioDryRunStepProps) {
           </AlertDescription>
         </Alert>
       ) : dryRunResult.invalidRows > 0 ? (
-        <Alert variant="warning" className="border-nx-warning-strong/35 bg-nx-warning/10 text-nx-warning-strong">
+        <Alert variant="warning" className="border-warning-strong/40 bg-warning/15 text-nx-warning-strong">
           <AlertTriangle className="h-4 w-4 text-nx-warning-strong shrink-0" />
           <AlertTitle className="text-sm font-semibold text-nx-ink">{t("dataExchange.dryRun.partialReadyTitle")}</AlertTitle>
           <AlertDescription className="text-xs text-nx-ink mt-1">
@@ -130,13 +130,20 @@ export function StudioDryRunStep({ dryRunResult }: StudioDryRunStepProps) {
                   </TableCell>
                   <TableCell>
                     <Badge
-                      dir="ltr"
-                      className="font-mono text-[10px]"
+                      className="text-[10px]"
                       variant={s.quotaPassed ? "success" : "destructive"}
                     >
-                      {s.quotaPassed
-                        ? s.quotaRemainingSlots ?? t("dataExchange.hub.unlimited")
-                        : s.quotaDenialReason ?? t("dataExchange.dryRun.quotaBlockedBadge")}
+                      {s.quotaPassed ? (
+                        s.quotaRemainingSlots !== null && s.quotaRemainingSlots !== undefined ? (
+                          <bdi dir="ltr" className="font-mono tabular-nums">
+                            {s.quotaRemainingSlots}
+                          </bdi>
+                        ) : (
+                          t("dataExchange.hub.unlimited")
+                        )
+                      ) : (
+                        s.quotaDenialReason ?? t("dataExchange.dryRun.quotaBlockedBadge")
+                      )}
                     </Badge>
                   </TableCell>
                 </TableRow>

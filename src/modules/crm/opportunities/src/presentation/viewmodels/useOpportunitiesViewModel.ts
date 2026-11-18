@@ -4,7 +4,10 @@ import { useState, useEffect, useCallback, useTransition } from "react";
 import { getCrmContainer } from "@modules/crm/di";
 import { useCrmWorkflowsStore } from "@modules/crm";
 import type { CrmOpportunity, OpportunityStatus } from "../../domain/entities/OpportunityEntity";
-import { lookupOpportunityPartyOptions } from "./useOpportunityViewModelHelpers";
+import {
+  buildOpportunitiesPagination,
+  lookupOpportunityPartyOptions,
+} from "./useOpportunityViewModelHelpers";
 import { useOpportunityLifecycleActions } from "./useOpportunityLifecycleActions";
 import { useOpportunityStageActions } from "./useOpportunityStageActions";
 
@@ -213,19 +216,13 @@ export function useOpportunitiesViewModel(initialSearch?: string) {
     items: state.items,
     loading: state.stage === "loading",
     error: state.error,
-    pagination: {
-      page: state.page || 1,
-      currentPage: state.page || 1,
-      pageSize: state.pageSize || 20,
-      itemsCount: state.totalCount,
-      pagesCount: Math.max(1, Math.ceil(state.totalCount / (state.pageSize || 20))),
-      totalCount: state.totalCount,
-      totalPages: Math.max(1, Math.ceil(state.totalCount / (state.pageSize || 20))),
-      hasNextPage: state.page * state.pageSize < state.totalCount,
-      hasPreviousPage: state.page > 1,
-      onPageChange: handlePageChange,
-      onPageSizeChange: handlePageSizeChange,
-    },
+    pagination: buildOpportunitiesPagination(
+      state.page,
+      state.pageSize,
+      state.totalCount,
+      handlePageChange,
+      handlePageSizeChange,
+    ),
     searchValue: search,
     selectedItems,
     setSelectedItems,

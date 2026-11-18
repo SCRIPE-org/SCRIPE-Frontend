@@ -20,6 +20,10 @@ import {
 import { OpportunityOverviewCard } from "../components/OpportunityOverviewCard";
 import { OpportunityCommercialAndCommitteeSection } from "../components/OpportunityCommercialAndCommitteeSection";
 import { OpportunityCommercialQuoteAndPlaybookSection } from "../components/OpportunityCommercialQuoteAndPlaybookSection";
+import {
+  evaluateDealStageTransition,
+  mapDealTransitionPayload,
+} from "../utils/opportunityTransitionHelpers";
 import { OpportunityDetailHeaderActions } from "../components/OpportunityDetailHeaderActions";
 import { OpportunityAuditTimeline } from "../components/OpportunityAuditTimeline";
 import { OpportunityDetailSkeleton } from "../components/OpportunityDetailSkeleton";
@@ -72,11 +76,7 @@ export function OpportunityDetailView({ opportunityId }: OpportunityDetailViewPr
         : (oppRecord.stageKey || "default.discovery");
     const toKey = targetStageKey === "terminal-won" ? "default.closed_won" : targetStageKey === "terminal-lost" ? "default.closed_lost" : targetStageKey;
 
-    const evalResult = useCrmWorkflowsStore.getState().evaluateTransition("deal", fromKey, toKey, {
-      hasVerifiedParty: Boolean(oppRecord.partyId),
-      estimatedAmount: oppRecord.estimatedAmount ?? null,
-      targetCloseDate: oppRecord.targetCloseDate ?? null,
-    });
+    const evalResult = evaluateDealStageTransition({ ...oppRecord, stageKey: fromKey }, toKey, isRtl);
 
     if (evalResult.status === "blocked") {
       setSubmitError(evalResult.reason || t("crmOpportunities.kanban.stageMoveFailed"));
@@ -99,23 +99,9 @@ export function OpportunityDetailView({ opportunityId }: OpportunityDetailViewPr
   };
 
   const handleTransitionSubmit = async (payload: CrmWorkflowTransitionSubmitPayload) => {
-    return handleMoveStage({
-      opportunityId: payload.entityId,
-      targetStageKey: payload.targetStageKey,
-      transitionId: payload.transitionId,
-      expectedRowVersion: payload.expectedRowVersion || data?.opportunity?.rowVersion,
-      partyId: payload.partyId,
-      accountId: payload.accountId,
-      estimatedAmount: payload.estimatedAmount,
-      targetCloseDate: payload.targetCloseDate,
-      lossReasonCode: payload.lossReasonCode,
-      competitorName: payload.competitorName,
-      closeNotes: payload.closeNotes,
-      reopenReason: payload.reopenReason,
-      reason: payload.reason,
-      stageTransitionNote: payload.auditNote,
-      customFieldValues: payload.customFields,
-    });
+    return handleMoveStage(
+      mapDealTransitionPayload(payload.entityId, payload, data?.opportunity?.rowVersion)
+    );
   };
 
   const onTabNav = (tab: string) => {
@@ -215,9 +201,9 @@ export function OpportunityDetailView({ opportunityId }: OpportunityDetailViewPr
               isRtl={isRtl}
               stageHistory={stageHistory}
               contactRoles={contactRoles}
-              onLookupParties={lookupPartyOptions}
               onAddContactRole={handleAddContactRole}
               onRemoveContactRole={handleRemoveContactRole}
+              submitError={submitError}
             />
           </TabsContent>
 

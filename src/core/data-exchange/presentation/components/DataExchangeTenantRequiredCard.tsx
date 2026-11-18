@@ -39,7 +39,7 @@ export function DataExchangeTenantRequiredCard({
       >
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-3.5">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-nx-control border border-nx-warning-strong/35 bg-nx-warning/10 text-nx-warning-strong">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-nx-control border border-warning-strong/40 bg-warning/15 text-nx-warning-strong">
               <Building2 className="h-5 w-5" aria-hidden="true" />
             </div>
             <div className="space-y-1">
@@ -54,7 +54,7 @@ export function DataExchangeTenantRequiredCard({
               type="button"
               size="sm"
               onClick={() => setSwitcherOpen(true)}
-              className="bg-nx-accent-fill text-nx-on-fill hover:opacity-90 font-medium"
+              className="font-medium"
               data-testid="tenant-required-go-tenants"
             >
               <span>{goToTenantsLabel}</span>

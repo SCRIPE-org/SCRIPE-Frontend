@@ -95,7 +95,11 @@ export const PartyDirectoryView = memo(function PartyDirectoryView() {
           </Button>
 
           <DataExchangeToolbarActions
-            entityKey="party.person"
+            entityKey={
+              vm.selectedType === "Organization"
+                ? "party.organization"
+                : "party.person"
+            }
             enableMultiSheetMigration
             onImportComplete={() => vm.refetch()}
           />

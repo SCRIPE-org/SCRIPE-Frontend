@@ -1,0 +1,66 @@
+import { CRM_PERMISSIONS } from "./permission-constants";
+import type {
+  CrmRuleOperatorOption,
+  CrmScopedPermissionOption,
+  CrmWorkflowFieldCatalogItem,
+} from "./crmWorkflowGovernanceCatalog";
+
+export const CRM_SCOPED_PERMISSION_OPTIONS: CrmScopedPermissionOption[] = [
+  { key: CRM_PERMISSIONS.OVERVIEW_READ, labelEn: "View CRM Overview", labelAr: "عرض نظرة عامة CRM", category: "Overview" },
+  { key: CRM_PERMISSIONS.LEADS_READ, labelEn: "Read Leads", labelAr: "قراءة العملاء المحتملين", category: "Leads" },
+  { key: CRM_PERMISSIONS.LEADS_CREATE, labelEn: "Create Leads", labelAr: "إنشاء عملاء محتملين", category: "Leads" },
+  { key: CRM_PERMISSIONS.LEADS_UPDATE, labelEn: "Update Leads", labelAr: "تحديث العملاء المحتملين", category: "Leads" },
+  { key: CRM_PERMISSIONS.LEADS_QUALIFY, labelEn: "Qualify / Convert Leads", labelAr: "تأهيل وتحويل العملاء المحتملين", category: "Leads" },
+  { key: CRM_PERMISSIONS.ACCOUNTS_READ, labelEn: "Read Accounts", labelAr: "قراءة الحسابات", category: "Accounts & Contacts" },
+  { key: CRM_PERMISSIONS.ACCOUNTS_CREATE, labelEn: "Create Accounts", labelAr: "إنشاء الحسابات", category: "Accounts & Contacts" },
+  { key: CRM_PERMISSIONS.ACCOUNTS_UPDATE, labelEn: "Update Accounts", labelAr: "تحديث الحسابات", category: "Accounts & Contacts" },
+  { key: CRM_PERMISSIONS.CONTACTS_READ, labelEn: "Read Contacts", labelAr: "قراءة جهات الاتصال", category: "Accounts & Contacts" },
+  { key: CRM_PERMISSIONS.CONTACTS_CREATE, labelEn: "Create Contacts", labelAr: "إنشاء جهات الاتصال", category: "Accounts & Contacts" },
+  { key: CRM_PERMISSIONS.CONTACTS_UPDATE, labelEn: "Update Contacts", labelAr: "تحديث جهات الاتصال", category: "Accounts & Contacts" },
+  { key: CRM_PERMISSIONS.OPPORTUNITIES_READ, labelEn: "Read Deals / Opportunities", labelAr: "قراءة الفرص البيعية", category: "Deals" },
+  { key: CRM_PERMISSIONS.OPPORTUNITIES_CREATE, labelEn: "Create Deals", labelAr: "إنشاء الفرص البيعية", category: "Deals" },
+  { key: CRM_PERMISSIONS.OPPORTUNITIES_UPDATE, labelEn: "Update Deals", labelAr: "تحديث الفرص البيعية", category: "Deals" },
+  { key: CRM_PERMISSIONS.OPPORTUNITIES_STAGE, labelEn: "Advance Deal Stage", labelAr: "تغيير مرحلة الفرصة", category: "Deals" },
+  { key: CRM_PERMISSIONS.OPPORTUNITIES_STAGE_OVERRIDE, labelEn: "Override Deal Stage / Gate", labelAr: "تجاوز شروط مراحل الفرص", category: "Deals" },
+  { key: CRM_PERMISSIONS.OPPORTUNITIES_CLOSE, labelEn: "Close Deal (Won / Lost)", labelAr: "إغلاق الفرص البيعية", category: "Deals" },
+  { key: CRM_PERMISSIONS.OPPORTUNITIES_REOPEN, labelEn: "Reopen Closed Deal", labelAr: "إعادة فتح الفرص المغلقة", category: "Deals" },
+  { key: CRM_PERMISSIONS.ACTIVITIES_READ, labelEn: "Read Activities", labelAr: "قراءة الأنشطة", category: "Activities" },
+  { key: CRM_PERMISSIONS.ACTIVITIES_CREATE, labelEn: "Log Activities", labelAr: "تسجيل الأنشطة", category: "Activities" },
+  { key: CRM_PERMISSIONS.ACTIVITIES_FOLLOWUP, labelEn: "Manage Activity Follow-ups", labelAr: "إدارة متابعات الأنشطة", category: "Activities" },
+  { key: CRM_PERMISSIONS.COMMUNICATIONS_SEND, labelEn: "Send CRM Communications", labelAr: "إرسال مراسلات CRM", category: "Activities" },
+  { key: CRM_PERMISSIONS.PIPELINES_READ, labelEn: "Read Pipelines", labelAr: "قراءة خطوط البيع", category: "Governance" },
+  { key: CRM_PERMISSIONS.PIPELINES_MANAGE, labelEn: "Manage Pipelines & Workflows", labelAr: "إدارة خطوط البيع ومسارات العمل", category: "Governance" },
+  { key: CRM_PERMISSIONS.WORKFLOW_ROLES_MANAGE, labelEn: "Manage Pipeline & Workflow Roles", labelAr: "إدارة أدوار خطوط البيع ومسارات العمل", category: "Governance" },
+  { key: CRM_PERMISSIONS.SETTINGS_MANAGE, labelEn: "Manage CRM Settings", labelAr: "إدارة إعدادات CRM", category: "Governance" },
+  { key: CRM_PERMISSIONS.ROLES_MANAGE_SCOPED, labelEn: "Manage Scoped CRM Roles", labelAr: "إدارة أدوار المبيعات المخصصة", category: "Governance" },
+  { key: CRM_PERMISSIONS.RECORDS_ASSIGN, labelEn: "Assign Record Ownership", labelAr: "تعيين ملكية السجلات", category: "Governance" },
+  { key: CRM_PERMISSIONS.REPORTS_READ, labelEn: "Read CRM Reports", labelAr: "قراءة تقارير CRM", category: "Reports" },
+  { key: CRM_PERMISSIONS.REPORTS_EXPORT, labelEn: "Export CRM Reports", labelAr: "تصدير تقارير CRM", category: "Reports" },
+];
+
+export const CRM_WORKFLOW_SYSTEM_FIELDS: CrmWorkflowFieldCatalogItem[] = [
+  { key: "partyId", labelEn: "Customer Account / Contact (Party)", labelAr: "حساب العميل / جهة الاتصال", entityType: "both", dataType: "text" },
+  { key: "accountId", labelEn: "Commercial Account", labelAr: "الحساب التجاري", entityType: "both", dataType: "text" },
+  { key: "contactId", labelEn: "Primary Contact Stakeholder", labelAr: "جهة الاتصال الرئيسية", entityType: "both", dataType: "text" },
+  { key: "ownerUserId", labelEn: "Commercial Owner", labelAr: "المالك التجاري", entityType: "both", dataType: "text" },
+  { key: "estimatedAmount", labelEn: "Estimated Deal Amount", labelAr: "القيمة التقديرية للصفقة", entityType: "deal", dataType: "number" },
+  { key: "discountPercent", labelEn: "Quote Discount %", labelAr: "نسبة الخصم %", entityType: "deal", dataType: "number" },
+  { key: "targetCloseDate", labelEn: "Target Close Date", labelAr: "تاريخ الإغلاق المستهدف", entityType: "deal", dataType: "date" },
+  { key: "primaryContactRole", labelEn: "Buying Committee Stakeholder Role", labelAr: "دور صاحب المصلحة في لجنة الشراء", entityType: "deal", dataType: "select" },
+  { key: "nextStepSummary", labelEn: "Next Commercial Step Summary", labelAr: "ملخص الخطوة التجارية التالية", entityType: "both", dataType: "text" },
+  { key: "lossReason", labelEn: "Closed-Lost / Rejection Reason", labelAr: "سبب الخسارة أو الاستبعاد", entityType: "both", dataType: "text" },
+  { key: "leadPhoneOrEmail", labelEn: "Verified Phone or Email", labelAr: "الهاتف أو البريد الإلكتروني المؤكد", entityType: "lead", dataType: "text" },
+  { key: "leadSourceChannel", labelEn: "Lead Acquisition Source", labelAr: "مصدر استقطاب العميل المحتمل", entityType: "lead", dataType: "select" },
+  { key: "leadBantNotes", labelEn: "BANT Qualification Summary", labelAr: "ملخص تأهيل الميزانية والاحتياج BANT", entityType: "lead", dataType: "text" },
+];
+
+export const CRM_RULE_OPERATORS: CrmRuleOperatorOption[] = [
+  { key: "equals", symbol: "=", labelEn: "Equals (=)", labelAr: "يساوي (=)" },
+  { key: "not_equals", symbol: "!=", labelEn: "Not Equals (!=)", labelAr: "لا يساوي (!=)" },
+  { key: "greater_than", symbol: ">", labelEn: "Greater Than (>)", labelAr: "أكبر من (>)" },
+  { key: "greater_or_equal", symbol: ">=", labelEn: "Greater or Equal (>=)", labelAr: "أكبر أو يساوي (>=)" },
+  { key: "less_than", symbol: "<", labelEn: "Less Than (<)", labelAr: "أقل من (<)" },
+  { key: "less_or_equal", symbol: "<=", labelEn: "Less or Equal (<=)", labelAr: "أقل أو يساوي (<=)" },
+  { key: "in", symbol: "IN", labelEn: "In Set (comma-separated)", labelAr: "ضمن المجموعة (مفصول بفواصل)" },
+  { key: "not_empty", symbol: "NOT EMPTY", labelEn: "Is Not Empty", labelAr: "غير فارغ" },
+];

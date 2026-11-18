@@ -1,20 +1,18 @@
 "use client";
 
-import React, { useState } from "react";
-import { Button } from "@core/ui/button";
+import React from "react";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { Checkbox } from "@core/ui/checkbox";
-import { Building2, Plus, ShieldAlert } from "lucide-react";
-import { CustomFieldsSection, encodeCustomFieldName } from "@core/crud/customFieldsExtension";
-import type { CrmCustomFieldDefinition } from "@modules/crm";
+import { Building2, ShieldAlert } from "lucide-react";
+import { CustomFieldsSection } from "@core/crud/customFieldsExtension";
+import { CrmEntitySearchSelect, type CrmCustomFieldDefinition } from "@modules/crm";
 import type { CrmOpportunity } from "../../domain/entities/OpportunityEntity";
-
-const CUSTOM_FIELD_VALUE_TYPES: CrmCustomFieldDefinition["valueType"][] = [
-  "Text", "Number", "Currency", "Date", "Select", "Boolean",
-];
+import { MoveStageExtraGateInputs } from "./MoveStageExtraGateInputs";
+import { MoveStageInlineCustomFieldCreator } from "./MoveStageInlineCustomFieldCreator";
+import { MoveStageSummaryBanner } from "./MoveStageSummaryBanner";
 
 export interface MoveStagePartyOption {
   partyId: string;
@@ -34,8 +32,23 @@ export interface MoveStageGateFieldsSectionProps {
   currencyCode: string;
   needsPartyInput: boolean;
   selectedPartyId: string;
-  partyOptions: MoveStagePartyOption[];
-  onPartyChange: (val: string) => void;
+  partyOptions?: MoveStagePartyOption[];
+  onPartyChange: (val: string, accountId?: string | null) => void;
+  needsContactIdInput: boolean;
+  selectedContactId: string;
+  onContactChange: (val: string) => void;
+  needsAccountIdInput: boolean;
+  selectedAccountId: string;
+  onAccountChange: (val: string) => void;
+  needsOwnerUserIdInput: boolean;
+  selectedOwnerUserId: string;
+  onOwnerChange: (val: string) => void;
+  needsDiscountPercentInput: boolean;
+  discountPercent: string;
+  onDiscountPercentChange: (val: string) => void;
+  needsNextStepInput: boolean;
+  nextStepSummary: string;
+  onNextStepSummaryChange: (val: string) => void;
   needsAmountInput: boolean;
   estimatedAmount: string;
   onEstimatedAmountChange: (val: string) => void;
@@ -64,72 +77,40 @@ export interface MoveStageGateFieldsSectionProps {
 
 export function MoveStageGateFieldsSection({
   t, isRtl, opportunity, effectivePartyId, targetStageKey, onTargetStageKeyChange, effectiveStages,
-  currencyCode, needsPartyInput, selectedPartyId, partyOptions, onPartyChange,
+  currencyCode, needsPartyInput, selectedPartyId, onPartyChange,
+  needsContactIdInput, selectedContactId, onContactChange,
+  needsAccountIdInput, selectedAccountId, onAccountChange,
+  needsOwnerUserIdInput, selectedOwnerUserId, onOwnerChange,
+  needsDiscountPercentInput, discountPercent, onDiscountPercentChange,
+  needsNextStepInput, nextStepSummary, onNextStepSummaryChange,
   needsAmountInput, estimatedAmount, onEstimatedAmountChange, needsCloseDateInput, targetCloseDate, onTargetCloseDateChange,
   needsContactRoleInput, primaryContactRole, onPrimaryContactRoleChange, needsSolutionFitInput, solutionFitConfirmed, onSolutionFitConfirmedChange,
   oppCustomFieldConfigs, requiredCustomFieldKeys = [], storeCustomFields = [], onAddCrmCustomField,
   isOppCfLoading, onRefetchOppCustomFields, customFieldValues, onCustomFieldChange, isAdjacentForward, reason, onReasonChange, isSubmitting,
 }: MoveStageGateFieldsSectionProps) {
-  const [showAddCf, setShowAddCf] = useState(false);
-  const [newCfNameEn, setNewCfNameEn] = useState("");
-  const [newCfKey, setNewCfKey] = useState("");
-  const [newCfType, setNewCfType] = useState<CrmCustomFieldDefinition["valueType"]>("Text");
-
-  const handleAddStageCf = () => {
-    if (!newCfNameEn.trim() || !onAddCrmCustomField) return;
-    const key = (newCfKey.trim() || newCfNameEn.trim()).toLowerCase().replace(/[^a-z0-9_]+/g, "_");
-    onAddCrmCustomField({
-      entityTypeKey: "crm.opportunity",
-      key,
-      labelEn: newCfNameEn.trim(),
-      labelAr: newCfNameEn.trim(),
-      valueType: newCfType,
-      isRequired: false,
-      defaultStageGateKey: targetStageKey,
-    });
-    setNewCfNameEn("");
-    setNewCfKey("");
-    setNewCfType("Text");
-    setShowAddCf(false);
-    onRefetchOppCustomFields();
-  };
-
-  const hasGateSection = needsAmountInput || needsCloseDateInput || needsContactRoleInput || needsSolutionFitInput || requiredCustomFieldKeys.length > 0;
+  const hasGateSection =
+    needsAmountInput ||
+    needsCloseDateInput ||
+    needsContactRoleInput ||
+    needsSolutionFitInput ||
+    needsContactIdInput ||
+    needsAccountIdInput ||
+    needsOwnerUserIdInput ||
+    needsDiscountPercentInput ||
+    needsNextStepInput ||
+    requiredCustomFieldKeys.length > 0;
 
   return (
     <>
-      <div className="rounded-nx-md border border-nx-line bg-nx-surface p-3 text-xs space-y-1.5">
-        <div className="flex justify-between">
-          <span className="text-nx-ink-3">{t("crmOpportunities.table.deal")}:</span>
-          <span className="font-semibold text-nx-ink">{opportunity.title}</span>
-        </div>
-        <div className="flex justify-between">
-          <span className="text-nx-ink-3">{t("crmOpportunities.dialogs.stage.currentStage")}:</span>
-          <span className="font-medium text-nx-ink">
-            {isRtl && opportunity.stageLabelArSnapshot ? opportunity.stageLabelArSnapshot : opportunity.stageLabelEnSnapshot || opportunity.stageKey}
-          </span>
-        </div>
-        <div className="flex justify-between">
-          <span className="text-nx-ink-3">{t("crmOpportunities.table.party")}:</span>
-          <span className={effectivePartyId ? "text-success font-medium" : "text-nx-warning-strong font-medium"}>
-            {effectivePartyId ? t("crmOpportunities.kanban.partyVerified") : t("crmOpportunities.kanban.partyUnlinked")}
-          </span>
-        </div>
-      </div>
-
-      <div className="space-y-1.5">
-        <Label htmlFor="target-stage">{t("crmOpportunities.dialogs.stage.targetStageLabel")}</Label>
-        <Select value={targetStageKey} onValueChange={onTargetStageKeyChange}>
-          <SelectTrigger id="target-stage"><SelectValue /></SelectTrigger>
-          <SelectContent>
-            {effectiveStages.map((s) => (
-              <SelectItem key={s.key} value={s.key}>
-                {isRtl && s.labelAr ? s.labelAr : s.labelEn} {s.partyRequired ? `• (${t("crmOpportunities.dialogs.stage.accountContactRequired")})` : ""}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+      <MoveStageSummaryBanner
+        t={t}
+        isRtl={isRtl}
+        opportunity={opportunity}
+        effectivePartyId={effectivePartyId}
+        targetStageKey={targetStageKey}
+        onTargetStageKeyChange={onTargetStageKeyChange}
+        effectiveStages={effectiveStages}
+      />
 
       {needsPartyInput && (
         <div className="space-y-2 rounded-nx-md border border-nx-accent/30 bg-nx-accent-wash p-3">
@@ -138,14 +119,20 @@ export function MoveStageGateFieldsSection({
             <span>{t("crmOpportunities.dialogs.create.partyIdLabel")} <span className="text-destructive">*</span></span>
           </Label>
           <p className="text-[11px] text-nx-ink-2">{t("crmOpportunities.dialogs.stage.partyNotice")}</p>
-          <Select value={selectedPartyId} onValueChange={onPartyChange}>
-            <SelectTrigger className="h-9 text-xs bg-nx-surface border-nx-line">
-              <SelectValue placeholder={t("crmOpportunities.dialogs.create.partyIdPlaceholder")} />
-            </SelectTrigger>
-            <SelectContent>
-              {partyOptions.map((opt) => <SelectItem key={opt.partyId} value={opt.partyId}>{opt.label}</SelectItem>)}
-            </SelectContent>
-          </Select>
+          <CrmEntitySearchSelect
+            entityKind="party"
+            value={selectedPartyId}
+            initialLabel={opportunity.partyDisplayName || opportunity.accountDisplayName || undefined}
+            onChange={(val, item) => onPartyChange(val, item?.accountId)}
+            placeholder={t("crmOpportunities.dialogs.create.partyIdPlaceholder")}
+            enableQuickCreate
+            quickCreateDefaultKind="account"
+            quickCreateInitialValues={{
+              accountNameEn: opportunity.accountDisplayName || opportunity.partyDisplayName || opportunity.title || undefined,
+              contactNameEn: opportunity.primaryContactName || undefined,
+              nameEn: opportunity.accountDisplayName || opportunity.partyDisplayName || opportunity.title || undefined,
+            }}
+          />
         </div>
       )}
 
@@ -188,69 +175,51 @@ export function MoveStageGateFieldsSection({
               </Label>
             </div>
           )}
-          {requiredCustomFieldKeys.map((cfKey) => {
-            const def = storeCustomFields.find((f) => f.key === cfKey);
-            const encodedKey = encodeCustomFieldName(cfKey);
-            const label = def ? (isRtl && def.labelAr ? def.labelAr : def.labelEn) : cfKey;
-            const vType = def?.valueType ?? "Text";
-            const currentVal = customFieldValues[encodedKey] ?? customFieldValues[cfKey] ?? "";
-            if (vType === "Boolean") {
-              return (
-                <div key={cfKey} className="flex items-center gap-2 sm:col-span-2 pt-1" data-testid={`move-stage-gate-cf-${cfKey}`}>
-                  <Checkbox id={`stage-gate-cf-${cfKey}`} checked={Boolean(currentVal)} onCheckedChange={(checked) => { onCustomFieldChange(encodedKey, Boolean(checked)); onCustomFieldChange(cfKey, Boolean(checked)); }} />
-                  <Label htmlFor={`stage-gate-cf-${cfKey}`} className="text-xs font-medium text-nx-ink cursor-pointer">{label} <span className="text-destructive">*</span></Label>
-                </div>
-              );
-            }
-            return (
-              <div key={cfKey} className="space-y-1 sm:col-span-2" data-testid={`move-stage-gate-cf-${cfKey}`}>
-                <Label htmlFor={`stage-gate-cf-${cfKey}`} className="text-xs">{label} <span className="text-destructive">*</span></Label>
-                <Input
-                  id={`stage-gate-cf-${cfKey}`}
-                  type={vType === "Number" || vType === "Currency" ? "number" : vType === "Date" ? "date" : "text"}
-                  value={String(currentVal)}
-                  onChange={(e) => { onCustomFieldChange(encodedKey, e.target.value); onCustomFieldChange(cfKey, e.target.value); }}
-                  className="h-8 text-xs"
-                  data-testid={`move-stage-gate-cf-input-${cfKey}`}
-                />
-              </div>
-            );
-          })}
+          <MoveStageExtraGateInputs
+            t={t}
+            isRtl={isRtl}
+            needsContactIdInput={needsContactIdInput}
+            selectedContactId={selectedContactId}
+            initialContactLabel={opportunity.primaryContactName}
+            onContactChange={onContactChange}
+            needsAccountIdInput={needsAccountIdInput}
+            selectedAccountId={selectedAccountId}
+            initialAccountLabel={opportunity.accountDisplayName}
+            onAccountChange={onAccountChange}
+            needsOwnerUserIdInput={needsOwnerUserIdInput}
+            selectedOwnerUserId={selectedOwnerUserId}
+            initialOwnerLabel={opportunity.ownerDisplayName}
+            onOwnerChange={onOwnerChange}
+            needsDiscountPercentInput={needsDiscountPercentInput}
+            discountPercent={discountPercent}
+            onDiscountPercentChange={onDiscountPercentChange}
+            needsNextStepInput={needsNextStepInput}
+            nextStepSummary={nextStepSummary}
+            onNextStepSummaryChange={onNextStepSummaryChange}
+            requiredCustomFieldKeys={requiredCustomFieldKeys}
+            storeCustomFields={storeCustomFields}
+            customFieldValues={customFieldValues}
+            onCustomFieldChange={onCustomFieldChange}
+          />
         </div>
       )}
 
-      {onAddCrmCustomField && (
-        <div className="rounded-nx-md border border-nx-line bg-nx-surface/60 p-2.5 space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-nx-ink-2">{t("crmOpportunities.dialogs.stage.stageCustomFieldsTitle")}</span>
-            <Button type="button" size="sm" variant="ghost" className="h-6 px-2 text-[11px]" onClick={() => setShowAddCf((v) => !v)} data-testid="move-stage-add-cf-toggle-btn">
-              <Plus className="w-3 h-3 me-1" />{t("crmOpportunities.dialogs.stage.addFieldBtn")}
-            </Button>
-          </div>
-          {showAddCf && (
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 pt-1 border-t border-nx-line">
-              <Input value={newCfNameEn} onChange={(e) => setNewCfNameEn(e.target.value)} placeholder={t("crmOpportunities.dialogs.stage.fieldLabelPlaceholder")} className="h-7 text-xs" data-testid="move-stage-cf-label-input" />
-              <Input value={newCfKey} onChange={(e) => setNewCfKey(e.target.value)} placeholder={t("crmOpportunities.dialogs.stage.fieldKeyOptionalPlaceholder")} className="h-7 text-xs font-mono" data-testid="move-stage-cf-key-input" />
-              <div className="flex items-center gap-1.5">
-                <Select value={newCfType} onValueChange={(v) => setNewCfType(v as CrmCustomFieldDefinition["valueType"])}>
-                  <SelectTrigger className="h-7 text-xs bg-nx-surface flex-1" data-testid="move-stage-cf-type-select"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {CUSTOM_FIELD_VALUE_TYPES.map((vt) => <SelectItem key={vt} value={vt} className="text-xs">{vt}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-                <Button type="button" size="sm" variant="outline" className="h-7 px-2.5 text-xs shrink-0" onClick={handleAddStageCf} data-testid="move-stage-cf-save-btn">{t("crmOpportunities.dialogs.stage.addBtn")}</Button>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
+      <MoveStageInlineCustomFieldCreator
+        targetStageKey={targetStageKey}
+        onAddCrmCustomField={onAddCrmCustomField}
+        onRefetchOppCustomFields={onRefetchOppCustomFields}
+        disabled={isSubmitting}
+        t={t}
+      />
 
       <CustomFieldsSection
         entityTypeKey="crm.opportunity"
         entityDisplayName={t("crmOpportunities.title") || "Commercial Opportunity"}
         configs={oppCustomFieldConfigs}
         isLoading={isOppCfLoading}
-        onFieldCreated={onRefetchOppCustomFields}
+        onFieldCreated={() => {
+          onRefetchOppCustomFields();
+        }}
         values={customFieldValues}
         onChange={onCustomFieldChange}
         disabled={isSubmitting}

@@ -17,6 +17,7 @@ import type { DataTransferJob, DataTransferJobStatus } from "../../domain/types"
 export interface FloatingDockJobItemProps {
   job: DataTransferJob;
   isCancelling: boolean;
+  downloadingKind?: "export" | "rejected" | null;
   onCancelJob: (jobId: string) => void;
   onDownload: (jobId: string, kind: "export" | "rejected") => void;
   onDismiss: (jobId: string) => void;
@@ -35,6 +36,7 @@ const TERMINAL_STATUSES = new Set<DataTransferJobStatus>([
 export function FloatingDockJobItem({
   job,
   isCancelling,
+  downloadingKind = null,
   onCancelJob,
   onDownload,
   onDismiss,
@@ -78,9 +80,20 @@ export function FloatingDockJobItem({
           <p className="truncate font-medium text-nx-ink">
             {entityDisplayName}
           </p>
-          <p className="text-[11px] text-nx-ink-3 font-mono truncate" dir="ltr">
-            {t(`dataExchange.hub.kinds.${job.kind}`, { defaultValue: job.kind })} • {job.entityKey}
-            {job.originalFileName ? ` • ${job.originalFileName}` : ""}
+          <p className="text-[11px] text-nx-ink-3 truncate">
+            <span>{t(`dataExchange.hub.kinds.${job.kind}`, { defaultValue: job.kind })}</span>
+            {" • "}
+            <bdi dir="ltr" className="font-mono">
+              {job.entityKey}
+            </bdi>
+            {job.originalFileName && (
+              <>
+                {" • "}
+                <bdi dir="ltr" className="font-mono">
+                  {job.originalFileName}
+                </bdi>
+              </>
+            )}
           </p>
         </div>
         <div className="flex items-center gap-1.5 shrink-0">
@@ -133,6 +146,8 @@ export function FloatingDockJobItem({
                 type="button"
                 variant="outline"
                 size="sm"
+                loading={downloadingKind === "export"}
+                disabled={downloadingKind !== null}
                 className="h-6 px-2 text-[11px]"
                 onClick={() => onDownload(job.id, "export")}
               >
@@ -145,6 +160,8 @@ export function FloatingDockJobItem({
                 type="button"
                 variant="outline"
                 size="sm"
+                loading={downloadingKind === "rejected"}
+                disabled={downloadingKind !== null}
                 className="h-6 px-2 text-[11px] text-nx-danger hover:text-nx-danger"
                 onClick={() => onDownload(job.id, "rejected")}
               >

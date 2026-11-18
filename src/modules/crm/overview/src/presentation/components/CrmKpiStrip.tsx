@@ -9,10 +9,11 @@ import { useCrmCurrency } from "../viewmodels/useCrmCurrency";
 
 interface CrmKpiStripProps {
   stats: CrmKpiStat[];
+  onSelectKpi?: (statId: string) => void;
   className?: string;
 }
 
-export function CrmKpiStrip({ stats, className }: CrmKpiStripProps) {
+export function CrmKpiStrip({ stats, onSelectKpi, className }: CrmKpiStripProps) {
   const { t, language } = useI18n();
   const isRtl = language === "ar";
   const { baseCurrency, autoConvertToBase, convertAmount } = useCrmCurrency();
@@ -91,7 +92,24 @@ export function CrmKpiStrip({ stats, className }: CrmKpiStripProps) {
         return (
           <Card
             key={stat.id}
-            className="rounded-nx-lg border border-nx-line bg-nx-surface p-4 sm:p-5 flex flex-col justify-between transition-colors duration-nx-micro hover:border-nx-line-hi"
+            role={onSelectKpi ? "button" : undefined}
+            tabIndex={onSelectKpi ? 0 : undefined}
+            onClick={onSelectKpi ? () => onSelectKpi(stat.id) : undefined}
+            onKeyDown={
+              onSelectKpi
+                ? (e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      onSelectKpi(stat.id);
+                    }
+                  }
+                : undefined
+            }
+            data-testid={`crm-kpi-card-${stat.id}`}
+            className={cn(
+              "rounded-nx-lg border border-nx-line bg-nx-surface p-4 sm:p-5 flex flex-col justify-between transition-colors duration-nx-micro hover:border-nx-line-hi",
+              onSelectKpi && "cursor-pointer hover:bg-nx-raised/30"
+            )}
           >
             <div className="flex items-center justify-between text-xs font-semibold text-nx-ink-2">
               <span>{displayTitle}</span>

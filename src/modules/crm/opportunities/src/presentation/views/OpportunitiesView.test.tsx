@@ -47,6 +47,7 @@ vi.mock("next/navigation", () => ({
     prefetch: vi.fn(),
   }),
   usePathname: () => "/crm/opportunities",
+  useSearchParams: () => new URLSearchParams(),
 }));
 
 describe("OpportunitiesView Component", () => {
@@ -292,9 +293,9 @@ describe("OpportunitiesView Component", () => {
 
     fireEvent.click(screen.getByTestId("toggle-kanban-view"));
 
-    const qualCols = await screen.findAllByTestId("kanban-column-default.qualification");
-    const qualCol = qualCols[qualCols.length - 1];
-    fireEvent.drop(qualCol, {
+    const qualDropTargets = await screen.findAllByTestId("kanban-stage-value-default.qualification");
+    const qualDropTarget = qualDropTargets[qualDropTargets.length - 1];
+    fireEvent.drop(qualDropTarget, {
       dataTransfer: {
         getData: (type: string) => (type === "text/plain" ? "opp-001" : ""),
       },

@@ -47,6 +47,7 @@ vi.mock("next/navigation", () => ({
     prefetch: vi.fn(),
   }),
   usePathname: () => "/crm/contacts",
+  useSearchParams: () => new URLSearchParams(),
 }));
 
 describe("ContactsView Component", () => {

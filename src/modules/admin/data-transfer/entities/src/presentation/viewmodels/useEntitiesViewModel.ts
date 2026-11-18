@@ -2,11 +2,13 @@
 
 import { useCallback, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { toast } from "@core/ui/sileo-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useAdminContext } from "@core/hooks/useAdminContext";
-import { isTenantRequiredError } from "@core/data-exchange/domain/tenant-errors";
+import { isTenantRequiredError } from "@core/data-exchange";
 import { getDataTransferContainer } from "../../../../di";
 import type { DataExchangeEntity } from "../../domain/entities/DataExchangeEntity";
+import { resolveModuleDisplayName } from "../utils/module-display-name";
 
 /**
  * ViewModel hook for the Data Transfer Entities catalog view.
@@ -47,6 +49,12 @@ export function useEntitiesViewModel() {
     setPageState(1);
   }, []);
 
+  const resetFilters = useCallback(() => {
+    setSearchState("");
+    setSelectedModuleState("all");
+    setPageState(1);
+  }, []);
+
   const query = useQuery({
     queryKey: ["data-transfer", "entities", activeTenantId ?? "no-tenant"],
     queryFn: ({ signal }) => repo.getAll(signal),
@@ -56,7 +64,7 @@ export function useEntitiesViewModel() {
   });
 
   const entities = query.data ?? [];
-  const isTenantRequired = isTenantRequiredError(query.error);
+  const isTenantRequired = !activeTenantId || isTenantRequiredError(query.error);
 
   const moduleSet = new Set<string>();
   for (const e of entities) {
@@ -71,12 +79,16 @@ export function useEntitiesViewModel() {
     }
     if (!q) return true;
     const name = language === "ar" ? e.displayNameAr : e.displayNameEn;
+    const moduleLabel = resolveModuleDisplayName(e.owningModule, t).toLowerCase();
     return (
       e.entityKey.toLowerCase().includes(q) ||
       name.toLowerCase().includes(q) ||
-      e.owningModule.toLowerCase().includes(q)
+      e.owningModule.toLowerCase().includes(q) ||
+      moduleLabel.includes(q)
     );
   });
+
+  const hasActiveFilters = Boolean(search.trim()) || selectedModule !== "all";
 
   const safePageSize = Math.max(1, Number.isFinite(pageSize) ? Math.floor(pageSize) : 10);
   const totalCount = Number.isFinite(filteredEntities.length)
@@ -111,14 +123,31 @@ export function useEntitiesViewModel() {
         document.body.appendChild(a);
         a.click();
         a.remove();
-        URL.revokeObjectURL(url);
-      } catch {
-        // Handled silently
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      } catch (err) {
+        if (err instanceof Error && err.name === "AbortError") {
+          return;
+        }
+        const displayName =
+          language === "ar" && entity.displayNameAr
+            ? entity.displayNameAr
+            : entity.displayNameEn;
+        const message =
+          err instanceof Error && err.message.trim()
+            ? err.message
+            : t("dataTransferEntities.error.templateDownloadFailed", {
+                defaultValue: "Failed to download template workbook.",
+              });
+        toast.error({
+          id: `dx-template-${entity.entityKey}`,
+          title: displayName || entity.entityKey,
+          description: message,
+        });
       } finally {
         setDownloadingTemplateEntity(null);
       }
     },
-    [language, repo]
+    [language, repo, t]
   );
 
   return {
@@ -135,6 +164,8 @@ export function useEntitiesViewModel() {
     setSearch,
     selectedModule,
     setSelectedModule,
+    hasActiveFilters,
+    resetFilters,
     page: safePage,
     pageNumber: safePage,
     setPage,

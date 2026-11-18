@@ -118,7 +118,9 @@ export function useCrmSettingsViewModel() {
         isRequired: input.isRequired,
         options,
         defaultStageGateKey:
-          input.entityTypeKey === "crm.opportunity" && input.defaultStageGateKey !== "none"
+          (input.entityTypeKey === "crm.opportunity" || input.entityTypeKey === "crm.lead") &&
+          input.defaultStageGateKey &&
+          input.defaultStageGateKey !== "none"
             ? input.defaultStageGateKey
             : undefined,
       });

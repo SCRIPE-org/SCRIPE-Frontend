@@ -1,6 +1,7 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermission } from "@core/hooks/use-permission";
 import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
@@ -27,6 +28,7 @@ import type { CrmAccount } from "../../domain/entities/AccountEntity";
  */
 export function AccountsView() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { t, language } = useI18n();
   const isRtl = language === "ar";
   const canCreateAccount = usePermission(CRM_PERMISSIONS.ACCOUNTS_CREATE);
@@ -45,6 +47,12 @@ export function AccountsView() {
     refresh,
   } = viewModel;
 
+  useEffect(() => {
+    if (searchParams?.get("create") === "1" && canCreateAccount) {
+      setIsCreateOpen(true);
+    }
+  }, [searchParams, canCreateAccount, setIsCreateOpen]);
+
   const handleTabChange = (tab: CrmTabId) => {
     const route = CRM_TAB_ROUTES[tab];
     if (route) router.push(route);
@@ -55,8 +63,9 @@ export function AccountsView() {
   const tiers = [
     { key: undefined, label: t("crmAccounts.filters.allTiers") },
     { key: "Enterprise", label: t("crmAccounts.tiers.Enterprise") },
-    { key: "KeyAccount", label: t("crmAccounts.tiers.KeyAccount") },
-    { key: "Strategic", label: t("crmAccounts.tiers.Strategic") },
+    { key: "Platinum", label: t("crmAccounts.tiers.Platinum") },
+    { key: "Gold", label: t("crmAccounts.tiers.Gold") },
+    { key: "Silver", label: t("crmAccounts.tiers.Silver") },
     { key: "Standard", label: t("crmAccounts.tiers.Standard") },
   ];
 
@@ -104,7 +113,7 @@ export function AccountsView() {
                 className={cn(
                   "h-7 px-2.5 text-xs rounded-nx-md shrink-0 transition-all",
                   isSelected
-                    ? "border-nx-accent/40 bg-nx-accent-wash text-nx-accent font-semibold"
+                    ? "border-[color:color-mix(in_srgb,var(--nx-accent)_40%,transparent)] bg-nx-accent-wash text-nx-accent font-semibold"
                     : "border-nx-line bg-nx-surface text-nx-ink-2 hover:bg-nx-raised hover:text-nx-ink"
                 )}
               >

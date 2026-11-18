@@ -23,13 +23,22 @@ export interface CrmLead {
   notes?: string;
   disqualificationReason?: string;
   verifiedPartyId?: string;
+  partyDisplayName?: string;
+  primaryContactName?: string;
   organizationPartyId?: string;
+  organizationDisplayName?: string;
   personPartyId?: string;
+  personDisplayName?: string;
   accountId?: string;
+  accountDisplayName?: string;
   qualificationDecision?: QualificationDecision;
   convertedOpportunityId?: string;
   ownerUserId?: string;
+  ownerDisplayName?: string;
   ownerTeamId?: string;
+  ownerTeamDisplayName?: string;
+  leadSourceChannel?: string;
+  leadBantNotes?: string;
   stageKey?: string;
   stageLabelEnSnapshot?: string;
   stageLabelArSnapshot?: string;
@@ -37,6 +46,15 @@ export interface CrmLead {
   triggerDealConversion?: boolean;
   createdAt: string;
   rowVersion?: string;
+}
+
+export interface AssignLeadOwnerInput {
+  leadId: string;
+  ownerUserId: string;
+  ownerTeamId?: string;
+  assignmentReason?: string;
+  expectedRowVersion?: string;
+  idempotencyKey?: string;
 }
 
 export interface MoveLeadStageInput {
@@ -53,12 +71,18 @@ export interface MoveLeadStageInput {
   idempotencyKey?: string;
   partyId?: string;
   accountId?: string;
+  contactId?: string;
+  ownerUserId?: string;
+  leadPhoneOrEmail?: string;
+  leadSourceChannel?: string;
+  leadBantNotes?: string;
   estimatedValue?: number;
   currency?: string;
   convertDealTitle?: string;
   targetDealPipelineId?: string;
   dealKind?: DealKind;
   reopenReason?: string;
+  nextStepSummary?: string;
 }
 
 export interface CreateLeadInput {

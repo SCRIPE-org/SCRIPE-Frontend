@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermission } from "@core/hooks/use-permission";
@@ -8,9 +8,7 @@ import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
 import { Button } from "@core/ui/button";
 import { Card } from "@core/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
-import {
-  AlertCircle, ArrowUpRight, CheckCircle2, ChevronLeft, ChevronRight, Edit2, Link as LinkIcon, XCircle,
-} from "lucide-react";
+import { AlertCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import { useCustomFieldsFormFields } from "@core/crud/customFieldsExtension";
 import {
   CRM_PERMISSIONS, CrmShell, ActivityTimeline, useCrmCurrency, useCrmWorkflowsStore,
@@ -19,11 +17,18 @@ import {
 import { QualifyLeadDialog } from "../components/QualifyLeadDialog";
 import { LinkPartyDialog } from "../components/LinkPartyDialog";
 import { ConvertLeadDialog } from "../components/ConvertLeadDialog";
+import { AssignLeadOwnerDialog } from "../components/AssignLeadOwnerDialog";
 import { LeadDetailProfileCards } from "../components/LeadDetailProfileCards";
 import { LeadDetailSkeleton } from "../components/LeadDetailSkeleton";
 import { EditLeadDetailDialog } from "../components/EditLeadDetailDialog";
 import { LeadStageProgressionCard } from "../components/LeadStageProgressionCard";
+import { LeadDetailActionsBar } from "../components/LeadDetailActionsBar";
 import { useLeadDetailViewModel } from "../viewmodels/useLeadDetailViewModel";
+import {
+  buildLeadTransitionRecord,
+  evaluateLeadStageTransition,
+  resolveLeadTransitionStageLabels,
+} from "../utils/leadTransitionHelpers";
 
 export interface LeadDetailViewProps {
   leadId: string;
@@ -38,13 +43,15 @@ export function LeadDetailView({ leadId }: LeadDetailViewProps) {
   const canUpdateLead = usePermission(CRM_PERMISSIONS.LEADS_UPDATE);
   const canQualifyLead = usePermission(CRM_PERMISSIONS.LEADS_QUALIFY);
   const canCreateOpp = usePermission(CRM_PERMISSIONS.OPPORTUNITIES_CREATE);
+  const canAssignOwner = usePermission(CRM_PERMISSIONS.RECORDS_ASSIGN);
 
   const {
     state, isEditOpen, setIsEditOpen, isQualifyOpen, setIsQualifyOpen,
     qualifyDefaultDecision, setQualifyDefaultDecision, isLinkPartyOpen, setIsLinkPartyOpen,
-    isConvertOpen, setIsConvertOpen, isSubmitting, submitError, setSubmitError,
+    isConvertOpen, setIsConvertOpen, isAssignOwnerOpen, setIsAssignOwnerOpen,
+    isSubmitting, submitError, setSubmitError,
     handleUpdateLead, handleTransitionSubmit, handleQualifyLead,
-    handleLinkParty, handleConvertLead, lookupCandidateParties,
+    handleLinkParty, handleConvertLead, handleAssignLeadOwner, linkPartyBeforeConvert,
   } = useLeadDetailViewModel(leadId);
 
   const activeLeadWorkflow = useCrmWorkflowsStore((s) => s.getActiveWorkflow("lead"));
@@ -74,11 +81,7 @@ export function LeadDetailView({ leadId }: LeadDetailViewProps) {
       return;
     }
 
-    const evalResult = useCrmWorkflowsStore.getState().evaluateTransition("lead", fromKey, toKey, {
-      hasVerifiedParty: Boolean(currentLead.organizationPartyId || currentLead.personPartyId || currentLead.verifiedPartyId),
-      estimatedAmount: currentLead.estimatedValue ?? null,
-      targetCloseDate: null,
-    });
+    const evalResult = evaluateLeadStageTransition(currentLead, fromKey, toKey, isRtl);
 
     if (evalResult.status === "blocked") {
       setSubmitError(evalResult.reason || t("crmLeads.detail.transitionBlockedTitle", { defaultValue: "Status Transition Blocked" }));
@@ -107,16 +110,16 @@ export function LeadDetailView({ leadId }: LeadDetailViewProps) {
   } = useCustomFieldsFormFields("crm.lead", leadId);
 
   const [editCustomFields, setEditCustomFields] = useState<Record<string, unknown>>({});
-
-  useEffect(() => {
-    if (leadCustomFieldConfigs.length > 0) {
-      setEditCustomFields((prev) => {
-        const next: Record<string, unknown> = { ...prev };
-        for (const fc of leadCustomFieldConfigs) if (fc.defaultValue != null) next[fc.name] = fc.defaultValue;
-        return next;
-      });
-    }
-  }, [leadCustomFieldConfigs]);
+  const [prevCfSig, setPrevCfSig] = useState("");
+  const cfSig = leadCustomFieldConfigs.map((c) => `${c.name}:${String(c.defaultValue ?? "")}`).join("|");
+  if (leadCustomFieldConfigs.length > 0 && cfSig !== prevCfSig) {
+    setPrevCfSig(cfSig);
+    setEditCustomFields((prev) => {
+      const next: Record<string, unknown> = { ...prev };
+      for (const fc of leadCustomFieldConfigs) if (fc.defaultValue != null && next[fc.name] === undefined) next[fc.name] = fc.defaultValue;
+      return next;
+    });
+  }
 
   const onSaveLead = async (payload: Record<string, any>) => {
     const ok = await handleUpdateLead(payload, editCustomFields);
@@ -151,47 +154,24 @@ export function LeadDetailView({ leadId }: LeadDetailViewProps) {
   return (
     <CrmShell activeTab="leads" onTabChange={onTabNav}>
       <div className="space-y-6" dir={isRtl ? "rtl" : "ltr"} data-testid="lead-detail-view">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <Button type="button" variant="ghost" size="sm" onClick={() => router.push("/crm/leads")} className="h-8 text-xs text-nx-ink-2 gap-1 border border-nx-line bg-nx-surface hover:bg-nx-raised">
-            {isRtl ? <ChevronRight className="size-3.5" /> : <ChevronLeft className="size-3.5" />}
-            <span>{t("crmLeads.detail.backToLeads")}</span>
-          </Button>
+        <LeadDetailActionsBar
+          lead={lead}
+          isRtl={isRtl}
+          isTerminal={isTerminal}
+          canUpdateLead={canUpdateLead}
+          canAssignOwner={canAssignOwner}
+          canQualifyLead={canQualifyLead}
+          canCreateOpp={canCreateOpp}
+          onBack={() => router.push("/crm/leads")}
+          onOpenEdit={() => { setSubmitError(null); setIsEditOpen(true); }}
+          onOpenAssignOwner={() => { setSubmitError(null); setIsAssignOwnerOpen(true); }}
+          onOpenLinkParty={() => { setSubmitError(null); setIsLinkPartyOpen(true); }}
+          onOpenQualify={(decision) => { setQualifyDefaultDecision(decision); setSubmitError(null); setIsQualifyOpen(true); }}
+          onOpenConvert={() => { setSubmitError(null); setIsConvertOpen(true); }}
+          t={t}
+        />
 
-          <div className="flex flex-wrap items-center gap-2">
-            {canUpdateLead && !isTerminal && (
-              <Button type="button" variant="outline" size="sm" data-testid="lead-detail-edit-btn" onClick={() => { setSubmitError(null); setIsEditOpen(true); }} className="h-8 text-xs gap-1.5 border-nx-line bg-nx-surface text-nx-ink hover:bg-nx-raised">
-                <Edit2 className="size-3.5 text-nx-accent" />
-                <span>{t("crmLeads.detail.editLeadBtn")}</span>
-              </Button>
-            )}
-            {canQualifyLead && !isTerminal && (
-              <Button type="button" variant="ghost" size="sm" data-testid="lead-detail-link-party-btn" onClick={() => { setSubmitError(null); setIsLinkPartyOpen(true); }} className="h-8 text-xs gap-1.5 text-nx-ink-2 hover:text-nx-ink">
-                <LinkIcon className="size-3.5" />
-                <span>{t("crmLeads.detail.linkPartyBtn")}</span>
-              </Button>
-            )}
-            {canQualifyLead && lead.status !== "Converted" && (
-              <>
-                <Button type="button" variant={lead.status !== "Qualified" ? "default" : "outline"} size="sm" data-testid="lead-detail-qualify-btn" onClick={() => { setQualifyDefaultDecision("Qualified"); setSubmitError(null); setIsQualifyOpen(true); }} className="h-8 text-xs gap-1.5">
-                  <CheckCircle2 className="size-3.5" />
-                  <span>{t("crmLeads.detail.qualifyLeadBtn")}</span>
-                </Button>
-                <Button type="button" variant="ghost" size="sm" data-testid="lead-detail-disqualify-btn" onClick={() => { setQualifyDefaultDecision("Disqualified"); setSubmitError(null); setIsQualifyOpen(true); }} className="h-8 text-xs gap-1.5 text-destructive hover:bg-destructive/10">
-                  <XCircle className="size-3.5" />
-                  <span>{t("crmLeads.detail.disqualifyBtn")}</span>
-                </Button>
-              </>
-            )}
-            {canQualifyLead && canCreateOpp && !lead.convertedOpportunityId && (
-              <Button type="button" size="sm" variant={lead.status === "Qualified" ? "default" : "outline"} data-testid="lead-detail-convert-btn" onClick={() => { setSubmitError(null); setIsConvertOpen(true); }} className="h-8 text-xs font-bold gap-1.5">
-                <ArrowUpRight className="size-3.5" />
-                <span>{t("crmLeads.detail.convertBtn")}</span>
-              </Button>
-            )}
-          </div>
-        </div>
-
-        {submitError && !isEditOpen && !isQualifyOpen && !isLinkPartyOpen && !isConvertOpen && (
+        {submitError && !isEditOpen && !isQualifyOpen && !isLinkPartyOpen && !isConvertOpen && !isAssignOwnerOpen && (
           <Alert variant="destructive" data-testid="lead-detail-transition-error-banner" dir={isRtl ? "rtl" : "ltr"}>
             <AlertCircle className="size-4" />
             <AlertTitle>{t("crmLeads.detail.transitionBlockedTitle")}</AlertTitle>
@@ -213,15 +193,9 @@ export function LeadDetailView({ leadId }: LeadDetailViewProps) {
 
         <Tabs defaultValue="profile" className="space-y-4">
           <TabsList className="bg-nx-surface border border-nx-line p-1">
-            <TabsTrigger value="profile" className="text-xs data-[state=active]:bg-nx-accent-wash data-[state=active]:text-nx-accent font-semibold">
-              {t("crmLeads.tabs.profile")}
-            </TabsTrigger>
-            <TabsTrigger value="linkage" className="text-xs data-[state=active]:bg-nx-accent-wash data-[state=active]:text-nx-accent font-semibold">
-              {t("crmLeads.tabs.linkage")}
-            </TabsTrigger>
-            <TabsTrigger value="activities" className="text-xs data-[state=active]:bg-nx-accent-wash data-[state=active]:text-nx-accent font-semibold">
-              {t("crmLeads.tabs.activities")}
-            </TabsTrigger>
+            <TabsTrigger value="profile" className="text-xs data-[state=active]:bg-nx-accent-wash data-[state=active]:text-nx-accent font-semibold">{t("crmLeads.tabs.profile")}</TabsTrigger>
+            <TabsTrigger value="linkage" className="text-xs data-[state=active]:bg-nx-accent-wash data-[state=active]:text-nx-accent font-semibold">{t("crmLeads.tabs.linkage")}</TabsTrigger>
+            <TabsTrigger value="activities" className="text-xs data-[state=active]:bg-nx-accent-wash data-[state=active]:text-nx-accent font-semibold">{t("crmLeads.tabs.activities")}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="profile" className="space-y-4">
@@ -260,35 +234,22 @@ export function LeadDetailView({ leadId }: LeadDetailViewProps) {
         />
 
         <QualifyLeadDialog open={isQualifyOpen} onOpenChange={setIsQualifyOpen} lead={lead} initialDecision={qualifyDefaultDecision} onSubmit={handleQualifyLead} isSubmitting={isSubmitting} submitError={submitError} />
-        <LinkPartyDialog open={isLinkPartyOpen} onOpenChange={setIsLinkPartyOpen} lead={lead} onSubmit={handleLinkParty} onLookupParties={lookupCandidateParties} isSubmitting={isSubmitting} submitError={submitError} />
-        <ConvertLeadDialog open={isConvertOpen} onOpenChange={setIsConvertOpen} lead={lead} onSubmit={handleConvertLead} isSubmitting={isSubmitting} submitError={submitError} />
+        <LinkPartyDialog open={isLinkPartyOpen} onOpenChange={setIsLinkPartyOpen} lead={lead} onSubmit={handleLinkParty} isSubmitting={isSubmitting} submitError={submitError} />
+        <ConvertLeadDialog open={isConvertOpen} onOpenChange={setIsConvertOpen} lead={lead} onLinkPartyBeforeConvert={linkPartyBeforeConvert} onSubmit={handleConvertLead} isSubmitting={isSubmitting} submitError={submitError} />
+        <AssignLeadOwnerDialog open={isAssignOwnerOpen} onOpenChange={setIsAssignOwnerOpen} lead={lead} onSubmit={handleAssignLeadOwner} isSubmitting={isSubmitting} submitError={submitError} />
 
-        {(() => {
-          const fromStage = activeLeadWorkflow?.stages.find((s) => s.stageKey === transitionFromKey);
-          const toStage = activeLeadWorkflow?.stages.find((s) => s.stageKey === transitionToKey);
-          return (
-            <CrmWorkflowTransitionDialog
-              open={transitionDialogOpen}
-              onOpenChange={setTransitionDialogOpen}
-              entityType="lead"
-              record={lead ? {
-                id: lead.id,
-                title: lead.title,
-                partyId: lead.verifiedPartyId || lead.organizationPartyId || lead.personPartyId,
-                estimatedValue: lead.estimatedValue,
-                currency: lead.currency,
-                rowVersion: lead.rowVersion,
-              } : null}
-              fromStageKey={transitionFromKey}
-              toStageKey={transitionToKey}
-              fromStageLabel={fromStage ? (isRtl && fromStage.labelAr ? fromStage.labelAr : fromStage.labelEn) : undefined}
-              toStageLabel={toStage ? (isRtl && toStage.labelAr ? toStage.labelAr : toStage.labelEn) : undefined}
-              evalResult={transitionEvalResult}
-              onSubmit={handleTransitionSubmit}
-              isSubmitting={isSubmitting}
-            />
-          );
-        })()}
+        <CrmWorkflowTransitionDialog
+          open={transitionDialogOpen}
+          onOpenChange={setTransitionDialogOpen}
+          entityType="lead"
+          record={lead ? buildLeadTransitionRecord(lead) : null}
+          fromStageKey={transitionFromKey}
+          toStageKey={transitionToKey}
+          {...resolveLeadTransitionStageLabels(activeLeadWorkflow, transitionFromKey, transitionToKey, isRtl)}
+          evalResult={transitionEvalResult}
+          onSubmit={handleTransitionSubmit}
+          isSubmitting={isSubmitting}
+        />
       </div>
     </CrmShell>
   );

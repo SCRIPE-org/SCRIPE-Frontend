@@ -108,6 +108,7 @@ export const ar = {
       viewDealsBtn: "عرض الصفقات",
       viewAccountsBtn: "عرض الحسابات",
       logActivityBtn: "تسجيل نشاط",
+      createDealBtn: "إنشاء صفقة",
     },
   },
 };

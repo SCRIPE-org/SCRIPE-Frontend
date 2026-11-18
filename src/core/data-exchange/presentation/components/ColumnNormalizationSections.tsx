@@ -115,7 +115,7 @@ export function ColumnNormalizationSections({
   const generalSection = (
     <div key="general" className="space-y-2">
       <span className="text-[11px] font-semibold text-nx-ink-2">{t("dataExchange.normalization.generalGroup")}</span>
-      <div className="space-y-2 rounded-nx-control border border-nx-line bg-nx-raised/50 p-2.5">
+      <div className="space-y-2 rounded-nx-control border border-nx-line bg-nx-raised p-2.5">
         <div className="flex items-center justify-between">
           <Label htmlFor={`norm-trim-${sourceColumnHeader}`} className="text-xs text-nx-ink">{t("dataExchange.normalization.trimLabel")}</Label>
           <Switch id={`norm-trim-${sourceColumnHeader}`} checked={rule.trim !== false} onCheckedChange={(c) => onUpdate({ trim: c })} />
@@ -151,7 +151,7 @@ export function ColumnNormalizationSections({
         </div>
         <div className="flex items-center justify-between gap-2 pt-1">
           <Label htmlFor={`norm-def-${sourceColumnHeader}`} className="text-xs text-nx-ink">{t("dataExchange.normalization.defaultValueLabel")}</Label>
-          <Input id={`norm-def-${sourceColumnHeader}`} value={rule.defaultValue ?? ""} placeholder={t("dataExchange.normalization.defaultValuePlaceholder")} onChange={(e) => onUpdate({ defaultValue: e.target.value || null })} className="h-7 w-36 text-xs" />
+          <Input id={`norm-def-${sourceColumnHeader}`} dir="auto" value={rule.defaultValue ?? ""} placeholder={t("dataExchange.normalization.defaultValuePlaceholder")} onChange={(e) => onUpdate({ defaultValue: e.target.value || null })} className="h-7 w-28 sm:w-36 text-xs" />
         </div>
       </div>
     </div>
@@ -160,7 +160,7 @@ export function ColumnNormalizationSections({
   const menaArabicSection = (
     <div key="menaArabic" className="space-y-2">
       <span className="text-[11px] font-semibold text-nx-ink-2">{t("dataExchange.normalization.menaArabicGroup")}</span>
-      <div className="space-y-2 rounded-nx-control border border-nx-line bg-nx-raised/50 p-2.5">
+      <div className="space-y-2 rounded-nx-control border border-nx-line bg-nx-raised p-2.5">
         <div className="flex items-center justify-between">
           <Label htmlFor={`norm-diacr-${sourceColumnHeader}`} className="text-xs text-nx-ink">{t("dataExchange.normalization.stripDiacriticsLabel")}</Label>
           <Switch id={`norm-diacr-${sourceColumnHeader}`} checked={rule.stripArabicDiacritics !== false} onCheckedChange={(c) => onUpdate({ stripArabicDiacritics: c })} />
@@ -180,7 +180,7 @@ export function ColumnNormalizationSections({
   const formatsSection = (
     <div key="formats" className="space-y-2">
       <span className="text-[11px] font-semibold text-nx-ink-2">{t("dataExchange.normalization.formatsGroup")}</span>
-      <div className="space-y-2 rounded-nx-control border border-nx-line bg-nx-raised/50 p-2.5">
+      <div className="space-y-2 rounded-nx-control border border-nx-line bg-nx-raised p-2.5">
         <div className="flex items-center justify-between">
           <Label htmlFor={`norm-curr-${sourceColumnHeader}`} className="text-xs text-nx-ink">{t("dataExchange.normalization.stripCurrencyLabel")}</Label>
           <Switch id={`norm-curr-${sourceColumnHeader}`} checked={rule.stripCurrencyAndGrouping !== false} onCheckedChange={(c) => onUpdate({ stripCurrencyAndGrouping: c })} />
@@ -195,19 +195,19 @@ export function ColumnNormalizationSections({
         </div>
         <div className="flex items-center justify-between gap-2 pt-1">
           <Label htmlFor={`norm-dial-${sourceColumnHeader}`} className="text-xs text-nx-ink">{t("dataExchange.normalization.defaultCountryCodeLabel")}</Label>
-          <Input id={`norm-dial-${sourceColumnHeader}`} value={rule.defaultCountryDialCode ?? ""} placeholder={t("dataExchange.normalization.defaultCountryCodePlaceholder")} onChange={(e) => onUpdate({ defaultCountryDialCode: e.target.value || null })} className="h-7 w-24 text-xs font-mono" />
+          <Input id={`norm-dial-${sourceColumnHeader}`} dir="ltr" value={rule.defaultCountryDialCode ?? ""} placeholder={t("dataExchange.normalization.defaultCountryCodePlaceholder")} onChange={(e) => onUpdate({ defaultCountryDialCode: e.target.value || null })} className="h-7 w-20 sm:w-24 text-xs font-mono" />
         </div>
         <div className="flex items-center justify-between gap-2 pt-1">
           <Label htmlFor={`norm-datefmt-${sourceColumnHeader}`} className="text-xs text-nx-ink">{t("dataExchange.normalization.dateFormatLabel")}</Label>
-          <Input id={`norm-datefmt-${sourceColumnHeader}`} value={rule.dateFormat ?? ""} placeholder={t("dataExchange.normalization.dateFormatPlaceholder")} onChange={(e) => onUpdate({ dateFormat: e.target.value || null })} className="h-7 w-32 text-xs font-mono" />
+          <Input id={`norm-datefmt-${sourceColumnHeader}`} dir="ltr" value={rule.dateFormat ?? ""} placeholder={t("dataExchange.normalization.dateFormatPlaceholder")} onChange={(e) => onUpdate({ dateFormat: e.target.value || null })} className="h-7 w-28 sm:w-32 text-xs font-mono" />
         </div>
         <div className="flex items-center justify-between gap-2 pt-1">
           <Label htmlFor={`norm-tz-${sourceColumnHeader}`} className="text-xs text-nx-ink">{t("dataExchange.normalization.sourceTimeZoneLabel")}</Label>
-          <Input id={`norm-tz-${sourceColumnHeader}`} value={rule.sourceTimeZoneId ?? ""} placeholder={t("dataExchange.normalization.sourceTimeZonePlaceholder")} onChange={(e) => onUpdate({ sourceTimeZoneId: e.target.value || null })} className="h-7 w-32 text-xs font-mono" />
+          <Input id={`norm-tz-${sourceColumnHeader}`} dir="ltr" value={rule.sourceTimeZoneId ?? ""} placeholder={t("dataExchange.normalization.sourceTimeZonePlaceholder")} onChange={(e) => onUpdate({ sourceTimeZoneId: e.target.value || null })} className="h-7 w-28 sm:w-32 text-xs font-mono" />
         </div>
         <div className="flex items-center justify-between gap-2 pt-1">
           <Label htmlFor={`norm-del-${sourceColumnHeader}`} className="text-xs text-nx-ink">{t("dataExchange.normalization.multiValueDelimiterLabel")}</Label>
-          <Input id={`norm-del-${sourceColumnHeader}`} value={rule.multiValueDelimiter ?? ""} placeholder={t("dataExchange.normalization.multiValueDelimiterPlaceholder")} onChange={(e) => onUpdate({ multiValueDelimiter: e.target.value || null })} className="h-7 w-24 text-xs font-mono" />
+          <Input id={`norm-del-${sourceColumnHeader}`} dir="ltr" value={rule.multiValueDelimiter ?? ""} placeholder={t("dataExchange.normalization.multiValueDelimiterPlaceholder")} onChange={(e) => onUpdate({ multiValueDelimiter: e.target.value || null })} className="h-7 w-20 sm:w-24 text-xs font-mono" />
         </div>
       </div>
     </div>
@@ -226,7 +226,7 @@ export function ColumnNormalizationSections({
   return (
     <div className="space-y-4">
       {smartPreset && (
-        <div className="rounded-nx-control border border-nx-accent/40 bg-nx-accent-wash/30 p-2.5 flex items-center justify-between gap-2">
+        <div className="rounded-nx-control border border-[color:color-mix(in_srgb,var(--nx-accent)_40%,transparent)] bg-nx-accent-wash p-2.5 flex items-center justify-between gap-2">
           <div className="flex items-center gap-1.5 min-w-0">
             <Sparkles className="h-3.5 w-3.5 text-nx-accent shrink-0" />
             <span className="text-[11px] font-medium text-nx-ink truncate">

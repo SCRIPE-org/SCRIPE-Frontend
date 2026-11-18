@@ -26,4 +26,10 @@ export class CrmActivityRepository implements ICrmActivityRepository {
   ): Promise<FollowUpCreatedResponse> {
     return this.service.createFollowUp(activityId, payload);
   }
+
+  completeFollowUpWorkItem(workItemId: string): Promise<void> {
+    return this.service.completeFollowUpWorkItem
+      ? this.service.completeFollowUpWorkItem(workItemId)
+      : Promise.resolve();
+  }
 }

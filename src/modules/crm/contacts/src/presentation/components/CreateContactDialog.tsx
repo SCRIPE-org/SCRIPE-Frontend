@@ -8,10 +8,10 @@ import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { PhoneInput } from "@core/ui/phone-input";
 import { Textarea } from "@core/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@core/ui/dialog";
-import { AlertCircle, User, PlusCircle, Search, Building2 } from "lucide-react";
+import { AlertCircle, User, PlusCircle, Building2 } from "lucide-react";
 import { CustomFieldsSection } from "@core/crud/customFieldsExtension";
+import { CrmEntitySearchSelect } from "@modules/crm";
 import type { CreateContactInput } from "../../domain/entities/ContactEntity";
 
 export interface ContactCandidatePersonLookup {
@@ -43,8 +43,6 @@ export function CreateContactDialog({
   open,
   onOpenChange,
   onSubmit,
-  onLookupPeople,
-  onLookupAccounts,
   isSubmitting,
   error,
   defaultAccountId = "",
@@ -64,30 +62,12 @@ export function CreateContactDialog({
   const [commercialNotes, setCommercialNotes] = useState("");
   const [customFields, setCustomFields] = useState<Record<string, unknown>>({});
   const [validationError, setValidationError] = useState<string | null>(null);
-  const [candidatePeople, setCandidatePeople] = useState<ContactCandidatePersonLookup[]>([]);
-  const [personSearch, setPersonSearch] = useState("");
-  const [accounts, setAccounts] = useState<ContactAccountLookup[]>([]);
 
   useEffect(() => {
-    if (!open) return;
-    let active = true;
-    Promise.all([
-      onLookupPeople ? onLookupPeople(personSearch) : Promise.resolve([]),
-      onLookupAccounts ? onLookupAccounts() : Promise.resolve([]),
-    ])
-      .then(([peopleRes, accountsRes]) => {
-        if (active) {
-          setCandidatePeople(peopleRes);
-          setAccounts(accountsRes ?? []);
-        }
-      })
-      .catch(() => {
-        if (active) setCandidatePeople([]);
-      });
-    return () => {
-      active = false;
-    };
-  }, [open, personSearch, onLookupPeople, onLookupAccounts]);
+    if (open && defaultAccountId) {
+      setPrimaryAccountId(defaultAccountId);
+    }
+  }, [open, defaultAccountId]);
 
   const resetForm = () => {
     setMode("create");
@@ -102,7 +82,6 @@ export function CreateContactDialog({
     setCommercialNotes("");
     setCustomFields({});
     setValidationError(null);
-    setPersonSearch("");
   };
 
   const handleOpenChange = (nextOpen: boolean) => {
@@ -205,26 +184,15 @@ export function CreateContactDialog({
               <Label className="text-xs font-medium text-nx-ink">
                 {t("crmContacts.create.selectPerson")} <span className="text-destructive">*</span>
               </Label>
-              <div className="relative">
-                <Search className="absolute start-2.5 top-1/2 -translate-y-1/2 size-3.5 text-nx-ink-3 pointer-events-none" />
-                <Input value={personSearch} onChange={(e) => setPersonSearch(e.target.value)} placeholder={t("crmContacts.create.searchPeople")} disabled={isSubmitting} className="h-8 ps-8 text-xs bg-nx-surface border-nx-line mb-2" />
-              </div>
-              <Select value={personPartyId} onValueChange={setPersonPartyId} disabled={isSubmitting}>
-                <SelectTrigger className="h-9 text-xs bg-nx-surface border-nx-line">
-                  <SelectValue placeholder={t("crmContacts.create.choosePerson")} />
-                </SelectTrigger>
-                <SelectContent>
-                  {candidatePeople.length === 0 ? (
-                    <SelectItem value="__empty" disabled>{t("crmContacts.create.noPeopleFound")}</SelectItem>
-                  ) : (
-                    candidatePeople.map((person) => (
-                      <SelectItem key={person.partyId} value={person.partyId}>
-                        {person.legalNameEn}{person.legalNameAr ? ` — ${person.legalNameAr}` : ""}
-                      </SelectItem>
-                    ))
-                  )}
-                </SelectContent>
-              </Select>
+              <CrmEntitySearchSelect
+                id="contact-person-select"
+                entityKind="party"
+                value={personPartyId}
+                onChange={(val) => setPersonPartyId(val)}
+                placeholder={t("crmContacts.create.choosePerson")}
+                allowClear
+                disabled={isSubmitting}
+              />
             </div>
           )}
 
@@ -233,19 +201,18 @@ export function CreateContactDialog({
               <Building2 className="size-3.5 text-nx-accent" />
               <span>{t("crmContacts.create.primaryAccountId")}</span>
             </Label>
-            <Select value={primaryAccountId} onValueChange={setPrimaryAccountId} disabled={isSubmitting}>
-              <SelectTrigger id="contact-account-id" className="h-9 text-xs bg-nx-surface border-nx-line">
-                <SelectValue placeholder={t("crmContacts.create.selectPrimaryAccount")} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="__none">{t("crmContacts.table.noAccount")}</SelectItem>
-                {accounts.map((acc) => (
-                  <SelectItem key={acc.id} value={acc.id}>
-                    {language === "ar" && acc.partyLegalNameAr ? acc.partyLegalNameAr : acc.partyLegalNameEn}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <CrmEntitySearchSelect
+              id="contact-account-id"
+              entityKind="account"
+              valueMode="id"
+              value={primaryAccountId === "__none" ? "" : primaryAccountId}
+              onChange={(val) => setPrimaryAccountId(val || "__none")}
+              placeholder={t("crmContacts.create.selectPrimaryAccount")}
+              enableQuickCreate
+              quickCreateDefaultKind="account"
+              allowClear
+              disabled={isSubmitting}
+            />
           </div>
 
           <div className="grid grid-cols-2 gap-3">

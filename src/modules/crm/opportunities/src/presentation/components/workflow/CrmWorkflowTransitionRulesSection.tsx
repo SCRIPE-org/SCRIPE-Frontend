@@ -39,7 +39,16 @@ export function CrmWorkflowTransitionRulesSection({
   openSection, onSetOpenSection, onOpenCatalogForCategory, attachedCatalogRules,
   onRemoveCatalogRule, onToggleField, onTransitionChange,
 }: CrmWorkflowTransitionRulesSectionProps) {
-  const exitFieldKeys = activeEntity === "lead" ? LEAD_EXIT_FIELD_KEYS : CORE_EXIT_FIELD_KEYS;
+  const baseExitKeys = activeEntity === "lead" ? LEAD_EXIT_FIELD_KEYS : CORE_EXIT_FIELD_KEYS;
+  const exitFieldKeys = Array.from(
+    new Set([
+      ...baseExitKeys,
+      "contactId",
+      "accountId",
+      "ownerUserId",
+      ...(activeEntity === "lead" ? [] : ["discountPercent", "nextStepSummary"]),
+    ])
+  );
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between pt-1">

@@ -4,14 +4,16 @@ import type {
   CrmOpportunity, OpportunityDetailResult, CreateOpportunityInput, UpdateOpportunityInput,
   AssignOpportunityOwnerInput, MoveOpportunityStageInput, CloseOpportunityInput, ReopenOpportunityInput,
   OpportunitiesFilterParams, PagedOpportunitiesResult, PipelineDefinition, UpdateDefaultPipelineInput,
-  DealContactRoleDto, AddDealContactRoleInput,
+  DealContactRole, AddDealContactRoleInput,
 } from "../../domain/entities/OpportunityEntity";
 import { CRM_OPPORTUNITY_ENDPOINTS } from "./crm-opportunity.endpoints";
+import {
+  normalizeDealContactRoleDto,
+  normalizePipelineDefinitionDto,
+  type ApiSuccessResponse,
+} from "./crmOpportunityMappers";
 
-export interface ApiSuccessResponse<T> {
-  success: boolean;
-  data: T;
-}
+export type { ApiSuccessResponse };
 
 export class CrmOpportunityService implements ICrmOpportunityService {
   constructor(private readonly api: IApiService) {}
@@ -82,12 +84,16 @@ export class CrmOpportunityService implements ICrmOpportunityService {
     const payload = {
       targetStageKey: input.targetStageKey,
       transitionId: input.transitionId,
-      reason: input.reason,
+      reason: input.reason || input.reopenReason,
       expectedRowVersion: input.expectedRowVersion ?? "",
       partyId: input.partyId,
       accountId: input.accountId,
+      contactId: input.contactId,
+      ownerUserId: input.ownerUserId,
       estimatedAmount: input.estimatedAmount,
       actualAmount: input.actualAmount,
+      discountPercent: input.discountPercent,
+      nextStepSummary: input.nextStepSummary,
       targetCloseDate: input.targetCloseDate,
       primaryContactRole: input.primaryContactRole,
       solutionFitConfirmed: input.solutionFitConfirmed,
@@ -206,23 +212,28 @@ export class CrmOpportunityService implements ICrmOpportunityService {
     return this.unwrap(response);
   }
 
-  async getContactRoles(opportunityId: string): Promise<DealContactRoleDto[]> {
-    const response = await this.api.get<ApiSuccessResponse<DealContactRoleDto[]> | DealContactRoleDto[]>(
+  async getContactRoles(opportunityId: string): Promise<DealContactRole[]> {
+    const response = await this.api.get<ApiSuccessResponse<DealContactRole[]> | DealContactRole[]>(
       CRM_OPPORTUNITY_ENDPOINTS.CONTACT_ROLES(opportunityId)
     );
-    return "data" in response && Array.isArray(response.data) ? response.data : Array.isArray(response) ? response : [];
+    const items = "data" in response && Array.isArray(response.data) ? response.data : Array.isArray(response) ? response : [];
+    return items.map((item) => normalizeDealContactRoleDto(item));
   }
 
-  async addContactRole(input: AddDealContactRoleInput): Promise<DealContactRoleDto> {
-    const response = await this.api.post<ApiSuccessResponse<DealContactRoleDto> | DealContactRoleDto>(
+  async addContactRole(input: AddDealContactRoleInput): Promise<DealContactRole> {
+    const response = await this.api.post<ApiSuccessResponse<DealContactRole> | DealContactRole>(
       CRM_OPPORTUNITY_ENDPOINTS.CONTACT_ROLES(input.opportunityId),
       {
-        contactPartyId: input.contactPartyId, contactName: input.contactName, contactEmail: input.contactEmail,
-        stakeholderRole: input.stakeholderRole, isPrimary: input.isPrimary ?? false, influenceNotes: input.influenceNotes,
+        contactPartyId: input.contactPartyId,
+        contactName: input.contactName,
+        contactEmail: input.contactEmail,
+        stakeholderRole: input.stakeholderRole,
+        isPrimary: input.isPrimary ?? false,
+        notes: input.influenceNotes,
       },
       undefined, this.withIdempotency("crm-role-add", input.idempotencyKey)
     );
-    return this.unwrap(response);
+    return normalizeDealContactRoleDto(this.unwrap(response));
   }
 
   async removeContactRole(opportunityId: string, roleId: string): Promise<boolean> {
@@ -231,26 +242,6 @@ export class CrmOpportunityService implements ICrmOpportunityService {
   }
 
   private normalizePipelineDefinition(p: any): PipelineDefinition {
-    if (!p) return p;
-    return {
-      id: p.pipelineId ?? p.id ?? "", pipelineId: p.pipelineId ?? p.id ?? "", tenantId: p.tenantId ?? "",
-      key: p.code ?? p.key ?? "default", code: p.code ?? p.key ?? "default",
-      entityType: p.entityType ?? (String(p.code ?? p.key ?? "").startsWith("lead.") ? "lead" : "deal"),
-      name: p.nameEn ?? p.name ?? "Standard Commercial Pipeline", nameEn: p.nameEn ?? p.name ?? "Standard Commercial Pipeline",
-      nameAr: p.nameAr ?? null, version: p.version ?? 1, isDefault: p.isDefault ?? true, isActive: p.isActive ?? true,
-      propertiesJson: p.propertiesJson ?? null, transitionsJson: p.transitionsJson ?? null, rowVersion: p.rowVersion ?? "",
-      stages: Array.isArray(p.stages)
-        ? p.stages.map((s: any) => ({
-            stageId: s.stageId ?? s.id ?? "", stageKey: s.stageKey, labelEn: s.labelEn, labelAr: s.labelAr ?? null,
-            sortOrder: s.sortOrder, statusCategory: s.statusCategory, color: s.color,
-            winProbabilityPercent: s.probabilityPercent ?? s.winProbabilityPercent ?? null,
-            probabilityPercent: s.probabilityPercent ?? s.winProbabilityPercent ?? null,
-            slaTargetDays: s.slaTargetDays ?? s.slaDays ?? null, slaDays: s.slaDays ?? s.slaTargetDays ?? null,
-            requiredExitFields: s.requiredExitFields ?? [], requiresVerifiedParty: s.requiresVerifiedParty ?? false,
-            triggerDealConversion: Boolean(s.triggerDealConversion), propertiesJson: s.propertiesJson ?? null,
-            canvasX: s.canvasX ?? null, canvasY: s.canvasY ?? null, rowVersion: s.rowVersion ?? null,
-          }))
-        : [],
-    };
+    return normalizePipelineDefinitionDto(p);
   }
 }

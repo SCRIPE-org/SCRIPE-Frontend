@@ -1,9 +1,31 @@
-import type { DataExchangeImportMode } from "@core/data-exchange/domain/types";
+/** Supported import modes for an exchange-capable entity. */
+export type DataExchangeEntityImportMode = "Insert" | "Update" | "Upsert";
+
+/** Structural view contract representing an entity in the data exchange catalog. */
+export interface DataExchangeEntitySummaryView {
+  readonly entityKey: string;
+  readonly owningModule: string;
+  readonly displayNameEn: string;
+  readonly displayNameAr: string;
+  readonly descriptionEn: string;
+  readonly descriptionAr: string;
+  readonly supportsBulkAutoCreateLookup: boolean;
+  readonly supportsIdentityOnboardingModes: boolean;
+  readonly supportedModes: DataExchangeEntityImportMode[];
+  readonly parentEntityKeys: string[];
+  readonly remainingQuotaSlots?: number | null;
+  readonly quotaMaxLimit?: number | null;
+  readonly isImportFeatureEnabled: boolean;
+  readonly isExportFeatureEnabled: boolean;
+  readonly canImport: boolean;
+  readonly canExport: boolean;
+  readonly relatedMultiSheetEntityKeys?: string[];
+}
 
 /**
  * Domain entity representing an exchange-capable entity in the catalog.
  */
-export class DataExchangeEntity {
+export class DataExchangeEntity implements DataExchangeEntitySummaryView {
   /** Unique entity key, e.g. "crm.lead", "party.person". */
   readonly entityKey: string;
   /** Owning module name, e.g. "CRM", "PartyKernel". */
@@ -21,7 +43,7 @@ export class DataExchangeEntity {
   /** Whether identity onboarding modes are supported. */
   readonly supportsIdentityOnboardingModes: boolean;
   /** Supported import modes (Insert, Update, Upsert). */
-  readonly supportedModes: DataExchangeImportMode[];
+  readonly supportedModes: DataExchangeEntityImportMode[];
   /** Keys of parent entities in the dependency hierarchy. */
   readonly parentEntityKeys: string[];
   /** Remaining quota slots for this entity in the active tenant. */
@@ -48,7 +70,7 @@ export class DataExchangeEntity {
     descriptionAr: string;
     supportsBulkAutoCreateLookup: boolean;
     supportsIdentityOnboardingModes: boolean;
-    supportedModes: DataExchangeImportMode[];
+    supportedModes: DataExchangeEntityImportMode[];
     parentEntityKeys: string[];
     remainingQuotaSlots?: number | null;
     quotaMaxLimit?: number | null;

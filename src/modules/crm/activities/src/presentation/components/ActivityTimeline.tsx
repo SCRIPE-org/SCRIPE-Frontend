@@ -6,15 +6,12 @@ import { usePermission } from "@core/hooks/use-permission";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { Card } from "@core/ui/card";
-import { Input } from "@core/ui/input";
-import { Textarea } from "@core/ui/textarea";
-import { Label } from "@core/ui/label";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@core/ui/dialog";
 import { Plus, Clock, Send } from "lucide-react";
 import { CRM_PERMISSIONS } from "@modules/crm";
 import { useCrmActivitiesViewModel } from "../viewmodels/useCrmActivitiesViewModel";
 import { CreateActivityModal } from "./CreateActivityModal";
 import { CreateFollowUpModal } from "./CreateFollowUpModal";
+import { SendCommunicationDialog } from "./SendCommunicationDialog";
 import { ActivityTimelineItemList } from "./ActivityTimelineItemList";
 import { ActivityTimelineSkeleton } from "./ActivityTimelineSkeleton";
 
@@ -193,63 +190,22 @@ export function ActivityTimeline({
         targetLabel={targetLabel}
       />
 
-      <Dialog open={isCommOpen} onOpenChange={setIsCommOpen}>
-        <DialogContent data-testid="send-communication-dialog" className="sm:max-w-lg bg-nx-surface border-nx-line text-nx-ink" dir={isRtl ? "rtl" : "ltr"}>
-          <form onSubmit={handleSendCommunication}>
-            <DialogHeader>
-              <DialogTitle className="text-base font-bold text-nx-ink font-heading flex items-center gap-2">
-                <Send className="size-4 text-nx-accent" />
-                <span>{t("crmActivities.communication.dialogTitle")}</span>
-              </DialogTitle>
-              <DialogDescription className="text-xs text-nx-ink-2">
-                {t("crmActivities.communication.dialogDesc")}
-              </DialogDescription>
-            </DialogHeader>
-
-            <div className="space-y-3.5 py-4 text-xs">
-              <div className="grid grid-cols-3 gap-2">
-                {(["Email", "Proposal", "WhatsApp"] as const).map((ch) => (
-                  <Button
-                    key={ch}
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setCommChannel(ch)}
-                    className={`h-8 text-xs ${
-                      commChannel === ch ? "border-primary bg-nx-surface text-nx-ink font-bold" : "border-nx-line bg-nx-raised text-nx-ink-2"
-                    }`}
-                  >
-                    {t(`crmActivities.communication.channels.${ch}`)}
-                  </Button>
-                ))}
-              </div>
-
-              <div className="space-y-1.5">
-                <Label htmlFor="comm-recipient" className="text-nx-ink font-semibold">{t("crmActivities.communication.recipientLabel")}</Label>
-                <Input id="comm-recipient" data-testid="comm-recipient-input" value={commRecipient} onChange={(e) => setCommRecipient(e.target.value)} placeholder={t("crmActivities.communication.recipientPlaceholder")} className="h-8 text-xs bg-nx-ground border-nx-line text-nx-ink" />
-              </div>
-
-              <div className="space-y-1.5">
-                <Label htmlFor="comm-subject" className="text-nx-ink font-semibold">{t("crmActivities.communication.subjectLabel")} *</Label>
-                <Input id="comm-subject" data-testid="comm-subject-input" value={commSubject} onChange={(e) => setCommSubject(e.target.value)} placeholder={t("crmActivities.communication.subjectPlaceholder")} required className="h-8 text-xs bg-nx-ground border-nx-line text-nx-ink" />
-              </div>
-
-              <div className="space-y-1.5">
-                <Label htmlFor="comm-body" className="text-nx-ink font-semibold">{t("crmActivities.communication.bodyLabel")}</Label>
-                <Textarea id="comm-body" data-testid="comm-body-textarea" value={commBody} onChange={(e) => setCommBody(e.target.value)} rows={4} placeholder={t("crmActivities.communication.bodyPlaceholder")} className="text-xs bg-nx-ground border-nx-line text-nx-ink resize-none" />
-              </div>
-            </div>
-
-            <DialogFooter className="gap-2 sm:gap-0 pt-2 border-t border-nx-line">
-              <Button type="button" variant="outline" size="sm" onClick={() => setIsCommOpen(false)} disabled={isSubmitting} className="h-8 text-xs border-nx-line text-nx-ink-2">{t("crmActivities.actions.cancel")}</Button>
-              <Button type="submit" size="sm" data-testid="submit-send-communication-btn" disabled={isSubmitting || !commSubject.trim()} className="h-8 text-xs font-bold gap-1.5">
-                <Send className="size-3.5" />
-                <span>{isSubmitting ? t("crmActivities.communication.dispatchingBtn") : t("crmActivities.communication.sendAndLogBtn")}</span>
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+      <SendCommunicationDialog
+        open={isCommOpen}
+        onOpenChange={setIsCommOpen}
+        isRtl={isRtl}
+        t={t}
+        commChannel={commChannel}
+        onChannelChange={setCommChannel}
+        commRecipient={commRecipient}
+        onRecipientChange={setCommRecipient}
+        commSubject={commSubject}
+        onSubjectChange={setCommSubject}
+        commBody={commBody}
+        onBodyChange={setCommBody}
+        isSubmitting={isSubmitting}
+        onSubmit={handleSendCommunication}
+      />
 
       <CreateFollowUpModal
         key={selectedActivityForFollowUp?.activityId ?? "closed"}

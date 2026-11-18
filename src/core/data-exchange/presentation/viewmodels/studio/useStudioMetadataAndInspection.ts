@@ -1,6 +1,14 @@
 "use client";
 
-import { useCallback, useEffect, type Dispatch, type MutableRefObject, type SetStateAction } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type Dispatch,
+  type MutableRefObject,
+  type SetStateAction,
+} from "react";
 import type { IDataExchangeRepository } from "../../../domain/interfaces/IDataExchangeRepository";
 import type {
   DataExchangeDescriptorResponseDto,
@@ -14,6 +22,8 @@ import type {
 import {
   buildInitialMappingsForSheet,
   getStudioErrorMessage,
+  isAbortOrInterceptedError,
+  validateUploadFileClientSide,
   type SheetMappingState,
   type StudioStep,
 } from "./studio-viewmodel.helpers";
@@ -87,6 +97,19 @@ export function useStudioMetadataAndInspection({
   setPolledJob,
   setStep,
 }: UseStudioMetadataAndInspectionParams) {
+  const [metaRetryNonce, setMetaRetryNonce] = useState(0);
+  const tRef = useRef(t);
+  const multiSheetEntityKeysRef = useRef(multiSheetEntityKeys);
+  useEffect(() => {
+    tRef.current = t;
+    multiSheetEntityKeysRef.current = multiSheetEntityKeys;
+  }, [t, multiSheetEntityKeys]);
+  const multiSheetEntityKeysKey = (multiSheetEntityKeys ?? []).filter(Boolean).join("|");
+
+  const retryLoadMetadata = useCallback(() => {
+    setMetaRetryNonce((n) => n + 1);
+  }, []);
+
   useEffect(() => {
     setIsMultiSheet(initialMultiSheet);
   }, [initialMultiSheet, open, setIsMultiSheet]);
@@ -104,34 +127,42 @@ export function useStudioMetadataAndInspection({
       setIsLoadingMeta(true);
       setErrorBanner(null);
       try {
-        const keysToLoad = Array.from(
-          new Set([entityKey, ...(multiSheetEntityKeys ?? [])].filter(Boolean))
+        const extraKeys = Array.from(
+          new Set(
+            (multiSheetEntityKeysRef.current ?? []).filter(
+              (k) => Boolean(k) && k.toLowerCase() !== entityKey.toLowerCase()
+            )
+          )
         );
 
-        const [descriptorList, loadedPresets] = await Promise.all([
+        const [primary, secondaryDescriptors] = await Promise.all([
+          repo.getEntityDescriptor(entityKey, controller.signal),
           Promise.all(
-            keysToLoad.map((key) =>
+            extraKeys.map((key) =>
               repo.getEntityDescriptor(key, controller.signal).catch(() => null)
             )
           ),
-          repo.listPresets(entityKey, controller.signal).catch(() => []),
         ]);
 
         if (cancelled) return;
 
         const map: Record<string, DataExchangeDescriptorResponseDto> = {};
-        for (const item of descriptorList) {
+        if (primary) {
+          map[primary.descriptor.entityKey] = primary;
+        }
+        for (const item of secondaryDescriptors) {
           if (item) {
             map[item.descriptor.entityKey] = item;
           }
         }
 
-        const primary = map[entityKey] ?? null;
         const discoveredKeys =
           primary?.relatedMultiSheetEntityKeys ??
           primary?.descriptor?.relatedMultiSheetEntityKeys ??
           [];
-        const missingRelatedKeys = discoveredKeys.filter((k) => Boolean(k) && !map[k]);
+        const missingRelatedKeys = discoveredKeys.filter(
+          (k) => Boolean(k) && !Object.keys(map).some((existing) => existing.toLowerCase() === k.toLowerCase())
+        );
         if (missingRelatedKeys.length > 0) {
           const extraDescriptors = await Promise.all(
             missingRelatedKeys.map((key) =>
@@ -145,6 +176,36 @@ export function useStudioMetadataAndInspection({
             }
           }
         }
+
+        const allEntityKeys = Array.from(
+          new Set([entityKey, ...Object.keys(map), ...discoveredKeys].filter(Boolean))
+        );
+
+        let loadedPresets: DataExchangeSavedPresetDto[] = [];
+        try {
+          const presetBatches = await Promise.all(
+            allEntityKeys.map((key) => repo.listPresets(key, controller.signal))
+          );
+          if (cancelled) return;
+          const seenPresetIds = new Set<string>();
+          for (const batch of presetBatches) {
+            for (const preset of batch) {
+              if (!seenPresetIds.has(preset.id)) {
+                seenPresetIds.add(preset.id);
+                loadedPresets.push(preset);
+              }
+            }
+          }
+        } catch (presetErr) {
+          if (!cancelled && !isAbortOrInterceptedError(presetErr)) {
+            setErrorBanner(
+              getStudioErrorMessage(presetErr, tRef.current("dataExchange.errors.presetsLoadFailed"))
+            );
+          }
+          loadedPresets = [];
+        }
+
+        if (cancelled) return;
 
         setDescriptorByEntity(map);
         setPrimaryDescriptor(primary);
@@ -161,8 +222,11 @@ export function useStudioMetadataAndInspection({
           setImportMode(modes.includes("Upsert") ? "Upsert" : modes[0]);
         }
       } catch (err) {
-        if (!cancelled) {
-          setErrorBanner(getStudioErrorMessage(err, t("dataExchange.errors.loadMetaFailed")));
+        if (!cancelled && !isAbortOrInterceptedError(err)) {
+          setPrimaryDescriptor(null);
+          setErrorBanner(
+            getStudioErrorMessage(err, tRef.current("dataExchange.errors.loadMetaFailed"))
+          );
         }
       } finally {
         if (!cancelled) {
@@ -171,7 +235,7 @@ export function useStudioMetadataAndInspection({
       }
     }
 
-    loadInitialMetadata();
+    void loadInitialMetadata();
 
     return () => {
       cancelled = true;
@@ -181,12 +245,12 @@ export function useStudioMetadataAndInspection({
   }, [
     open,
     entityKey,
-    multiSheetEntityKeys,
+    multiSheetEntityKeysKey,
     initialPresetId,
     initialMultiSheet,
+    metaRetryNonce,
     repo,
     stopPolling,
-    t,
     setDescriptorByEntity,
     setErrorBanner,
     setImportMode,
@@ -197,6 +261,12 @@ export function useStudioMetadataAndInspection({
 
   const inspectUploadedFile = useCallback(
     async (file: File, multiSheetOverride?: boolean) => {
+      const validationError = validateUploadFileClientSide(file, t);
+      if (validationError) {
+        setErrorBanner(validationError);
+        return;
+      }
+
       const multiFlag = multiSheetOverride ?? isMultiSheet;
       setSelectedFile(file);
       setIsInspecting(true);
@@ -210,39 +280,51 @@ export function useStudioMetadataAndInspection({
         const inspection = await repo.inspectUpload(entityKey, file, multiFlag);
         setInspectResult(inspection);
 
-        const matchedPreset =
-          (initialPresetId ? presets.find((p) => p.id === initialPresetId) : null) ??
-          presets.find((p) => p.isDefault);
+        const findPresetForEntity = (targetKey: string) => {
+          const entityPresets = presets.filter(
+            (p) => p.entityKey.toLowerCase() === targetKey.toLowerCase()
+          );
+          return (
+            (initialPresetId ? entityPresets.find((p) => p.id === initialPresetId) : null) ??
+            entityPresets.find((p) => p.isDefault)
+          );
+        };
+
+        const primaryPreset = findPresetForEntity(entityKey);
 
         const initialSheets: SheetMappingState[] = inspection.sheets
           .filter((s) => !s.isEmpty || inspection.sheets.length === 1)
           .map((sheet) => {
             const targetEntityKey = sheet.suggestedEntityKey || entityKey;
-            const sheetDesc = descriptorByEntity[targetEntityKey]?.descriptor;
+            const sheetDesc =
+              descriptorByEntity[targetEntityKey]?.descriptor ??
+              Object.values(descriptorByEntity).find(
+                (d) => d.descriptor.entityKey.toLowerCase() === targetEntityKey.toLowerCase()
+              )?.descriptor;
             const defaultSheetMode = sheetDesc?.supportedModes.includes(importMode)
               ? importMode
               : sheetDesc?.supportedModes[0] ?? "Upsert";
+            const sheetPreset = multiFlag ? findPresetForEntity(targetEntityKey) : primaryPreset;
 
             return {
               sheetName: sheet.sheetName,
               entityKey: targetEntityKey,
-              mode: !multiFlag && matchedPreset ? matchedPreset.importMode : defaultSheetMode,
-              mappings: buildInitialMappingsForSheet(
-                sheet,
-                !multiFlag ? matchedPreset : undefined
-              ),
+              mode: sheetPreset ? sheetPreset.importMode : defaultSheetMode,
+              mappings: buildInitialMappingsForSheet(sheet, sheetPreset),
             };
           });
 
         setSheetStates(initialSheets);
         setActiveSheetName(initialSheets[0]?.sheetName ?? "");
-        if (!multiFlag && matchedPreset) {
-          setImportMode(matchedPreset.importMode);
-          appliedInitialPresetRef.current = matchedPreset.id;
+        if (!multiFlag && primaryPreset) {
+          setImportMode(primaryPreset.importMode);
+          appliedInitialPresetRef.current = primaryPreset.id;
         }
         setStep("mapping");
       } catch (err) {
-        setErrorBanner(getStudioErrorMessage(err, t("dataExchange.errors.inspectFailed")));
+        if (!isAbortOrInterceptedError(err)) {
+          setErrorBanner(getStudioErrorMessage(err, t("dataExchange.errors.inspectFailed")));
+        }
       } finally {
         setIsInspecting(false);
       }
@@ -272,5 +354,5 @@ export function useStudioMetadataAndInspection({
     ]
   );
 
-  return { inspectUploadedFile };
+  return { inspectUploadedFile, retryLoadMetadata };
 }

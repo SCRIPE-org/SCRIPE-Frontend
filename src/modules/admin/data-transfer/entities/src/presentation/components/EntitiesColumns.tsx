@@ -5,6 +5,7 @@ import { Download, FileSpreadsheet, Layers, Sparkles } from "lucide-react";
 import type { CrudAction, CrudColumn } from "@core/crud";
 import { Badge } from "@core/ui/badge";
 import type { DataExchangeEntity } from "../../domain/entities/DataExchangeEntity";
+import { resolveModuleDisplayName } from "../utils/module-display-name";
 
 export interface EntitiesColumnsOptions {
   t: (key: string, params?: Record<string, string | number>) => string;
@@ -40,7 +41,7 @@ export function createEntitiesColumns({
       sortable: true,
       render: (value: unknown) => (
         <Badge variant="outline" className="font-medium text-xs">
-          {String(value ?? "")}
+          {resolveModuleDisplayName(String(value ?? ""), t)}
         </Badge>
       ),
     },

@@ -3,47 +3,22 @@ import { ar as crmOverviewAr } from "../../../locales/crm-overview.ar";
 import {
   type CrmWorkflowDefinition,
   type EvaluatedWorkflowTransition,
-  makeWorkflowTransition,
   normalizeStageKeyForMatch,
-  transitionMatchesSourceStage,
 } from "./crmWorkflowRuleCatalogAndEval";
+import {
+  evaluateFieldValueRuleConfig,
+  evaluateRolesPermissionsTokens,
+  isTargetCloseDateFutureOrToday,
+} from "./crmWorkflowRuleEvalHelpers";
 
-function formatEngineText(template: string, vars: Record<string, string>): string {
-  return template.replace(/\{\{(\w+)\}\}/g, (_, k) => vars[k] ?? "");
-}
+import {
+  formatEngineText,
+  isFieldSatisfiedOnRecord,
+  type RecordTransitionContext,
+  resolveWorkflowTransitionMatch,
+} from "./crmWorkflowTransitionContext";
 
-export interface RecordTransitionContext {
-  hasVerifiedParty?: boolean; partyId?: string | null; accountId?: string | null;
-  estimatedAmount?: number | null; estimatedValue?: number | null; targetCloseDate?: string | null;
-  lossReasonCode?: string | null; disqualificationReason?: string | null; hasOpenSubtasks?: boolean;
-  hasManagerApproval?: boolean; actorUserId?: string; lastMovedByUserId?: string; contactRoles?: string[];
-  solutionFitConfirmed?: boolean | null; primaryContactRole?: string | null; qualificationNotes?: string | null;
-  visitedStageKeys?: string[]; customFields?: Record<string, unknown>; fields?: Record<string, unknown>;
-  userRoles?: string[]; permissions?: string[]; rowVersion?: string; locale?: "en" | "ar";
-}
-
-/** Determines whether a specific exit or validation field is satisfied by record context. */
-export function isFieldSatisfiedOnRecord(fieldKey: string, ctx?: RecordTransitionContext): boolean {
-  if (!ctx) return false;
-  const key = fieldKey.trim();
-  if (key === "partyId" || key === "verifiedPartyId" || key === "organizationPartyId" || key === "accountId") {
-    return Boolean(ctx.hasVerifiedParty || (ctx.partyId && ctx.partyId.trim() !== "") || (ctx.accountId && ctx.accountId.trim() !== ""));
-  }
-  if (key === "estimatedAmount" || key === "estimatedValue") return (ctx.estimatedAmount ?? ctx.estimatedValue ?? 0) > 0;
-  if (key === "targetCloseDate" || key === "expectedCloseDate") return Boolean(ctx.targetCloseDate && ctx.targetCloseDate.trim() !== "");
-  if (key === "lossReasonCode" || key === "disqualificationReason" || key === "disqualificationReasonCode" || key === "reason") {
-    return Boolean(ctx.lossReasonCode || ctx.disqualificationReason);
-  }
-  if (key === "solutionFitConfirmed") {
-    return Boolean(ctx.solutionFitConfirmed || ctx.fields?.solutionFitConfirmed || ctx.customFields?.solutionFitConfirmed);
-  }
-  if (key === "primaryContactRole") return Boolean(ctx.primaryContactRole || (ctx.contactRoles && ctx.contactRoles.length > 0));
-  if (key === "qualificationNotes" && Boolean(ctx.qualificationNotes)) return true;
-  if (ctx.fields?.[key] !== undefined && ctx.fields?.[key] !== null && ctx.fields?.[key] !== "") return true;
-  if (ctx.customFields?.[key] !== undefined && ctx.customFields?.[key] !== null && ctx.customFields?.[key] !== "") return true;
-  const inDirect = (ctx as Record<string, unknown>)[key];
-  return inDirect !== undefined && inDirect !== null && inDirect !== "";
-}
+export { isFieldSatisfiedOnRecord, type RecordTransitionContext };
 
 export function evaluateWorkflowTransition(
   wf: CrmWorkflowDefinition,
@@ -63,38 +38,7 @@ export function evaluateWorkflowTransition(
     (fromStage.category === "done" || fromStage.category === "lost") &&
     (toStage.category === "todo" || toStage.category === "in_progress")
   );
-
-  const allDirectMatches = wf.transitions.filter(
-    (t) => t.fromStageKey !== "*" && !t.fromStageKeys?.includes("*") &&
-      transitionMatchesSourceStage(t, fromStageKey) && normalizeStageKeyForMatch(t.toStageKey) === normTo
-  );
-  const directMatch = allDirectMatches[0];
-
-  const outboundWildcard = wf.transitions.find(
-    (t) => t.fromStageKey !== "*" && transitionMatchesSourceStage(t, fromStageKey) &&
-      (t.toStageKey === "*" || normalizeStageKeyForMatch(t.toStageKey) === "*")
-  );
-  const globalInbound = wf.transitions.find(
-    (t) => (t.fromStageKey === "*" || t.fromStageKeys?.includes("*")) &&
-      normalizeStageKeyForMatch(t.toStageKey) === normTo
-  );
-
-  let matched = directMatch ?? outboundWildcard ?? globalInbound;
-  const matchedTransitions = allDirectMatches.length > 0 ? allDirectMatches : (matched ? [matched] : []);
-
-  if (!matched && toStage?.allowInboundFromAny && normFrom !== normTo) {
-    matched = makeWorkflowTransition(
-      `auto-any-${toStage.stageKey}`, "*", toStage.stageKey, "global",
-      formatEngineText(crmOverviewEn.crm.workflowEngine.moveToStage, { stage: toStage.labelEn }),
-      formatEngineText(crmOverviewAr.crm.workflowEngine.moveToStage, { stage: toStage.labelAr || toStage.labelEn }),
-      {
-        allowRollback: true,
-        requiredFieldKeys: toStage.requiredExitFields ? [...toStage.requiredExitFields] : [],
-        requireVerifiedParty: Boolean(toStage.requiresVerifiedParty),
-        triggerDealConversion: Boolean(toStage.triggerDealConversion),
-      }
-    );
-  }
+  const { matched, matchedTransitions } = resolveWorkflowTransitionMatch(wf, fromStageKey, normFrom, normTo, toStage);
 
   const fromLabel = isAr ? (fromStage?.labelAr || fromStage?.labelEn || fromStageKey) : (fromStage?.labelEn || fromStageKey);
   const toLabel = isAr ? (toStage?.labelAr || toStage?.labelEn || toStageKey) : (toStage?.labelEn || toStageKey);
@@ -164,8 +108,31 @@ export function evaluateWorkflowTransition(
         return block(formatEngineText(wfDict.priorStatusRequired, { transition: trName, stage: cRule.config.requiredStageKey }));
       }
     }
+    if (cRule.ruleTypeKey === "restrict.field_value" && recordContext) {
+      const fieldEval = evaluateFieldValueRuleConfig(cRule.config, recordContext);
+      if (!fieldEval.passed) {
+        return block(formatEngineText(wfDict.fieldConditionFailed, { field: fieldEval.field, operator: fieldEval.operator, expected: fieldEval.expected, transition: trName }));
+      }
+    }
+    if (cRule.ruleTypeKey === "restrict.roles_permissions" && recordContext && (recordContext.permissions !== undefined || recordContext.userRoles !== undefined)) {
+      const roleEval = evaluateRolesPermissionsTokens(cRule.config, recordContext);
+      if (!roleEval.passed) {
+        return block(formatEngineText(wfDict.roleOrPermissionRequired, { transition: trName, requirements: roleEval.requirements }));
+      }
+    }
     if (cRule.ruleTypeKey === "input.prompt_fields" && cRule.config?.fields) {
       dynamicPromptedFields.push(...cRule.config.fields.split(",").map((s) => s.trim()).filter(Boolean));
+    }
+    if (cRule.ruleTypeKey === "validate.active_quote" && recordContext) {
+      const hasQuote = Boolean(
+        recordContext.hasActiveQuote ||
+        recordContext.quoteId ||
+        recordContext.fields?.quoteId ||
+        recordContext.customFields?.quoteId
+      );
+      if (!hasQuote) {
+        return block(formatEngineText(wfDict.activeQuoteRequired, { transition: trName }), ["activeQuote"]);
+      }
     }
     if (cRule.ruleTypeKey === "validate.buying_committee_role") {
       dynamicPromptedFields.push("primaryContactRole");
@@ -178,9 +145,18 @@ export function evaluateWorkflowTransition(
     }
   }
 
+  if (matched.rules.requiredPermission && recordContext?.permissions !== undefined) {
+    const reqPerm = matched.rules.requiredPermission;
+    if (!recordContext.permissions.includes("*") && !recordContext.permissions.includes(reqPerm)) {
+      return block(formatEngineText(wfDict.roleOrPermissionRequired, { transition: trName, requirements: reqPerm }));
+    }
+  }
+
+  const forecastRule = catalogRules.find((r) => r.ruleTypeKey === "validate.financial_forecast");
+  const forecastMinAmount = Number(forecastRule?.config?.minAmount ?? 0);
   const requiresParty = Boolean(matched.rules.requireVerifiedParty || toStage?.requiresVerifiedParty || catalogRules.some((r) => r.ruleTypeKey === "validate.verified_party"));
-  const hasFinancialAmountRule = Boolean(matched.rules.requireEstimatedAmountPositive || matched.rules.requireEstimatedAmount || catalogRules.some((r) => r.ruleTypeKey === "validate.financial_forecast"));
-  const hasTargetCloseDateRule = Boolean(matched.rules.requireTargetCloseDate || catalogRules.some((r) => r.ruleTypeKey === "validate.financial_forecast"));
+  const hasFinancialAmountRule = Boolean(matched.rules.requireEstimatedAmountPositive || matched.rules.requireEstimatedAmount || forecastRule);
+  const hasTargetCloseDateRule = Boolean(matched.rules.requireTargetCloseDate || forecastRule);
 
   const isMovingForwardToActive = !isBackward && toStage?.category !== "lost";
   const candidateExitFields = isMovingForwardToActive ? fromStage?.requiredExitFields ?? [] : [];
@@ -192,7 +168,17 @@ export function evaluateWorkflowTransition(
     ...(hasTargetCloseDateRule ? ["targetCloseDate"] : []),
   ]));
 
-  const unfulfilledFields = rawRequiredFields.filter((f) => !isFieldSatisfiedOnRecord(f, recordContext));
+  const unfulfilledFields = rawRequiredFields.filter((f) => {
+    if (!isFieldSatisfiedOnRecord(f, recordContext)) return true;
+    if (forecastRule && (f === "estimatedAmount" || f === "estimatedValue") && Number.isFinite(forecastMinAmount) && forecastMinAmount > 0) {
+      const amt = recordContext?.estimatedAmount ?? recordContext?.estimatedValue ?? 0;
+      return amt < forecastMinAmount;
+    }
+    if (forecastRule && (f === "targetCloseDate" || f === "expectedCloseDate") && recordContext?.targetCloseDate) {
+      return !isTargetCloseDateFutureOrToday(recordContext.targetCloseDate);
+    }
+    return false;
+  });
   const shouldConvert = Boolean(matched.rules.triggerDealConversion || catalogRules.some((r) => r.ruleTypeKey === "action.convert_lead_to_deal") || (!isBackward && toStage?.triggerDealConversion));
   const configuredFields = [...rawRequiredFields, ...(matched.rules.promptFields ?? []), ...dynamicPromptedFields];
   const requiresLossReasonRule = Boolean(

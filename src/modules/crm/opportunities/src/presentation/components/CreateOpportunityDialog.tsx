@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import {
   Dialog,
@@ -11,17 +11,21 @@ import {
   DialogFooter,
 } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
-import { Input } from "@core/ui/input";
-import { Label } from "@core/ui/label";
 import { Alert, AlertDescription } from "@core/ui/alert";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
-import { AlertCircle, ArrowRightLeft } from "lucide-react";
-import { useCrmCurrency, CRM_CURRENCY_OPTIONS } from "@modules/crm";
+import { AlertCircle } from "lucide-react";
+import {
+  useCrmCurrency,
+  useCrmWorkflowsStore,
+  type CrmEntitySearchItem,
+} from "@modules/crm";
 import type { CreateOpportunityInput } from "../../domain/entities/OpportunityEntity";
 import {
   CreateOpportunityPartyStageFields,
   type OpportunityPartyOption,
+  type OpportunityStageOption,
 } from "./CreateOpportunityPartyStageFields";
+import { CreateOpportunityTitleAmountFields } from "./CreateOpportunityTitleAmountFields";
+import { OpportunityConversionPreviewBanner } from "./OpportunityConversionPreviewBanner";
 
 export type { OpportunityPartyOption };
 
@@ -30,6 +34,9 @@ export interface CreateOpportunityDialogProps {
   onOpenChange: (open: boolean) => void;
   onSubmit: (input: CreateOpportunityInput) => Promise<boolean>;
   onLookupParties?: (search?: string) => Promise<OpportunityPartyOption[]>;
+  initialAccountId?: string;
+  initialPartyId?: string;
+  initialPartyLabel?: string;
   isSubmitting?: boolean;
   submitError?: string | null;
 }
@@ -38,43 +45,69 @@ export function CreateOpportunityDialog({
   open,
   onOpenChange,
   onSubmit,
-  onLookupParties,
+  initialAccountId,
+  initialPartyId,
+  initialPartyLabel,
   isSubmitting = false,
   submitError,
 }: CreateOpportunityDialogProps) {
   const { t, language } = useI18n();
   const isRtl = language === "ar";
   const { baseCurrency, defaultDealCurrency, getConversionPreview } = useCrmCurrency();
+  const activeDealWorkflow = useCrmWorkflowsStore((s) => s.getActiveWorkflow("deal"));
+
+  const stageOptions: OpportunityStageOption[] = (activeDealWorkflow?.stages ?? [])
+    .filter((s) => s.category !== "done" && s.category !== "lost")
+    .sort((a, b) => a.sortOrder - b.sortOrder)
+    .map((s) => ({
+      stageKey: s.stageKey,
+      labelEn: s.labelEn,
+      labelAr: s.labelAr,
+      requiresParty: Boolean(s.requiresVerifiedParty || s.requiredExitFields?.includes("partyId")),
+    }));
+  const defaultStageKey = stageOptions[0]?.stageKey || "default.discovery";
 
   const [formData, setFormData] = useState<CreateOpportunityInput>({
     title: "",
     estimatedAmount: 0,
     currencyCode: defaultDealCurrency || baseCurrency || "SAR",
-    targetStageKey: "default.discovery",
+    targetStageKey: defaultStageKey,
     targetCloseDate: "",
     dealKind: "NewBusiness",
     directCreateRationale: "",
-    partyId: "",
-    accountId: "",
+    partyId: initialPartyId || "",
+    accountId: initialAccountId || "",
   });
 
-  const [partyOptions, setPartyOptions] = useState<OpportunityPartyOption[]>([]);
-  const [partySearch, setPartySearch] = useState("");
+  const [selectedPartyLabel, setSelectedPartyLabel] = useState(initialPartyLabel || "");
   const [customFieldValues, setCustomFieldValues] = useState<Record<string, unknown>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [prevOpenSyncKey, setPrevOpenSyncKey] = useState("");
 
-  useEffect(() => {
-    if (!open || !onLookupParties) return;
-    let cancelled = false;
-    onLookupParties(partySearch)
-      .then((options) => {
-        if (!cancelled) setPartyOptions(options);
-      })
-      .catch(() => {});
-    return () => {
-      cancelled = true;
-    };
-  }, [open, partySearch, onLookupParties]);
+  const syncKey = open
+    ? `${defaultStageKey}:${defaultDealCurrency}:${baseCurrency}:${initialAccountId ?? ""}:${initialPartyId ?? ""}:${initialPartyLabel ?? ""}`
+    : "";
+  if (syncKey && syncKey !== prevOpenSyncKey) {
+    setPrevOpenSyncKey(syncKey);
+    const hasStage = stageOptions.some((s) => s.stageKey === formData.targetStageKey);
+    setFormData((prev) => ({
+      ...prev,
+      currencyCode: prev.currencyCode || defaultDealCurrency || baseCurrency || "SAR",
+      targetStageKey: hasStage ? prev.targetStageKey : defaultStageKey,
+      partyId: initialPartyId || prev.partyId || "",
+      accountId: initialAccountId || prev.accountId || "",
+    }));
+    if (initialPartyLabel) setSelectedPartyLabel(initialPartyLabel);
+  } else if (!open && prevOpenSyncKey !== "") {
+    setPrevOpenSyncKey("");
+  }
+
+  const selectedStage = stageOptions.find((s) => s.stageKey === formData.targetStageKey);
+  const isStagePartyRequired = Boolean(
+    selectedStage?.requiresParty ||
+      formData.targetStageKey === "default.proposal" ||
+      formData.targetStageKey === "default.negotiation"
+  );
 
   const validate = (): boolean => {
     const errs: Record<string, string> = {};
@@ -82,26 +115,24 @@ export function CreateOpportunityDialog({
     if (formData.estimatedAmount == null || isNaN(formData.estimatedAmount) || formData.estimatedAmount < 0) {
       errs.estimatedAmount = t("crmOpportunities.dialogs.create.amountRequired");
     }
-    if (
-      (formData.targetStageKey === "default.proposal" || formData.targetStageKey === "default.negotiation") &&
-      !formData.partyId?.trim()
-    ) {
+    if (isStagePartyRequired && !formData.partyId?.trim() && !formData.accountId?.trim()) {
       errs.partyId = t("crmOpportunities.dialogs.create.partyRequiredError");
     }
     setErrors(errs);
     return Object.keys(errs).length === 0;
   };
 
-  const handleSelectParty = (selectedPartyId: string) => {
-    if (selectedPartyId === "__none__") {
+  const handleSelectParty = (selectedPartyId: string, item?: CrmEntitySearchItem) => {
+    if (!selectedPartyId) {
+      setSelectedPartyLabel("");
       setFormData((prev) => ({ ...prev, partyId: "", accountId: "" }));
       return;
     }
-    const matched = partyOptions.find((o) => o.partyId === selectedPartyId);
+    setSelectedPartyLabel(item ? (isRtl && item.labelAr ? item.labelAr : item.label) : "");
     setFormData((prev) => ({
       ...prev,
-      partyId: selectedPartyId,
-      accountId: matched?.accountId || undefined,
+      partyId: item?.partyId || selectedPartyId,
+      accountId: item?.accountId || undefined,
     }));
   };
 
@@ -112,8 +143,8 @@ export function CreateOpportunityDialog({
     const payload: CreateOpportunityInput = {
       title: formData.title.trim(),
       estimatedAmount: Number(formData.estimatedAmount),
-      currencyCode: formData.currencyCode?.trim().toUpperCase() || "SAR",
-      targetStageKey: formData.targetStageKey || "default.discovery",
+      currencyCode: formData.currencyCode?.trim().toUpperCase() || defaultDealCurrency || baseCurrency || "SAR",
+      targetStageKey: formData.targetStageKey || defaultStageKey,
       targetCloseDate: formData.targetCloseDate ? new Date(formData.targetCloseDate).toISOString() : undefined,
       dealKind: formData.dealKind || "NewBusiness",
       directCreateRationale: formData.directCreateRationale?.trim() || undefined,
@@ -128,21 +159,21 @@ export function CreateOpportunityDialog({
       setFormData({
         title: "",
         estimatedAmount: 0,
-        currencyCode: "SAR",
-        targetStageKey: "default.discovery",
+        currencyCode: defaultDealCurrency || baseCurrency || "SAR",
+        targetStageKey: defaultStageKey,
         targetCloseDate: "",
         dealKind: "NewBusiness",
         directCreateRationale: "",
         partyId: "",
         accountId: "",
       });
+      setSelectedPartyLabel("");
       setCustomFieldValues({});
       setErrors({});
     }
   };
 
-  const isProposalOrLater =
-    formData.targetStageKey === "default.proposal" || formData.targetStageKey === "default.negotiation";
+  const isProposalOrLater = isStagePartyRequired;
   const preview = getConversionPreview(formData.estimatedAmount || 0, formData.currencyCode);
 
   return (
@@ -161,84 +192,30 @@ export function CreateOpportunityDialog({
             </Alert>
           )}
 
-          <div className="space-y-1.5">
-            <Label htmlFor="opp-title">
-              {t("crmOpportunities.dialogs.create.titleLabel")} <span className="text-destructive">*</span>
-            </Label>
-            <Input
-              id="opp-title"
-              placeholder={t("crmOpportunities.dialogs.create.titlePlaceholder")}
-              value={formData.title}
-              onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
-              aria-invalid={Boolean(errors.title)}
-            />
-            {errors.title && <p className="text-xs text-destructive">{errors.title}</p>}
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <Label htmlFor="opp-amount">
-                {t("crmOpportunities.dialogs.create.amountLabel")} <span className="text-destructive">*</span>
-              </Label>
-              <Input
-                id="opp-amount"
-                type="number"
-                min="0"
-                step="any"
-                placeholder={t("crmOpportunities.dialogs.create.amountPlaceholder")}
-                value={formData.estimatedAmount || ""}
-                onChange={(e) => setFormData((prev) => ({ ...prev, estimatedAmount: parseFloat(e.target.value) || 0 }))}
-                aria-invalid={Boolean(errors.estimatedAmount)}
-              />
-              {errors.estimatedAmount && <p className="text-xs text-destructive">{errors.estimatedAmount}</p>}
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="opp-currency">{t("crmOpportunities.dialogs.create.currencyLabel")}</Label>
-              <Select
-                value={formData.currencyCode || defaultDealCurrency || "SAR"}
-                onValueChange={(val) => setFormData((prev) => ({ ...prev, currencyCode: val }))}
-              >
-                <SelectTrigger id="opp-currency" data-testid="create-opp-currency-select">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {CRM_CURRENCY_OPTIONS.map((c) => (
-                    <SelectItem key={c.code} value={c.code}>
-                      {c.code} — {c.name} ({c.symbol})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+          <CreateOpportunityTitleAmountFields
+            t={t}
+            formData={formData}
+            defaultDealCurrency={defaultDealCurrency || "SAR"}
+            errors={errors}
+            onChangeFormData={setFormData}
+          />
 
           {preview.isDifferentCurrency && (
-            <div
-              data-testid="create-opp-conversion-preview"
-              className="flex items-center justify-between rounded-nx-md border border-nx-line bg-nx-raised px-3 py-2 text-xs"
-            >
-              <div className="flex items-center gap-2 text-nx-ink-2">
-                <ArrowRightLeft className="size-3.5 text-nx-accent shrink-0" />
-                <span>
-                  {t("crmOpportunities.dialogs.create.autoConvertedToBase")}{" "}
-                  (<strong>{preview.baseCurrency}</strong>):
-                </span>
-              </div>
-              <div className="text-end font-mono">
-                <span className="font-bold text-nx-accent">{preview.formattedConverted}</span>
-                <span className="ms-2 text-[10px] text-nx-ink-3">({preview.rateSummary})</span>
-              </div>
-            </div>
+            <OpportunityConversionPreviewBanner
+              baseCurrency={preview.baseCurrency}
+              formattedConverted={preview.formattedConverted}
+              rateSummary={preview.rateSummary}
+              label={t("crmOpportunities.dialogs.create.autoConvertedToBase")}
+            />
           )}
 
           <CreateOpportunityPartyStageFields
             t={t}
+            isRtl={isRtl}
             formData={formData}
             onChangeFormData={setFormData}
-            partySearch={partySearch}
-            onPartySearchChange={setPartySearch}
-            partyOptions={partyOptions}
+            stageOptions={stageOptions}
+            selectedPartyLabel={selectedPartyLabel}
             onSelectParty={handleSelectParty}
             isProposalOrLater={isProposalOrLater}
             errors={errors}

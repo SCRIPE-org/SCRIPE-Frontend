@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
-import { Mail, Link as LinkIcon, ChevronLeft, ChevronRight, ArrowUpRight } from "lucide-react";
+import { Mail, Phone, Link as LinkIcon, ChevronLeft, ChevronRight, ArrowUpRight, UserCheck } from "lucide-react";
 import { cn } from "@core/common/utils";
 import type { CrmWorkflowDefinition } from "@modules/crm";
 import { LeadStatusBadge } from "./LeadStatusBadge";
@@ -30,12 +30,13 @@ interface LeadsKanbanCardItemProps {
   convertAmount: (amount: number, from: string, to: string) => number;
   onOpenLinkParty: (lead: CrmLead) => void;
   onOpenConvert: (lead: CrmLead) => void;
+  onOpenAssignOwner?: (lead: CrmLead) => void;
   onUpdateLeadStatus: (lead: CrmLead, targetStatus: string) => void;
 }
 
 /**
  * Compact matte Kanban card for CRM leads with single-line FX conversion pill,
- * isolated pointer-down interactive actions, and bidirectional stage steppers.
+ * isolated pointer-down interactive actions, click-to-call/email, and stage steppers.
  */
 export function LeadsKanbanCardItem({
   lead,
@@ -46,6 +47,7 @@ export function LeadsKanbanCardItem({
   convertAmount,
   onOpenLinkParty,
   onOpenConvert,
+  onOpenAssignOwner,
   onUpdateLeadStatus,
 }: LeadsKanbanCardItemProps) {
   const router = useRouter();
@@ -102,10 +104,42 @@ export function LeadsKanbanCardItem({
           </div>
         </div>
       )}
-      {lead.email && (
-        <div className="text-[11px] text-nx-ink-3 truncate flex items-center gap-1">
-          <Mail className="size-2.5 shrink-0" />
-          <span className="truncate">{lead.email}</span>
+      {(lead.email || lead.phone || lead.ownerDisplayName) && (
+        <div
+          className="flex flex-wrap items-center justify-between gap-1.5 text-[11px] text-nx-ink-3"
+          onPointerDown={(e) => e.stopPropagation()}
+        >
+          <div className="flex items-center gap-2 min-w-0">
+            {lead.email && (
+              <a
+                href={`mailto:${lead.email}`}
+                title={t("crmLeads.actions.sendEmail")}
+                onClick={(e) => e.stopPropagation()}
+                onPointerDown={(e) => e.stopPropagation()}
+                className="inline-flex items-center gap-1 hover:text-nx-accent truncate max-w-36"
+              >
+                <Mail className="size-2.5 shrink-0" />
+                <span className="truncate">{lead.email}</span>
+              </a>
+            )}
+            {lead.phone && (
+              <a
+                href={`tel:${lead.phone}`}
+                title={t("crmLeads.actions.callPhone")}
+                onClick={(e) => e.stopPropagation()}
+                onPointerDown={(e) => e.stopPropagation()}
+                className="inline-flex items-center gap-1 hover:text-nx-accent shrink-0 font-mono"
+              >
+                <Phone className="size-2.5 shrink-0" />
+                <span>{lead.phone}</span>
+              </a>
+            )}
+          </div>
+          {lead.ownerDisplayName && (
+            <span className="rounded bg-nx-surface border border-nx-line px-1.5 py-0 text-[9px] font-medium text-nx-ink-2 truncate max-w-24">
+              {lead.ownerDisplayName}
+            </span>
+          )}
         </div>
       )}
       <div
@@ -113,6 +147,23 @@ export function LeadsKanbanCardItem({
         onPointerDown={(e) => e.stopPropagation()}
       >
         <div className="flex flex-wrap items-center gap-1" onPointerDown={(e) => e.stopPropagation()}>
+          {onOpenAssignOwner && lead.status !== "Converted" && lead.status !== "Disqualified" && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="h-6 px-1.5 text-[10px] border-nx-line bg-nx-surface text-nx-ink-2 hover:text-nx-ink gap-1"
+              title={t("crmLeads.actions.assignOwner")}
+              aria-label={t("crmLeads.actions.assignOwner")}
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpenAssignOwner(lead);
+              }}
+            >
+              <UserCheck className="size-2.5" />
+            </Button>
+          )}
           {lead.status !== "Converted" && lead.status !== "Disqualified" && (
             <Button
               type="button"
@@ -136,7 +187,7 @@ export function LeadsKanbanCardItem({
                 type="button"
                 variant="outline"
                 size="sm"
-                className="h-6 px-1.5 text-[10px] border-nx-accent/30 bg-nx-accent-wash text-nx-accent hover:brightness-95 gap-1 font-semibold"
+                className="h-6 px-1.5 text-[10px] border-nx-line bg-nx-surface text-nx-ink hover:border-nx-line-hi gap-1 font-medium"
                 title={t("crmLeads.actions.convert")}
                 onPointerDown={(e) => e.stopPropagation()}
                 onClick={(e) => {

@@ -100,14 +100,14 @@ export function PresetsSplitDetail({
       </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <div className="rounded-nx-control border border-nx-line bg-nx-raised/40 p-3 text-xs">
+        <div className="rounded-nx-control border border-nx-line bg-nx-raised p-3 text-xs">
           <p className="text-nx-ink-3">{t("adminDataTransferPresets.columns.mappingsCount")}</p>
           <p className="mt-1 font-mono text-sm font-semibold text-nx-ink tabular-nums">
             {t("adminDataTransferPresets.columnsCount", { count: String(preset.mappingCount) })}
           </p>
         </div>
 
-        <div className="rounded-nx-control border border-nx-line bg-nx-raised/40 p-3 text-xs">
+        <div className="rounded-nx-control border border-nx-line bg-nx-raised p-3 text-xs">
           <p className="text-nx-ink-3">{t("adminDataTransferPresets.columns.createdAt")}</p>
           <p className="mt-1 font-mono text-xs font-medium text-nx-ink tabular-nums">
             {createdDate.toLocaleDateString(dateLocale)}{" "}
@@ -116,7 +116,7 @@ export function PresetsSplitDetail({
         </div>
       </div>
 
-      <div className="rounded-nx-control border border-nx-line bg-nx-raised/40 p-3 text-xs space-y-2">
+      <div className="rounded-nx-control border border-nx-line bg-nx-raised p-3 text-xs space-y-2">
         <div className="flex items-center justify-between text-[11px] font-medium text-nx-ink-3">
           <span>{t("adminDataTransferPresets.detail.sourceColumn")}</span>
           <span>{t("adminDataTransferPresets.detail.targetField")}</span>
@@ -124,7 +124,7 @@ export function PresetsSplitDetail({
         {preset.mappings.length === 0 ? (
           <p className="text-nx-ink-3 py-1">{t("common.none")}</p>
         ) : (
-          <div className="divide-y divide-nx-line/50">
+          <div className="divide-y divide-nx-line">
             {preset.mappings.map((mapping, idx) => (
               <div
                 key={`${mapping.sourceColumnHeader}-${mapping.targetFieldKey}-${idx}`}

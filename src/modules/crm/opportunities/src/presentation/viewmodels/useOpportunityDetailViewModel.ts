@@ -11,9 +11,12 @@ import type {
   ReopenOpportunityInput,
   AssignOpportunityOwnerInput,
   PipelineDefinition,
-  DealContactRoleDto,
+  DealContactRole,
 } from "../../domain/entities/OpportunityEntity";
-import { lookupOpportunityPartyOptions } from "./useOpportunityViewModelHelpers";
+import {
+  lookupOpportunityPartyOptions,
+  persistOpportunityContactRole,
+} from "./useOpportunityViewModelHelpers";
 
 export interface OpportunityDetailState {
   loading: boolean;
@@ -33,7 +36,7 @@ export function useOpportunityDetailViewModel(opportunityId: string) {
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<OpportunityDetailResult | null>(null);
   const [pipeline, setPipeline] = useState<PipelineDefinition | null>(null);
-  const [contactRoles, setContactRoles] = useState<DealContactRoleDto[]>([]);
+  const [contactRoles, setContactRoles] = useState<DealContactRole[]>([]);
 
   const [isMoveStageOpen, setIsMoveStageOpen] = useState(false);
   const [targetMoveStageKey, setTargetMoveStageKey] = useState<string | undefined>(undefined);
@@ -90,10 +93,27 @@ export function useOpportunityDetailViewModel(opportunityId: string) {
     loadData();
   }, [loadData]);
 
-  const handleMoveStage = async (input: MoveOpportunityStageInput) => {
-    setIsSubmitting(true);
-    setSubmitError(null);
-    try {
+  const runDetailMutation = useCallback(
+    async (op: () => Promise<void>, fallbackError: string) => {
+      setIsSubmitting(true);
+      setSubmitError(null);
+      try {
+        await op();
+        await loadData();
+        setTimelineVersion((v) => v + 1);
+        setIsSubmitting(false);
+        return true;
+      } catch (err: any) {
+        setIsSubmitting(false);
+        setSubmitError(err?.message || fallbackError);
+        return false;
+      }
+    },
+    [loadData]
+  );
+
+  const handleMoveStage = (input: MoveOpportunityStageInput) =>
+    runDetailMutation(async () => {
       const repo = (getCrmContainer() as any).opportunityRepository;
       await repo.moveStage(input);
       if (input.customFieldValues && Object.keys(input.customFieldValues).length > 0) {
@@ -106,67 +126,25 @@ export function useOpportunityDetailViewModel(opportunityId: string) {
           // Non-blocking custom fields persistence
         }
       }
-      await loadData();
-      setTimelineVersion((v) => v + 1);
-      setIsSubmitting(false);
-      return true;
-    } catch (err: any) {
-      setIsSubmitting(false);
-      setSubmitError(err.message || "Failed to move stage");
-      return false;
-    }
-  };
+    }, "Failed to move stage");
 
-  const handleCloseOpportunity = async (input: CloseOpportunityInput) => {
-    setIsSubmitting(true);
-    setSubmitError(null);
-    try {
-      const repo = (getCrmContainer() as any).opportunityRepository;
-      await repo.closeOpportunity(input);
-      await loadData();
-      setTimelineVersion((v) => v + 1);
-      setIsSubmitting(false);
-      return true;
-    } catch (err: any) {
-      setIsSubmitting(false);
-      setSubmitError(err.message || "Failed to close opportunity");
-      return false;
-    }
-  };
+  const handleCloseOpportunity = (input: CloseOpportunityInput) =>
+    runDetailMutation(
+      () => (getCrmContainer() as any).opportunityRepository.closeOpportunity(input),
+      "Failed to close opportunity"
+    );
 
-  const handleReopenOpportunity = async (input: ReopenOpportunityInput) => {
-    setIsSubmitting(true);
-    setSubmitError(null);
-    try {
-      const repo = (getCrmContainer() as any).opportunityRepository;
-      await repo.reopenOpportunity(input);
-      await loadData();
-      setTimelineVersion((v) => v + 1);
-      setIsSubmitting(false);
-      return true;
-    } catch (err: any) {
-      setIsSubmitting(false);
-      setSubmitError(err.message || "Failed to reopen opportunity");
-      return false;
-    }
-  };
+  const handleReopenOpportunity = (input: ReopenOpportunityInput) =>
+    runDetailMutation(
+      () => (getCrmContainer() as any).opportunityRepository.reopenOpportunity(input),
+      "Failed to reopen opportunity"
+    );
 
-  const handleAssignOwner = async (input: AssignOpportunityOwnerInput) => {
-    setIsSubmitting(true);
-    setSubmitError(null);
-    try {
-      const repo = (getCrmContainer() as any).opportunityRepository;
-      await repo.assignOwner(input);
-      await loadData();
-      setTimelineVersion((v) => v + 1);
-      setIsSubmitting(false);
-      return true;
-    } catch (err: any) {
-      setIsSubmitting(false);
-      setSubmitError(err.message || "Failed to assign owner");
-      return false;
-    }
-  };
+  const handleAssignOwner = (input: AssignOpportunityOwnerInput) =>
+    runDetailMutation(
+      () => (getCrmContainer() as any).opportunityRepository.assignOwner(input),
+      "Failed to assign owner"
+    );
 
   const handleRequestFulfillment = async () => {
     const opp = data?.opportunity;
@@ -198,52 +176,39 @@ export function useOpportunityDetailViewModel(opportunityId: string) {
   const handleAddContactRole = async (input: {
     contactPartyId: string;
     contactName: string;
-    stakeholderRole: DealContactRoleDto["stakeholderRole"];
+    stakeholderRole: DealContactRole["stakeholderRole"];
     isPrimary: boolean;
     influenceNotes?: string;
   }) => {
     const opp = data?.opportunity;
     if (!opp) return;
+    setSubmitError(null);
     try {
-      const repo = (getCrmContainer() as any).opportunityRepository;
-      if (typeof repo?.addContactRole === "function") {
-        const created = await repo.addContactRole({
-          opportunityId: opp.id,
-          contactPartyId: input.contactPartyId,
-          contactName: input.contactName,
-          stakeholderRole: input.stakeholderRole,
-          isPrimary: input.isPrimary,
-          influenceNotes: input.influenceNotes,
-        });
-        const normalizedRole: DealContactRoleDto = {
-          ...created,
-          id: created?.id || `role-${Date.now()}`,
-          opportunityId: opp.id,
-          contactPartyId: created?.contactPartyId || input.contactPartyId,
-          contactName: created?.contactName || input.contactName,
-          stakeholderRole: (created?.stakeholderRole || input.stakeholderRole) as DealContactRoleDto["stakeholderRole"],
-          isPrimary: created?.isPrimary ?? input.isPrimary,
-          influenceNotes: created?.influenceNotes ?? (created as any)?.notes ?? input.influenceNotes ?? null,
-          createdAtUtc: created?.createdAtUtc ?? (created as any)?.createdAt ?? new Date().toISOString(),
-        };
+      const outcome = await persistOpportunityContactRole(opp.id, input);
+      if (outcome) {
+        const { normalizedRole, refreshed } = outcome;
         setContactRoles((prev) => [normalizedRole, ...prev.filter((r) => r.id !== normalizedRole.id)]);
+        if (refreshed) setData(refreshed);
       }
-    } catch {
-      // Keep UI responsive even if offline
+    } catch (err: unknown) {
+      setSubmitError(err instanceof Error ? err.message : "Unable to add stakeholder role");
     }
   };
 
   const handleRemoveContactRole = async (roleId: string) => {
     const opp = data?.opportunity;
     if (!opp) return;
+    setSubmitError(null);
     try {
-      const repo = (getCrmContainer() as any).opportunityRepository;
+      const repo = getCrmContainer().opportunityRepository;
       if (typeof repo?.removeContactRole === "function") {
         await repo.removeContactRole(opp.id, roleId);
       }
       setContactRoles((prev) => prev.filter((r) => r.id !== roleId));
-    } catch {
-      setContactRoles((prev) => prev.filter((r) => r.id !== roleId));
+      const refreshed = typeof repo?.getOpportunityById === "function" ? await repo.getOpportunityById(opp.id).catch(() => null) : null;
+      if (refreshed) setData(refreshed);
+    } catch (err: unknown) {
+      setSubmitError(err instanceof Error ? err.message : "Unable to remove stakeholder role");
     }
   };
 

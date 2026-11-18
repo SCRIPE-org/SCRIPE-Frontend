@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useCallback, useEffect, useRef } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermission } from "@core/hooks/use-permission";
 import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
@@ -25,16 +25,25 @@ import { CreateLeadDialog } from "../components/CreateLeadDialog";
 import { QualifyLeadDialog } from "../components/QualifyLeadDialog";
 import { LinkPartyDialog } from "../components/LinkPartyDialog";
 import { ConvertLeadDialog } from "../components/ConvertLeadDialog";
+import { AssignLeadOwnerDialog } from "../components/AssignLeadOwnerDialog";
 import { stageToLeadStatusValue } from "../components/LeadsKanbanCardItem";
 import { useLeadsViewModel } from "../viewmodels/useLeadsViewModel";
 import { useLeadsCrudConfig } from "../viewmodels/useLeadsCrudConfig";
+import {
+  buildLeadTransitionRecord,
+  evaluateLeadStageTransition,
+} from "../utils/leadTransitionHelpers";
 import type { CrmLead, LeadStatus } from "../../domain/entities/LeadEntity";
 
 export function LeadsView() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const shouldAutoOpenCreate = searchParams?.get("create") === "1";
+  const autoOpenedCreateRef = useRef(false);
   const { t, language } = useI18n();
   const isRtl = language === "ar";
   const canCreateLead = usePermission(CRM_PERMISSIONS.LEADS_CREATE);
+  const canAssignOwner = usePermission(CRM_PERMISSIONS.RECORDS_ASSIGN);
   const { baseCurrency, autoConvertToBase, convertAmount, showOriginalCurrencyBadge } = useCrmCurrency();
   const activeLeadWorkflow = useCrmWorkflowsStore((s) => s.getActiveWorkflow("lead"));
   const workflows = useCrmWorkflowsStore((s) => s.workflows);
@@ -44,10 +53,11 @@ export function LeadsView() {
   const defaultDealViewMode = useCrmSettingsStore((s) => s.defaultDealViewMode);
   const viewModel = useLeadsViewModel();
   const {
-    state, search, statusFilter, isCreateOpen, isQualifyOpen, isLinkPartyOpen, isConvertOpen,
-    activeLead, isSubmitting, submitError, setIsCreateOpen, setIsQualifyOpen, setIsLinkPartyOpen, setIsConvertOpen,
+    state, search, statusFilter, isCreateOpen, isQualifyOpen, isLinkPartyOpen, isConvertOpen, isAssignOwnerOpen,
+    activeLead, isSubmitting, submitError, setIsCreateOpen, setIsQualifyOpen, setIsLinkPartyOpen, setIsConvertOpen, setIsAssignOwnerOpen,
     handleSearchChange, handleStatusFilterChange, handleCreateLead, handleQualifyLead, handleLinkParty,
-    handleConvertLead, openQualifyDialog, openLinkPartyDialog, openConvertDialog, handleUpdateLeadStatus,
+    handleConvertLead, handleAssignLeadOwner, linkPartyBeforeConvert,
+    openQualifyDialog, openLinkPartyDialog, openConvertDialog, openAssignOwnerDialog, handleUpdateLeadStatus,
     handleTransitionSubmit, refresh,
   } = viewModel;
 
@@ -61,6 +71,13 @@ export function LeadsView() {
     void useCrmWorkflowsStore.getState().fetchPipelinesFromBackend();
   }, []);
 
+  useEffect(() => {
+    if (shouldAutoOpenCreate && canCreateLead && !autoOpenedCreateRef.current) {
+      autoOpenedCreateRef.current = true;
+      setIsCreateOpen(true);
+    }
+  }, [shouldAutoOpenCreate, canCreateLead, setIsCreateOpen]);
+
   const handleLeadStageTransition = useCallback(
     async (lead: CrmLead, targetStageOrStatus: string, _dropEval?: DropEvaluationResult) => {
       const fromKey = lead.stageKey || `lead.${lead.status.toLowerCase()}`;
@@ -72,22 +89,7 @@ export function LeadsView() {
           s.stageKey.toLowerCase().endsWith(`.${targetStageOrStatus.toLowerCase()}`)
       );
       const toKey = matchedTarget?.stageKey || (targetStageOrStatus.startsWith("lead.") ? targetStageOrStatus : `lead.${targetStageOrStatus.toLowerCase()}`);
-
-      const leadExtras = lead as unknown as {
-        qualificationNotes?: string;
-        customFields?: Record<string, unknown>;
-      };
-      const evalResult = useCrmWorkflowsStore.getState().evaluateTransition("lead", fromKey, toKey, {
-        hasVerifiedParty: Boolean(lead.organizationPartyId || lead.personPartyId || lead.verifiedPartyId),
-        partyId: lead.verifiedPartyId || lead.organizationPartyId || lead.personPartyId || null,
-        estimatedAmount: lead.estimatedValue ?? null,
-        estimatedValue: lead.estimatedValue ?? null,
-        targetCloseDate: null,
-        disqualificationReason: lead.disqualificationReason ?? null,
-        qualificationNotes: leadExtras.qualificationNotes ?? null,
-        fields: leadExtras.customFields,
-        locale: isRtl ? "ar" : "en",
-      });
+      const evalResult = evaluateLeadStageTransition(lead, fromKey, toKey, isRtl);
 
       if (evalResult.status === "blocked") {
         const msg = evalResult.reason || t("crmLeads.detail.transitionBlockedTitle", { defaultValue: "Status Transition Blocked" });
@@ -142,7 +144,7 @@ export function LeadsView() {
     router, t, language, baseCurrency, autoConvertToBase, convertAmount, showOriginalCurrencyBadge,
     activeLeadWorkflow, leadWorkflows, activeLeadWorkflowId, setActiveWorkflow, defaultDealViewMode,
     search, handleSearchChange, statusFilter, handleStatusFilterChange, statuses, sumLeadsInBaseCurrency,
-    handleLeadStageTransition, handleUpdateLeadStatus, openQualifyDialog, openLinkPartyDialog, openConvertDialog, setIsCreateOpen,
+    handleLeadStageTransition, handleUpdateLeadStatus, openQualifyDialog, openLinkPartyDialog, openConvertDialog, openAssignOwnerDialog, canAssignOwner, setIsCreateOpen,
   });
 
   const onTabNav = (tab: string) => {
@@ -187,7 +189,7 @@ export function LeadsView() {
         </Alert>
       ) : (
         <>
-          {(state.error || submitError) && !isCreateOpen && !isQualifyOpen && !isLinkPartyOpen && !isConvertOpen && (
+          {(state.error || submitError) && !isCreateOpen && !isQualifyOpen && !isLinkPartyOpen && !isConvertOpen && !isAssignOwnerOpen && (
             <Alert variant="destructive" data-testid="leads-transition-error-banner" className="mb-4" dir={isRtl ? "rtl" : "ltr"}>
               <AlertCircle className="size-4" />
               <AlertTitle>{t("crmLeads.detail.transitionBlockedTitle", { defaultValue: "Status Transition Blocked" })}</AlertTitle>
@@ -202,8 +204,9 @@ export function LeadsView() {
       )}
       <CreateLeadDialog open={isCreateOpen} onOpenChange={setIsCreateOpen} onSubmit={handleCreateLead} isSubmitting={isSubmitting} submitError={submitError} />
       <QualifyLeadDialog open={isQualifyOpen} onOpenChange={setIsQualifyOpen} lead={activeLead} initialDecision={viewModel.qualifyDefaultDecision} onSubmit={handleQualifyLead} isSubmitting={isSubmitting} submitError={submitError} />
-      <LinkPartyDialog open={isLinkPartyOpen} onOpenChange={setIsLinkPartyOpen} lead={activeLead} onSubmit={handleLinkParty} onLookupParties={viewModel.lookupCandidateParties} isSubmitting={isSubmitting} submitError={submitError} />
-      <ConvertLeadDialog open={isConvertOpen} onOpenChange={setIsConvertOpen} lead={activeLead} onSubmit={handleConvertLead} isSubmitting={isSubmitting} submitError={submitError} />
+      <LinkPartyDialog open={isLinkPartyOpen} onOpenChange={setIsLinkPartyOpen} lead={activeLead} onSubmit={handleLinkParty} isSubmitting={isSubmitting} submitError={submitError} />
+      <ConvertLeadDialog open={isConvertOpen} onOpenChange={setIsConvertOpen} lead={activeLead} onLinkPartyBeforeConvert={linkPartyBeforeConvert} onSubmit={handleConvertLead} isSubmitting={isSubmitting} submitError={submitError} />
+      <AssignLeadOwnerDialog open={isAssignOwnerOpen} onOpenChange={setIsAssignOwnerOpen} lead={activeLead} onSubmit={handleAssignLeadOwner} isSubmitting={isSubmitting} submitError={submitError} />
       {(() => {
         const fromStage = activeLeadWorkflow?.stages.find((s) => s.stageKey === transitionFromKey);
         const toStage = activeLeadWorkflow?.stages.find((s) => s.stageKey === transitionToKey);
@@ -212,16 +215,7 @@ export function LeadsView() {
             open={transitionDialogOpen}
             onOpenChange={setTransitionDialogOpen}
             entityType="lead"
-            record={transitionLead ? {
-              id: transitionLead.id,
-              title: transitionLead.title,
-              partyId: transitionLead.verifiedPartyId || transitionLead.organizationPartyId || transitionLead.personPartyId,
-              estimatedValue: transitionLead.estimatedValue,
-              currency: transitionLead.currency,
-              rowVersion: transitionLead.rowVersion,
-              qualificationNotes: (transitionLead as unknown as { qualificationNotes?: string }).qualificationNotes,
-              customFields: (transitionLead as unknown as { customFields?: Record<string, unknown> }).customFields,
-            } : null}
+            record={transitionLead ? buildLeadTransitionRecord(transitionLead) : null}
             fromStageKey={transitionFromKey}
             toStageKey={transitionToKey}
             fromStageLabel={fromStage ? (isRtl && fromStage.labelAr ? fromStage.labelAr : fromStage.labelEn) : undefined}

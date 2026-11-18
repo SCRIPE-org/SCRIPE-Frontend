@@ -88,7 +88,7 @@ export function CrmWorkflowStageExitGatesSection({
         </div>
 
         <div className="space-y-1.5">
-          {coreFieldKeys.map((fk) => (
+          {Array.from(new Set([...coreFieldKeys, "contactId", "accountId", "ownerUserId", "discountPercent", "nextStepSummary"])).map((fk) => (
             <div key={fk} className="flex items-center gap-2" data-testid={`inspector-${selectedStage.stageKey}-exit-field-${fk}`}>
               <Checkbox id={`stage-exit-${fk}`} checked={selectedStage.requiredExitFields.includes(fk)} onCheckedChange={(v) => onToggleExitField(fk, Boolean(v))} />
               <Label htmlFor={`stage-exit-${fk}`} className="text-xs cursor-pointer">{formatExitFieldLabel(fk, t, isAr, crmCustomFields)}</Label>

@@ -150,7 +150,11 @@ export function JobsExecutionView(): React.ReactElement {
           onPageChange: vm.setPage,
           onPageSizeChange: vm.setPageSize,
         }}
-        search={{ value: vm.search, onChange: vm.setSearch }}
+        search={{
+          value: vm.search,
+          onChange: vm.setSearch,
+          placeholder: t("adminDataTransferJobs.searchPlaceholder"),
+        }}
       />
       <CancelJobDialog
         job={vm.jobToCancel}

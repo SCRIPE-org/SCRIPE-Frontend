@@ -45,6 +45,7 @@ vi.mock("next/navigation", () => ({
     prefetch: vi.fn(),
   }),
   usePathname: () => "/crm/leads",
+  useSearchParams: () => new URLSearchParams(),
 }));
 
 describe("LeadsView Component", () => {

@@ -173,7 +173,7 @@ describe("GenericWorkflowKanban", () => {
     expect(collapseSmbBtn).toBeInTheDocument();
   });
 
-  it("separates card drag handle from row action buttons without nested controls", () => {
+  it("attaches direct full-card drag without GripVertical handle or nested role=button around action buttons", () => {
     const onDelete = vi.fn();
     const config: WorkflowKanbanConfig<TestItem> = {
       stages: mockStages,
@@ -192,9 +192,14 @@ describe("GenericWorkflowKanban", () => {
       />
     );
 
-    const dragHandle = screen.getByRole("button", { name: "Drag Deal One" });
+    expect(screen.queryByRole("button", { name: /^drag /i })).toBeNull();
+    const cards = screen.getAllByTestId("kanban-sortable-card");
+    expect(cards.length).toBeGreaterThanOrEqual(3);
+    expect(cards[0]).toHaveAttribute("aria-roledescription", "sortable");
+    expect(cards[0].className).toContain("cursor-grab");
+    expect(cards[0].className).toContain("active:cursor-grabbing");
+
     const actionBtn = screen.getByRole("button", { name: "Delete Deal One" });
-    expect(dragHandle.contains(actionBtn)).toBe(false);
     expect(actionBtn.closest("[role='button']")).toBeNull();
     expect(actionBtn.closest("button")).toBe(actionBtn);
 
@@ -233,17 +238,24 @@ describe("GenericWorkflowKanban", () => {
     );
   });
 
-  it("renders @core/ui Button drag handle with >= 32px hit target", () => {
+  it("renders custom renderCard directly without extra nested border or padding wrapper", () => {
     const config: WorkflowKanbanConfig<TestItem> = {
       stages: mockStages,
       stageField: "stageKey",
+      renderCard: (item) => (
+        <div data-testid={`custom-card-${item.id}`} className="custom-single-card">
+          {item.title}
+        </div>
+      ),
     };
 
     render(<GenericWorkflowKanban config={config} items={mockItems} />);
 
-    const dragHandle = screen.getByRole("button", { name: "Drag Deal One" });
-    expect(dragHandle.className).toContain("h-8");
-    expect(dragHandle.className).toContain("w-8");
-    expect(dragHandle.className).not.toContain("h-7");
+    const customCard = screen.getByTestId("custom-card-deal-1");
+    const sortableRoot = customCard.parentElement;
+    expect(sortableRoot).toHaveAttribute("data-testid", "kanban-sortable-card");
+    expect(sortableRoot?.className).toContain("cursor-grab");
+    expect(sortableRoot?.className).not.toContain("border-nx-line");
+    expect(sortableRoot?.className).not.toContain("p-1.5");
   });
 });

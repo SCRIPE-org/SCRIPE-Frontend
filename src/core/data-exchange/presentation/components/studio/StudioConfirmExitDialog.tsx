@@ -10,6 +10,7 @@ export interface StudioConfirmExitDialogProps {
   onCancel: () => void;
   title?: string;
   description?: string;
+  confirmText?: string;
 }
 
 /**
@@ -23,6 +24,7 @@ export function StudioConfirmExitDialog({
   onCancel,
   title,
   description,
+  confirmText,
 }: StudioConfirmExitDialogProps) {
   const { direction, t } = useI18n();
 
@@ -35,7 +37,7 @@ export function StudioConfirmExitDialog({
       variant="destructive"
       title={title || t("dataExchange.confirmExit.title")}
       description={description || t("dataExchange.confirmExit.description")}
-      confirmText={t("dataExchange.confirmExit.discardAndExit")}
+      confirmText={confirmText || t("dataExchange.confirmExit.discardAndExit")}
       cancelText={t("dataExchange.confirmExit.keepEditing")}
       dir={direction}
       className="max-w-md border border-nx-line bg-nx-surface text-nx-ink"

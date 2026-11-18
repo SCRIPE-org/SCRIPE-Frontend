@@ -34,7 +34,7 @@ export function StudioHeader({
   const BackIcon = direction === "rtl" ? ArrowRight : ArrowLeft;
 
   return (
-    <header className="flex flex-wrap items-center justify-between gap-4 border-b border-nx-line bg-nx-surface px-6 py-3.5 shrink-0">
+    <header className="flex flex-wrap items-center justify-between gap-3 border-b border-nx-line bg-nx-surface px-4 py-3.5 sm:px-6 shrink-0">
       <div className="flex items-center gap-3">
         <div className="flex h-10 w-10 items-center justify-center rounded-nx-control border border-nx-line bg-nx-raised text-nx-accent shrink-0">
           <FileSpreadsheet className="h-5 w-5" />

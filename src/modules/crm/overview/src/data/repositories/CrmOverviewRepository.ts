@@ -1,15 +1,18 @@
 import type { ICrmOverviewRepository } from "../../domain/interfaces/ICrmOverviewRepository";
 import type { ICrmOverviewService } from "../../domain/interfaces/ICrmOverviewService";
 import type {
+  CrmEntitySearchItem,
+  CrmEntitySearchRequest,
   CrmOverviewData,
   CrmPipelineReport,
+  CrmQuickCreateEntityInput,
   CrmSettingsResponseData,
   CrmTenantSettingsPayload,
   CrmUserPreferencePayload,
 } from "../../domain/models/crm-overview.types";
 
 /**
- * Concrete repository mediating CRM overview, analytics, and server-side settings persistence.
+ * Concrete repository mediating CRM overview, analytics, entity search, and server-side settings persistence.
  */
 export class CrmOverviewRepository implements ICrmOverviewRepository {
   constructor(private readonly service: ICrmOverviewService) {}
@@ -32,5 +35,13 @@ export class CrmOverviewRepository implements ICrmOverviewRepository {
 
   async updateUserPreferences(input: Partial<CrmUserPreferencePayload>): Promise<CrmSettingsResponseData> {
     return this.service.updateUserPreferences(input);
+  }
+
+  async searchEntities(input: CrmEntitySearchRequest): Promise<CrmEntitySearchItem[]> {
+    return this.service.searchEntities(input);
+  }
+
+  async quickCreateEntity(input: CrmQuickCreateEntityInput): Promise<CrmEntitySearchItem> {
+    return this.service.quickCreateEntity(input);
   }
 }

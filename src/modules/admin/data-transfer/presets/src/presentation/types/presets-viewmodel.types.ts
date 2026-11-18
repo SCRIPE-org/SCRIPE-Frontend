@@ -1,4 +1,4 @@
-import type { DataExchangeEntitySummaryDto } from "@core/data-exchange/domain/types";
+import type { DataExchangeEntitySummaryView } from "../../../../entities/src/domain/entities/DataExchangeEntity";
 import type { DataExchangePreset } from "../../domain/entities/DataExchangePreset";
 import type { PresetEntityFilterOption } from "../hooks/usePresetsEntityCatalog";
 
@@ -42,10 +42,12 @@ export interface UsePresetsViewModelReturn {
   setSearch: (search: string) => void;
   setEntityFilter: (entity: string) => void;
   refetch: () => Promise<unknown>;
-  importableEntities: DataExchangeEntitySummaryDto[];
+  importableEntities: DataExchangeEntitySummaryView[];
   isCatalogLoading: boolean;
-  getCatalogEntry: (entityKey: string) => DataExchangeEntitySummaryDto | undefined;
+  getCatalogEntry: (entityKey: string) => DataExchangeEntitySummaryView | undefined;
   resolveEntityName: (entityKey: string) => string;
+  hasActiveFilters: boolean;
+  resetFilters: () => void;
   activeStudioPreset: DataExchangePreset | null;
   setActiveStudioPreset: (preset: DataExchangePreset | null) => void;
   isCreatePickerOpen: boolean;

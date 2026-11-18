@@ -51,63 +51,94 @@ function buildJob(overrides: Partial<ConstructorParameters<typeof DataTransferJo
 }
 
 describe("Data Transfer UI tokens, RTL logical properties, Progress & Tooltips", () => {
-  it("JobExecutionCard renders @core/ui/progress, full jobId tooltip trigger, tabular-nums, me-1, and canonical danger classes", () => {
+  it("JobExecutionCard renders @core/ui/progress, focusable jobId copy button with tooltip, tabular-nums, me-1, and canonical danger/success classes without nx-*/alpha", () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.assign(navigator, { clipboard: { writeText } });
+
     const job = buildJob({ status: "Running", rejectedRows: 10 });
     const onCancel = vi.fn();
 
     const { container, rerender } = render(
-      <JobExecutionCard
-        job={job}
-        onCancelJob={onCancel}
-        onDownloadArtifact={vi.fn()}
-      />
+      <TooltipProvider>
+        <JobExecutionCard
+          job={job}
+          onCancelJob={onCancel}
+          onDownloadArtifact={vi.fn()}
+        />
+      </TooltipProvider>
     );
 
     const progress = screen.getByRole("progressbar");
     expect(progress).toBeInTheDocument();
 
     const idTrigger = screen.getByTestId("job-card-id-tooltip-trigger");
-    expect(idTrigger).toHaveAttribute("aria-label", FULL_JOB_ID);
+    expect(idTrigger.tagName).toBe("BUTTON");
+    expect(idTrigger).toHaveAttribute("aria-label", expect.stringContaining(FULL_JOB_ID));
     expect(idTrigger).toHaveTextContent("9b2a4f10...");
+    fireEvent.click(idTrigger);
+    expect(writeText).toHaveBeenCalledWith(FULL_JOB_ID);
 
     const html = container.innerHTML;
     expect(html).toContain("tabular-nums");
     expect(html).toContain("me-1");
     expect(html).toContain("text-nx-danger");
-    expect(html).toContain("hover:bg-nx-danger/10");
+    expect(html).toContain("hover:bg-destructive/10");
     expect(html).not.toContain("nx-destructive");
-    expect(html).not.toContain("hover:bg-destructive/10");
+    expect(html).not.toMatch(/nx-[a-z-]+\/\d+/);
     expect(html).not.toContain("ltr:mr-1");
     expect(html).not.toContain("rtl:ml-1");
     expect(html).not.toContain("rounded-nx-xs");
 
     rerender(
-      <JobExecutionCard
-        job={buildJob({ status: "CompletedWithErrors", progressPercent: 100 })}
-        onCancelJob={onCancel}
-        onDownloadArtifact={vi.fn()}
-      />
+      <TooltipProvider>
+        <JobExecutionCard
+          job={buildJob({ status: "CompletedWithErrors", progressPercent: 100 })}
+          onCancelJob={onCancel}
+          onDownloadArtifact={vi.fn()}
+        />
+      </TooltipProvider>
     );
     expect(screen.getByRole("progressbar").firstElementChild?.className).toContain("bg-nx-warning");
 
     rerender(
-      <JobExecutionCard
-        job={buildJob({ status: "Failed", progressPercent: 40 })}
-        onCancelJob={onCancel}
-        onDownloadArtifact={vi.fn()}
-      />
+      <TooltipProvider>
+        <JobExecutionCard
+          job={buildJob({ status: "Failed", progressPercent: 40 })}
+          onCancelJob={onCancel}
+          onDownloadArtifact={vi.fn()}
+        />
+      </TooltipProvider>
     );
     expect(screen.getByRole("progressbar").firstElementChild?.className).toContain("bg-nx-danger");
 
     rerender(
-      <JobExecutionCard
-        job={buildJob({ status: "Completed", progressPercent: 100, hasExportWorkbook: true })}
-        onCancelJob={onCancel}
-        onDownloadArtifact={vi.fn()}
-      />
+      <TooltipProvider>
+        <JobExecutionCard
+          job={buildJob({ status: "Completed", progressPercent: 100, hasExportWorkbook: true })}
+          onCancelJob={onCancel}
+          onDownloadArtifact={vi.fn()}
+        />
+      </TooltipProvider>
     );
     expect(screen.getByRole("progressbar").firstElementChild?.className).toContain("bg-nx-success");
-    expect(container.innerHTML).toContain("hover:bg-nx-success/10");
+    expect(container.innerHTML).toContain("hover:bg-success/10");
+    expect(container.innerHTML).not.toMatch(/nx-[a-z-]+\/\d+/);
+
+    rerender(
+      <TooltipProvider>
+        <JobExecutionCard
+          job={buildJob({
+            status: "Completed",
+            progressPercent: 100,
+            hasExportWorkbook: false,
+            hasRejectedWorkbook: false,
+          })}
+          onCancelJob={onCancel}
+          onDownloadArtifact={vi.fn()}
+        />
+      </TooltipProvider>
+    );
+    expect(screen.queryByTestId("job-card-actions-trigger")).not.toBeInTheDocument();
   });
 
   it("KPI headers use tabular-nums across all KPI tiles and canonical text-nx-danger", () => {
@@ -229,11 +260,12 @@ describe("Data Transfer UI tokens, RTL logical properties, Progress & Tooltips",
     );
     expect(presetContainer.innerHTML).toContain("me-1");
     expect(presetContainer.innerHTML).toContain("text-nx-danger");
-    expect(presetContainer.innerHTML).toContain("hover:bg-nx-danger/10");
+    expect(presetContainer.innerHTML).toContain("hover:bg-destructive/10");
     expect(presetContainer.innerHTML).not.toContain("nx-destructive");
-    expect(presetContainer.innerHTML).not.toContain("hover:bg-destructive/10");
+    expect(presetContainer.innerHTML).not.toMatch(/nx-[a-z-]+\/\d+/);
     expect(presetContainer.innerHTML).not.toContain("rounded-nx-xs");
     expect(presetContainer.innerHTML).not.toContain("ltr:mr-1");
+    expect(entityContainer.innerHTML).not.toMatch(/nx-[a-z-]+\/\d+/);
   });
 
   it("JobsStateFeedback explicitly distinguishes error recovery vs filtered empty vs unfiltered empty states", () => {
@@ -288,7 +320,11 @@ describe("Data Transfer UI tokens, RTL logical properties, Progress & Tooltips",
     render(
       <TooltipProvider>
         <JobsSplitDetail
-          job={buildJob({ errorSummary: "Row 14 failed FK check" })}
+          job={buildJob({
+            importMode: "Upsert",
+            onboardingMode: "InviteByEmail",
+            errorSummary: "Row 14 failed FK check",
+          })}
           entityDisplayName="CRM Leads"
           actions={<button type="button">Cancel</button>}
         />
@@ -335,6 +371,10 @@ describe("Data Transfer UI tokens, RTL logical properties, Progress & Tooltips",
     expect(screen.getByTestId("jobs-split-detail")).toBeInTheDocument();
     expect(screen.getByText(FULL_JOB_ID)).toBeInTheDocument();
     expect(screen.getByText("Row 14 failed FK check")).toBeInTheDocument();
+    expect(screen.getByText("adminDataTransferJobs.modes.Upsert")).toBeInTheDocument();
+    expect(
+      screen.getByText("adminDataTransferJobs.onboardingModes.InviteByEmail")
+    ).toBeInTheDocument();
     expect(screen.getByTestId("entities-split-detail")).toBeInTheDocument();
     expect(screen.getByTestId("presets-split-detail")).toBeInTheDocument();
     expect(screen.getByText("LeadEmail")).toBeInTheDocument();

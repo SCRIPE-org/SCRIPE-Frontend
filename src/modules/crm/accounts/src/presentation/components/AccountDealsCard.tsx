@@ -97,7 +97,7 @@ export function AccountDealsCard({
                         )}
                       </span>
                     )}
-                  {opp.targetCloseDate && (
+                  {opp.targetCloseDate && new Date(opp.targetCloseDate).getFullYear() > 1900 && (
                     <span className="mt-0.5 flex items-center justify-end gap-1 text-[10px] text-nx-ink-3">
                       <Calendar className="size-2.5" aria-hidden="true" />
                       {new Date(opp.targetCloseDate).toLocaleDateString(isAr ? "ar-SA" : "en-US", {
