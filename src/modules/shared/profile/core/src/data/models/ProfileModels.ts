@@ -112,7 +112,24 @@ export interface Enable2FAResultDto {
 }
 
 /**
- * Interface defining property specifications, keys types, and structural contract rules for link external login dto.
+ * DTO payload for initiating a Sudo-gated federated external login link handshake.
+ */
+export interface InitiateExternalLoginLinkDto {
+  identityProviderId: string;
+  redirectUri?: string;
+}
+
+/**
+ * DTO response containing the Identity Provider authorization URL and protocol state.
+ */
+export interface InitiateExternalLoginLinkResultDto {
+  authorizationUrl: string;
+  protocol: string;
+  state?: string | null;
+}
+
+/**
+ * Legacy external login link DTO preserved for type-contract compatibility.
  */
 export interface LinkExternalLoginDto {
   provider?: string;

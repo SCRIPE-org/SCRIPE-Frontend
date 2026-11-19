@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
+import { FeatureUnavailableGate } from "@core/components/tenant-context";
 import { Alert, AlertDescription } from "@core/ui/alert";
 import { Button } from "@core/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { toast } from "@core/ui/sileo-toast";
 import { useSecurityVaultViewModel } from "../viewmodels/useSecurityVaultViewModel";
-import { useExternalLoginsViewModel } from "../viewmodels/useExternalLoginsViewModel";
 import {
   useAccountContextSliceViewModel,
   useAccountSecuritySliceViewModel,
@@ -37,9 +37,8 @@ import { AlertCircle, Lock, RefreshCw } from "lucide-react";
 export function AccountSecurityView() {
   const { t, language } = useI18n();
   const vm = useSecurityVaultViewModel();
-  const { principalContext, featureFlags, isLoadingContext, isContextError } =
+  const { featureFlags, principalContext, isLoadingContext, isContextError } =
     useAccountContextSliceViewModel();
-  const { externalLogins } = useExternalLoginsViewModel();
   const {
     security,
     isLoadingSecurity,
@@ -51,11 +50,9 @@ export function AccountSecurityView() {
     updatePolicyError,
   } = useAccountSecuritySliceViewModel();
 
-  const isPlatformAdmin = principalContext?.principalKind === "PlatformAdmin";
   const showSsoCard =
     security?.isSsoFeatureEnabled !== false &&
-    featureFlags?.externalSsoEnabled !== false &&
-    (!isPlatformAdmin || externalLogins.length > 0);
+    featureFlags?.externalSsoEnabled !== false;
   const showTotpSection =
     security?.isTwoFactorFeatureEnabled !== false &&
     featureFlags?.twoFactorEnabled !== false;
@@ -105,6 +102,10 @@ export function AccountSecurityView() {
         }}
       />
     );
+  }
+
+  if (security?.isSecurityPageEnabled === false) {
+    return <FeatureUnavailableGate featureKey="Account.Security.Enabled" />;
   }
 
   const handleBegin2FaSetup = async () => {

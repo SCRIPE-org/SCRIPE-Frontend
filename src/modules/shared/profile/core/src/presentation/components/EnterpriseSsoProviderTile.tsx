@@ -1,142 +1,177 @@
 "use client";
 
+import { useState } from "react";
+import Image from "next/image";
 import { useI18n } from "@core/providers/i18n-provider";
-import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
+import { Badge } from "@core/ui/badge";
+import { Card } from "@core/ui/card";
 import { BrandIcon } from "@core/ui/brand-icons";
-import { type SsoProviderCatalogItem } from "./EnterpriseSsoConnectDialog";
-import { Link2, Unlink, CheckCircle2, Loader2 } from "lucide-react";
-import type { ExternalLogin } from "../../domain/entities/ExternalLogin";
-
-export {
-  ENTERPRISE_IDP_CATALOG,
-  matchExternalLogin,
-  findFederatedProviderId,
+import type { AvailableSsoProvider } from "../../domain/entities/SovereignAccountEntities";
+import {
+  formatLinkedTimestamp,
+  formatProtocolLabel,
+  isGlobalSsoScope,
+  resolveProviderBadgeColors,
 } from "../utils/enterprise-sso.utils";
+import { Building2, CheckCircle2, Globe, Link2, Loader2, Unlink } from "lucide-react";
+
+/** Renders the provider's icon image if supplied, or a clean SVG brand/protocol fallback mark. */
+export function SsoProviderBrandMark({
+  provider,
+}: {
+  provider: Pick<AvailableSsoProvider, "slug" | "name" | "protocol" | "iconUrl" | "buttonColor">;
+}) {
+  const colors = resolveProviderBadgeColors(provider.buttonColor);
+
+  if (provider.iconUrl) {
+    return (
+      <div
+        className="w-9 h-9 rounded-lg border border-nx-line flex items-center justify-center shrink-0 overflow-hidden"
+        style={{ backgroundColor: colors.background }}
+      >
+        <Image
+          src={provider.iconUrl}
+          alt={provider.name}
+          width={20}
+          height={20}
+          unoptimized
+          className="h-5 w-5 object-contain"
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-9 h-9 rounded-lg border border-nx-line bg-nx-surface flex items-center justify-center shrink-0">
+      <BrandIcon
+        slug={provider.slug}
+        name={provider.name}
+        protocol={provider.protocol}
+        className="h-5 w-5"
+      />
+    </div>
+  );
+}
 
 /**
  * Props for {@link EnterpriseSsoProviderTile}.
  */
 export interface EnterpriseSsoProviderTileProps {
-  /** Catalog metadata for the enterprise identity provider. */
-  item: SsoProviderCatalogItem;
-  /** Matching linked external login record for the current user, if connected. */
-  matchingLogin?: ExternalLogin;
-  /** True when the tile is currently in inline unlink confirmation state. */
-  isConfirmingUnlink: boolean;
-  /** True when this specific login binding is currently unlinking. */
-  isUnlinkingThis: boolean;
-  /** Opens the connect/federate modal for this provider. */
-  onConnect: (item: SsoProviderCatalogItem) => void;
-  /** Requests inline unlink confirmation for the given login ID. */
-  onRequestUnlink: (loginId: string) => void;
-  /** Cancels inline unlink confirmation. */
-  onCancelUnlink: () => void;
-  /** Confirms and executes unlinking the given external login ID. */
-  onConfirmUnlink: (loginId: string) => Promise<void>;
+  /** Live DB Identity Provider metadata & current user's link state. */
+  provider: AvailableSsoProvider;
+  /** Whether an unlink mutation is currently in progress. */
+  isUnlinking: boolean;
+  /** Opens the Sudo-gated federated handshake flow for an unlinked provider. */
+  onConnect: (provider: AvailableSsoProvider) => void;
+  /** Triggers the Sudo-gated unlink mutation for a connected external login ID. */
+  onDisconnect: (externalLoginId: string) => Promise<unknown> | void;
 }
 
 /**
- * Single enterprise SSO identity provider tile showing brand identity,
- * connection status, linked claim summary, and connect/disconnect actions.
+ * Single live DB-configured Enterprise SSO Identity Provider tile on `/account/security`.
  */
 export function EnterpriseSsoProviderTile({
-  item,
-  matchingLogin,
-  isConfirmingUnlink,
-  isUnlinkingThis,
+  provider,
+  isUnlinking,
   onConnect,
-  onRequestUnlink,
-  onCancelUnlink,
-  onConfirmUnlink,
+  onDisconnect,
 }: EnterpriseSsoProviderTileProps) {
-  const { t } = useI18n();
-  const isConnected = Boolean(matchingLogin);
+  const { t, language } = useI18n();
+  const [confirmUnlink, setConfirmUnlink] = useState(false);
+
+  const protocolLabel = formatProtocolLabel(provider.protocol);
+  const isGlobal = isGlobalSsoScope(provider.scope);
+  const scopeLabel = isGlobal
+    ? t("profile.security.ssoScopeGlobal")
+    : t("profile.security.ssoScopeOrganization");
+  const linkedTimestamp = formatLinkedTimestamp(provider.linkedAtUtc, language);
 
   return (
-    <div
-      data-testid={`sso-provider-card-${item.key}`}
-      className={`rounded-xl border p-4 flex flex-col justify-between gap-3.5 transition-colors ${
-        isConnected
-          ? "border-nx-accent/40 bg-nx-ground"
-          : "border-nx-line bg-nx-ground hover:border-nx-line-hi"
-      }`}
+    <Card
+      data-testid={`enterprise-sso-tile-${provider.slug || provider.encryptedId}`}
+      className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl border border-nx-line bg-nx-raised hover:border-nx-line-hi transition-colors"
     >
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-start gap-3 min-w-0">
-          <div
-            className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border ${item.brandContainerClass}`}
-          >
-            <BrandIcon
-              slug={item.slug}
-              name={item.name}
-              protocol={item.protocol}
-              className="h-5 w-5"
-            />
-          </div>
-          <div className="min-w-0 space-y-1">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-sm font-bold text-nx-ink">{item.name}</span>
+      <div className="flex items-start sm:items-center gap-3 min-w-0">
+        <SsoProviderBrandMark provider={provider} />
+
+        <div className="min-w-0 space-y-1">
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="text-xs font-bold text-nx-ink truncate">
+              {provider.name}
+            </span>
+            <Badge
+              variant="outline"
+              className="border-nx-line text-nx-ink-2 text-[10px] font-mono py-0"
+            >
+              {protocolLabel}
+            </Badge>
+            <Badge
+              variant="outline"
+              className="border-nx-line text-nx-ink-2 text-[10px] py-0 gap-1"
+            >
+              {isGlobal ? (
+                <Globe className="h-2.5 w-2.5 text-nx-accent" />
+              ) : (
+                <Building2 className="h-2.5 w-2.5 text-nx-ink-2" />
+              )}
+              <span>{scopeLabel}</span>
+            </Badge>
+            {provider.isLinked ? (
+              <Badge className="bg-success/15 text-success border border-success/30 text-[10px] font-semibold gap-1 py-0">
+                <CheckCircle2 className="h-2.5 w-2.5" />
+                <span>{t("profile.security.ssoConnectedBadge")}</span>
+              </Badge>
+            ) : (
               <Badge
                 variant="outline"
-                className="border-nx-line text-nx-ink-2 font-mono text-[10px] py-0 px-1.5"
+                className="border-nx-line text-nx-ink-3 text-[10px] py-0"
               >
-                {item.protocol}
+                {t("profile.security.ssoAvailableBadge")}
               </Badge>
-            </div>
-
-            {isConnected && matchingLogin ? (
-              <p className="text-xs font-mono text-nx-ink-2 truncate">
-                {matchingLogin.email || matchingLogin.displayName || matchingLogin.providerKey}
-              </p>
-            ) : (
-              <p className="text-xs text-nx-ink-3">
-                {item.domainHint
-                  ? t("profile.security.ssoNotConnectedHint", { domain: item.domainHint })
-                  : t("profile.security.ssoNotConnectedProtocolHint", { protocol: item.protocol })}
-              </p>
             )}
           </div>
-        </div>
 
-        {isConnected ? (
-          <Badge className="bg-success/15 text-success border border-success/30 text-[10px] font-semibold shrink-0 flex items-center gap-1">
-            <CheckCircle2 className="h-3 w-3" style={{ minWidth: 12, minHeight: 12 }} />
-            <span>{t("profile.security.ssoConnectedBadge")}</span>
-          </Badge>
-        ) : (
-          <Badge
-            variant="outline"
-            className="border-nx-line text-nx-ink-3 text-[10px] shrink-0"
-          >
-            {t("profile.security.ssoAvailableBadge")}
-          </Badge>
-        )}
+          <p className="text-[11px] text-nx-ink-2 truncate">
+            {provider.isLinked ? (
+              <span className="font-mono text-nx-ink">
+                {provider.linkedEmail || t("profile.security.ssoVerifiedClaimLabel")}
+              </span>
+            ) : (
+              t("profile.security.ssoNotConnectedProtocolHint", {
+                protocol: protocolLabel,
+              })
+            )}
+          </p>
+
+          {provider.isLinked && linkedTimestamp && (
+            <p className="text-[10px] text-nx-ink-3">
+              {t("profile.security.ssoLinkedAtLabel", { date: linkedTimestamp })}
+            </p>
+          )}
+        </div>
       </div>
 
-      <div className="flex items-center justify-between gap-2 pt-2 border-t border-nx-line">
-        <span className="text-[11px] font-mono text-nx-ink-3">
-          {isConnected
-            ? t("profile.security.ssoVerifiedClaimLabel")
-            : t("profile.security.ssoPreconfiguredByTenant")}
-        </span>
-
-        {isConnected && matchingLogin ? (
-          isConfirmingUnlink ? (
-            <div className="flex items-center gap-1.5 flex-wrap justify-end">
-              <span className="text-[11px] text-destructive font-medium">
+      <div className="flex items-center gap-2 shrink-0">
+        {provider.isLinked && provider.externalLoginId ? (
+          confirmUnlink ? (
+            <div className="flex items-center gap-1.5">
+              <span className="text-[10px] text-destructive font-medium">
                 {t("profile.security.ssoConfirmDisconnectPrompt")}
               </span>
               <Button
                 type="button"
-                variant="outline"
+                variant="destructive"
                 size="sm"
-                data-testid={`sso-confirm-disconnect-btn-${item.key}`}
-                onClick={() => void onConfirmUnlink(matchingLogin.id)}
-                disabled={isUnlinkingThis}
-                className="h-7 px-2 text-[10px] font-semibold border-destructive/40 text-destructive hover:bg-destructive/10"
+                disabled={isUnlinking}
+                data-testid={`confirm-unlink-${provider.slug || provider.encryptedId}`}
+                onClick={async () => {
+                  await onDisconnect(provider.externalLoginId!);
+                  setConfirmUnlink(false);
+                }}
+                className="h-7 text-[10px] px-2 font-semibold"
               >
-                {isUnlinkingThis ? (
+                {isUnlinking ? (
                   <Loader2 className="h-3 w-3 animate-spin" />
                 ) : (
                   t("profile.security.ssoConfirmDisconnectBtn")
@@ -144,10 +179,11 @@ export function EnterpriseSsoProviderTile({
               </Button>
               <Button
                 type="button"
-                variant="ghost"
+                variant="outline"
                 size="sm"
-                onClick={onCancelUnlink}
-                className="h-7 px-2 text-[10px] text-nx-ink-3 hover:text-nx-ink"
+                disabled={isUnlinking}
+                onClick={() => setConfirmUnlink(false)}
+                className="h-7 text-[10px] px-2 border-nx-line text-nx-ink-2"
               >
                 {t("profile.common.cancel")}
               </Button>
@@ -157,16 +193,11 @@ export function EnterpriseSsoProviderTile({
               type="button"
               variant="outline"
               size="sm"
-              data-testid={`sso-disconnect-btn-${item.key}`}
-              onClick={() => onRequestUnlink(matchingLogin.id)}
-              disabled={isUnlinkingThis}
-              className="h-8 text-xs font-semibold border-destructive/30 text-destructive hover:bg-destructive/10 gap-1.5"
+              data-testid={`disconnect-sso-${provider.slug || provider.encryptedId}`}
+              onClick={() => setConfirmUnlink(true)}
+              className="h-7 text-xs border-destructive/40 text-destructive hover:bg-destructive/10 gap-1"
             >
-              {isUnlinkingThis ? (
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              ) : (
-                <Unlink className="h-3.5 w-3.5" style={{ minWidth: 14, minHeight: 14 }} />
-              )}
+              <Unlink className="h-3 w-3" />
               <span>{t("profile.security.ssoDisconnectBtn")}</span>
             </Button>
           )
@@ -174,15 +205,15 @@ export function EnterpriseSsoProviderTile({
           <Button
             type="button"
             size="sm"
-            data-testid={`sso-connect-btn-${item.key}`}
-            onClick={() => onConnect(item)}
-            className="h-8 text-xs font-semibold bg-nx-accent-fill text-nx-on-fill gap-1.5"
+            data-testid={`connect-sso-${provider.slug || provider.encryptedId}`}
+            onClick={() => onConnect(provider)}
+            className="h-7 text-xs font-semibold gap-1 bg-nx-accent-fill text-nx-on-fill"
           >
-            <Link2 className="h-3.5 w-3.5" style={{ minWidth: 14, minHeight: 14 }} />
+            <Link2 className="h-3 w-3" />
             <span>{t("profile.security.ssoConnectBtn")}</span>
           </Button>
         )}
       </div>
-    </div>
+    </Card>
   );
 }

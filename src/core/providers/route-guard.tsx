@@ -28,6 +28,8 @@ import { useEffect, useState, useRef, useCallback, useSyncExternalStore } from "
 import { useRouter, usePathname } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAppStore } from "@core/store/useAppStore";
+import { useSudoStore } from "@core/store/useSudoStore";
+import { usePatOneTimeSecretStore } from "@core/store/usePatOneTimeSecretStore";
 import { useServices } from "@core/providers/service-provider";
 import { usePermissions } from "@core/hooks/use-permissions";
 import { useNavigation } from "@core/providers/navigation-provider";
@@ -120,6 +122,8 @@ const ALL_AUTH_PAGES = new Set([
 function forceLogout() {
   secureTokenService.clearTokens();
   useNavigationStore.getState().reset();
+  useSudoStore.getState().reset();
+  usePatOneTimeSecretStore.getState().clearPendingReceipt();
   useAppStore.getState().logout();
   if (typeof window !== "undefined") {
     try {
@@ -128,7 +132,7 @@ function forceLogout() {
       // Ignore storage access errors in restricted browsing contexts
     }
   }
-  appLogger.debug("[RouteGuard] Forced logout — cleared tokens, nav store, and app-storage");
+  appLogger.debug("[RouteGuard] Forced logout — cleared tokens, nav store, sudo/pat stores, and app-storage");
 }
 
 function buildLoginRedirectUrl(normalizedPath: string): string {

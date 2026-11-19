@@ -7,6 +7,7 @@ import {
   type AuthenticatorMode,
 } from "@core/services/webauthn.service";
 import type { PasskeyRegistrationMode } from "../../domain/interfaces/ISecurityRepository";
+import { ensureSudoElevation } from "../utils/sudoElevation";
 import { sovereignAccountKeys } from "./useSovereignAccountSlicesViewModel";
 
 /**
@@ -31,20 +32,28 @@ export function useSecurityPasskeyActions(passkeysQueryKey: readonly string[]) {
       deviceName: string;
       mode?: AuthenticatorMode;
     }) => {
+      const sudoToken = await ensureSudoElevation();
       const backendMode: PasskeyRegistrationMode =
         mode === "security-key" ? "cross-platform" : mode;
-      const options = await securityRepo.beginPasskeyRegistration(deviceName, backendMode);
-      const attestation = await registerPasskey(options, mode);
-      return securityRepo.completePasskeyRegistration({
-        attestationObjectBase64: attestation.attestationObjectBase64,
-        clientDataJsonBase64: attestation.clientDataJsonBase64,
+      const options = await securityRepo.beginPasskeyRegistration(
         deviceName,
-        transports: attestation.transports,
-        clientExtensionResults: attestation.clientExtensionResults,
-        challengeToken: options?.challengeToken,
-        attestationMode: options?.mode ?? options?.attachmentMode ?? backendMode,
-        credentialIdBase64: attestation.rawId,
-      });
+        backendMode,
+        sudoToken
+      );
+      const attestation = await registerPasskey(options, mode);
+      return securityRepo.completePasskeyRegistration(
+        {
+          attestationObjectBase64: attestation.attestationObjectBase64,
+          clientDataJsonBase64: attestation.clientDataJsonBase64,
+          deviceName,
+          transports: attestation.transports,
+          clientExtensionResults: attestation.clientExtensionResults,
+          challengeToken: options?.challengeToken,
+          attestationMode: options?.mode ?? options?.attachmentMode ?? backendMode,
+          credentialIdBase64: attestation.rawId,
+        },
+        sudoToken
+      );
     },
     onSuccess: invalidatePasskeyCaches,
   });

@@ -124,21 +124,21 @@ export function ProfileTelemetryHud({
     <>
       <Card className="w-full rounded-xl border border-nx-line bg-nx-surface p-4 sm:p-5 mb-6 hover:border-nx-line-hi transition-colors">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 min-w-0">
-          <div className="flex items-center gap-3.5 min-w-0">
+          <div className="flex items-center gap-3.5 min-w-0 flex-1">
             <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-nx-line bg-nx-accent-wash text-nx-accent">
               <Building2 className="h-5 w-5" style={{ minWidth: 20, minHeight: 20 }} />
             </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <h2 className="text-sm font-semibold tracking-tight text-nx-ink truncate">
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2 min-w-0 flex-wrap sm:flex-nowrap">
+                <h2 className="text-sm font-semibold tracking-tight text-nx-ink truncate min-w-0">
                   {primaryOrgTitle}
                 </h2>
                 {secondaryBadgeText && (
                   <Badge
                     variant="outline"
-                    className="border-nx-accent/30 text-nx-accent text-[10px] font-medium py-0 px-1.5 flex items-center gap-1"
+                    className="border-nx-accent/30 text-nx-accent text-[10px] font-medium py-0 px-1.5 flex items-center gap-1 shrink-0 whitespace-nowrap"
                   >
-                    <ShieldCheck className="h-3 w-3" style={{ minWidth: 12, minHeight: 12 }} />
+                    <ShieldCheck className="h-3 w-3 shrink-0" style={{ minWidth: 12, minHeight: 12 }} />
                     <span>{secondaryBadgeText}</span>
                   </Badge>
                 )}
@@ -153,8 +153,8 @@ export function ProfileTelemetryHud({
             </div>
           </div>
 
-          <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap min-w-0">
-            <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-lg border border-nx-line bg-nx-raised">
+          <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap xl:flex-nowrap shrink-0">
+            <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-lg border border-nx-line bg-nx-raised shrink-0 whitespace-nowrap">
               <Switch
                 checked={isAvailable}
                 onCheckedChange={onToggleAvailability}

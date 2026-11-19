@@ -131,6 +131,24 @@ export interface SovereignDossierSlice {
 /**
  * Account security posture, credential enrollment counts, and IP allowlist state.
  */
+/** Live DB-configured Enterprise SSO provider resolved for the current account security view. */
+export interface AvailableSsoProvider {
+  encryptedId: string;
+  name: string;
+  slug: string;
+  protocol: "oidc" | "oauth2" | "saml" | string;
+  scope: "Global" | "Organization" | string;
+  iconUrl?: string | null;
+  buttonColor?: string | null;
+  buttonLabel?: string | null;
+  displayOrder: number;
+  isLinked: boolean;
+  linkedEmail?: string | null;
+  linkedAtUtc?: string | null;
+  externalLoginId?: string | null;
+}
+
+/** Security posture, trusted IP CIDR, passkey, and Enterprise SSO snapshot for the current account. */
 export interface SovereignSecuritySlice {
   isTwoFactorEnabled: boolean;
   isTwoFactorFeatureEnabled?: boolean;
@@ -146,6 +164,7 @@ export interface SovereignSecuritySlice {
   sudoExpiresAtUtc?: string | null;
   currentClientIp?: string | null;
   isCurrentIpAllowed: boolean;
+  availableSsoProviders: AvailableSsoProvider[];
   rowVersion?: string;
 }
 

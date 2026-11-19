@@ -232,21 +232,14 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   }, [queryClient]);
 
   // ── Impersonation listener ─────────────────────────────────────────────────
-  // Note: authBroadcast is a singleton with no unsubscribe API — this is intentional.
-  // The handler is registered once and lives for the lifetime of the app.
-  const impersonationListenerRegistered = useRef(false);
   useEffect(() => {
-    if (impersonationListenerRegistered.current) return;
-    impersonationListenerRegistered.current = true;
-
-    authBroadcast.onImpersonation(async () => {
+    return authBroadcast.onImpersonation(() => {
       appLogger.auth("[NavigationProvider] Impersonation event — resetting navigation");
       useNavigationStore.getState().clearRouteData();
       useNavigationStore.getState().reset();
       autoFetchDone.current = false; // Allow auto-fetch for impersonated user
-      await queryClient.invalidateQueries({ queryKey: ["navigation"] });
+      void queryClient.invalidateQueries({ queryKey: ["navigation"] });
     });
-    // authBroadcast is a singleton — no cleanup needed (matches pattern in useImpersonation.ts)
   }, [queryClient]);
 
   // When auth ends, purge cached navigation state immediately so the next user starts clean

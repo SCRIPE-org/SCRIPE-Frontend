@@ -27,6 +27,7 @@ export const AUTH_CORE_ENDPOINTS = {
     CHALLENGE: `${V1}/auth/oidc/challenge`,
     CALLBACK: `${V1}/auth/oidc/callback`,
     AUTHORIZE: `/connect/authorize`,
+    LOGOUT: `/oidc/logout`,
     COMPLETE_WORKSPACE_SELECTION: `${V1}/auth/oidc/complete-workspace-selection`,
   },
   SAML: {

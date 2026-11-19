@@ -38,8 +38,9 @@ vi.mock("@core/components/tenant-context", () => ({
 }));
 
 vi.mock("next/navigation", () => ({
-  usePathname: () => "/account/integrations",
+  usePathname: () => "/account/security",
   useRouter: () => ({ replace: vi.fn(), push: vi.fn() }),
+  useSearchParams: () => new URLSearchParams(),
 }));
 
 vi.mock("next/link", () => ({
@@ -195,14 +196,19 @@ describe("Milestone 9 Feature, Quota & Nav Rail Zero-Phantom-Feature Gating", ()
       removePasskey: vi.fn(),
     });
     mockExternalLoginsVm.mockReturnValue({
+      availableSsoProviders: [],
       externalLogins: [],
-      providers: [],
+      orphanedExternalLogins: [],
       isLoading: false,
+      isSudoActive: false,
       isUnlinking: false,
+      isInitiatingLink: false,
+      linkErrorMessage: null,
+      resetLinkError: vi.fn(),
       unlink: vi.fn(),
-      handleLink: vi.fn(),
-      linkAccount: vi.fn(),
-      isLinking: false,
+      unlinkAsync: vi.fn(),
+      initiateFederatedLink: vi.fn(),
+      invalidateSsoQueries: vi.fn(),
     });
   });
 
@@ -286,7 +292,7 @@ describe("Milestone 9 Feature, Quota & Nav Rail Zero-Phantom-Feature Gating", ()
     expect(screen.queryByTestId("open-create-pat-modal-btn")).not.toBeInTheDocument();
   });
 
-  it("gates 2FA and SSO cards on /account/security by Edition flags and PlatformAdmin linked logins", () => {
+  it("gates 2FA, SSO cards, and full page on /account/security by Edition flags while rendering SSO for PlatformAdmin with 0 logins", () => {
     const { rerender } = render(<AccountSecurityView />);
     expect(screen.getByTestId("connected-enterprise-sso-card")).toBeInTheDocument();
     expect(screen.getByText("profile.security.twoFactor.sectionTitle")).toBeInTheDocument();
@@ -298,6 +304,8 @@ describe("Milestone 9 Feature, Quota & Nav Rail Zero-Phantom-Feature Gating", ()
         currentClientIp: "10.0.0.1",
         isTwoFactorFeatureEnabled: false,
         isSsoFeatureEnabled: false,
+        isSecurityPageEnabled: true,
+        availableSsoProviders: [],
       },
     });
     rerender(<AccountSecurityView />);
@@ -328,18 +336,27 @@ describe("Milestone 9 Feature, Quota & Nav Rail Zero-Phantom-Feature Gating", ()
         currentClientIp: "10.0.0.1",
         isTwoFactorFeatureEnabled: true,
         isSsoFeatureEnabled: true,
+        isSecurityPageEnabled: true,
+        availableSsoProviders: [],
       },
     });
     rerender(<AccountSecurityView />);
-    expect(screen.queryByTestId("connected-enterprise-sso-card")).not.toBeInTheDocument();
+    expect(screen.getByTestId("connected-enterprise-sso-card")).toBeInTheDocument();
     expect(screen.getByText("profile.security.twoFactor.sectionTitle")).toBeInTheDocument();
 
-    mockExternalLoginsVm.mockReturnValue({
-      ...mockExternalLoginsVm(),
-      externalLogins: [{ id: "ext-1", provider: "Google", providerDisplayName: "Google" }],
+    mockSecuritySliceVm.mockReturnValue({
+      ...mockSecuritySliceVm(),
+      security: {
+        trustedCidrs: [],
+        currentClientIp: "10.0.0.1",
+        isTwoFactorFeatureEnabled: true,
+        isSsoFeatureEnabled: true,
+        isSecurityPageEnabled: false,
+        availableSsoProviders: [],
+      },
     });
     rerender(<AccountSecurityView />);
-    expect(screen.getByTestId("connected-enterprise-sso-card")).toBeInTheDocument();
+    expect(screen.getByTestId("feature-unavailable-gate")).toBeInTheDocument();
   });
 
   it("gates delegation section on /account/governance by feature flag", () => {

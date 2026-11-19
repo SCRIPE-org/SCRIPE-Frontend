@@ -8,6 +8,7 @@ import { useEffect, useRef } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { BRAND } from "@core/config/branding";
 import { useResolvedFileUrl } from "@core/hooks/use-resolved-file-url";
+import { sanitizeCssUrl } from "@modules/auth/core/src/presentation/viewmodels/branding/sanitizeBrandingCss";
 
 import { useLoginViewModel } from "../viewmodels/use-login-viewmodel";
 import { useSsoProviders } from "../viewmodels/useSsoProviders";
@@ -19,6 +20,7 @@ import { SlotRenderer } from "../components/SlotRenderer";
 import { LoginFormRouter } from "../components/LoginFormRouter";
 import { LoginLayoutRouter } from "../components/LoginLayoutRouter";
 import { LoginTopActions } from "../components/LoginTopActions";
+import { formatBidiCompanyName } from "../components/layouts/layout-shared";
 import { TenantSuspendedView, TenantNotFoundView } from "./TenantStatusView";
 
 /**
@@ -36,7 +38,7 @@ export function LoginView() {
     branding,
     isResolved,
     isLoading: isTenantLoading,
-    isApiError,
+    isTenantExpected,
   } = useTenantResolution();
 
   // Studio preview mode (§22)
@@ -63,7 +65,13 @@ export function LoginView() {
     isSafeMode: branding?.isSafeMode ?? false,
   });
 
-  const sso = useSsoProviders({ tenantId, mode: branding?.identityProviderMode ?? "inherit" });
+  // BAM-04 fail-closed: only query SSO providers once tenant resolution completes cleanly
+  // (never leak platform SSO providers while a tenant domain or `?_tenant=` is resolving or failed).
+  const sso = useSsoProviders({
+    tenantId,
+    mode: branding?.identityProviderMode ?? "inherit",
+    enabled: !isTenantLoading && (!isTenantExpected || isResolved),
+  });
 
   const resolvedLogoSrc = useResolvedFileUrl(branding?.logoUrl);
   const logoSrc = branding?.logoUrl
@@ -95,13 +103,15 @@ export function LoginView() {
   const faviconUrl = branding?.faviconUrl;
   useEffect(() => {
     if (typeof document === "undefined" || !faviconUrl) return;
+    const safeFaviconUrl = sanitizeCssUrl(faviconUrl);
+    if (!safeFaviconUrl) return;
     let link = document.querySelector<HTMLLinkElement>("link[rel~='icon']");
     if (!link) {
       link = document.createElement("link");
       link.rel = "icon";
       document.head.appendChild(link);
     }
-    link.href = faviconUrl;
+    link.href = safeFaviconUrl;
   }, [faviconUrl]);
 
   // ── Loading gate ──────────────────────────────────────────────────────────
@@ -128,17 +138,14 @@ export function LoginView() {
     return <TenantSuspendedView branding={branding} />;
   }
 
-  if (
-    !isPreviewMode &&
-    !isTenantLoading &&
-    !isResolved &&
-    !isApiError &&
-    typeof window !== "undefined"
-  ) {
+  // BAM-04 fail-closed: when a tenant domain (`*.localhost`, custom domain) or `?_tenant=`
+  // was requested and resolution failed (404 / inactive / error), render TenantNotFoundView
+  // and NEVER fall back to the platform login or platform SSO list.
+  if (!isPreviewMode && !isTenantLoading && !isResolved && typeof window !== "undefined") {
     const hostname = window.location.hostname;
     const devCode = new URLSearchParams(window.location.search).get("_tenant");
-    const isTenantExpected = devCode !== null || !isPlatformDomain(hostname);
-    if (isTenantExpected) return <TenantNotFoundView />;
+    const expectsTenant = isTenantExpected || devCode !== null || !isPlatformDomain(hostname);
+    if (expectsTenant) return <TenantNotFoundView />;
   }
 
   const safeModeActive = branding?.isSafeMode === true;
@@ -167,7 +174,8 @@ export function LoginView() {
   const footer = (
     <div className="mt-12 text-center lg:hidden">
       <p className="text-[11px] font-medium text-nx-ink-3">
-        © {new Date().getFullYear()} {companyName} — {t("auth.branding.copyright")}
+        © {new Date().getFullYear()} {formatBidiCompanyName(companyName)} —{" "}
+        {t("auth.branding.copyright")}
       </p>
     </div>
   );

@@ -72,7 +72,7 @@ export function TrustRow({ trustMarks, trustedByCount, trustedByLabel }: TrustRo
 
       {/* ── Compliance marks — icon + label, wrap gracefully ── */}
       {hasMarks && (
-        <ul className="flex flex-wrap items-center gap-x-5 gap-y-2.5" role="list">
+        <ul className="flex flex-wrap items-center gap-x-5 gap-y-2.5" >
           {trustMarks.map((mark) => {
             const Icon = mark.iconKey ? TRUST_ICONS[mark.iconKey] : undefined;
             return (

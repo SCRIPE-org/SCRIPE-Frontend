@@ -73,6 +73,7 @@ export const ar = {
     sso: {
       orContinueWith: "أو تابع عبر",
       signInWith: "تسجيل الدخول عبر",
+      signInWithProvider: "تسجيل الدخول عبر {{provider}}",
       signingIn: "جاري تسجيل الدخول...",
       callbackProcessing: "إتمام تسجيل الدخول",
       callbackProcessingDesc: "جاري التحقق من هويتك مع المزود...",
@@ -86,6 +87,13 @@ export const ar = {
       loginSuccess: "تم تسجيل الدخول بنجاح",
       redirecting: "جاري التحويل إلى لوحة التحكم...",
       backToLogin: "العودة لتسجيل الدخول",
+      organizationScope: "المنظمة",
+      accountLinkedSuccess: "تم ربط موفر تسجيل الدخول الموحد بنجاح.",
+      discoveryError:
+        "تعذّر تحميل موفري تسجيل الدخول الموحد. لا يزال بإمكانك تسجيل الدخول ببيانات الاعتماد أو المحاولة مرة أخرى.",
+      discoveryRateLimited:
+        "تم إرسال عدد كبير من الطلبات لجلب موفري الدخول. يرجى الانتظار لحظة ثم المحاولة مجدداً، أو تسجيل الدخول ببيانات الاعتماد.",
+      retryProviders: "إعادة المحاولة",
     },
     forgotPassword: "نسيت كلمة المرور؟",
     forgotPasswordDesc: "أدخل بريدك الإلكتروني وسنرسل لك تعليمات إعادة تعيين كلمة المرور.",

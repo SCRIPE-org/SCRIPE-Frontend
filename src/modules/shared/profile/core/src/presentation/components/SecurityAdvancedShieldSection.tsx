@@ -79,19 +79,40 @@ export function SecurityAdvancedShieldSection({
   const [newCidr, setNewCidr] = useState("");
   const [newLabel, setNewLabel] = useState("");
   const [validationError, setValidationError] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [ignoreExternalPolicyError, setIgnoreExternalPolicyError] = useState(false);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const [savedNotice, setSavedNotice] = useState(false);
 
   const [prevTrustedCidrs, setPrevTrustedCidrs] = useState(trustedCidrs);
   if (prevTrustedCidrs !== trustedCidrs) {
-    setPrevTrustedCidrs(trustedCidrs); setSubnets(parseInitialCidrs(trustedCidrs));
+    setPrevTrustedCidrs(trustedCidrs);
+    setSubnets(parseInitialCidrs(trustedCidrs));
   }
+
+  const [prevPolicyError, setPrevPolicyError] = useState(policyError);
+  if (prevPolicyError !== policyError) {
+    setPrevPolicyError(policyError);
+    setIgnoreExternalPolicyError(false);
+  }
+
+  const resolvedClientIp =
+    currentClientIp && currentClientIp.trim().toLowerCase() !== "unknown"
+      ? currentClientIp.trim()
+      : null;
+  const detectedIpCidr = resolvedClientIp ? formatCurrentIpAsCidr(resolvedClientIp) : null;
 
   const hasUnsavedChanges =
     JSON.stringify(serializeCidrs(subnets)) !== JSON.stringify(trustedCidrs);
 
-  const handleAddSubnet = () => {
+  const clearErrors = () => {
     setValidationError(null);
+    setSaveError(null);
+    setIgnoreExternalPolicyError(true);
+  };
+
+  const handleAddSubnet = () => {
+    clearErrors();
     const result = normalizeAndValidateCidr(newCidr, subnets);
     if (!result.ok) {
       setValidationError(t(SUBNET_ERROR_KEYS[result.reason]));
@@ -117,29 +138,34 @@ export function SecurityAdvancedShieldSection({
   };
 
   const handleUseCurrentIp = () => {
-    const detectedIp = currentClientIp?.trim();
-    if (!detectedIp) {
-      setValidationError(
-        t("profile.security.noIpDetectedNotice", {
-          defaultValue: "Client IP unavailable from gateway telemetry — enter your CIDR manually.",
-        })
-      );
+    clearErrors();
+    if (!detectedIpCidr) {
+      setValidationError(t("profile.security.noIpDetectedNotice"));
       return;
     }
-    setNewCidr(formatCurrentIpAsCidr(detectedIp));
-    setNewLabel(t("profile.security.currentWorkstationLabel"));
-    setValidationError(null);
+    const result = normalizeAndValidateCidr(detectedIpCidr, subnets);
+    if (!result.ok) {
+      setValidationError(t(SUBNET_ERROR_KEYS[result.reason]));
+      return;
+    }
+    setSubnets((prev) => [
+      ...prev,
+      { cidr: result.cidr, label: t("profile.security.currentWorkstationLabel") },
+    ]);
+    toast.success(t("profile.security.currentIpAddedNotice", { cidr: result.cidr }));
   };
 
   const handleSavePolicy = async () => {
     setValidationError(null);
+    setSaveError(null);
+    setIgnoreExternalPolicyError(false);
     try {
       await onUpdatePolicy({ trustedCidrs: serializeCidrs(subnets), rowVersion });
       setSavedNotice(true);
       setTimeout(() => setSavedNotice(false), 2500);
     } catch (error: unknown) {
       const message = resolveProfileSaveErrorMessage(error, t);
-      setValidationError(message);
+      setSaveError(message);
       if (isConcurrencyConflictError(error)) {
         toast.warning(message);
       } else {
@@ -185,7 +211,7 @@ export function SecurityAdvancedShieldSection({
 
         <CardContent className="space-y-4">
           {subnets.length === 0 ? (
-            <div className="p-6 rounded-xl border border-nx-line bg-nx-raised text-center space-y-2">
+            <Card className="p-6 border border-nx-line bg-nx-raised text-center space-y-2">
               <Network className="h-6 w-6 text-nx-accent mx-auto" />
               <p className="text-xs font-semibold text-nx-ink">
                 {t("profile.security.noCidrsTitle")}
@@ -193,7 +219,7 @@ export function SecurityAdvancedShieldSection({
               <p className="text-[11px] text-nx-ink-3 max-w-sm mx-auto">
                 {t("profile.security.noCidrsDesc")}
               </p>
-            </div>
+            </Card>
           ) : (
             <div className="space-y-2">
               {subnets.map((sub, idx) => (
@@ -203,7 +229,10 @@ export function SecurityAdvancedShieldSection({
                   index={idx}
                   isCopied={copiedIndex === idx}
                   onCopy={(cidr, index) => void handleCopy(cidr, index)}
-                  onRemove={(index) => setSubnets((prev) => prev.filter((_, i) => i !== index))}
+                  onRemove={(index) => {
+                    clearErrors();
+                    setSubnets((prev) => prev.filter((_, i) => i !== index));
+                  }}
                 />
               ))}
             </div>
@@ -212,11 +241,12 @@ export function SecurityAdvancedShieldSection({
           <TrustedCidrAddForm
             newCidr={newCidr}
             newLabel={newLabel}
-            validationError={validationError}
-            policyError={policyError}
+            detectedIpCidr={detectedIpCidr}
+            validationError={validationError ?? saveError}
+            policyError={ignoreExternalPolicyError ? null : policyError}
             onCidrChange={(value) => {
               setNewCidr(value);
-              setValidationError(null);
+              clearErrors();
             }}
             onLabelChange={setNewLabel}
             onUseCurrentIp={handleUseCurrentIp}

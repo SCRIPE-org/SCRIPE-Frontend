@@ -2,28 +2,36 @@
 
 import { useState, useCallback, useEffect, useRef } from "react";
 import type { ReactNode } from "react";
+import { Smartphone, Check, X, Clock, QrCode } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { authContainer } from "@modules/auth/di";
+import type { TokenLoginPayload } from "./useTokenLogin";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 /**
- * Exported type defining parameters and fields for qr session status configurations.
+ * Status union representing the QR cross-device sign-in session lifecycle.
  */
-export type QrSessionStatus = "pending" | "scanned" | "approved" | "rejected" | "expired";
+export type QrSessionStatus =
+  | "pending"
+  | "scanned"
+  | "approved"
+  | "rejected"
+  | "expired"
+  | "consumed";
 
 /**
- * Interface defining property specifications, keys types, and structural contract rules for qr status info.
+ * Display metadata for the current QR session status indicator.
  */
 export interface QrStatusInfo {
-  /** SVG icon element — no emojis */
+  /** Lucide icon element rendered beside the status label. */
   svgIcon: ReactNode;
   label: string;
   color: string;
 }
 
 /**
- * Interface defining property specifications, keys types, and structural contract rules for use qr sign in view model return.
+ * Public state and action contract returned by {@link useQrSignInViewModel}.
  */
 export interface UseQrSignInViewModelReturn {
   // State
@@ -45,22 +53,16 @@ export interface UseQrSignInViewModelReturn {
 /**
  * useQrSignInViewModel — Business logic for QR Cross-Device Sign-In.
  *
- * Extracted from QrSignInView.tsx to enforce SCRIPE MVVM architecture:
- * View → ViewModel → Repository → Service → HTTP
+ * Enforces SCRIPE MVVM architecture:
+ * View -> ViewModel -> Repository -> Service -> HTTP.
  *
- * Per auth-methods.md §4 QR Code Login:
- * 1. Desktop creates a QR session → displays QR code
- * 2. Mobile scans QR → sees approval screen (QrApprovalView)
- * 3. Desktop polls session status every 3 seconds
- * 4. When approved → receives tokens, completes login
- *
- * Security:
- * - Session expires after 5 minutes
- * - One-time use (consumed on approve/reject)
- * - Polling uses fixed interval (3s)
+ * Passes the active encrypted `tenantId` (or `null` for Platform login) when
+ * creating the session, and completes login on the single winning `"approved"`
+ * poll that returns `accessToken` (refresh token is set in the httpOnly cookie).
  */
 export function useQrSignInViewModel(
-  onSuccess: (result: { accessToken: string; refreshToken: string }) => void
+  onSuccess: (result: TokenLoginPayload) => void,
+  tenantId?: string | null
 ): UseQrSignInViewModelReturn {
   const { t } = useI18n();
   const { authRepository } = authContainer;
@@ -70,39 +72,36 @@ export function useQrSignInViewModel(
   const [status, setStatus] = useState<QrSessionStatus>("pending");
   const [error, setError] = useState("");
   const [isCreating, setIsCreating] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(300); // 5 minutes
+  const [timeLeft, setTimeLeft] = useState(300);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const completedRef = useRef(false);
 
   // ── Create QR Session ──
   const createSession = useCallback(async () => {
     setIsCreating(true);
     setError("");
     setStatus("pending");
+    completedRef.current = false;
 
     try {
-      const result = await authRepository.beginQrSignIn();
+      const result = await authRepository.beginQrSignIn(tenantId ?? null);
 
       setSessionId(result.sessionId);
       setQrData(result.qrData);
 
-      // Calculate time left from expiry
       const expiresAt = new Date(result.expiresAt);
       const now = new Date();
       const remainingSec = Math.max(0, Math.floor((expiresAt.getTime() - now.getTime()) / 1000));
       setTimeLeft(remainingSec);
     } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : t("auth.qr.createFailed") || "Failed to create QR session."
-      );
+      setError(err instanceof Error ? err.message : t("auth.qr.createFailed"));
     } finally {
       setIsCreating(false);
     }
-  }, [t, authRepository]);
+  }, [t, authRepository, tenantId]);
 
-  // ── Init session on mount ──
+  // ── Init session on mount / tenant change ──
   useEffect(() => {
     queueMicrotask(() => {
       void createSession();
@@ -111,36 +110,61 @@ export function useQrSignInViewModel(
       if (pollRef.current) clearInterval(pollRef.current);
       if (timerRef.current) clearInterval(timerRef.current);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [createSession]);
 
   // ── Poll session status ──
   useEffect(() => {
-    if (!sessionId || status === "approved" || status === "rejected" || status === "expired") {
+    if (
+      !sessionId ||
+      status === "approved" ||
+      status === "rejected" ||
+      status === "expired" ||
+      status === "consumed"
+    ) {
       return;
     }
 
     pollRef.current = setInterval(async () => {
+      if (completedRef.current) return;
       try {
         const result = await authRepository.checkQrSignIn(sessionId);
 
-        setStatus(result.status as QrSessionStatus);
-
-        if (result.status === "approved" && result.accessToken && result.refreshToken) {
+        if (result.status === "approved" && result.accessToken) {
+          completedRef.current = true;
           if (pollRef.current) clearInterval(pollRef.current);
           if (timerRef.current) clearInterval(timerRef.current);
+          setStatus("approved");
           onSuccess({
             accessToken: result.accessToken,
             refreshToken: result.refreshToken,
+            defaultRedirectPath: result.defaultRedirectPath,
           });
-        } else if (result.status === "expired") {
+          return;
+        }
+
+        if (result.status === "consumed") {
           if (pollRef.current) clearInterval(pollRef.current);
-          setError(t("auth.qr.expired") || "QR code expired. Please generate a new one.");
+          if (timerRef.current) clearInterval(timerRef.current);
+          if (!completedRef.current) {
+            setStatus("expired");
+            setError(t("auth.qr.expired"));
+          }
+          return;
+        }
+
+        setStatus(result.status);
+
+        if (result.status === "expired" || result.status === "rejected") {
+          if (pollRef.current) clearInterval(pollRef.current);
+          if (timerRef.current) clearInterval(timerRef.current);
+          if (result.status === "expired") {
+            setError(t("auth.qr.expired"));
+          }
         }
       } catch {
-        // Silent fail — retry on next interval
+        // Silent retry on transient network/poll errors
       }
-    }, 3000); // Poll every 3 seconds
+    }, 3000);
 
     return () => {
       if (pollRef.current) clearInterval(pollRef.current);
@@ -166,7 +190,6 @@ export function useQrSignInViewModel(
     };
   }, [timeLeft, status]);
 
-  // Expire when timer hits zero — separate effect avoids nested setState
   useEffect(() => {
     if (timeLeft === 0 && status === "pending") {
       queueMicrotask(() => {
@@ -181,105 +204,37 @@ export function useQrSignInViewModel(
     return `${m}:${s.toString().padStart(2, "0")}`;
   };
 
-  // ── Status indicators (SVG icons — no emojis) ──
   const getStatusInfo = (): QrStatusInfo => {
     switch (status) {
       case "scanned":
         return {
-          svgIcon: (
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="hsl(var(--info))"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <rect x="5" y="2" width="14" height="20" rx="2" />
-              <circle cx="12" cy="17" r="1" fill="hsl(var(--info))" stroke="none" />
-            </svg>
-          ),
-          label: t("auth.qr.scanned") || "QR code scanned! Waiting for approval…",
+          svgIcon: <Smartphone className="h-4 w-4 text-info" aria-hidden="true" />,
+          label: t("auth.qr.scanned"),
           color: "hsl(var(--info))",
         };
       case "approved":
         return {
-          svgIcon: (
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="hsl(var(--success))"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M20 6L9 17l-5-5" />
-            </svg>
-          ),
-          label: t("auth.qr.approved") || "Approved! Signing you in…",
+          svgIcon: <Check className="h-4 w-4 text-success" aria-hidden="true" />,
+          label: t("auth.qr.approved"),
           color: "hsl(var(--success))",
         };
       case "rejected":
         return {
-          svgIcon: (
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="hsl(var(--destructive))"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-            >
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-          ),
-          label: t("auth.qr.rejected") || "Request rejected.",
+          svgIcon: <X className="h-4 w-4 text-destructive" aria-hidden="true" />,
+          label: t("auth.qr.rejected"),
           color: "hsl(var(--destructive))",
         };
       case "expired":
+      case "consumed":
         return {
-          svgIcon: (
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="hsl(var(--warning-strong))"
-              strokeWidth="2"
-              strokeLinecap="round"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <polyline points="12 6 12 12 16 14" />
-            </svg>
-          ),
-          label: t("auth.qr.expired") || "QR code expired.",
+          svgIcon: <Clock className="h-4 w-4 text-warning" aria-hidden="true" />,
+          label: t("auth.qr.expired"),
           color: "hsl(var(--warning-strong))",
         };
       default:
         return {
-          svgIcon: (
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="var(--sx-text-mute)"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-            >
-              <rect x="3" y="3" width="7" height="7" />
-              <rect x="14" y="3" width="7" height="7" />
-              <rect x="3" y="14" width="7" height="7" />
-              <path d="M14 14h.01M14 17h.01M17 14h.01M17 17h.01M20 14h.01M20 17h.01" />
-            </svg>
-          ),
-          label: t("auth.qr.pending") || "Scan the QR code with your mobile device",
+          svgIcon: <QrCode className="h-4 w-4 text-nx-ink-2" aria-hidden="true" />,
+          label: t("auth.qr.pending"),
           color: "var(--sx-text-mute)",
         };
     }

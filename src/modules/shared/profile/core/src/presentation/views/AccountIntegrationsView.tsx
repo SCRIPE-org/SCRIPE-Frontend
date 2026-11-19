@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useAppStore } from "@core/store/useAppStore";
+import { usePatOneTimeSecretStore } from "@core/store/usePatOneTimeSecretStore";
 import { FeatureUnavailableGate } from "@core/components/tenant-context";
 import { Badge } from "@core/ui/badge";
 import { startRoutingProgress } from "@core/ui/routing-progress-bar";
@@ -29,7 +31,14 @@ import { PatSecretAndConfirmModals } from "../sections/integrations/PatSecretAnd
 export function AccountIntegrationsView() {
   const { t } = useI18n();
   const router = useRouter();
+  const currentUserId = useAppStore((s) => s.user?.id ?? null);
   const { principalContext, featureFlags } = useAccountContextSliceViewModel();
+
+  useEffect(() => {
+    return () => {
+      usePatOneTimeSecretStore.getState().clearPendingReceipt();
+    };
+  }, []);
   const { security } = useAccountSecuritySliceViewModel();
   const {
     personalTokens,
@@ -87,8 +96,14 @@ export function AccountIntegrationsView() {
 
   const isPlatformAdmin = principalContext?.principalKind === "PlatformAdmin";
   const cidrEnforcedCount = personalTokens.filter((p) => p.allowedCidrs.length > 0).length;
+  const ownedPendingReceipt =
+    pendingSecretReceipt &&
+    (!pendingSecretReceipt.ownerUserId || pendingSecretReceipt.ownerUserId === currentUserId)
+      ? pendingSecretReceipt
+      : null;
+
   const effectiveReceipt =
-    pendingSecretReceipt ??
+    ownedPendingReceipt ??
     (createdTokenSecret
       ? {
           tokenId: "",
@@ -96,6 +111,7 @@ export function AccountIntegrationsView() {
           plainTextSecret: createdTokenSecret,
           fingerprintOrPrefix: createdTokenSecret.slice(0, 14),
           isRotated: false,
+          ownerUserId: currentUserId,
         }
       : null);
 
@@ -141,6 +157,7 @@ export function AccountIntegrationsView() {
       <PatOneTimeSecretBanner
         t={t}
         receipt={effectiveReceipt}
+        currentUserId={currentUserId}
         onDismiss={clearCreatedTokenSecret}
       />
 

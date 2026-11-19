@@ -9,6 +9,7 @@ import { getBaseApiService, getModuleApiService } from "@core/services/api-facto
 import { useAppStore } from "@core/store/useAppStore";
 import { authBroadcast } from "@core/common/broadcast-auth";
 import { queryClient } from "@core/query-client";
+import { clearAllLocalStorage } from "./core/data/utils/auth-storage-cleanup";
 
 import { AuthService } from "./core/data/services/AuthService";
 import { PublicApiService } from "@core/services";
@@ -97,11 +98,13 @@ function createContainer(): AuthContainer {
   });
 
   baseApi.setLogoutHandler(() => {
+    clearAllLocalStorage();
     useAppStore.getState().logout();
     queryClient.clear();
   });
 
   authBroadcast.onLogout(() => {
+    clearAllLocalStorage();
     useAppStore.getState().logout();
     queryClient.clear();
   });

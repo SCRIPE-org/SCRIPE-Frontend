@@ -12,9 +12,16 @@
  * The UI catches this to transition to the 2FA input step.
  */
 export class TwoFactorRequiredError extends Error {
-  constructor() {
+  /** Optional passwordless/hybrid 2FA pending ticket issued by the backend. */
+  public readonly twoFactorPendingToken: string | null;
+  /** Whether the initiating login requested a persistent refresh session. */
+  public readonly staySignedIn: boolean;
+
+  constructor(twoFactorPendingToken?: string | null, staySignedIn: boolean = false) {
     super("Two-factor authentication required");
     this.name = "TwoFactorRequiredError";
+    this.twoFactorPendingToken = twoFactorPendingToken ?? null;
+    this.staySignedIn = staySignedIn;
     // Required for `instanceof` to work correctly when TypeScript targets ES2015+
     // and the bundler does not preserve the prototype chain for Error subclasses.
     Object.setPrototypeOf(this, TwoFactorRequiredError.prototype);

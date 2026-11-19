@@ -9,7 +9,8 @@ import type {
   UpdateProfileRequest,
   ChangePasswordRequest,
   Enable2FAResult,
-  LinkExternalLoginRequest,
+  InitiateExternalLoginLinkRequest,
+  InitiateExternalLoginLinkResponse,
 } from "../../domain/interfaces/IProfileRepository";
 import { PROFILE_ENDPOINTS } from "./profile.endpoints";
 
@@ -94,11 +95,32 @@ export class ProfileService implements IProfileService {
     return this.api.get<ExternalLogin[]>(PROFILE_ENDPOINTS.EXTERNAL_LOGINS);
   }
 
-  async linkExternalLogin(data: LinkExternalLoginRequest): Promise<ExternalLogin> {
-    return this.api.post<ExternalLogin>(PROFILE_ENDPOINTS.LINK_EXTERNAL_LOGIN, data);
+  async initiateExternalLoginLink(
+    data: InitiateExternalLoginLinkRequest,
+    sudoToken?: string
+  ): Promise<InitiateExternalLoginLinkResponse> {
+    if (sudoToken) {
+      return this.api.post<InitiateExternalLoginLinkResponse>(
+        PROFILE_ENDPOINTS.INITIATE_EXTERNAL_LOGIN_LINK,
+        data,
+        undefined,
+        { headers: { "X-Sudo-Token": sudoToken } }
+      );
+    }
+    return this.api.post<InitiateExternalLoginLinkResponse>(
+      PROFILE_ENDPOINTS.INITIATE_EXTERNAL_LOGIN_LINK,
+      data
+    );
   }
 
-  async unlinkExternalLogin(externalLoginId: string): Promise<void> {
+  async unlinkExternalLogin(externalLoginId: string, sudoToken?: string): Promise<void> {
+    if (sudoToken) {
+      return this.api.delete<void>(
+        PROFILE_ENDPOINTS.UNLINK_EXTERNAL_LOGIN(externalLoginId),
+        undefined,
+        { headers: { "X-Sudo-Token": sudoToken } }
+      );
+    }
     return this.api.delete<void>(PROFILE_ENDPOINTS.UNLINK_EXTERNAL_LOGIN(externalLoginId));
   }
 }

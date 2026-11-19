@@ -22,6 +22,8 @@ export interface LoginResponseJson {
   success?: boolean;
   userProfile?: unknown | null;
   requires2FA?: boolean;
+  twoFactorPendingToken?: string | null;
+  staySignedIn?: boolean;
   requiresWorkspaceSelection?: boolean;
   availableWorkspaces?: Array<{
     tenantId: string;
@@ -82,9 +84,11 @@ export interface LoginResponseModel extends LoginResponseJson {
 
 export interface Verify2FARequestJson {
   identifier: string;
-  password: string;
+  password: string | null;
   code: string;
   tenantId?: string;
+  twoFactorPendingToken?: string | null;
+  staySignedIn?: boolean;
 }
 
 export interface Verify2FARequestModel {

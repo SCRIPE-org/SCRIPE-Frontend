@@ -8,6 +8,7 @@
  * (`GET/POST/DELETE /api/v1/account/integrations`, `POST /api/v1/account/integrations/pats/{id}/roll`).
  */
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useAppStore } from "@core/store/useAppStore";
 import { container } from "@modules/profile/di";
 import {
   sovereignAccountKeys,
@@ -146,6 +147,7 @@ export function useIntegrationsFederationViewModel() {
         plainTextSecret: secret,
         fingerprintOrPrefix: res.fingerprintOrPrefix,
         isRotated: false,
+        ownerUserId: useAppStore.getState().user?.id ?? null,
       });
     }
     await queryClient.invalidateQueries({ queryKey: sovereignAccountKeys.integrations() });
@@ -179,6 +181,7 @@ export function useIntegrationsFederationViewModel() {
         plainTextSecret: secret,
         fingerprintOrPrefix: res.fingerprintOrPrefix,
         isRotated: true,
+        ownerUserId: useAppStore.getState().user?.id ?? null,
       });
     }
     await queryClient.invalidateQueries({ queryKey: sovereignAccountKeys.integrations() });

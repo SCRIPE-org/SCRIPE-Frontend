@@ -103,12 +103,17 @@ const PROVIDER_TEMPLATES: ProviderTemplate[] = [
     preset: {
       protocol: "oauth2",
       authority: "https://github.com",
+      authorizationEndpoint: "https://github.com/login/oauth/authorize",
+      tokenEndpoint: "https://github.com/login/oauth/access_token",
+      userInformationEndpoint: "https://api.github.com/user",
       clientId: "",
       clientSecret: "",
       scopes: "user:email read:user",
       buttonLabel: "Continue with GitHub",
       displayOrder: 3,
       isActive: true,
+      enabledForAdmins: true,
+      enabledForUsers: true,
       claimMappingJson: JSON.stringify({
         email: "email",
         firstName: "name",
@@ -513,6 +518,8 @@ export function WellKnownProviderGallery({ onSelect, selectedId }: WellKnownProv
               variant="ghost"
               onClick={() => {
                 onSelect({
+                  enabledForAdmins: true,
+                  enabledForUsers: true,
                   ...tpl.preset,
                   name: tpl.name,
                   slug: tpl.id,
@@ -567,7 +574,7 @@ export function WellKnownProviderGallery({ onSelect, selectedId }: WellKnownProv
                   selection affordance in the app (Table row, Card, etc.),
                   not the per-vendor brand colour. */}
               {isSelected && (
-                <div className="absolute end-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-nx-accent shadow-nx-sm">
+                <div className="absolute end-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-nx-accent">
                   <svg
                     width="8"
                     height="8"

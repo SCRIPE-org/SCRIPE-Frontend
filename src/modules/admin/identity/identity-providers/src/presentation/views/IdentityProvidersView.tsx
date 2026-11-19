@@ -8,12 +8,13 @@
  */
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { useIdentityProvidersViewModel } from "../viewmodels/useIdentityProvidersViewModel";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useI18n } from "@core/providers/i18n-provider";
 import { IdentityProviderStatsBar } from "../components/IdentityProviderStatsBar";
 import { IdentityProviderCard } from "../components/IdentityProviderCard";
+import { TestConnectionDiagnosticsBanner } from "../components/TestConnectionDiagnosticsBanner";
 import { PageHeader } from "@core/ui/page-header";
 import { Input } from "@core/ui/input";
 import { Button } from "@core/ui/button";
@@ -21,46 +22,44 @@ import { EmptyState } from "@core/ui/empty-state";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { Plus, Search, ShieldCheck, Fingerprint } from "lucide-react";
 import { useRouter } from "next/navigation";
+import type { IdentityProviderListItem } from "../../domain/entities/IdentityProvider";
 
 /**
  * Presentation UI component rendering the identity providers view.
- * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ * Arranges layout boundaries and accessibility targets using the core design library (@core/ui/*).
  */
 export function IdentityProvidersView() {
   useModuleLocales(() => import("../../../locales"), "identity-providers");
   const { t } = useI18n();
   const router = useRouter();
 
-  const { vm, handleTestConnection, isTesting, testingId } = useIdentityProvidersViewModel();
+  const {
+    vm,
+    handleTestConnection,
+    handleToggleActive,
+    isTesting,
+    testingId,
+    lastTestDiagnostics,
+    clearTestDiagnostics,
+  } = useIdentityProvidersViewModel();
 
   // Category filter state: "all" | "active" | "inactive" | "oidc" | "oauth2" | "saml"
   const [filterType, setFilterType] = useState<string>("all");
 
-  const items = vm.items;
-  // Apply filters client-side to keep interface extremely fast and fluid
-  const filteredItems = useMemo(() => {
-    return items.filter((item) => {
-      // 1. Text search (handled via vm.searchValue or filter client-side if needed, but VM handles server search)
-      // 2. Category filter
-      if (filterType === "active") return item.isActive;
-      if (filterType === "inactive") return !item.isActive;
-      if (filterType === "oidc") return item.protocol === "oidc";
-      if (filterType === "oauth2") return item.protocol === "oauth2";
-      if (filterType === "saml") return item.protocol === "saml";
-      return true;
-    });
-  }, [items, filterType]);
+  const filteredItems = vm.items.filter((item) => {
+    if (filterType === "active") return item.isActive;
+    if (filterType === "inactive") return !item.isActive;
+    if (filterType === "oidc") return item.protocol === "oidc";
+    if (filterType === "oauth2") return item.protocol === "oauth2";
+    if (filterType === "saml") return item.protocol === "saml";
+    return true;
+  });
 
   const handleCreateClick = () => {
     router.push("/settings/identity-providers/create");
   };
 
-  const handleToggleActive = async (item: any) => {
-    // Call vm.updateItem to toggle status
-    await vm.updateItem(item.id, { isActive: !item.isActive });
-  };
-
-  const handleDeleteItem = async (item: any) => {
+  const handleDeleteItem = async (item: IdentityProviderListItem) => {
     await vm.deleteItem(item.id);
   };
 
@@ -81,6 +80,16 @@ export function IdentityProvidersView() {
 
       {/* ─── Statistics Metrics ────────────────────────────────── */}
       <IdentityProviderStatsBar items={vm.items} />
+
+      {/* ─── Test Connection Diagnostics ────────────────────────── */}
+      {lastTestDiagnostics && (
+        <TestConnectionDiagnosticsBanner
+          providerName={lastTestDiagnostics.providerName}
+          result={lastTestDiagnostics.result}
+          errorMessage={lastTestDiagnostics.errorMessage}
+          onDismiss={clearTestDiagnostics}
+        />
+      )}
 
       {/* ─── Controls & Search Section ───────────────────────────── */}
       <div className="flex flex-col gap-3 border-b border-nx-line pb-4 md:flex-row md:items-center md:justify-between">
@@ -110,10 +119,11 @@ export function IdentityProvidersView() {
               type="button"
               variant="ghost"
               size="sm"
+              aria-pressed={filterType === tab.id}
               onClick={() => setFilterType(tab.id)}
               className={`h-7 rounded-nx-sm px-3 text-xs font-semibold transition-[background-color,color] duration-nx-micro motion-reduce:transition-none ${
                 filterType === tab.id
-                  ? "bg-nx-surface text-nx-ink shadow-nx-sm hover:bg-nx-surface"
+                  ? "bg-nx-surface text-nx-ink border border-nx-line hover:bg-nx-surface"
                   : "text-nx-ink-3 hover:text-nx-ink"
               }`}
             >
@@ -138,11 +148,30 @@ export function IdentityProvidersView() {
                   onEdit={(itm) => router.push(`/settings/identity-providers/${itm.id}`)}
                   onDelete={handleDeleteItem}
                   onToggleActive={handleToggleActive}
-                  onTestConnection={handleTestConnection}
+                  onTestConnection={(id) => handleTestConnection(id, item.name)}
                   isTesting={isTesting && testingId === item.id}
                 />
               ))}
             </div>
+          ) : filterType !== "all" || vm.searchValue.trim().length > 0 ? (
+            <EmptyState
+              variant="filtered"
+              size="lg"
+              title={t("identityProviders.noMatchingTitle")}
+              description={t("identityProviders.noMatchingDesc")}
+              action={
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setFilterType("all");
+                    vm.handleSearchChange("");
+                  }}
+                >
+                  {t("identityProviders.clearFilters")}
+                </Button>
+              }
+            />
           ) : (
             <EmptyState
               icon={Fingerprint}

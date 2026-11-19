@@ -2,8 +2,10 @@
 
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
+import { Card } from "@core/ui/card";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
+import { Alert, AlertDescription } from "@core/ui/alert";
 import { resolveProfileSaveErrorMessage } from "../utils/concurrency";
 import { Plus, Laptop, AlertCircle } from "lucide-react";
 
@@ -15,26 +17,29 @@ export interface TrustedCidrAddFormProps {
   newCidr: string;
   /** Controlled friendly label input value. */
   newLabel: string;
-  /** Current client validation error string, if any. */
+  /** Normalized current workstation `/32` or `/128` CIDR when telemetry detected an IP. */
+  detectedIpCidr?: string | null;
+  /** Current client or save validation error string, if any. */
   validationError: string | null;
   /** Optional server-side policy update error object. */
   policyError?: unknown;
-  /** Handler to update the CIDR input and clear client validation errors. */
+  /** Handler to update the CIDR input and clear validation errors. */
   onCidrChange: (value: string) => void;
   /** Handler to update the optional subnet label. */
   onLabelChange: (value: string) => void;
-  /** Quick-fill callback that populates the caller's current workstation IP. */
+  /** Quick-add callback that appends the caller's current workstation IP CIDR. */
   onUseCurrentIp: () => void;
   /** Callback to validate and append the new subnet to the pending list. */
   onAddSubnet: () => void;
 }
 
 /**
- * Interactive subnet entry form with quick-fill current IP support and live error reporting.
+ * Interactive subnet entry form with 1-click current IP (`/32`) quick-add and live backend/anti-lockout error reporting.
  */
 export function TrustedCidrAddForm({
   newCidr,
   newLabel,
+  detectedIpCidr,
   validationError,
   policyError,
   onCidrChange,
@@ -43,10 +48,12 @@ export function TrustedCidrAddForm({
   onAddSubnet,
 }: TrustedCidrAddFormProps) {
   const { t } = useI18n();
+  const displayError =
+    validationError ?? (policyError ? resolveProfileSaveErrorMessage(policyError, t) : null);
 
   return (
-    <div className="p-4 rounded-xl border border-nx-line bg-nx-raised space-y-3">
-      <div className="flex items-center justify-between">
+    <Card className="p-4 border border-nx-line bg-nx-raised space-y-3">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <span className="text-xs font-bold text-nx-ink flex items-center gap-1.5">
           <Plus className="h-3.5 w-3.5 text-nx-accent" />
           {t("profile.security.addCidrSubnetTitle")}
@@ -57,10 +64,14 @@ export function TrustedCidrAddForm({
           size="sm"
           data-testid="use-current-ip-btn"
           onClick={onUseCurrentIp}
-          className="h-7 text-[10px] font-semibold border-nx-line text-nx-ink-2 hover:text-nx-ink gap-1"
+          className="h-7 text-[10px] font-semibold border-nx-line text-nx-ink-2 hover:text-nx-ink gap-1.5"
         >
           <Laptop className="h-3 w-3 text-nx-accent" />
-          <span>{t("profile.security.useCurrentIpBtn")}</span>
+          <span>
+            {detectedIpCidr
+              ? t("profile.security.addCurrentIpBtn", { cidr: detectedIpCidr })
+              : t("profile.security.useCurrentIpBtn")}
+          </span>
         </Button>
       </div>
 
@@ -110,16 +121,15 @@ export function TrustedCidrAddForm({
         </div>
       </div>
 
-      {(validationError || Boolean(policyError)) && (
-        <div
+      {displayError && (
+        <Alert
+          variant="destructive"
           data-testid="cidr-validation-error-banner"
-          className="p-2.5 rounded-lg border border-destructive/40 bg-destructive/10 text-destructive text-xs flex items-center gap-2"
+          className="border-destructive/40 bg-destructive/10 text-destructive py-2.5"
         >
           <AlertCircle className="h-4 w-4 shrink-0" />
-          <span>
-            {validationError ?? resolveProfileSaveErrorMessage(policyError, t)}
-          </span>
-        </div>
+          <AlertDescription className="text-xs">{displayError}</AlertDescription>
+        </Alert>
       )}
 
       <Button
@@ -132,6 +142,6 @@ export function TrustedCidrAddForm({
         <Plus className="h-3.5 w-3.5" />
         <span>{t("profile.security.appendSubnetBtn")}</span>
       </Button>
-    </div>
+    </Card>
   );
 }

@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { ArrowLeft, CheckCircle, ShieldAlert, UserX } from "lucide-react";
 import { Button } from "@core/ui/button";
+import { Card } from "@core/ui/card";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { SsoCallbackError, SsoCallbackState } from "../viewmodels/useSsoCallbackHandler";
 import { PostCredentialWorkspaceSelector } from "./PostCredentialWorkspaceSelector";
+import { TwoFactorForm } from "./TwoFactorForm";
 import type { WorkspaceChoice } from "@modules/auth/core/domain/errors/AuthErrors";
 
 interface SsoCallbackContentProps {
@@ -18,11 +20,18 @@ interface SsoCallbackContentProps {
   selectionError?: string;
   handleSelectWorkspace?: (workspace: WorkspaceChoice) => Promise<void> | void;
   handleBack?: () => void;
+  twoFactorCode?: string;
+  setTwoFactorCode?: (code: string) => void;
+  useBackupCode?: boolean;
+  isVerifying2FA?: boolean;
+  twoFactorError?: string;
+  handleVerify2FA?: () => void;
+  toggleBackupCode?: () => void;
 }
 
 /**
- * Presentation UI component rendering the sso callback content.
- * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ * Presentation UI component rendering SSO callback processing, success, errors,
+ * multi-workspace selection, and hybrid IdP MFA step-up verification.
  */
 export function SsoCallbackContent({
   state,
@@ -33,8 +42,16 @@ export function SsoCallbackContent({
   selectionError,
   handleSelectWorkspace,
   handleBack,
+  twoFactorCode = "",
+  setTwoFactorCode,
+  useBackupCode = false,
+  isVerifying2FA = false,
+  twoFactorError = "",
+  handleVerify2FA,
+  toggleBackupCode,
 }: SsoCallbackContentProps) {
   const { t, direction } = useI18n();
+  const isRTL = direction === "rtl";
 
   return (
     <div
@@ -111,6 +128,7 @@ export function SsoCallbackContent({
             </Button>
           </div>
         )}
+
         {state === "workspace_selection" && workspaceData && (
           <PostCredentialWorkspaceSelector
             email={workspaceEmail || ""}
@@ -121,6 +139,22 @@ export function SsoCallbackContent({
             isLoading={isSelectingWorkspace}
             error={selectionError}
           />
+        )}
+
+        {state === "two_factor" && (
+          <Card className="border-nx-line bg-nx-surface p-6 sm:p-8">
+            <TwoFactorForm
+              twoFactorCode={twoFactorCode}
+              setTwoFactorCode={setTwoFactorCode || (() => {})}
+              useBackupCode={useBackupCode}
+              isVerifying2FA={isVerifying2FA}
+              error={twoFactorError}
+              isRTL={isRTL}
+              handleVerify2FA={handleVerify2FA || (() => {})}
+              toggleBackupCode={toggleBackupCode || (() => {})}
+              goBackToCredentials={handleBack || (() => {})}
+            />
+          </Card>
         )}
       </div>
     </div>

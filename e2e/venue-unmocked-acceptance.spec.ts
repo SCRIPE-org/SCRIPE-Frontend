@@ -439,7 +439,7 @@ test.describe("SCRIPE Venue: Real Runtime End-to-End Operational Acceptance", ()
 
     // Extract raw DB GUID, reservation number, resource ID, and requested time slot
     const match = dbOutput.match(
-      /([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\s+\|\s+([A-Z0-9\-]+)\s+\|\s+4\s+\|\s+([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\s+\|\s+([^\s|]+(?:\s+[^\s|]+)?)\s+\|\s+([^\s|]+(?:\s+[^\s|]+)?)/i
+      /([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\s+\|\s+([A-Z0-9-]+)\s+\|\s+4\s+\|\s+([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\s+\|\s+([^\s|]+(?:\s+[^\s|]+)?)\s+\|\s+([^\s|]+(?:\s+[^\s|]+)?)/i
     );
     expect(match).not.toBeNull();
 

@@ -66,6 +66,7 @@ export function useLoginViewModel() {
     redirectPath: redirect.redirectPath,
     formIdentifier: formData.identifier,
     formPassword: formData.password,
+    staySignedIn: formData.staySignedIn,
     tenantId,
     setLoginStep,
     setError,
@@ -119,7 +120,7 @@ export function useLoginViewModel() {
       } catch (err: unknown) {
         const outcome = classifyLoginError(err);
         if (outcome.kind === "two_factor") {
-          twoFA.enterTwoFactor();
+          twoFA.enterTwoFactor(outcome.twoFactorPendingToken, outcome.staySignedIn);
           return;
         }
         if (outcome.kind === "workspace_selection") {
@@ -203,6 +204,7 @@ export function useLoginViewModel() {
     togglePasswordVisibility,
     handleLogin,
     handleVerify2FA: twoFA.handleVerify2FA,
+    enterTwoFactor: twoFA.enterTwoFactor,
     goBackToCredentials,
     toggleBackupCode: twoFA.toggleBackupCode,
     checkAndRedirect: redirect.checkAndRedirect,

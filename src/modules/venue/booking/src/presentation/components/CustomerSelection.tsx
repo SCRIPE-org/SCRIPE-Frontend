@@ -208,10 +208,10 @@ export function CustomerSelection({
             {results.length > 0 && (
               <ul
                 className="divide-nx-line border-nx-line m-0 list-none divide-y rounded-xl border p-0"
-                role="list"
+                
               >
                 {results.map((party) => (
-                  <li key={party.id} role="listitem">
+                  <li key={party.id} >
                     <Button
                       type="button"
                       variant="ghost"

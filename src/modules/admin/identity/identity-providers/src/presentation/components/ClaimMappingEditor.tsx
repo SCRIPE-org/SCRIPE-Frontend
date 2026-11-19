@@ -170,7 +170,7 @@ export function ClaimMappingEditor({ value, onChange }: Props) {
             disabled={!!jsonError}
             className={`h-7 gap-1.5 px-2.5 text-xs ${
               mode === "visual"
-                ? "bg-nx-surface text-nx-ink shadow-nx-sm hover:bg-nx-surface"
+                ? "bg-nx-surface text-nx-ink border border-nx-line hover:bg-nx-surface"
                 : "text-nx-ink-3 hover:text-nx-ink"
             }`}
           >
@@ -184,7 +184,7 @@ export function ClaimMappingEditor({ value, onChange }: Props) {
             onClick={() => setMode("json")}
             className={`h-7 gap-1.5 px-2.5 text-xs ${
               mode === "json"
-                ? "bg-nx-surface text-nx-ink shadow-nx-sm hover:bg-nx-surface"
+                ? "bg-nx-surface text-nx-ink border border-nx-line hover:bg-nx-surface"
                 : "text-nx-ink-3 hover:text-nx-ink"
             }`}
           >
@@ -259,6 +259,7 @@ export function ClaimMappingEditor({ value, onChange }: Props) {
                       </TableCell>
                       <TableCell className="py-2.5">
                         <Input
+                          dir="ltr"
                           value={row.externalClaim}
                           onChange={(e) => updateMappingRow(idx, "externalClaim", e.target.value)}
                           placeholder={t("identityProviders.claimPlaceholder")}
@@ -303,6 +304,7 @@ export function ClaimMappingEditor({ value, onChange }: Props) {
       {mode === "json" && (
         <div className="space-y-2">
           <Textarea
+            dir="ltr"
             value={jsonText}
             onChange={(e) => handleJsonChange(e.target.value)}
             placeholder='{ "email": "email", "firstName": "given_name" }'

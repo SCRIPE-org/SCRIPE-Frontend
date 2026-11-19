@@ -5,31 +5,28 @@ import QRCode from "qrcode";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { useQrSignInViewModel } from "../viewmodels/useQrSignInViewModel";
+import type { TokenLoginPayload } from "../viewmodels/useTokenLogin";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface QrSignInViewProps {
-  onSuccess: (result: { accessToken: string; refreshToken: string }) => void;
+  onSuccess: (result: TokenLoginPayload) => void;
   onBack: () => void;
   isRTL: boolean;
+  tenantId?: string | null;
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
 /**
- * QrSignInView — QR Cross-Device Sign-In (pure render)
+ * QrSignInView — QR Cross-Device Sign-In (pure render).
  *
- * All business logic (session creation, polling, countdown) lives in useQrSignInViewModel.
- * This component is a pure render — no DI imports, no HTTP calls.
- *
- * Uses the `qrcode` npm library to render a real, scannable QR code matrix on a canvas.
- * The QR data encodes the /qr-approve?session={sessionId} URL that the mobile device opens.
- *
- * Design: Vault aesthetic, real QR rendered via canvas, status indicators.
+ * All business logic (tenant-scoped session creation, polling, countdown) lives
+ * in `useQrSignInViewModel`.
  */
-export function QrSignInView({ onSuccess, onBack, isRTL }: QrSignInViewProps) {
+export function QrSignInView({ onSuccess, onBack, isRTL, tenantId }: QrSignInViewProps) {
   const { t } = useI18n();
-  const vm = useQrSignInViewModel(onSuccess);
+  const vm = useQrSignInViewModel(onSuccess, tenantId);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const qrData = vm.qrData;

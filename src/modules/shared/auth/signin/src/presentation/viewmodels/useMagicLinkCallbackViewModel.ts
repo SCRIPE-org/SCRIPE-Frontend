@@ -1,53 +1,32 @@
 /**
  * useMagicLinkCallbackViewModel — Business logic for Magic-Link sign-in verification.
  *
- * Extracted from MagicLinkCallbackView.tsx to enforce SCRIPE MVVM architecture:
- * View → ViewModel → Repository → Service → HTTP
- *
- * The user lands here after clicking the link in their email.
- * URL: /magic-link?token=<raw-token>[&tenantId=<encrypted-id>]
- *
- * Multi-workspace flow:
- *   - If the magic link email belongs to ONE workspace → direct login
- *   - If it belongs to MULTIPLE workspaces → show an IN-PAGE workspace
- *     picker (same pattern as useSsoCallbackHandler's "workspace_selection"
- *     state) and complete the login for the chosen workspace by re-calling
- *     verifyMagicLink with that workspace's tenantId — the same magic-link
- *     token is reusable for this second call because the backend didn't
- *     issue a session yet (requiresWorkspaceSelection means no token was
- *     consumed).
- *
- *     NOTE: this deliberately does NOT redirect to /hub — /hub is a
- *     protected SYSTEM_PAGE and the user has no auth token at this point,
- *     so RouteGuard would bounce them to /login before /hub ever reads the
- *     query params.
- *
- * States:
- *   - verifying: spinner while POST /auth/magic-link/verify runs
- *   - success: brief success flash → redirect to dashboard
- *   - workspace-selection: in-page workspace picker (see above)
- *   - expired/invalid: error with "request a new link" CTA
+ * Enforces SCRIPE MVVM: View -> ViewModel -> Repository -> Service -> HTTP.
+ * Supports single-workspace login, multi-workspace selection, and hybrid passwordless
+ * 2FA step-up (`requires2FA + twoFactorPendingToken`, BAM-01 / BAM-09).
  */
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useAppStore } from "@core/store/useAppStore";
 import { authContainer } from "@modules/auth/di";
+import type { User } from "@modules/auth/core/domain/entities/User";
 import type { WorkspaceChoice } from "@modules/auth/core/domain/errors/AuthErrors";
+import type { AdminRole, PermissionCode } from "@core/common/types/permissions";
 import { getSafeRedirectPath } from "../utils/redirect-safety";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+/** States of the magic-link callback verification screen. */
+export type MagicLinkVerifyState =
+  | "verifying"
+  | "success"
+  | "workspace-selection"
+  | "two-factor"
+  | "error";
 
-/**
- * Exported type defining parameters and fields for magic link verify state configurations.
- */
-export type MagicLinkVerifyState = "verifying" | "success" | "workspace-selection" | "error";
-
-/**
- * Interface defining property specifications, keys types, and structural contract rules for use magic link callback view model return.
- */
+/** Public contract returned by `useMagicLinkCallbackViewModel`. */
 export interface UseMagicLinkCallbackViewModelReturn {
   state: MagicLinkVerifyState;
   direction: string;
@@ -55,21 +34,42 @@ export interface UseMagicLinkCallbackViewModelReturn {
   isSelectingWorkspace: boolean;
   workspaceSelectionError?: string;
   selectWorkspace: (workspace: WorkspaceChoice) => Promise<void>;
+  twoFactorCode: string;
+  setTwoFactorCode: (code: string) => void;
+  useBackupCode: boolean;
+  isVerifying2FA: boolean;
+  twoFactorError: string;
+  handleVerify2FA: () => Promise<void>;
+  toggleBackupCode: () => void;
   goBackToLogin: () => void;
 }
 
-// ─── ViewModel ────────────────────────────────────────────────────────────────
+interface SessionPayload {
+  user: User;
+  mustChangePassword?: boolean;
+  subscriptionStatus?: string | null;
+  gracePhase?: string | null;
+  editionName?: string | null;
+  defaultRedirectPath?: string | null;
+}
+
+function normalizeRedirectTarget(rawPath: string | null | undefined): string {
+  return rawPath && rawPath !== "/" ? getSafeRedirectPath(rawPath, "/overview") : "/overview";
+}
 
 /**
- * React hook/ViewModel orchestrating state and data flows for magic link callback view model.
- * Handles active states updates, form fields validations, and browser navigation controllers.
+ * ViewModel hook for `/magic-link` token redemption, multi-workspace picking,
+ * and passwordless 2FA pending-token verification.
  */
 export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelReturn {
   const { direction, t } = useI18n();
   const searchParams = useSearchParams();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const setAuth = useAppStore((state) => state.setAuth);
   const setSubscriptionInfo = useAppStore((state) => state.setSubscriptionInfo);
+  const setMustChangePassword = useAppStore((state) => state.setMustChangePassword);
+  const setDefaultRedirectPath = useAppStore((state) => state.setDefaultRedirectPath);
 
   const token = searchParams?.get("token") ?? "";
   const tenantId = searchParams?.get("tenantId") ?? undefined;
@@ -81,61 +81,83 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
     undefined
   );
 
-  // Guard: track which token has already been sent to the backend.
-  // React StrictMode (Next.js dev) double-invokes effects (mount → cleanup → remount).
-  // The magic-link token is single-use — the first POST consumes it, the second gets
-  // "expired/invalid". Storing the token in a ref (which persists across StrictMode
-  // remounts) ensures we only call verifyMagicLink once per unique token.
+  // Hybrid 2FA step-up state (BAM-01 / BAM-09)
+  const [twoFactorPendingToken, setTwoFactorPendingToken] = useState<string | null>(null);
+  const [twoFactorStaySignedIn, setTwoFactorStaySignedIn] = useState(false);
+  const [twoFactorCode, setTwoFactorCode] = useState("");
+  const [useBackupCode, setUseBackupCode] = useState(false);
+  const [isVerifying2FA, setIsVerifying2FA] = useState(false);
+  const [twoFactorError, setTwoFactorError] = useState("");
+
+  // Guard against React StrictMode double-invoking single-use magic-link verification
   const verifiedTokenRef = useRef<string | null>(null);
 
-  useEffect(() => {
-    if (!token) return;
-    if (verifiedTokenRef.current === token) return; // already in-flight or completed
-    verifiedTokenRef.current = token;
+  const enterTwoFactorStep = useCallback((pendingToken: string, staySignedIn: boolean) => {
+    setTwoFactorPendingToken(pendingToken);
+    setTwoFactorStaySignedIn(staySignedIn);
+    setTwoFactorCode("");
+    setTwoFactorError("");
+    setState("two-factor");
+  }, []);
 
+  const hydrateAndRedirect = useCallback(
+    (payload: SessionPayload, delayMs: number, isCancelled?: () => boolean) => {
+      const mustChange = Boolean(payload.mustChangePassword);
+      const targetPath = normalizeRedirectTarget(payload.defaultRedirectPath);
+      setState("success");
+
+      const apply = () => {
+        if (isCancelled?.()) return;
+        setAuth(
+          payload.user,
+          (payload.user.permissions ?? []) as PermissionCode[],
+          (payload.user.roles ?? []) as AdminRole[],
+          true
+        );
+        setSubscriptionInfo(
+          payload.subscriptionStatus ?? null,
+          payload.gracePhase ?? null,
+          payload.editionName ?? null
+        );
+        setMustChangePassword(mustChange);
+        setDefaultRedirectPath(targetPath);
+        if (!mustChange) queryClient.invalidateQueries();
+        router.replace(mustChange ? "/change-password" : targetPath);
+      };
+
+      setTimeout(apply, delayMs);
+    },
+    [setAuth, setSubscriptionInfo, setMustChangePassword, setDefaultRedirectPath, queryClient, router]
+  );
+
+  useEffect(() => {
+    if (!token || verifiedTokenRef.current === token) return;
+    verifiedTokenRef.current = token;
     let cancelled = false;
 
     (async () => {
       try {
-        const { authRepository } = authContainer;
-        const response = await authRepository.verifyMagicLink(token, tenantId);
-
+        const response = await authContainer.authRepository.verifyMagicLink(token, tenantId);
         if (cancelled) return;
 
-        // ── Multi-workspace: show the picker in-page ─────────────────────
-        // No session/token has been issued yet, so we cannot redirect to any
-        // authenticated route — RouteGuard would bounce it straight back to
-        // /login. Render the picker here and complete login on selection.
+        if (response.requires2FA && response.twoFactorPendingToken) {
+          enterTwoFactorStep(response.twoFactorPendingToken, Boolean(response.staySignedIn));
+          return;
+        }
         if (response.requiresWorkspaceSelection && response.availableWorkspaces?.length) {
           setAvailableWorkspaces(response.availableWorkspaces as WorkspaceChoice[]);
           setState("workspace-selection");
           return;
         }
-
-        // ── Single workspace: direct login ───────────────────────────────
         if (response.user) {
-          // Show success animation. Auth state is set right before navigation
-          // (inside the timeout) so the route guard doesn't preempt the animation.
-          setState("success");
-
-          setTimeout(() => {
-            if (cancelled) return;
-            setAuth(response.user!, response.user!.permissions ?? [], [], true);
-            setSubscriptionInfo(
-              response.subscriptionStatus ?? null,
-              response.gracePhase ?? null,
-              response.editionName ?? null
-            );
-            useAppStore.getState().setMustChangePassword(response.mustChangePassword ?? false);
-            router.replace(
-              response.mustChangePassword
-                ? "/change-password"
-                : getSafeRedirectPath(response.defaultRedirectPath, "/")
-            );
-          }, 1200);
-        } else {
-          setState("error");
+          hydrateAndRedirect(
+            { ...response, user: response.user },
+            1200,
+            () => cancelled
+          );
+          return;
         }
+        setState("error");
       } catch {
         if (!cancelled) setState("error");
       }
@@ -144,13 +166,8 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
     return () => {
       cancelled = true;
     };
-  }, [token, tenantId, router, setAuth, setSubscriptionInfo]);
+  }, [token, tenantId, enterTwoFactorStep, hydrateAndRedirect]);
 
-  // ── Workspace selection: re-verify the SAME magic-link token, now scoped
-  // to the chosen tenant. The first verifyMagicLink call above never issued
-  // a session (requiresWorkspaceSelection means the token wasn't consumed),
-  // so this is safe and mirrors how the credentials-login workspace picker
-  // re-submits with a tenantId.
   const selectWorkspace = useCallback(
     async (workspace: WorkspaceChoice) => {
       if (!token) return;
@@ -158,40 +175,63 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
       setIsSelectingWorkspace(true);
 
       try {
-        const { authRepository } = authContainer;
-        const response = await authRepository.verifyMagicLink(token, workspace.tenantId);
+        const targetTenantId = workspace.isPlatformAdmin ? undefined : workspace.tenantId;
+        const response = await authContainer.authRepository.verifyMagicLink(
+          token,
+          targetTenantId,
+          false,
+          workspace.isPlatformAdmin
+        );
 
-        if (!response.user) {
-          setWorkspaceSelectionError(t("auth.loginFailed") || "Login failed");
+        if (response.requires2FA && response.twoFactorPendingToken) {
+          enterTwoFactorStep(response.twoFactorPendingToken, Boolean(response.staySignedIn));
           return;
         }
-
-        setAuth(response.user, response.user.permissions ?? [], [], true);
-        setSubscriptionInfo(
-          response.subscriptionStatus ?? null,
-          response.gracePhase ?? null,
-          response.editionName ?? null
-        );
-        useAppStore.getState().setMustChangePassword(response.mustChangePassword ?? false);
-
-        setState("success");
-        setTimeout(() => {
-          router.replace(
-            response.mustChangePassword
-              ? "/change-password"
-              : getSafeRedirectPath(response.defaultRedirectPath, "/")
-          );
-        }, 600);
+        if (!response.user) {
+          setWorkspaceSelectionError(t("auth.loginFailed"));
+          return;
+        }
+        hydrateAndRedirect({ ...response, user: response.user }, 600);
       } catch (err) {
-        setWorkspaceSelectionError(
-          err instanceof Error ? err.message : t("auth.loginFailed") || "Login failed"
-        );
+        setWorkspaceSelectionError(err instanceof Error ? err.message : t("auth.loginFailed"));
       } finally {
         setIsSelectingWorkspace(false);
       }
     },
-    [token, setAuth, setSubscriptionInfo, router, t]
+    [token, enterTwoFactorStep, hydrateAndRedirect, t]
   );
+
+  const handleVerify2FA = useCallback(async () => {
+    if (!twoFactorPendingToken) return;
+    if (!twoFactorCode.trim()) {
+      setTwoFactorError(t("auth.twoFactor.enterCode"));
+      return;
+    }
+
+    setTwoFactorError("");
+    setIsVerifying2FA(true);
+    try {
+      const result = await authContainer.authRepository.verify2FA(
+        "",
+        null,
+        twoFactorCode.trim(),
+        undefined,
+        twoFactorPendingToken,
+        twoFactorStaySignedIn
+      );
+      hydrateAndRedirect(result, 400);
+    } catch (err) {
+      setTwoFactorError(err instanceof Error ? err.message : t("auth.twoFactor.invalidCode"));
+    } finally {
+      setIsVerifying2FA(false);
+    }
+  }, [twoFactorPendingToken, twoFactorStaySignedIn, twoFactorCode, hydrateAndRedirect, t]);
+
+  const toggleBackupCode = useCallback(() => {
+    setUseBackupCode((prev) => !prev);
+    setTwoFactorCode("");
+    setTwoFactorError("");
+  }, []);
 
   const goBackToLogin = useCallback(() => {
     router.replace("/login");
@@ -204,6 +244,13 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
     isSelectingWorkspace,
     workspaceSelectionError,
     selectWorkspace,
+    twoFactorCode,
+    setTwoFactorCode,
+    useBackupCode,
+    isVerifying2FA,
+    twoFactorError,
+    handleVerify2FA,
+    toggleBackupCode,
     goBackToLogin,
   };
 }

@@ -1,239 +1,161 @@
 "use client";
 
-/**
- * EnterpriseSsoConnectDialog
- *
- * Enterprise SSO Connection & Identity Linking Dialog.
- */
-import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@core/ui/dialog";
+import { Alert, AlertDescription } from "@core/ui/alert";
 import { Button } from "@core/ui/button";
-import { Input } from "@core/ui/input";
-import { Label } from "@core/ui/label";
 import { Badge } from "@core/ui/badge";
-import { BrandIcon } from "@core/ui/brand-icons";
+import type { AvailableSsoProvider } from "../../domain/entities/SovereignAccountEntities";
 import {
-  ShieldCheck,
-  Link2,
-  ExternalLink,
-  Loader2,
-  AlertCircle,
-  Building2,
-} from "lucide-react";
-import { EnterpriseSsoCallbackSection } from "./EnterpriseSsoCallbackSection";
-import type { LinkExternalLoginRequest } from "../../domain/interfaces/IProfileRepository";
+  formatProtocolLabel,
+  isGlobalSsoScope,
+} from "../utils/enterprise-sso.utils";
+import { SsoProviderBrandMark } from "./EnterpriseSsoProviderTile";
+import { AlertCircle, ExternalLink, Loader2, ShieldAlert, ShieldCheck } from "lucide-react";
 
-/** Catalog metadata describing an enterprise OIDC or SAML 2.0 identity provider. */
-export interface SsoProviderCatalogItem {
-  key: string;
-  slug: string;
-  name: string;
-  protocol: "OIDC" | "SAML 2.0";
-  domainHint?: string;
-  brandContainerClass: string;
-  defaultConnected: boolean;
-  emailPlaceholder: string;
-}
-
-/** Props for {@link EnterpriseSsoConnectDialog}. */
+/**
+ * Props for {@link EnterpriseSsoConnectDialog}.
+ */
 export interface EnterpriseSsoConnectDialogProps {
-  isOpen: boolean;
-  onClose: () => void;
-  provider: SsoProviderCatalogItem | null;
-  onDirectLink: (data: LinkExternalLoginRequest) => Promise<unknown>;
-  onInitiateFederatedLogin?: (providerId: string, protocol: string) => void;
-  isLinking: boolean;
-  activeFederatedProviderId?: string | null;
+  /** Selected live DB identity provider to initiate federated linking against. */
+  provider: AvailableSsoProvider | null;
+  /** Controlled open state of the dialog. */
+  open: boolean;
+  /** Callback invoked when the dialog open state changes. */
+  onOpenChange: (open: boolean) => void;
+  /** Whether the caller already holds an active Sudo elevation session. */
+  isSudoActive: boolean;
+  /** Whether the federated link initiation request is in flight. */
+  isInitiating: boolean;
+  /** Localized error returned by Sudo or initiate-link, if any. */
+  errorMessage: string | null;
+  /** Initiates the Sudo-gated federated link handshake and browser redirect. */
+  onConfirmHandshake: (provider: AvailableSsoProvider) => Promise<unknown>;
 }
 
 /**
- * Modal dialog for initiating federated IdP handshakes or binding corporate email identities.
+ * Sudo-gated federated identity handshake dialog for connecting a live DB-configured
+ * Enterprise SSO provider via `POST /api/v1/auth/admin/external-logins/initiate-link`.
  */
 export function EnterpriseSsoConnectDialog({
-  isOpen,
-  onClose,
   provider,
-  onDirectLink,
-  onInitiateFederatedLogin,
-  isLinking,
-  activeFederatedProviderId,
+  open,
+  onOpenChange,
+  isSudoActive,
+  isInitiating,
+  errorMessage,
+  onConfirmHandshake,
 }: EnterpriseSsoConnectDialogProps) {
   const { t } = useI18n();
-  const [corporateEmail, setCorporateEmail] = useState("");
-  const [copiedCallback, setCopiedCallback] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   if (!provider) return null;
 
-  const callbackUrl =
-    typeof window !== "undefined"
-      ? `${window.location.origin}/api/v1/auth/callback/oidc`
-      : "https://scripe.org/api/v1/auth/callback/oidc";
-
-  const handleCopyCallback = async () => {
-    try {
-      await navigator.clipboard.writeText(callbackUrl);
-      setCopiedCallback(true);
-      setTimeout(() => setCopiedCallback(false), 2000);
-    } catch {
-      // Clipboard fallback
-    }
-  };
-
-  const handleFederatedRedirect = () => {
-    if (activeFederatedProviderId && onInitiateFederatedLogin) {
-      onInitiateFederatedLogin(activeFederatedProviderId, provider.protocol);
-      onClose();
-    }
-  };
-
-  const handleBindCorporateAccount = async () => {
-    const email = corporateEmail.trim();
-    if (!email) {
-      setErrorMessage(t("profile.security.ssoEmailRequired"));
-      return;
-    }
-    setErrorMessage(null);
-    try {
-      await onDirectLink({
-        provider: provider.name,
-        providerName: provider.name,
-        providerKey: email,
-        identityProviderId: activeFederatedProviderId || undefined,
-      });
-      setCorporateEmail("");
-      onClose();
-    } catch (err: unknown) {
-      setErrorMessage(err instanceof Error ? err.message : t("profile.security.ssoAccountLinkError"));
-    }
-  };
+  const protocolLabel = formatProtocolLabel(provider.protocol);
+  const scopeLabel = isGlobalSsoScope(provider.scope)
+    ? t("profile.security.ssoScopeGlobal")
+    : t("profile.security.ssoScopeOrganization");
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[540px] bg-nx-surface border-nx-line p-6">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent
+        data-testid="enterprise-sso-connect-dialog"
+        className="sm:max-w-md border border-nx-line bg-nx-surface text-nx-ink"
+      >
         <DialogHeader>
-          <div className="flex items-center gap-3 mb-1">
-            <div
-              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${provider.brandContainerClass}`}
-            >
-              <BrandIcon slug={provider.slug} name={provider.name} protocol={provider.protocol} className="h-5 w-5" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <DialogTitle className="text-base font-bold text-nx-ink">{provider.name}</DialogTitle>
-                <Badge variant="outline" className="border-nx-line text-nx-ink-2 font-mono text-[10px] py-0 px-1.5">
-                  {provider.protocol}
-                </Badge>
-              </div>
-              <DialogDescription className="text-xs text-nx-ink-3 mt-0.5">
-                {t("profile.security.ssoDialogSubtitle")}
-              </DialogDescription>
-            </div>
-          </div>
+          <DialogTitle className="text-base font-bold text-nx-ink flex items-center gap-2.5">
+            <SsoProviderBrandMark provider={provider} />
+            <span className="truncate">{provider.name}</span>
+          </DialogTitle>
+          <DialogDescription className="text-xs text-nx-ink-2">
+            {t("profile.security.ssoDialogFederatedDesc", {
+              provider: provider.name,
+              protocol: protocolLabel,
+            })}
+          </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4 py-3">
-          {activeFederatedProviderId && (
-            <div className="p-3.5 rounded-xl border border-nx-accent/30 bg-nx-accent-wash space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-nx-ink flex items-center gap-1.5">
-                  <ShieldCheck className="h-4 w-4 text-nx-accent" />
-                  {t("profile.security.ssoFederationReadyTitle")}
-                </span>
-                <Badge className="bg-nx-accent-fill text-nx-on-fill text-[9px] font-semibold py-0 px-1.5">
-                  {t("profile.security.ssoLiveSsoBadge")}
-                </Badge>
-              </div>
-              <p className="text-[11px] text-nx-ink-2 leading-relaxed">
-                {t("profile.security.ssoFederationReadyDesc", { provider: provider.name })}
-              </p>
-              <Button
-                type="button"
-                size="sm"
-                onClick={handleFederatedRedirect}
-                className="w-full text-xs font-semibold bg-nx-accent-fill text-nx-on-fill gap-1.5 mt-1"
-              >
-                <ExternalLink className="h-3.5 w-3.5" />
-                <span>{t("profile.security.ssoInitiateHandshakeBtn")}</span>
-              </Button>
-            </div>
+        <div className="space-y-4 pt-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge
+              variant="outline"
+              className="border-nx-line bg-nx-raised text-nx-ink-2 text-[10px] font-mono"
+            >
+              {protocolLabel}
+            </Badge>
+            <Badge
+              variant="outline"
+              className="border-nx-line bg-nx-raised text-nx-ink-2 text-[10px]"
+            >
+              {scopeLabel}
+            </Badge>
+            <Badge className="bg-info/15 text-info border border-info/30 text-[10px] font-semibold">
+              {t("profile.security.ssoLiveSsoBadge")}
+            </Badge>
+          </div>
+
+          <Alert className="border-nx-line bg-nx-raised text-nx-ink">
+            {isSudoActive ? (
+              <ShieldCheck className="h-4 w-4 text-success" />
+            ) : (
+              <ShieldAlert className="h-4 w-4 text-warning" />
+            )}
+            <AlertDescription className="text-xs text-nx-ink-2 leading-relaxed">
+              {isSudoActive
+                ? t("profile.security.ssoSudoActiveNotice")
+                : t("profile.security.ssoSudoRequiredNotice")}
+            </AlertDescription>
+          </Alert>
+
+          {errorMessage && (
+            <Alert
+              variant="destructive"
+              data-testid="sso-connect-error-alert"
+              className="border-destructive/40 bg-destructive/10 text-destructive"
+            >
+              <AlertCircle className="h-4 w-4 shrink-0" />
+              <AlertDescription className="text-xs">{errorMessage}</AlertDescription>
+            </Alert>
           )}
 
-          <div className="p-4 rounded-xl border border-nx-line bg-nx-raised space-y-3">
-            <div className="space-y-1">
-              <Label htmlFor="corporate-email" className="text-xs font-semibold text-nx-ink flex items-center gap-1.5">
-                <Building2 className="h-3.5 w-3.5 text-nx-accent" />
-                <span>{t("profile.security.ssoCorporateEmailLabel")}</span>
-              </Label>
-              <p className="text-[11px] text-nx-ink-3">
-                {provider.domainHint
-                  ? t("profile.security.ssoCorporateEmailHint", { domain: provider.domainHint })
-                  : t("profile.security.ssoCorporateEmailGenericHint")}
-              </p>
-              <Input
-                id="corporate-email"
-                data-testid="sso-dialog-email-input"
-                type="email"
-                value={corporateEmail}
-                onChange={(e) => setCorporateEmail(e.target.value)}
-                placeholder={provider.emailPlaceholder}
-                className="text-xs h-9 bg-nx-surface border-nx-line text-nx-ink font-mono mt-1"
-                disabled={isLinking}
-              />
-            </div>
-
-            {errorMessage && (
-              <div
-                data-testid="sso-dialog-error-banner"
-                className="p-2.5 rounded-lg border border-destructive/40 bg-destructive/10 text-destructive text-xs flex items-center gap-2"
-              >
-                <AlertCircle className="h-4 w-4 shrink-0" />
-                <span>{errorMessage}</span>
-              </div>
-            )}
-
+          <div className="flex items-center justify-end gap-2 pt-1">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={isInitiating}
+              onClick={() => onOpenChange(false)}
+              className="border-nx-line text-nx-ink-2 hover:text-nx-ink text-xs"
+            >
+              {t("profile.common.cancel")}
+            </Button>
             <Button
               type="button"
               size="sm"
-              data-testid="sso-dialog-bind-btn"
-              onClick={handleBindCorporateAccount}
-              disabled={isLinking || !corporateEmail.trim()}
-              className="w-full text-xs font-semibold gap-1.5 bg-nx-accent-fill text-nx-on-fill mt-2"
+              disabled={isInitiating}
+              data-testid="initiate-sso-handshake-btn"
+              onClick={() => void onConfirmHandshake(provider)}
+              className="bg-nx-accent-fill text-nx-on-fill text-xs font-semibold gap-1.5"
             >
-              {isLinking ? (
+              {isInitiating ? (
                 <>
                   <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                  <span>{t("profile.security.ssoLinkingProgress")}</span>
+                  <span>{t("profile.security.ssoRedirectingProgress")}</span>
                 </>
               ) : (
                 <>
-                  <Link2 className="h-3.5 w-3.5" />
-                  <span>{t("profile.security.ssoLinkVerifiedIdentityBtn")}</span>
+                  <ExternalLink className="h-3.5 w-3.5" />
+                  <span>{t("profile.security.ssoInitiateHandshakeBtn")}</span>
                 </>
               )}
             </Button>
           </div>
-
-          <EnterpriseSsoCallbackSection
-            callbackUrl={callbackUrl}
-            copiedCallback={copiedCallback}
-            onCopyCallback={() => void handleCopyCallback()}
-          />
         </div>
-
-        <DialogFooter>
-          <Button type="button" variant="outline" size="sm" onClick={onClose} className="text-xs" disabled={isLinking}>
-            {t("profile.common.cancel")}
-          </Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

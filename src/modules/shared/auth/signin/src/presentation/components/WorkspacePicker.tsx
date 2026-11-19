@@ -122,7 +122,7 @@ export function WorkspacePicker({
               <p className="text-xs text-nx-ink-2">
                 {t("auth.workspacePicker.selectWorkspace") || "Select a workspace to continue:"}
               </p>
-              <ul className="flex flex-col gap-1.5" role="list">
+              <ul className="flex flex-col gap-1.5" >
                 {workspaces.map((ws) => (
                   <li key={ws.tenantCode}>
                     <Button

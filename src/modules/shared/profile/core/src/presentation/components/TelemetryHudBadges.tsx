@@ -48,7 +48,7 @@ export function TelemetryHudBadges({
         variant="outline"
         size="sm"
         onClick={onOpenChecklist}
-        className="h-auto py-1.5 px-3 rounded-lg border-nx-line bg-nx-raised hover:border-nx-line-hi flex items-center gap-2.5"
+        className="h-auto py-1.5 px-3 rounded-lg border-nx-line bg-nx-raised hover:border-nx-line-hi flex items-center gap-2.5 shrink-0 whitespace-nowrap"
         data-testid="security-posture-ring-trigger"
       >
         <div className="relative h-9 w-9 flex items-center justify-center shrink-0">
@@ -80,12 +80,12 @@ export function TelemetryHudBadges({
         </div>
       </Button>
 
-      <div className="flex items-center gap-1.5">
+      <div className="flex items-center gap-1.5 shrink-0">
         <Button
           variant="outline"
           size="sm"
           onClick={onTriggerSudo}
-          className={`h-auto py-2 px-3 rounded-lg border bg-nx-raised hover:border-nx-line-hi flex items-center gap-2 ${
+          className={`h-auto py-2 px-3 rounded-lg border bg-nx-raised hover:border-nx-line-hi flex items-center gap-2 shrink-0 whitespace-nowrap ${
             effectiveSudoActive ? "border-nx-accent/50" : "border-nx-line"
           }`}
           data-testid="sudo-mode-badge"
@@ -120,7 +120,7 @@ export function TelemetryHudBadges({
         )}
       </div>
 
-      <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-nx-line bg-nx-raised">
+      <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-nx-line bg-nx-raised shrink-0 whitespace-nowrap">
         <Monitor className="h-4 w-4 text-nx-accent shrink-0" style={{ minWidth: 16, minHeight: 16 }} />
         <div className="flex flex-col">
           <div className="flex items-center gap-1.5">

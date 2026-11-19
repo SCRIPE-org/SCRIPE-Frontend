@@ -103,7 +103,8 @@ export interface ISecurityRepository {
   listPasskeys(): Promise<PasskeyCredential[]>;
   beginPasskeyRegistration(
     deviceName?: string,
-    mode?: PasskeyRegistrationMode
+    mode?: PasskeyRegistrationMode,
+    sudoToken?: string
   ): Promise<PasskeyRegistrationBeginResponse>;
   beginPasskeyAuth(
     identifier?: string,
@@ -124,7 +125,7 @@ export interface ISecurityRepository {
     challengeToken?: string;
     attestationMode?: string;
     credentialIdBase64?: string;
-  }): Promise<{ id: string; deviceName: string; createdAt: Date }>;
+  }, sudoToken?: string): Promise<{ id: string; deviceName: string; createdAt: Date }>;
   removePasskey(id: string): Promise<void>;
   renamePasskey(id: string, newName: string): Promise<void>;
 

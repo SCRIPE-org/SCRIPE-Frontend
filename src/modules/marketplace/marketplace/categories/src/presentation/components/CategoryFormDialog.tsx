@@ -115,7 +115,7 @@ export function CategoryFormDialog({
     const errs: Record<string, string> = {};
     if (!form.nameEn.trim()) errs.nameEn = t("common.required");
     if (!form.slug.trim()) errs.slug = t("common.required");
-    if (form.slug.trim() && !/^[a-z0-9][a-z0-9\-]*$/.test(form.slug.trim())) {
+    if (form.slug.trim() && !/^[a-z0-9][a-z0-9-]*$/.test(form.slug.trim())) {
       errs.slug = t("marketplace.categorySlugErr");
     }
     setErrors(errs);

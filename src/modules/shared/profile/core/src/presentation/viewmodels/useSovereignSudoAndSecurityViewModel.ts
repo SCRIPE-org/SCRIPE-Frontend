@@ -131,6 +131,7 @@ export function useAccountSecuritySliceViewModel() {
           isTwoFactorFeatureEnabled: data.isTwoFactorFeatureEnabled,
           isSsoFeatureEnabled: data.isSsoFeatureEnabled,
           isSecurityPageEnabled: data.isSecurityPageEnabled,
+          availableSsoProviders: data.availableSsoProviders,
           rowVersion: data.rowVersion,
         }
       : undefined,

@@ -87,6 +87,8 @@ export interface LoginResponseJson {
   success?: boolean;
   accessToken: string;
   requires2FA?: boolean;
+  twoFactorPendingToken?: string | null;
+  staySignedIn?: boolean;
   requiresWorkspaceSelection?: boolean;
   availableWorkspaces?: WorkspaceChoiceJson[] | null;
   mustChangePassword?: boolean;
@@ -154,7 +156,9 @@ export class LoginResponseModel {
     public readonly editionName: string | null = null,
     public readonly userProfile: UserProfileJson | null = null,
     public readonly defaultRedirectPath: string = "/",
-    public readonly lastWorkspaceKey: string | null = null
+    public readonly lastWorkspaceKey: string | null = null,
+    public readonly twoFactorPendingToken: string | null = null,
+    public readonly staySignedIn: boolean = false
   ) {}
 
   static fromJson(json: LoginResponseJson): LoginResponseModel {
@@ -170,7 +174,9 @@ export class LoginResponseModel {
       json.editionName ?? null,
       json.userProfile ?? null,
       json.defaultRedirectPath ?? "/",
-      json.lastWorkspaceKey ?? null
+      json.lastWorkspaceKey ?? null,
+      json.twoFactorPendingToken ?? null,
+      json.staySignedIn ?? false
     );
   }
 
@@ -179,6 +185,8 @@ export class LoginResponseModel {
       success: this.success,
       accessToken: this.accessToken,
       requires2FA: this.requires2FA,
+      twoFactorPendingToken: this.twoFactorPendingToken,
+      staySignedIn: this.staySignedIn,
       requiresWorkspaceSelection: this.requiresWorkspaceSelection,
       availableWorkspaces: this.availableWorkspaces,
       mustChangePassword: this.mustChangePassword,

@@ -48,7 +48,24 @@ export interface Enable2FAResult {
 }
 
 /**
- * Interface defining property specifications and payload contract rules for linking external login accounts.
+ * Domain request contract for initiating a Sudo-gated external SSO link redirect.
+ */
+export interface InitiateExternalLoginLinkRequest {
+  identityProviderId: string;
+  redirectUri?: string;
+}
+
+/**
+ * Domain response containing the federated authorization redirect URL and CSRF state.
+ */
+export interface InitiateExternalLoginLinkResponse {
+  authorizationUrl: string;
+  protocol: string;
+  state?: string | null;
+}
+
+/**
+ * Legacy external login link request preserved for type-contract compatibility.
  */
 export interface LinkExternalLoginRequest {
   provider?: string;
@@ -92,8 +109,11 @@ export interface IProfileRepository {
 
   // External Logins
   getExternalLogins(): Promise<ExternalLogin[]>;
-  linkExternalLogin(data: LinkExternalLoginRequest): Promise<ExternalLogin>;
-  unlinkExternalLogin(externalLoginId: string): Promise<void>;
+  initiateExternalLoginLink(
+    data: InitiateExternalLoginLinkRequest,
+    sudoToken?: string
+  ): Promise<InitiateExternalLoginLinkResponse>;
+  unlinkExternalLogin(externalLoginId: string, sudoToken?: string): Promise<void>;
   forceChangePassword(data: ForceChangePasswordRequest): Promise<ForceChangePasswordResult>;
 }
 

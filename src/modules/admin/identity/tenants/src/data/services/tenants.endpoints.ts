@@ -37,6 +37,11 @@ export const TENANTS_ENDPOINTS = {
   DOMAIN_PRIMARY: (id: string, domainId: string) =>
     `${V1}/Tenants/${id}/domains/${domainId}/primary`,
   DOMAIN_VERIFY: (id: string, domainId: string) => `${V1}/Tenants/${id}/domains/${domainId}/verify`,
+  IDENTITY_PROVIDERS: (tenantId: string) => `${V1}/tenants/${tenantId}/identity-providers`,
+  IDENTITY_PROVIDER_BY_ID: (tenantId: string, id: string) =>
+    `${V1}/tenants/${tenantId}/identity-providers/${id}`,
+  IDENTITY_PROVIDER_TEST_CONNECTION: (tenantId: string, id: string) =>
+    `${V1}/tenants/${tenantId}/identity-providers/${id}/test-connection`,
   ENTITLEMENTS: {
     EDITIONS: {
       LIST: `${V1}/editions`,

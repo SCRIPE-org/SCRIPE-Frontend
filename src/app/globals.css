@@ -3882,7 +3882,6 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
 
 /* ── OTP / Codes always LTR ──────────────────────── */
 .vault-stage input[inputmode="numeric"],
-.vault-stage input[type="password"],
 .vault-stage input[autocomplete="one-time-code"],
 .vault-stage [data-otp-input] {
   direction: ltr !important;

@@ -52,6 +52,8 @@ const IdentityProviderModelSchema = z.object({
   buttonLabel: z.string().optional().nullable(),
   displayOrder: z.number().int().optional().default(0),
   isActive: z.boolean().optional().default(true),
+  trustIdpMfa: z.boolean().optional().default(false),
+  rowVersion: z.string().optional().nullable(),
   createdAt: z.string().optional().nullable(),
   modifiedAt: z.string().optional().nullable(),
 });
@@ -64,6 +66,7 @@ const IdentityProviderListItemModelSchema = z.object({
   enabledForAdmins: z.boolean().optional().default(false),
   enabledForUsers: z.boolean().optional().default(false),
   isActive: z.boolean().optional().default(true),
+  trustIdpMfa: z.boolean().optional().default(false),
   displayOrder: z.number().int().optional().default(0),
   iconUrl: z.string().optional().nullable(),
   buttonColor: z.string().optional().nullable(),
@@ -102,6 +105,8 @@ export class IdentityProviderMapper {
       buttonLabel: validated.buttonLabel ?? null,
       displayOrder: validated.displayOrder ?? 0,
       isActive: validated.isActive ?? true,
+      trustIdpMfa: validated.trustIdpMfa ?? false,
+      rowVersion: validated.rowVersion ?? null,
       createdAt: validated.createdAt ?? "",
       modifiedAt: validated.modifiedAt ?? null,
     };
@@ -128,6 +133,7 @@ export class IdentityProviderMapper {
       enabledForAdmins: validated.enabledForAdmins ?? false,
       enabledForUsers: validated.enabledForUsers ?? false,
       isActive: validated.isActive ?? true,
+      trustIdpMfa: validated.trustIdpMfa ?? false,
       displayOrder: validated.displayOrder ?? 0,
       iconUrl: resolveFileUrl(validated.iconUrl),
       buttonColor: validated.buttonColor ?? null,
@@ -151,15 +157,20 @@ export class IdentityProviderMapper {
   }
 
   static toCreateJson(request: CreateIdentityProviderRequest) {
+    const trimmedSecret = request.clientSecret?.trim();
     return {
       ...request,
+      clientSecret: trimmedSecret ? trimmedSecret : undefined,
       iconUrl: unresolveFileUrl(request.iconUrl),
     };
   }
 
   static toUpdateJson(request: UpdateIdentityProviderRequest) {
+    const trimmedSecret = request.clientSecret?.trim();
     return {
       ...request,
+      clientSecret: trimmedSecret ? trimmedSecret : undefined,
+      rowVersion: request.rowVersion ?? undefined,
       iconUrl: unresolveFileUrl(request.iconUrl),
     };
   }

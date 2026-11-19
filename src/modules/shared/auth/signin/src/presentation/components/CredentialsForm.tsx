@@ -107,7 +107,7 @@ export function CredentialsForm({
         if (!isLoading && isFormValid) handleLogin();
       }}
       className="flex flex-col gap-[var(--login-gap,16px)]"
-      role="form"
+      
       aria-label={t("auth.loginFormAriaLabel")}
       noValidate
     >

@@ -24,9 +24,11 @@ export interface IAuthRepository {
   login(credentials: LoginRequest): Promise<LoginResult>;
   verify2FA(
     identifier: string,
-    password: string,
+    password: string | null,
     code: string,
-    tenantId?: string
+    tenantId?: string,
+    twoFactorPendingToken?: string | null,
+    staySignedIn?: boolean
   ): Promise<LoginResult>;
   logout(): Promise<void>;
   getCurrentPrincipal(): Promise<User>;
@@ -45,8 +47,11 @@ export interface IAuthRepository {
   /** Abstract the OIDC Consent form parameters generation out of the Presentation layer */
   buildOidcConsentForm(
     searchParams: URLSearchParams,
-    accessToken: string
+    accessToken: string,
+    decision?: "approve" | "deny"
   ): { action: string; params: Record<string, string> };
+  /** Build backend `/oidc/logout` redirect URL with sanitized `/connect/authorize` returnUrl */
+  buildOidcLogoutUrl(searchParams: URLSearchParams): string;
   /** Link an external SSO account to the current admin profile */
   linkExternalLogin(data: {
     identityProviderId: string;
@@ -63,27 +68,49 @@ export interface IAuthRepository {
   /** Verify WebAuthn assertion — send assertion to backend, get tokens */
   verifyPasskeyAuth(data: VerifyPasskeyAuthRequestData): Promise<PasskeyAuthVerifyResult>;
   /** Request phone OTP for sign-in */
-  requestPhoneOtp(phoneNumber: string): Promise<{ sent: boolean; retryAfterSeconds: number }>;
-  /** Verify phone OTP code — returns full login response (supports multi-workspace) */
-  verifyPhoneOtp(phoneNumber: string, code: string): Promise<LoginResponseModel>;
+  requestPhoneOtp(
+    identifier: string,
+    tenantId?: string | null
+  ): Promise<{ sent: boolean; retryAfterSeconds: number }>;
+  /** Verify phone OTP code — returns full login response (supports multi-workspace & 2FA) */
+  verifyPhoneOtp(
+    identifier: string,
+    code: string,
+    tenantId?: string | null,
+    staySignedIn?: boolean,
+    isPlatformAdmin?: boolean
+  ): Promise<LoginResponseModel>;
   /** Begin QR sign-in session */
-  beginQrSignIn(): Promise<{ sessionId: string; qrData: string; expiresAt: string }>;
+  beginQrSignIn(tenantId?: string | null): Promise<{
+    sessionId: string;
+    sessionToken?: string;
+    qrData: string;
+    expiresAt: string;
+  }>;
   /** Check QR sign-in session status */
   checkQrSignIn(sessionId: string): Promise<{
-    status: "pending" | "scanned" | "approved" | "expired";
+    status: "pending" | "scanned" | "approved" | "rejected" | "expired" | "consumed";
     accessToken?: string;
     refreshToken?: string;
+    expiresAt?: string;
+    approverName?: string | null;
+    defaultRedirectPath?: string | null;
   }>;
   /** Approve QR sign-in from mobile */
-  approveQrSignIn(sessionId: string): Promise<void>;
+  approveQrSignIn(sessionToken: string, deviceInfo?: string): Promise<void>;
   /** Reject QR sign-in from mobile */
-  rejectQrSignIn(sessionId: string): Promise<void>;
-  /** Verify a magic-link token from the email URL and issue a session. */
+  rejectQrSignIn(sessionToken: string): Promise<void>;
+  /** Verify a magic-link token from the email URL and issue a session, workspace picker, or 2FA challenge. */
   verifyMagicLink(
     token: string,
-    tenantId?: string
+    tenantId?: string,
+    staySignedIn?: boolean,
+    isPlatformAdmin?: boolean
   ): Promise<{
     user?: User;
+    requires2FA?: boolean;
+    twoFactorPendingToken?: string | null;
+    staySignedIn?: boolean;
     requiresWorkspaceSelection: boolean;
     availableWorkspaces: LoginResponseModel["availableWorkspaces"];
     mustChangePassword: boolean;

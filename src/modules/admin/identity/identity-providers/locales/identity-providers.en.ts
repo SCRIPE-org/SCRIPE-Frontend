@@ -74,6 +74,22 @@ export const en = {
     deletedDesc: "Identity provider deleted.",
     testSuccess: "Connection Successful",
     testFailed: "Connection Failed",
+    trustIdpMfa: "Trust IdP MFA Assertion",
+    trustIdpMfaHelp:
+      "Accept multi-factor authentication claims (AMR) asserted by this provider instead of prompting for a second SCRIPE factor.",
+    badgeTrustMfa: "IdP MFA Trusted",
+    saveProviderFirstAcsNote:
+      "Save provider first to generate your exact Provider ACS/Callback URL.",
+    clientSecretCreatePlaceholder: "Enter OAuth2/OIDC client secret",
+    testDiagnosticsTitle: "Connection Diagnostics",
+    testDiagnosticsProvider: "Provider:",
+    discoveredIssuerLabel: "Discovered Issuer:",
+    discoveredEndpointsLabel: "Discovered Endpoints",
+    dismissDiagnostics: "Dismiss",
+    toggleStatusSuccess: "{{name}} status updated.",
+    toggleStatusError: "Failed to update provider status — reverted.",
+    concurrencyConflict:
+      "This provider was updated elsewhere. Latest changes have been loaded — review and save again.",
     deleteWarning:
       "Deleting this provider will permanently remove it. Users who signed in via this provider will lose SSO access.",
     deleteButton: "Delete Provider",
@@ -104,6 +120,9 @@ export const en = {
     emptyDesc:
       "Configure Single Sign-On (SSO) using OpenID Connect (OIDC), OAuth 2.0, or SAML 2.0 to let users log in with external credentials.",
     emptyTitle: "No Identity Providers",
+    noMatchingTitle: "No matching providers",
+    noMatchingDesc: "No identity providers match your current search or filter criteria.",
+    clearFilters: "Clear filters",
     externalClaimKey: "External Claim Key",
     internalAttribute: "Internal Attribute",
     jsonEditor: "JSON",

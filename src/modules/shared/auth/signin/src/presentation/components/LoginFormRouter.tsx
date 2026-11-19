@@ -133,6 +133,8 @@ export function LoginFormRouter({
             providers={sso.providers}
             isLoading={sso.isLoading}
             error={sso.error}
+            discoveryError={sso.discoveryError}
+            onRetryProviders={sso.retryProviders}
             onProviderClick={sso.initiateSsoLogin}
           />
           <CredentialsFormFooter isPlatformMode={isPlatformMode} arrow={isRTL ? "←" : "→"} t={t} />
@@ -144,6 +146,10 @@ export function LoginFormRouter({
           }}
           onBack={vm.goBackToCredentials}
           isRTL={isRTL}
+          tenantId={tenantId}
+          onTwoFactorRequired={(pendingToken, staySignedIn) =>
+            vm.enterTwoFactor(pendingToken, staySignedIn)
+          }
         />
       ) : vm.loginStep === "passkey" ? (
         <PasskeyPrompt
@@ -162,6 +168,7 @@ export function LoginFormRouter({
           }}
           onBack={vm.goBackToCredentials}
           isRTL={isRTL}
+          tenantId={tenantId}
         />
       ) : (
         <TwoFactorForm

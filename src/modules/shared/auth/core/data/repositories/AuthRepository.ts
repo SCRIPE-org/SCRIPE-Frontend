@@ -72,7 +72,8 @@ export class AuthRepository implements IAuthRepository {
       credentials.password,
       credentials.tenantId,
       credentials.deviceInfo ?? getBrowserDeviceInfo(),
-      credentials.isPlatformAdmin
+      credentials.isPlatformAdmin,
+      credentials.staySignedIn
     );
 
     const responseModel = await this.service.login(requestModel);
@@ -81,7 +82,10 @@ export class AuthRepository implements IAuthRepository {
 
     if (responseModel.requires2FA) {
       appLogger.auth("2FA verification required");
-      throw new TwoFactorRequiredError();
+      throw new TwoFactorRequiredError(
+        responseModel.twoFactorPendingToken ?? null,
+        Boolean(responseModel.staySignedIn ?? credentials.staySignedIn)
+      );
     }
 
     if (responseModel.requiresWorkspaceSelection && responseModel.availableWorkspaces) {
@@ -129,16 +133,24 @@ export class AuthRepository implements IAuthRepository {
   }
 
   /**
-   * Verify 2FA code during login.
-   * Called after login() throws TwoFactorRequiredError.
+   * Verify 2FA code during login (supports both password-based and passwordless pending-token flows).
    */
   async verify2FA(
     identifier: string,
-    password: string,
+    password: string | null,
     code: string,
-    tenantId?: string
+    tenantId?: string,
+    twoFactorPendingToken?: string | null,
+    staySignedIn: boolean = false
   ): Promise<LoginResult> {
-    const requestModel = new Verify2FARequestModel(identifier, password, code, tenantId);
+    const requestModel = new Verify2FARequestModel(
+      identifier,
+      twoFactorPendingToken ? null : password,
+      code,
+      tenantId,
+      twoFactorPendingToken ?? null,
+      staySignedIn
+    );
     const responseModel = await this.service.verify2FA(requestModel);
 
     appLogger.auth("2FA verification successful");
@@ -278,9 +290,14 @@ export class AuthRepository implements IAuthRepository {
 
   buildOidcConsentForm(
     searchParams: URLSearchParams,
-    accessToken: string
+    accessToken: string,
+    decision: "approve" | "deny" = "approve"
   ): { action: string; params: Record<string, string> } {
-    return this.impersonation.buildOidcConsentForm(searchParams, accessToken);
+    return this.impersonation.buildOidcConsentForm(searchParams, accessToken, decision);
+  }
+
+  buildOidcLogoutUrl(searchParams: URLSearchParams): string {
+    return this.impersonation.buildOidcLogoutUrl(searchParams);
   }
 
   async linkExternalLogin(data: {
@@ -316,73 +333,117 @@ export class AuthRepository implements IAuthRepository {
 
   // ── Phone OTP (delegated) ─────────────────────────────────────────────────
   async requestPhoneOtp(
-    phoneNumber: string
+    identifier: string,
+    tenantId?: string | null
   ): Promise<{ sent: boolean; retryAfterSeconds: number }> {
-    return this.service.requestPhoneOtp(phoneNumber);
+    return this.service.requestPhoneOtp(identifier, tenantId);
   }
 
   async verifyPhoneOtp(
-    phoneNumber: string,
-    code: string
+    identifier: string,
+    code: string,
+    tenantId?: string | null,
+    staySignedIn: boolean = false,
+    isPlatformAdmin: boolean = false
   ): Promise<import("../../domain/types/AuthTypes").LoginResponseModel> {
-    const raw = await this.service.verifyPhoneOtp(phoneNumber, code);
-    // Map the service response (superset) to the full LoginResponseModel shape.
-    // Fields not returned by the backend (e.g. userProfile) default to safe values.
+    const raw = await this.service.verifyPhoneOtp(
+      identifier,
+      code,
+      tenantId,
+      staySignedIn,
+      isPlatformAdmin
+    );
     return {
-      accessToken: raw.accessToken,
+      accessToken: raw.accessToken ?? "",
       refreshToken: raw.refreshToken ?? "",
       expiresAt: raw.expiresAt ?? "",
-      success: !raw.requiresWorkspaceSelection,
-      requires2FA: false,
+      success: !raw.requiresWorkspaceSelection && !raw.requires2FA,
+      requires2FA: Boolean(raw.requires2FA),
+      twoFactorPendingToken: raw.twoFactorPendingToken ?? null,
+      staySignedIn: Boolean(raw.staySignedIn),
       requiresWorkspaceSelection: raw.requiresWorkspaceSelection ?? false,
       availableWorkspaces:
         (raw.availableWorkspaces as import("../../domain/types/AuthTypes").LoginResponseModel["availableWorkspaces"]) ??
         null,
       mustChangePassword: raw.mustChangePassword ?? false,
-      subscriptionStatus: null,
-      gracePhase: null,
-      editionName: null,
+      subscriptionStatus: raw.subscriptionStatus ?? null,
+      gracePhase: raw.gracePhase ?? null,
+      editionName: raw.editionName ?? null,
       userProfile: null,
-      isSuccessful: !raw.requiresWorkspaceSelection,
+      isSuccessful: !raw.requiresWorkspaceSelection && !raw.requires2FA && Boolean(raw.accessToken),
       defaultRedirectPath: raw.defaultRedirectPath ?? "/",
       toJson: () => raw as import("../../domain/types/AuthTypes").LoginResponseJson,
     };
   }
 
   // ── QR Cross-Device Sign-In (delegated) ───────────────────────────────────
-  async beginQrSignIn(): Promise<{
+  async beginQrSignIn(tenantId?: string | null): Promise<{
     sessionId: string;
+    sessionToken?: string;
     qrData: string;
     expiresAt: string;
   }> {
-    return this.service.beginQrSignIn();
+    return this.service.beginQrSignIn(tenantId);
   }
 
   async checkQrSignIn(sessionId: string): Promise<{
-    status: "pending" | "scanned" | "approved" | "expired";
+    status: "pending" | "scanned" | "approved" | "rejected" | "expired" | "consumed";
     accessToken?: string;
     refreshToken?: string;
+    expiresAt?: string;
+    approverName?: string | null;
+    defaultRedirectPath?: string | null;
   }> {
     return this.service.checkQrSignIn(sessionId);
   }
 
-  async approveQrSignIn(sessionId: string): Promise<void> {
-    return this.service.approveQrSignIn(sessionId);
+  async approveQrSignIn(sessionToken: string, deviceInfo?: string): Promise<void> {
+    return this.service.approveQrSignIn(sessionToken, deviceInfo);
   }
 
-  async rejectQrSignIn(sessionId: string): Promise<void> {
-    return this.service.rejectQrSignIn(sessionId);
+  async rejectQrSignIn(sessionToken: string): Promise<void> {
+    return this.service.rejectQrSignIn(sessionToken);
   }
 
   // ── Magic Link ───────────────────────────────────────────────────────────
-  async verifyMagicLink(token: string, tenantId?: string) {
-    const responseModel = await this.service.verifyMagicLink(token, tenantId);
+  async verifyMagicLink(
+    token: string,
+    tenantId?: string,
+    staySignedIn: boolean = false,
+    isPlatformAdmin: boolean = false
+  ) {
+    const responseModel = await this.service.verifyMagicLink(
+      token,
+      tenantId,
+      getBrowserDeviceInfo(),
+      staySignedIn,
+      isPlatformAdmin
+    );
+
+    // Hybrid MFA challenge: passwordless 2FA pending token — no access token issued yet
+    if (responseModel.requires2FA && responseModel.twoFactorPendingToken) {
+      return {
+        requires2FA: true,
+        twoFactorPendingToken: responseModel.twoFactorPendingToken,
+        staySignedIn: responseModel.staySignedIn ?? staySignedIn,
+        requiresWorkspaceSelection: false,
+        availableWorkspaces: null,
+        mustChangePassword: false,
+        subscriptionStatus: null as string | null,
+        gracePhase: null as string | null,
+        editionName: null as string | null,
+        defaultRedirectPath: "/",
+      };
+    }
 
     // Multi-workspace: no token issued yet — return workspace list for picker
     if (responseModel.requiresWorkspaceSelection && responseModel.availableWorkspaces) {
       return {
+        requires2FA: false,
+        twoFactorPendingToken: null as string | null,
+        staySignedIn: false,
         requiresWorkspaceSelection: true,
-        availableWorkspaces: responseModel.availableWorkspaces as any,
+        availableWorkspaces: responseModel.availableWorkspaces ?? null,
         mustChangePassword: false,
         subscriptionStatus: null as string | null,
         gracePhase: null as string | null,
@@ -404,6 +465,9 @@ export class AuthRepository implements IAuthRepository {
 
       return {
         user,
+        requires2FA: false,
+        twoFactorPendingToken: null as string | null,
+        staySignedIn: false,
         requiresWorkspaceSelection: false,
         availableWorkspaces: null,
         mustChangePassword: responseModel.mustChangePassword ?? false,

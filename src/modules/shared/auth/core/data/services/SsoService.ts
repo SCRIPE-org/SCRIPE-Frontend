@@ -29,7 +29,7 @@ export class SsoService implements ISsoService {
   completeOidcCallback(params: {
     providerId: string;
     code: string;
-    codeVerifier: string;
+    codeVerifier?: string;
     state: string;
     redirectUri?: string;
   }): Promise<SsoCallbackResultDto> {
@@ -47,7 +47,10 @@ export class SsoService implements ISsoService {
   }
 
   buildSamlLoginUrl(params: { providerId: string; redirectUri?: string }): string {
-    const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+    const backendUrl = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:5035/api").replace(
+      /\/+$/,
+      ""
+    );
     const url = buildUrl(AUTH_CORE_ENDPOINTS.SAML.LOGIN, {
       providerId: params.providerId,
       redirectUri: params.redirectUri || undefined,

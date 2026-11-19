@@ -1,11 +1,33 @@
 "use client";
 
+import { useSyncExternalStore } from "react";
 import { Sun, Moon } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useSignupTheme } from "@core/providers/signup-theme";
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@core/common/utils";
 import { Button } from "@core/ui/button";
+
+function subscribeHtmlThemeClass(callback: () => void) {
+  if (typeof document === "undefined" || typeof MutationObserver === "undefined") {
+    return () => {};
+  }
+  const observer = new MutationObserver(callback);
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+  return () => observer.disconnect();
+}
+
+function getHtmlThemeDarkSnapshot(): boolean | null {
+  if (typeof document === "undefined") return null;
+  const cls = document.documentElement.classList;
+  if (cls.contains("dark")) return true;
+  if (cls.contains("light")) return false;
+  return null;
+}
+
+function getServerHtmlThemeSnapshot(): boolean | null {
+  return null;
+}
 
 /*
  * TWO switchers, on purpose.
@@ -114,7 +136,12 @@ export function NxThemeSwitcher({
   // adapter does, which is why the swap is behaviour-preserving.
   const { resolvedTheme, setTheme } = useTheme();
   const { t } = useI18n();
-  const isDark = resolvedTheme !== "light";
+  const htmlIsDark = useSyncExternalStore(
+    subscribeHtmlThemeClass,
+    getHtmlThemeDarkSnapshot,
+    getServerHtmlThemeSnapshot
+  );
+  const isDark = htmlIsDark ?? (resolvedTheme !== "light");
 
   const toggleTheme = () => setTheme(isDark ? "light" : "dark");
 

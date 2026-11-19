@@ -12,7 +12,7 @@ import type { WorkspaceChoice } from "@modules/auth/core/domain/errors/AuthError
 
 /** Classified authentication failure outcomes surfaced to the login ViewModel. */
 export type LoginErrorClassification =
-  | { kind: "two_factor" }
+  | { kind: "two_factor"; twoFactorPendingToken?: string | null; staySignedIn?: boolean }
   | { kind: "workspace_selection"; workspaces: WorkspaceChoice[] }
   | { kind: "unactivated"; message: string }
   | { kind: "error"; message: string };
@@ -31,7 +31,12 @@ export function classifyLoginError(err: unknown): LoginErrorClassification {
     err instanceof TwoFactorRequiredError ||
     (err instanceof Error && err.name === "TwoFactorRequiredError")
   ) {
-    return { kind: "two_factor" };
+    const twoFaErr = err as TwoFactorRequiredError;
+    return {
+      kind: "two_factor",
+      twoFactorPendingToken: twoFaErr.twoFactorPendingToken ?? null,
+      staySignedIn: Boolean(twoFaErr.staySignedIn),
+    };
   }
 
   if (

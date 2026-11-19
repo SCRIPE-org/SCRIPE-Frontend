@@ -19,6 +19,7 @@ import { useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
+import { getSafeRedirectPath } from "@core/common/redirect-safety";
 import { secureTokenService } from "@core/common/secure-token-service";
 import { useAppStore } from "@core/store/useAppStore";
 import { User } from "@modules/auth/core/domain/entities/User";
@@ -191,10 +192,11 @@ export function useSignupProvisioning({
           adminTypeName: "",
         });
 
+      const safeRedirectPath = getSafeRedirectPath(result.redirectUrl, "/");
       setAuth(user, user.permissions ?? [], [], true);
       if (result.tenantCode) setTenantCode(result.tenantCode);
       setSubscriptionInfo(null, null, null);
-      setDefaultRedirectPath(result.redirectUrl || "/");
+      setDefaultRedirectPath(safeRedirectPath);
       // Clear stale query cache — do NOT use invalidateQueries() here because
       // it triggers immediate refetches before the refresh-token cookie is
       // fully established, causing 401 → logout race conditions. clear()
@@ -208,7 +210,7 @@ export function useSignupProvisioning({
       setStep("complete");
 
       setTimeout(() => {
-        router.replace(result.redirectUrl || "/");
+        router.replace(safeRedirectPath);
       }, 1500);
     } catch (err: unknown) {
       isProvisioningRef.current = false;

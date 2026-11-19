@@ -154,9 +154,11 @@ export function OAuthConsentView() {
           className="hidden"
           style={{ display: "none" }}
         >
-          {Object.entries(formParams).map(([key, value]) => (
-            <Input key={key} type="hidden" name={key} value={value} />
-          ))}
+          {Object.entries(formParams)
+            .filter(([key]) => key !== "access_token")
+            .map(([key, value]) => (
+              <Input key={key} type="hidden" name={key} value={value} />
+            ))}
           <Input type="hidden" name="access_token" value={accessToken} />
         </form>
       )}

@@ -10,6 +10,7 @@ import { Check, CheckCircle2, Copy, Eye, EyeOff, Terminal, X } from "lucide-reac
 export interface PatOneTimeSecretBannerProps {
   t: (key: string, params?: Record<string, string | number>) => string;
   receipt: PatOneTimeSecretReceipt | null | undefined;
+  currentUserId?: string | null;
   onDismiss: () => void;
 }
 
@@ -17,12 +18,24 @@ export interface PatOneTimeSecretBannerProps {
  * GitHub-inspired inline one-time cryptographic token receipt banner displayed cleanly
  * right inside /account/integrations or /account/integrations/[id] immediately after generation or rotation.
  */
-export function PatOneTimeSecretBanner({ t, receipt, onDismiss }: PatOneTimeSecretBannerProps) {
+export function PatOneTimeSecretBanner({
+  t,
+  receipt,
+  currentUserId,
+  onDismiss,
+}: PatOneTimeSecretBannerProps) {
   const [revealed, setRevealed] = useState(true);
   const [copiedSecret, setCopiedSecret] = useState(false);
   const [copiedHeader, setCopiedHeader] = useState(false);
 
   if (!receipt?.plainTextSecret) return null;
+  if (
+    receipt.ownerUserId != null &&
+    currentUserId !== undefined &&
+    receipt.ownerUserId !== currentUserId
+  ) {
+    return null;
+  }
 
   const handleCopySecret = async () => {
     try {

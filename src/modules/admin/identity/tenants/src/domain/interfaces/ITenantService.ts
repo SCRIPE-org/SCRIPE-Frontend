@@ -41,7 +41,13 @@ import type {
   TenantTreeListResult,
   TenantDomainsResponse,
   TenantDomainJson,
+  TenantIdentityProviderPagedDto,
+  TenantIdentityProviderDetailDto,
+  CreateTenantIdentityProviderDto,
+  UpdateTenantIdentityProviderDto,
+  TenantIdpTestConnectionDto,
 } from "./tenantServiceTypes";
+import type { TenantIdentityProviderListParams } from "../entities/TenantIdentityProvider";
 
 /**
  * Http API network service for i tenant.
@@ -273,4 +279,12 @@ export interface ITenantService {
   setDomainPrimary(tenantId: string, domainId: string): Promise<void>;
   /** Remove a custom domain */
   removeDomain(tenantId: string, domainId: string): Promise<void>;
+
+  // ── Platform-Admin Tenant-Scoped Identity Providers ───────
+  getIdentityProviders(tenantId: string, params?: TenantIdentityProviderListParams): Promise<TenantIdentityProviderPagedDto>;
+  getIdentityProviderById(tenantId: string, id: string): Promise<TenantIdentityProviderDetailDto>;
+  createIdentityProvider(tenantId: string, payload: CreateTenantIdentityProviderDto): Promise<{ id: string }>;
+  updateIdentityProvider(tenantId: string, id: string, payload: UpdateTenantIdentityProviderDto): Promise<void>;
+  deleteIdentityProvider(tenantId: string, id: string): Promise<void>;
+  testIdentityProviderConnection(tenantId: string, id: string): Promise<TenantIdpTestConnectionDto>;
 }

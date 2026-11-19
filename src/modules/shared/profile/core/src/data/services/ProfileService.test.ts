@@ -197,23 +197,29 @@ describe("ProfileService — no call site targets the dead /v1/profile/* or lega
     expect(api.get).toHaveBeenCalledWith(PROFILE_ENDPOINTS.EXTERNAL_LOGINS);
   });
 
-  it("linkExternalLogin() POSTs /v1/auth/admin/external-logins/link, not /v1/profile/external-logins", async () => {
+  it("initiateExternalLoginLink() POSTs /v1/auth/admin/external-logins/initiate-link with optional X-Sudo-Token header", async () => {
     const api = mockApiService();
     const data = {
-      identityProviderId: "p1",
-      providerName: "google",
-      providerKey: "k1",
-      email: null,
-      displayName: null,
+      identityProviderId: "enc-idp-1",
+      redirectUri: "http://localhost:3000/sso/callback",
     };
-    await new ProfileService(api).linkExternalLogin(data);
-    expect(api.post).toHaveBeenCalledWith(PROFILE_ENDPOINTS.LINK_EXTERNAL_LOGIN, data);
+    await new ProfileService(api).initiateExternalLoginLink(data, "sudo-tok-123");
+    expect(api.post).toHaveBeenCalledWith(
+      PROFILE_ENDPOINTS.INITIATE_EXTERNAL_LOGIN_LINK,
+      data,
+      undefined,
+      { headers: { "X-Sudo-Token": "sudo-tok-123" } }
+    );
   });
 
-  it("unlinkExternalLogin() DELETEs /v1/auth/admin/external-logins/{id}, not /v1/profile/external-logins/{id}", async () => {
+  it("unlinkExternalLogin() DELETEs /v1/auth/admin/external-logins/{id} with optional X-Sudo-Token header", async () => {
     const api = mockApiService();
-    await new ProfileService(api).unlinkExternalLogin("ext-1");
-    expect(api.delete).toHaveBeenCalledWith(PROFILE_ENDPOINTS.UNLINK_EXTERNAL_LOGIN("ext-1"));
+    await new ProfileService(api).unlinkExternalLogin("ext-1", "sudo-tok-456");
+    expect(api.delete).toHaveBeenCalledWith(
+      PROFILE_ENDPOINTS.UNLINK_EXTERNAL_LOGIN("ext-1"),
+      undefined,
+      { headers: { "X-Sudo-Token": "sudo-tok-456" } }
+    );
   });
 
   it("PROFILE_ENDPOINTS no longer exposes a LEGACY family (removed — dead, no backend ProfileController)", () => {

@@ -1,3 +1,4 @@
+/** Domain data structure for a Single Sign-On provider. */
 export interface SsoProviderData {
   id: string;
   name: string;
@@ -7,8 +8,12 @@ export interface SsoProviderData {
   buttonColor: string | null;
   buttonLabel: string | null;
   displayOrder: number;
+  isActive?: boolean;
+  trustIdpMfa?: boolean;
+  scope?: "Global" | "Organization" | string;
 }
 
+/** Rich domain entity representing an enabled SSO identity provider. */
 export class SsoProvider {
   constructor(private readonly data: SsoProviderData) {}
 
@@ -36,9 +41,18 @@ export class SsoProvider {
   get displayOrder() {
     return this.data.displayOrder;
   }
+  get isActive() {
+    return this.data.isActive ?? true;
+  }
+  get trustIdpMfa() {
+    return this.data.trustIdpMfa ?? false;
+  }
+  get scope() {
+    return this.data.scope ?? "Global";
+  }
 
   get isSaml() {
-    return this.protocol.toLowerCase() === "saml";
+    return this.protocol.toLowerCase().includes("saml");
   }
 
   get label() {
@@ -50,6 +64,7 @@ export class SsoProvider {
   }
 }
 
+/** Workspace choice returned when an SSO identity matches multiple workspaces. */
 export interface SsoWorkspaceListItem {
   tenantId: string;
   tenantCode: string;
@@ -61,8 +76,10 @@ export interface SsoWorkspaceListItem {
   isPasswordVerified: boolean;
 }
 
+/** Domain result returned by OIDC/OAuth2/SAML callback completion. */
 export interface SsoCallbackResult {
-  type: "admin" | "user";
+  type?: "admin" | "user";
+  linked?: boolean;
   accessToken?: string;
   refreshToken?: string;
   expiresAt?: string;
@@ -71,6 +88,10 @@ export interface SsoCallbackResult {
   subscriptionStatus?: string | null;
   gracePhase?: string | null;
   editionName?: string | null;
+  requires2FA?: boolean;
+  twoFactorPendingToken?: string | null;
+  staySignedIn?: boolean;
+  mustChangePassword?: boolean;
   requiresWorkspaceSelection?: boolean;
   availableWorkspaces?: SsoWorkspaceListItem[];
   token?: string;

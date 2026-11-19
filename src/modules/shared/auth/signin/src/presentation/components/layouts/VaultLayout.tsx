@@ -7,7 +7,7 @@
 "use client";
 
 import { SlotRenderer } from "../SlotRenderer";
-import { LogoImg, MobileLogo } from "./layout-shared";
+import { LogoImg, MobileLogo, formatBidiCompanyName } from "./layout-shared";
 import { BG_STYLE } from "./layout-types";
 import type { LoginLayoutProps } from "./layout-types";
 import { VaultBackground } from "./VaultBackground";
@@ -70,7 +70,7 @@ export function VaultLayout({
               className="text-lg font-semibold tracking-tight"
               style={{ color: "var(--sx-text)" }}
             >
-              {companyName}
+              {formatBidiCompanyName(companyName)}
             </span>
           </div>
 

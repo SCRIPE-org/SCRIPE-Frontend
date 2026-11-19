@@ -7,6 +7,14 @@
 import type { Tenant, TenantTreeNode } from "../entities/Tenant";
 import type { TenantDomain, TenantDomainsConfig } from "../entities/TenantDomain";
 import type {
+  CreateTenantIdentityProviderPayload,
+  TenantIdentityProviderDetail,
+  TenantIdentityProviderListItem,
+  TenantIdentityProviderListParams,
+  TenantIdpTestConnectionResult,
+  UpdateTenantIdentityProviderPayload,
+} from "../entities/TenantIdentityProvider";
+import type {
   CreateTenantRequest,
   CreateTenantResult,
   UpdateTenantRequest,
@@ -320,4 +328,37 @@ export interface ITenantRepository {
 
   /** Remove a custom domain */
   removeDomain(tenantId: string, domainId: string): Promise<void>;
+
+  // ── Platform-Admin Tenant-Scoped Identity Providers ───────
+
+  /** List identity providers owned by a specific tenant */
+  getIdentityProviders(
+    tenantId: string,
+    params?: TenantIdentityProviderListParams
+  ): Promise<PagedResult<TenantIdentityProviderListItem>>;
+
+  /** Get full detail of a tenant identity provider (includes rowVersion) */
+  getIdentityProviderById(tenantId: string, id: string): Promise<TenantIdentityProviderDetail>;
+
+  /** Create a tenant-scoped identity provider */
+  createIdentityProvider(
+    tenantId: string,
+    payload: CreateTenantIdentityProviderPayload
+  ): Promise<{ id: string }>;
+
+  /** Update a tenant-scoped identity provider */
+  updateIdentityProvider(
+    tenantId: string,
+    id: string,
+    payload: UpdateTenantIdentityProviderPayload
+  ): Promise<void>;
+
+  /** Delete a tenant-scoped identity provider */
+  deleteIdentityProvider(tenantId: string, id: string): Promise<void>;
+
+  /** Test connection for a tenant-scoped identity provider */
+  testIdentityProviderConnection(
+    tenantId: string,
+    id: string
+  ): Promise<TenantIdpTestConnectionResult>;
 }

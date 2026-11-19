@@ -1,16 +1,8 @@
 /**
  * MagicLinkCallbackView — Magic-link sign-in verification page (pure render).
  *
- * All business logic is in useMagicLinkCallbackViewModel.
- * This component is a pure render — no DI imports, no HTTP calls.
- *
- * States:
- *   - verifying: spinner while POST /auth/magic-link/verify runs
- *   - success: brief success flash → redirect
- *   - workspace-selection: in-page picker for multi-workspace accounts
- *     (same pattern as SsoCallbackContent's "workspace_selection" state —
- *     no redirect to a protected route before a session exists)
- *   - expired/invalid: error with "request a new link" CTA
+ * All business logic is in `useMagicLinkCallbackViewModel`.
+ * Supports verifying, success, workspace-selection, hybrid two-factor step-up, and expired/error.
  */
 "use client";
 
@@ -21,14 +13,15 @@ import Link from "next/link";
 import { useMagicLinkCallbackViewModel } from "../viewmodels/useMagicLinkCallbackViewModel";
 import { VaultBackground } from "../components/layouts/VaultBackground";
 import { PostCredentialWorkspaceSelector } from "../components/PostCredentialWorkspaceSelector";
+import { TwoFactorForm } from "../components/TwoFactorForm";
 
 /**
- * Presentation UI component rendering the magic link callback view.
- * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ * Presentation UI component rendering the magic link callback verification screen.
  */
 export function MagicLinkCallbackView() {
   const { t } = useI18n();
   const vm = useMagicLinkCallbackViewModel();
+  const isRTL = vm.direction === "rtl";
 
   return (
     <div
@@ -45,7 +38,9 @@ export function MagicLinkCallbackView() {
       >
         <div
           className={`sx-screen w-full rounded-[20px] p-8 sm:p-9 ${
-            vm.state === "workspace-selection" ? "text-start" : "text-center"
+            vm.state === "workspace-selection" || vm.state === "two-factor"
+              ? "text-start"
+              : "text-center"
           }`}
           style={{
             background: "var(--sx-card-bg)",
@@ -89,6 +84,20 @@ export function MagicLinkCallbackView() {
               onBack={vm.goBackToLogin}
               isLoading={vm.isSelectingWorkspace}
               error={vm.workspaceSelectionError}
+            />
+          )}
+
+          {vm.state === "two-factor" && (
+            <TwoFactorForm
+              twoFactorCode={vm.twoFactorCode}
+              setTwoFactorCode={vm.setTwoFactorCode}
+              useBackupCode={vm.useBackupCode}
+              isVerifying2FA={vm.isVerifying2FA}
+              error={vm.twoFactorError}
+              isRTL={isRTL}
+              handleVerify2FA={() => void vm.handleVerify2FA()}
+              toggleBackupCode={vm.toggleBackupCode}
+              goBackToCredentials={vm.goBackToLogin}
             />
           )}
 

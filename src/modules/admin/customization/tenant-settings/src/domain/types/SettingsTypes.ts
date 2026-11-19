@@ -7,6 +7,12 @@
  * @module tenant-settings/domain
  */
 
+/** Governs whether a tenant inherits platform identity providers or uses custom tenant IdPs only. */
+export type IdentityProviderMode = "inherit" | "custom";
+
+/**
+ * Raw API model shape for tenant security, quota, audit, and branding settings.
+ */
 export interface TenantSettingsModel {
   // Quotas
   maxAdmins: number;
@@ -24,6 +30,9 @@ export interface TenantSettingsModel {
   loginLockoutThreshold: number;
   loginLockoutMinutes: number;
   require2FA: boolean;
+
+  // Identity Provider Governance
+  identityProviderMode?: IdentityProviderMode;
 
   // Audit
   auditEnabled: boolean;
@@ -52,6 +61,9 @@ export interface TenantSettingsModel {
   privacyPolicyUrl: string | null;
   settingsVersion: number;
   isSafeMode: boolean;
+
+  // Context mode returned by backend ("my" | "system" | "tenant")
+  mode?: "my" | "system" | "tenant";
 }
 
 /**
@@ -69,6 +81,7 @@ export interface UpdateTenantSettingsRequest {
   loginLockoutThreshold?: number;
   loginLockoutMinutes?: number;
   require2FA?: boolean;
+  identityProviderMode?: IdentityProviderMode;
   auditEnabled?: boolean;
   auditRetentionDays?: number;
   logoUrl?: string | null;

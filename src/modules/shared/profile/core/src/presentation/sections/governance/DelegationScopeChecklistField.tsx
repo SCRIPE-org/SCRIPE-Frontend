@@ -86,16 +86,16 @@ export function DelegationScopeChecklistField({
             </p>
           ) : (
             filteredModalScopes.map((code) => (
-              <label
+              <Label
                 key={code}
-                className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg hover:bg-nx-surface cursor-pointer"
+                className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg hover:bg-nx-surface cursor-pointer font-normal"
               >
                 <Checkbox
                   checked={selectedScopes.includes(code)}
                   onCheckedChange={() => onToggleScope(code)}
                 />
                 <span className="text-xs font-mono text-nx-ink break-all">{code}</span>
-              </label>
+              </Label>
             ))
           )}
         </div>

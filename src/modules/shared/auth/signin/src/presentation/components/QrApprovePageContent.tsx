@@ -28,20 +28,20 @@ export function QrApprovePageContent() {
   const router = useRouter();
   const params = useSearchParams();
 
-  const sessionId = params.get("session") ?? "";
+  const sessionToken = params.get("token") ?? params.get("session") ?? "";
   const deviceInfo = params.get("device") ?? undefined;
   const location = params.get("loc") ?? undefined;
 
   const vm = useQrApproveViewModel();
 
-  // Redirect to login if no session ID in URL
+  // Redirect to login if no session token in URL
   useEffect(() => {
-    if (!sessionId) {
+    if (!sessionToken) {
       router.replace("/login");
     }
-  }, [sessionId, router]);
+  }, [sessionToken, router]);
 
-  if (!sessionId) {
+  if (!sessionToken) {
     return (
       <div className="space-y-3 text-center">
         <p className="text-sm" style={{ color: "var(--sx-text-mute)" }}>
@@ -54,10 +54,10 @@ export function QrApprovePageContent() {
 
   return (
     <QrApprovalView
-      sessionId={sessionId}
+      sessionId={sessionToken}
       deviceInfo={deviceInfo}
       location={location}
-      onApprove={vm.handleApprove}
+      onApprove={(token) => vm.handleApprove(token, deviceInfo)}
       onReject={vm.handleReject}
       onComplete={vm.handleComplete}
     />

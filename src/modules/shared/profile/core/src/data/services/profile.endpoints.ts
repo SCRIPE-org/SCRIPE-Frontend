@@ -14,7 +14,7 @@ export const PROFILE_ENDPOINTS = {
   BACKUP_CODES_REGENERATE: `${V1}/auth/admin/2fa/backup-codes/regenerate`,
   SECURITY_LOG: `${V1}/auth/admin/security-log`,
   EXTERNAL_LOGINS: `${V1}/auth/admin/external-logins`,
-  LINK_EXTERNAL_LOGIN: `${V1}/auth/admin/external-logins/link`,
+  INITIATE_EXTERNAL_LOGIN_LINK: `${V1}/auth/admin/external-logins/initiate-link`,
   UNLINK_EXTERNAL_LOGIN: (id: string) => `${V1}/auth/admin/external-logins/${id}`,
   TWO_FA: {
     ENABLE: `${V1}/auth/admin/2fa/enable`,

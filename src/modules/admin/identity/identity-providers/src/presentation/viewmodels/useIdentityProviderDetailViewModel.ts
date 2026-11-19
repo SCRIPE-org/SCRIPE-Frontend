@@ -8,12 +8,13 @@
  */
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { identityContainer } from "@modules/identity/di";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import type { TestConnectionResult } from "../../domain/entities/IdentityProvider";
 import { identityProviderKeys } from "./useIdentityProvidersViewModel";
 
 // ─── Form State ──────────────────────────────────────────────────
@@ -43,6 +44,10 @@ export interface IdentityProviderFormState {
   // Access Control
   enabledForAdmins: boolean;
   enabledForUsers: boolean;
+  trustIdpMfa: boolean;
+
+  // Optimistic Concurrency
+  rowVersion: string | null;
 
   // Claim Mappings
   claimMappingJson: string;
@@ -72,8 +77,10 @@ const DEFAULT_STATE: IdentityProviderFormState = {
   iconUrl: "",
   buttonColor: "#4285F4",
   buttonLabel: "",
-  enabledForAdmins: false,
+  enabledForAdmins: true,
   enabledForUsers: true,
+  trustIdpMfa: false,
+  rowVersion: null,
   claimMappingJson: "{}",
   authorizationEndpoint: "",
   tokenEndpoint: "",
@@ -82,6 +89,23 @@ const DEFAULT_STATE: IdentityProviderFormState = {
   samlSsoUrl: "",
   samlCertificate: "",
 };
+
+const PROTOCOL_OPTIONS = [
+  { value: "oidc", label: "OpenID Connect (OIDC)" },
+  { value: "oauth2", label: "OAuth 2.0" },
+  { value: "saml", label: "SAML 2.0" },
+];
+
+function isConcurrencyConflict(error: unknown): boolean {
+  if (!error || typeof error !== "object") return false;
+  const err = error as { status?: unknown; response?: { status?: unknown }; details?: { statusCode?: unknown; status?: unknown } };
+  return (
+    err.status === 409 ||
+    err.response?.status === 409 ||
+    err.details?.statusCode === 409 ||
+    err.details?.status === 409
+  );
+}
 
 // ─── Hook ─────────────────────────────────────────────────────────
 /**
@@ -100,6 +124,8 @@ export function useIdentityProviderDetailViewModel(providerId?: string) {
   const [form, setForm] = useState<IdentityProviderFormState>(DEFAULT_STATE);
   const [isDirty, setIsDirty] = useState(false);
   const [selectedTemplateId, setSelectedTemplateId] = useState<string | undefined>(undefined);
+  const [lastTestResult, setLastTestResult] = useState<TestConnectionResult | null>(null);
+  const [testError, setTestError] = useState<string | null>(null);
 
   // ─── Fetch existing provider ──────────────────
   const {
@@ -112,15 +138,13 @@ export function useIdentityProviderDetailViewModel(providerId?: string) {
     enabled: !!providerId,
   });
 
-  // Populate form when provider data first arrives for this id (render-time
-  // state-sync). Guarded by id, not object identity: react-query can return a
-  // new `provider` reference for the SAME record (refetchOnReconnect, a
-  // stale invalidation fired by another mutation, …) and that must never
-  // silently clobber edits the admin has in progress. Once the form has been
-  // initialized for this id, later refetches of the same id are ignored here.
+  // Populate form on initial load or sync updated rowVersion when clean / refreshed.
   const [initializedForId, setInitializedForId] = useState<string | undefined>(undefined);
-  if (provider && initializedForId !== providerId) {
+  const [syncedRowVersion, setSyncedRowVersion] = useState<string | null>(null);
+  const providerRowVersion = provider?.rowVersion ?? null;
+  if (provider && (initializedForId !== providerId || (!isDirty && syncedRowVersion !== providerRowVersion))) {
     setInitializedForId(providerId);
+    setSyncedRowVersion(providerRowVersion);
     setForm({
       name: provider.name,
       slug: provider.slug,
@@ -137,6 +161,8 @@ export function useIdentityProviderDetailViewModel(providerId?: string) {
       buttonLabel: provider.buttonLabel ?? "",
       enabledForAdmins: provider.enabledForAdmins,
       enabledForUsers: provider.enabledForUsers,
+      trustIdpMfa: provider.trustIdpMfa,
+      rowVersion: provider.rowVersion ?? null,
       claimMappingJson: provider.claimMappingJson ?? "{}",
       authorizationEndpoint: provider.authorizationEndpoint ?? "",
       tokenEndpoint: provider.tokenEndpoint ?? "",
@@ -170,18 +196,21 @@ export function useIdentityProviderDetailViewModel(providerId?: string) {
   // ─── Save (Create / Update) ──────────────────
   const saveMutation = useMutation({
     mutationFn: async () => {
+      const trimmedSecret = form.clientSecret.trim();
       const payload: Record<string, unknown> = {
         name: form.name,
         slug: form.slug,
         protocol: form.protocol,
         authority: form.authority || undefined,
         clientId: form.clientId || undefined,
-        clientSecret: form.clientSecret || undefined,
+        ...(trimmedSecret ? { clientSecret: trimmedSecret } : {}),
         scopes: form.scopes || undefined,
         redirectUri: form.redirectUri || undefined,
         claimMappingJson: form.claimMappingJson || undefined,
         enabledForAdmins: form.enabledForAdmins,
         enabledForUsers: form.enabledForUsers,
+        isActive: form.isActive,
+        trustIdpMfa: form.trustIdpMfa,
         iconUrl: form.iconUrl || undefined,
         buttonColor: form.buttonColor || undefined,
         buttonLabel: form.buttonLabel || undefined,
@@ -198,7 +227,11 @@ export function useIdentityProviderDetailViewModel(providerId?: string) {
         const result = await identityProviderRepository.create(payload as any);
         return result;
       } else {
-        await identityProviderRepository.update(providerId!, payload as any);
+        const rowVersion = form.rowVersion ?? provider?.rowVersion ?? undefined;
+        await identityProviderRepository.update(providerId!, {
+          ...(payload as Record<string, unknown>),
+          ...(rowVersion ? { rowVersion } : {}),
+        } as any);
         return null;
       }
     },
@@ -216,11 +249,21 @@ export function useIdentityProviderDetailViewModel(providerId?: string) {
           title: t("identityProviders.updated"),
           description: t("identityProviders.updatedDesc"),
         });
-        // Refetch detail
+        // Refetch detail so rowVersion rotates to latest server token
         queryClient.invalidateQueries({ queryKey: identityProviderKeys.detail(providerId!) });
       }
     },
     onError: (err: Error) => {
+      if (!isCreateMode && providerId && isConcurrencyConflict(err)) {
+        setInitializedForId(undefined);
+        void queryClient.invalidateQueries({ queryKey: identityProviderKeys.detail(providerId) });
+        void queryClient.invalidateQueries({ queryKey: identityProviderKeys.all });
+        toastError({
+          title: t("common.error"),
+          description: t("identityProviders.concurrencyConflict"),
+        });
+        return;
+      }
       toastError({
         title: t("common.error"),
         description: err.message,
@@ -231,20 +274,26 @@ export function useIdentityProviderDetailViewModel(providerId?: string) {
   // ─── Test Connection ──────────────────────────
   const testMutation = useMutation({
     mutationFn: () => identityProviderRepository.testConnection(providerId!),
+    onMutate: () => {
+      setTestError(null);
+    },
     onSuccess: (result) => {
+      setLastTestResult(result);
       if (result.isSuccess) {
         success({
           title: t("identityProviders.testSuccess"),
-          description: result.message || "Provider is reachable.",
+          description: result.message || t("identityProviders.testSuccess"),
         });
       } else {
         toastError({
           title: t("identityProviders.testFailed"),
-          description: result.message || "Could not reach the provider.",
+          description: result.message || t("identityProviders.testFailed"),
         });
       }
     },
     onError: (err: Error) => {
+      setLastTestResult(null);
+      setTestError(err.message);
       toastError({
         title: t("common.error"),
         description: err.message,
@@ -285,16 +334,6 @@ export function useIdentityProviderDetailViewModel(providerId?: string) {
     }
   }, [formName, isCreateMode, isDirty]);
 
-  // ─── Protocol options ─────────────────────────
-  const protocolOptions = useMemo(
-    () => [
-      { value: "oidc", label: "OpenID Connect (OIDC)" },
-      { value: "oauth2", label: "OAuth 2.0" },
-      { value: "saml", label: "SAML" },
-    ],
-    []
-  );
-
   return {
     // Mode
     isCreateMode,
@@ -308,7 +347,7 @@ export function useIdentityProviderDetailViewModel(providerId?: string) {
     applyTemplate,
     selectedTemplateId,
     isDirty,
-    protocolOptions,
+    protocolOptions: PROTOCOL_OPTIONS,
     autoGenerateSlug,
 
     // Actions
@@ -316,6 +355,12 @@ export function useIdentityProviderDetailViewModel(providerId?: string) {
     isSaving: saveMutation.isPending,
     testConnection: () => testMutation.mutate(),
     isTesting: testMutation.isPending,
+    lastTestResult,
+    testError,
+    clearTestDiagnostics: () => {
+      setLastTestResult(null);
+      setTestError(null);
+    },
     deleteProvider: () => deleteMutation.mutate(),
     isDeleting: deleteMutation.isPending,
 

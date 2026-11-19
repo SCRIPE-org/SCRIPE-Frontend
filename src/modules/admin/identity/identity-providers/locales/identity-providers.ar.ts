@@ -73,6 +73,22 @@ export const ar = {
     deletedDesc: "تم حذف موفر الهوية.",
     testSuccess: "الاتصال ناجح",
     testFailed: "فشل الاتصال",
+    trustIdpMfa: "الوثوق بتأكيد المصادقة الثنائية لمزود الهوية",
+    trustIdpMfaHelp:
+      "اعتماد مطالبات المصادقة متعددة العوامل (AMR) الصادرة عن هذا المزود بدلاً من طلب تحقق ثنائي إضافي داخل SCRIPE.",
+    badgeTrustMfa: "MFA موثوق",
+    saveProviderFirstAcsNote:
+      "احفظ الموفر أولاً لتوليد رابط استهلاك تأكيد SAML (ACS) أو إعادة التوجيه الدقيق الخاص به.",
+    clientSecretCreatePlaceholder: "أدخل سر العميل الخاص بـ OAuth2/OIDC",
+    testDiagnosticsTitle: "تشخيص الاتصال",
+    testDiagnosticsProvider: "الموفر:",
+    discoveredIssuerLabel: "المُصدر المكتشف:",
+    discoveredEndpointsLabel: "نقاط النهاية المكتشفة",
+    dismissDiagnostics: "إغلاق",
+    toggleStatusSuccess: "تم تحديث حالة {{name}}.",
+    toggleStatusError: "فشل تحديث حالة الموفر — تمت استعادة الحالة السابقة.",
+    concurrencyConflict:
+      "تم تعديل هذا الموفر من جلسة أخرى. تم تحميل أحدث البيانات — راجع التغييرات واحفظ مرة أخرى.",
     deleteWarning:
       "حذف هذا الموفر سيزيله نهائياً. المستخدمون الذين سجلوا الدخول عبره سيفقدون الوصول عبر SSO.",
     deleteButton: "حذف الموفر",
@@ -103,6 +119,9 @@ export const ar = {
     emptyDesc:
       "قم بتهيئة تسجيل الدخول الموحد (SSO) باستخدام OpenID Connect (OIDC) أو OAuth 2.0 أو SAML 2.0 لتمكين المستخدمين من تسجيل الدخول باستخدام حسابات خارجية.",
     emptyTitle: "لا يوجد مزودو هوية",
+    noMatchingTitle: "لا يوجد موفرون مطابقون",
+    noMatchingDesc: "لا يوجد موفرو هوية يطابقون معايير البحث أو التصفية الحالية.",
+    clearFilters: "مسح التصفية",
     externalClaimKey: "حقل مزود الهوية الخارجي",
     internalAttribute: "الخاصية الداخلية لـ SCRIPE",
     jsonEditor: "JSON",

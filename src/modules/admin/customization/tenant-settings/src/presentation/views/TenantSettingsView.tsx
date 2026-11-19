@@ -78,7 +78,11 @@ export function TenantSettingsView() {
       {/* Show Quotas & Security only for tenant contexts, not system defaults */}
       {vm.mode !== "system" && (
         <>
-          <QuotasSection settings={vm.settings} updateField={vm.updateField} />
+          <QuotasSection
+            settings={vm.settings}
+            updateField={vm.updateField}
+            readOnly={vm.mode === "my"}
+          />
           <SecuritySection settings={vm.settings} updateField={vm.updateField} />
           <Card className="border-nx-line bg-nx-surface p-5">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

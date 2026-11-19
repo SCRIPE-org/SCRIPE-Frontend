@@ -40,13 +40,26 @@ import type {
   DowngradeImpactReport,
 } from "../models/TenantSubscription";
 import { TENANTS_ENDPOINTS } from "./tenants.endpoints";
+import { TenantIdentityProviderService } from "./TenantIdentityProviderService";
+import type { TenantIdentityProviderListParams } from "../../domain/entities/TenantIdentityProvider";
+import type {
+  CreateTenantIdentityProviderDto,
+  TenantIdentityProviderDetailDto,
+  TenantIdentityProviderPagedDto,
+  TenantIdpTestConnectionDto,
+  UpdateTenantIdentityProviderDto,
+} from "../models/TenantIdentityProviderModels";
 
 /**
  * Http API network service for tenant.
  * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export class TenantService implements ITenantService {
-  constructor(private readonly api: IApiService) {}
+  private readonly identityProviderService: TenantIdentityProviderService;
+
+  constructor(private readonly api: IApiService) {
+    this.identityProviderService = new TenantIdentityProviderService(api);
+  }
 
   async getAll(params: ServiceTenantListParams): Promise<TenantListResult> {
     const url = buildUrl(TENANTS_ENDPOINTS.LIST, {
@@ -449,5 +462,47 @@ export class TenantService implements ITenantService {
 
   async removeDomain(tenantId: string, domainId: string): Promise<void> {
     await this.api.delete(TENANTS_ENDPOINTS.DOMAIN_BY_ID(tenantId, domainId));
+  }
+
+  // ── Platform-Admin Tenant-Scoped Identity Providers ───────
+
+  async getIdentityProviders(
+    tenantId: string,
+    params?: TenantIdentityProviderListParams
+  ): Promise<TenantIdentityProviderPagedDto> {
+    return this.identityProviderService.getAll(tenantId, params);
+  }
+
+  async getIdentityProviderById(
+    tenantId: string,
+    id: string
+  ): Promise<TenantIdentityProviderDetailDto> {
+    return this.identityProviderService.getById(tenantId, id);
+  }
+
+  async createIdentityProvider(
+    tenantId: string,
+    payload: CreateTenantIdentityProviderDto
+  ): Promise<{ id: string }> {
+    return this.identityProviderService.create(tenantId, payload);
+  }
+
+  async updateIdentityProvider(
+    tenantId: string,
+    id: string,
+    payload: UpdateTenantIdentityProviderDto
+  ): Promise<void> {
+    return this.identityProviderService.update(tenantId, id, payload);
+  }
+
+  async deleteIdentityProvider(tenantId: string, id: string): Promise<void> {
+    return this.identityProviderService.delete(tenantId, id);
+  }
+
+  async testIdentityProviderConnection(
+    tenantId: string,
+    id: string
+  ): Promise<TenantIdpTestConnectionDto> {
+    return this.identityProviderService.testConnection(tenantId, id);
   }
 }

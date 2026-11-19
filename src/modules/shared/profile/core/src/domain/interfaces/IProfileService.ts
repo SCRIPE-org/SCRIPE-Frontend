@@ -6,7 +6,8 @@ import type {
   UpdateProfileRequest,
   ChangePasswordRequest,
   Enable2FAResult,
-  LinkExternalLoginRequest,
+  InitiateExternalLoginLinkRequest,
+  InitiateExternalLoginLinkResponse,
 } from "./IProfileRepository";
 
 /**
@@ -28,6 +29,9 @@ export interface IProfileService {
   regenerateBackupCodes(twoFactorCode: string): Promise<string[]>;
   getSecurityLog(page?: number, pageSize?: number): Promise<SecurityLogEntry[]>;
   getExternalLogins(): Promise<ExternalLogin[]>;
-  linkExternalLogin(data: LinkExternalLoginRequest): Promise<ExternalLogin>;
-  unlinkExternalLogin(externalLoginId: string): Promise<void>;
+  initiateExternalLoginLink(
+    data: InitiateExternalLoginLinkRequest,
+    sudoToken?: string
+  ): Promise<InitiateExternalLoginLinkResponse>;
+  unlinkExternalLogin(externalLoginId: string, sudoToken?: string): Promise<void>;
 }

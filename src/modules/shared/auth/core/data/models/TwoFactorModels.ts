@@ -17,9 +17,11 @@ import type { UserProfileJson } from "./AuthModel";
 
 export interface Verify2FARequestJson {
   identifier: string;
-  password: string;
+  password: string | null;
   code: string;
   tenantId?: string;
+  twoFactorPendingToken?: string | null;
+  staySignedIn?: boolean;
 }
 
 export interface Verify2FAResponseJson {
@@ -36,22 +38,28 @@ export interface Verify2FAResponseJson {
 // ===== Model Classes =====
 
 /**
- * Verify 2FA Request Model
+ * Verify 2FA Request Model.
+ * Supports password-based 2FA (`identifier` + `password`) and passwordless pending-token 2FA
+ * (`twoFactorPendingToken` with `password = null`).
  */
 export class Verify2FARequestModel {
   constructor(
     public readonly identifier: string,
-    public readonly password: string,
+    public readonly password: string | null,
     public readonly code: string,
-    public readonly tenantId?: string
+    public readonly tenantId?: string,
+    public readonly twoFactorPendingToken?: string | null,
+    public readonly staySignedIn: boolean = false
   ) {}
 
   toJson(): Verify2FARequestJson {
     return {
       identifier: this.identifier,
-      password: this.password,
+      password: this.twoFactorPendingToken ? null : this.password,
       code: this.code,
       tenantId: this.tenantId,
+      twoFactorPendingToken: this.twoFactorPendingToken || undefined,
+      staySignedIn: this.staySignedIn || undefined,
     };
   }
 }

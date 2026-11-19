@@ -415,7 +415,7 @@ function sticky(input: ToastInput, extraOptions?: Partial<SileoOptions>): ToastR
  * Updates or morphs an existing toast in place using Sileo's spring physics.
  */
 function update(
-  target: string | ToastHandle | String,
+  target: string | ToastHandle | string,
   options: ToastInput | Partial<SileoOptions>
 ): ToastResponse {
   const id =
@@ -494,7 +494,7 @@ function promise<T>(
 /**
  * Dismiss a specific toast by its ID or handle, or dismiss all active toasts.
  */
-function dismiss(target?: string | ToastHandle | String): void {
+function dismiss(target?: string | ToastHandle | string): void {
   if (target) {
     const id =
       typeof target === "object" && target !== null && "id" in target ? target.id : String(target);

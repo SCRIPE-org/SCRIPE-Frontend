@@ -48,19 +48,19 @@ export const VALIDATION_PATTERNS = {
     /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
 
   // Phone number validation (international format)
-  PHONE: /^[\+]?[1-9][\d]{0,15}$/,
+  PHONE: /^[+]?[1-9][\d]{0,15}$/,
 
   // Username validation (alphanumeric, underscore, hyphen, 3-30 characters)
   USERNAME: /^[a-zA-Z0-9_-]{3,30}$/,
 
   // URL validation
-  URL: /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/,
+  URL: /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)$/,
 
   // Password strength patterns
   PASSWORD_LOWERCASE: /(?=.*[a-z])/,
   PASSWORD_UPPERCASE: /(?=.*[A-Z])/,
   PASSWORD_NUMBER: /(?=.*\d)/,
-  PASSWORD_SPECIAL: /(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])/,
+  PASSWORD_SPECIAL: /(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?])/,
 
   // Name validation (letters, spaces, hyphens, apostrophes)
   NAME: /^[a-zA-Z\s\-']+$/,
@@ -76,7 +76,7 @@ export const VALIDATION_PATTERNS = {
 
   // Strong password (at least 8 chars, uppercase, lowercase, number, special char)
   STRONG_PASSWORD:
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/,
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/,
 
   // Credit card patterns
   CREDIT_CARD: /^\d{4}\s?\d{4}\s?\d{4}\s?\d{4}$/,
@@ -192,7 +192,7 @@ export const VALIDATION_PATTERNS = {
   SECRET_KEY: /^[A-Za-z0-9]{20,100}$/,
   TOKEN: /^[A-Za-z0-9._-]{20,100}$/,
   WEBHOOK_URL:
-    /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/,
+    /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)$/,
 
   // Database patterns
   TABLE_NAME: /^[a-zA-Z_][a-zA-Z0-9_]{0,63}$/,

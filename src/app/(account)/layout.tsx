@@ -15,6 +15,8 @@ import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useAppStore } from "@core/store/useAppStore";
 import { useSudoStore } from "@core/store/useSudoStore";
+import { usePatOneTimeSecretStore } from "@core/store/usePatOneTimeSecretStore";
+import { useAuthLogout } from "@modules/auth/core/src/presentation/viewmodels/useAuthLogout";
 import { LanguageSwitcher } from "@core/ui/layout/common/language-switcher";
 import { NxThemeSwitcher } from "@core/ui/layout/common/theme-switcher";
 import { Avatar, AvatarFallback, AvatarImage } from "@core/ui/avatar";
@@ -100,7 +102,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
   const router = useRouter();
   const { t } = useI18n();
   const user = useAppStore((s) => s.user);
-  const logout = useAppStore((s) => s.logout);
+  const { handleLogout } = useAuthLogout();
   const { preferences, updatePreferences } = useAccountPreferencesSliceViewModel();
   const isMounted = useSyncExternalStore(
     emptySubscribe,
@@ -161,10 +163,8 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
 
   const handleSignOut = () => {
     useSudoStore.getState().reset();
-    logout();
-    if (typeof window !== "undefined") {
-      window.location.href = "/login";
-    }
+    usePatOneTimeSecretStore.getState().clearPendingReceipt();
+    void handleLogout("/login");
   };
 
   const navigateToOverview = () => {

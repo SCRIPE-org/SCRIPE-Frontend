@@ -12,7 +12,7 @@ export interface ISsoService {
   completeOidcCallback(params: {
     providerId: string;
     code: string;
-    codeVerifier: string;
+    codeVerifier?: string;
     state: string;
     redirectUri?: string;
   }): Promise<SsoCallbackResultDto>;

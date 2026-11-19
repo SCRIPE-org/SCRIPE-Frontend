@@ -50,8 +50,8 @@ export function LogoMarquee({ logos, caption }: LogoMarqueeProps) {
           {caption}
         </p>
       )}
-      <ul className="flex flex-wrap items-center gap-x-8 gap-y-5" role="list">
-        {logos.map((logo) => (
+      <ul className="flex flex-wrap items-center gap-x-8 gap-y-5" >
+        {renderable.map((logo) => (
           <li key={logo.key} className="flex items-center">
             <Image
               src={logo.assetUrl}

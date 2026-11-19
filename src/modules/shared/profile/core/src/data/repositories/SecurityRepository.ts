@@ -52,12 +52,25 @@ export class SecurityRepository implements ISecurityRepository {
 
   async beginPasskeyRegistration(
     deviceName?: string,
-    mode?: PasskeyRegistrationMode
+    mode?: PasskeyRegistrationMode,
+    sudoToken?: string
   ): Promise<PasskeyRegistrationBeginResponse> {
-    return this.api.post<PasskeyRegistrationBeginResponse>(PROFILE_ENDPOINTS.PASSKEYS.REGISTER_BEGIN, {
+    const body = {
       deviceName,
       ...(mode ? { mode } : {}),
-    });
+    };
+    if (sudoToken) {
+      return this.api.post<PasskeyRegistrationBeginResponse>(
+        PROFILE_ENDPOINTS.PASSKEYS.REGISTER_BEGIN,
+        body,
+        undefined,
+        { headers: { "X-Sudo-Token": sudoToken } }
+      );
+    }
+    return this.api.post<PasskeyRegistrationBeginResponse>(
+      PROFILE_ENDPOINTS.PASSKEYS.REGISTER_BEGIN,
+      body
+    );
   }
 
   async beginPasskeyAuth(
@@ -85,11 +98,18 @@ export class SecurityRepository implements ISecurityRepository {
     challengeToken?: string;
     attestationMode?: string;
     credentialIdBase64?: string;
-  }): Promise<{ id: string; deviceName: string; createdAt: Date }> {
-    const res = await this.api.post<{ id: string; deviceName: string; createdAt: string }>(
-      PROFILE_ENDPOINTS.PASSKEYS.REGISTER_COMPLETE,
-      data
-    );
+  }, sudoToken?: string): Promise<{ id: string; deviceName: string; createdAt: Date }> {
+    const res = sudoToken
+      ? await this.api.post<{ id: string; deviceName: string; createdAt: string }>(
+          PROFILE_ENDPOINTS.PASSKEYS.REGISTER_COMPLETE,
+          data,
+          undefined,
+          { headers: { "X-Sudo-Token": sudoToken } }
+        )
+      : await this.api.post<{ id: string; deviceName: string; createdAt: string }>(
+          PROFILE_ENDPOINTS.PASSKEYS.REGISTER_COMPLETE,
+          data
+        );
     return {
       id: res.id,
       deviceName: res.deviceName,

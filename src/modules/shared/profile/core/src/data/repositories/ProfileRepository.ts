@@ -13,7 +13,8 @@ import type {
   IProfileRepository,
   UpdateProfileRequest,
   ChangePasswordRequest,
-  LinkExternalLoginRequest,
+  InitiateExternalLoginLinkRequest,
+  InitiateExternalLoginLinkResponse,
   ForceChangePasswordRequest,
   ForceChangePasswordResult,
 } from "../../domain/interfaces/IProfileRepository";
@@ -26,6 +27,7 @@ import type {
   SecurityLogEntryDto,
   Enable2FAResultDto,
   ExternalLoginDto,
+  InitiateExternalLoginLinkResultDto,
 } from "../models/ProfileModels";
 import { ProfileMapper } from "../mappers/ProfileMapper";
 import type { ExternalLogin } from "../../domain/entities/ExternalLogin";
@@ -142,12 +144,38 @@ export class ProfileRepository implements IProfileRepository {
     return ProfileMapper.toExternalLogins(dtos);
   }
 
-  async linkExternalLogin(data: LinkExternalLoginRequest): Promise<ExternalLogin> {
-    const dto = await this.api.post<ExternalLoginDto>(PROFILE_ENDPOINTS.LINK_EXTERNAL_LOGIN, data);
-    return ProfileMapper.toExternalLogin(dto);
+  async initiateExternalLoginLink(
+    data: InitiateExternalLoginLinkRequest,
+    sudoToken?: string
+  ): Promise<InitiateExternalLoginLinkResponse> {
+    const options = sudoToken ? { headers: { "X-Sudo-Token": sudoToken } } : undefined;
+    const dto = options
+      ? await this.api.post<InitiateExternalLoginLinkResultDto>(
+          PROFILE_ENDPOINTS.INITIATE_EXTERNAL_LOGIN_LINK,
+          data,
+          undefined,
+          options
+        )
+      : await this.api.post<InitiateExternalLoginLinkResultDto>(
+          PROFILE_ENDPOINTS.INITIATE_EXTERNAL_LOGIN_LINK,
+          data
+        );
+    return {
+      authorizationUrl: dto.authorizationUrl,
+      protocol: dto.protocol,
+      state: dto.state ?? null,
+    };
   }
 
-  async unlinkExternalLogin(externalLoginId: string): Promise<void> {
+  async unlinkExternalLogin(externalLoginId: string, sudoToken?: string): Promise<void> {
+    if (sudoToken) {
+      await this.api.delete(
+        PROFILE_ENDPOINTS.UNLINK_EXTERNAL_LOGIN(externalLoginId),
+        undefined,
+        { headers: { "X-Sudo-Token": sudoToken } }
+      );
+      return;
+    }
     await this.api.delete(PROFILE_ENDPOINTS.UNLINK_EXTERNAL_LOGIN(externalLoginId));
   }
 

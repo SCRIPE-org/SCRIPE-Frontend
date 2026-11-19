@@ -6,6 +6,7 @@
  */
 import type {
   AccountPrincipalContext,
+  AvailableSsoProvider,
   SecurityPostureCheckItem,
   SovereignAccountContext,
   SovereignAccountFeatureFlags,
@@ -159,6 +160,29 @@ export function mapDossierSlice(raw: any): SovereignDossierSlice {
 /**
  * Maps `/v1/account/security` payload into `SovereignSecuritySlice`.
  */
+function mapAvailableSsoProviders(rawList: any): AvailableSsoProvider[] {
+  if (!Array.isArray(rawList)) return [];
+  return rawList
+    .map((p: any): AvailableSsoProvider => ({
+      encryptedId: String(p.encryptedId ?? p.id ?? ""),
+      name: String(p.name ?? ""),
+      slug: String(p.slug ?? ""),
+      protocol: String(p.protocol ?? "oidc"),
+      scope: String(p.scope ?? "Organization"),
+      iconUrl: p.iconUrl ?? null,
+      buttonColor: p.buttonColor ?? null,
+      buttonLabel: p.buttonLabel ?? null,
+      displayOrder: Number(p.displayOrder ?? 0),
+      isLinked: Boolean(p.isLinked),
+      linkedEmail: p.linkedEmail ?? null,
+      linkedAtUtc: p.linkedAtUtc ?? null,
+      externalLoginId: p.externalLoginId ? String(p.externalLoginId) : null,
+    }))
+    .filter((p) => p.encryptedId.length > 0)
+    .sort((a, b) => a.displayOrder - b.displayOrder);
+}
+
+/** Maps raw `GET /api/v1/account/security` payloads into {@link SovereignSecuritySlice}. */
 export function mapSecuritySlice(raw: any): SovereignSecuritySlice {
   const passkeysCount = Array.isArray(raw.passkeys)
     ? raw.passkeys.length
@@ -185,6 +209,7 @@ export function mapSecuritySlice(raw: any): SovereignSecuritySlice {
     isCurrentIpAllowed: Boolean(
       raw.isClientIpAllowed ?? raw.isCurrentIpAllowed ?? true
     ),
+    availableSsoProviders: mapAvailableSsoProviders(raw.availableSsoProviders),
     rowVersion: raw.rowVersion ?? undefined,
   };
 }

@@ -4,6 +4,8 @@ import { User } from "@modules/auth/core/domain/entities/User";
 import { PermissionCode, AdminRole } from "@core/common/types/permissions";
 import { secureTokenService } from "@core/common/secure-token-service";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
+import { useSudoStore } from "@core/store/useSudoStore";
+import { usePatOneTimeSecretStore } from "@core/store/usePatOneTimeSecretStore";
 
 interface AppState {
   // Sidebar State
@@ -119,8 +121,10 @@ export const useAppStore = create<AppState>()(
         if (typeof document !== "undefined") {
           document.cookie = `${STORAGE_KEYS.scr_auth_state}=; path=/; max-age=0; samesite=Lax`;
         }
-        // Also clear tokens when logging out from store
+        // Also clear tokens, sudo elevation, and ephemeral PAT secrets when logging out from store
         secureTokenService.clearTokens();
+        useSudoStore.getState().reset();
+        usePatOneTimeSecretStore.getState().clearPendingReceipt();
         set({
           user: null,
           isAuthenticated: false,

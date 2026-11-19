@@ -1,192 +1,231 @@
 "use client";
 
-/**
- * ConnectedEnterpriseSsoCard
- *
- * Unified Enterprise Identity Providers (OIDC / SAML 2.0) card inside /account/security.
- * Powered by backend external login identity bindings.
- */
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
+import { usePermission } from "@core/hooks/use-permission";
+import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { Alert, AlertDescription } from "@core/ui/alert";
 import { Badge } from "@core/ui/badge";
-import { ErrorMessage } from "@core/ui/error-message";
+import { Button } from "@core/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { Skeleton } from "@core/ui/skeleton";
+import { toast } from "@core/ui/sileo-toast";
 import { useExternalLoginsViewModel } from "../viewmodels/useExternalLoginsViewModel";
-import { useAccountContextSliceViewModel } from "../viewmodels/useSovereignAccountSlicesViewModel";
-import {
-  EnterpriseSsoConnectDialog,
-  type SsoProviderCatalogItem,
-} from "./EnterpriseSsoConnectDialog";
-import {
-  ENTERPRISE_IDP_CATALOG,
-  EnterpriseSsoProviderTile,
-  findFederatedProviderId,
-  matchExternalLogin,
-} from "./EnterpriseSsoProviderTile";
-import { AlertCircle, ShieldCheck, Shield } from "lucide-react";
+import { SectionInfoPopover } from "./SectionInfoPopover";
+import { EnterpriseSsoProviderTile } from "./EnterpriseSsoProviderTile";
+import { OrphanedExternalLoginTile } from "./OrphanedExternalLoginTile";
+import { EnterpriseSsoConnectDialog } from "./EnterpriseSsoConnectDialog";
+import type { AvailableSsoProvider } from "../../domain/entities/SovereignAccountEntities";
+import { resolveSsoCallbackError } from "../utils/enterprise-sso.utils";
+import { AlertCircle, CheckCircle2, KeyRound, Link2, Settings2 } from "lucide-react";
 
 /**
- * Displays linked and available enterprise SSO providers (OIDC / SAML 2.0)
- * with connect and unlink workflows for the active principal.
+ * Connected Enterprise SSO Identity Providers card for `/account/security`.
+ * Renders exclusively live database-backed `availableSsoProviders` plus any orphaned
+ * legacy bindings, initiating Sudo-gated federated redirects via `initiate-link`.
  */
 export function ConnectedEnterpriseSsoCard() {
   const { t } = useI18n();
-  const { principalContext } = useAccountContextSliceViewModel();
-  const isPlatformAdmin = principalContext?.principalKind === "PlatformAdmin";
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const canConfigureProviders = usePermission(SYSTEM_PERMISSIONS.IDENTITY_PROVIDERS_VIEW);
+
   const {
-    externalLogins,
-    providers,
+    availableSsoProviders,
+    orphanedExternalLogins,
     isLoading,
-    isError,
-    error,
-    refetch,
+    isSudoActive,
     isUnlinking,
-    unlink,
     unlinkAsync,
-    handleLink,
-    linkAccount,
-    isLinking,
+    initiateFederatedLink,
+    isInitiatingLink,
+    linkErrorMessage,
+    resetLinkError,
+    invalidateSsoQueries,
   } = useExternalLoginsViewModel();
 
-  const [activeConnectProvider, setActiveConnectProvider] =
-    useState<SsoProviderCatalogItem | null>(null);
-  const [unlinkingId, setUnlinkingId] = useState<string | null>(null);
-  const [confirmingUnlinkId, setConfirmingUnlinkId] = useState<string | null>(null);
-  const [unlinkError, setUnlinkError] = useState<string | null>(null);
+  const [connectTarget, setConnectTarget] = useState<AvailableSsoProvider | null>(null);
+  const [callbackBanner, setCallbackBanner] = useState<{
+    kind: "success" | "error";
+    message: string;
+  } | null>(null);
+  const handledCallbackRef = useRef<string | null>(null);
 
-  const handleDisconnect = async (loginId: string) => {
-    setUnlinkingId(loginId);
-    setUnlinkError(null);
-    try {
-      if (unlinkAsync) {
-        await unlinkAsync(loginId);
-      } else {
-        await Promise.resolve(unlink(loginId));
-      }
-      setConfirmingUnlinkId(null);
-    } catch (err: unknown) {
-      setUnlinkError(err instanceof Error && err.message ? err.message : t("sso.unlinkError"));
-    } finally {
-      setUnlinkingId(null);
+  const ssoLinkedParam = searchParams?.get("ssoLinked");
+  const linkedParam = searchParams?.get("linked");
+  const errorParam = searchParams?.get("error");
+
+  useEffect(() => {
+    const isSuccess = ssoLinkedParam === "success" || linkedParam === "1";
+    const hasError = Boolean(errorParam);
+    if (!isSuccess && !hasError) return;
+
+    const signature = `${ssoLinkedParam ?? ""}:${linkedParam ?? ""}:${errorParam ?? ""}`;
+    if (handledCallbackRef.current === signature) return;
+    handledCallbackRef.current = signature;
+
+    if (isSuccess) {
+      const msg = t("profile.security.ssoAccountLinkedNotice");
+      queueMicrotask(() => setCallbackBanner({ kind: "success", message: msg }));
+      toast.success(msg);
+    } else if (errorParam) {
+      const msg = resolveSsoCallbackError(errorParam, t);
+      queueMicrotask(() => setCallbackBanner({ kind: "error", message: msg }));
+      toast.error(msg);
     }
-  };
 
-  const visibleCatalog = isPlatformAdmin
-    ? ENTERPRISE_IDP_CATALOG.filter(
-        (item) =>
-          Boolean(findFederatedProviderId(providers, item)) ||
-          Boolean(matchExternalLogin(externalLogins, item))
-      )
-    : ENTERPRISE_IDP_CATALOG;
+    invalidateSsoQueries();
 
-  const connectedCount = visibleCatalog.filter((p) =>
-    Boolean(matchExternalLogin(externalLogins, p))
-  ).length;
+    if (pathname) {
+      const nextParams = new URLSearchParams(searchParams?.toString() ?? "");
+      nextParams.delete("ssoLinked");
+      nextParams.delete("linked");
+      nextParams.delete("error");
+      const query = nextParams.toString();
+      router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+    }
+  }, [
+    ssoLinkedParam,
+    linkedParam,
+    errorParam,
+    pathname,
+    router,
+    searchParams,
+    invalidateSsoQueries,
+    t,
+  ]);
+
+  const linkedCount = availableSsoProviders.filter((p) => p.isLinked).length;
 
   return (
-    <>
-      <Card
-        data-testid="connected-enterprise-sso-card"
-        className="border border-nx-line bg-nx-surface hover:border-nx-line-hi transition-colors"
-      >
-        <CardHeader className="pb-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-          <div>
-            <div className="flex items-center gap-2">
-              <ShieldCheck className="h-4 w-4 text-nx-accent" style={{ minWidth: 16, minHeight: 16 }} />
-              <CardTitle className="text-base font-bold text-nx-ink">
-                {t("profile.security.ssoSectionTitle")}
-              </CardTitle>
-            </div>
-            <CardDescription className="text-xs text-nx-ink-2 mt-0.5">
-              {t("profile.security.ssoSectionSubtitle")}
-            </CardDescription>
+    <Card
+      data-testid="connected-enterprise-sso-card"
+      className="border border-nx-line bg-nx-surface hover:border-nx-line-hi transition-colors"
+    >
+      <CardHeader className="pb-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <div>
+          <div className="flex items-center gap-2">
+            <Link2 className="h-4 w-4 text-nx-accent" style={{ minWidth: 16, minHeight: 16 }} />
+            <CardTitle className="text-base font-bold text-nx-ink">
+              {t("profile.security.ssoSectionTitle")}
+            </CardTitle>
+            <SectionInfoPopover i18nPrefix="profile.infoPopover.enterpriseSso" />
           </div>
+          <CardDescription className="text-xs text-nx-ink-2 mt-0.5">
+            {t("profile.security.ssoSectionSubtitle")}
+          </CardDescription>
+        </div>
 
-          <Badge
-            variant="outline"
-            className="border-nx-accent/30 text-nx-accent bg-nx-accent-wash text-xs font-semibold w-fit"
+        <Badge
+          variant="outline"
+          data-testid="sso-connected-summary-badge"
+          className="border-nx-line text-nx-ink-2 text-xs font-mono py-0.5 px-2 self-start sm:self-auto"
+        >
+          {t("profile.security.ssoConnectedSummary", {
+            connected: linkedCount,
+            total: availableSsoProviders.length,
+          })}
+        </Badge>
+      </CardHeader>
+
+      <CardContent className="space-y-3">
+        {callbackBanner && (
+          <Alert
+            variant={callbackBanner.kind === "error" ? "destructive" : "default"}
+            data-testid="sso-callback-status-alert"
+            className={
+              callbackBanner.kind === "error"
+                ? "border-destructive/40 bg-destructive/10 text-destructive"
+                : "border-success/30 bg-success/10 text-success"
+            }
           >
-            {t("profile.security.ssoConnectedSummary", {
-              connected: connectedCount,
-              total: visibleCatalog.length,
-            })}
-          </Badge>
-        </CardHeader>
+            {callbackBanner.kind === "error" ? (
+              <AlertCircle className="h-4 w-4 shrink-0" />
+            ) : (
+              <CheckCircle2 className="h-4 w-4 shrink-0" />
+            )}
+            <AlertDescription className="text-xs">{callbackBanner.message}</AlertDescription>
+          </Alert>
+        )}
 
-        <CardContent className="space-y-3">
-          {unlinkError && (
-            <Alert variant="destructive" data-testid="sso-unlink-error-alert">
-              <AlertCircle className="h-4 w-4" aria-hidden="true" />
-              <AlertDescription className="text-xs">{unlinkError}</AlertDescription>
-            </Alert>
-          )}
-          {isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-              <Skeleton className="h-28 w-full rounded-xl" />
-              <Skeleton className="h-28 w-full rounded-xl" />
-            </div>
-          ) : isError && externalLogins.length === 0 ? (
-            <ErrorMessage
-              size="sm"
-              message={error || t("profile.loadError.description")}
-              onRetry={() => void refetch?.()}
-            />
-          ) : isPlatformAdmin && visibleCatalog.length === 0 ? (
-            <div className="p-4 rounded-xl border border-nx-line bg-nx-ground flex items-start gap-3">
-              <Shield className="h-4 w-4 text-nx-accent shrink-0 mt-0.5" style={{ minWidth: 16, minHeight: 16 }} />
-              <div className="space-y-1">
-                <p className="text-xs font-semibold text-nx-ink">
-                  {t("profile.security.ssoPlatformPolicyTitle")}
-                </p>
-                <p className="text-xs text-nx-ink-3">
-                  {t("profile.security.ssoPlatformPolicyNotice")}
-                </p>
+        {isLoading && availableSsoProviders.length === 0 && orphanedExternalLogins.length === 0 ? (
+          <div className="space-y-2.5" data-testid="sso-providers-loading">
+            <Skeleton className="h-16 w-full rounded-xl" />
+            <Skeleton className="h-16 w-full rounded-xl" />
+          </div>
+        ) : availableSsoProviders.length === 0 && orphanedExternalLogins.length === 0 ? (
+          <Card
+            data-testid="sso-empty-state"
+            className="p-6 border border-nx-line bg-nx-raised text-center space-y-2.5"
+          >
+            <KeyRound className="h-6 w-6 text-nx-accent mx-auto" />
+            <p className="text-xs font-semibold text-nx-ink">
+              {t("profile.security.ssoEmptyTitle")}
+            </p>
+            <p className="text-[11px] text-nx-ink-3 max-w-md mx-auto">
+              {t("profile.security.ssoEmptyDesc")}
+            </p>
+            {canConfigureProviders && (
+              <div className="pt-1">
+                <Button
+                  asChild
+                  variant="outline"
+                  size="sm"
+                  data-testid="configure-sso-providers-link"
+                  className="border-nx-line text-nx-ink hover:border-nx-line-hi text-xs gap-1.5"
+                >
+                  <Link href="/settings/identity-providers">
+                    <Settings2 className="h-3.5 w-3.5 text-nx-accent" />
+                    <span>{t("profile.security.ssoConfigureProvidersLink")}</span>
+                  </Link>
+                </Button>
               </div>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-              {visibleCatalog.map((item) => {
-                const matchingLogin = matchExternalLogin(externalLogins, item);
-                return (
-                  <EnterpriseSsoProviderTile
-                    key={item.key}
-                    item={item}
-                    matchingLogin={matchingLogin}
-                    isConfirmingUnlink={Boolean(matchingLogin && confirmingUnlinkId === matchingLogin.id)}
-                    isUnlinkingThis={Boolean(
-                      matchingLogin && (isUnlinking || unlinkingId === matchingLogin.id) && unlinkingId === matchingLogin.id
-                    )}
-                    onConnect={setActiveConnectProvider}
-                    onRequestUnlink={(id) => {
-                      setUnlinkError(null);
-                      setConfirmingUnlinkId(id);
-                    }}
-                    onCancelUnlink={() => {
-                      setUnlinkError(null);
-                      setConfirmingUnlinkId(null);
-                    }}
-                    onConfirmUnlink={handleDisconnect}
-                  />
-                );
-              })}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+            )}
+          </Card>
+        ) : (
+          <div className="space-y-2.5">
+            {availableSsoProviders.map((provider) => (
+              <EnterpriseSsoProviderTile
+                key={provider.encryptedId}
+                provider={provider}
+                isUnlinking={isUnlinking}
+                onConnect={(selected) => {
+                  resetLinkError();
+                  setConnectTarget(selected);
+                }}
+                onDisconnect={unlinkAsync}
+              />
+            ))}
+
+            {orphanedExternalLogins.map((login) => (
+              <OrphanedExternalLoginTile
+                key={login.id}
+                login={login}
+                isUnlinking={isUnlinking}
+                onDisconnect={unlinkAsync}
+              />
+            ))}
+          </div>
+        )}
+      </CardContent>
 
       <EnterpriseSsoConnectDialog
-        isOpen={Boolean(activeConnectProvider)}
-        onClose={() => setActiveConnectProvider(null)}
-        provider={activeConnectProvider}
-        onDirectLink={linkAccount}
-        onInitiateFederatedLogin={handleLink}
-        isLinking={isLinking}
-        activeFederatedProviderId={
-          activeConnectProvider ? findFederatedProviderId(providers, activeConnectProvider) : null
-        }
+        provider={connectTarget}
+        open={Boolean(connectTarget)}
+        onOpenChange={(open) => {
+          if (!open) {
+            resetLinkError();
+            setConnectTarget(null);
+          }
+        }}
+        isSudoActive={isSudoActive}
+        isInitiating={isInitiatingLink}
+        errorMessage={linkErrorMessage}
+        onConfirmHandshake={(provider) => initiateFederatedLink(provider)}
       />
-    </>
+    </Card>
   );
 }

@@ -47,13 +47,11 @@ export function CredentialsPasswordInput({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           required
-          dir="ltr"
           aria-invalid={hasError || undefined}
           aria-describedby={hasError ? "login-error" : undefined}
-          className="h-[var(--login-input-height,48px)] w-full rounded-xl border px-4 text-[15px] shadow-none transition-all duration-150 focus-visible:ring-0 [&::-ms-reveal]:hidden"
+          className="h-[var(--login-input-height,48px)] w-full rounded-xl border ps-4 pe-12 text-start text-[15px] shadow-none transition-all duration-150 focus-visible:ring-0 [&::-ms-reveal]:hidden"
           style={{
-            paddingRight: "4rem",
-            textAlign: "left",
+            textAlign: "start",
             background: "var(--sx-field-bg, transparent)",
             borderColor: "var(--sx-field-border, hsl(var(--border)))",
             boxShadow: "var(--sx-field-inner-hi, none)",
@@ -65,10 +63,8 @@ export function CredentialsPasswordInput({
         <Button
           type="button"
           variant="ghost"
-          className="absolute top-0 flex items-center justify-center px-3 transition-colors hover:bg-transparent"
+          className="absolute top-0 end-1 flex items-center justify-center px-3 transition-colors hover:bg-transparent"
           style={{
-            right: "4px",
-            left: "auto",
             height: "var(--login-input-height,48px)",
           }}
           onClick={onToggleShowPassword}
