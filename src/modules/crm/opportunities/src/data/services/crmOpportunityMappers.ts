@@ -1,5 +1,6 @@
 import type { DealContactRole, PipelineDefinition } from "../../domain/entities/OpportunityEntity";
 
+/** Standard API envelope returned by CRM Opportunity endpoints. */
 export interface ApiSuccessResponse<T> {
   success: boolean;
   data: T;
@@ -29,9 +30,50 @@ export function normalizeDealContactRoleDto(
   };
 }
 
+interface RawPipelineStageDto {
+  stageId?: string;
+  id?: string;
+  stageKey: string;
+  labelEn: string;
+  labelAr?: string | null;
+  sortOrder: number;
+  statusCategory: PipelineDefinition["stages"][number]["statusCategory"];
+  color?: string;
+  probabilityPercent?: number | null;
+  winProbabilityPercent?: number | null;
+  slaTargetDays?: number | null;
+  slaDays?: number | null;
+  requiredExitFields?: string[];
+  requiresVerifiedParty?: boolean;
+  triggerDealConversion?: boolean;
+  propertiesJson?: string | null;
+  canvasX?: number | null;
+  canvasY?: number | null;
+  rowVersion?: string | null;
+}
+
+interface RawPipelineDefinitionDto {
+  pipelineId?: string;
+  id?: string;
+  tenantId?: string;
+  code?: string;
+  key?: string;
+  entityType?: "deal" | "lead";
+  nameEn?: string;
+  name?: string;
+  nameAr?: string | null;
+  version?: number;
+  isDefault?: boolean;
+  isActive?: boolean;
+  propertiesJson?: string | null;
+  transitionsJson?: string | null;
+  rowVersion?: string;
+  stages?: RawPipelineStageDto[];
+}
+
 /** Normalizes PipelineDefinition payloads from relational backend endpoints. */
-export function normalizePipelineDefinitionDto(p: any): PipelineDefinition {
-  if (!p) return p;
+export function normalizePipelineDefinitionDto(p: RawPipelineDefinitionDto | null | undefined): PipelineDefinition {
+  if (!p) return p as unknown as PipelineDefinition;
   return {
     id: p.pipelineId ?? p.id ?? "",
     pipelineId: p.pipelineId ?? p.id ?? "",
@@ -49,14 +91,14 @@ export function normalizePipelineDefinitionDto(p: any): PipelineDefinition {
     transitionsJson: p.transitionsJson ?? null,
     rowVersion: p.rowVersion ?? "",
     stages: Array.isArray(p.stages)
-      ? p.stages.map((s: any) => ({
+      ? p.stages.map((s) => ({
           stageId: s.stageId ?? s.id ?? "",
           stageKey: s.stageKey,
           labelEn: s.labelEn,
           labelAr: s.labelAr ?? null,
           sortOrder: s.sortOrder,
           statusCategory: s.statusCategory,
-          color: s.color,
+          color: (s.color ?? "slate") as PipelineDefinition["stages"][number]["color"],
           winProbabilityPercent: s.probabilityPercent ?? s.winProbabilityPercent ?? null,
           probabilityPercent: s.probabilityPercent ?? s.winProbabilityPercent ?? null,
           slaTargetDays: s.slaTargetDays ?? s.slaDays ?? null,

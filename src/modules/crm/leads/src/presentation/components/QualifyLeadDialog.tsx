@@ -29,6 +29,7 @@ interface QualifyLeadDialogProps {
   initialDecision?: QualificationDecision;
 }
 
+/** Modal dialog for recording a qualification or disqualification decision on a CRM Lead. */
 export function QualifyLeadDialog({
   open,
   onOpenChange,
@@ -207,14 +208,10 @@ export function QualifyLeadDialog({
             </Button>
             <Button
               type="submit"
+              variant={decision === "Qualified" ? "default" : "destructive"}
               size="sm"
               disabled={isSubmitting}
-              className={cn(
-                "h-8 text-xs font-bold hover:brightness-105",
-                decision === "Qualified"
-                  ? "bg-nx-accent-fill text-nx-on-fill"
-                  : "bg-destructive text-destructive-foreground"
-              )}
+              className="h-8 text-xs font-bold"
             >
               {isSubmitting
                 ? t("crmLeads.qualification.saving")

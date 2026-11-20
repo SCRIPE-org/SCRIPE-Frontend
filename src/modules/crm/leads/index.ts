@@ -9,7 +9,6 @@ export * from "./src/data/services/CrmLeadService";
 export * from "./src/data/repositories/CrmLeadRepository";
 export * from "./src/presentation/views/LeadsView";
 export * from "./src/presentation/views/LeadDetailView";
-export * from "./src/presentation/components/LeadsTable";
 export * from "./src/presentation/components/CreateLeadDialog";
 export * from "./src/presentation/components/LeadStatusBadge";
 export * from "./src/presentation/viewmodels/useLeadsViewModel";

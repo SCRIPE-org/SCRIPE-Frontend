@@ -19,6 +19,7 @@ import { AlertCircle, Building2, UserCheck } from "lucide-react";
 import type { CrmLead, LinkPartyToLeadInput } from "../../domain/entities/LeadEntity";
 import { buildLeadQuickCreateDefaults } from "../utils/leadTransitionHelpers";
 
+/** Candidate PartyKernel organization or person lookup projection for lead linking. */
 export interface LeadCandidatePartyOption {
   partyId: string;
   legalNameEn: string;
@@ -40,6 +41,7 @@ interface LinkPartyDialogProps {
   submitError?: string | null;
 }
 
+/** Modal dialog for linking a verified PartyKernel organization, person, or account to a Lead. */
 export function LinkPartyDialog({
   open,
   onOpenChange,
@@ -202,9 +204,10 @@ export function LinkPartyDialog({
             </Button>
             <Button
               type="submit"
+              variant="default"
               size="sm"
               disabled={isSubmitting}
-              className="h-8 text-xs bg-nx-accent-fill text-nx-on-fill font-bold hover:brightness-105"
+              className="h-8 text-xs font-bold"
             >
               {isSubmitting ? t("crmLeads.partyLink.saving") : t("crmLeads.partyLink.save")}
             </Button>

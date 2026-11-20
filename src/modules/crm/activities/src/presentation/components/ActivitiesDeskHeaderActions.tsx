@@ -4,6 +4,7 @@ import { Button } from "@core/ui/button";
 import { DataExchangeToolbarActions } from "@core/data-exchange";
 import { CalendarClock, Plus, RefreshCw } from "lucide-react";
 
+/** Props for `ActivitiesDeskHeaderActions`. */
 export interface ActivitiesDeskHeaderActionsProps {
   t: (key: string) => string;
   search: string;
@@ -59,7 +60,7 @@ export function ActivitiesDeskHeaderActions({
           variant="default"
           size="sm"
           onClick={onOpenCreate}
-          className="h-8 px-3 text-xs bg-nx-accent-fill text-nx-on-fill font-semibold hover:brightness-95 gap-1.5"
+          className="h-8 px-3 text-xs font-semibold gap-1.5"
         >
           <Plus className="size-3.5" />
           <span>{t("crmActivities.actions.logActivity")}</span>

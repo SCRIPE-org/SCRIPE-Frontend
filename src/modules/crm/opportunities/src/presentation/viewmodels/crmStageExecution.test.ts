@@ -3,7 +3,7 @@ import { renderHook, act } from "@testing-library/react";
 import { setCrmContainer, type CrmContainer } from "@modules/crm/di";
 import { useCrmWorkflowsStore } from "@modules/crm";
 import type { CrmOpportunity } from "../../domain/entities/OpportunityEntity";
-import { evaluateOptimisticDealStageMove } from "./useOpportunityViewModelHelpers";
+import { evaluateOptimisticDealStageMove } from "../utils/opportunityViewModelHelpers";
 import { useOpportunityStageActions } from "./useOpportunityStageActions";
 
 const baseOpp: CrmOpportunity = {
@@ -111,6 +111,14 @@ describe("Deal Kanban dynamic stage execution & error rollback", () => {
     setCrmContainer({
       overviewService: {} as never,
       overviewRepository: {} as never,
+
+      workflowService: {} as never,
+
+      workflowRepository: {} as never,
+      reportsService: {} as never,
+      reportsRepository: {} as never,
+      settingsService: {} as never,
+      settingsRepository: {} as never,
       leadService: {} as never,
       leadRepository: {} as never,
       opportunityService: {} as never,
@@ -119,6 +127,9 @@ describe("Deal Kanban dynamic stage execution & error rollback", () => {
       accountRepository: {} as never,
       contactService: {} as never,
       contactRepository: {} as never,
+      activityService: {} as never,
+      activityRepository: {} as never,
+      entityLookup: {} as never,
     } as CrmContainer);
 
     const wf = useCrmWorkflowsStore.getState().getActiveWorkflow("deal");

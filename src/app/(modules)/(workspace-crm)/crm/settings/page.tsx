@@ -1,16 +1,19 @@
 import type { Metadata } from "next";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
-import { CrmSettingsView } from "@modules/crm/overview";
+import { CrmSettingsView } from "@modules/crm/settings";
 
 export const metadata: Metadata = {
-  title: "CRM Module Settings & Multi-Currency Engine | SCRIPE",
+  title: "CRM Settings & Governance | SCRIPE",
   description:
-    "Configure CRM base reporting currency, live exchange rates, stage gate governance, SLAs, and Custom Fields Studio.",
+    "Server-persisted tenant CRM governance, multi-currency FX rules, custom fields studio, and pipeline roles.",
 };
 
+/**
+ * Next.js App Router entry point for CRM Tenant Governance & Currency Settings.
+ */
 export default function CrmSettingsPage() {
   return (
-    <ModuleErrorBoundary moduleName="crm.tabs.settings">
+    <ModuleErrorBoundary moduleName="crm.settings.title">
       <CrmSettingsView />
     </ModuleErrorBoundary>
   );

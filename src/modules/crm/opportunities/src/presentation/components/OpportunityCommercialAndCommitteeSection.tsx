@@ -13,20 +13,23 @@ import { Label } from "@core/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import {
   CrmEntitySearchSelect,
-  DEFAULT_BUYING_COMMITTEE_ROLES,
-  useCrmSettingsStore,
+} from "@modules/crm/shared";
+import {
+  useCrmWorkflowGovernanceQuery,
   useCrmWorkflowsStore,
-} from "@modules/crm";
+} from "@modules/crm/workflows";
 import type { CrmOpportunity, CrmOpportunityStageHistory, DealContactRole } from "../../domain/entities/OpportunityEntity";
 import {
   OpportunityCommercialQuoteAndPlaybookSection,
   type QuoteLineItem,
 } from "./OpportunityCommercialQuoteAndPlaybookSection";
 
+/** Re-exported quote line-item type for commercial package callers. */
 export type { QuoteLineItem };
 
 type StakeholderRoleType = DealContactRole["stakeholderRole"];
 
+/** Renders the commercial quote builder, stage playbook, and buying committee stakeholder matrix. */
 export function OpportunityCommercialAndCommitteeSection({
   opp,
   isRtl,
@@ -59,8 +62,7 @@ export function OpportunityCommercialAndCommitteeSection({
     (opp.stageKey.includes("negotiation") || opp.status === "Won" ? "estimatedAmount,currencyCode" : "");
   const lockedFields = rawLockedFields ? rawLockedFields.split(",").map((s) => s.trim()).filter(Boolean) : [];
 
-  const buyingCommitteeRoles = useCrmSettingsStore((s) => s.buyingCommitteeRoles ?? DEFAULT_BUYING_COMMITTEE_ROLES);
-  const addBuyingCommitteeRole = useCrmSettingsStore((s) => s.addBuyingCommitteeRole);
+  const { buyingCommitteeRoles, addBuyingCommitteeRole } = useCrmWorkflowGovernanceQuery();
   const [contactId, setContactId] = useState("");
   const [contactDisplayName, setContactDisplayName] = useState("");
   const [stakeholderRole, setStakeholderRole] = useState<StakeholderRoleType>("DecisionMaker");
@@ -201,7 +203,7 @@ export function OpportunityCommercialAndCommitteeSection({
                   const en = newRoleLabelEn.trim();
                   if (!en) return;
                   const key = en.replace(/[^a-zA-Z0-9]/g, "") || `CustomRole${Date.now()}`;
-                  addBuyingCommitteeRole({ key, labelEn: en, labelAr: newRoleLabelAr.trim() || en, isSystem: false });
+                  addBuyingCommitteeRole({ key, labelEn: en, labelAr: newRoleLabelAr.trim() || en });
                   setStakeholderRole(key as StakeholderRoleType);
                   setNewRoleLabelEn("");
                   setNewRoleLabelAr("");
@@ -216,8 +218,9 @@ export function OpportunityCommercialAndCommitteeSection({
 
           <div className="space-y-1.5">
             {contactRoles.map((r, idx) => {
-              const roleLabel = r.stakeholderRole || (r as any).role || "DecisionMaker";
-              const displayLabel = r.contactName || (r as any).contactDisplayName || (opp as any).partyDisplayName || t("crmOpportunities.commercialSuite.primaryAccountStakeholder");
+              const roleExt = r as DealContactRole & { role?: string; contactDisplayName?: string };
+              const roleLabel = r.stakeholderRole || roleExt.role || "DecisionMaker";
+              const displayLabel = r.contactName || roleExt.contactDisplayName || opp.partyDisplayName || t("crmOpportunities.commercialSuite.primaryAccountStakeholder");
               const rowKey = r.id || `${r.contactPartyId || "contact"}-${roleLabel}-${idx}`;
               return (
                 <div key={rowKey} className="rounded-md border border-nx-line bg-nx-raised/40 px-3 py-1.5 flex items-start justify-between gap-2 text-xs" data-testid={`committee-role-row-${roleLabel}`}>

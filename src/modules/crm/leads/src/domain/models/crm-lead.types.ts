@@ -2,10 +2,14 @@
  * CRM Lead Domain Types
  */
 
+/** Canonical qualification lifecycle statuses for a CRM Lead. */
 export type LeadStatus = "New" | "Working" | "Qualified" | "Converted" | "Disqualified";
+/** Qualification outcome decision submitted when qualifying or disqualifying a Lead. */
 export type QualificationDecision = "Qualified" | "Disqualified";
+/** Commercial deal classification assigned when converting a CRM Lead. */
 export type DealKind = "NewBusiness" | "Expansion" | "Renewal" | "Services";
 
+/** Core CRM Lead domain record with PartyKernel linkages and pipeline stage metadata. */
 export interface CrmLead {
   id: string;
   title: string;
@@ -48,6 +52,7 @@ export interface CrmLead {
   rowVersion?: string;
 }
 
+/** Input payload for assigning an owner user or team to a CRM Lead. */
 export interface AssignLeadOwnerInput {
   leadId: string;
   ownerUserId: string;
@@ -57,6 +62,7 @@ export interface AssignLeadOwnerInput {
   idempotencyKey?: string;
 }
 
+/** Input payload for advancing or returning a CRM Lead across workflow stages. */
 export interface MoveLeadStageInput {
   leadId: string;
   targetStageKey: string;
@@ -85,6 +91,7 @@ export interface MoveLeadStageInput {
   nextStepSummary?: string;
 }
 
+/** Input payload for creating a new inbound or outbound CRM Lead. */
 export interface CreateLeadInput {
   title?: string;
   firstName?: string;
@@ -109,6 +116,7 @@ export interface CreateLeadInput {
   idempotencyKey?: string;
 }
 
+/** Input payload for updating editable CRM Lead profile and qualification fields. */
 export interface UpdateLeadInput {
   leadId: string;
   title?: string;
@@ -127,6 +135,7 @@ export interface UpdateLeadInput {
   idempotencyKey?: string;
 }
 
+/** Input payload for qualifying or disqualifying a CRM Lead. */
 export interface QualifyLeadInput {
   leadId: string;
   decision: QualificationDecision;
@@ -137,6 +146,7 @@ export interface QualifyLeadInput {
   idempotencyKey?: string;
 }
 
+/** Input payload for linking an organization, person, or account to a CRM Lead. */
 export interface LinkPartyToLeadInput {
   leadId: string;
   organizationPartyId?: string;
@@ -147,6 +157,7 @@ export interface LinkPartyToLeadInput {
   idempotencyKey?: string;
 }
 
+/** Input payload for converting a qualified CRM Lead into a commercial Opportunity. */
 export interface ConvertLeadInput {
   leadId: string;
   opportunityTitle: string;
@@ -160,6 +171,7 @@ export interface ConvertLeadInput {
   idempotencyKey?: string;
 }
 
+/** Result returned after converting a CRM Lead into an Opportunity and Party records. */
 export interface ConvertLeadResult {
   leadId: string;
   opportunityId: string;
@@ -170,6 +182,7 @@ export interface ConvertLeadResult {
   convertedAtUtc: string;
 }
 
+/** Pagination, search, and status filter options for querying CRM Leads. */
 export interface LeadsFilterParams {
   page?: number;
   pageSize?: number;
@@ -177,6 +190,7 @@ export interface LeadsFilterParams {
   status?: LeadStatus;
 }
 
+/** Paginated list response containing CRM Lead records and total count. */
 export interface PagedLeadsResult {
   items: CrmLead[];
   totalCount: number;

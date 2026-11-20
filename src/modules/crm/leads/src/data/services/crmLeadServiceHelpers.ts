@@ -1,5 +1,6 @@
 import type { CrmLead } from "../../domain/models/crm-lead.types";
 
+/** Standard API envelope returned by CRM Lead endpoints. */
 export interface LeadApiSuccessResponse<T> {
   success: boolean;
   data: T;

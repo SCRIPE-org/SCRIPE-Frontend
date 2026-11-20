@@ -12,6 +12,7 @@ import type {
   PagedLeadsResult,
 } from "../models/crm-lead.types";
 
+/** Repository port abstracting CRM Lead lifecycle persistence and transitions. */
 export interface ICrmLeadRepository {
   getLeads(params?: LeadsFilterParams): Promise<PagedLeadsResult>;
   getLeadById(id: string): Promise<CrmLead>;

@@ -1,26 +1,9 @@
-/**
- * SCRIPE CRM Overview & Settings Domain Models
- *
- * Types for CRM Shell, Dashboard, Pipeline Progress, and Server-Persisted Settings.
- */
+import type { CanonicalActiveStageKey, CrmStageKey } from "@modules/crm/shared";
 
-export type CanonicalActiveStageKey =
-  | "default.discovery"
-  | "default.qualification"
-  | "default.solution_fit"
-  | "default.proposal"
-  | "default.negotiation";
+/** Re-exported canonical CRM pipeline stage keys for overview rollups. */
+export type { CanonicalActiveStageKey, CrmStageKey };
 
-export type CrmStageKey =
-  | CanonicalActiveStageKey
-  | "discovery"
-  | "qualification"
-  | "solution_fit"
-  | "proposal"
-  | "negotiation"
-  | "won"
-  | "lost";
-
+/** Stage rollup descriptor rendered in the overview pipeline progression strip. */
 export interface CrmStageSummary {
   key: CrmStageKey;
   name: string;
@@ -30,6 +13,7 @@ export interface CrmStageSummary {
   requiresVerifiedParty: boolean;
 }
 
+/** Commercial pipeline velocity rollup model. */
 export interface CrmPipelineOverview {
   id: string;
   name: string;
@@ -39,6 +23,7 @@ export interface CrmPipelineOverview {
   currency: string;
 }
 
+/** Single KPI metric card entry on CRM Overview. */
 export interface CrmKpiStat {
   id: string;
   title: string;
@@ -48,6 +33,7 @@ export interface CrmKpiStat {
   description: string;
 }
 
+/** Recent deal row rendered on CRM Overview. */
 export interface CrmRecentDeal {
   id: string;
   title: string;
@@ -61,174 +47,9 @@ export interface CrmRecentDeal {
   updatedAt: string;
 }
 
+/** Aggregated CRM Overview dashboard domain payload. */
 export interface CrmOverviewData {
   stats: CrmKpiStat[];
   pipeline: CrmPipelineOverview;
   recentDeals: CrmRecentDeal[];
-}
-
-export interface CrmStageReportItem {
-  stageKey: string;
-  labelEn: string;
-  labelAr: string;
-  sortOrder: number;
-  probabilityPercent: number;
-  requiresVerifiedParty: boolean;
-  dealCount: number;
-  totalAmount?: number | null;
-  weightedForecastAmount?: number | null;
-}
-
-export interface CrmCurrencyPipelineBreakdown {
-  currencyCode: string;
-  openDealsCount: number;
-  wonDealsCount: number;
-  lostDealsCount: number;
-  totalOpenValue?: number | null;
-  totalWeightedForecastValue?: number | null;
-  totalWonValue?: number | null;
-  totalLostValue?: number | null;
-  stages: CrmStageReportItem[];
-}
-
-export type CrmStageReportBucket = CrmStageReportItem;
-
-
-export interface CrmLeadFunnelReport {
-  totalLeads: number;
-  newCount: number;
-  workingCount: number;
-  qualifiedCount: number;
-  convertedCount: number;
-  disqualifiedCount: number;
-  qualificationRatePercent: number;
-  conversionRatePercent: number;
-}
-
-export interface CrmWinLossSummary {
-  totalClosedDeals: number;
-  wonCount: number;
-  lostCount: number;
-  openCount?: number;
-  winRatePercent: number;
-  avgCycleDays: number;
-}
-
-export interface CrmActivitySummary {
-  totalActivitiesCount: number;
-  notesCount?: number;
-  callsCount: number;
-  meetingsCount: number;
-  communicationsSentCount: number;
-  followUpsCreatedCount: number;
-}
-
-export interface CrmPipelineReport {
-  generatedAtUtc: string;
-  pipelineId?: string;
-  pipelineCode?: string;
-  pipelineNameEn: string;
-  pipelineNameAr: string | null;
-  isAmountMasked: boolean;
-  currencyBreakdowns: CrmCurrencyPipelineBreakdown[];
-  leadFunnel: CrmLeadFunnelReport;
-  winLoss: CrmWinLossSummary;
-  activities: CrmActivitySummary;
-}
-
-/** Server-persisted tenant-wide CRM governance and currency configuration. */
-export interface CrmTenantSettingsPayload {
-  baseCurrencyCode: string;
-  defaultDealCurrencyCode: string;
-  autoConvertAmountsToBase: boolean;
-  showDualCurrencyBadges: boolean;
-  allowUserCurrencyOverride: boolean;
-  snapshotExchangeRateOnDealCreation: boolean;
-  stageGateStrictness: "strict" | "advisory" | "custom";
-  requireVerifiedPartyOnProposal: boolean;
-  requireCloseNotesOnWin: boolean;
-  defaultLeadSource: string;
-  slaLeadResponseHours: number;
-  stalledDealThresholdDays: number;
-  duplicateDetectionMode: "strict" | "fuzzy" | "advisory";
-  leadAutoAssignmentRule: "round_robin" | "territory" | "manual";
-  enableCatalogPricingQuoteHandoff: boolean;
-  enableVenueAcademyCommercialHandoff: boolean;
-  autoCreateWorkItemsOnStageMove: boolean;
-  defaultCommunicationChannel: "email" | "whatsapp" | "in_app";
-  autoSyncPartyKernelOnConvert: boolean;
-  customFieldsConfigJson?: string | null;
-  workflowCanvasConfigJson?: string | null;
-  defaultDealViewMode?: "Kanban" | "Table" | "SplitPane";
-  defaultPipelineCode?: string;
-  cardDensity?: "Comfortable" | "Compact";
-  rowVersion?: number | string;
-}
-
-/** Server-persisted per-user CRM display & currency override preferences. */
-export interface CrmUserPreferencePayload {
-  overrideCurrencyCode?: string | null;
-  defaultDealViewMode: "Kanban" | "Table" | "SplitPane";
-  defaultPipelineCode: string;
-  cardDensity: "Comfortable" | "Compact";
-  autoConvertAmountsOverride?: boolean | null;
-  showDualCurrencyBadgesOverride?: boolean | null;
-  dailyDigestEnabled: boolean;
-  stageMoveNotificationsEnabled: boolean;
-  rowVersion?: number | string;
-}
-
-  /** Composite server-side CRM settings response including live exchange rates. */
-export interface CrmSettingsResponseData {
-  effectiveBaseCurrencyCode: string;
-  effectiveAutoConvertToBase: boolean;
-  effectiveShowDualCurrencyBadges: boolean;
-  tenantSettings: CrmTenantSettingsPayload;
-  userPreferences: CrmUserPreferencePayload;
-  exchangeRatesUsdBase: Record<string, number>;
-}
-
-/** Supported entity categories for server-backed searchable CRM selectors. */
-export type CrmEntitySearchKind =
-  | "party"
-  | "account"
-  | "contact"
-  | "user"
-  | "team"
-  | "assignee";
-
-/** Query descriptor for searching tenant CRM entities or commercial assignees. */
-export interface CrmEntitySearchRequest {
-  kind: CrmEntitySearchKind;
-  query?: string;
-  accountId?: string;
-  pageSize?: number;
-}
-
-/** Normalized entity search option returned from tenant CRM endpoints. */
-export interface CrmEntitySearchItem {
-  id: string;
-  partyId?: string;
-  accountId?: string;
-  contactId?: string;
-  kind: "party" | "account" | "contact" | "user" | "team";
-  label: string;
-  labelAr?: string | null;
-  description?: string | null;
-  isVerified?: boolean;
-  email?: string | null;
-  phone?: string | null;
-}
-
-/** Input payload for inline quick creation inside searchable CRM selectors. */
-export interface CrmQuickCreateEntityInput {
-  kind: "account" | "contact" | "party";
-  entitySubKind?: "account" | "contact";
-  nameEn: string;
-  nameAr?: string;
-  email?: string;
-  phone?: string;
-  jobTitle?: string;
-  primaryAccountId?: string;
-  commercialTierCode?: string;
 }

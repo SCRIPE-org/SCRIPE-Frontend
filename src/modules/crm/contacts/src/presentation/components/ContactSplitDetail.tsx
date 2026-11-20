@@ -14,6 +14,7 @@ interface ContactSplitDetailProps {
   readonly t: (key: string) => string;
 }
 
+/** Split-pane detail inspector rendering a selected CRM Contact summary. */
 export function ContactSplitDetail({
   contact,
   actions,

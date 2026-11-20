@@ -36,6 +36,7 @@ interface ContactEditDialogProps {
   readonly t: (key: string) => string;
 }
 
+/** Modal dialog for editing a CRM Contact's account linkage, role, and notes. */
 export function ContactEditDialog({
   isOpen,
   isSubmitting,

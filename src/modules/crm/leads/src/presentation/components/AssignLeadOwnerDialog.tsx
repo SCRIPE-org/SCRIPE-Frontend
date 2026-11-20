@@ -18,6 +18,7 @@ import { Alert, AlertDescription } from "@core/ui/alert";
 import { AlertCircle, UserCheck } from "lucide-react";
 import type { CrmLead, AssignLeadOwnerInput } from "../../domain/entities/LeadEntity";
 
+/** Props for `AssignLeadOwnerDialog`. */
 export interface AssignLeadOwnerDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;

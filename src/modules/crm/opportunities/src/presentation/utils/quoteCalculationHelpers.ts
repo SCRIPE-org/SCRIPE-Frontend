@@ -1,4 +1,6 @@
-import type { CrmDealQuoteLineItem } from "@modules/crm";
+"use client";
+
+import type { CrmDealQuoteLineItem } from "../../domain/models/crm-opportunity-quote.types";
 
 /** Builds baseline quote line items from an opportunity's estimated amount when none are persisted yet. */
 export function buildDefaultQuoteItems(

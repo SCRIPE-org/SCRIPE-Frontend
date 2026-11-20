@@ -21,10 +21,7 @@ import { CreateFollowUpModal } from "../components/CreateFollowUpModal";
 import { isActivityWorkItemDone } from "../utils/activitiesFilteringHelpers";
 import type { CrmActivity } from "../../domain/entities/CrmActivityEntity";
 
-/**
- * CRM Activities Execution Desk view for logging sales engagements,
- * scheduling linked follow-up tasks, and reviewing account timelines.
- */
+/** CRM Activities Execution Desk view (<200 lines). */
 export function ActivitiesExecutionDeskView() {
   const router = useRouter();
   const { t, language } = useI18n();
@@ -34,33 +31,13 @@ export function ActivitiesExecutionDeskView() {
   const viewModel = useActivitiesExecutionDeskViewModel(language);
 
   const {
-    accounts,
-    accountsMap,
-    selectedAccountId,
-    selectedAccountName,
-    selectAccountId,
-    search,
-    activityKindFilter,
-    dueFilter,
-    handleDueFilterChange,
-    contactFilterId,
-    contactDisplayName,
-    clearContactFilter,
-    completedActivityIds,
-    handleCompleteActivity,
-    handleSearchChange,
-    handleActivityKindFilterChange,
-    isCreateOpen,
-    setIsCreateOpen,
-    selectedActivityForFollowUp,
-    closeFollowUpModal,
-    openFollowUpForActivity,
-    openHeaderFollowUp,
-    isSubmitting,
-    submitError,
-    handleCreateActivity,
-    handleCreateFollowUp,
-    refresh,
+    accounts, accountsMap, selectedAccountId, selectedAccountName, selectAccountId,
+    search, activityKindFilter, dueFilter, handleDueFilterChange,
+    contactFilterId, contactDisplayName, clearContactFilter,
+    completedActivityIds, handleCompleteActivity, handleSearchChange, handleActivityKindFilterChange,
+    isCreateOpen, setIsCreateOpen, selectedActivityForFollowUp, closeFollowUpModal,
+    openFollowUpForActivity, openHeaderFollowUp, isSubmitting, submitError,
+    handleCreateActivity, handleCreateFollowUp, refresh,
   } = viewModel;
 
   const handleTabChange = (tab: CrmTabId) => {
@@ -69,7 +46,6 @@ export function ActivitiesExecutionDeskView() {
   };
 
   const columns = useActivitiesCrudColumns(language, t, accountsMap);
-
   const crudConfig: CrudConfig<CrmActivity> = {
     titleKey: "crmActivities.executionDesk.title",
     subtitleKey: "crmActivities.executionDesk.description",
@@ -83,28 +59,14 @@ export function ActivitiesExecutionDeskView() {
     viewSwitchPosition: "toolbar",
     viewModes: ["Table", "CardGrid", "SplitPane"],
     defaultView: "Table",
-    permissions: {
-      canView: CRM_PERMISSIONS.ACTIVITIES_READ,
-      canCreate: CRM_PERMISSIONS.ACTIVITIES_CREATE,
-      canUpdate: false,
-      canDelete: false,
-    },
+    permissions: { canView: CRM_PERMISSIONS.ACTIVITIES_READ, canCreate: CRM_PERMISSIONS.ACTIVITIES_CREATE, canUpdate: false, canDelete: false },
     toolbarContent: (
       <ActivitiesToolbar
-        isRtl={isRtl}
-        search={search}
-        onSearchChange={handleSearchChange}
-        accounts={accounts}
-        selectedAccountId={selectedAccountId}
-        onSelectAccountId={selectAccountId}
-        activityKindFilter={activityKindFilter}
-        onActivityKindFilterChange={handleActivityKindFilterChange}
-        dueFilter={dueFilter}
-        onDueFilterChange={handleDueFilterChange}
-        contactFilterId={contactFilterId}
-        contactDisplayName={contactDisplayName}
-        onClearContactFilter={clearContactFilter}
-        t={t}
+        isRtl={isRtl} search={search} onSearchChange={handleSearchChange} accounts={accounts}
+        selectedAccountId={selectedAccountId} onSelectAccountId={selectAccountId}
+        activityKindFilter={activityKindFilter} onActivityKindFilterChange={handleActivityKindFilterChange}
+        dueFilter={dueFilter} onDueFilterChange={handleDueFilterChange}
+        contactFilterId={contactFilterId} contactDisplayName={contactDisplayName} onClearContactFilter={clearContactFilter} t={t}
       />
     ),
     columns,
@@ -112,11 +74,7 @@ export function ActivitiesExecutionDeskView() {
       {
         label: tFn("crmActivities.actions.markDone"),
         icon: <CheckCircle2 className="size-3.5" />,
-        show: (a: CrmActivity) =>
-          canFollowUp &&
-          Boolean(a.workItemStatus) &&
-          !isActivityWorkItemDone(a.workItemStatus) &&
-          !completedActivityIds[a.activityId],
+        show: (a: CrmActivity) => canFollowUp && Boolean(a.workItemStatus) && !isActivityWorkItemDone(a.workItemStatus) && !completedActivityIds[a.activityId],
         onClick: (a: CrmActivity) => void handleCompleteActivity(a),
       },
       {
@@ -139,26 +97,10 @@ export function ActivitiesExecutionDeskView() {
       },
     ],
     renderCardGridItem: (activity: CrmActivity, actions: React.ReactNode) => (
-      <ActivityCardGridItem
-        activity={activity}
-        actions={actions}
-        language={language}
-        accountsMap={accountsMap}
-        onSelectAccount={(accId) => router.push(`/crm/accounts/${accId}`)}
-        onScheduleFollowUp={openFollowUpForActivity}
-        t={t}
-      />
+      <ActivityCardGridItem activity={activity} actions={actions} language={language} accountsMap={accountsMap} onSelectAccount={(accId) => router.push(`/crm/accounts/${accId}`)} onScheduleFollowUp={openFollowUpForActivity} t={t} />
     ),
     renderSplitDetail: (activity: CrmActivity, actions: React.ReactNode) => (
-      <ActivitySplitDetail
-        activity={activity}
-        actions={actions}
-        language={language}
-        accountsMap={accountsMap}
-        onSelectAccount={(accId) => router.push(`/crm/accounts/${accId}`)}
-        onScheduleFollowUp={openFollowUpForActivity}
-        t={t}
-      />
+      <ActivitySplitDetail activity={activity} actions={actions} language={language} accountsMap={accountsMap} onSelectAccount={(accId) => router.push(`/crm/accounts/${accId}`)} onScheduleFollowUp={openFollowUpForActivity} t={t} />
     ),
   };
 
@@ -170,13 +112,8 @@ export function ActivitiesExecutionDeskView() {
           subtitle={t("crmActivities.executionDesk.description")}
           actions={
             <ActivitiesDeskHeaderActions
-              t={t}
-              search={search}
-              onRefresh={refresh}
-              canFollowUp={canFollowUp}
-              onScheduleFollowUp={openHeaderFollowUp}
-              canCreateActivity={canCreateActivity}
-              onOpenCreate={() => setIsCreateOpen(true)}
+              t={t} search={search} onRefresh={refresh} canFollowUp={canFollowUp}
+              onScheduleFollowUp={openHeaderFollowUp} canCreateActivity={canCreateActivity} onOpenCreate={() => setIsCreateOpen(true)}
             />
           }
         />
@@ -193,13 +130,7 @@ export function ActivitiesExecutionDeskView() {
               description={t("crmActivities.empty.description")}
               action={
                 canCreateActivity ? (
-                  <Button
-                    type="button"
-                    variant="default"
-                    size="sm"
-                    onClick={() => setIsCreateOpen(true)}
-                    className="h-8 px-3 text-xs bg-nx-accent-fill text-nx-on-fill font-semibold hover:brightness-95 gap-1.5"
-                  >
+                  <Button type="button" variant="default" size="sm" onClick={() => setIsCreateOpen(true)} className="h-8 px-3 text-xs font-semibold gap-1.5">
                     <Plus className="size-3.5" />
                     <span>{t("crmActivities.actions.logActivity")}</span>
                   </Button>
@@ -209,25 +140,8 @@ export function ActivitiesExecutionDeskView() {
           }
         />
 
-        <CreateActivityModal
-          isOpen={isCreateOpen}
-          onOpenChange={setIsCreateOpen}
-          onSubmit={handleCreateActivity}
-          isSubmitting={isSubmitting}
-          error={submitError}
-          targetLabel={selectedAccountName}
-          allowAccountSelect={selectedAccountId === "all"}
-          initialAccountId={selectedAccountId !== "all" ? selectedAccountId : undefined}
-        />
-
-        <CreateFollowUpModal
-          key={selectedActivityForFollowUp?.activityId ?? "closed"}
-          activity={selectedActivityForFollowUp}
-          onClose={closeFollowUpModal}
-          onSubmit={handleCreateFollowUp}
-          isSubmitting={isSubmitting}
-          error={submitError}
-        />
+        <CreateActivityModal isOpen={isCreateOpen} onOpenChange={setIsCreateOpen} onSubmit={handleCreateActivity} isSubmitting={isSubmitting} error={submitError} targetLabel={selectedAccountName} allowAccountSelect={selectedAccountId === "all"} initialAccountId={selectedAccountId !== "all" ? selectedAccountId : undefined} />
+        <CreateFollowUpModal key={selectedActivityForFollowUp?.activityId ?? "closed"} activity={selectedActivityForFollowUp} onClose={closeFollowUpModal} onSubmit={handleCreateFollowUp} isSubmitting={isSubmitting} error={submitError} />
       </div>
     </CrmShell>
   );

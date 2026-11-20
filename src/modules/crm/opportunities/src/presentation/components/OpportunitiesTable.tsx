@@ -10,6 +10,7 @@ import { OpportunityStatusBadge } from "./OpportunityStatusBadge";
 import { OpportunityStageBadge } from "./OpportunityStageBadge";
 import { renderOpportunitySplitDetail } from "./opportunitySplitDetailRenderer";
 
+/** Re-exported split-pane detail renderer for CRM Opportunities views. */
 export { renderOpportunitySplitDetail };
 
 /**

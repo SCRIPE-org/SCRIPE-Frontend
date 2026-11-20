@@ -3,6 +3,7 @@
  * Matches backend ASP.NET Core SalesActivitiesController wire format.
  */
 
+/** Raw API wire DTO representing a CRM sales activity timeline entry. */
 export interface CrmSalesActivityDto {
   readonly activityId: string;
   readonly leadId?: string | null;
@@ -22,6 +23,7 @@ export interface CrmSalesActivityDto {
   readonly maskedFieldKeys?: readonly string[];
 }
 
+/** Paginated sales activity wire DTO response. */
 export interface PagedActivitiesResultDto {
   readonly items: readonly CrmSalesActivityDto[];
   readonly page: number;
@@ -32,6 +34,7 @@ export interface PagedActivitiesResultDto {
   readonly hasNextPage: boolean;
 }
 
+/** Wire DTO returned when creating a follow-up work item linked to an activity. */
 export interface FollowUpCreatedResponseDto {
   readonly workItemRefId: string;
   readonly workItemStatus: string;

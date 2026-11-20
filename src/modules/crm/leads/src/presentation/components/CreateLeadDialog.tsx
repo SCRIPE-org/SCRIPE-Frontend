@@ -23,6 +23,7 @@ interface CreateLeadDialogProps {
   submitError?: string | null;
 }
 
+/** Modal dialog for capturing a new CRM Lead with currency conversion preview and custom fields. */
 export function CreateLeadDialog({
   open,
   onOpenChange,
@@ -195,7 +196,7 @@ export function CreateLeadDialog({
             <Button type="button" variant="outline" size="sm" onClick={() => onOpenChange(false)} disabled={isSubmitting} className="h-8 text-xs border-nx-line bg-nx-surface text-nx-ink hover:bg-nx-raised">
               {t("crmLeads.actions.cancel")}
             </Button>
-            <Button type="submit" size="sm" disabled={isSubmitting || !title.trim() || !firstName.trim()} className="h-8 text-xs bg-nx-accent-fill text-nx-on-fill font-bold hover:brightness-105">
+            <Button type="submit" variant="default" size="sm" disabled={isSubmitting || !title.trim() || !firstName.trim()} className="h-8 text-xs font-bold">
               {isSubmitting ? t("crmLeads.actions.creating") : t("crmLeads.actions.create")}
             </Button>
           </DialogFooter>

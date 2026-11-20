@@ -1,8 +1,10 @@
 "use client";
 
 import { useMemo } from "react";
-import { resolveDefaultStageColor, type CrmStageColorToken } from "@modules/crm";
+import { resolveDefaultStageColor, type CrmStageColorToken, type CrmWorkflowDefinition } from "@modules/crm";
+import type { PipelineDefinition } from "../../domain/entities/OpportunityEntity";
 
+/** Normalized opportunity stage descriptor for detail stepper rendering. */
 export interface ResolvedDetailStage {
   key: string;
   label: string;
@@ -20,14 +22,15 @@ const DEFAULT_STAGE_STEPS = [
   { key: "default.negotiation", labelKey: "crmOpportunities.stages.negotiation", order: 5, requiresParty: true },
 ];
 
+/** Resolves ordered opportunity detail stepper stages from workflow or pipeline definitions. */
 export function useOpportunityDetailStages({
   activeDealWorkflow,
   pipeline,
   isRtl,
   t,
 }: {
-  readonly activeDealWorkflow: any;
-  readonly pipeline: any;
+  readonly activeDealWorkflow: CrmWorkflowDefinition | null | undefined;
+  readonly pipeline: PipelineDefinition | null | undefined;
   readonly isRtl: boolean;
   readonly t: (key: string) => string;
 }): ResolvedDetailStage[] {

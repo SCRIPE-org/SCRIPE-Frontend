@@ -37,6 +37,7 @@ interface CreateActivityModalProps {
   readonly initialAccountId?: string;
 }
 
+/** Modal dialog for logging a new sales note, call, or meeting activity. */
 export function CreateActivityModal({
   isOpen,
   onOpenChange,

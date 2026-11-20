@@ -24,6 +24,7 @@ interface CreateAccountDialogProps {
   error: string | null;
 }
 
+/** Modal dialog for creating a CRM Account from an existing Party or inline organization. */
 export function CreateAccountDialog({
   open,
   onOpenChange,

@@ -1,12 +1,15 @@
 "use client";
 
+import { usePermission } from "@core/hooks/use-permission";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Card } from "@core/ui/card";
+import { CRM_PERMISSIONS } from "@modules/crm/shared";
 import { CheckCircle2, Rocket } from "lucide-react";
 import { cn } from "@core/common/utils";
 import type { CrmOpportunity } from "../../domain/entities/OpportunityEntity";
 
+/** HQ fulfillment handoff trigger card gated by `CRM_PERMISSIONS.OPPORTUNITIES_UPDATE`. */
 export function OpportunityHqFulfillmentHandoffCard({
   t,
   opp,
@@ -20,6 +23,8 @@ export function OpportunityHqFulfillmentHandoffCard({
   isRequestingFulfillment: boolean;
   onRequestFulfillmentHandoff: () => void;
 }) {
+  const canRequestFulfillment = usePermission(CRM_PERMISSIONS.OPPORTUNITIES_UPDATE);
+
   return (
     <Card
       data-testid="hq-fulfillment-handoff-card"
@@ -47,33 +52,35 @@ export function OpportunityHqFulfillmentHandoffCard({
         </div>
         <p className="text-xs text-nx-ink-2">{t("crmOpportunities.detail.hqHandoffDescription")}</p>
       </div>
-      <div className="shrink-0">
-        <Button
-          type="button"
-          variant={fulfillmentRequested ? "outline" : "default"}
-          size="sm"
-          data-testid="request-fulfillment-btn"
-          disabled={isRequestingFulfillment || fulfillmentRequested}
-          onClick={onRequestFulfillmentHandoff}
-          className="h-8 text-xs font-bold gap-1.5"
-        >
-          {fulfillmentRequested ? (
-            <>
-              <CheckCircle2 className="size-3.5 text-success" />
-              <span>{t("crmOpportunities.detail.handoffLoggedBtn")}</span>
-            </>
-          ) : (
-            <>
-              <Rocket className="size-3.5" />
-              <span>
-                {isRequestingFulfillment
-                  ? t("crmOpportunities.detail.dispatchingBtn")
-                  : t("crmOpportunities.detail.requestHqHandoffBtn")}
-              </span>
-            </>
-          )}
-        </Button>
-      </div>
+      {canRequestFulfillment && (
+        <div className="shrink-0">
+          <Button
+            type="button"
+            variant={fulfillmentRequested ? "outline" : "default"}
+            size="sm"
+            data-testid="request-fulfillment-btn"
+            disabled={isRequestingFulfillment || fulfillmentRequested}
+            onClick={onRequestFulfillmentHandoff}
+            className="h-8 text-xs font-bold gap-1.5"
+          >
+            {fulfillmentRequested ? (
+              <>
+                <CheckCircle2 className="size-3.5 text-success" />
+                <span>{t("crmOpportunities.detail.handoffLoggedBtn")}</span>
+              </>
+            ) : (
+              <>
+                <Rocket className="size-3.5" />
+                <span>
+                  {isRequestingFulfillment
+                    ? t("crmOpportunities.detail.dispatchingBtn")
+                    : t("crmOpportunities.detail.requestHqHandoffBtn")}
+                </span>
+              </>
+            )}
+          </Button>
+        </div>
+      )}
     </Card>
   );
 }

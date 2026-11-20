@@ -38,14 +38,7 @@ export const en = {
       emptyTitle: "No leads found",
       emptyDescription: "No commercial leads match your current criteria. Create a new lead to start your sales pipeline.",
     },
-    status: {
-      new: "New",
-      working: "Working",
-      contacted: "Working",
-      qualified: "Qualified",
-      converted: "Converted",
-      disqualified: "Disqualified",
-    },
+    status: { new: "New", working: "Working", contacted: "Working", qualified: "Qualified", converted: "Converted", disqualified: "Disqualified" },
     sources: {
       inbound: "Inbound",
       website: "Website",

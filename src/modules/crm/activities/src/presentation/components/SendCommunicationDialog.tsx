@@ -15,6 +15,7 @@ import {
 } from "@core/ui/dialog";
 import { Send } from "lucide-react";
 
+/** Props for `SendCommunicationDialog`. */
 export interface SendCommunicationDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;

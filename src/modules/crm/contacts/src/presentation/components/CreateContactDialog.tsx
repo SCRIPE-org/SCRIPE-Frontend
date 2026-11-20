@@ -14,6 +14,7 @@ import { CustomFieldsSection } from "@core/crud/customFieldsExtension";
 import { CrmEntitySearchSelect } from "@modules/crm";
 import type { CreateContactInput } from "../../domain/entities/ContactEntity";
 
+/** Lookup projection for candidate PartyKernel person records when creating a contact. */
 export interface ContactCandidatePersonLookup {
   partyId: string;
   legalNameEn: string;
@@ -22,6 +23,7 @@ export interface ContactCandidatePersonLookup {
   isVerified: boolean;
 }
 
+/** Lookup projection for commercial accounts selectable during contact creation. */
 export interface ContactAccountLookup {
   id: string;
   partyLegalNameEn: string;
@@ -39,6 +41,7 @@ interface CreateContactDialogProps {
   defaultAccountId?: string;
 }
 
+/** Modal dialog for creating a new CRM Contact linked to a PartyKernel person and account. */
 export function CreateContactDialog({
   open,
   onOpenChange,

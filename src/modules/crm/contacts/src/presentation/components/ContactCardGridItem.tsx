@@ -13,6 +13,7 @@ interface ContactCardGridItemProps {
   readonly t: (key: string) => string;
 }
 
+/** Grid card item displaying a CRM Contact's name, role, account, and actions. */
 export function ContactCardGridItem({
   contact,
   actions,

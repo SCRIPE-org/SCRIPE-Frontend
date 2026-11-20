@@ -12,6 +12,7 @@ import type {
   PagedLeadsResult,
 } from "../models/crm-lead.types";
 
+/** Service port defining HTTP operations for CRM Lead workflows. */
 export interface ICrmLeadService {
   getLeads(params?: LeadsFilterParams): Promise<PagedLeadsResult>;
   getLeadById(id: string): Promise<CrmLead>;

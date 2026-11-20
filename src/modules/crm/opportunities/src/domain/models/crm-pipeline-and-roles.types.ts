@@ -1,74 +1,12 @@
-export interface PipelineStageConfig {
-  id?: string;
-  stageId?: string;
-  pipelineId?: string;
-  stageKey: string;
-  labelEn: string;
-  labelAr?: string | null;
-  sortOrder: number;
-  statusCategory?: "todo" | "in_progress" | "done" | "lost" | string;
-  color?: string;
-  winProbabilityPercent?: number | null;
-  probabilityPercent?: number | null;
-  slaTargetDays?: number | null;
-  slaDays?: number | null;
-  requiredExitFields?: string[];
-  requiresVerifiedParty?: boolean;
-  triggerDealConversion?: boolean;
-  propertiesJson?: string | null;
-  canvasX?: number | null;
-  canvasY?: number | null;
-  rowVersion?: string | null;
-}
+/** Re-exported workflow pipeline configuration models consumed by Opportunities. */
+export type {
+  PipelineStageConfig,
+  PipelineDefinition,
+  UpdatePipelineStageItem,
+  UpdateDefaultPipelineInput,
+} from "@modules/crm/workflows/src/domain/models/crm-workflow.types";
 
-export interface PipelineDefinition {
-  id?: string;
-  pipelineId?: string;
-  tenantId?: string;
-  key?: string;
-  code?: string;
-  entityType?: string;
-  name?: string;
-  nameEn?: string;
-  nameAr?: string | null;
-  version: number;
-  isDefault?: boolean;
-  isActive?: boolean;
-  propertiesJson?: string | null;
-  stages: PipelineStageConfig[];
-  transitionsJson?: string | null;
-  rowVersion: string;
-}
-
-export interface UpdatePipelineStageItem {
-  stageKey: string;
-  labelEn: string;
-  labelAr?: string | null;
-  sortOrder: number;
-  statusCategory?: string;
-  color?: string;
-  winProbabilityPercent?: number | null;
-  probabilityPercent?: number | null;
-  slaTargetDays?: number | null;
-  slaDays?: number | null;
-  requiredExitFields?: string[];
-  triggerDealConversion?: boolean;
-  propertiesJson?: string | null;
-  canvasX?: number | null;
-  canvasY?: number | null;
-  expectedRowVersion?: string | null;
-}
-
-export interface UpdateDefaultPipelineInput {
-  nameEn?: string;
-  nameAr?: string | null;
-  stages: UpdatePipelineStageItem[];
-  transitionsJson?: string | null;
-  expectedRowVersion: string;
-  allowDynamicStages?: boolean;
-  idempotencyKey?: string;
-}
-
+/** Stakeholder role classification for buying committee contacts on an Opportunity. */
 export type DealStakeholderRole =
   | "DecisionMaker"
   | "Champion"
@@ -79,6 +17,7 @@ export type DealStakeholderRole =
   | "FinancialApprover"
   | "EndUser";
 
+/** Buying committee contact assignment linked to a CRM Opportunity. */
 export interface DealContactRole {
   id: string;
   opportunityId: string;
@@ -92,6 +31,7 @@ export interface DealContactRole {
   createdAtUtc: string;
 }
 
+/** Input payload for adding a buying committee stakeholder to an Opportunity. */
 export interface AddDealContactRoleInput {
   opportunityId: string;
   contactPartyId: string;

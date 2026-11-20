@@ -10,6 +10,7 @@ import { CustomFieldsSection } from "@core/crud/customFieldsExtension";
 import { CrmEntitySearchSelect, type CrmEntitySearchItem } from "@modules/crm";
 import type { CreateOpportunityInput, DealKind } from "../../domain/entities/OpportunityEntity";
 
+/** Lookup option representing a PartyKernel organization/account for an Opportunity. */
 export interface OpportunityPartyOption {
   partyId: string;
   accountId?: string;
@@ -17,6 +18,7 @@ export interface OpportunityPartyOption {
   subtitle?: string;
 }
 
+/** Selectable initial pipeline stage option when creating an Opportunity. */
 export interface OpportunityStageOption {
   stageKey: string;
   labelEn: string;
@@ -24,6 +26,7 @@ export interface OpportunityStageOption {
   requiresParty?: boolean;
 }
 
+/** Props for `CreateOpportunityPartyStageFields`. */
 export interface CreateOpportunityPartyStageFieldsProps {
   t: (key: string, params?: Record<string, any>) => string;
   isRtl: boolean;
@@ -39,6 +42,7 @@ export interface CreateOpportunityPartyStageFieldsProps {
   isSubmitting: boolean;
 }
 
+/** Party linkage, stage selection, and custom field controls inside `CreateOpportunityDialog`. */
 export function CreateOpportunityPartyStageFields({
   t,
   isRtl,

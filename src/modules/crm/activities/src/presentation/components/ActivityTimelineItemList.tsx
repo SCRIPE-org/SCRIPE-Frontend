@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
+import { Card } from "@core/ui/card";
 import { CalendarClock, CheckCircle2, ListTodo, ShieldAlert, User } from "lucide-react";
 import type { CrmActivity } from "../../domain/entities/CrmActivityEntity";
 import {
@@ -14,6 +15,7 @@ import {
   renderActivityKindIcon,
 } from "../utils/activityTimelineFormatters";
 
+/** Props for `ActivityTimelineItemList`. */
 export interface ActivityTimelineItemListProps {
   readonly items: readonly CrmActivity[];
   readonly canFollowUp: boolean;
@@ -45,7 +47,7 @@ export function ActivityTimelineItemList({
               {renderActivityKindIcon(activity.activityKind)}
             </div>
 
-            <div className="p-3.5 rounded-lg bg-nx-surface border border-nx-line hover:border-nx-line-hi transition-colors space-y-2">
+            <Card className="p-3.5 rounded-lg bg-nx-surface border-nx-line hover:border-nx-line-hi transition-colors space-y-2">
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div className="space-y-1">
                   <div className="flex flex-wrap items-center gap-2">
@@ -129,7 +131,7 @@ export function ActivityTimelineItemList({
               ) : activity.bodyText ? (
                 <p className="text-xs text-nx-ink-2 whitespace-pre-wrap leading-relaxed pt-1">{activity.bodyText}</p>
               ) : null}
-            </div>
+            </Card>
           </div>
         );
       })}

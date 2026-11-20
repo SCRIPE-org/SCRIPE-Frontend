@@ -3,9 +3,11 @@
 import React from "react";
 import { Mail } from "lucide-react";
 import { Button } from "@core/ui/button";
+import { Card } from "@core/ui/card";
 import { LeadStatusBadge } from "./LeadStatusBadge";
 import type { CrmLead } from "../../domain/entities/LeadEntity";
 
+/** Formats a raw CRM lead source identifier into a localized display label. */
 export function formatLeadSourceLabel(src: string | undefined | null, t: (k: string) => string): string {
   if (!src) return t("crmLeads.sources.direct");
   const norm = src.toLowerCase().replace(/[\s\-_]/g, "");
@@ -18,6 +20,7 @@ export function formatLeadSourceLabel(src: string | undefined | null, t: (k: str
   return src;
 }
 
+/** Renders a responsive grid card item for a CRM Lead inside `GenericCrudView`. */
 export function renderLeadsCardGridItemCard(
   lead: CrmLead,
   actions: React.ReactNode,
@@ -26,7 +29,7 @@ export function renderLeadsCardGridItemCard(
   showOriginalCurrencyBadge: boolean,
   convertAmount: (amount: number, from: string, to: string) => number,
   onNavigateLead: (id: string) => void,
-  t: (key: string, params?: Record<string, any>) => string,
+  t: (key: string, params?: Record<string, string | number>) => string,
 ) {
   return (
     <div
@@ -75,13 +78,14 @@ export function renderLeadsCardGridItemCard(
   );
 }
 
+/** Renders the split-pane detail card for a selected CRM Lead. */
 export function renderLeadsSplitDetailCard(
   lead: CrmLead,
   actions: React.ReactNode,
-  t: (key: string, params?: Record<string, any>) => string,
+  t: (key: string, params?: Record<string, string | number>) => string,
 ) {
   return (
-    <div className="rounded-nx-lg border border-nx-line bg-nx-surface p-5 space-y-5 text-nx-ink">
+    <Card className="rounded-nx-lg border-nx-line bg-nx-surface p-5 space-y-5 text-nx-ink">
       <div className="flex items-start justify-between border-b border-nx-line pb-4">
         <div>
           <h3 className="text-lg font-bold text-nx-ink">{lead.title}</h3>
@@ -122,6 +126,6 @@ export function renderLeadsSplitDetailCard(
           <p className="text-nx-ink-2 whitespace-pre-wrap">{lead.notes}</p>
         </div>
       )}
-    </div>
+    </Card>
   );
 }

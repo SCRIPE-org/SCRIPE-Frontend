@@ -1,3 +1,5 @@
+"use client";
+
 import {
   INITIAL_CRM_WORKFLOWS,
   useCrmWorkflowsStore,
@@ -37,6 +39,7 @@ export function buildLeadConversionStageOptions(
     });
 }
 
+/** Normalizes a lead status or label into its canonical workflow stage key. */
 export function toLeadStageKey(
   statusOrKey: string,
   stages?: Array<{ stageKey: string; labelEn: string; labelAr?: string | null }>
@@ -53,6 +56,7 @@ export function toLeadStageKey(
   return `lead.${statusOrKey.trim().toLowerCase().replace(/[^a-z0-9]+/g, "_")}`;
 }
 
+/** Maps a canonical lead workflow stage key back to a domain `LeadStatus`. */
 export function stageKeyToLeadStatus(
   stageKey: string,
   labelEn: string,

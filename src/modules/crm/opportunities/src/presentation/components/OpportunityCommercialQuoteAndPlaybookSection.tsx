@@ -7,19 +7,21 @@ import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Card } from "@core/ui/card";
 import { Input } from "@core/ui/input";
-import {
-  useCrmCurrency,
-  useCrmSettingsStore,
-  type CrmDealCommercialPackage,
-  type CrmDealQuoteLineItem,
-} from "@modules/crm";
+import { useCrmCurrency } from "@modules/crm/shared";
 import type { CrmOpportunity, CrmOpportunityStageHistory } from "../../domain/entities/OpportunityEntity";
+import type {
+  CrmDealCommercialPackage,
+  CrmDealQuoteLineItem,
+} from "../../domain/models/crm-opportunity-quote.types";
+import { useOpportunityCommercialPackage } from "../viewmodels/useOpportunityCommercialPackage";
 import { buildDefaultQuoteItems, computeQuoteFinancialTotals } from "../utils/quoteCalculationHelpers";
 import { OpportunityStagePlaybookCard } from "./OpportunityStagePlaybookCard";
 import { OpportunityQuoteTotalsFooter } from "./OpportunityQuoteTotalsFooter";
 
+/** Alias for a commercial quote line item attached to an Opportunity package. */
 export type QuoteLineItem = CrmDealQuoteLineItem;
 
+/** Renders the interactive commercial quote table, totals summary, and active stage playbook card. */
 export function OpportunityCommercialQuoteAndPlaybookSection({
   opp,
   isRtl = false,
@@ -32,8 +34,7 @@ export function OpportunityCommercialQuoteAndPlaybookSection({
 }) {
   const { t } = useI18n();
   const { baseCurrency, convertAmount } = useCrmCurrency();
-  const persistedPkg = useCrmSettingsStore((s) => s.dealCommercialPackages?.[opp.id]);
-  const setDealCommercialPackage = useCrmSettingsStore((s) => s.setDealCommercialPackage);
+  const { commercialPackage: persistedPkg, savePackage } = useOpportunityCommercialPackage(opp.id);
 
   const quoteItems =
     persistedPkg?.quoteItems && persistedPkg.quoteItems.length > 0
@@ -48,49 +49,45 @@ export function OpportunityCommercialQuoteAndPlaybookSection({
   const [newItemDiscount, setNewItemDiscount] = useState("");
   const [taxRatePct, setTaxRatePct] = useState("0");
 
-  const persistPackage = (next: CrmDealCommercialPackage) => {
-    setDealCommercialPackage(opp.id, next);
-  };
+  const patchPackage = (updater: (prev: CrmDealCommercialPackage) => Partial<CrmDealCommercialPackage>) =>
+    savePackage((prev) => {
+      const base: CrmDealCommercialPackage = {
+        quoteItems: prev?.quoteItems?.length ? prev.quoteItems : quoteItems,
+        venueHoldStatus: prev?.venueHoldStatus ?? venueHoldStatus,
+        academyCohortStatus: prev?.academyCohortStatus ?? academyCohortStatus,
+      };
+      return { ...base, ...updater(base) };
+    });
 
   const handleAddQuoteItem = () => {
     if (!newItemName.trim()) return;
-    const nextItems: QuoteLineItem[] = [
-      ...quoteItems,
-      {
-        id: `q-${Date.now()}`,
-        itemName: newItemName.trim(),
-        quantity: Math.max(1, Math.round(Number(newItemQty) || 1)),
-        unitPrice: Math.max(0, Number(newItemPrice) || 0),
-        discountPct: Math.max(0, Math.min(100, Number(newItemDiscount) || 0)),
-      },
-    ];
-    persistPackage({ quoteItems: nextItems, venueHoldStatus, academyCohortStatus });
+    const addedItem: QuoteLineItem = {
+      id: `q-${Date.now()}`,
+      itemName: newItemName.trim(),
+      quantity: Math.max(1, Math.round(Number(newItemQty) || 1)),
+      unitPrice: Math.max(0, Number(newItemPrice) || 0),
+      discountPct: Math.max(0, Math.min(100, Number(newItemDiscount) || 0)),
+    };
+    patchPackage((base) => ({ quoteItems: [...base.quoteItems, addedItem] }));
     setNewItemName("");
     setNewItemQty("1");
     setNewItemDiscount("");
   };
 
-  const handleUpdateItemField = (
-    itemId: string,
-    field: "quantity" | "unitPrice" | "discountPct",
-    rawValue: string
-  ) => {
+  const handleUpdateItemField = (itemId: string, field: "quantity" | "unitPrice" | "discountPct", rawValue: string) => {
     const parsed = Number(rawValue);
-    const sanitized = !Number.isFinite(parsed)
+    const val = !Number.isFinite(parsed)
       ? 0
       : field === "quantity"
         ? Math.max(1, Math.round(parsed))
         : field === "discountPct"
           ? Math.max(0, Math.min(100, parsed))
           : Math.max(0, parsed);
-    const nextItems = quoteItems.map((it) => (it.id === itemId ? { ...it, [field]: sanitized } : it));
-    persistPackage({ quoteItems: nextItems, venueHoldStatus, academyCohortStatus });
+    patchPackage((base) => ({ quoteItems: base.quoteItems.map((it) => (it.id === itemId ? { ...it, [field]: val } : it)) }));
   };
 
-  const handleRemoveQuoteItem = (itemId: string) => {
-    const nextItems = quoteItems.filter((it) => it.id !== itemId);
-    persistPackage({ quoteItems: nextItems, venueHoldStatus, academyCohortStatus });
-  };
+  const handleRemoveQuoteItem = (itemId: string) =>
+    patchPackage((base) => ({ quoteItems: base.quoteItems.filter((it) => it.id !== itemId) }));
 
   const { grossSubtotal, discountAmount, taxAmount, grandTotal, requiresDiscountApproval } =
     computeQuoteFinancialTotals(quoteItems, taxRatePct);
@@ -238,8 +235,20 @@ export function OpportunityCommercialQuoteAndPlaybookSection({
           isRtl={isRtl}
           venueHoldStatus={venueHoldStatus}
           academyCohortStatus={academyCohortStatus}
-          onVenueHold={() => persistPackage({ quoteItems, venueHoldStatus: "reserved", academyCohortStatus })}
-          onAcademyCohort={() => persistPackage({ quoteItems, venueHoldStatus, academyCohortStatus: "provisioned" })}
+          onVenueHold={() =>
+            savePackage((prev) => ({
+              quoteItems: prev?.quoteItems?.length ? prev.quoteItems : quoteItems,
+              venueHoldStatus: "reserved",
+              academyCohortStatus: prev?.academyCohortStatus ?? academyCohortStatus,
+            }))
+          }
+          onAcademyCohort={() =>
+            savePackage((prev) => ({
+              quoteItems: prev?.quoteItems?.length ? prev.quoteItems : quoteItems,
+              venueHoldStatus: prev?.venueHoldStatus ?? venueHoldStatus,
+              academyCohortStatus: "provisioned",
+            }))
+          }
         />
       )}
     </>

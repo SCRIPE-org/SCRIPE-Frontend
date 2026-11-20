@@ -42,6 +42,7 @@ interface ActivityCardGridItemProps {
   readonly t: (key: string) => string;
 }
 
+/** Grid card item displaying a sales activity entry, account link, and follow-up trigger. */
 export function ActivityCardGridItem({
   activity,
   actions,

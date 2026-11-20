@@ -1,10 +1,12 @@
-export * from "./overview/src/domain/constants/permission-constants";
+export * from "./shared";
 export * from "./di";
 export * from "./overview";
+export * from "./workflows";
+export * from "./reports";
+export * from "./settings";
 export * from "./activities";
 export * from "./leads";
 export * from "./opportunities";
 export * from "./accounts";
 export * from "./contacts";
 export type { DealKind } from "./opportunities";
-

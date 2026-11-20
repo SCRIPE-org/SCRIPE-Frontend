@@ -30,7 +30,7 @@ import { WORK_MANAGEMENT_PERMISSIONS } from "@modules/work-management/permission
 import { CUSTOM_FIELDS_PERMISSIONS } from "@modules/custom-fields/permission-constants";
 import { ANALYTICS_EVENTS_PERMISSIONS } from "@modules/analytics/permission-constants";
 import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
-import { CRM_PERMISSIONS } from "@modules/crm";
+import { CRM_PERMISSIONS } from "@modules/crm/shared/src/constants/permission-constants";
 
 // ── Re-export individual module permissions for direct access ─────────────────
 export {
@@ -540,14 +540,14 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/crm/leads/[id]": [CRM_PERMISSIONS.LEADS_READ],
   "/crm/opportunities": [CRM_PERMISSIONS.OPPORTUNITIES_READ],
   "/crm/opportunities/[id]": [CRM_PERMISSIONS.OPPORTUNITIES_READ],
-  "/crm/pipelines": [`${CRM_PERMISSIONS.PIPELINES_READ}|${CRM_PERMISSIONS.OPPORTUNITIES_READ}`],
+  "/crm/pipelines": [CRM_PERMISSIONS.PIPELINES_READ],
   "/crm/accounts": [CRM_PERMISSIONS.ACCOUNTS_READ],
   "/crm/accounts/[id]": [CRM_PERMISSIONS.ACCOUNTS_READ],
   "/crm/contacts": [CRM_PERMISSIONS.CONTACTS_READ],
   "/crm/contacts/[id]": [CRM_PERMISSIONS.CONTACTS_READ],
   "/crm/activities": [CRM_PERMISSIONS.ACTIVITIES_READ],
   "/crm/reports": [CRM_PERMISSIONS.REPORTS_READ],
-  "/crm/settings": [`${CRM_PERMISSIONS.SETTINGS_MANAGE}|${CRM_PERMISSIONS.PIPELINES_READ}|${CRM_PERMISSIONS.OVERVIEW_READ}`],
+  "/crm/settings": [CRM_PERMISSIONS.SETTINGS_MANAGE],
   "/data-exchange": [DATA_TRANSFER_PERMISSIONS.JOBS_VIEW],
   "/data-exchange/jobs": [DATA_TRANSFER_PERMISSIONS.JOBS_VIEW],
   "/data-exchange/presets": [DATA_TRANSFER_PERMISSIONS.PRESETS_VIEW],

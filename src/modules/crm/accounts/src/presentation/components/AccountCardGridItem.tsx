@@ -14,6 +14,7 @@ interface AccountCardGridItemProps {
   readonly t: (key: string) => string;
 }
 
+/** Grid card item displaying a CRM Account's name, tier badge, counts, and actions. */
 export function AccountCardGridItem({
   account,
   actions,

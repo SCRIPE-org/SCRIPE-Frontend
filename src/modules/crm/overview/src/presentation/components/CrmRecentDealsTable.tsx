@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { ShieldCheck, AlertCircle, ArrowUpRight, User } from "lucide-react";
 import { Button } from "@core/ui/button";
+import { Card } from "@core/ui/card";
 import { EmptyState } from "@core/ui/empty-state";
 import {
   Table,
@@ -15,14 +16,17 @@ import {
 } from "@core/ui/table";
 import { cn } from "@core/common/utils";
 import type { CrmRecentDeal } from "../../domain/entities/OverviewEntity";
-import { CrmStatusBadge } from "./CrmStatusBadge";
-import { useCrmCurrency } from "../viewmodels/useCrmCurrency";
+import { CrmStatusBadge, useCrmCurrency } from "@modules/crm/shared";
 
-interface CrmRecentDealsTableProps {
+/** Props for `CrmRecentDealsTable`. */
+export interface CrmRecentDealsTableProps {
   deals: CrmRecentDeal[];
   className?: string;
 }
 
+/**
+ * Displays active deals scoped to the selected pipeline/stage in a Nexus surface card.
+ */
 export function CrmRecentDealsTable({ deals, className }: CrmRecentDealsTableProps) {
   const router = useRouter();
   const { t, language } = useI18n();
@@ -32,19 +36,19 @@ export function CrmRecentDealsTable({ deals, className }: CrmRecentDealsTablePro
 
   if (deals.length === 0) {
     return (
-      <div className="rounded-nx-lg border border-nx-line bg-nx-surface p-8 text-center">
+      <Card className="rounded-nx-lg border border-nx-line bg-nx-surface p-8 text-center">
         <EmptyState
           title={t("crm.recentDeals.emptyTitle")}
           description={t("crm.recentDeals.emptyDescription")}
         />
-      </div>
+      </Card>
     );
   }
 
   return (
-    <div
+    <Card
       className={cn(
-        "rounded-nx-lg border border-nx-line bg-nx-surface overflow-hidden",
+        "rounded-nx-lg border border-nx-line bg-nx-surface overflow-hidden p-0 gap-0",
         className
       )}
       dir={isRtl ? "rtl" : "ltr"}
@@ -167,7 +171,7 @@ export function CrmRecentDealsTable({ deals, className }: CrmRecentDealsTablePro
                       onClick={() => router.push(`/crm/opportunities/${deal.id}`)}
                       className="h-7 px-2 text-xs text-nx-ink-2 hover:text-nx-ink hover:bg-nx-raised gap-1"
                     >
-                      <span>{t("crmOpportunities.actions.viewDetails", { defaultValue: "View" })}</span>
+                      <span>{t("crm.recentDeals.viewDeal")}</span>
                       <ArrowUpRight className="size-3" />
                     </Button>
                   </TableCell>
@@ -177,6 +181,6 @@ export function CrmRecentDealsTable({ deals, className }: CrmRecentDealsTablePro
           </TableBody>
         </Table>
       </div>
-    </div>
+    </Card>
   );
 }

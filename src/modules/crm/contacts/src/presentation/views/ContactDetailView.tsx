@@ -8,22 +8,8 @@ import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { Card } from "@core/ui/card";
-import {
-  AlertCircle,
-  Briefcase,
-  Building2,
-  ChevronLeft,
-  ChevronRight,
-  Edit2,
-  ArrowUpRight,
-  Activity,
-} from "lucide-react";
-import {
-  CRM_PERMISSIONS,
-  CrmShell,
-  ActivityTimeline,
-  CRM_TAB_ROUTES,
-} from "@modules/crm";
+import { AlertCircle, Briefcase, Building2, ChevronLeft, ChevronRight, Edit2, ArrowUpRight, Activity } from "lucide-react";
+import { CRM_PERMISSIONS, CrmShell, ActivityTimeline, CRM_TAB_ROUTES } from "@modules/crm";
 import type { CrmTabId } from "@modules/crm";
 import { ContactDetailSkeleton } from "../components/ContactDetailSkeleton";
 import { ContactDetailProfileCard } from "../components/ContactDetailProfileCard";
@@ -35,21 +21,14 @@ interface ContactDetailViewProps {
   contactId: string;
 }
 
+/** Commercial Contact 360 detail view (<200 lines). */
 export function ContactDetailView({ contactId }: ContactDetailViewProps) {
   const router = useRouter();
   const { t, language } = useI18n();
   const isRtl = language === "ar";
   const canUpdateContact = usePermission(CRM_PERMISSIONS.CONTACTS_UPDATE);
   const canCreateOpp = usePermission(CRM_PERMISSIONS.OPPORTUNITIES_CREATE);
-  const {
-    state,
-    isEditOpen,
-    isSubmitting,
-    submitError,
-    accountOptions,
-    setIsEditOpen,
-    handleUpdateContact,
-  } = useContactDetailViewModel(contactId);
+  const { state, isEditOpen, isSubmitting, submitError, accountOptions, setIsEditOpen, handleUpdateContact } = useContactDetailViewModel(contactId);
 
   const [editPrimaryAccount, setEditPrimaryAccount] = useState("");
   const [editJobTitle, setEditJobTitle] = useState("");
@@ -71,23 +50,14 @@ export function ContactDetailView({ contactId }: ContactDetailViewProps) {
   };
 
   if (state.stage === "loading" && !state.contact) {
-    return (
-      <CrmShell activeTab="contacts" onTabChange={handleTabChange}>
-        <ContactDetailSkeleton />
-      </CrmShell>
-    );
+    return (<CrmShell activeTab="contacts" onTabChange={handleTabChange}><ContactDetailSkeleton /></CrmShell>);
   }
 
   if (state.stage === "failed" && !state.contact) {
     return (
       <CrmShell activeTab="contacts" onTabChange={handleTabChange}>
         <div className="space-y-4">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => router.push("/crm/contacts")}
-            className="h-8 text-xs text-nx-ink-2 gap-1"
-          >
+          <Button variant="ghost" size="sm" onClick={() => router.push("/crm/contacts")} className="h-8 text-xs text-nx-ink-2 gap-1">
             {isRtl ? <ChevronRight className="size-4" /> : <ChevronLeft className="size-4" />}
             <span>{t("crmContacts.detail.back")}</span>
           </Button>
@@ -108,29 +78,13 @@ export function ContactDetailView({ contactId }: ContactDetailViewProps) {
     <CrmShell activeTab="contacts" onTabChange={handleTabChange}>
       <div className="space-y-6" dir={isRtl ? "rtl" : "ltr"}>
         <div className="flex items-center justify-between">
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => router.push("/crm/contacts")}
-            className="h-8 text-xs text-nx-ink-2 gap-1 border border-nx-line bg-nx-surface hover:bg-nx-raised"
-          >
+          <Button type="button" variant="ghost" size="sm" onClick={() => router.push("/crm/contacts")} className="h-8 text-xs text-nx-ink-2 gap-1 border border-nx-line bg-nx-surface hover:bg-nx-raised">
             {isRtl ? <ChevronRight className="size-3.5" /> : <ChevronLeft className="size-3.5" />}
             <span>{t("crmContacts.detail.back")}</span>
           </Button>
           <div className="flex flex-wrap items-center gap-2">
             {canCreateOpp && (
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() =>
-                  router.push(
-                    `/crm/opportunities?create=1${contact.primaryAccountId ? `&accountId=${contact.primaryAccountId}` : ""}${contact.personPartyId ? `&partyId=${contact.personPartyId}` : ""}`
-                  )
-                }
-                className="h-8 text-xs gap-1.5 border-nx-line bg-nx-surface text-nx-ink hover:bg-nx-raised"
-              >
+              <Button type="button" variant="outline" size="sm" onClick={() => router.push(`/crm/opportunities?create=1${contact.primaryAccountId ? `&accountId=${contact.primaryAccountId}` : ""}${contact.personPartyId ? `&partyId=${contact.personPartyId}` : ""}`)} className="h-8 text-xs gap-1.5 border-nx-line bg-nx-surface text-nx-ink hover:bg-nx-raised">
                 <Briefcase className="size-3.5 text-nx-accent" />
                 <span>{t("crmContacts.detail.createDealBtn")}</span>
               </Button>
@@ -148,12 +102,7 @@ export function ContactDetailView({ contactId }: ContactDetailViewProps) {
           </div>
         </div>
 
-        <ContactDetailProfileCard
-          contact={contact}
-          language={language}
-          isRtl={isRtl}
-          t={t}
-        />
+        <ContactDetailProfileCard contact={contact} language={language} isRtl={isRtl} t={t} />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Card className="rounded-nx-lg border border-nx-line bg-nx-surface p-4 space-y-3">
@@ -167,13 +116,9 @@ export function ContactDetailView({ contactId }: ContactDetailViewProps) {
               <div className="space-y-3 pt-1">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-semibold text-nx-ink">
-                    {language === "ar" && contact.primaryAccountNameAr
-                      ? contact.primaryAccountNameAr
-                      : contact.primaryAccountNameEn || t("crmContacts.detail.defaultAccountLabel")}
+                    {language === "ar" && contact.primaryAccountNameAr ? contact.primaryAccountNameAr : contact.primaryAccountNameEn || t("crmContacts.detail.defaultAccountLabel")}
                   </span>
-                  <Badge variant="outline" className="border-nx-line bg-nx-raised text-[10px]">
-                    {t("crmContacts.detail.primaryBadge")}
-                  </Badge>
+                  <Badge variant="outline" className="border-nx-line bg-nx-raised text-[10px]">{t("crmContacts.detail.primaryBadge")}</Badge>
                 </div>
                 <Button type="button" variant="outline" size="sm" onClick={() => router.push(`/crm/accounts/${contact.primaryAccountId}`)} className="w-full text-xs h-8 border-nx-line bg-nx-raised/60 hover:bg-nx-raised text-nx-ink justify-between">
                   <span>{t("crmContacts.detail.viewAccount360")}</span>
@@ -191,40 +136,14 @@ export function ContactDetailView({ contactId }: ContactDetailViewProps) {
             )}
           </Card>
 
-          <ContactDealsCard
-            opportunities={contact.opportunities}
-            jobTitleSnapshot={contact.jobTitleSnapshot}
-            language={language}
-            t={t}
-            onSelectOpportunity={(id) => router.push(id ? `/crm/opportunities/${id}` : "/crm/opportunities")}
-            onViewAllOpportunities={() => router.push("/crm/opportunities")}
-          />
+          <ContactDealsCard opportunities={contact.opportunities} jobTitleSnapshot={contact.jobTitleSnapshot} language={language} t={t} onSelectOpportunity={(id) => router.push(id ? `/crm/opportunities/${id}` : "/crm/opportunities")} onViewAllOpportunities={() => router.push("/crm/opportunities")} />
         </div>
 
         <Card className="p-5 bg-nx-surface border-nx-line">
-          <ActivityTimeline
-            accountId={contact.primaryAccountId || undefined}
-            targetLabel={language === "ar" && contact.personLegalNameAr ? contact.personLegalNameAr : contact.personLegalNameEn}
-            defaultRecipientEmail={contact.email}
-          />
+          <ActivityTimeline accountId={contact.primaryAccountId || undefined} targetLabel={language === "ar" && contact.personLegalNameAr ? contact.personLegalNameAr : contact.personLegalNameEn} defaultRecipientEmail={contact.email} />
         </Card>
 
-        <ContactEditDialog
-          isOpen={isEditOpen}
-          isSubmitting={isSubmitting}
-          submitError={submitError}
-          accountOptions={accountOptions}
-          initialAccountId={editPrimaryAccount}
-          initialJobTitle={editJobTitle}
-          initialDepartment={editDepartment}
-          initialNotes={editNotes}
-          onOpenChange={setIsEditOpen}
-          onSave={async (data) => {
-            await handleUpdateContact(data);
-          }}
-          isRtl={isRtl}
-          t={t}
-        />
+        <ContactEditDialog isOpen={isEditOpen} isSubmitting={isSubmitting} submitError={submitError} accountOptions={accountOptions} initialAccountId={editPrimaryAccount} initialJobTitle={editJobTitle} initialDepartment={editDepartment} initialNotes={editNotes} onOpenChange={setIsEditOpen} onSave={async (data) => { await handleUpdateContact(data); }} isRtl={isRtl} t={t} />
       </div>
     </CrmShell>
   );

@@ -1,3 +1,5 @@
+import { buildUrl } from "@/core/config/api-endpoints/_shared";
+import { stripHtmlTags } from "@core/common/sanitize";
 import type { IApiService } from "@/core/interfaces/api.interface";
 import type { ICrmLeadService } from "../../domain/interfaces/ICrmLeadService";
 import type {
@@ -16,6 +18,7 @@ import type {
 import { CRM_LEAD_ENDPOINTS } from "./crm-lead.endpoints";
 import { normalizeCrmLeadDto, type LeadApiSuccessResponse } from "./crmLeadServiceHelpers";
 
+/** HTTP API client service for CRM Lead queries, qualification, party linking, and conversion. */
 export class CrmLeadService implements ICrmLeadService {
   constructor(private readonly api: IApiService) {}
 
@@ -34,22 +37,24 @@ export class CrmLeadService implements ICrmLeadService {
       : (response as T);
   }
 
+  /** Fetches paginated CRM Leads matching the specified search and status filters. */
   async getLeads(params?: LeadsFilterParams): Promise<PagedLeadsResult> {
-    const queryParams: Record<string, unknown> = {
+    const cleanSearch = stripHtmlTags(params?.search ?? "").trim();
+    const url = buildUrl(CRM_LEAD_ENDPOINTS.LEADS, {
       page: params?.page ?? 1,
       pageSize: params?.pageSize ?? 20,
-    };
-    if (params?.search && params.search.trim() !== "") queryParams.search = params.search.trim();
-    if (params?.status) queryParams.status = params.status;
+      search: cleanSearch || undefined,
+      status: params?.status || undefined,
+    });
 
     const response = await this.api.get<LeadApiSuccessResponse<PagedLeadsResult> | PagedLeadsResult>(
-      CRM_LEAD_ENDPOINTS.LEADS,
-      queryParams
+      url
     );
     const resData = this.unwrap(response);
     return { ...resData, items: (resData.items || []).map(normalizeCrmLeadDto) };
   }
 
+  /** Fetches a single CRM Lead record by ID. */
   async getLeadById(id: string): Promise<CrmLead> {
     const response = await this.api.get<LeadApiSuccessResponse<CrmLead> | CrmLead>(
       CRM_LEAD_ENDPOINTS.LEAD_BY_ID(id)
@@ -57,8 +62,16 @@ export class CrmLeadService implements ICrmLeadService {
     return normalizeCrmLeadDto(this.unwrap(response));
   }
 
+  /** Sanitizes text fields and sends an idempotent POST request to create a CRM Lead. */
   async createLead(input: CreateLeadInput): Promise<CrmLead> {
-    const { idempotencyKey, ...payload } = input;
+    const { idempotencyKey, ...rawPayload } = input;
+    const payload = {
+      ...rawPayload,
+      title: rawPayload.title ? stripHtmlTags(rawPayload.title).trim() : rawPayload.title,
+      firstName: rawPayload.firstName ? stripHtmlTags(rawPayload.firstName).trim() : rawPayload.firstName,
+      lastName: rawPayload.lastName ? stripHtmlTags(rawPayload.lastName).trim() : rawPayload.lastName,
+      companyName: rawPayload.companyName ? stripHtmlTags(rawPayload.companyName).trim() : rawPayload.companyName,
+    };
     const response = await this.api.post<LeadApiSuccessResponse<CrmLead> | CrmLead>(
       CRM_LEAD_ENDPOINTS.LEADS,
       payload,
@@ -68,6 +81,7 @@ export class CrmLeadService implements ICrmLeadService {
     return normalizeCrmLeadDto(this.unwrap(response));
   }
 
+  /** Sends an idempotent PUT request to update a CRM Lead with optimistic concurrency. */
   async updateLead(input: UpdateLeadInput): Promise<CrmLead> {
     const { leadId, ...payload } = input;
     const response = await this.api.put<LeadApiSuccessResponse<CrmLead> | CrmLead>(
@@ -79,6 +93,7 @@ export class CrmLeadService implements ICrmLeadService {
     return normalizeCrmLeadDto(this.unwrap(response));
   }
 
+  /** Submits a qualification or disqualification decision for a CRM Lead. */
   async qualifyLead(input: QualifyLeadInput): Promise<CrmLead> {
     const payload = {
       decision: input.decision,
@@ -96,6 +111,7 @@ export class CrmLeadService implements ICrmLeadService {
     return normalizeCrmLeadDto(this.unwrap(response));
   }
 
+  /** Links PartyKernel organization/person and Account records to a CRM Lead. */
   async linkParty(input: LinkPartyToLeadInput): Promise<CrmLead> {
     const payload = {
       organizationPartyId: input.organizationPartyId,
@@ -113,6 +129,7 @@ export class CrmLeadService implements ICrmLeadService {
     return normalizeCrmLeadDto(this.unwrap(response));
   }
 
+  /** Converts a qualified CRM Lead into a commercial Opportunity on the backend. */
   async convertLead(input: ConvertLeadInput): Promise<ConvertLeadResult> {
     const payload = {
       opportunityTitle: input.opportunityTitle,
@@ -133,6 +150,7 @@ export class CrmLeadService implements ICrmLeadService {
     return this.unwrap(response);
   }
 
+  /** Moves a CRM Lead to a target workflow stage along with exit-gate payload fields. */
   async moveLeadStage(input: MoveLeadStageInput): Promise<CrmLead> {
     const payload = {
       targetStageKey: input.targetStageKey,
@@ -168,6 +186,7 @@ export class CrmLeadService implements ICrmLeadService {
     return normalizeCrmLeadDto(this.unwrap(response));
   }
 
+  /** Assigns an owner user and optional team to a CRM Lead via PUT. */
   async assignOwner(input: AssignLeadOwnerInput): Promise<CrmLead> {
     const payload = {
       ownerUserId: input.ownerUserId,

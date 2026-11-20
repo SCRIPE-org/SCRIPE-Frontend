@@ -38,14 +38,7 @@ export const ar = {
       emptyTitle: "لم يتم العثور على عملاء محتملين",
       emptyDescription: "لا توجد سجلات مطابقة لمعايير البحث الحالية. قم بإنشاء عميل محتمل جديد لبدء مسار الصفقات.",
     },
-    status: {
-      new: "جديد",
-      working: "قيد المتابعة",
-      contacted: "قيد المتابعة",
-      qualified: "مؤهل",
-      converted: "تم التحويل",
-      disqualified: "مستبعد",
-    },
+    status: { new: "جديد", working: "قيد المتابعة", contacted: "قيد المتابعة", qualified: "مؤهل", converted: "تم التحويل", disqualified: "مستبعد" },
     sources: {
       inbound: "وارد",
       website: "الموقع الإلكتروني",

@@ -12,10 +12,12 @@ import {
 } from "./LeadCardRenderers";
 import type { CrmLead } from "../../domain/entities/LeadEntity";
 
+/** Re-exported card-grid and split-detail renderers for CRM Leads views. */
 export { renderLeadsCardGridItemCard, renderLeadsSplitDetailCard };
 
+/** Parameters for building CRM Leads table columns. */
 export interface BuildLeadsTableColumnsParams {
-  t: (key: string, params?: Record<string, any>) => string;
+  t: (key: string, params?: Record<string, string | number>) => string;
   language: string;
   baseCurrency: string;
   autoConvertToBase: boolean;
@@ -24,6 +26,7 @@ export interface BuildLeadsTableColumnsParams {
   onNavigateLead: (leadId: string) => void;
 }
 
+/** Builds column definitions for the CRM Leads `GenericCrudView` table. */
 export function buildLeadsTableColumns({
   t,
   language,

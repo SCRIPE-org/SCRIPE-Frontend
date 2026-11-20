@@ -10,6 +10,7 @@ import {
   User,
 } from "lucide-react";
 import { CustomFieldsSection } from "@core/crud/customFieldsExtension";
+import type { FieldConfig } from "@core/ui/forms/generic-form";
 import { LeadStatusBadge } from "./LeadStatusBadge";
 import { LeadDetailLinkageCards } from "./LeadDetailLinkageCards";
 import type { CrmLead } from "../../domain/entities/LeadEntity";
@@ -19,9 +20,9 @@ interface LeadDetailProfileCardsProps {
   baseCurrency: string;
   autoConvertToBase: boolean;
   convertAmount: (amount: number, from: string, to: string) => number;
-  leadCustomFieldConfigs: any[];
+  leadCustomFieldConfigs: FieldConfig[];
   isLeadCfLoading: boolean;
-  refetchLeadCustomFields: () => Promise<any>;
+  refetchLeadCustomFields: () => Promise<unknown>;
   editCustomFields: Record<string, unknown>;
   onCustomFieldChange: (key: string, value: unknown) => void;
   canQualifyLead: boolean;
@@ -30,6 +31,7 @@ interface LeadDetailProfileCardsProps {
   mode?: "all" | "profile" | "linkage";
 }
 
+/** Renders CRM Lead profile summary, custom fields, and PartyKernel linkage cards. */
 export function LeadDetailProfileCards({
   lead,
   baseCurrency,

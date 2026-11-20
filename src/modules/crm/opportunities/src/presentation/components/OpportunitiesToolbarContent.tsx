@@ -3,9 +3,10 @@
 import { Input } from "@core/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { Search } from "lucide-react";
-import type { CrmWorkflowDefinition } from "@modules/crm";
+import { PipelineSelector, type CrmWorkflowDefinition } from "@modules/crm";
 import type { OpportunityStatus } from "../../domain/entities/OpportunityEntity";
 
+/** Props for `OpportunitiesToolbarContent`. */
 export interface OpportunitiesToolbarContentProps {
   t: (key: string) => string;
   isRtl: boolean;
@@ -50,18 +51,14 @@ export function OpportunitiesToolbarContent({
         />
       </div>
       <div className="w-48">
-        <Select value={activeDealWorkflowId} onValueChange={onSelectWorkflow}>
-          <SelectTrigger className="h-8 text-xs" data-testid="deal-pipeline-selector">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {dealWorkflows.map((wf) => (
-              <SelectItem key={wf.id} value={wf.id} className="text-xs">
-                {isRtl ? wf.nameAr : wf.nameEn}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <PipelineSelector
+          pipelines={dealWorkflows}
+          value={activeDealWorkflowId}
+          onChange={onSelectWorkflow}
+          entityType="deal"
+          triggerClassName="h-8 text-xs"
+          data-testid="deal-pipeline-selector"
+        />
       </div>
       <div className="w-36">
         <Select

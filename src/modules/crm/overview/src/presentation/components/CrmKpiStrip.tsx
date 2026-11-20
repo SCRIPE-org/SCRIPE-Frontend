@@ -5,14 +5,18 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Card } from "@core/ui/card";
 import { cn } from "@core/common/utils";
 import type { CrmKpiStat } from "../../domain/entities/OverviewEntity";
-import { useCrmCurrency } from "../viewmodels/useCrmCurrency";
+import { useCrmCurrency } from "@modules/crm/shared";
 
-interface CrmKpiStripProps {
+/** Props for `CrmKpiStrip`. */
+export interface CrmKpiStripProps {
   stats: CrmKpiStat[];
   onSelectKpi?: (statId: string) => void;
   className?: string;
 }
 
+/**
+ * Renders the 4-card commercial KPI strip on CRM Overview with FX conversion support.
+ */
 export function CrmKpiStrip({ stats, onSelectKpi, className }: CrmKpiStripProps) {
   const { t, language } = useI18n();
   const isRtl = language === "ar";

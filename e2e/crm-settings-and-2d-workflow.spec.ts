@@ -389,7 +389,7 @@ test.describe("CRM Settings Hub & 2D Jira Workflow Studio E2E Verification", () 
     await expect(page.getByTestId("status-inspector-color-picker")).toBeVisible();
     await page.getByTestId("status-color-swatch-amber").click();
     await expect(page.getByTestId("canvas-node-default.proposal")).toHaveAttribute("data-stage-color", "amber");
-    await expect(page.getByTestId("minimap-node-default.proposal")).toHaveAttribute("data-stage-color", "amber");
+    await expect(page.getByTestId("workflow-minimap").locator("svg")).toBeVisible();
     await page.getByTestId("status-color-swatch-indigo").click();
     await expect(page.getByTestId("canvas-node-default.proposal")).toHaveAttribute("data-stage-color", "indigo");
 
@@ -416,11 +416,10 @@ test.describe("CRM Settings Hub & 2D Jira Workflow Studio E2E Verification", () 
       page.getByTestId(`inspector-default.proposal-exit-field-custom:${uniqueKey}`)
     ).toBeVisible({ timeout: 5_000 });
 
-    // Verify Proportional 2D Spatial Mini-Map, Zoom Slider (50%-150%), Tidy Auto-Layout, and Status Replacement Migration Modal
-    await expect(page.getByTestId("workflow-minimap-surface")).toBeVisible();
-    await expect(page.getByTestId("minimap-viewport-box")).toBeVisible();
-    await expect(page.getByTestId("minimap-zoom-slider")).toBeVisible();
-    await expect(page.getByTestId("minimap-node-default.discovery")).toBeVisible();
+    // Verify Managed @xyflow/react Mini-Map, Tidy Auto-Layout, and Status Replacement Migration Modal
+    await expect(page.getByTestId("workflow-minimap")).toBeVisible();
+    await expect(page.getByTestId("workflow-minimap").locator("svg")).toBeVisible();
+    await expect(page.getByTestId("canvas-node-default.discovery")).toBeVisible();
     await page.getByTestId("canvas-tidy-auto-layout-btn").click();
     await assertZeroOverlappingTransitionPills();
     await setThemeAndCapture(page, "02h_crm_workflow_minimap_and_zoom");
@@ -649,21 +648,16 @@ test.describe("CRM Settings Hub & 2D Jira Workflow Studio E2E Verification", () 
     const committeePartyText = await page.getByTestId("committee-party-select").innerText();
     expect(committeePartyText.trim()).toContain("Select Contact / Stakeholder");
 
-    // Verify Deal Commercial Package syncs to backend server (PUT /api/v1/crm/settings/tenant)
-    const putQuotePackagePromise = page.waitForResponse(
-      (res) =>
-        res.url().includes("/crm/settings/tenant") &&
-        res.request().method() === "PUT" &&
-        res.status() === 200,
-      { timeout: 15_000 }
-    );
-    await page.getByTestId("venue-block-booking-hold-btn").click();
-    const putQuotePackageRes = await putQuotePackagePromise;
-    expect(putQuotePackageRes.status()).toBe(200);
-    const quotePkgBody = putQuotePackageRes.request().postDataJSON() as {
-      customFieldsConfigJson?: string;
+    // Verify Deal Commercial Package stays Deal-scoped without mutating tenant governance settings
+    let tenantSettingsMutated = false;
+    const onTenantReq = (req: import("@playwright/test").Request) => {
+      if (req.url().includes("/crm/settings/tenant") && req.method() === "PUT") tenantSettingsMutated = true;
     };
-    expect(quotePkgBody.customFieldsConfigJson ?? "").toContain("dealCommercialPackages");
+    page.on("request", onTenantReq);
+    await page.getByTestId("venue-block-booking-hold-btn").click();
+    await expect(page.getByTestId("venue-block-status-badge")).toContainText(/reserved/i, { timeout: 5_000 });
+    page.off("request", onTenantReq);
+    expect(tenantSettingsMutated).toBe(false);
 
     await page.waitForLoadState("networkidle");
     await setThemeAndCapture(page, "07_crm_deal_360_buying_committee_and_quotes");

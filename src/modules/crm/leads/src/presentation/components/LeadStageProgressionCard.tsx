@@ -14,15 +14,17 @@ import { LeadStatusBadge } from "./LeadStatusBadge";
 import { stageToLeadStatusValue } from "./LeadsKanbanCardItem";
 import type { CrmLead } from "../../domain/entities/LeadEntity";
 
+/** Props for `LeadStageProgressionCard`. */
 export interface LeadStageProgressionCardProps {
   lead: CrmLead;
   activeWorkflow?: CrmWorkflowDefinition | null;
   isSubmitting?: boolean;
   onStageTransition: (stageKey: string) => void;
   isRtl?: boolean;
-  t: (key: string, params?: any) => string;
+  t: (key: string, params?: Record<string, string | number>) => string;
 }
 
+/** Interactive horizontal workflow progression strip for transitioning a CRM Lead's stage. */
 export function LeadStageProgressionCard({
   lead,
   activeWorkflow,
@@ -61,9 +63,8 @@ export function LeadStageProgressionCard({
               stg.color
             );
             const colorMeta = STAGE_COLOR_PALETTE[colorToken] ?? STAGE_COLOR_PALETTE.blue;
-            const raw = stg as any;
             const customHexStyles = buildCustomHexHarmonicStyles(
-              stg.customColorHex || raw.properties?.customColorHex
+              stg.customColorHex || stg.properties?.customColorHex
             );
             return (
               <Button

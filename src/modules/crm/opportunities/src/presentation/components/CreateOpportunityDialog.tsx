@@ -27,8 +27,10 @@ import {
 import { CreateOpportunityTitleAmountFields } from "./CreateOpportunityTitleAmountFields";
 import { OpportunityConversionPreviewBanner } from "./OpportunityConversionPreviewBanner";
 
+/** Re-exported party lookup option type for opportunity creation forms. */
 export type { OpportunityPartyOption };
 
+/** Props for `CreateOpportunityDialog`. */
 export interface CreateOpportunityDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -41,6 +43,7 @@ export interface CreateOpportunityDialogProps {
   submitError?: string | null;
 }
 
+/** Modal dialog for creating a new commercial Opportunity with party and currency preview. */
 export function CreateOpportunityDialog({
   open,
   onOpenChange,

@@ -1,6 +1,9 @@
+"use client";
+
 import type { ICrmActivityRepository } from "../../domain/interfaces/ICrmActivityRepository";
 import type { CrmActivity, SalesActivityKind } from "../../domain/entities/CrmActivityEntity";
 
+/** Account lookup projection used by the Activities Execution Desk account filter. */
 export interface ExecutionDeskAccountSummary {
   readonly id: string;
   readonly nameEn: string;
@@ -9,6 +12,7 @@ export interface ExecutionDeskAccountSummary {
   readonly preferredCurrencyCode?: string | null;
 }
 
+/** Reactive loading and pagination state for the Activities Execution Desk. */
 export interface ActivitiesState {
   stage: "idle" | "loading" | "success" | "failed";
   items: CrmActivity[];
@@ -18,6 +22,7 @@ export interface ActivitiesState {
   error: string | null;
 }
 
+/** Loads workspace-wide CRM activities with a graceful multi-account fan-out fallback. */
 export async function fetchAggregatedActivities(
   repository: ICrmActivityRepository,
   accounts: ExecutionDeskAccountSummary[],
@@ -96,6 +101,7 @@ export async function fetchAggregatedActivities(
   return { items: pagedItems, totalCount: allItems.length };
 }
 
+/** Logs a new sales activity from the Execution Desk targeting the selected or default account. */
 export async function executeCreateDeskActivity(
   repository: ICrmActivityRepository | undefined,
   selectedAccountId: string,
@@ -119,6 +125,7 @@ export async function executeCreateDeskActivity(
   });
 }
 
+/** Schedules a follow-up work item linked to an existing Execution Desk sales activity. */
 export async function executeCreateDeskFollowUp(
   repository: ICrmActivityRepository | undefined,
   activityId: string,

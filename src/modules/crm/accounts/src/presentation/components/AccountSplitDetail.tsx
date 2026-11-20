@@ -13,6 +13,7 @@ interface AccountSplitDetailProps {
   readonly t: (key: string) => string;
 }
 
+/** Split-pane detail inspector rendering a selected CRM Account summary. */
 export function AccountSplitDetail({
   account,
   actions,

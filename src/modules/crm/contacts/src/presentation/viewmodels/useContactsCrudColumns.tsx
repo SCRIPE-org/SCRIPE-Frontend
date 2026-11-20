@@ -7,6 +7,7 @@ import { User, Building2, Mail, Phone, Calendar } from "lucide-react";
 import type { CrudColumn } from "@core/crud/components/generic-crud-view";
 import type { CrmContact } from "../../domain/entities/ContactEntity";
 
+/** Builds column definitions for the CRM Contacts `GenericCrudView` table. */
 export function useContactsCrudColumns(
   language: string,
   t: (key: string) => string

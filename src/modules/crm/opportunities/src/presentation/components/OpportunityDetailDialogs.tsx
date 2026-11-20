@@ -2,37 +2,23 @@
 
 import {
   CrmWorkflowTransitionDialog,
+  type CrmWorkflowDefinition,
   type CrmWorkflowTransitionSubmitPayload,
   type EvaluatedWorkflowTransition,
-} from "@modules/crm";
-import type { CrmOpportunity } from "../../domain/entities/OpportunityEntity";
-import { MoveStageDialog } from "./MoveStageDialog";
-import { CloseOpportunityDialog } from "./CloseOpportunityDialog";
-import { ReopenOpportunityDialog } from "./ReopenOpportunityDialog";
+} from "@modules/crm/workflows";
+import type { AssignOpportunityOwnerInput, CrmOpportunity } from "../../domain/entities/OpportunityEntity";
 import { AssignOwnerDialog } from "./AssignOwnerDialog";
 
+/** Props for `OpportunityDetailDialogs`. */
 export interface OpportunityDetailDialogsProps {
   readonly opp: CrmOpportunity;
-  readonly pipeline: any;
-  readonly activeDealWorkflow: any;
+  readonly activeDealWorkflow: CrmWorkflowDefinition | undefined;
   readonly isRtl: boolean;
   readonly isSubmitting: boolean;
   readonly submitError: string | null;
-  readonly lookupPartyOptions: (q?: string) => Promise<any[]>;
-  readonly isMoveStageOpen: boolean;
-  readonly setIsMoveStageOpen: (open: boolean) => void;
-  readonly targetMoveStageKey?: string;
-  readonly handleMoveStage: (payload: any) => Promise<boolean>;
-  readonly isCloseOpen: boolean;
-  readonly setIsCloseOpen: (open: boolean) => void;
-  readonly closeInitialOutcome?: "Won" | "Lost";
-  readonly handleCloseOpportunity: (payload: any) => Promise<boolean>;
-  readonly isReopenOpen: boolean;
-  readonly setIsReopenOpen: (open: boolean) => void;
-  readonly handleReopenOpportunity: (payload: any) => Promise<boolean>;
   readonly isAssignOwnerOpen: boolean;
   readonly setIsAssignOwnerOpen: (open: boolean) => void;
-  readonly handleAssignOwner: (payload: any) => Promise<boolean>;
+  readonly handleAssignOwner: (payload: AssignOpportunityOwnerInput) => Promise<boolean>;
   readonly transitionDialogOpen: boolean;
   readonly setTransitionDialogOpen: (open: boolean) => void;
   readonly transitionFromKey: string;
@@ -41,25 +27,13 @@ export interface OpportunityDetailDialogsProps {
   readonly handleTransitionSubmit: (payload: CrmWorkflowTransitionSubmitPayload) => Promise<boolean>;
 }
 
+/** Unified Deal 360 dialog host (owner assignment + dynamic workflow transition screen). */
 export function OpportunityDetailDialogs({
   opp,
-  pipeline,
   activeDealWorkflow,
   isRtl,
   isSubmitting,
   submitError,
-  lookupPartyOptions,
-  isMoveStageOpen,
-  setIsMoveStageOpen,
-  targetMoveStageKey,
-  handleMoveStage,
-  isCloseOpen,
-  setIsCloseOpen,
-  closeInitialOutcome,
-  handleCloseOpportunity,
-  isReopenOpen,
-  setIsReopenOpen,
-  handleReopenOpportunity,
   isAssignOwnerOpen,
   setIsAssignOwnerOpen,
   handleAssignOwner,
@@ -70,39 +44,11 @@ export function OpportunityDetailDialogs({
   transitionEvalResult,
   handleTransitionSubmit,
 }: OpportunityDetailDialogsProps) {
-  const fromStage = activeDealWorkflow?.stages.find((s: any) => s.stageKey === transitionFromKey);
-  const toStage = activeDealWorkflow?.stages.find((s: any) => s.stageKey === transitionToKey);
+  const fromStage = activeDealWorkflow?.stages.find((s) => s.stageKey === transitionFromKey);
+  const toStage = activeDealWorkflow?.stages.find((s) => s.stageKey === transitionToKey);
 
   return (
     <>
-      <MoveStageDialog
-        open={isMoveStageOpen}
-        onOpenChange={setIsMoveStageOpen}
-        opportunity={opp}
-        initialTargetStageKey={targetMoveStageKey}
-        pipeline={pipeline}
-        onSubmit={handleMoveStage}
-        onLookupParties={lookupPartyOptions}
-        isSubmitting={isSubmitting}
-        submitError={submitError}
-      />
-      <CloseOpportunityDialog
-        open={isCloseOpen}
-        onOpenChange={setIsCloseOpen}
-        opportunity={opp}
-        initialOutcome={closeInitialOutcome}
-        onSubmit={handleCloseOpportunity}
-        isSubmitting={isSubmitting}
-        submitError={submitError}
-      />
-      <ReopenOpportunityDialog
-        open={isReopenOpen}
-        onOpenChange={setIsReopenOpen}
-        opportunity={opp}
-        onSubmit={handleReopenOpportunity}
-        isSubmitting={isSubmitting}
-        submitError={submitError}
-      />
       <AssignOwnerDialog
         open={isAssignOwnerOpen}
         onOpenChange={setIsAssignOwnerOpen}

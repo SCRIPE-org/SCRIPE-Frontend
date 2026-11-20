@@ -2,7 +2,7 @@ import React from "react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import type { IApiService } from "@/core/interfaces/api.interface";
-import { useCrmSettingsStore } from "@modules/crm";
+import { useCrmClientPrefsStore } from "@modules/crm";
 import { CrmOpportunityService } from "../opportunities/src/data/services/CrmOpportunityService";
 import { CrmLeadService } from "../leads/src/data/services/CrmLeadService";
 import { CrmActivityService } from "../activities/src/data/services/CrmActivityService";
@@ -21,7 +21,7 @@ function createMockApi() {
 
 describe("CRM Phase C DTO Alignment & Multi-Currency Kanban Overhaul", () => {
   afterEach(() => {
-    useCrmSettingsStore.getState().resetDefaults();
+    useCrmClientPrefsStore.getState().resetClientPrefs();
   });
 
   it("normalizes backend CrmDealContactRoleDto fields and sends notes on addContactRole", async () => {
@@ -181,7 +181,7 @@ describe("CRM Phase C DTO Alignment & Multi-Currency Kanban Overhaul", () => {
   });
 
   it("renders base currency 0 on empty Kanban stage and converts mixed currencies cleanly", () => {
-    useCrmSettingsStore.setState({
+    useCrmClientPrefsStore.setState({
       baseCurrency: "SAR",
       autoConvertToBase: true,
       customRateOverrides: { USD: 1, SAR: 3.75 },

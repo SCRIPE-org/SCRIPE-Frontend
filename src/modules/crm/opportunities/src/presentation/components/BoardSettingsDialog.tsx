@@ -9,20 +9,25 @@ import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 
+/** Swimlane grouping modes supported by the Opportunities Kanban board. */
 export type KanbanSwimlaneMode = "none" | "assignee" | "account" | "dealType";
+/** Visual card density presets for Opportunities Kanban cards. */
 export type KanbanCardDensity = "Compact" | "Standard" | "Executive";
 
+/** Minimum and maximum work-in-progress card thresholds for a pipeline stage column. */
 export interface StageWipLimit {
   min?: number;
   max?: number;
 }
 
+/** Persisted Kanban board layout, density, and per-stage WIP limit configuration. */
 export interface BoardSettingsConfig {
   swimlaneMode: KanbanSwimlaneMode;
   cardDensity?: KanbanCardDensity;
   wipLimits: Record<string, StageWipLimit>;
 }
 
+/** Props for `BoardSettingsDialog`. */
 export interface BoardSettingsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;

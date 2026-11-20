@@ -3,8 +3,10 @@
  * Governed by PartyKernel organization bridge, commercial tiers, and 360 overview.
  */
 
+/** PartyKernel entity classification snapshot stored on CRM Accounts. */
 export type PartyTypeSnapshot = "Organization" | "Person";
 
+/** Commercial CRM Account linked to a verified or candidate PartyKernel record. */
 export interface CrmAccount {
   id: string;
   partyId: string;
@@ -23,6 +25,7 @@ export interface CrmAccount {
   modifiedAt?: string;
 }
 
+/** Summary contact item displayed in a CRM Account 360 profile. */
 export interface CrmAccountContactItem {
   id: string;
   personPartyId: string;
@@ -34,6 +37,7 @@ export interface CrmAccountContactItem {
   phone?: string;
 }
 
+/** Summary opportunity row displayed in a CRM Account 360 profile. */
 export interface CrmAccountOpportunityItem {
   id: string;
   title: string;
@@ -46,11 +50,13 @@ export interface CrmAccountOpportunityItem {
   targetCloseDate?: string;
 }
 
+/** Full 360-degree CRM Account aggregate including linked contacts and deals. */
 export interface CrmAccount360 extends CrmAccount {
   contacts: CrmAccountContactItem[];
   opportunities: CrmAccountOpportunityItem[];
 }
 
+/** Candidate PartyKernel organization or person lookup item for account onboarding. */
 export interface CrmCandidatePartyLookup {
   partyId: string;
   legalNameEn: string;
@@ -59,6 +65,7 @@ export interface CrmCandidatePartyLookup {
   isVerified: boolean;
 }
 
+/** Input payload for creating a CRM Account from a PartyKernel party or inline organization. */
 export interface CreateAccountInput {
   partyId?: string;
   commercialTierCode?: string;
@@ -72,6 +79,7 @@ export interface CreateAccountInput {
   phone?: string;
 }
 
+/** Input payload for updating a CRM Account's commercial tier, currency, and notes. */
 export interface UpdateAccountInput {
   id: string;
   commercialTierCode?: string;
@@ -82,6 +90,7 @@ export interface UpdateAccountInput {
   rowVersion?: string;
 }
 
+/** Pagination and tier filter parameters for querying CRM Accounts. */
 export interface AccountsFilterParams {
   page?: number;
   pageSize?: number;
@@ -89,6 +98,7 @@ export interface AccountsFilterParams {
   tierCode?: string;
 }
 
+/** Paginated list response containing CRM Account records and total count. */
 export interface PagedAccountsResult {
   items: CrmAccount[];
   totalCount: number;

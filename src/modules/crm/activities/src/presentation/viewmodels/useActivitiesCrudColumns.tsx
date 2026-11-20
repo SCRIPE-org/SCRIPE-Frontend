@@ -32,6 +32,7 @@ function getActivityKindIcon(kind: SalesActivityKind) {
   }
 }
 
+/** Builds column definitions for the CRM Activities Execution Desk `GenericCrudView`. */
 export function useActivitiesCrudColumns(
   language: string,
   t: (key: string) => string,

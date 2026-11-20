@@ -6,6 +6,7 @@ import { Button } from "@core/ui/button";
 import { Mail, Phone, Users } from "lucide-react";
 import type { CrmAccountContactItem } from "../../domain/entities/AccountEntity";
 
+/** Props for `AccountContactsCard`. */
 export interface AccountContactsCardProps {
   readonly contacts?: CrmAccountContactItem[];
   readonly language: string;
@@ -15,6 +16,7 @@ export interface AccountContactsCardProps {
   readonly onViewAllContacts: () => void;
 }
 
+/** Card listing commercial contacts associated with an Account 360 record. */
 export function AccountContactsCard({
   contacts = [],
   language,

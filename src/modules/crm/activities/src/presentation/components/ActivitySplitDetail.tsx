@@ -45,6 +45,7 @@ interface ActivitySplitDetailProps {
   readonly t: (key: string) => string;
 }
 
+/** Split-pane detail inspector rendering full sales activity metadata and actions. */
 export function ActivitySplitDetail({
   activity,
   actions,

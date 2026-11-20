@@ -8,6 +8,7 @@ import type {
   PagedAccountsResult,
 } from "../models/crm-account.types";
 
+/** Service port defining HTTP operations for CRM Accounts. */
 export interface ICrmAccountService {
   getAccounts(params?: AccountsFilterParams): Promise<PagedAccountsResult>;
   getAccountById(id: string): Promise<CrmAccount360>;

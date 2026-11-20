@@ -102,6 +102,14 @@ describe("Lead Kanban dynamic status/stage execution", () => {
     setCrmContainer({
       overviewService: {} as never,
       overviewRepository: {} as never,
+
+      workflowService: {} as never,
+
+      workflowRepository: {} as never,
+      reportsService: {} as never,
+      reportsRepository: {} as never,
+      settingsService: {} as never,
+      settingsRepository: {} as never,
       leadService: {} as never,
       leadRepository: { moveLeadStage: mockMoveLeadStage } as never,
       opportunityService: {} as never,
@@ -110,6 +118,9 @@ describe("Lead Kanban dynamic status/stage execution", () => {
       accountRepository: {} as never,
       contactService: {} as never,
       contactRepository: {} as never,
+      activityService: {} as never,
+      activityRepository: {} as never,
+      entityLookup: {} as never,
     } as CrmContainer);
 
     const loadLeads = vi.fn().mockResolvedValue(undefined);

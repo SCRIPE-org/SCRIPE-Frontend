@@ -1,7 +1,11 @@
+"use client";
+
 import type { CrmActivity } from "../../domain/entities/CrmActivityEntity";
 
+/** Due-date filter bucket options for the Activities Execution Desk. */
 export type ActivityDueBucket = "all" | "overdue" | "today" | "upcoming";
 
+/** Resolved contact identity and account context extracted from `?contact=` URL deep links. */
 export interface ContactActivityFilterInfo {
   ids: string[];
   displayName: string | null;
@@ -90,6 +94,7 @@ export function buildActivitiesPagination(
   };
 }
 
+/** Payload structure for updating a linked activity follow-up work item. */
 export interface ActivityWorkItemUpdatePayload {
   title: string;
   description?: string | null;

@@ -22,10 +22,7 @@ import { useAccountsViewModel } from "../viewmodels/useAccountsViewModel";
 import { useAccountsCrudColumns } from "../viewmodels/useAccountsCrudColumns";
 import type { CrmAccount } from "../../domain/entities/AccountEntity";
 
-/**
- * CRM Accounts directory view providing tier filtering, quick search,
- * multi-layout rendering (Table, CardGrid, SplitPane), and account creation.
- */
+/** CRM Accounts directory view providing tier filtering, quick search, multi-layout rendering, and account creation. */
 export function AccountsView() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -33,24 +30,10 @@ export function AccountsView() {
   const isRtl = language === "ar";
   const canCreateAccount = usePermission(CRM_PERMISSIONS.ACCOUNTS_CREATE);
   const viewModel = useAccountsViewModel();
-  const {
-    state,
-    search,
-    tierFilter,
-    isCreateOpen,
-    isSubmitting,
-    submitError,
-    setIsCreateOpen,
-    handleSearchChange,
-    handleTierFilterChange,
-    handleCreateAccount,
-    refresh,
-  } = viewModel;
+  const { state, search, tierFilter, isCreateOpen, isSubmitting, submitError, setIsCreateOpen, handleSearchChange, handleTierFilterChange, handleCreateAccount, refresh } = viewModel;
 
   useEffect(() => {
-    if (searchParams?.get("create") === "1" && canCreateAccount) {
-      setIsCreateOpen(true);
-    }
+    if (searchParams?.get("create") === "1" && canCreateAccount) setIsCreateOpen(true);
   }, [searchParams, canCreateAccount, setIsCreateOpen]);
 
   const handleTabChange = (tab: CrmTabId) => {
@@ -59,7 +42,6 @@ export function AccountsView() {
   };
 
   const columns = useAccountsCrudColumns(language, t);
-
   const tiers = [
     { key: undefined, label: t("crmAccounts.filters.allTiers") },
     { key: "Enterprise", label: t("crmAccounts.tiers.Enterprise") },
@@ -82,41 +64,18 @@ export function AccountsView() {
     viewSwitchPosition: "toolbar",
     viewModes: ["Table", "CardGrid", "SplitPane"],
     defaultView: "Table",
-    permissions: {
-      canView: CRM_PERMISSIONS.ACCOUNTS_READ,
-      canCreate: CRM_PERMISSIONS.ACCOUNTS_CREATE,
-      canUpdate: CRM_PERMISSIONS.ACCOUNTS_UPDATE,
-      canDelete: false,
-    },
+    permissions: { canView: CRM_PERMISSIONS.ACCOUNTS_READ, canCreate: CRM_PERMISSIONS.ACCOUNTS_CREATE, canUpdate: CRM_PERMISSIONS.ACCOUNTS_UPDATE, canDelete: false },
     toolbarContent: (
       <div className="flex flex-col sm:flex-row sm:items-center gap-3 flex-1" dir={isRtl ? "rtl" : "ltr"}>
         <div className="relative w-full sm:w-72">
           <Search className="absolute start-2.5 top-1/2 -translate-y-1/2 size-3.5 text-nx-ink-3 pointer-events-none" />
-          <Input
-            type="text"
-            placeholder={t("crmAccounts.searchPlaceholder")}
-            value={search}
-            onChange={(e) => handleSearchChange(e.target.value)}
-            className="h-8 ps-8 pe-3 text-xs bg-nx-surface border-nx-line text-nx-ink"
-          />
+          <Input type="text" placeholder={t("crmAccounts.searchPlaceholder")} value={search} onChange={(e) => handleSearchChange(e.target.value)} className="h-8 ps-8 pe-3 text-xs bg-nx-surface border-nx-line text-nx-ink" />
         </div>
         <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
           {tiers.map((tier) => {
             const isSelected = tierFilter === tier.key;
             return (
-              <Button
-                key={tier.label}
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => handleTierFilterChange(tier.key)}
-                className={cn(
-                  "h-7 px-2.5 text-xs rounded-nx-md shrink-0 transition-all",
-                  isSelected
-                    ? "border-[color:color-mix(in_srgb,var(--nx-accent)_40%,transparent)] bg-nx-accent-wash text-nx-accent font-semibold"
-                    : "border-nx-line bg-nx-surface text-nx-ink-2 hover:bg-nx-raised hover:text-nx-ink"
-                )}
-              >
+              <Button key={tier.label} type="button" variant="outline" size="sm" onClick={() => handleTierFilterChange(tier.key)} className={cn("h-7 px-2.5 text-xs rounded-nx-md shrink-0 transition-all", isSelected ? "border-[color:color-mix(in_srgb,var(--nx-accent)_40%,transparent)] bg-nx-accent-wash text-nx-accent font-semibold" : "border-nx-line bg-nx-surface text-nx-ink-2 hover:bg-nx-raised hover:text-nx-ink")}>
                 {tier.label}
               </Button>
             );
@@ -126,28 +85,13 @@ export function AccountsView() {
     ),
     columns,
     getActions: (_vm, tFn): CrudAction<CrmAccount>[] => [
-      {
-        label: tFn("crmAccounts.actions.view360") || "View 360",
-        icon: <Eye className="size-3.5" />,
-        onClick: (a: CrmAccount) => router.push(`/crm/accounts/${a.id}`),
-      },
+      { label: tFn("crmAccounts.actions.view360") || "View 360", icon: <Eye className="size-3.5" />, onClick: (a: CrmAccount) => router.push(`/crm/accounts/${a.id}`) },
     ],
     renderCardGridItem: (account: CrmAccount, actions: React.ReactNode) => (
-      <AccountCardGridItem
-        account={account}
-        actions={actions}
-        language={language}
-        onViewDetail={(id) => router.push(`/crm/accounts/${id}`)}
-        t={t}
-      />
+      <AccountCardGridItem account={account} actions={actions} language={language} onViewDetail={(id) => router.push(`/crm/accounts/${id}`)} t={t} />
     ),
     renderSplitDetail: (account: CrmAccount, actions: React.ReactNode) => (
-      <AccountSplitDetail
-        account={account}
-        actions={actions}
-        language={language}
-        t={t}
-      />
+      <AccountSplitDetail account={account} actions={actions} language={language} t={t} />
     ),
   };
 
@@ -159,29 +103,13 @@ export function AccountsView() {
           subtitle={t("crmAccounts.header.subtitle")}
           actions={
             <div className="flex items-center gap-2">
-              <DataExchangeToolbarActions
-                entityKey="crm.account"
-                activeSearch={search}
-                onImportComplete={refresh}
-              />
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={refresh}
-                className="h-8 px-2.5 text-xs border border-nx-line bg-nx-surface hover:bg-nx-raised text-nx-ink gap-1.5"
-              >
+              <DataExchangeToolbarActions entityKey="crm.account" activeSearch={search} onImportComplete={refresh} />
+              <Button type="button" variant="outline" size="sm" onClick={refresh} className="h-8 px-2.5 text-xs border border-nx-line bg-nx-surface hover:bg-nx-raised text-nx-ink gap-1.5">
                 <RefreshCw className="size-3.5 text-nx-ink-3" />
                 <span>{t("crmAccounts.actions.refresh")}</span>
               </Button>
               {canCreateAccount && (
-                <Button
-                  type="button"
-                  variant="default"
-                  size="sm"
-                  onClick={() => setIsCreateOpen(true)}
-                  className="h-8 px-3 text-xs bg-nx-accent-fill text-nx-on-fill font-semibold hover:brightness-95 gap-1.5"
-                >
+                <Button type="button" variant="default" size="sm" onClick={() => setIsCreateOpen(true)} className="h-8 px-3 text-xs font-semibold gap-1.5">
                   <Plus className="size-3.5" />
                   <span>{t("crmAccounts.actions.create")}</span>
                 </Button>
@@ -210,13 +138,7 @@ export function AccountsView() {
               description={t("crmAccounts.empty.description")}
               action={
                 canCreateAccount ? (
-                  <Button
-                    type="button"
-                    variant="default"
-                    size="sm"
-                    onClick={() => setIsCreateOpen(true)}
-                    className="h-8 px-3 text-xs bg-nx-accent-fill text-nx-on-fill font-semibold hover:brightness-95 gap-1.5"
-                  >
+                  <Button type="button" variant="default" size="sm" onClick={() => setIsCreateOpen(true)} className="h-8 px-3 text-xs font-semibold gap-1.5">
                     <Plus className="size-3.5" />
                     <span>{t("crmAccounts.actions.create")}</span>
                   </Button>
@@ -226,14 +148,7 @@ export function AccountsView() {
           }
         />
 
-        <CreateAccountDialog
-          open={isCreateOpen}
-          isSubmitting={isSubmitting}
-          error={submitError}
-          onOpenChange={setIsCreateOpen}
-          onSubmit={handleCreateAccount}
-          onLookupOrganizations={viewModel.lookupCandidateOrganizations}
-        />
+        <CreateAccountDialog open={isCreateOpen} isSubmitting={isSubmitting} error={submitError} onOpenChange={setIsCreateOpen} onSubmit={handleCreateAccount} onLookupOrganizations={viewModel.lookupCandidateOrganizations} />
       </div>
     </CrmShell>
   );

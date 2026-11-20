@@ -35,6 +35,7 @@ interface CreateFollowUpModalProps {
   readonly error: string | null;
 }
 
+/** Modal dialog for scheduling a follow-up work item linked to a sales activity. */
 export function CreateFollowUpModal({
   activity,
   onClose,

@@ -29,6 +29,7 @@ interface ConvertLeadDialogProps {
   submitError?: string | null;
 }
 
+/** Modal dialog for converting a qualified CRM Lead into a commercial Opportunity. */
 export function ConvertLeadDialog({
   open,
   onOpenChange,

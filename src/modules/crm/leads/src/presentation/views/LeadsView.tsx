@@ -7,17 +7,8 @@ import { usePermission } from "@core/hooks/use-permission";
 import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
 import { Button } from "@core/ui/button";
 import { AlertCircle, RefreshCw, Plus } from "lucide-react";
-import {
-  CRM_PERMISSIONS,
-  CrmShell,
-  CrmSectionHeader,
-  useCrmCurrency,
-  useCrmWorkflowsStore,
-  useCrmSettingsStore,
-  CrmWorkflowTransitionDialog,
-  type CrmWorkflowTransitionSubmitPayload,
-  type EvaluatedWorkflowTransition,
-} from "@modules/crm";
+import { CRM_PERMISSIONS, CrmShell, CrmSectionHeader, useCrmCurrency, useCrmClientPrefsStore } from "@modules/crm/shared";
+import { useCrmWorkflowsStore, CrmWorkflowTransitionDialog, type EvaluatedWorkflowTransition } from "@modules/crm";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
 import type { DropEvaluationResult } from "@core/crud/components/generic-crud-view";
 import { DataExchangeToolbarActions } from "@core/data-exchange";
@@ -29,12 +20,10 @@ import { AssignLeadOwnerDialog } from "../components/AssignLeadOwnerDialog";
 import { stageToLeadStatusValue } from "../components/LeadsKanbanCardItem";
 import { useLeadsViewModel } from "../viewmodels/useLeadsViewModel";
 import { useLeadsCrudConfig } from "../viewmodels/useLeadsCrudConfig";
-import {
-  buildLeadTransitionRecord,
-  evaluateLeadStageTransition,
-} from "../utils/leadTransitionHelpers";
+import { buildLeadTransitionRecord, evaluateLeadStageTransition } from "../utils/leadTransitionHelpers";
 import type { CrmLead, LeadStatus } from "../../domain/entities/LeadEntity";
 
+/** Primary CRM Leads & Qualification workspace view (<200 lines). */
 export function LeadsView() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -50,7 +39,7 @@ export function LeadsView() {
   const activeLeadWorkflowId = useCrmWorkflowsStore((s) => s.activeLeadWorkflowId);
   const setActiveWorkflow = useCrmWorkflowsStore((s) => s.setActiveWorkflow);
   const leadWorkflows = workflows.filter((w) => w.entityType === "lead");
-  const defaultDealViewMode = useCrmSettingsStore((s) => s.defaultDealViewMode);
+  const defaultDealViewMode = useCrmClientPrefsStore((s) => s.defaultDealViewMode);
   const viewModel = useLeadsViewModel();
   const {
     state, search, statusFilter, isCreateOpen, isQualifyOpen, isLinkPartyOpen, isConvertOpen, isAssignOwnerOpen,
@@ -58,7 +47,7 @@ export function LeadsView() {
     handleSearchChange, handleStatusFilterChange, handleCreateLead, handleQualifyLead, handleLinkParty,
     handleConvertLead, handleAssignLeadOwner, linkPartyBeforeConvert,
     openQualifyDialog, openLinkPartyDialog, openConvertDialog, openAssignOwnerDialog, handleUpdateLeadStatus,
-    handleTransitionSubmit, refresh,
+    handleTransitionSubmit, refresh, setSubmitError, clearError,
   } = viewModel;
 
   const [transitionDialogOpen, setTransitionDialogOpen] = useState(false);
@@ -66,10 +55,6 @@ export function LeadsView() {
   const [transitionFromKey, setTransitionFromKey] = useState("");
   const [transitionToKey, setTransitionToKey] = useState("");
   const [transitionEvalResult, setTransitionEvalResult] = useState<EvaluatedWorkflowTransition | null>(null);
-
-  useEffect(() => {
-    void useCrmWorkflowsStore.getState().fetchPipelinesFromBackend();
-  }, []);
 
   useEffect(() => {
     if (shouldAutoOpenCreate && canCreateLead && !autoOpenedCreateRef.current) {
@@ -92,11 +77,9 @@ export function LeadsView() {
       const evalResult = evaluateLeadStageTransition(lead, fromKey, toKey, isRtl);
 
       if (evalResult.status === "blocked") {
-        const msg = evalResult.reason || t("crmLeads.detail.transitionBlockedTitle", { defaultValue: "Status Transition Blocked" });
-        viewModel.setSubmitError?.(msg);
+        setSubmitError(evalResult.reason || t("crmLeads.detail.transitionBlockedTitle", { defaultValue: "Status Transition Blocked" }));
         return false;
       }
-
       if (evalResult.status === "allowed_screen_required") {
         setTransitionLead(lead);
         setTransitionFromKey(fromKey);
@@ -105,10 +88,9 @@ export function LeadsView() {
         setTransitionDialogOpen(true);
         return false;
       }
-
       return handleUpdateLeadStatus(lead, targetStageOrStatus);
     },
-    [activeLeadWorkflow, handleUpdateLeadStatus, viewModel, t, isRtl]
+    [activeLeadWorkflow, handleUpdateLeadStatus, setSubmitError, t, isRtl]
   );
 
   const sumLeadsInBaseCurrency = useCallback((items: CrmLead[]) => {
@@ -132,12 +114,10 @@ export function LeadsView() {
         ]
       : [
           { key: undefined, label: t("crmLeads.actions.allStatuses") },
-          ...[...activeLeadWorkflow.stages]
-            .sort((a, b) => a.sortOrder - b.sortOrder)
-            .map((stg) => ({
-              key: stageToLeadStatusValue(stg.stageKey, stg.labelEn),
-              label: isRtl && stg.labelAr ? stg.labelAr : stg.labelEn,
-            })),
+          ...[...activeLeadWorkflow.stages].sort((a, b) => a.sortOrder - b.sortOrder).map((stg) => ({
+            key: stageToLeadStatusValue(stg.stageKey, stg.labelEn),
+            label: isRtl && stg.labelAr ? stg.labelAr : stg.labelEn,
+          })),
         ];
 
   const { crudConfig, columns } = useLeadsCrudConfig({
@@ -150,6 +130,8 @@ export function LeadsView() {
   const onTabNav = (tab: string) => {
     if (tab !== "leads") router.push(tab === "overview" ? "/crm" : tab === "deals" ? "/crm/opportunities" : `/crm/${tab}`);
   };
+  const fromStage = activeLeadWorkflow?.stages.find((s) => s.stageKey === transitionFromKey);
+  const toStage = activeLeadWorkflow?.stages.find((s) => s.stageKey === transitionToKey);
 
   return (
     <CrmShell activeTab="leads" onTabChange={onTabNav}>
@@ -159,12 +141,7 @@ export function LeadsView() {
         badge={`${state.totalCount} ${t("crm.tabs.leads")}`}
         actions={
           <div className="flex items-center gap-2">
-            <DataExchangeToolbarActions
-              entityKey="crm.lead"
-              enableMultiSheetMigration
-              activeSearch={search}
-              onImportComplete={refresh}
-            />
+            <DataExchangeToolbarActions entityKey="crm.lead" enableMultiSheetMigration activeSearch={search} onImportComplete={refresh} />
             <Button type="button" variant="outline" size="sm" onClick={refresh} className="h-8 gap-1.5 border-nx-line bg-nx-surface text-xs text-nx-ink hover:bg-nx-raised">
               <RefreshCw className="size-3.5 text-nx-ink-2" />
               <span>{t("crmLeads.actions.refresh")}</span>
@@ -195,7 +172,7 @@ export function LeadsView() {
               <AlertTitle>{t("crmLeads.detail.transitionBlockedTitle", { defaultValue: "Status Transition Blocked" })}</AlertTitle>
               <AlertDescription className="mt-1 flex items-center justify-between gap-3">
                 <span className="text-xs">{state.error || submitError}</span>
-                <Button type="button" size="sm" variant="outline" onClick={() => viewModel.clearError?.()} className="text-xs h-7 shrink-0">{t("crmLeads.detail.dismissBtn", { defaultValue: "Dismiss" })}</Button>
+                <Button type="button" size="sm" variant="outline" onClick={clearError} className="text-xs h-7 shrink-0">{t("crmLeads.detail.dismissBtn", { defaultValue: "Dismiss" })}</Button>
               </AlertDescription>
             </Alert>
           )}
@@ -207,25 +184,7 @@ export function LeadsView() {
       <LinkPartyDialog open={isLinkPartyOpen} onOpenChange={setIsLinkPartyOpen} lead={activeLead} onSubmit={handleLinkParty} isSubmitting={isSubmitting} submitError={submitError} />
       <ConvertLeadDialog open={isConvertOpen} onOpenChange={setIsConvertOpen} lead={activeLead} onLinkPartyBeforeConvert={linkPartyBeforeConvert} onSubmit={handleConvertLead} isSubmitting={isSubmitting} submitError={submitError} />
       <AssignLeadOwnerDialog open={isAssignOwnerOpen} onOpenChange={setIsAssignOwnerOpen} lead={activeLead} onSubmit={handleAssignLeadOwner} isSubmitting={isSubmitting} submitError={submitError} />
-      {(() => {
-        const fromStage = activeLeadWorkflow?.stages.find((s) => s.stageKey === transitionFromKey);
-        const toStage = activeLeadWorkflow?.stages.find((s) => s.stageKey === transitionToKey);
-        return (
-          <CrmWorkflowTransitionDialog
-            open={transitionDialogOpen}
-            onOpenChange={setTransitionDialogOpen}
-            entityType="lead"
-            record={transitionLead ? buildLeadTransitionRecord(transitionLead) : null}
-            fromStageKey={transitionFromKey}
-            toStageKey={transitionToKey}
-            fromStageLabel={fromStage ? (isRtl && fromStage.labelAr ? fromStage.labelAr : fromStage.labelEn) : undefined}
-            toStageLabel={toStage ? (isRtl && toStage.labelAr ? toStage.labelAr : toStage.labelEn) : undefined}
-            evalResult={transitionEvalResult}
-            onSubmit={handleTransitionSubmit}
-            isSubmitting={isSubmitting}
-          />
-        );
-      })()}
+      <CrmWorkflowTransitionDialog open={transitionDialogOpen} onOpenChange={setTransitionDialogOpen} entityType="lead" record={transitionLead ? buildLeadTransitionRecord(transitionLead) : null} fromStageKey={transitionFromKey} toStageKey={transitionToKey} fromStageLabel={fromStage ? (isRtl && fromStage.labelAr ? fromStage.labelAr : fromStage.labelEn) : undefined} toStageLabel={toStage ? (isRtl && toStage.labelAr ? toStage.labelAr : toStage.labelEn) : undefined} evalResult={transitionEvalResult} onSubmit={handleTransitionSubmit} isSubmitting={isSubmitting} />
     </CrmShell>
   );
 }

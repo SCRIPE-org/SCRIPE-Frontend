@@ -3,6 +3,7 @@
  * Normative entity matching EP-ACTIVITIES-LIST wire contract.
  */
 
+/** Supported CRM sales activity entry classifications matching the backend contract. */
 export type SalesActivityKind =
   | "Note"
   | "MeetingLog"
@@ -14,6 +15,7 @@ export type SalesActivityKind =
   | "StageTransition"
   | "DocumentGenerated";
 
+/** Immutable sales activity timeline record linked to a lead, account, or deal. */
 export interface CrmActivity {
   readonly activityId: string;
   readonly leadId?: string | null;
@@ -33,6 +35,7 @@ export interface CrmActivity {
   readonly maskedFieldKeys: readonly string[];
 }
 
+/** Domain entity class wrapping `CrmActivity` with safe copy-update semantics. */
 export class CrmActivityEntity implements CrmActivity {
   readonly activityId: string;
   readonly leadId?: string | null;
@@ -70,11 +73,13 @@ export class CrmActivityEntity implements CrmActivity {
     this.maskedFieldKeys = data.maskedFieldKeys ?? [];
   }
 
+  /** Returns a new `CrmActivityEntity` with merged partial property updates. */
   copyWith(updates: Partial<CrmActivity>): CrmActivityEntity {
     return new CrmActivityEntity({ ...this, ...updates });
   }
 }
 
+/** Input payload for logging a manual CRM sales activity entry. */
 export interface CreateSalesActivityPayload {
   readonly activityKind: SalesActivityKind;
   readonly summary: string;
@@ -86,6 +91,7 @@ export interface CreateSalesActivityPayload {
   readonly occurredAtUtc?: string;
 }
 
+/** Input payload for creating a follow-up work item from an existing activity. */
 export interface CreateActivityFollowUpPayload {
   readonly title: string;
   readonly description?: string;
@@ -93,12 +99,14 @@ export interface CreateActivityFollowUpPayload {
   readonly dueAtUtc?: string;
 }
 
+/** Response payload returned after creating a follow-up work item on an activity. */
 export interface FollowUpCreatedResponse {
   readonly workItemRefId: string;
   readonly workItemStatus: string;
   readonly followUpActivity: CrmActivity;
 }
 
+/** Query filter options for paginated CRM sales activity lookups. */
 export interface CrmActivitiesQueryFilter {
   readonly leadId?: string;
   readonly accountId?: string;
@@ -109,6 +117,7 @@ export interface CrmActivitiesQueryFilter {
   readonly includeAllVisible?: boolean;
 }
 
+/** Paginated domain response containing CRM sales activity items. */
 export interface PagedActivitiesResult {
   readonly items: readonly CrmActivity[];
   readonly page: number;

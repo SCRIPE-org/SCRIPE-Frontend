@@ -8,6 +8,7 @@ import type {
   PagedAccountsResult,
 } from "../models/crm-account.types";
 
+/** Repository port abstracting CRM Account persistence and party lookup. */
 export interface ICrmAccountRepository {
   getAccounts(params?: AccountsFilterParams): Promise<PagedAccountsResult>;
   getAccountById(id: string): Promise<CrmAccount360>;

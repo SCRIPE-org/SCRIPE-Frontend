@@ -5,6 +5,7 @@ import { setCrmContainer } from "@modules/crm/di";
 import type { CrmContainer } from "@modules/crm/di";
 import type { CrmAccount, PagedAccountsResult } from "../../domain/models/crm-account.types";
 import { PAGE_PERMISSIONS } from "@core/common/types/permissions";
+import { queryClient } from "@core/query-client";
 import { CRM_PERMISSIONS } from "@modules/crm";
 
 vi.mock("@core/providers/i18n-provider", () => ({
@@ -91,11 +92,18 @@ describe("AccountsView Component", () => {
   let mockContainer: CrmContainer;
 
   beforeEach(() => {
+    queryClient.clear();
     mockContainer = {
       overviewService: {} as any,
       overviewRepository: {
         getOverview: vi.fn().mockResolvedValue({}),
       } as any,
+      workflowService: {} as any,
+      workflowRepository: {} as any,
+      reportsService: {} as any,
+      reportsRepository: {} as any,
+      settingsService: {} as any,
+      settingsRepository: {} as any,
       leadService: {} as any,
       leadRepository: {
         getLeads: vi.fn().mockResolvedValue({ items: [], totalCount: 0, page: 1, pageSize: 20 }),
@@ -128,6 +136,9 @@ describe("AccountsView Component", () => {
         createContact: vi.fn(),
         updateContact: vi.fn(),
       },
+      activityService: {} as any,
+      activityRepository: {} as any,
+      entityLookup: {} as any,
     };
 
     setCrmContainer(mockContainer);

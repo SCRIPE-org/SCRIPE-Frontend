@@ -24,6 +24,7 @@ interface ActivityTimelineProps {
   readonly className?: string;
 }
 
+/** Entity-scoped CRM sales activity timeline with quick-log, follow-up, and messaging modals. */
 export function ActivityTimeline({
   leadId,
   accountId,

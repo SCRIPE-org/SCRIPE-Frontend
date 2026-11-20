@@ -1,20 +1,18 @@
+import { stripHtmlTags } from "@core/common/sanitize";
 import type { IApiService } from "@/core/interfaces/api.interface";
 import type { ICrmOpportunityService } from "../../domain/interfaces/ICrmOpportunityService";
 import type {
   CrmOpportunity, OpportunityDetailResult, CreateOpportunityInput, UpdateOpportunityInput,
   AssignOpportunityOwnerInput, MoveOpportunityStageInput, CloseOpportunityInput, ReopenOpportunityInput,
-  OpportunitiesFilterParams, PagedOpportunitiesResult, PipelineDefinition, UpdateDefaultPipelineInput,
-  DealContactRole, AddDealContactRoleInput,
+  OpportunitiesFilterParams, PagedOpportunitiesResult, DealContactRole, AddDealContactRoleInput,
 } from "../../domain/entities/OpportunityEntity";
 import { CRM_OPPORTUNITY_ENDPOINTS } from "./crm-opportunity.endpoints";
-import {
-  normalizeDealContactRoleDto,
-  normalizePipelineDefinitionDto,
-  type ApiSuccessResponse,
-} from "./crmOpportunityMappers";
+import { normalizeDealContactRoleDto, type ApiSuccessResponse } from "./crmOpportunityMappers";
 
+/** Re-exported standard API envelope type for CRM Opportunity service consumers. */
 export type { ApiSuccessResponse };
 
+/** Concrete HTTP service for CRM Opportunity lifecycle and buying committee endpoints. */
 export class CrmOpportunityService implements ICrmOpportunityService {
   constructor(private readonly api: IApiService) {}
 
@@ -31,9 +29,11 @@ export class CrmOpportunityService implements ICrmOpportunityService {
     return response as T;
   }
 
+  /** Fetches paginated CRM Opportunities filtered by search, stageKey, and status. */
   async getOpportunities(params?: OpportunitiesFilterParams): Promise<PagedOpportunitiesResult> {
     const queryParams: Record<string, unknown> = { page: params?.page ?? 1, pageSize: params?.pageSize ?? 20 };
-    if (params?.search && params.search.trim() !== "") queryParams.search = params.search.trim();
+    const cleanSearch = stripHtmlTags(params?.search ?? "").trim();
+    if (cleanSearch) queryParams.search = cleanSearch;
     if (params?.stageKey) queryParams.stageKey = params.stageKey;
     if (params?.status) queryParams.status = params.status;
     const response = await this.api.get<ApiSuccessResponse<PagedOpportunitiesResult> | PagedOpportunitiesResult>(
@@ -42,6 +42,7 @@ export class CrmOpportunityService implements ICrmOpportunityService {
     return this.unwrap(response);
   }
 
+  /** Fetches a single Opportunity aggregate and its stage history by ID. */
   async getOpportunityById(id: string): Promise<OpportunityDetailResult> {
     const response = await this.api.get<ApiSuccessResponse<OpportunityDetailResult> | OpportunityDetailResult>(
       CRM_OPPORTUNITY_ENDPOINTS.OPPORTUNITY_BY_ID(id)
@@ -49,14 +50,23 @@ export class CrmOpportunityService implements ICrmOpportunityService {
     return this.unwrap(response);
   }
 
+  /** Sanitizes text fields and creates a new Opportunity via idempotent POST. */
   async createOpportunity(input: CreateOpportunityInput): Promise<CrmOpportunity> {
-    const { idempotencyKey, ...payload } = input;
+    const { idempotencyKey, ...rawPayload } = input;
+    const payload = {
+      ...rawPayload,
+      title: stripHtmlTags(rawPayload.title).trim(),
+      directCreateRationale: rawPayload.directCreateRationale
+        ? stripHtmlTags(rawPayload.directCreateRationale).trim()
+        : rawPayload.directCreateRationale,
+    };
     const response = await this.api.post<ApiSuccessResponse<CrmOpportunity> | CrmOpportunity>(
       CRM_OPPORTUNITY_ENDPOINTS.OPPORTUNITIES, payload, undefined, this.withIdempotency("crm-opp", idempotencyKey)
     );
     return this.unwrap(response);
   }
 
+  /** Updates core commercial fields on an existing Opportunity via idempotent PUT. */
   async updateOpportunity(input: UpdateOpportunityInput): Promise<CrmOpportunity> {
     const payload = {
       title: input.title, estimatedAmount: input.estimatedAmount, currencyCode: input.currencyCode ?? "SAR",
@@ -69,6 +79,7 @@ export class CrmOpportunityService implements ICrmOpportunityService {
     return this.unwrap(response);
   }
 
+  /** Assigns an owner user and optional team to an Opportunity via idempotent PUT. */
   async assignOwner(input: AssignOpportunityOwnerInput): Promise<CrmOpportunity> {
     const payload = {
       ownerUserId: input.ownerUserId, ownerTeamId: input.ownerTeamId,
@@ -80,6 +91,7 @@ export class CrmOpportunityService implements ICrmOpportunityService {
     return this.unwrap(response);
   }
 
+  /** Executes a workflow-governed stage transition on an Opportunity via POST. */
   async moveStage(input: MoveOpportunityStageInput): Promise<CrmOpportunity> {
     const payload = {
       targetStageKey: input.targetStageKey,
@@ -111,6 +123,7 @@ export class CrmOpportunityService implements ICrmOpportunityService {
     return this.unwrap(response);
   }
 
+  /** Closes an Opportunity as Won or Lost with rationale and approval metadata. */
   async closeOpportunity(input: CloseOpportunityInput): Promise<CrmOpportunity> {
     const payload = {
       outcome: input.outcome, dealKind: input.dealKind ?? "NewBusiness", hqOutcomeKind: input.hqOutcomeKind,
@@ -124,6 +137,7 @@ export class CrmOpportunityService implements ICrmOpportunityService {
     return this.unwrap(response);
   }
 
+  /** Reopens a previously closed Opportunity with an audit reason. */
   async reopenOpportunity(input: ReopenOpportunityInput): Promise<CrmOpportunity> {
     const payload = { reason: input.reason, expectedRowVersion: input.expectedRowVersion ?? "" };
     const response = await this.api.post<ApiSuccessResponse<CrmOpportunity> | CrmOpportunity>(
@@ -132,86 +146,7 @@ export class CrmOpportunityService implements ICrmOpportunityService {
     return this.unwrap(response);
   }
 
-  async getDefaultPipeline(): Promise<PipelineDefinition> {
-    const response = await this.api.get<ApiSuccessResponse<PipelineDefinition> | PipelineDefinition>(
-      CRM_OPPORTUNITY_ENDPOINTS.DEFAULT_PIPELINE
-    );
-    return this.normalizePipelineDefinition(this.unwrap(response));
-  }
-
-  async updateDefaultPipeline(input: UpdateDefaultPipelineInput): Promise<PipelineDefinition> {
-    const payload = {
-      nameEn: input.nameEn ?? "Standard Commercial Pipeline", nameAr: input.nameAr ?? null,
-      stages: input.stages.map((s) => ({
-        stageKey: s.stageKey, sortOrder: s.sortOrder, labelEn: s.labelEn, labelAr: s.labelAr ?? null,
-        probabilityPercent: s.probabilityPercent ?? s.winProbabilityPercent ?? null,
-        slaTargetDays: s.slaTargetDays ?? s.slaDays ?? null, requiredExitFields: s.requiredExitFields ?? [],
-        ...(s.triggerDealConversion !== undefined ? { triggerDealConversion: Boolean(s.triggerDealConversion) } : {}),
-      })),
-      ...(input.transitionsJson !== undefined ? { transitionsJson: input.transitionsJson } : {}),
-      ...(input.allowDynamicStages !== undefined ? { allowDynamicStages: input.allowDynamicStages } : {}),
-      expectedRowVersion: input.expectedRowVersion,
-    };
-    const response = await this.api.put<ApiSuccessResponse<PipelineDefinition> | PipelineDefinition>(
-      CRM_OPPORTUNITY_ENDPOINTS.DEFAULT_PIPELINE, payload, undefined, this.withIdempotency("crm-pipe-upd", input.idempotencyKey)
-    );
-    return this.normalizePipelineDefinition(this.unwrap(response));
-  }
-
-  async getPipelines(entityType?: string): Promise<PipelineDefinition[]> {
-    const query = entityType ? { entityType } : undefined;
-    const response = await this.api.get<ApiSuccessResponse<PipelineDefinition[]> | PipelineDefinition[]>(
-      CRM_OPPORTUNITY_ENDPOINTS.PIPELINES, query
-    );
-    const list = "data" in response && Array.isArray(response.data) ? response.data : Array.isArray(response) ? response : [];
-    return list.map((p) => this.normalizePipelineDefinition(p));
-  }
-
-  async savePipeline(
-    pipelineId: string,
-    input: UpdateDefaultPipelineInput & { entityType?: string; isActive?: boolean }
-  ): Promise<PipelineDefinition> {
-    const payload = {
-      nameEn: input.nameEn ?? "Custom CRM Pipeline", nameAr: input.nameAr ?? null,
-      entityType: input.entityType ?? "deal", isActive: input.isActive,
-      allowDynamicStages: input.allowDynamicStages ?? true, transitionsJson: input.transitionsJson ?? null,
-      expectedRowVersion: input.expectedRowVersion || "auto",
-      stages: input.stages.map((s) => ({
-        stageKey: s.stageKey, sortOrder: s.sortOrder, labelEn: s.labelEn, labelAr: s.labelAr ?? null,
-        statusCategory: s.statusCategory, probabilityPercent: s.probabilityPercent ?? s.winProbabilityPercent ?? null,
-        slaTargetDays: s.slaTargetDays ?? s.slaDays ?? null, requiredExitFields: s.requiredExitFields ?? [],
-        triggerDealConversion: Boolean(s.triggerDealConversion), propertiesJson: s.propertiesJson ?? null,
-        canvasX: s.canvasX ?? null, canvasY: s.canvasY ?? null,
-      })),
-    };
-    const response = await this.api.put<ApiSuccessResponse<PipelineDefinition> | PipelineDefinition>(
-      CRM_OPPORTUNITY_ENDPOINTS.PIPELINE_BY_ID(pipelineId), payload, undefined, this.withIdempotency("crm-pipe-save", input.idempotencyKey)
-    );
-    return this.normalizePipelineDefinition(this.unwrap(response));
-  }
-
-  async activatePipeline(pipelineId: string): Promise<PipelineDefinition> {
-    const response = await this.api.post<ApiSuccessResponse<PipelineDefinition> | PipelineDefinition>(
-      CRM_OPPORTUNITY_ENDPOINTS.ACTIVATE_PIPELINE(pipelineId), {}, undefined, this.withIdempotency("crm-pipe-act")
-    );
-    return this.normalizePipelineDefinition(this.unwrap(response));
-  }
-
-  async deletePipeline(pipelineId: string): Promise<boolean> {
-    await this.api.delete(CRM_OPPORTUNITY_ENDPOINTS.PIPELINE_BY_ID(pipelineId));
-    return true;
-  }
-
-  async replacePipelineStage(
-    pipelineId: string, stageKeyToRemove: string, replacementStageKey: string
-  ): Promise<{ migratedRecordCount: number }> {
-    const response = await this.api.post<ApiSuccessResponse<{ migratedRecordCount: number }> | { migratedRecordCount: number }>(
-      CRM_OPPORTUNITY_ENDPOINTS.REPLACE_STAGE(pipelineId, stageKeyToRemove),
-      { replacementStageKey }, undefined, this.withIdempotency("crm-pipe-rep")
-    );
-    return this.unwrap(response);
-  }
-
+  /** Fetches buying-committee stakeholder roles attached to an Opportunity. */
   async getContactRoles(opportunityId: string): Promise<DealContactRole[]> {
     const response = await this.api.get<ApiSuccessResponse<DealContactRole[]> | DealContactRole[]>(
       CRM_OPPORTUNITY_ENDPOINTS.CONTACT_ROLES(opportunityId)
@@ -220,6 +155,7 @@ export class CrmOpportunityService implements ICrmOpportunityService {
     return items.map((item) => normalizeDealContactRoleDto(item));
   }
 
+  /** Adds a buying-committee stakeholder role to an Opportunity via idempotent POST. */
   async addContactRole(input: AddDealContactRoleInput): Promise<DealContactRole> {
     const response = await this.api.post<ApiSuccessResponse<DealContactRole> | DealContactRole>(
       CRM_OPPORTUNITY_ENDPOINTS.CONTACT_ROLES(input.opportunityId),
@@ -236,12 +172,9 @@ export class CrmOpportunityService implements ICrmOpportunityService {
     return normalizeDealContactRoleDto(this.unwrap(response));
   }
 
+  /** Removes a buying-committee stakeholder role from an Opportunity via DELETE. */
   async removeContactRole(opportunityId: string, roleId: string): Promise<boolean> {
     await this.api.delete(CRM_OPPORTUNITY_ENDPOINTS.CONTACT_ROLE_BY_ID(opportunityId, roleId));
     return true;
-  }
-
-  private normalizePipelineDefinition(p: any): PipelineDefinition {
-    return normalizePipelineDefinitionDto(p);
   }
 }

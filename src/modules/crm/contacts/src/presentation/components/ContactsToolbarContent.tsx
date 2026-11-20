@@ -6,6 +6,7 @@ import { cn } from "@core/common/utils";
 import type { CrmAccount } from "@modules/crm";
 import { Search } from "lucide-react";
 
+/** Props for `ContactsToolbarContent`. */
 export interface ContactsToolbarContentProps {
   t: (key: string) => string;
   isRtl: boolean;

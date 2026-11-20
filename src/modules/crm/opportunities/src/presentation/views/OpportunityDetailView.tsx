@@ -3,55 +3,47 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
+import { usePermission } from "@core/hooks/use-permission";
 import { Alert, AlertDescription } from "@core/ui/alert";
 import { Button } from "@core/ui/button";
 import { Card } from "@core/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
-import { ArrowLeft } from "lucide-react";
-
+import { ArrowLeft, ShieldAlert } from "lucide-react";
 import {
+  CRM_PERMISSIONS,
   CrmShell,
-  ActivityTimeline,
-  resolveDefaultStageColor,
   useCrmWorkflowsStore,
   type CrmWorkflowTransitionSubmitPayload,
   type EvaluatedWorkflowTransition,
 } from "@modules/crm";
 import { OpportunityOverviewCard } from "../components/OpportunityOverviewCard";
-import { OpportunityCommercialAndCommitteeSection } from "../components/OpportunityCommercialAndCommitteeSection";
-import { OpportunityCommercialQuoteAndPlaybookSection } from "../components/OpportunityCommercialQuoteAndPlaybookSection";
-import {
-  evaluateDealStageTransition,
-  mapDealTransitionPayload,
-} from "../utils/opportunityTransitionHelpers";
+import { evaluateDealStageTransition, mapDealTransitionPayload } from "../utils/opportunityTransitionHelpers";
 import { OpportunityDetailHeaderActions } from "../components/OpportunityDetailHeaderActions";
-import { OpportunityAuditTimeline } from "../components/OpportunityAuditTimeline";
 import { OpportunityDetailSkeleton } from "../components/OpportunityDetailSkeleton";
 import { OpportunityStageProgressionCard } from "../components/OpportunityStageProgressionCard";
-import { OpportunityHqFulfillmentHandoffCard } from "../components/OpportunityHqFulfillmentHandoffCard";
 import { OpportunityDetailDialogs } from "../components/OpportunityDetailDialogs";
+import { OpportunityDetailTabsSection } from "../components/OpportunityDetailTabsSection";
 import { useOpportunityDetailViewModel } from "../viewmodels/useOpportunityDetailViewModel";
 import { useOpportunityDetailStages } from "../viewmodels/useOpportunityDetailStages";
 
+/** Props for `OpportunityDetailView`. */
 export interface OpportunityDetailViewProps {
   opportunityId: string;
 }
 
+/** Deal 360 operational detail view gated by PBAC and unified workflow transitions (<190 lines). */
 export function OpportunityDetailView({ opportunityId }: OpportunityDetailViewProps) {
   const router = useRouter();
   const { t, language } = useI18n();
   const isRtl = language === "ar";
+  const canViewDeal = usePermission(CRM_PERMISSIONS.OPPORTUNITIES_READ);
   const activeDealWorkflow = useCrmWorkflowsStore((s) => s.getActiveWorkflow("deal"));
 
   const {
-    loading, error, data, pipeline, contactRoles, lookupPartyOptions,
-    isMoveStageOpen, setIsMoveStageOpen, targetMoveStageKey, setTargetMoveStageKey,
-    isCloseOpen, setIsCloseOpen, isReopenOpen, setIsReopenOpen,
-    isAssignOwnerOpen, setIsAssignOwnerOpen, closeInitialOutcome, setCloseInitialOutcome,
-    fulfillmentRequested, timelineVersion, isSubmitting, submitError, setSubmitError,
-    handleMoveStage, handleCloseOpportunity, handleReopenOpportunity,
-    handleAssignOwner, handleRequestFulfillment, handleAddContactRole, handleRemoveContactRole,
-  } = useOpportunityDetailViewModel(opportunityId);
+    loading, error, data, pipeline, contactRoles,
+    isAssignOwnerOpen, setIsAssignOwnerOpen, fulfillmentRequested,
+    isSubmitting, submitError, setSubmitError,
+    handleMoveStage, handleAssignOwner, handleRequestFulfillment, handleAddContactRole, handleRemoveContactRole,
+  } = useOpportunityDetailViewModel(opportunityId, canViewDeal);
 
   const [isRequestingFulfillment, setIsRequestingFulfillment] = useState(false);
   const [transitionDialogOpen, setTransitionDialogOpen] = useState(false);
@@ -59,61 +51,49 @@ export function OpportunityDetailView({ opportunityId }: OpportunityDetailViewPr
   const [transitionToKey, setTransitionToKey] = useState("");
   const [transitionEvalResult, setTransitionEvalResult] = useState<EvaluatedWorkflowTransition | null>(null);
 
-  const stages = useOpportunityDetailStages({
-    activeDealWorkflow,
-    pipeline,
-    isRtl,
-    t,
-  });
+  const stages = useOpportunityDetailStages({ activeDealWorkflow, pipeline, isRtl, t });
 
-  const handleStageTransition = async (targetStageKey: string) => {
+  const openTransitionForStage = async (targetStageKey: string, forceModal = false) => {
     if (!data?.opportunity) return;
     const oppRecord = data.opportunity;
-    const fromKey = oppRecord.status === "Won"
-      ? "default.closed_won"
-      : oppRecord.status === "Lost"
-        ? "default.closed_lost"
-        : (oppRecord.stageKey || "default.discovery");
+    const fromKey = oppRecord.status === "Won" ? "default.closed_won" : oppRecord.status === "Lost" ? "default.closed_lost" : (oppRecord.stageKey || "default.discovery");
     const toKey = targetStageKey === "terminal-won" ? "default.closed_won" : targetStageKey === "terminal-lost" ? "default.closed_lost" : targetStageKey;
 
     const evalResult = evaluateDealStageTransition({ ...oppRecord, stageKey: fromKey }, toKey, isRtl);
-
     if (evalResult.status === "blocked") {
       setSubmitError(evalResult.reason || t("crmOpportunities.kanban.stageMoveFailed"));
       return;
     }
-
-    if (evalResult.status === "allowed_screen_required") {
+    if (forceModal || evalResult.status === "allowed_screen_required") {
       setTransitionFromKey(fromKey);
       setTransitionToKey(toKey);
       setTransitionEvalResult(evalResult);
       setTransitionDialogOpen(true);
       return;
     }
-
-    await handleMoveStage({
-      opportunityId: oppRecord.id,
-      targetStageKey: toKey,
-      expectedRowVersion: oppRecord.rowVersion,
-    });
+    await handleMoveStage({ opportunityId: oppRecord.id, targetStageKey: toKey, expectedRowVersion: oppRecord.rowVersion });
   };
 
-  const handleTransitionSubmit = async (payload: CrmWorkflowTransitionSubmitPayload) => {
-    return handleMoveStage(
-      mapDealTransitionPayload(payload.entityId, payload, data?.opportunity?.rowVersion)
-    );
-  };
+  const handleTransitionSubmit = async (payload: CrmWorkflowTransitionSubmitPayload) =>
+    handleMoveStage(mapDealTransitionPayload(payload.entityId, payload, data?.opportunity?.rowVersion));
 
   const onTabNav = (tab: string) => {
     if (tab !== "deals") router.push(tab === "overview" ? "/crm" : tab === "deals" ? "/crm/opportunities" : `/crm/${tab}`);
   };
 
-  if (loading) {
+  if (!canViewDeal) {
     return (
       <CrmShell activeTab="deals" onTabChange={onTabNav}>
-        <OpportunityDetailSkeleton />
+        <Card className="p-6 border border-nx-line bg-nx-surface flex items-start gap-3">
+          <ShieldAlert className="size-5 text-destructive shrink-0 mt-0.5" />
+          <p className="text-xs text-nx-ink-2">{t("crm.errors.accessDenied")}</p>
+        </Card>
       </CrmShell>
     );
+  }
+
+  if (loading) {
+    return <CrmShell activeTab="deals" onTabChange={onTabNav}><OpportunityDetailSkeleton /></CrmShell>;
   }
 
   if (error || !data) {
@@ -131,9 +111,8 @@ export function OpportunityDetailView({ opportunityId }: OpportunityDetailViewPr
 
   const { opportunity: opp, stageHistory } = data;
   const isOpen = opp.status === "Open";
-
-  const currentStageObj = stages.find((s) => s.key === opp.stageKey);
-  const currentSortOrder = currentStageObj?.order ?? 1;
+  const currentIdx = stages.findIndex((s) => s.key === opp.stageKey);
+  const nextForwardKey = stages[currentIdx + 1]?.key ?? "default.qualification";
 
   const handleRequestFulfillmentHandoff = async () => {
     setIsRequestingFulfillment(true);
@@ -148,15 +127,14 @@ export function OpportunityDetailView({ opportunityId }: OpportunityDetailViewPr
           <Button type="button" variant="ghost" onClick={() => router.push("/crm/opportunities")} className="gap-2 text-xs">
             <ArrowLeft className="size-4" />{t("crmOpportunities.detail.backToList")}
           </Button>
-
           <OpportunityDetailHeaderActions
             isOpen={isOpen}
             t={t}
-            onOpenMoveStage={() => { setTargetMoveStageKey(undefined); setSubmitError(null); setIsMoveStageOpen(true); }}
-            onCloseWon={() => handleStageTransition("default.closed_won")}
-            onCloseLost={() => handleStageTransition("default.closed_lost")}
+            onOpenMoveStage={() => { setSubmitError(null); void openTransitionForStage(nextForwardKey, true); }}
+            onCloseWon={() => { void openTransitionForStage("default.closed_won", true); }}
+            onCloseLost={() => { void openTransitionForStage("default.closed_lost", true); }}
             onOpenAssignOwner={() => { setSubmitError(null); setIsAssignOwnerOpen(true); }}
-            onReopen={() => handleStageTransition("default.discovery")}
+            onReopen={() => { void openTransitionForStage("default.discovery", true); }}
           />
         </div>
 
@@ -165,79 +143,25 @@ export function OpportunityDetailView({ opportunityId }: OpportunityDetailViewPr
           opp={opp}
           isOpen={isOpen}
           stages={stages}
-          currentSortOrder={currentSortOrder}
-          onSelectStageStep={(stageKey) => handleStageTransition(stageKey)}
+          currentSortOrder={stages[currentIdx]?.order ?? 1}
+          onSelectStageStep={(stageKey) => { void openTransitionForStage(stageKey); }}
         />
 
         <OpportunityOverviewCard opp={opp} />
 
-        <Tabs defaultValue="overview" className="space-y-4">
-          <TabsList className="bg-nx-surface border border-nx-line p-1">
-            <TabsTrigger value="overview" className="text-xs data-[state=active]:bg-nx-accent-wash data-[state=active]:text-nx-accent font-semibold">
-              {t("crmOpportunities.tabs.overview")}
-            </TabsTrigger>
-            <TabsTrigger value="commercial" className="text-xs data-[state=active]:bg-nx-accent-wash data-[state=active]:text-nx-accent font-semibold">
-              {t("crmOpportunities.tabs.commercial")}
-            </TabsTrigger>
-            <TabsTrigger value="activity" className="text-xs data-[state=active]:bg-nx-accent-wash data-[state=active]:text-nx-accent font-semibold">
-              {t("crmOpportunities.tabs.activity")}
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="overview" forceMount className="space-y-4 data-[state=inactive]:hidden">
-            <OpportunityCommercialQuoteAndPlaybookSection opp={opp} isRtl={isRtl} mode="playbook" />
-            <OpportunityHqFulfillmentHandoffCard
-              t={t}
-              opp={opp}
-              fulfillmentRequested={fulfillmentRequested}
-              isRequestingFulfillment={isRequestingFulfillment}
-              onRequestFulfillmentHandoff={handleRequestFulfillmentHandoff}
-            />
-          </TabsContent>
-
-          <TabsContent value="commercial" forceMount className="space-y-4 data-[state=inactive]:hidden">
-            <OpportunityCommercialAndCommitteeSection
-              opp={opp}
-              isRtl={isRtl}
-              stageHistory={stageHistory}
-              contactRoles={contactRoles}
-              onAddContactRole={handleAddContactRole}
-              onRemoveContactRole={handleRemoveContactRole}
-              submitError={submitError}
-            />
-          </TabsContent>
-
-          <TabsContent value="activity" forceMount className="space-y-4 data-[state=inactive]:hidden">
-            <Card className="p-5 border-nx-line bg-nx-surface">
-              <ActivityTimeline
-                key={`${opp.id}-${opp.rowVersion || ""}-${timelineVersion}`}
-                opportunityId={opp.id}
-                targetLabel={opp.title}
-              />
-            </Card>
-            <OpportunityAuditTimeline stageHistory={stageHistory} isRtl={isRtl} />
-          </TabsContent>
-        </Tabs>
+        <OpportunityDetailTabsSection
+          t={t} isRtl={isRtl} opp={opp} stageHistory={stageHistory} contactRoles={contactRoles}
+          fulfillmentRequested={fulfillmentRequested} isRequestingFulfillment={isRequestingFulfillment} submitError={submitError}
+          onRequestFulfillmentHandoff={handleRequestFulfillmentHandoff}
+          onAddContactRole={handleAddContactRole} onRemoveContactRole={handleRemoveContactRole}
+        />
 
         <OpportunityDetailDialogs
           opp={opp}
-          pipeline={pipeline}
           activeDealWorkflow={activeDealWorkflow}
           isRtl={isRtl}
           isSubmitting={isSubmitting}
           submitError={submitError}
-          lookupPartyOptions={lookupPartyOptions}
-          isMoveStageOpen={isMoveStageOpen}
-          setIsMoveStageOpen={setIsMoveStageOpen}
-          targetMoveStageKey={targetMoveStageKey}
-          handleMoveStage={handleMoveStage}
-          isCloseOpen={isCloseOpen}
-          setIsCloseOpen={setIsCloseOpen}
-          closeInitialOutcome={closeInitialOutcome === "Won" || closeInitialOutcome === "Lost" ? closeInitialOutcome : undefined}
-          handleCloseOpportunity={handleCloseOpportunity}
-          isReopenOpen={isReopenOpen}
-          setIsReopenOpen={setIsReopenOpen}
-          handleReopenOpportunity={handleReopenOpportunity}
           isAssignOwnerOpen={isAssignOwnerOpen}
           setIsAssignOwnerOpen={setIsAssignOwnerOpen}
           handleAssignOwner={handleAssignOwner}

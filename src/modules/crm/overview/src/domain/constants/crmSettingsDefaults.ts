@@ -1,10 +1,9 @@
 import { SUPPORTED_CURRENCIES } from "@core/constants/currencies";
+import type { CrmBuyingCommitteeRoleOption, CrmScopedRoleDefinition } from "@modules/crm/shared";
 import {
   DEFAULT_CRM_SCOPED_ROLES,
   DEFAULT_BUYING_COMMITTEE_ROLES,
-  type CrmScopedRoleDefinition,
-  type CrmBuyingCommitteeRoleOption,
-} from "./crmWorkflowGovernanceCatalog";
+} from "@modules/crm/workflows/src/domain/constants/crmWorkflowGovernanceCatalog";
 
 /** Baseline USD exchange rates matching SCRIPE-Backend CurrencyExchangeService fallback table. */
 export const CRM_FALLBACK_USD_RATES: Record<string, number> = {
@@ -39,6 +38,7 @@ export type CrmEntityTypeKey =
   | "crm.account"
   | "crm.contact";
 
+/** Supported data value types for CRM custom field definitions. */
 export type CrmCustomFieldValueType = "Text" | "Number" | "Currency" | "Date" | "Select" | "Boolean";
 
 /** Custom field definition bound to CRM entities and optional stage exit gates. */
@@ -62,28 +62,14 @@ export interface CrmConfigurableOptionItem {
   labelAr: string;
 }
 
+/** Persisted Kanban board swimlane, card density, and WIP limit preferences. */
 export interface CrmPersistedBoardSettings {
   swimlaneMode: "none" | "assignee" | "account" | "dealType";
   cardDensity?: "Compact" | "Standard" | "Executive";
   wipLimits: Record<string, { min?: number; max?: number }>;
 }
 
-/** Commercial quote line item persisted in backend tenant settings per deal. */
-export interface CrmDealQuoteLineItem {
-  id: string;
-  itemName: string;
-  quantity: number;
-  unitPrice: number;
-  discountPct: number;
-}
-
-/** Server-persisted deal commercial package (quote items + Venue/Academy provisioning state). */
-export interface CrmDealCommercialPackage {
-  quoteItems: CrmDealQuoteLineItem[];
-  venueHoldStatus: "idle" | "reserved";
-  academyCohortStatus: "idle" | "provisioned";
-}
-
+/** Built-in default custom field definitions seeded for new CRM tenants. */
 export const DEFAULT_CRM_CUSTOM_FIELDS: CrmCustomFieldDefinition[] = [
   {
     id: "cf-crm-opp-procurement-ref",
@@ -109,6 +95,7 @@ export const DEFAULT_CRM_CUSTOM_FIELDS: CrmCustomFieldDefinition[] = [
   },
 ];
 
+/** Built-in bilingual deal loss reason catalog for CRM pipelines. */
 export const DEFAULT_CONFIGURED_LOSS_REASONS: CrmConfigurableOptionItem[] = [
   { code: "budget_cut", labelEn: "Budget Cut / Freeze", labelAr: "تخفيض أو تجميد الميزانية" },
   { code: "competitor", labelEn: "Lost to Competitor", labelAr: "خسارة لصالح منافس" },
@@ -119,6 +106,7 @@ export const DEFAULT_CONFIGURED_LOSS_REASONS: CrmConfigurableOptionItem[] = [
   { code: "other", labelEn: "Other", labelAr: "سبب آخر" },
 ];
 
+/** Built-in bilingual CRM activity type options for timeline logging. */
 export const DEFAULT_CONFIGURED_ACTIVITY_TYPES: CrmConfigurableOptionItem[] = [
   { code: "Note", labelEn: "Note", labelAr: "ملاحظة" },
   { code: "CallLog", labelEn: "Call Log", labelAr: "سجل مكالمة" },
@@ -126,6 +114,7 @@ export const DEFAULT_CONFIGURED_ACTIVITY_TYPES: CrmConfigurableOptionItem[] = [
   { code: "SiteVisit", labelEn: "Venue / Pitch Site Visit", labelAr: "زيارة ميدانية للمنشأة" },
 ];
 
+/** Baseline tenant CRM settings defaults used prior to server hydration. */
 export const DEFAULT_SETTINGS = {
   baseCurrency: "SAR",
   tenantBaseCurrency: "SAR",
@@ -164,12 +153,12 @@ export const DEFAULT_SETTINGS = {
   buyingCommitteeRoles: DEFAULT_BUYING_COMMITTEE_ROLES as CrmBuyingCommitteeRoleOption[],
   configuredLossReasons: DEFAULT_CONFIGURED_LOSS_REASONS,
   configuredActivityTypes: DEFAULT_CONFIGURED_ACTIVITY_TYPES,
-  dealCommercialPackages: {} as Record<string, CrmDealCommercialPackage>,
   isHydrating: false,
   isServerHydrated: false,
   updatedAtIso: null as string | null,
 };
 
+/** Bilingual default labels and templates when scaffolding a new CRM workflow. */
 export const DEFAULT_NEW_WORKFLOW_META = {
   roleNameEn: "Custom Pipeline Role",
   roleNameAr: "دور خط بيع مخصص",

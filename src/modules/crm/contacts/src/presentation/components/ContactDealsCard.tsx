@@ -15,6 +15,7 @@ interface ContactDealsCardProps {
   readonly onViewAllOpportunities?: () => void;
 }
 
+/** Card listing opportunities associated with a CRM Contact and influenced pipeline total. */
 export function ContactDealsCard({
   opportunities = [],
   jobTitleSnapshot,

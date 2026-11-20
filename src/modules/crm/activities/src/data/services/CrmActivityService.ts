@@ -1,3 +1,4 @@
+import { stripHtmlTags } from "@core/common/sanitize";
 import type { IApiService } from "@/core/interfaces/api.interface";
 import type { ICrmActivityService } from "../../domain/interfaces/ICrmActivityService";
 import type {
@@ -15,9 +16,11 @@ interface ApiSuccessResponse<T> {
   data: T;
 }
 
+/** HTTP API client service for CRM Sales Activities and follow-up work items. */
 export class CrmActivityService implements ICrmActivityService {
   constructor(private readonly api: IApiService) {}
 
+  /** Fetches paginated CRM sales activities matching entity and kind filters. */
   async getActivities(filter: CrmActivitiesQueryFilter): Promise<PagedActivitiesResult> {
     const queryParams: Record<string, unknown> = {
       page: filter.page ?? 1,
@@ -40,10 +43,16 @@ export class CrmActivityService implements ICrmActivityService {
     return response as PagedActivitiesResult;
   }
 
+  /** Sanitizes and persists a manual CRM sales activity entry via POST. */
   async createActivity(payload: CreateSalesActivityPayload): Promise<CrmActivity> {
+    const sanitized: CreateSalesActivityPayload = {
+      ...payload,
+      summary: stripHtmlTags(payload.summary).trim(),
+      bodyText: payload.bodyText ? stripHtmlTags(payload.bodyText).trim() : payload.bodyText,
+    };
     const response = await this.api.post<
       ApiSuccessResponse<CrmActivity> | CrmActivity
-    >(CRM_ACTIVITY_ENDPOINTS.ACTIVITIES, payload);
+    >(CRM_ACTIVITY_ENDPOINTS.ACTIVITIES, sanitized);
 
     if (response && typeof response === "object" && "data" in response && (response as ApiSuccessResponse<CrmActivity>).data) {
       return (response as ApiSuccessResponse<CrmActivity>).data;
@@ -51,6 +60,7 @@ export class CrmActivityService implements ICrmActivityService {
     return response as CrmActivity;
   }
 
+  /** Creates a linked follow-up work item for the specified sales activity. */
   async createFollowUp(
     activityId: string,
     payload: CreateActivityFollowUpPayload
@@ -65,6 +75,7 @@ export class CrmActivityService implements ICrmActivityService {
     return response as FollowUpCreatedResponse;
   }
 
+  /** Marks an existing follow-up work item as completed by preserving its metadata. */
   async completeFollowUpWorkItem(workItemId: string): Promise<void> {
     interface WorkItemSnapshot {
       title?: string;

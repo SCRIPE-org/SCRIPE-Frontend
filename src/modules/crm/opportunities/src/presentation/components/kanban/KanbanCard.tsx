@@ -11,6 +11,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useCrmCurrency, useCrmWorkflowsStore } from "@modules/crm";
 import type { CrmOpportunity } from "../../../domain/entities/OpportunityEntity";
 
+/** Props for `KanbanCard`. */
 export interface KanbanCardProps {
   opportunity: CrmOpportunity;
   currentStageIndex: number;
@@ -24,6 +25,7 @@ export interface KanbanCardProps {
   onDragEnd?: () => void;
 }
 
+/** Draggable Kanban deal card displaying SLA aging, verified party status, and quick-move buttons. */
 export function KanbanCard({
   opportunity, currentStageIndex, totalStages, slaTargetDays, cardDensity = "Standard",
   onMoveForward, onMoveBackward, isDragging = false, onDragStart, onDragEnd,

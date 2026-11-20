@@ -17,6 +17,7 @@ interface AccountDealsCardProps {
   readonly onViewAllOpportunities?: () => void;
 }
 
+/** Card listing linked opportunities and currency-converted pipeline value for an Account. */
 export function AccountDealsCard({
   opportunities = [],
   autoConvertToBase,

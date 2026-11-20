@@ -4,6 +4,7 @@ import { LeadsView } from "./LeadsView";
 import { setCrmContainer } from "@modules/crm/di";
 import type { CrmContainer } from "@modules/crm/di";
 import type { CrmLead, PagedLeadsResult } from "../../domain/models/crm-lead.types";
+import { queryClient } from "@core/query-client";
 
 vi.mock("@core/providers/i18n-provider", () => ({
   useI18n: () => ({
@@ -106,6 +107,7 @@ describe("LeadsView Component", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    queryClient.clear();
 
     mockGetLeads = vi.fn().mockResolvedValue({
       items: [],
@@ -144,26 +146,15 @@ describe("LeadsView Component", () => {
 
     const mockContainer: CrmContainer = {
       overviewService: {} as any,
-      overviewRepository: {
-        getOverviewSummary: vi.fn().mockResolvedValue({
-          pipelineMetrics: {
-            totalPipelineValue: 0,
-            formattedTotalValue: "SAR 0",
-            totalDeals: 0,
-            averageDealSize: 0,
-            winRatePercentage: 0,
-            stageCounts: {
-              discovery: 0,
-              qualification: 0,
-              solutionFit: 0,
-              proposal: 0,
-              negotiation: 0,
-            },
-          },
-          recentDeals: [],
-          upcomingActions: [],
-        }),
-      } as any,
+      overviewRepository: {} as any,
+
+      workflowService: {} as never,
+
+      workflowRepository: {} as never,
+      reportsService: {} as any,
+      reportsRepository: {} as any,
+      settingsService: {} as any,
+      settingsRepository: {} as any,
       leadService: {} as any,
       leadRepository: {
         getLeads: mockGetLeads as any,
@@ -180,6 +171,9 @@ describe("LeadsView Component", () => {
       accountRepository: {} as any,
       contactService: {} as any,
       contactRepository: {} as any,
+      activityService: {} as any,
+      activityRepository: {} as any,
+      entityLookup: {} as any,
     };
 
     setCrmContainer(mockContainer);
@@ -187,8 +181,8 @@ describe("LeadsView Component", () => {
 
   afterEach(async () => {
     try {
-      const { useCrmSettingsStore } = await import("@modules/crm");
-      useCrmSettingsStore.getState().setDefaultDealViewMode("Table");
+      const { useCrmClientPrefsStore } = await import("@modules/crm");
+      useCrmClientPrefsStore.getState().setDefaultDealViewMode("Table");
     } catch { /* noop */ }
   });
 
@@ -466,6 +460,14 @@ describe("LeadsView Component", () => {
     setCrmContainer({
       overviewService: {} as any,
       overviewRepository: {} as any,
+
+      workflowService: {} as never,
+
+      workflowRepository: {} as never,
+      reportsService: {} as any,
+      reportsRepository: {} as any,
+      settingsService: {} as any,
+      settingsRepository: {} as any,
       leadService: {} as any,
       leadRepository: {
         getLeads: mockGetLeads as any,
@@ -482,6 +484,9 @@ describe("LeadsView Component", () => {
       accountRepository: {} as any,
       contactService: {} as any,
       contactRepository: {} as any,
+      activityService: {} as any,
+      activityRepository: {} as any,
+      entityLookup: {} as any,
     });
 
     render(<LeadsView />);
@@ -525,8 +530,8 @@ describe("LeadsView Component", () => {
   });
 
   it("renders Kanban view by default when defaultDealViewMode is set to Kanban in CRM Settings", async () => {
-    const { useCrmSettingsStore } = await import("@modules/crm");
-    useCrmSettingsStore.getState().setDefaultDealViewMode("Kanban");
+    const { useCrmClientPrefsStore } = await import("@modules/crm");
+    useCrmClientPrefsStore.getState().setDefaultDealViewMode("Kanban");
 
     mockGetLeads.mockResolvedValue({
       items: mockLeads,
@@ -547,6 +552,6 @@ describe("LeadsView Component", () => {
     expect(screen.getAllByText("crmLeads.status.working")[0]).toBeDefined();
 
     // Reset back to Table
-    useCrmSettingsStore.getState().setDefaultDealViewMode("Table");
+    useCrmClientPrefsStore.getState().setDefaultDealViewMode("Table");
   });
 });

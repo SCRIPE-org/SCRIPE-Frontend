@@ -57,10 +57,10 @@ export function useLeadsCrudConfig(params: UseLeadsCrudConfigParams) {
   } = params;
 
   const isRtl = language === "ar";
-  const columns = useMemo(() => buildLeadsTableColumns({
+  const columns = buildLeadsTableColumns({
     t, language, baseCurrency, autoConvertToBase, showOriginalCurrencyBadge, convertAmount,
     onNavigateLead: (id) => router.push(`/crm/leads/${id}`),
-  }), [t, language, baseCurrency, autoConvertToBase, showOriginalCurrencyBadge, convertAmount, router]);
+  });
 
   const getStageDisplayLabel = useCallback((stg: { stageKey: string; labelEn: string; labelAr?: string | null }) => {
     if (stg.stageKey === "lead.new") return t("crmLeads.status.new");

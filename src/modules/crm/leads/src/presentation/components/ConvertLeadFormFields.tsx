@@ -15,6 +15,7 @@ import {
 } from "@modules/crm";
 import type { DealKind } from "../../domain/entities/LeadEntity";
 
+/** Props for `ConvertLeadFormFields`. */
 export interface ConvertLeadFormFieldsProps {
   t: (key: string, params?: Record<string, any>) => string;
   title: string;
@@ -46,6 +47,7 @@ export interface ConvertLeadFormFieldsProps {
   onRationaleChange: (val: string) => void;
 }
 
+/** Form controls for opportunity details, party linkage, and currency preview during lead conversion. */
 export function ConvertLeadFormFields({
   t,
   title,

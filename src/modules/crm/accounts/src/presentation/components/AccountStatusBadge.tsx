@@ -9,6 +9,7 @@ interface AccountStatusBadgeProps {
   className?: string;
 }
 
+/** Semantic tier badge rendering a CRM Account's commercial classification. */
 export function AccountStatusBadge({ tierCode, className }: AccountStatusBadgeProps) {
   const { t } = useI18n();
   const rawTier = tierCode || "Standard";

@@ -5,6 +5,7 @@ import { setCrmContainer } from "@modules/crm/di";
 import type { CrmContainer } from "@modules/crm/di";
 import type { CrmOpportunity, PagedOpportunitiesResult } from "../../domain/models/crm-opportunity.types";
 import { PAGE_PERMISSIONS } from "@core/common/types/permissions";
+import { queryClient } from "@core/query-client";
 import { CRM_PERMISSIONS } from "@modules/crm";
 
 vi.mock("@core/providers/i18n-provider", () => ({
@@ -148,6 +149,14 @@ describe("OpportunitiesView Component", () => {
     const container: CrmContainer = {
       overviewService: {} as any,
       overviewRepository: {} as any,
+
+      workflowService: {} as never,
+
+      workflowRepository: {} as never,
+      reportsService: {} as any,
+      reportsRepository: {} as any,
+      settingsService: {} as any,
+      settingsRepository: {} as any,
       leadService: {} as any,
       leadRepository: {} as any,
       opportunityService: {} as any,
@@ -156,15 +165,19 @@ describe("OpportunitiesView Component", () => {
       accountRepository: {} as any,
       contactService: {} as any,
       contactRepository: {} as any,
+      activityService: {} as any,
+      activityRepository: {} as any,
+      entityLookup: {} as any,
     };
 
     setCrmContainer(container);
+    queryClient.clear();
   });
 
   afterEach(async () => {
     try {
-      const { useCrmSettingsStore } = await import("@modules/crm");
-      useCrmSettingsStore.getState().setDefaultDealViewMode("Table");
+      const { useCrmClientPrefsStore } = await import("@modules/crm");
+      useCrmClientPrefsStore.getState().setDefaultDealViewMode("Table");
     } catch { /* noop */ }
   });
 
@@ -194,7 +207,7 @@ describe("OpportunitiesView Component", () => {
     });
   });
 
-  it("opens move stage dialog and submits stage advance", async () => {
+  it("opens CrmWorkflowTransitionDialog when clicking move stage and submits stage advance", async () => {
     render(<OpportunitiesView />);
 
     await waitFor(() => {
@@ -209,10 +222,10 @@ describe("OpportunitiesView Component", () => {
     fireEvent.click(moveStageBtn);
 
     await waitFor(() => {
-      expect(screen.getByText("crmOpportunities.dialogs.stage.title")).toBeDefined();
+      expect(screen.getByTestId("crm-workflow-transition-dialog")).toBeDefined();
     });
 
-    const submitBtn = screen.getByText("crmOpportunities.dialogs.stage.submit");
+    const submitBtn = screen.getByTestId("transition-dialog-submit-btn");
     fireEvent.click(submitBtn);
 
     await waitFor(() => {
@@ -309,9 +322,9 @@ describe("OpportunitiesView Component", () => {
     useCrmWorkflowsStore.getState().resetDefaults();
   });
 
-  it("renders Kanban board view by default when defaultDealViewMode is set to Kanban in CRM Settings", async () => {
-    const { useCrmSettingsStore } = await import("@modules/crm");
-    useCrmSettingsStore.getState().setDefaultDealViewMode("Kanban");
+  it("renders Kanban board view by default when defaultDealViewMode is set to Kanban in client preferences", async () => {
+    const { useCrmClientPrefsStore } = await import("@modules/crm");
+    useCrmClientPrefsStore.getState().setDefaultDealViewMode("Kanban");
 
     render(<OpportunitiesView />);
 
@@ -319,28 +332,17 @@ describe("OpportunitiesView Component", () => {
       expect(screen.getAllByText("Al-Nassr Pitch Licensing Contract")[0]).toBeDefined();
     });
 
-    // Should render Kanban columns by default
     expect(screen.getAllByTestId("kanban-column-default.discovery")[0]).toBeDefined();
     expect(screen.getAllByTestId("kanban-column-default.qualification")[0]).toBeDefined();
 
-    // Reset back to Table
-    useCrmSettingsStore.getState().setDefaultDealViewMode("Table");
+    useCrmClientPrefsStore.getState().setDefaultDealViewMode("Table");
   });
 
-  it("supports adding a custom exit gate field inline inside MoveStageDialog and enforces Boolean and Text custom field gate validation", async () => {
-    const { useCrmSettingsStore, useCrmWorkflowsStore } = await import("@modules/crm");
-    useCrmSettingsStore.getState().resetDefaults();
+  it("enforces workflow exit gate validation inside CrmWorkflowTransitionDialog and blocks premature submission", async () => {
+    const { useCrmWorkflowsStore } = await import("@modules/crm");
     useCrmWorkflowsStore.getState().resetDefaults();
-
-    // Pre-register a Boolean custom field on default.discovery exit gate
-    useCrmSettingsStore.getState().addCrmCustomField({
-      entityTypeKey: "crm.opportunity",
-      key: "board_compliance_check",
-      labelEn: "Board Compliance Confirmed",
-      labelAr: "تأكيد امتثال المجلس",
-      valueType: "Boolean",
-      isRequired: true,
-      defaultStageGateKey: "default.discovery",
+    useCrmWorkflowsStore.getState().updateStageInWorkflow("wf-deal-default", "default.discovery", {
+      requiredExitFields: ["estimatedAmount", "nextStepSummary"],
     });
 
     render(<OpportunitiesView />);
@@ -357,30 +359,12 @@ describe("OpportunitiesView Component", () => {
     fireEvent.click(moveStageBtn);
 
     await waitFor(() => {
-      expect(screen.getByTestId("move-stage-gate-cf-board_compliance_check")).toBeDefined();
+      expect(screen.getByTestId("crm-workflow-transition-dialog")).toBeDefined();
     });
 
-    // Submitting without checking Boolean custom field should fail validation
-    const submitBtn = screen.getByText("crmOpportunities.dialogs.stage.submit");
-    fireEvent.click(submitBtn);
+    fireEvent.click(screen.getByTestId("transition-dialog-submit-btn"));
     expect(mockRepo.moveStage).not.toHaveBeenCalled();
 
-    // Add a new custom field inline inside MoveStageDialog
-    fireEvent.click(screen.getByTestId("move-stage-add-cf-toggle-btn"));
-    fireEvent.change(screen.getByTestId("move-stage-cf-label-input"), {
-      target: { value: "Sponsor PO Number" },
-    });
-    fireEvent.change(screen.getByTestId("move-stage-cf-key-input"), {
-      target: { value: "sponsor_po_num" },
-    });
-    fireEvent.click(screen.getByTestId("move-stage-cf-save-btn"));
-
-    await waitFor(() => {
-      expect(screen.getByTestId("move-stage-gate-cf-sponsor_po_num")).toBeDefined();
-    });
-
-    useCrmSettingsStore.getState().resetDefaults();
     useCrmWorkflowsStore.getState().resetDefaults();
   });
 });
-

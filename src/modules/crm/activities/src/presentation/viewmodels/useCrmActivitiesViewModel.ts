@@ -1,17 +1,19 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { qk } from "@core/common/query-keys";
 import { getCrmContainer } from "@modules/crm/di";
+import { useCrmTenantScope, useSafeQueryClient } from "@modules/crm/shared";
 import type {
   CrmActivity,
   SalesActivityKind,
   CreateSalesActivityPayload,
   CreateActivityFollowUpPayload,
+  PagedActivitiesResult,
 } from "../../domain/entities/CrmActivityEntity";
 
-/**
- * State contract for the activities timeline viewmodel.
- */
+/** State contract for the activities timeline viewmodel. */
 export interface ActivitiesState {
   stage: "idle" | "loading" | "success" | "failed";
   items: CrmActivity[];
@@ -21,9 +23,7 @@ export interface ActivitiesState {
   error: string | null;
 }
 
-/**
- * Configuration options for the activities viewmodel hook.
- */
+/** Configuration options for the activities viewmodel hook. */
 export interface UseCrmActivitiesProps {
   readonly leadId?: string;
   readonly accountId?: string;
@@ -32,22 +32,15 @@ export interface UseCrmActivitiesProps {
 }
 
 /**
- * ViewModel hook orchestrating chronological sales interaction retrieval, activity logging, and follow-up delegation.
- * @param props - Filter criteria and initial parameters for the activities query.
- * @returns State and mutation methods for the sales activity timeline.
+ * ViewModel hook orchestrating chronological sales interaction retrieval, activity logging,
+ * and follow-up delegation using TanStack Query v5.
  */
 export function useCrmActivitiesViewModel(props: UseCrmActivitiesProps = {}) {
   const { leadId, accountId, opportunityId, initialActivityKind } = props;
+  const safeQueryClient = useSafeQueryClient();
+  const { tenantId } = useCrmTenantScope();
 
-  const [state, setState] = useState<ActivitiesState>({
-    stage: "idle",
-    items: [],
-    totalCount: 0,
-    page: 1,
-    pageSize: 20,
-    error: null,
-  });
-
+  const [page] = useState(1);
   const [activityKindFilter, setActivityKindFilter] = useState<SalesActivityKind | "ALL">(
     initialActivityKind ?? "ALL"
   );
@@ -56,60 +49,47 @@ export function useCrmActivitiesViewModel(props: UseCrmActivitiesProps = {}) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const loadActivities = useCallback(
-    async (pageToLoad = 1, kind?: SalesActivityKind | "ALL") => {
-      // If no parent filter is provided, remain idle or don't query until a parent is provided
-      if (!leadId && !accountId && !opportunityId) {
-        setState({
-          stage: "idle",
-          items: [],
-          totalCount: 0,
-          page: 1,
-          pageSize: 20,
-          error: null,
-        });
-        return;
-      }
+  const hasParentScope = Boolean(leadId || accountId || opportunityId);
+  const activeKind = activityKindFilter !== "ALL" ? activityKindFilter : undefined;
+  const filterParams = {
+    page,
+    pageSize: 20,
+    leadId,
+    accountId,
+    opportunityId,
+    activityKind: activeKind,
+  };
 
-      setState((prev) => ({ ...prev, stage: "loading", error: null }));
-      try {
-        const container = getCrmContainer();
-        if (!container.activityRepository) {
-          throw new Error("Activities repository not configured");
-        }
-        const activeKind = kind && kind !== "ALL" ? kind : undefined;
-        const result = await container.activityRepository.getActivities({
-          page: pageToLoad,
-          pageSize: 20,
-          leadId,
-          accountId,
-          opportunityId,
-          activityKind: activeKind,
-        });
-
-        setState({
-          stage: "success",
-          items: [...(result.items ?? [])],
-          totalCount: result.totalCount ?? 0,
-          page: result.page ?? pageToLoad,
-          pageSize: result.pageSize ?? 20,
-          error: null,
-        });
-      } catch (err: unknown) {
-        const message = err instanceof Error ? err.message : "Failed to load CRM activities";
-        setState((prev) => ({
-          ...prev,
-          stage: "failed",
-          error: message,
-        }));
-      }
+  const activitiesQuery = useQuery<PagedActivitiesResult>(
+    {
+      queryKey: qk.crm.activities(tenantId, filterParams),
+      queryFn: () => {
+        const repo = getCrmContainer().activityRepository;
+        if (!repo) throw new Error("Activities repository not configured");
+        return repo.getActivities(filterParams);
+      },
+      enabled: hasParentScope,
+      staleTime: 20_000,
     },
-    [leadId, accountId, opportunityId]
+    safeQueryClient
   );
 
-  useEffect(() => {
-    loadActivities(1, activityKindFilter);
-  }, [loadActivities, activityKindFilter]);
+  const errorMsg = activitiesQuery.error instanceof Error ? activitiesQuery.error.message : null;
+  const state: ActivitiesState = !hasParentScope
+    ? { stage: "idle", items: [], totalCount: 0, page: 1, pageSize: 20, error: null }
+    : {
+        stage: activitiesQuery.isLoading ? "loading" : activitiesQuery.isError ? "failed" : "success",
+        items: [...(activitiesQuery.data?.items ?? [])],
+        totalCount: activitiesQuery.data?.totalCount ?? 0,
+        page: activitiesQuery.data?.page ?? page,
+        pageSize: activitiesQuery.data?.pageSize ?? 20,
+        error: errorMsg,
+      };
+
+  const invalidateActivities = useCallback(
+    () => safeQueryClient.invalidateQueries({ queryKey: qk.crm.activities(tenantId) }),
+    [safeQueryClient, tenantId]
+  );
 
   const handleCreateActivity = useCallback(
     async (data: {
@@ -122,10 +102,8 @@ export function useCrmActivitiesViewModel(props: UseCrmActivitiesProps = {}) {
       setIsSubmitting(true);
       setSubmitError(null);
       try {
-        const container = getCrmContainer();
-        if (!container.activityRepository) {
-          throw new Error("Activities repository not configured");
-        }
+        const repo = getCrmContainer().activityRepository;
+        if (!repo) throw new Error("Activities repository not configured");
         const payload: CreateSalesActivityPayload = {
           activityKind: data.activityKind,
           summary: data.summary,
@@ -136,59 +114,48 @@ export function useCrmActivitiesViewModel(props: UseCrmActivitiesProps = {}) {
           containsPii: data.containsPii ?? false,
           occurredAtUtc: data.occurredAtUtc,
         };
-
-        await container.activityRepository.createActivity(payload);
+        await repo.createActivity(payload);
         setIsCreateOpen(false);
-        await loadActivities(1, activityKindFilter);
+        await invalidateActivities();
         return true;
       } catch (err: unknown) {
-        const msg = err instanceof Error ? err.message : "Failed to log sales activity";
-        setSubmitError(msg);
+        setSubmitError(err instanceof Error ? err.message : "Failed to log sales activity");
         return false;
       } finally {
         setIsSubmitting(false);
       }
     },
-    [leadId, accountId, opportunityId, activityKindFilter, loadActivities]
+    [leadId, accountId, opportunityId, invalidateActivities]
   );
 
   const handleCreateFollowUp = useCallback(
     async (
       activityId: string,
-      data: {
-        title: string;
-        description?: string;
-        assigneeUserId: string;
-        dueAtUtc?: string;
-      }
+      data: { title: string; description?: string; assigneeUserId: string; dueAtUtc?: string }
     ): Promise<boolean> => {
       setIsSubmitting(true);
       setSubmitError(null);
       try {
-        const container = getCrmContainer();
-        if (!container.activityRepository) {
-          throw new Error("Activities repository not configured");
-        }
+        const repo = getCrmContainer().activityRepository;
+        if (!repo) throw new Error("Activities repository not configured");
         const payload: CreateActivityFollowUpPayload = {
           title: data.title,
           description: data.description,
           assigneeUserId: data.assigneeUserId,
           dueAtUtc: data.dueAtUtc,
         };
-
-        await container.activityRepository.createFollowUp(activityId, payload);
+        await repo.createFollowUp(activityId, payload);
         setSelectedActivityForFollowUp(null);
-        await loadActivities(state.page, activityKindFilter);
+        await invalidateActivities();
         return true;
       } catch (err: unknown) {
-        const msg = err instanceof Error ? err.message : "Failed to schedule follow-up task";
-        setSubmitError(msg);
+        setSubmitError(err instanceof Error ? err.message : "Failed to schedule follow-up task");
         return false;
       } finally {
         setIsSubmitting(false);
       }
     },
-    [activityKindFilter, loadActivities, state.page]
+    [invalidateActivities]
   );
 
   return {
@@ -204,6 +171,6 @@ export function useCrmActivitiesViewModel(props: UseCrmActivitiesProps = {}) {
     setSubmitError,
     handleCreateActivity,
     handleCreateFollowUp,
-    refresh: () => loadActivities(state.page, activityKindFilter),
+    refresh: () => activitiesQuery.refetch().then(() => undefined),
   };
 }

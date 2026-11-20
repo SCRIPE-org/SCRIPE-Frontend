@@ -11,6 +11,7 @@ import {
 } from "@modules/crm";
 import type { CrmOpportunity } from "../../domain/entities/OpportunityEntity";
 
+/** Stepper item descriptor for the Opportunity stage progression header. */
 export interface OpportunityStageStepItem {
   key: string;
   label: string;
@@ -20,6 +21,7 @@ export interface OpportunityStageStepItem {
   requiresParty: boolean;
 }
 
+/** Interactive horizontal pipeline stepper card for transitioning an open Opportunity. */
 export function OpportunityStageProgressionCard({
   t,
   opp,

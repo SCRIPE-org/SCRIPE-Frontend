@@ -8,6 +8,7 @@ import type { CrudColumn } from "@core/crud/components/generic-crud-view";
 import type { CrmAccount } from "../../domain/entities/AccountEntity";
 import { AccountStatusBadge } from "../components/AccountStatusBadge";
 
+/** Builds column definitions for the CRM Accounts `GenericCrudView` table. */
 export function useAccountsCrudColumns(
   language: string,
   t: (key: string) => string

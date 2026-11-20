@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import type { SalesActivityKind } from "../../domain/entities/CrmActivityEntity";
 
+/** Renders the Lucide icon matching a CRM sales activity kind. */
 export function renderActivityKindIcon(kind: SalesActivityKind) {
   switch (kind) {
     case "Note":
@@ -38,6 +39,7 @@ export function renderActivityKindIcon(kind: SalesActivityKind) {
   }
 }
 
+/** Renders a semantic outline badge with localized label for a sales activity kind. */
 export function renderActivityKindBadge(kind: SalesActivityKind, t: (k: string) => string) {
   const kindMap: Record<string, { cls: string; key?: string }> = {
     Note: { cls: "border-info/30 bg-info/10 text-info", key: "crmActivities.kinds.note" },
@@ -58,6 +60,7 @@ export function renderActivityKindBadge(kind: SalesActivityKind, t: (k: string) 
   );
 }
 
+/** Formats an ISO timestamp into a locale-aware date/time string for activity timelines. */
 export function formatActivityTimestamp(timestamp: string, language: string): string {
   try {
     const parsed = new Date(timestamp);
@@ -74,6 +77,7 @@ export function formatActivityTimestamp(timestamp: string, language: string): st
   }
 }
 
+/** Resolves the localized label for a communication dispatch delivery status. */
 export function getActivityDeliveryStatusLabel(status: string | null | undefined, t: (k: string) => string): string {
   if (!status) return t("crmActivities.timeline.deliveryStatuses.sent");
   const normalized = status.toLowerCase();
@@ -84,6 +88,7 @@ export function getActivityDeliveryStatusLabel(status: string | null | undefined
   return status;
 }
 
+/** Resolves the localized label for a linked follow-up work item status. */
 export function getActivityWorkItemStatusLabel(status: string | null | undefined, t: (k: string) => string): string {
   if (!status) return t("crmActivities.timeline.taskStatuses.active");
   const normalized = status.toLowerCase();

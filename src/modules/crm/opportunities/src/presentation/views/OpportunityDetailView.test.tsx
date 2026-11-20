@@ -2,9 +2,9 @@ import { render, renderHook, act, screen, waitFor, fireEvent } from "@testing-li
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { OpportunityDetailView } from "./OpportunityDetailView";
 import { useOpportunityDetailViewModel } from "../viewmodels/useOpportunityDetailViewModel";
-import { setCrmContainer } from "@modules/crm/di";
-import type { CrmContainer } from "@modules/crm/di";
-import { useCrmSettingsStore } from "@modules/crm";
+import { setCrmContainer, type CrmContainer } from "@modules/crm/di";
+import { queryClient } from "@core/query-client";
+import { useCrmClientPrefsStore } from "@modules/crm";
 import {
   type OpportunityDetailResult,
   OpportunityStageTransitionKind,
@@ -27,8 +27,10 @@ vi.mock("@core/providers/i18n-provider", () => ({
   }),
 }));
 
+const mockUsePermission = vi.fn((_perm?: string) => true);
+
 vi.mock("@core/hooks/use-permission", () => ({
-  usePermission: () => true,
+  usePermission: (perm: string) => mockUsePermission(perm),
 }));
 
 vi.mock("@core/providers/permission-provider", () => ({
@@ -134,7 +136,9 @@ describe("OpportunityDetailView Component", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    useCrmSettingsStore.getState().resetDefaults();
+    mockUsePermission.mockReturnValue(true);
+    queryClient.clear();
+    useCrmClientPrefsStore.getState().resetClientPrefs();
 
     mockRepo = {
       getOpportunities: vi.fn(),
@@ -148,7 +152,12 @@ describe("OpportunityDetailView Component", () => {
     };
 
     mockOverviewRepo = {
+      getOverview: vi.fn(),
+    };
+    const mockSettingsRepo = {
       getSettings: vi.fn().mockResolvedValue({}),
+      getGovernanceCatalog: vi.fn().mockResolvedValue({}),
+      lookupAssignees: vi.fn().mockResolvedValue([]),
       updateTenantSettings: vi.fn().mockResolvedValue({}),
       updateUserPreferences: vi.fn().mockResolvedValue({}),
     };
@@ -165,6 +174,14 @@ describe("OpportunityDetailView Component", () => {
     const container: CrmContainer = {
       overviewService: {} as any,
       overviewRepository: mockOverviewRepo,
+
+      workflowService: {} as never,
+
+      workflowRepository: {} as never,
+      reportsService: {} as any,
+      reportsRepository: {} as any,
+      settingsService: {} as any,
+      settingsRepository: mockSettingsRepo as any,
       leadService: {} as any,
       leadRepository: {} as any,
       opportunityService: {} as any,
@@ -175,6 +192,7 @@ describe("OpportunityDetailView Component", () => {
       contactRepository: {} as any,
       activityService: {} as any,
       activityRepository: mockActivityRepo,
+      entityLookup: {} as any,
     };
 
     setCrmContainer(container);
@@ -208,7 +226,7 @@ describe("OpportunityDetailView Component", () => {
     expect(mockRepo.getOpportunityById).toHaveBeenCalledWith("opp-123");
   });
 
-  it("persists Deal Commercial Package quote items and handoff statuses to the backend server via CustomFieldsConfigJson", async () => {
+  it("manages Opportunity-scoped commercial package quote items and handoff statuses without mutating tenant-wide settings", async () => {
     render(<OpportunityDetailView opportunityId="opp-123" />);
 
     await waitFor(() => {
@@ -218,7 +236,6 @@ describe("OpportunityDetailView Component", () => {
     fireEvent.click(screen.getByTestId("venue-block-booking-hold-btn"));
     fireEvent.click(screen.getByTestId("academy-b2b-sponsorship-btn"));
 
-    // Add a new commercial quote line item
     fireEvent.change(screen.getByTestId("quote-item-name-input"), {
       target: { value: "VIP Hospitality Suite Add-On" },
     });
@@ -228,22 +245,15 @@ describe("OpportunityDetailView Component", () => {
     fireEvent.click(screen.getByTestId("quote-add-item-btn"));
 
     await waitFor(() => {
-      const pkg = useCrmSettingsStore.getState().dealCommercialPackages["opp-123"];
-      expect(pkg).toBeDefined();
-      expect(pkg.venueHoldStatus).toBe("reserved");
-      expect(pkg.academyCohortStatus).toBe("provisioned");
-      expect(pkg.quoteItems.some((item) => item.itemName === "VIP Hospitality Suite Add-On")).toBe(true);
-      expect(mockOverviewRepo.updateTenantSettings).toHaveBeenCalled();
+      expect(screen.getByText("VIP Hospitality Suite Add-On")).toBeDefined();
     });
 
-    const lastPayload =
-      mockOverviewRepo.updateTenantSettings.mock.calls[
-        mockOverviewRepo.updateTenantSettings.mock.calls.length - 1
-      ][0];
-    const parsedEnvelope = JSON.parse(lastPayload.customFieldsConfigJson);
-    expect(parsedEnvelope.dealCommercialPackages["opp-123"].venueHoldStatus).toBe("reserved");
-    expect(parsedEnvelope.dealCommercialPackages["opp-123"].academyCohortStatus).toBe("provisioned");
-    expect(parsedEnvelope.dealCommercialPackages["opp-123"].quoteItems).toHaveLength(3);
+    const cachedRaw = window.sessionStorage.getItem("scripe:crm:deal-package:platform:anon:opp-123");
+    expect(cachedRaw).not.toBeNull();
+    const parsedPkg = JSON.parse(cachedRaw!);
+    expect(parsedPkg.venueHoldStatus).toBe("reserved");
+    expect(parsedPkg.academyCohortStatus).toBe("provisioned");
+    expect(parsedPkg.quoteItems).toHaveLength(3);
   });
 
   it("silently refreshes opportunity rowVersion via getOpportunityById after addContactRole and removeContactRole", async () => {
@@ -294,6 +304,28 @@ describe("OpportunityDetailView Component", () => {
     expect(result.current.loading).toBe(false);
     expect(mockRepo.getOpportunityById).toHaveBeenCalledTimes(3);
     expect(result.current.data?.opportunity.rowVersion).toBe("rv-after-remove");
+  });
+
+  it("propagates fulfillment dispatch failures via submitError and returns false", async () => {
+    mockActivityRepo.createActivity = vi.fn().mockRejectedValueOnce(new Error("HQ Fulfillment Endpoint Offline"));
+    const { result } = renderHook(() => useOpportunityDetailViewModel("opp-123"));
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    let ok = true;
+    await act(async () => {
+      ok = await result.current.handleRequestFulfillment();
+    });
+
+    expect(ok).toBe(false);
+    expect(result.current.fulfillmentRequested).toBe(false);
+    expect(result.current.submitError).toBe("HQ Fulfillment Endpoint Offline");
+  });
+
+  it("blocks Deal 360 rendering when OPPORTUNITIES_READ permission is denied", () => {
+    mockUsePermission.mockReturnValue(false);
+    render(<OpportunityDetailView opportunityId="opp-123" />);
+    expect(screen.getByText("crm.errors.accessDenied")).toBeDefined();
+    expect(mockRepo.getOpportunityById).not.toHaveBeenCalled();
   });
 });
 

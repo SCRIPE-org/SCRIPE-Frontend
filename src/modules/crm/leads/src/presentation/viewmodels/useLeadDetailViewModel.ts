@@ -1,7 +1,10 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { qk } from "@core/common/query-keys";
 import { getCrmContainer } from "@modules/crm/di";
+import { useCrmTenantScope, useSafeQueryClient } from "@modules/crm/shared";
 import type { CrmWorkflowTransitionSubmitPayload } from "@modules/crm";
 import type {
   CrmLead,
@@ -16,6 +19,7 @@ import type {
 } from "../../domain/models/crm-lead.types";
 import { mapLeadTransitionPayload, saveLeadCustomFieldsIfPresent } from "../utils/leadTransitionHelpers";
 
+/** State snapshot for the Lead 360 Qualification & Conversion Workspace. */
 export interface LeadDetailState {
   stage: "loading" | "success" | "failed";
   lead: CrmLead | null;
@@ -23,10 +27,12 @@ export interface LeadDetailState {
 }
 
 /**
- * ViewModel hook for the Lead 360 Qualification & Conversion Workspace (/crm/leads/[id]).
+ * ViewModel hook for the Lead 360 Qualification & Conversion Workspace (`/crm/leads/[id]`)
+ * powered by TanStack Query v5.
  */
 export function useLeadDetailViewModel(leadId: string) {
-  const [state, setState] = useState<LeadDetailState>({ stage: "loading", lead: null, error: null });
+  const safeQueryClient = useSafeQueryClient();
+  const { tenantId } = useCrmTenantScope();
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isQualifyOpen, setIsQualifyOpen] = useState(false);
   const [qualifyDefaultDecision, setQualifyDefaultDecision] = useState<QualificationDecision>("Qualified");
@@ -36,40 +42,50 @@ export function useLeadDetailViewModel(leadId: string) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const loadLead = useCallback(async () => {
-    if (!leadId) return;
-    setState((prev) => ({ ...prev, stage: "loading", error: null }));
-    try {
-      const lead = await getCrmContainer().leadRepository.getLeadById(leadId);
-      setState({ stage: "success", lead, error: null });
-    } catch (err) {
-      setState({ stage: "failed", lead: null, error: err instanceof Error ? err.message : "Failed to load lead details" });
-    }
-  }, [leadId]);
+  const detailQuery = useQuery<CrmLead>(
+    {
+      queryKey: qk.crm.leadDetail(tenantId, leadId),
+      queryFn: () => getCrmContainer().leadRepository.getLeadById(leadId),
+      enabled: Boolean(leadId),
+      staleTime: 30_000,
+    },
+    safeQueryClient
+  );
 
-  useEffect(() => { loadLead(); }, [loadLead]);
+  const currentLead = detailQuery.data ?? null;
+  const errorMsg = detailQuery.error instanceof Error ? detailQuery.error.message : null;
+  const state: LeadDetailState = {
+    stage: detailQuery.isLoading ? "loading" : detailQuery.isError ? "failed" : "success",
+    lead: currentLead,
+    error: errorMsg,
+  };
 
-  const runLeadUpdate = useCallback(async (op: () => Promise<CrmLead>, fallbackError: string, onSuccess?: () => void) => {
-    setIsSubmitting(true);
-    setSubmitError(null);
-    try {
-      const updated = await op();
-      setState({ stage: "success", lead: updated, error: null });
-      setIsSubmitting(false);
-      onSuccess?.();
-      return updated;
-    } catch (err) {
-      setIsSubmitting(false);
-      setSubmitError(err instanceof Error ? err.message : fallbackError);
-      return null;
-    }
-  }, []);
+  const runLeadUpdate = useCallback(
+    async (op: () => Promise<CrmLead>, fallbackError: string, onSuccess?: () => void) => {
+      setIsSubmitting(true);
+      setSubmitError(null);
+      try {
+        const updated = await op();
+        safeQueryClient.setQueryData(qk.crm.leadDetail(tenantId, leadId), updated);
+        await safeQueryClient.invalidateQueries({ queryKey: qk.crm.leadDetail(tenantId, leadId) });
+        await safeQueryClient.invalidateQueries({ queryKey: qk.crm.leads(tenantId) });
+        setIsSubmitting(false);
+        onSuccess?.();
+        return updated;
+      } catch (err) {
+        setIsSubmitting(false);
+        setSubmitError(err instanceof Error ? err.message : fallbackError);
+        return null;
+      }
+    },
+    [leadId, safeQueryClient, tenantId]
+  );
 
   const handleUpdateLead = useCallback(
     async (input: Omit<UpdateLeadInput, "leadId" | "expectedRowVersion">, customFieldValues?: Record<string, unknown>) => {
-      if (!state.lead) return false;
-      const leadIdToSave = state.lead.id;
-      const expectedRowVersion = state.lead.rowVersion;
+      if (!currentLead) return false;
+      const leadIdToSave = currentLead.id;
+      const expectedRowVersion = currentLead.rowVersion;
       const updated = await runLeadUpdate(async () => {
         const res = await getCrmContainer().leadRepository.updateLead({ ...input, leadId: leadIdToSave, expectedRowVersion });
         await saveLeadCustomFieldsIfPresent(leadIdToSave, customFieldValues);
@@ -77,14 +93,14 @@ export function useLeadDetailViewModel(leadId: string) {
       }, "Failed to update lead", () => setIsEditOpen(false));
       return Boolean(updated);
     },
-    [state.lead, runLeadUpdate]
+    [currentLead, runLeadUpdate]
   );
 
   const handleStatusProgression = useCallback(
     async (targetStatus: LeadStatus) => {
-      if (!state.lead || state.lead.status === targetStatus) return true;
+      if (!currentLead || currentLead.status === targetStatus) return true;
       if (targetStatus === "Converted") { setSubmitError(null); setIsConvertOpen(true); return false; }
-      if (targetStatus === "Disqualified" || (targetStatus === "Qualified" && state.lead.status !== "Converted")) {
+      if (targetStatus === "Disqualified" || (targetStatus === "Qualified" && currentLead.status !== "Converted")) {
         setQualifyDefaultDecision(targetStatus === "Disqualified" ? "Disqualified" : "Qualified");
         setSubmitError(null);
         setIsQualifyOpen(true);
@@ -92,26 +108,28 @@ export function useLeadDetailViewModel(leadId: string) {
       }
       const res = await runLeadUpdate(
         () => getCrmContainer().leadRepository.updateLead({
-          leadId: state.lead!.id, markWorking: targetStatus === "Working",
-          targetStatus, expectedRowVersion: state.lead!.rowVersion,
+          leadId: currentLead.id,
+          markWorking: targetStatus === "Working",
+          targetStatus,
+          expectedRowVersion: currentLead.rowVersion,
         }),
         "Failed to transition lead status"
       );
       return Boolean(res);
     },
-    [state.lead, runLeadUpdate]
+    [currentLead, runLeadUpdate]
   );
 
   const handleTransitionSubmit = useCallback(
     async (payload: CrmWorkflowTransitionSubmitPayload) => {
-      if (!state.lead) return false;
+      if (!currentLead) return false;
       const res = await runLeadUpdate(
-        () => getCrmContainer().leadRepository.moveLeadStage(mapLeadTransitionPayload(payload, state.lead!.rowVersion)),
+        () => getCrmContainer().leadRepository.moveLeadStage(mapLeadTransitionPayload(payload, currentLead.rowVersion)),
         "Failed to move stage"
       );
       return Boolean(res);
     },
-    [state.lead, runLeadUpdate]
+    [currentLead, runLeadUpdate]
   );
 
   const handleAssignLeadOwner = useCallback(async (input: AssignLeadOwnerInput) => {
@@ -146,7 +164,8 @@ export function useLeadDetailViewModel(leadId: string) {
         const result = await getCrmContainer().leadRepository.convertLead(input);
         setIsSubmitting(false);
         setIsConvertOpen(false);
-        await loadLead();
+        await safeQueryClient.invalidateQueries({ queryKey: qk.crm.leadDetail(tenantId, leadId) });
+        await safeQueryClient.invalidateQueries({ queryKey: qk.crm.leads(tenantId) });
         return result;
       } catch (err) {
         setIsSubmitting(false);
@@ -154,7 +173,7 @@ export function useLeadDetailViewModel(leadId: string) {
         return null;
       }
     },
-    [loadLead]
+    [leadId, safeQueryClient, tenantId]
   );
 
   const lookupCandidateParties = useCallback(
@@ -170,6 +189,6 @@ export function useLeadDetailViewModel(leadId: string) {
     isSubmitting, submitError, setSubmitError,
     handleUpdateLead, handleStatusProgression, handleTransitionSubmit,
     handleQualifyLead, handleLinkParty, handleConvertLead, handleAssignLeadOwner,
-    linkPartyBeforeConvert, lookupCandidateParties, refresh: loadLead,
+    linkPartyBeforeConvert, lookupCandidateParties, refresh: () => detailQuery.refetch().then(() => undefined),
   };
 }

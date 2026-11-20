@@ -1,3 +1,5 @@
+"use client";
+
 import { useCrmWorkflowsStore, type CrmWorkflowTransitionSubmitPayload } from "@modules/crm";
 import type {
   CrmOpportunity,

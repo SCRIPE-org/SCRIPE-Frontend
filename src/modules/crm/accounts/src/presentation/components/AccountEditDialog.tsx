@@ -41,6 +41,7 @@ interface AccountEditDialogProps {
   readonly t: (key: string) => string;
 }
 
+/** Modal dialog for editing a CRM Account's tier, preferred currency, and notes. */
 export function AccountEditDialog({
   isOpen,
   isSubmitting,

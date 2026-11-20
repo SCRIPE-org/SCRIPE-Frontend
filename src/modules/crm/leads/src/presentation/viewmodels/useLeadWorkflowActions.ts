@@ -18,6 +18,7 @@ import { stageKeyToLeadStatus, toLeadStageKey } from "../utils/leadTransitionHel
 
 const STANDARD_LEAD_STATUSES = new Set(["New", "Working", "Qualified", "Converted", "Disqualified"]);
 
+/** Manages lead qualification, party linking, conversion, and stage-transition modals and handlers. */
 export function useLeadWorkflowActions(
   items: CrmLead[],
   page: number,

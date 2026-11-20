@@ -11,10 +11,11 @@ interface LeadStatusBadgeProps {
   className?: string;
 }
 
+/** Semantic status badge displaying a CRM Lead's current lifecycle state. */
 export function LeadStatusBadge({ status, label, className }: LeadStatusBadgeProps) {
   const { t } = useI18n();
 
-  const getBadgeConfig = (s: LeadStatus) => {
+  const getBadgeConfig = (s: LeadStatus | "Contacted") => {
     switch (s) {
       case "New":
         return {
@@ -23,7 +24,7 @@ export function LeadStatusBadge({ status, label, className }: LeadStatusBadgePro
           text: label || t("crmLeads.status.new"),
         };
       case "Working":
-      case "Contacted" as any:
+      case "Contacted":
         return {
           variant: "secondary" as const,
           cls: "border-info/30 bg-info/10 text-info border font-medium",

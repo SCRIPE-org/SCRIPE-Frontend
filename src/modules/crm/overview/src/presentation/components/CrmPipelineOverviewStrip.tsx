@@ -6,17 +6,24 @@ import { Button } from "@core/ui/button";
 import { Card } from "@core/ui/card";
 import { cn } from "@core/common/utils";
 import type { CrmPipelineOverview, CrmStageKey } from "../../domain/entities/OverviewEntity";
-import { STAGE_COLOR_PALETTE, resolveDefaultStageColor } from "../../domain/constants/crmWorkflowDefaults";
-import { useCrmWorkflowsStore } from "../stores/useCrmWorkflowsStore";
-import { useCrmCurrency } from "../viewmodels/useCrmCurrency";
+import {
+  STAGE_COLOR_PALETTE,
+  resolveDefaultStageColor,
+  useCrmCurrency,
+} from "@modules/crm/shared";
+import { useCrmWorkflowsStore } from "@modules/crm";
 
-interface CrmPipelineOverviewStripProps {
+/** Props for `CrmPipelineOverviewStrip`. */
+export interface CrmPipelineOverviewStripProps {
   pipeline: CrmPipelineOverview;
   activeFilterStage?: CrmStageKey;
   onSelectStage?: (stage: CrmStageKey) => void;
   className?: string;
 }
 
+/**
+ * Interactive stage velocity strip on CRM Overview with party-gate cues and currency totals.
+ */
 export function CrmPipelineOverviewStrip({
   pipeline,
   activeFilterStage,
@@ -115,7 +122,6 @@ export function CrmPipelineOverviewStrip({
         </div>
       </div>
 
-      {/* Progress Strip */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5">
         {(Array.isArray(pipeline?.stages)
           ? [...pipeline.stages].sort((a, b) => a.sortOrder - b.sortOrder)
@@ -175,7 +181,7 @@ export function CrmPipelineOverviewStrip({
                 <div className="mt-2 pt-1.5 border-t border-nx-line/50 flex items-center gap-1 text-[10px] text-nx-warning-strong font-semibold w-full">
                   <ShieldCheck className="size-3 shrink-0" />
                   <span className="truncate">
-                    {t("crm.pipeline.partyGate", { defaultValue: "Account / Contact Required" })}
+                    {t("crm.pipeline.partyGate")}
                   </span>
                 </div>
               )}

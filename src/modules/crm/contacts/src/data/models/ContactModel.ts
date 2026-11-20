@@ -1,3 +1,4 @@
+/** Wire DTO aliases mapping CRM Contact domain models to API payloads. */
 export type {
   CrmContact as CrmContactDto,
   CrmContactContext as CrmContactContextDto,

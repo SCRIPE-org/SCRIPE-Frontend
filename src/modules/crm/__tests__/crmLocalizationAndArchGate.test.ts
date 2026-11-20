@@ -99,15 +99,67 @@ describe("CRM Frontend Localization & Architecture Gate", () => {
       }
       if (
         file.endsWith(".tsx") &&
-        file.includes(`${path.sep}components${path.sep}workflow${path.sep}`) &&
+        (file.includes(`${path.sep}components${path.sep}workflow${path.sep}`) ||
+          file.includes(`${path.sep}workflows${path.sep}src${path.sep}presentation${path.sep}`)) &&
         lineCount >= 200
       ) {
         over200Workflow.push(`${path.relative(CRM_ROOT, file)} (${lineCount} lines)`);
+      }
+      if (file.endsWith("View.tsx") && lineCount > 200) {
+        over200Workflow.push(`${path.relative(CRM_ROOT, file)} (${lineCount} lines > 200 View limit)`);
       }
     }
 
     expect(over260).toEqual([]);
     expect(over200Workflow).toEqual([]);
+  });
+
+  it("enforces FE-030..FE-033, zero any types, zero useCrmSettingsStore, and repository-mapper contracts across CRM", () => {
+    const allProdFiles = walkFiles(
+      CRM_ROOT,
+      (p) => isProdSourceFile(p) && !p.includes(`${path.sep}locales${path.sep}`),
+    );
+    const persistViolations: string[] = [];
+    const anyViolations: string[] = [];
+    const legacyStoreViolations: string[] = [];
+    const memberDepViolations: string[] = [];
+    const mapperViolations: string[] = [];
+
+    for (const file of allProdFiles) {
+      const content = fs.readFileSync(file, "utf8");
+      const rel = path.relative(CRM_ROOT, file).replace(/\\/g, "/");
+
+      if (/\bpersist\s*\(/.test(content) && !rel.endsWith("useCrmClientPrefsStore.ts")) {
+        persistViolations.push(rel);
+      }
+      if (/useCrmSettingsStore/.test(content)) {
+        legacyStoreViolations.push(rel);
+      }
+      const lines = content.split(/\r?\n/);
+      lines.forEach((line, idx) => {
+        if (!/^\s*\/\//.test(line) && /:\s*any\b|\bas\s+any\b/.test(line)) {
+          anyViolations.push(`${rel}:${idx + 1}`);
+        }
+      });
+      if (rel.includes("presentation/")) {
+        const hookDepRegex = /\b(?:useEffect|useCallback|useMemo)\s*\([\s\S]*?,\s*\[([^\]]*)\]\s*\)/g;
+        for (const m of content.matchAll(hookDepRegex)) {
+          const deps = m[1];
+          if (/\b[a-zA-Z_$][\w$]*\??\.[a-zA-Z_$][\w$]*/.test(deps)) {
+            memberDepViolations.push(`${rel}: [${deps.trim()}]`);
+          }
+        }
+      }
+      if (rel.includes("data/repositories/") && /Repository\.ts$/.test(rel) && !/Mapper\.toEntity/.test(content)) {
+        mapperViolations.push(rel);
+      }
+    }
+
+    expect(persistViolations).toEqual([]);
+    expect(legacyStoreViolations).toEqual([]);
+    expect(anyViolations).toEqual([]);
+    expect(memberDepViolations).toEqual([]);
+    expect(mapperViolations).toEqual([]);
   });
 
   it("enforces single exported React component per .tsx file across CRM presentation", () => {
@@ -169,6 +221,49 @@ describe("CRM Frontend Localization & Architecture Gate", () => {
     }
 
     expect(violations).toEqual([]);
+  });
+
+  it("enforces 'use client' in presentation, V1 in endpoints, zero NODE_ENV test bypasses, and DI boundary purity", () => {
+    const allProdFiles = walkFiles(
+      CRM_ROOT,
+      (p) => isProdSourceFile(p) && !p.includes(`${path.sep}locales${path.sep}`),
+    );
+    const missingUseClient: string[] = [];
+    const hardcodedEndpoints: string[] = [];
+    const testEnvBypasses: string[] = [];
+    const illegalDiCalls: string[] = [];
+
+    for (const file of allProdFiles) {
+      const content = fs.readFileSync(file, "utf8");
+      const rel = path.relative(CRM_ROOT, file).replace(/\\/g, "/");
+
+      if (rel.includes("presentation/") && !rel.endsWith("/index.ts")) {
+        if (!content.startsWith('"use client"') && !content.startsWith("'use client'")) {
+          missingUseClient.push(rel);
+        }
+      }
+      if (rel.endsWith(".endpoints.ts")) {
+        if (!content.includes("V1") || /["']\/v1\//.test(content)) {
+          hardcodedEndpoints.push(rel);
+        }
+      }
+      if (/\bNODE_ENV\b/.test(content)) {
+        testEnvBypasses.push(rel);
+      }
+      if (
+        content.includes("getCrmContainer") &&
+        !rel.endsWith("di.ts") &&
+        !rel.includes("presentation/viewmodels/") &&
+        !rel.includes("presentation/stores/")
+      ) {
+        illegalDiCalls.push(rel);
+      }
+    }
+
+    expect(missingUseClient).toEqual([]);
+    expect(hardcodedEndpoints).toEqual([]);
+    expect(testEnvBypasses).toEqual([]);
+    expect(illegalDiCalls).toEqual([]);
   });
 });
 

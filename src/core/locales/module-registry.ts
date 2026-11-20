@@ -303,7 +303,11 @@ import { en as venueSharedEn, ar as venueSharedAr } from "@modules/venue/shared/
 import { en as guestPortalEn, ar as guestPortalAr } from "@modules/venue/guest-portal/locales";
 
 // ─── CRM ───────────────────────────────────────────────
+import { en as crmSharedEn, ar as crmSharedAr } from "@modules/crm/shared/locales";
 import { en as crmOverviewEn, ar as crmOverviewAr } from "@modules/crm/overview/locales";
+import { en as crmWorkflowsEn, ar as crmWorkflowsAr } from "@modules/crm/workflows/locales";
+import { en as crmReportsEn, ar as crmReportsAr } from "@modules/crm/reports/locales";
+import { en as crmSettingsEn, ar as crmSettingsAr } from "@modules/crm/settings/locales";
 import { en as crmLeadsEn, ar as crmLeadsAr } from "@modules/crm/leads/locales";
 import { en as crmOpportunitiesEn, ar as crmOpportunitiesAr } from "@modules/crm/opportunities/locales";
 import { en as crmAccountsEn, ar as crmAccountsAr } from "@modules/crm/accounts/locales";
@@ -438,7 +442,11 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   venueSharedEn,
   guestPortalEn,
   // CRM
+  crmSharedEn,
   crmOverviewEn,
+  crmWorkflowsEn,
+  crmReportsEn,
+  crmSettingsEn,
   crmLeadsEn,
   crmOpportunitiesEn,
   crmAccountsEn,
@@ -570,7 +578,11 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   venueSharedAr,
   guestPortalAr,
   // CRM
+  crmSharedAr,
   crmOverviewAr,
+  crmWorkflowsAr,
+  crmReportsAr,
+  crmSettingsAr,
   crmLeadsAr,
   crmOpportunitiesAr,
   crmAccountsAr,

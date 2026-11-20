@@ -7,6 +7,7 @@ import type {
   PagedContactsResult,
 } from "../models/crm-contact.types";
 
+/** Service port defining HTTP operations for CRM Contacts. */
 export interface ICrmContactService {
   getContacts(params?: ContactsFilterParams): Promise<PagedContactsResult>;
   getContactById(id: string): Promise<CrmContactContext>;

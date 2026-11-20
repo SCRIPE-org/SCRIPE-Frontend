@@ -2,9 +2,9 @@
 
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { cn } from "@core/common/utils";
 import { Search } from "lucide-react";
+import { PipelineSelector } from "@modules/crm/shared";
 import type { CrmWorkflowDefinition } from "@modules/crm";
 import type { LeadStatus } from "../../domain/entities/LeadEntity";
 
@@ -22,14 +22,13 @@ interface LeadsToolbarContentProps {
   onStatusFilterChange: (status?: LeadStatus) => void;
 }
 
-/** Search input, workflow selector, and status filter strip rendered inside Leads GenericCrudView toolbar. */
+/** Search input, unified pipeline selector, and status filter strip rendered inside Leads GenericCrudView toolbar. */
 export function LeadsToolbarContent({
   t,
   isRtl,
   search,
   onSearchChange,
   matchedLeadWorkflow,
-  selectedLeadPipelineLabel,
   leadWorkflows,
   onSelectPipeline,
   statuses,
@@ -48,27 +47,15 @@ export function LeadsToolbarContent({
         />
       </div>
       <div className="w-auto min-w-[12.5rem] max-w-[17rem] shrink-0">
-        <Select
+        <PipelineSelector
+          pipelines={leadWorkflows}
           value={matchedLeadWorkflow?.id ?? ""}
-          onValueChange={(id) => { if (id) onSelectPipeline(id); }}
-        >
-          <SelectTrigger
-            className="h-8 w-full min-w-[12.5rem] gap-2 border-nx-line bg-nx-surface text-xs text-nx-ink"
-            data-testid="lead-pipeline-selector"
-            aria-label={t("crmLeads.actions.filterPipelineLabel")}
-          >
-            <SelectValue placeholder={t("crmLeads.actions.allPipelines")}>
-              {selectedLeadPipelineLabel || undefined}
-            </SelectValue>
-          </SelectTrigger>
-          <SelectContent>
-            {leadWorkflows.map((wf) => (
-              <SelectItem key={wf.id} value={wf.id} className="text-xs">
-                {isRtl ? wf.nameAr || wf.nameEn : wf.nameEn || wf.nameAr}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+          onChange={(id) => { if (id) onSelectPipeline(id); }}
+          entityType="lead"
+          placeholder={t("crmLeads.actions.allPipelines")}
+          ariaLabel={t("crmLeads.actions.filterPipelineLabel")}
+          data-testid="lead-pipeline-selector"
+        />
       </div>
       <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
         {statuses.map((item) => {
