@@ -37,6 +37,8 @@ export interface IdentityProviderJson {
   buttonLabel: string | null;
   displayOrder: number;
   isActive: boolean;
+  trustIdpMfa?: boolean;
+  rowVersion?: string | null;
   createdAt: string;
   modifiedAt: string | null;
 }
@@ -52,6 +54,7 @@ export interface IdentityProviderListItemJson {
   enabledForAdmins: boolean;
   enabledForUsers: boolean;
   isActive: boolean;
+  trustIdpMfa?: boolean;
   displayOrder: number;
   iconUrl: string | null;
   buttonColor: string | null;
@@ -101,6 +104,8 @@ export interface CreateIdentityProviderJson {
   buttonColor?: string;
   buttonLabel?: string;
   displayOrder?: number;
+  isActive?: boolean;
+  trustIdpMfa?: boolean;
 }
 
 /**
@@ -128,6 +133,9 @@ export interface UpdateIdentityProviderJson {
   buttonColor?: string;
   buttonLabel?: string;
   displayOrder?: number;
+  isActive?: boolean;
+  trustIdpMfa?: boolean;
+  rowVersion?: string;
 }
 
 // ===== Model Classes =====
@@ -161,6 +169,8 @@ export class IdentityProviderModel {
     public readonly buttonLabel: string | null,
     public readonly displayOrder: number,
     public readonly isActive: boolean,
+    public readonly trustIdpMfa: boolean,
+    public readonly rowVersion: string | null,
     public readonly createdAt: string,
     public readonly modifiedAt: string | null
   ) {}
@@ -191,6 +201,8 @@ export class IdentityProviderModel {
       json.buttonLabel,
       json.displayOrder,
       json.isActive,
+      Boolean(json.trustIdpMfa),
+      json.rowVersion ?? null,
       json.createdAt,
       json.modifiedAt
     );
@@ -209,6 +221,7 @@ export class IdentityProviderListItemModel {
     public readonly enabledForAdmins: boolean,
     public readonly enabledForUsers: boolean,
     public readonly isActive: boolean,
+    public readonly trustIdpMfa: boolean,
     public readonly displayOrder: number,
     public readonly iconUrl: string | null,
     public readonly buttonColor: string | null,
@@ -224,6 +237,7 @@ export class IdentityProviderListItemModel {
       json.enabledForAdmins,
       json.enabledForUsers,
       json.isActive,
+      Boolean(json.trustIdpMfa),
       json.displayOrder,
       json.iconUrl,
       json.buttonColor,

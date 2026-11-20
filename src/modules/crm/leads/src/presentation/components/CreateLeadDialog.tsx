@@ -23,6 +23,7 @@ interface CreateLeadDialogProps {
   submitError?: string | null;
 }
 
+/** Modal dialog for capturing a new CRM Lead with currency conversion preview and custom fields. */
 export function CreateLeadDialog({
   open,
   onOpenChange,
@@ -132,11 +133,11 @@ export function CreateLeadDialog({
                 <Select value={source} onValueChange={setSource}>
                   <SelectTrigger className="h-8 text-xs border-nx-line bg-nx-ground text-nx-ink"><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Inbound">Inbound</SelectItem>
-                    <SelectItem value="Website">Website</SelectItem>
-                    <SelectItem value="Referral">Referral</SelectItem>
-                    <SelectItem value="DirectOutreach">Direct Outreach</SelectItem>
-                    <SelectItem value="Event">Event / Conference</SelectItem>
+                    <SelectItem value="Inbound">{t("crmLeads.sources.inbound")}</SelectItem>
+                    <SelectItem value="Website">{t("crmLeads.sources.website")}</SelectItem>
+                    <SelectItem value="Referral">{t("crmLeads.sources.referral")}</SelectItem>
+                    <SelectItem value="DirectOutreach">{t("crmLeads.sources.directOutreach")}</SelectItem>
+                    <SelectItem value="Event">{t("crmLeads.sources.event")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -150,7 +151,7 @@ export function CreateLeadDialog({
 
               <div className="space-y-1.5">
                 <Label htmlFor="lead-phone" className="text-xs font-semibold text-nx-ink">{t("crmLeads.dialog.phoneLabel")}</Label>
-                <PhoneInput value={phone} onChange={(val) => setPhone(val)} defaultCountry="SA" disabled={isSubmitting} placeholder="5X XXX XXXX" />
+                <PhoneInput value={phone} onChange={(val) => setPhone(val)} defaultCountry="SA" disabled={isSubmitting} placeholder={t("crmLeads.dialog.phonePlaceholder")} />
               </div>
             </div>
 
@@ -172,8 +173,8 @@ export function CreateLeadDialog({
             </div>
 
             {conversionPreview.isDifferent && Number(estimatedValue) > 0 && (
-              <div data-testid="create-lead-conversion-preview" className="text-[11px] font-mono text-nx-accent bg-nx-accent-wash/30 border border-nx-accent/30 rounded-nx-sm px-2.5 py-1.5">
-                ≈ {conversionPreview.formattedConverted} (Base {baseCurrency})
+              <div data-testid="create-lead-conversion-preview" className="text-[11px] font-mono tabular-nums text-nx-accent bg-nx-accent-wash border border-nx-accent/30 rounded-nx-sm px-2.5 py-1.5">
+                ≈ {conversionPreview.formattedConverted} ({t("crmLeads.conversion.baseCurrencyLabel")} {baseCurrency})
               </div>
             )}
 
@@ -184,7 +185,7 @@ export function CreateLeadDialog({
 
             <CustomFieldsSection
               entityTypeKey="crm.lead"
-              entityDisplayName={t("crmLeads.title") || "Commercial Lead"}
+              entityDisplayName={t("crmLeads.title")}
               values={customFields}
               onChange={(key, value) => setCustomFields((prev) => ({ ...prev, [key]: value }))}
               disabled={isSubmitting}
@@ -195,7 +196,7 @@ export function CreateLeadDialog({
             <Button type="button" variant="outline" size="sm" onClick={() => onOpenChange(false)} disabled={isSubmitting} className="h-8 text-xs border-nx-line bg-nx-surface text-nx-ink hover:bg-nx-raised">
               {t("crmLeads.actions.cancel")}
             </Button>
-            <Button type="submit" size="sm" disabled={isSubmitting || !title.trim() || !firstName.trim()} className="h-8 text-xs bg-nx-accent-fill text-nx-on-fill font-bold hover:brightness-105">
+            <Button type="submit" variant="default" size="sm" disabled={isSubmitting || !title.trim() || !firstName.trim()} className="h-8 text-xs font-bold">
               {isSubmitting ? t("crmLeads.actions.creating") : t("crmLeads.actions.create")}
             </Button>
           </DialogFooter>

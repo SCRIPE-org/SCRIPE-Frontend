@@ -37,7 +37,7 @@ export interface WorkspaceGroupDto {
 }
 
 /**
- * Lightweight workspace stub (GET /Menus/my/workspaces).
+ * Lightweight workspace stub (GET /menus/navigation/workspaces).
  * No menu items — used only for the primary rail on initial load.
  */
 export interface WorkspaceStubDto {

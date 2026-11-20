@@ -3,6 +3,7 @@
 import { Card } from "@core/ui/card";
 import { Skeleton } from "@core/ui/skeleton";
 
+/** Loading skeleton placeholder for the CRM sales activity timeline list. */
 export function ActivityTimelineSkeleton({ rows = 3 }: { readonly rows?: number }) {
   return (
     <div className="space-y-2.5 py-2" data-testid="activity-timeline-skeleton">

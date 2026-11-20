@@ -18,9 +18,14 @@ import {
   type Verify2FAResponseJson,
 } from "../models/TwoFactorModels";
 import type { IApiService } from "@core/interfaces/api.interface";
-import { ALLOWED_OIDC_PARAMS } from "@core/config/oidc-keys";
+import { ALLOWED_OIDC_PARAMS, OIDC_KEYS } from "@core/config/oidc-keys";
 import type { IAuthService } from "../../domain/interfaces/IAuthService";
-import type { DiscoverWorkspacesResponseDto } from "../models/WorkspaceModels";
+import type {
+  DiscoverWorkspacesResponseDto,
+  PasskeyAuthBeginOptions,
+  PasskeyAuthVerifyResult,
+  VerifyPasskeyAuthRequestData,
+} from "../../domain/types/AuthTypes";
 import { AUTH_CORE_ENDPOINTS } from "./auth-core.endpoints";
 
 const allowedOidcParams = new Set<string>(ALLOWED_OIDC_PARAMS);
@@ -61,8 +66,8 @@ export class AuthService implements IAuthService {
     return LoginResponseModel.fromJson(json);
   }
 
-  async getMe<T>(): Promise<T> {
-    return this.api.get<T>(AUTH_CORE_ENDPOINTS.ME);
+  async getCurrentPrincipal<T>(): Promise<T> {
+    return this.api.get<T>(AUTH_CORE_ENDPOINTS.PRINCIPAL);
   }
 
   async discoverWorkspaces(email: string): Promise<DiscoverWorkspacesResponseDto> {
@@ -95,14 +100,17 @@ export class AuthService implements IAuthService {
 
   /**
    * Constructs the HTML Form action URL and whitelist of hidden input parameters
-   * required to securely POST the OIDC consent back to the backend.
+   * required to securely POST the OIDC consent decision (approve or deny) back to
+   * the backend `/connect/authorize` endpoint so OpenIddict validates `client_id`
+   * and `redirect_uri` server-side (SEC-03).
    */
   buildOidcConsentForm(
     searchParams: URLSearchParams,
-    accessToken: string
+    accessToken: string,
+    decision: "approve" | "deny" = "approve"
   ): { action: string; params: Record<string, string> } {
-    const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-    const baseHost = backendUrl.replace(/\/api$/, "");
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5035/api";
+    const baseHost = backendUrl.replace(/\/api\/?$/, "");
     const action = `${baseHost}${AUTH_CORE_ENDPOINTS.OIDC.AUTHORIZE}`;
 
     const params: Record<string, string> = {};
@@ -112,9 +120,36 @@ export class AuthService implements IAuthService {
       }
     });
 
+    params["decision"] = decision;
     params["access_token"] = accessToken;
 
     return { action, params };
+  }
+
+  /**
+   * Builds the backend `/oidc/logout?returnUrl=...` URL to clear the server-side
+   * OidcSession cookie before redirecting back to `/connect/authorize` without
+   * stale `consent_ticket` parameters.
+   */
+  buildOidcLogoutUrl(searchParams: URLSearchParams): string {
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5035/api";
+    const baseHost = backendUrl.replace(/\/api\/?$/, "");
+
+    const authorizeParams = new URLSearchParams();
+    searchParams.forEach((value, key) => {
+      if (key === OIDC_KEYS.CONSENT_TICKET) return;
+      if (allowedOidcParams.has(key)) {
+        authorizeParams.set(key, value);
+      }
+    });
+
+    const authorizeQuery = authorizeParams.toString();
+    const returnUrl = authorizeQuery
+      ? `${AUTH_CORE_ENDPOINTS.OIDC.AUTHORIZE}?${authorizeQuery}`
+      : "/";
+
+    const logoutParams = new URLSearchParams({ returnUrl });
+    return `${baseHost}${AUTH_CORE_ENDPOINTS.OIDC.LOGOUT}?${logoutParams.toString()}`;
   }
 
   /**
@@ -142,56 +177,97 @@ export class AuthService implements IAuthService {
   }
 
   /**
-   * Verify a magic-link token from the email URL and issue a full JWT session.
-   * Throws on invalid/expired token.
+   * Verify a magic-link token from the email URL and issue a full JWT session,
+   * workspace picker, or passwordless 2FA pending challenge.
    */
   async verifyMagicLink(
     token: string,
     tenantId?: string,
-    deviceInfo?: string
+    deviceInfo?: string,
+    staySignedIn: boolean = false,
+    isPlatformAdmin: boolean = false
   ): Promise<LoginResponseModel> {
     const json = await this.api.postPublic<LoginResponseJson>(
       AUTH_CORE_ENDPOINTS.MAGIC_LINK.VERIFY,
-      { token, tenantId: tenantId ?? null, deviceInfo: deviceInfo ?? null }
+      {
+        token,
+        tenantId: tenantId ?? null,
+        deviceInfo: deviceInfo ?? null,
+        staySignedIn,
+        isPlatformAdmin,
+      }
     );
     return LoginResponseModel.fromJson(json);
   }
 
   /**
-   * Begin WebAuthn/Passkey authentication — get challenge from backend.
-   * Returns the challengeId and PublicKeyCredentialRequestOptions.
+   * Begin WebAuthn/Passkey authentication — get challenge options from backend.
+   * Normalizes both flat PasskeyAuthenticationOptions and wrapped { challengeId, options } shapes.
    */
-  async beginPasskeyAuth(): Promise<{
-    challengeId: string;
-    options: PublicKeyCredentialRequestOptions;
-  }> {
-    return this.api.postPublic<{
-      challengeId: string;
-      options: PublicKeyCredentialRequestOptions;
-    }>(AUTH_CORE_ENDPOINTS.PASSKEY.AUTH_BEGIN, {});
+  async beginPasskeyAuth(
+    identifier?: string,
+    tenantId?: string | null
+  ): Promise<PasskeyAuthBeginOptions> {
+    const raw = await this.api.postPublic<Record<string, unknown>>(
+      AUTH_CORE_ENDPOINTS.PASSKEY.AUTH_BEGIN,
+      {
+        identifier: identifier?.trim() ? identifier.trim() : null,
+        tenantId: tenantId ?? null,
+      }
+    );
+
+    const wrapped = (raw?.options as Record<string, unknown> | undefined) ?? undefined;
+    const challengeRaw = raw?.challenge ?? wrapped?.challenge ?? "";
+    const rawAllowCreds = (raw?.allowCredentials ?? wrapped?.allowCredentials) as
+      | Array<{ id: string; type?: string; transports?: string[] }>
+      | undefined;
+
+    return {
+      challenge: typeof challengeRaw === "string" ? challengeRaw : String(challengeRaw ?? ""),
+      rpId:
+        typeof raw?.rpId === "string"
+          ? raw.rpId
+          : typeof wrapped?.rpId === "string"
+          ? wrapped.rpId
+          : undefined,
+      timeout:
+        typeof raw?.timeout === "number"
+          ? raw.timeout
+          : typeof wrapped?.timeout === "number"
+          ? wrapped.timeout
+          : undefined,
+      userVerification: (raw?.userVerification ??
+        wrapped?.userVerification ??
+        "required") as UserVerificationRequirement,
+      challengeToken:
+        typeof raw?.challengeToken === "string"
+          ? raw.challengeToken
+          : typeof raw?.challengeId === "string"
+          ? raw.challengeId
+          : null,
+      challengeId: typeof raw?.challengeId === "string" ? raw.challengeId : undefined,
+      allowCredentials: Array.isArray(rawAllowCreds)
+        ? rawAllowCreds.map((cred) => ({
+            id: String(cred.id),
+            type: "public-key" as const,
+            transports: Array.isArray(cred.transports) ? cred.transports : undefined,
+          }))
+        : undefined,
+    };
   }
 
   /**
-   * Verify WebAuthn/Passkey assertion — sends client assertion payload to backend to exchange for tokens.
+   * Verify WebAuthn/Passkey assertion — sends client assertion payload + challengeToken to backend.
    *
-   * @param data Assertion payload containing raw/credential IDs, clientDataJSON, authenticatorData, signature, userHandle, and optional tenantId.
-   * @returns A promise resolving to the issued access and refresh tokens.
+   * @param data Assertion payload containing raw/credential IDs, clientDataJSON, authenticatorData, signature, userHandle, challengeToken, clientExtensionResults, and optional tenantId.
+   * @returns A promise resolving to the issued access/refresh tokens and auth flags.
    * @security
    * - Enforces Double-Submit CSRF cookie validation matched against session identifier.
-   * - Restricts replay attacks via backend request timestamp drift and nonce checks.
+   * - Restricts replay attacks via challengeToken binding and backend one-time consumption.
    * - Access tokens are short-lived, while refresh tokens are securely stored in httpOnly cookies.
    * - CORS allowed origins are strictly whitelisted on the API gateway layer.
    */
-  async verifyPasskeyAuth(data: {
-    challengeId: string;
-    credentialId: string;
-    rawId: string;
-    clientDataJSON: string;
-    authenticatorData: string;
-    signature: string;
-    userHandle: string | null;
-    tenantId?: string | null;
-  }): Promise<{ accessToken: string; refreshToken: string }> {
+  async verifyPasskeyAuth(data: VerifyPasskeyAuthRequestData): Promise<PasskeyAuthVerifyResult> {
     const toBase64 = (base64url: string) => {
       const base64 = base64url.replace(/-/g, "+").replace(/_/g, "/");
       const pad = (4 - (base64.length % 4)) % 4;
@@ -199,16 +275,18 @@ export class AuthService implements IAuthService {
     };
 
     const backendRequest = {
-      credentialIdBase64: toBase64(data.rawId),
+      credentialIdBase64: toBase64(data.rawId || data.credentialId),
       authenticatorDataBase64: toBase64(data.authenticatorData),
       clientDataJsonBase64: toBase64(data.clientDataJSON),
       signatureBase64: toBase64(data.signature),
       userHandleBase64: data.userHandle ? toBase64(data.userHandle) : null,
       tenantId: data.tenantId ?? null,
       deviceInfo: typeof window !== "undefined" ? window.navigator.userAgent : null,
+      clientExtensionResults: data.clientExtensionResults ?? null,
+      challengeToken: data.challengeToken ?? data.challengeId ?? null,
     };
 
-    return this.api.postPublic<{ accessToken: string; refreshToken: string }>(
+    return this.api.postPublic<PasskeyAuthVerifyResult>(
       AUTH_CORE_ENDPOINTS.PASSKEY.AUTH_VERIFY,
       backendRequest
     );
@@ -217,21 +295,28 @@ export class AuthService implements IAuthService {
   // ── Phone OTP ───────────────────────────────────────────────────────────────
 
   async requestPhoneOtp(
-    phoneNumber: string
+    identifier: string,
+    tenantId?: string | null
   ): Promise<{ sent: boolean; retryAfterSeconds: number }> {
     return this.api.postPublic<{ sent: boolean; retryAfterSeconds: number }>(
       AUTH_CORE_ENDPOINTS.PHONE_OTP.REQUEST,
-      { phoneNumber }
+      { identifier: identifier.trim(), tenantId: tenantId ?? null }
     );
   }
 
   async verifyPhoneOtp(
-    phoneNumber: string,
-    code: string
+    identifier: string,
+    code: string,
+    tenantId?: string | null,
+    staySignedIn: boolean = false,
+    isPlatformAdmin: boolean = false
   ): Promise<{
     accessToken: string;
     refreshToken?: string;
     expiresAt?: string;
+    requires2FA?: boolean;
+    twoFactorPendingToken?: string | null;
+    staySignedIn?: boolean;
     requiresWorkspaceSelection?: boolean;
     availableWorkspaces?: Array<{
       tenantId: string;
@@ -247,48 +332,72 @@ export class AuthService implements IAuthService {
       lockedUntil?: string | null;
     }> | null;
     mustChangePassword?: boolean;
+    subscriptionStatus?: string | null;
+    gracePhase?: string | null;
+    editionName?: string | null;
     defaultRedirectPath?: string;
   }> {
-    return this.api.postPublic(AUTH_CORE_ENDPOINTS.PHONE_OTP.VERIFY, { phoneNumber, code });
+    return this.api.postPublic(AUTH_CORE_ENDPOINTS.PHONE_OTP.VERIFY, {
+      identifier: identifier.trim(),
+      code,
+      tenantId: tenantId ?? null,
+      deviceInfo: typeof window !== "undefined" ? window.navigator.userAgent : null,
+      staySignedIn,
+      isPlatformAdmin,
+    });
   }
 
   // ── QR Cross-Device Sign-In ─────────────────────────────────────────────────
 
-  async beginQrSignIn(): Promise<{
+  async beginQrSignIn(tenantId?: string | null): Promise<{
     sessionId: string;
+    sessionToken?: string;
     qrData: string;
     expiresAt: string;
   }> {
     const res = await this.api.postPublic<{
       sessionId: string;
+      sessionToken?: string;
       qrUrl: string;
       expiresAt: string;
-    }>(AUTH_CORE_ENDPOINTS.QR_LOGIN.CREATE_SESSION, {});
+    }>(AUTH_CORE_ENDPOINTS.QR_LOGIN.CREATE_SESSION, {
+      tenantId: tenantId ?? null,
+    });
 
     return {
       sessionId: res.sessionId,
+      sessionToken: res.sessionToken,
       qrData: res.qrUrl,
       expiresAt: res.expiresAt,
     };
   }
 
   async checkQrSignIn(sessionId: string): Promise<{
-    status: "pending" | "scanned" | "approved" | "expired";
+    status: "pending" | "scanned" | "approved" | "rejected" | "expired" | "consumed";
     accessToken?: string;
     refreshToken?: string;
+    expiresAt?: string;
+    approverName?: string | null;
+    defaultRedirectPath?: string | null;
   }> {
     return this.api.getPublic<{
-      status: "pending" | "scanned" | "approved" | "expired";
+      status: "pending" | "scanned" | "approved" | "rejected" | "expired" | "consumed";
       accessToken?: string;
       refreshToken?: string;
+      expiresAt?: string;
+      approverName?: string | null;
+      defaultRedirectPath?: string | null;
     }>(AUTH_CORE_ENDPOINTS.QR_LOGIN.SESSION_STATUS(sessionId));
   }
 
-  async approveQrSignIn(sessionId: string): Promise<void> {
-    await this.api.post(AUTH_CORE_ENDPOINTS.QR_LOGIN.APPROVE, { sessionId });
+  async approveQrSignIn(sessionToken: string, deviceInfo?: string): Promise<void> {
+    await this.api.post(AUTH_CORE_ENDPOINTS.QR_LOGIN.APPROVE, {
+      sessionToken,
+      deviceInfo: deviceInfo ?? (typeof window !== "undefined" ? window.navigator.userAgent : null),
+    });
   }
 
-  async rejectQrSignIn(sessionId: string): Promise<void> {
-    await this.api.post(AUTH_CORE_ENDPOINTS.QR_LOGIN.REJECT, { sessionId });
+  async rejectQrSignIn(sessionToken: string): Promise<void> {
+    await this.api.post(AUTH_CORE_ENDPOINTS.QR_LOGIN.REJECT, { sessionToken });
   }
 }

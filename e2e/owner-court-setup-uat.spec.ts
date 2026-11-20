@@ -339,7 +339,7 @@ test.describe("SCRIPE Venue: Owner Manual UAT & First-Time Court Setup", () => {
     expect(dbOutput).toContain(tenantId);
     expect(dbOutput).toMatch(/\|\s+4\s+\|/); // Status 4 = Confirmed
 
-    const match = dbOutput.match(/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\s+\|\s+(RES-[A-Z0-9\-]+)/i);
+    const match = dbOutput.match(/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\s+\|\s+(RES-[A-Z0-9-]+)/i);
     expect(match).not.toBeNull();
     if (match) {
       const rawDbId = match[1];

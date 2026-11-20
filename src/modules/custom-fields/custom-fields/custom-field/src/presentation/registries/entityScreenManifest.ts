@@ -78,6 +78,7 @@ export const ENTITY_TYPES_WITH_FRONTEND_SCREEN = [
   "compliance.data-inventory",
   "compliance.dsr",
   "crm.account",
+  "crm.activity",
   "crm.contact",
   "crm.lead",
   "crm.opportunity",

@@ -10,7 +10,7 @@ import { blockColor, clamp } from "./block-style-utils";
 export function DividerBlockView({ block }: { block: DividerBlock }) {
   const props = block.props;
   if (props.style === "space") return <div style={{ height: clamp(props.thickness, 8, 64, 24) }} />;
-  if (props.style === "dots") return <div className="text-center text-muted-foreground">...</div>;
+  if (props.style === "dots") return <div className="text-center text-nx-ink-2">...</div>;
 
   return (
     <div
@@ -20,13 +20,13 @@ export function DividerBlockView({ block }: { block: DividerBlock }) {
       <div
         className="flex-1"
         style={{
-          borderTopColor: blockColor(props.color, "hsl(var(--border))"),
+          borderTopColor: blockColor(props.color, "var(--nx-line)"),
           borderTopWidth: clamp(props.thickness, 1, 5, 1),
           borderTopStyle: props.lineStyle || "solid",
         }}
       />
       {props.label && (
-        <span className="px-2 text-xs text-muted-foreground" style={{ background: props.labelBg }}>
+        <span className="px-2 text-xs text-nx-ink-2" style={{ background: props.labelBg }}>
           {props.label}
         </span>
       )}
@@ -34,7 +34,7 @@ export function DividerBlockView({ block }: { block: DividerBlock }) {
         <div
           className="flex-1"
           style={{
-            borderTopColor: blockColor(props.color, "hsl(var(--border))"),
+            borderTopColor: blockColor(props.color, "var(--nx-line)"),
             borderTopWidth: clamp(props.thickness, 1, 5, 1),
             borderTopStyle: props.lineStyle || "solid",
           }}

@@ -9,7 +9,6 @@ export * from "./src/data/services/CrmContactService";
 export * from "./src/data/repositories/CrmContactRepository";
 export * from "./src/presentation/views/ContactsView";
 export * from "./src/presentation/views/ContactDetailView";
-export * from "./src/presentation/components/ContactsTable";
 export * from "./src/presentation/components/CreateContactDialog";
 export * from "./src/presentation/viewmodels/useContactsViewModel";
 export * from "./src/presentation/viewmodels/useContactDetailViewModel";

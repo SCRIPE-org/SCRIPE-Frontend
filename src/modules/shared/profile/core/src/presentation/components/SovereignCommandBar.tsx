@@ -4,10 +4,10 @@
  * SovereignCommandBar (⌘K / Ctrl+K)
  *
  * Raycast / Linear-style instant command palette for the Sovereign Account World v3.0.
- * Allows instant keyboard navigation to all 15 /account/* pages and quick security actions in <50ms.
+ * Allows instant keyboard navigation to authorized /account/* pages and quick security actions.
  */
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import {
   Dialog,
@@ -19,6 +19,12 @@ import {
 import { Input } from "@core/ui/input";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
+import { startRoutingProgress } from "@core/ui/routing-progress-bar";
+import { useAccountContextSliceViewModel } from "../viewmodels/useSovereignAccountSlicesViewModel";
+import type {
+  AccountPrincipalContext,
+  SovereignAccountFeatureFlags,
+} from "../../domain/entities/SovereignAccountEntities";
 import {
   User,
   ShieldCheck,
@@ -33,20 +39,34 @@ import {
   CornerDownLeft,
 } from "lucide-react";
 
-interface SovereignCommandBarProps {
+/** Props for {@link SovereignCommandBar}. */
+export interface SovereignCommandBarProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onTogglePrivacyBlur?: () => void;
+  principalContext?: AccountPrincipalContext | null;
+  featureFlags?: SovereignAccountFeatureFlags | null;
 }
 
+/** Keyboard-accessible command palette (`Cmd+K` / `Ctrl+K`) for rapid account console navigation. */
 export function SovereignCommandBar({
   open,
   onOpenChange,
   onTogglePrivacyBlur,
+  principalContext: principalContextProp,
+  featureFlags: featureFlagsProp,
 }: SovereignCommandBarProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const { t } = useI18n();
   const [query, setQuery] = useState("");
+  const contextVm = useAccountContextSliceViewModel();
+
+  const principalContext = principalContextProp !== undefined ? principalContextProp : contextVm?.principalContext;
+  const featureFlags = featureFlagsProp !== undefined ? featureFlagsProp : contextVm?.featureFlags;
+  const isPlatformAdmin = principalContext?.principalKind === "PlatformAdmin";
+  const showPlanCommand = !isPlatformAdmin && featureFlags?.planAndQuotasEnabled !== false;
+  const showIntegrationsCommand = featureFlags?.integrationsEnabled !== false;
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -67,10 +87,31 @@ export function SovereignCommandBar({
     { id: "activity", href: "/account/activity", label: t("profile.rail.activity"), desc: t("profile.rail.activityDesc"), category: t("profile.rail.catGovernance"), icon: Activity },
     { id: "preferences", href: "/account/preferences", label: t("profile.rail.preferences"), desc: t("profile.rail.preferencesDesc"), category: t("profile.rail.catWorkstation"), icon: Sliders },
     { id: "notifications", href: "/account/notifications", label: t("profile.rail.notifications"), desc: t("profile.rail.notificationsDesc"), category: t("profile.rail.catWorkstation"), icon: Bell },
-    { id: "plan", href: "/account/plan", label: t("profile.rail.plan"), desc: t("profile.rail.planDesc"), category: t("profile.rail.catCommercial"), icon: Crown },
-    { id: "integrations", href: "/account/integrations", label: t("profile.rail.integrations"), desc: t("profile.rail.integrationsDesc"), category: t("profile.rail.catEcosystem"), icon: Network },
+    ...(showPlanCommand
+      ? [
+          {
+            id: "plan",
+            href: "/account/plan",
+            label: t("profile.rail.plan"),
+            desc: t("profile.rail.planDesc"),
+            category: t("profile.rail.catCommercial"),
+            icon: Crown,
+          },
+        ]
+      : []),
+    ...(showIntegrationsCommand
+      ? [
+          {
+            id: "integrations",
+            href: "/account/integrations",
+            label: t("profile.rail.integrations"),
+            desc: t("profile.rail.integrationsDesc"),
+            category: t("profile.rail.catEcosystem"),
+            icon: Network,
+          },
+        ]
+      : []),
   ];
-
 
   const normalizedQuery = query.trim().toLowerCase();
   const filtered = normalizedQuery
@@ -83,14 +124,23 @@ export function SovereignCommandBar({
       )
     : commands;
 
+  const handleDialogOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen) {
+      setQuery("");
+    }
+    onOpenChange(nextOpen);
+  };
+
   const handleSelect = (href: string) => {
-    onOpenChange(false);
-    setQuery("");
+    handleDialogOpenChange(false);
+    if (pathname !== href) {
+      startRoutingProgress();
+    }
     router.push(href);
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleDialogOpenChange}>
       <DialogContent className="sm:max-w-2xl border-nx-line bg-nx-surface text-nx-ink p-0 overflow-hidden">
         <DialogHeader className="p-4 pb-2 border-b border-nx-line bg-nx-raised">
           <DialogTitle className="text-sm font-semibold text-nx-ink flex items-center justify-between">
@@ -123,6 +173,7 @@ export function SovereignCommandBar({
               <Button
                 key={item.id}
                 variant="ghost"
+                data-testid={`command-bar-item-${item.id}`}
                 onClick={() => handleSelect(item.href)}
                 className="w-full justify-between h-auto py-2.5 px-3 rounded-lg border border-transparent hover:border-nx-line-hi hover:bg-nx-raised text-start"
               >
@@ -154,7 +205,7 @@ export function SovereignCommandBar({
               size="sm"
               onClick={() => {
                 onTogglePrivacyBlur();
-                onOpenChange(false);
+                handleDialogOpenChange(false);
               }}
               className="h-7 text-[11px] border-nx-line bg-nx-surface text-nx-ink"
             >

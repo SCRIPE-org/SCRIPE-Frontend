@@ -47,6 +47,7 @@ export function HubSearch({ value, onChange }: HubSearchProps) {
         className="pointer-events-none absolute start-4 top-1/2 -translate-y-1/2 text-nx-ink-3"
       />
       <Input
+        id="hub-search-input"
         ref={inputRef}
         type="text"
         value={value}

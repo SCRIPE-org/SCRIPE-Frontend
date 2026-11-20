@@ -1,9 +1,9 @@
-// UI-EXCEPTION: compact studio layout
 "use client";
 
 import React, { useCallback, useRef, useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
+import { Input } from "@core/ui/input";
 import { Badge } from "@core/ui/badge";
 import { cn } from "@core/common/utils";
 import {
@@ -166,7 +166,7 @@ export function AttachmentUploader({
           {" · "}
           {t("messaging.email.maxFiles", { count: maxFiles })}
         </p>
-        <input
+        <Input
           ref={inputRef}
           type="file"
           accept={accept}

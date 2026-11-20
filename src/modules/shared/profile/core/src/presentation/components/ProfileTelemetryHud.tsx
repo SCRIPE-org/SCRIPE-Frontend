@@ -3,100 +3,158 @@
 /**
  * ProfileTelemetryHud
  *
- * Persistent Sovereign Telemetry HUD across all 15 /account/* routes.
- * Features: Club affiliation, Edition badge, Operational availability toggle,
- * Interactive SVG Security Posture Ring (0-100% Sovereign Hardened) + Guided Hardening Checklist,
- * Biometric Sudo status badge, and live workstation session count.
+ * Persistent Sovereign Telemetry HUD across all /account/* routes.
  */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useSudoStore } from "@core/store/useSudoStore";
 import { Card } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
-import { Button } from "@core/ui/button";
 import { Switch } from "@core/ui/switch";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@core/ui/dialog";
-import {
-  ShieldCheck,
-  Monitor,
-  Building2,
-  CheckCircle2,
-  Circle,
-  Fingerprint,
-} from "lucide-react";
+import { Building2, ShieldCheck } from "lucide-react";
 import type { AdminProfile } from "../../domain/entities/AdminProfile";
+import type { SovereignAccountContext } from "../../domain/entities/SovereignAccountEntities";
+import { ProfileTelemetryHudSkeleton } from "./AccountSkeletons";
+import {
+  ProfilePostureChecklistDialog,
+  buildPostureChecklistItems,
+} from "./ProfilePostureChecklistDialog";
+import { TelemetryHudBadges } from "./TelemetryHudBadges";
 
-interface ProfileTelemetryHudProps {
+/** Props for {@link ProfileTelemetryHud}. */
+export interface ProfileTelemetryHudProps {
+  /** Legacy admin profile fallback used when sovereign context is not yet loaded. */
   profile?: AdminProfile | null;
+  /** Sovereign account context containing tenant, staff code, posture score, and session counts. */
+  accountContext?: SovereignAccountContext | null;
+  /** Live active session count override from workstation fleet slice. */
   activeSessionCount?: number;
+  /** Toggles operational availability status on the backend profile. */
   onToggleAvailability?: (available: boolean) => void;
+  /** Opens the Sudo step-up elevation dialog. */
   onOpenSudoGate?: () => void;
+  /** Immediately locks the elevated sudo session. */
+  onLockSudo?: () => void | Promise<void>;
+  /** Explicit sudo active flag overriding store value when supplied. */
   sudoActive?: boolean;
+  /** Shows loading skeleton when neither profile nor context has resolved. */
+  isLoading?: boolean;
 }
 
+/** Persistent telemetry header displaying account security posture, Sudo countdown, and session status. */
 export function ProfileTelemetryHud({
   profile,
-  activeSessionCount = 3,
+  accountContext,
+  activeSessionCount,
   onToggleAvailability,
   onOpenSudoGate,
-  sudoActive = true,
+  onLockSudo,
+  sudoActive,
+  isLoading = false,
 }: ProfileTelemetryHudProps) {
   const { t } = useI18n();
   const router = useRouter();
   const [checklistOpen, setChecklistOpen] = useState(false);
 
-  const isAvailable = profile?.isAvailableForOperations ?? true;
-  const securityScore = profile?.securityScore ?? 92;
-  const radius = 15;
-  const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset = circumference - (Math.min(100, Math.max(0, securityScore)) / 100) * circumference;
+  const storeSudoActive = useSudoStore((s) => s.isActive);
+  const sudoExpiresAtUtc = useSudoStore((s) => s.expiresAtUtc);
+  const openSudoModal = useSudoStore((s) => s.openModal);
+  const effectiveSudoActive =
+    typeof sudoActive === "boolean" ? sudoActive && storeSudoActive : storeSudoActive;
 
-  const checklistItems = [
-    { key: "passkey", label: t("profile.posture.passkey"), weight: "+35%", done: true, href: "/account/security" },
-    { key: "totp", label: t("profile.posture.totp"), weight: "+30%", done: true, href: "/account/security" },
-    { key: "hardwareKey", label: t("profile.posture.hardwareKey"), weight: "+20%", done: true, href: "/account/security" },
-    { key: "trustedCidr", label: t("profile.posture.trustedCidr"), weight: "+15%", done: securityScore >= 85, href: "/account/security" },
-  ];
+  const [remainingSeconds, setRemainingSeconds] = useState<number>(() => {
+    if (!sudoExpiresAtUtc) return 0;
+    return Math.max(0, Math.floor((Date.parse(sudoExpiresAtUtc) - Date.now()) / 1000));
+  });
+
+  const displayedRemainingSeconds =
+    effectiveSudoActive && sudoExpiresAtUtc ? remainingSeconds : 0;
+
+  useEffect(() => {
+    if (!effectiveSudoActive || !sudoExpiresAtUtc) {
+      return;
+    }
+    const compute = () => {
+      const diff = Math.floor((Date.parse(sudoExpiresAtUtc) - Date.now()) / 1000);
+      setRemainingSeconds(Math.max(0, diff));
+    };
+    const immediate = setTimeout(compute, 0);
+    const timer = setInterval(compute, 1000);
+    return () => {
+      clearTimeout(immediate);
+      clearInterval(timer);
+    };
+  }, [effectiveSudoActive, sudoExpiresAtUtc]);
+
+  if (isLoading && !profile && !accountContext) {
+    return <ProfileTelemetryHudSkeleton />;
+  }
+
+  const checklistItems = buildPostureChecklistItems(accountContext, profile, t);
+  const principalContext = accountContext?.principalContext;
+  const isPlatformAdmin = principalContext?.principalKind === "PlatformAdmin";
+
+  const isAvailable =
+    accountContext?.isAvailableForOperations ?? profile?.isAvailableForOperations ?? true;
+  const securityScore = accountContext?.securityPostureScore ?? profile?.securityScore ?? 0;
+  const resolvedSessionCount =
+    activeSessionCount ?? accountContext?.activeSessionsCount ?? 0;
+
+  const primaryOrgTitle = isPlatformAdmin
+    ? principalContext?.controlPlaneLabel || t("profile.hud.globalControlPlane")
+    : principalContext?.activeTenantName ||
+      accountContext?.clubAffiliation ||
+      profile?.clubAffiliation ||
+      t("profile.hud.noOrganizationScoped");
+
+  const secondaryBadgeText = isPlatformAdmin
+    ? t("profile.hud.soleRootGuard")
+    : accountContext?.editionName || profile?.editionName || "";
+
+  const branchLabel = isPlatformAdmin
+    ? t("profile.hud.globalControlPlane")
+    : accountContext?.activeBranchName ||
+      principalContext?.activeBranchName ||
+      profile?.activeBranchName ||
+      "";
+  const staffCode = accountContext?.staffCode || profile?.staffCode || "";
 
   return (
     <>
       <Card className="w-full rounded-xl border border-nx-line bg-nx-surface p-4 sm:p-5 mb-6 hover:border-nx-line-hi transition-colors">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          {/* Left: Organization & Edition context */}
-          <div className="flex items-center gap-3.5">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 min-w-0">
+          <div className="flex items-center gap-3.5 min-w-0 flex-1">
             <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-nx-line bg-nx-accent-wash text-nx-accent">
               <Building2 className="h-5 w-5" style={{ minWidth: 20, minHeight: 20 }} />
             </div>
-            <div>
-              <div className="flex items-center gap-2 flex-wrap">
-                <h2 className="text-sm font-semibold tracking-tight text-nx-ink">
-                  {profile?.clubAffiliation || t("profile.hud.defaultClub")}
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2 min-w-0 flex-wrap sm:flex-nowrap">
+                <h2 className="text-sm font-semibold tracking-tight text-nx-ink truncate min-w-0">
+                  {primaryOrgTitle}
                 </h2>
-                <Badge
-                  variant="outline"
-                  className="border-nx-accent/30 text-nx-accent text-[10px] font-medium py-0 px-1.5 flex items-center gap-1"
-                >
-                  <ShieldCheck className="h-3 w-3" style={{ minWidth: 12, minHeight: 12 }} />
-                  <span>{profile?.editionName || t("profile.hud.defaultEdition")}</span>
-                </Badge>
+                {secondaryBadgeText && (
+                  <Badge
+                    variant="outline"
+                    className="border-nx-accent/30 text-nx-accent text-[10px] font-medium py-0 px-1.5 flex items-center gap-1 shrink-0 whitespace-nowrap"
+                  >
+                    <ShieldCheck className="h-3 w-3 shrink-0" style={{ minWidth: 12, minHeight: 12 }} />
+                    <span>{secondaryBadgeText}</span>
+                  </Badge>
+                )}
               </div>
-              <p className="text-xs text-nx-ink-3 mt-0.5 font-mono">
-                {profile?.activeBranchName || t("profile.hud.defaultBranch")} • {profile?.staffCode || "#SCR-ADM-001"}
-              </p>
+              {(branchLabel || staffCode) && (
+                <p className="text-xs text-nx-ink-3 mt-0.5 font-mono truncate">
+                  {branchLabel}
+                  {branchLabel && staffCode ? " • " : ""}
+                  {staffCode ? <bdi dir="ltr">{staffCode}</bdi> : null}
+                </p>
+              )}
             </div>
           </div>
 
-
-          {/* Right: Operational Controls & Telemetry Gauges */}
-          <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
-            {/* Operational Availability Toggle */}
-            <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-lg border border-nx-line bg-nx-raised">
+          <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap xl:flex-nowrap shrink-0">
+            <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-lg border border-nx-line bg-nx-raised shrink-0 whitespace-nowrap">
               <Switch
                 checked={isAvailable}
                 onCheckedChange={onToggleAvailability}
@@ -112,136 +170,29 @@ export function ProfileTelemetryHud({
               </div>
             </div>
 
-            {/* Interactive SVG Security Posture Ring */}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setChecklistOpen(true)}
-              className="h-auto py-1.5 px-3 rounded-lg border-nx-line bg-nx-raised hover:border-nx-line-hi flex items-center gap-2.5"
-              data-testid="security-posture-ring-trigger"
-            >
-              <div className="relative h-9 w-9 flex items-center justify-center shrink-0">
-                <svg className="h-9 w-9 -rotate-90" viewBox="0 0 36 36">
-                  <circle
-                    cx="18"
-                    cy="18"
-                    r={radius}
-                    fill="none"
-                    stroke="var(--nx-line)"
-                    strokeWidth="3"
-                  />
-                  <circle
-                    cx="18"
-                    cy="18"
-                    r={radius}
-                    fill="none"
-                    stroke="var(--nx-accent)"
-                    strokeWidth="3"
-                    strokeDasharray={circumference}
-                    strokeDashoffset={strokeDashoffset}
-                    strokeLinecap="round"
-                  />
-                </svg>
-                <span className="absolute text-[10px] font-bold font-mono text-nx-ink">
-                  {securityScore}%
-                </span>
-              </div>
-              <div className="flex flex-col text-start">
-                <span className="text-[11px] font-semibold text-nx-ink leading-tight">
-                  {t("profile.hud.securityPosture")}
-                </span>
-                <span className="text-[10px] text-success">
-                  {securityScore >= 75 ? t("profile.hud.hardened") : t("profile.hud.needsAttention")}
-                </span>
-              </div>
-            </Button>
-
-            {/* Biometric Sudo Mode Trigger */}
-            {onOpenSudoGate && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={onOpenSudoGate}
-                className="h-auto py-2 px-3 rounded-lg border-nx-line bg-nx-raised hover:border-nx-line-hi flex items-center gap-2"
-                data-testid="sudo-mode-badge"
-              >
-                <Fingerprint className="h-4 w-4 text-nx-accent shrink-0" />
-                <div className="flex flex-col text-start">
-                  <span className="text-[11px] font-semibold text-nx-ink leading-tight">
-                    {sudoActive ? t("profile.hud.sudoActive") : t("profile.hud.sudoElevate")}
-                  </span>
-                  <span className="text-[10px] text-nx-ink-3 font-mono">15m TTL</span>
-                </div>
-              </Button>
-            )}
-
-            {/* Active Workstation Fleet Badge */}
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-nx-line bg-nx-raised">
-              <Monitor className="h-4 w-4 text-nx-accent shrink-0" style={{ minWidth: 16, minHeight: 16 }} />
-              <div className="flex flex-col">
-                <div className="flex items-center gap-1.5">
-                  <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
-                  <span className="text-[11px] font-semibold text-nx-ink leading-tight">
-                    {activeSessionCount}{" "}
-                    {activeSessionCount === 1
-                      ? t("profile.hud.sessionSingular")
-                      : t("profile.hud.sessionPlural")}
-                  </span>
-                </div>
-                <span className="text-[10px] text-nx-ink-3">{t("profile.hud.fleetActive")}</span>
-              </div>
-            </div>
+            <TelemetryHudBadges
+              securityScore={securityScore}
+              effectiveSudoActive={effectiveSudoActive}
+              remainingSeconds={displayedRemainingSeconds}
+              resolvedSessionCount={resolvedSessionCount}
+              onOpenChecklist={() => setChecklistOpen(true)}
+              onTriggerSudo={() => (onOpenSudoGate ? onOpenSudoGate() : openSudoModal())}
+              onLockSudo={onLockSudo}
+            />
           </div>
         </div>
       </Card>
 
-      {/* Guided Security Posture Hardening Checklist Dialog */}
-      <Dialog open={checklistOpen} onOpenChange={setChecklistOpen}>
-        <DialogContent className="sm:max-w-lg border-nx-line bg-nx-surface text-nx-ink">
-          <DialogHeader>
-            <DialogTitle className="text-sm font-bold text-nx-ink flex items-center gap-2">
-              <ShieldCheck className="h-4 w-4 text-nx-accent" />
-              <span>{t("profile.posture.dialogTitle")} ({securityScore}%)</span>
-            </DialogTitle>
-            <DialogDescription className="text-xs text-nx-ink-2">
-              {t("profile.posture.dialogSubtitle")}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-2 py-2">
-            {checklistItems.map((item) => (
-              <div
-                key={item.key}
-                className="flex items-center justify-between p-2.5 rounded-lg border border-nx-line bg-nx-raised"
-              >
-                <div className="flex items-center gap-2.5">
-                  {item.done ? (
-                    <CheckCircle2 className="h-4 w-4 text-success shrink-0" />
-                  ) : (
-                    <Circle className="h-4 w-4 text-nx-ink-3 shrink-0" />
-                  )}
-                  <span className="text-xs font-medium text-nx-ink">{item.label}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="text-[10px] font-mono border-nx-line text-nx-ink-2">
-                    {item.weight}
-                  </Badge>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => {
-                      setChecklistOpen(false);
-                      router.push(item.href);
-                    }}
-                    className="h-7 text-xs text-nx-accent"
-                  >
-                    {t("profile.posture.configure")}
-                  </Button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </DialogContent>
-      </Dialog>
+      <ProfilePostureChecklistDialog
+        open={checklistOpen}
+        onOpenChange={setChecklistOpen}
+        securityScore={securityScore}
+        items={checklistItems}
+        onNavigate={(href) => {
+          setChecklistOpen(false);
+          router.push(href);
+        }}
+      />
     </>
   );
 }

@@ -84,7 +84,7 @@ export function WizardStepPricing({ form, prices, onPriceChange }: WizardStepPri
   if (cycles.length === 0) {
     return (
       <div className="space-y-2 border border-dashed border-warning/30 bg-warning/5 p-8 text-center">
-        <p className="text-sm font-medium text-warning">
+        <p className="text-sm font-medium text-nx-warning-strong">
           {t("entitlements.editions.wizard.noBillingCycles")}
         </p>
       </div>

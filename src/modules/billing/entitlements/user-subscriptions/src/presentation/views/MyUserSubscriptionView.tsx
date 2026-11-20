@@ -5,7 +5,7 @@
  */
 "use client";
 
-import { useMyUserSubscriptionViewModel } from "../viewmodels/useMyUserSubscriptionViewModel";
+import { useCurrentSubscriberSubscriptionViewModel } from "../viewmodels/useCurrentSubscriberSubscriptionViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { PageHeader } from "@core/ui/page-header";
@@ -22,7 +22,7 @@ import { SubscriptionActionsCard } from "../components/my-subscription/Subscript
  */
 export function MyUserSubscriptionView() {
   useModuleLocales(() => import("../../../locales"), "user-subscriptions");
-  const vm = useMyUserSubscriptionViewModel();
+  const vm = useCurrentSubscriberSubscriptionViewModel();
   const { t, language } = useI18n();
 
   if (vm.isLoading) {

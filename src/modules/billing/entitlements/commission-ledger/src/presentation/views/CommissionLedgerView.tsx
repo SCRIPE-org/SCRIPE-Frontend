@@ -111,6 +111,7 @@ export function CommissionLedgerView() {
               titleKey: "",
               subtitleKey: "",
               columns: invoiceColumnsWithActions,
+              stickyActions: true,
               hideAddButton: true,
             }}
           />

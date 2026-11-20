@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useId } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { PARTY_KERNEL_PERMISSIONS } from "../../../../permission-constants";
 import { usePermission } from "@core/hooks/use-permission";
@@ -77,6 +77,8 @@ export const PartyPicker = React.memo(function PartyPicker({
   excludeId,
 }: PartyPickerProps) {
   const { t } = useI18n();
+  const triggerId = useId();
+  const labelId = `${triggerId}-label`;
 
   // Dialog & popover states
   const [isOpen, setIsOpen] = useState(false);
@@ -207,108 +209,129 @@ export const PartyPicker = React.memo(function PartyPicker({
   return (
     <div className={`space-y-1.5 ${className}`}>
       {label && (
-        <Label className="flex items-center gap-1 text-xs font-medium text-nx-ink">
+        <Label
+          id={labelId}
+          htmlFor={triggerId}
+          className="flex items-center gap-1 text-xs font-medium text-nx-ink"
+        >
           <span>{label}</span>
-          {required && <span className="text-destructive">*</span>}
+          {required && (
+            <span className="text-destructive" aria-hidden="true">
+              *
+            </span>
+          )}
         </Label>
       )}
 
       {/* ── Trigger / Selected View ───────────────────────────────── */}
       <Popover open={isOpen} onOpenChange={setIsOpen} modal={false}>
-        <PopoverTrigger asChild disabled={disabled}>
-          <div
-            tabIndex={disabled ? -1 : 0}
-            role="combobox"
-            data-testid="party-picker-trigger"
-            aria-expanded={isOpen}
-            aria-haspopup="listbox"
-            onKeyDown={(e) => {
-              if (disabled) return;
-              if (e.key === "ArrowDown" || e.key === "Enter" || e.key === " ") {
-                if (!isOpen) {
-                  e.preventDefault();
-                  setIsOpen(true);
+        <div
+          className={`flex min-h-[42px] w-full items-center rounded-xl border bg-nx-surface transition-colors ${
+            error
+              ? "border-destructive/60 focus-within:ring-1 focus-within:ring-destructive"
+              : "border-nx-line hover:border-nx-line-hi focus-within:border-nx-accent"
+          } ${disabled ? "cursor-not-allowed opacity-50" : ""}`}
+        >
+          <PopoverTrigger asChild disabled={disabled}>
+            <Button
+              type="button"
+              id={triggerId}
+              variant="ghost"
+              role="combobox"
+              data-testid="party-picker-trigger"
+              aria-expanded={isOpen}
+              aria-haspopup="listbox"
+              aria-controls={isOpen ? "party-picker-listbox" : undefined}
+              aria-labelledby={label ? labelId : undefined}
+              disabled={disabled}
+              onKeyDown={(e) => {
+                if (disabled) return;
+                if (e.key === "ArrowDown" || e.key === "Enter" || e.key === " ") {
+                  if (!isOpen) {
+                    e.preventDefault();
+                    setIsOpen(true);
+                  }
                 }
-              }
-            }}
-            className={`flex min-h-[42px] w-full cursor-pointer select-none items-center justify-between rounded-xl border bg-nx-surface px-3 py-2 text-xs transition-colors ${
-              error
-                ? "border-destructive/60 focus:ring-1 focus:ring-destructive"
-                : "border-nx-line hover:border-nx-line-hi focus:border-nx-accent"
-            } ${disabled ? "cursor-not-allowed opacity-50" : ""}`}
-          >
-            {value ? (
-              <div className="flex min-w-0 flex-1 items-center gap-2.5">
-                <div
-                  className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${
-                    value.type === "Person"
-                      ? "bg-info/10 text-info"
-                      : "bg-success/10 text-success"
-                  }`}
-                >
-                  {value.type === "Person" ? (
-                    <User className="h-4 w-4" />
-                  ) : (
-                    <Building className="h-4 w-4" />
-                  )}
-                </div>
-                <div className="flex min-w-0 flex-1 flex-col text-left rtl:text-right">
-                  <div className="flex items-center gap-1.5 truncate">
-                    <span className="truncate font-semibold text-nx-ink">
-                      {value.displayName || value.fullName || value.legalName || "—"}
-                    </span>
-                    <Badge variant="outline" className="border-nx-line h-4 px-1 py-0 text-[9px]">
-                      {value.type === "Person"
-                        ? t("party.picker.typeFilterPerson") || "Person"
-                        : t("party.picker.typeFilterOrg") || "Organization"}
-                    </Badge>
-                  </div>
-                  {value.displayName &&
-                    ((value.fullName && value.fullName !== value.displayName) ||
-                      (value.legalName && value.legalName !== value.displayName)) && (
-                      <span className="truncate text-[11px] text-nx-ink-3">
-                        {value.fullName || value.legalName}
-                      </span>
-                    )}
-                </div>
-
-                {!disabled && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="h-6 w-6 shrink-0 rounded-full p-0 text-nx-ink-3 hover:text-nx-ink"
-                    onClick={handleClearSelection}
-                    title={t("party.picker.clearSelection") || "Clear"}
+              }}
+              className="flex h-auto min-h-[40px] min-w-0 flex-1 items-center justify-between gap-2 whitespace-normal rounded-xl bg-transparent px-3 py-2 text-start text-xs font-normal text-nx-ink hover:bg-transparent disabled:border-transparent disabled:bg-transparent"
+            >
+              {value ? (
+                <div className="flex min-w-0 flex-1 items-center gap-2.5">
+                  <div
+                    className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${
+                      value.type === "Person"
+                        ? "bg-info/10 text-info"
+                        : "bg-success/10 text-success"
+                    }`}
                   >
-                    <X className="h-3.5 w-3.5" />
-                  </Button>
-                )}
-              </div>
-            ) : (
-              <div className="flex items-center gap-2 text-nx-ink-3">
-                <Search className="h-3.5 w-3.5" />
-                <span>
-                  {placeholder ||
-                    t("party.picker.searchPlaceholder") ||
-                    "Search contacts by name..."}
-                </span>
-              </div>
-            )}
+                    {value.type === "Person" ? (
+                      <User className="h-4 w-4" aria-hidden="true" />
+                    ) : (
+                      <Building className="h-4 w-4" aria-hidden="true" />
+                    )}
+                  </div>
+                  <div className="flex min-w-0 flex-1 flex-col text-start">
+                    <div className="flex items-center gap-1.5 truncate">
+                      <span className="truncate font-semibold text-nx-ink">
+                        {value.displayName || value.fullName || value.legalName || "—"}
+                      </span>
+                      <Badge variant="outline" className="border-nx-line h-4 px-1 py-0 text-[9px]">
+                        {value.type === "Person"
+                          ? t("party.picker.typeFilterPerson") || "Person"
+                          : t("party.picker.typeFilterOrg") || "Organization"}
+                      </Badge>
+                    </div>
+                    {value.displayName &&
+                      ((value.fullName && value.fullName !== value.displayName) ||
+                        (value.legalName && value.legalName !== value.displayName)) && (
+                        <span className="truncate text-[11px] text-nx-ink-3">
+                          {value.fullName || value.legalName}
+                        </span>
+                      )}
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 text-nx-ink-3">
+                  <Search className="h-3.5 w-3.5" aria-hidden="true" />
+                  <span>
+                    {placeholder ||
+                      t("party.picker.searchPlaceholder") ||
+                      "Search contacts by name..."}
+                  </span>
+                </div>
+              )}
 
-            <ChevronDown className="ml-1 h-4 w-4 shrink-0 text-nx-ink-3 rtl:mr-1" />
-          </div>
-        </PopoverTrigger>
+              <ChevronDown className="ms-1 h-4 w-4 shrink-0 text-nx-ink-3" aria-hidden="true" />
+            </Button>
+          </PopoverTrigger>
+
+          {value && !disabled && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="me-1.5 h-7 w-7 shrink-0 rounded-full text-nx-ink-3 hover:text-nx-ink"
+              onClick={handleClearSelection}
+              aria-label={t("party.picker.clearSelection") || "Clear"}
+              title={t("party.picker.clearSelection") || "Clear"}
+            >
+              <X className="h-3.5 w-3.5" aria-hidden="true" />
+            </Button>
+          )}
+        </div>
 
         {/* ── Search & Selection Popover Content ──────────────────────── */}
         <PopoverContent
           align="start"
-          className="border-nx-line shadow-nx-modal w-[calc(100vw-2rem)] max-w-[420px] overflow-hidden rounded-2xl border bg-nx-surface p-0 sm:w-[420px]"
+          className="border-nx-line shadow-nx-popover w-[calc(100vw-2rem)] max-w-[420px] overflow-hidden rounded-2xl border bg-nx-surface p-0 sm:w-[420px]"
         >
           {/* Header & Search Bar */}
           <div className="border-nx-line bg-nx-raised/40 space-y-2 border-b p-3">
             <div className="relative">
-              <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-nx-ink-3 rtl:right-3" />
+              <Search
+                className="pointer-events-none absolute start-3 top-2.5 h-3.5 w-3.5 text-nx-ink-3"
+                aria-hidden="true"
+              />
               <Input
                 value={searchTerm}
                 onChange={(e) => {
@@ -317,8 +340,8 @@ export const PartyPicker = React.memo(function PartyPicker({
                 }}
                 onKeyDown={handleKeyDown}
                 placeholder={t("party.picker.searchPlaceholder") || "Search contacts by name..."}
-                className="border-nx-line h-9 bg-nx-surface pl-9 pr-3 text-xs rtl:pl-3 rtl:pr-9"
-                autoFocus
+                aria-label={t("party.picker.searchPlaceholder") || "Search contacts by name..."}
+                className="border-nx-line h-9 bg-nx-surface ps-9 pe-8 text-xs"
                 data-testid="party-picker-search-input"
                 role="combobox"
                 aria-expanded={isOpen}
@@ -334,14 +357,15 @@ export const PartyPicker = React.memo(function PartyPicker({
                 <Button
                   type="button"
                   variant="ghost"
-                  size="sm"
-                  className="absolute right-1.5 top-1.5 h-6 w-6 p-0 text-nx-ink-3 rtl:left-1.5"
+                  size="icon"
+                  aria-label={t("party.picker.clearSelection") || "Clear"}
+                  className="absolute end-1.5 top-1.5 h-6 w-6 p-0 text-nx-ink-3"
                   onClick={() => {
                     setSearchTerm("");
                     setHighlightedIndex(-1);
                   }}
                 >
-                  <X className="h-3 w-3" />
+                  <X className="h-3 w-3" aria-hidden="true" />
                 </Button>
               )}
             </div>
@@ -436,20 +460,22 @@ export const PartyPicker = React.memo(function PartyPicker({
                   const isSelected = value?.id === p.id;
                   const isHighlighted = highlightedIndex === idx;
                   return (
-                    <div
+                    <Button
                       key={p.id}
+                      type="button"
+                      variant="ghost"
                       id={`party-option-${idx}`}
                       data-testid={`party-option-${idx}`}
                       role="option"
                       aria-selected={isSelected}
                       onClick={() => handleSelectParty(p)}
                       onMouseEnter={() => setHighlightedIndex(idx)}
-                      className={`flex cursor-pointer items-center justify-between rounded-xl p-2.5 transition-colors ${
+                      className={`group flex h-auto w-full items-center justify-between whitespace-normal rounded-xl p-2.5 text-start font-normal transition-colors ${
                         isHighlighted
-                          ? "bg-nx-accent/20 border-nx-accent/40 border"
+                          ? "border border-nx-accent bg-nx-accent-wash hover:bg-nx-accent-wash"
                           : isSelected
-                            ? "bg-nx-accent/10 border-nx-accent/20 border"
-                            : "hover:bg-nx-raised border border-transparent"
+                            ? "border border-nx-line-hi bg-nx-accent-wash hover:bg-nx-accent-wash"
+                            : "border border-transparent hover:bg-nx-raised"
                       }`}
                     >
                       <div className="flex min-w-0 flex-1 items-center gap-2.5">
@@ -461,9 +487,9 @@ export const PartyPicker = React.memo(function PartyPicker({
                           }`}
                         >
                           {p.type === "Person" ? (
-                            <User className="h-3.5 w-3.5" />
+                            <User className="h-3.5 w-3.5" aria-hidden="true" />
                           ) : (
-                            <Building className="h-3.5 w-3.5" />
+                            <Building className="h-3.5 w-3.5" aria-hidden="true" />
                           )}
                         </div>
                         <div className="flex min-w-0 flex-col">
@@ -486,18 +512,16 @@ export const PartyPicker = React.memo(function PartyPicker({
                       </div>
 
                       {isSelected ? (
-                        <Check className="ml-2 h-4 w-4 shrink-0 text-nx-accent" />
+                        <Check className="ms-2 h-4 w-4 shrink-0 text-nx-accent" aria-hidden="true" />
                       ) : (
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className="h-7 px-2 text-[11px] text-nx-accent opacity-0 group-hover:opacity-100"
+                        <span
+                          aria-hidden="true"
+                          className="inline-flex h-7 items-center px-2 text-[11px] font-medium text-nx-accent opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100"
                         >
                           {t("party.picker.selectAction") || "Select"}
-                        </Button>
+                        </span>
                       )}
-                    </div>
+                    </Button>
                   );
                 })
               )}

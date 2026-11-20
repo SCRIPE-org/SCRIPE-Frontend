@@ -55,7 +55,7 @@ export function useImpersonation() {
 
   // Subscribe to cross-tab impersonation events so all open tabs update instantly
   useEffect(() => {
-    authBroadcast.onImpersonation((type) => {
+    const unsubscribe = authBroadcast.onImpersonation((type) => {
       if (type === "start") {
         setIsImpersonating(true);
         // Invalidate all queries so menu items refetch with impersonated identity
@@ -67,7 +67,7 @@ export function useImpersonation() {
         queryClient.invalidateQueries();
       }
     });
-    // Note: authBroadcast is a singleton — no cleanup needed
+    return unsubscribe;
   }, [queryClient]);
 
   /**

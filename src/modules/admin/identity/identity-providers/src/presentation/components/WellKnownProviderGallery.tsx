@@ -1,5 +1,4 @@
 // FILE-EXCEPTION: file length
-// UI-EXCEPTION: compact studio layout
 /**
  * WellKnownProviderGallery — Pre-configured provider templates gallery
  *
@@ -15,6 +14,7 @@ import type { IdentityProviderFormState } from "../viewmodels/useIdentityProvide
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@core/common/utils";
 import { Badge } from "@core/ui/badge";
+import { Button } from "@core/ui/button";
 import { Card, CardContent } from "@core/ui/card";
 import { HelpCircle } from "lucide-react";
 import { BrandIcon } from "@core/ui/brand-icons";
@@ -103,12 +103,17 @@ const PROVIDER_TEMPLATES: ProviderTemplate[] = [
     preset: {
       protocol: "oauth2",
       authority: "https://github.com",
+      authorizationEndpoint: "https://github.com/login/oauth/authorize",
+      tokenEndpoint: "https://github.com/login/oauth/access_token",
+      userInformationEndpoint: "https://api.github.com/user",
       clientId: "",
       clientSecret: "",
       scopes: "user:email read:user",
       buttonLabel: "Continue with GitHub",
       displayOrder: 3,
       isActive: true,
+      enabledForAdmins: true,
+      enabledForUsers: true,
       claimMappingJson: JSON.stringify({
         email: "email",
         firstName: "name",
@@ -507,11 +512,14 @@ export function WellKnownProviderGallery({ onSelect, selectedId }: WellKnownProv
         {PROVIDER_TEMPLATES.map((tpl) => {
           const isSelected = selectedId === tpl.id;
           return (
-            <button
+            <Button
               key={tpl.id}
               type="button"
+              variant="ghost"
               onClick={() => {
                 onSelect({
+                  enabledForAdmins: true,
+                  enabledForUsers: true,
                   ...tpl.preset,
                   name: tpl.name,
                   slug: tpl.id,
@@ -520,9 +528,9 @@ export function WellKnownProviderGallery({ onSelect, selectedId }: WellKnownProv
                 });
               }}
               className={cn(
-                "group relative flex cursor-pointer flex-col items-center gap-2.5 rounded-nx-md border p-4 text-center transition-[border-color,background-color,box-shadow] duration-nx-micro motion-reduce:transition-none",
+                "group relative flex h-auto cursor-pointer flex-col items-center gap-2.5 whitespace-normal rounded-nx-md border p-4 text-center font-normal transition-[border-color,background-color,box-shadow] duration-nx-micro motion-reduce:transition-none",
                 isSelected
-                  ? "border-nx-accent bg-nx-accent-wash"
+                  ? "border-nx-accent bg-nx-accent-wash hover:bg-nx-accent-wash"
                   : "border-nx-line hover:border-[color:color-mix(in_srgb,var(--nx-accent)_40%,transparent)] hover:bg-nx-accent-wash"
               )}
               aria-pressed={isSelected}
@@ -566,7 +574,7 @@ export function WellKnownProviderGallery({ onSelect, selectedId }: WellKnownProv
                   selection affordance in the app (Table row, Card, etc.),
                   not the per-vendor brand colour. */}
               {isSelected && (
-                <div className="absolute end-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-nx-accent shadow-nx-sm">
+                <div className="absolute end-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-nx-accent">
                   <svg
                     width="8"
                     height="8"
@@ -583,7 +591,7 @@ export function WellKnownProviderGallery({ onSelect, selectedId }: WellKnownProv
                   </svg>
                 </div>
               )}
-            </button>
+            </Button>
           );
         })}
       </div>

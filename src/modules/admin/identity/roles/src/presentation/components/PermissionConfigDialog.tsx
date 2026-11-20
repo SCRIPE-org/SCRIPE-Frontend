@@ -1,4 +1,3 @@
-// UI-EXCEPTION: compact studio layout
 /**
  * Permission Config Dialog
  *
@@ -255,14 +254,16 @@ export function PermissionConfigDialog({
                   <li key={field}>
                     <Badge variant="secondary" className="gap-1 pe-1">
                       <span className="truncate">{field}</span>
-                      <button
+                      <Button
                         type="button"
+                        variant="ghost"
+                        size="icon"
                         onClick={() => handleRemoveField(field)}
                         aria-label={`${t("common.remove")} ${field}`}
-                        className="grid h-4 w-4 place-items-center rounded-full transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-raised-2 focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
+                        className="grid h-4 w-4 place-items-center rounded-full p-0 transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-raised-2 focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
                       >
                         <X className="h-3 w-3" aria-hidden="true" />
-                      </button>
+                      </Button>
                     </Badge>
                   </li>
                 ))

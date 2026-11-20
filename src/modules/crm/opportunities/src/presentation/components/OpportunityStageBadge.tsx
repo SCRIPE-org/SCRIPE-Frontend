@@ -23,11 +23,11 @@ export function OpportunityStageBadge({ stageKey, label, className }: Opportunit
       case "default.qualification":
         return "border-info/30 bg-info/10 text-info";
       case "default.solution_fit":
-        return "border-warning/30 bg-warning/10 text-warning";
+        return "border-warning-strong/30 bg-warning/10 text-nx-warning-strong";
       case "default.proposal":
         return "border-nx-accent bg-nx-accent-wash text-nx-accent font-semibold";
       case "default.negotiation":
-        return "border-nx-accent-fill bg-nx-accent-fill/15 text-nx-accent font-bold";
+        return "border-nx-accent bg-nx-accent-wash text-nx-accent font-bold";
       case "default.closed_won":
         return "border-success/30 bg-success/10 text-success font-semibold";
       case "default.closed_lost":

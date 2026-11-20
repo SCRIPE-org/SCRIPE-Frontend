@@ -84,12 +84,12 @@ export function ResourceCard({ item, onDelete, onDeleted }: Props) {
             alt={item.name}
             className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+          <div className="bg-gradient-to-t from-nx-ground/85 via-nx-ground/35 to-transparent absolute inset-0" />
 
           {/* Top-Left: Sport Type Badge and Composite Badge */}
-          <div className="absolute left-3 top-3 z-10 flex max-w-[75%] flex-wrap items-center gap-1.5">
+          <div className="absolute start-3 top-3 z-10 flex max-w-[75%] flex-wrap items-center gap-1.5">
             <span
-              className="block truncate rounded-md border border-white/20 bg-black/60 px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wider text-white backdrop-blur-xs"
+              className="block truncate rounded-md border border-nx-line bg-nx-surface/90 px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wider text-nx-ink backdrop-blur-xs"
               title={item.sportType || undefined}
             >
               {item.sportType || t("resources.card.court", { defaultValue: "Court" })}
@@ -105,15 +105,15 @@ export function ResourceCard({ item, onDelete, onDeleted }: Props) {
           </div>
 
         {/* Top-Right: Readiness Status Pill */}
-        <div className="absolute right-3 top-3 z-10">
+        <div className="absolute end-3 top-3 z-10">
           {isReady ? (
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-success/30 bg-black/70 px-2.5 py-1 text-[11px] font-bold text-success backdrop-blur-xs">
-              <span className="size-1.5 rounded-full bg-success shadow-[0_0_6px_rgba(34,197,94,0.8)]" />
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-success/30 bg-nx-surface/90 px-2.5 py-1 text-[11px] font-bold text-success backdrop-blur-xs">
+              <span className="size-1.5 rounded-full bg-success" />
               {t("resources.card.statusReady", { defaultValue: "Ready" })}
             </span>
           ) : isActivating ? (
             <span
-              className="inline-flex items-center gap-1.5 rounded-full border border-info/30 bg-black/70 px-2.5 py-1 text-[11px] font-bold text-info backdrop-blur-xs"
+              className="inline-flex items-center gap-1.5 rounded-full border border-info/30 bg-nx-surface/90 px-2.5 py-1 text-[11px] font-bold text-info backdrop-blur-xs"
               title={t("resources.card.activatingTooltip", {
                 defaultValue:
                   "Pricing is activating on the network and will become effective shortly.",
@@ -123,16 +123,16 @@ export function ResourceCard({ item, onDelete, onDeleted }: Props) {
               {t("resources.card.statusActivating", { defaultValue: "Activating" })}
             </span>
           ) : isUnavailable ? (
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-black/70 px-2.5 py-1 text-[11px] font-bold text-nx-ink-2 backdrop-blur-xs">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-nx-line bg-nx-surface/90 px-2.5 py-1 text-[11px] font-bold text-nx-ink-2 backdrop-blur-xs">
               <span className="size-1.5 rounded-full bg-nx-ink-3" />
               {t("resources.card.statusUnavailable", { defaultValue: "Unavailable" })}
             </span>
           ) : (
             <span
-              className="inline-flex items-center gap-1.5 rounded-full border border-warning/30 bg-black/70 px-2.5 py-1 text-[11px] font-bold text-warning backdrop-blur-xs"
+              className="inline-flex items-center gap-1.5 rounded-full border border-warning/30 bg-nx-surface/90 px-2.5 py-1 text-[11px] font-bold text-nx-warning-strong backdrop-blur-xs"
               title={readiness.missingActions.map((a) => a.label).join(", ")}
             >
-              <span className="size-1.5 rounded-full bg-warning shadow-[0_0_6px_rgba(234,179,8,0.8)]" />
+              <span className="size-1.5 rounded-full bg-warning" />
               {t("resources.card.setupRequired", { defaultValue: "Setup Required" })}
             </span>
           )}
@@ -140,8 +140,8 @@ export function ResourceCard({ item, onDelete, onDeleted }: Props) {
 
         {/* Bottom overlay inside thumbnail: Facility / Complex Name */}
         {item.facilityName && (
-          <div className="absolute bottom-2.5 left-3 right-3 z-10 flex items-center gap-1.5 text-xs font-semibold text-white/95">
-            <MapPin className="size-3.5 shrink-0 text-white/80" />
+          <div className="absolute inset-x-3 bottom-2.5 z-10 flex items-center gap-1.5 text-xs font-semibold text-nx-ink">
+            <MapPin className="size-3.5 shrink-0 text-nx-ink-2" />
             <span className="truncate" title={item.facilityName}>
               {item.facilityName}
             </span>
@@ -310,14 +310,14 @@ export function ResourceCard({ item, onDelete, onDeleted }: Props) {
             <Button
               asChild
               size="sm"
-              className="h-8 flex-1 rounded-xl bg-nx-accent text-xs font-bold text-nx-on-fill hover:bg-nx-accent/90"
+              className="h-8 flex-1 rounded-xl bg-nx-accent-fill text-xs font-bold text-nx-on-fill hover:bg-nx-accent-fill/90"
             >
               <Link
                 href={`/venue/calendar?newBooking=true&resourceId=${encodeURIComponent(
                   item.id
                 )}&facilityId=${encodeURIComponent(item.facilityId)}`}
               >
-                <Plus className="mr-1 size-3.5" />
+                <Plus className="me-1 size-3.5" />
                 <span>{t("resources.card.book", { defaultValue: "Book" })}</span>
               </Link>
             </Button>
@@ -331,7 +331,7 @@ export function ResourceCard({ item, onDelete, onDeleted }: Props) {
                   "Pricing is activating on the network and will become effective shortly. Bookings cannot be accepted until activation completes.",
               })}
             >
-              <Clock className="mr-1 size-3.5 animate-pulse" />
+              <Clock className="me-1 size-3.5 animate-pulse" />
               <span>{t("resources.card.activatingButton", { defaultValue: "Activating..." })}</span>
             </Button>
           ) : (
@@ -339,11 +339,11 @@ export function ResourceCard({ item, onDelete, onDeleted }: Props) {
               asChild
               size="sm"
               variant="outline"
-              className="h-8 flex-1 rounded-xl border-warning/30 bg-warning/10 text-xs font-bold text-warning hover:bg-warning/20"
+              className="h-8 flex-1 rounded-xl border-warning/30 bg-warning/10 text-xs font-bold text-nx-warning-strong hover:bg-warning/20"
               title={readiness.missingActions.map((a) => a.label).join(", ")}
             >
               <Link href={`/venue/resources/${encodeURIComponent(item.id)}`}>
-                <Sliders className="mr-1 size-3.5" />
+                <Sliders className="me-1 size-3.5" />
                 <span>{t("resources.card.completeSetup", { defaultValue: "Complete Setup" })}</span>
               </Link>
             </Button>
@@ -356,7 +356,7 @@ export function ResourceCard({ item, onDelete, onDeleted }: Props) {
             className="h-8 flex-1 rounded-xl border-nx-line text-xs font-semibold hover:bg-nx-raised"
           >
             <Link href={`/venue/resources/${encodeURIComponent(item.id)}`}>
-              <Edit className="mr-1 size-3.5" />
+              <Edit className="me-1 size-3.5" />
               <span>{t("resources.card.viewEdit", { defaultValue: "Edit" })}</span>
             </Link>
           </Button>

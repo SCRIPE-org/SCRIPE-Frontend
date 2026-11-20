@@ -1,4 +1,3 @@
-// UI-EXCEPTION: compact studio layout
 /**
  * TenantPlan Detail View — Elevated Tier 2
  *
@@ -120,12 +119,18 @@ export function TenantPlanDetailView({ planId }: TenantPlanDetailViewProps) {
       {/* ─────── HEADER ─────── */}
       <div className="flex items-start justify-between gap-4">
         <div className="flex min-w-0 items-start gap-3">
-          <Link href="/entitlements/tenant-plans">
-            <Button variant="ghost" size="icon" className="mt-1 shrink-0">
-              <ArrowLeft className="h-5 w-5" aria-hidden="true" />
+          <Button
+            asChild
+            variant="ghost"
+            size="icon"
+            className="mt-1 shrink-0"
+            aria-label={t("common.back")}
+          >
+            <Link href="/entitlements/tenant-plans">
+              <ArrowLeft className="h-5 w-5 rtl:rotate-180" aria-hidden="true" />
               <span className="sr-only">{t("common.back")}</span>
-            </Button>
-          </Link>
+            </Link>
+          </Button>
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
               <h1 className="text-2xl font-bold tracking-tight text-nx-ink">{plan.name}</h1>
@@ -144,12 +149,12 @@ export function TenantPlanDetailView({ planId }: TenantPlanDetailViewProps) {
 
         {/* Lifecycle Actions */}
         <div className="flex shrink-0 items-center gap-2">
-          <Link href={`/entitlements/tenant-plans/${planId}/edit`}>
-            <Button size="sm" variant="outline">
+          <Button asChild size="sm" variant="outline">
+            <Link href={`/entitlements/tenant-plans/${planId}/edit`}>
               <Settings className="me-1 h-4 w-4" aria-hidden="true" />
               {t("entitlements.tenantPlans.editSettings")}
-            </Button>
-          </Link>
+            </Link>
+          </Button>
           {(plan.isDraft || plan.isPublished) && (
             <Button
               size="sm"
@@ -157,7 +162,7 @@ export function TenantPlanDetailView({ planId }: TenantPlanDetailViewProps) {
               onClick={() => vm.archivePlan()}
               disabled={isBusy}
               loading={vm.isArchiving}
-              className="border-warning/30 text-warning hover:bg-warning/10"
+              className="border-warning/30 text-nx-warning-strong hover:bg-warning/10"
             >
               {!vm.isArchiving && <Archive className="me-1 h-4 w-4" aria-hidden="true" />}
               {t("entitlements.tenantPlans.archive")}

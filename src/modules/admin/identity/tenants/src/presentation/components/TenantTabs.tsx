@@ -1,4 +1,3 @@
-// UI-EXCEPTION: compact studio layout
 /**
  * Tenant Tabs Component
  *
@@ -15,9 +14,19 @@
 
 import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useAppStore } from "@core/store/useAppStore";
 import { Card, CardContent } from "@core/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@core/ui/tabs";
-import { Users, Shield, Building2, Settings, Crown, UsersRound, Globe } from "lucide-react";
+import {
+  Users,
+  Shield,
+  Building2,
+  Settings,
+  Crown,
+  UsersRound,
+  Globe,
+  KeyRound,
+} from "lucide-react";
 import { cn } from "@core/common/utils";
 
 // Tab components
@@ -28,6 +37,7 @@ import { SubTenantsTab } from "./tabs/SubTenantsTab";
 import { TenantSettingsTab } from "./tabs/TenantSettingsTab";
 import { TenantEntitlementsTab } from "./tabs/TenantEntitlementsTab";
 import { TenantDomainsTab } from "./tabs/TenantDomainsTab";
+import { TenantIdentityProvidersTab } from "./tabs/TenantIdentityProvidersTab";
 
 interface TenantTabsProps {
   tenantId: string;
@@ -37,7 +47,14 @@ interface TenantTabsProps {
 }
 
 type TabValue =
-  "entitlements" | "admins" | "roles" | "userGroups" | "subtenants" | "settings" | "domains";
+  | "entitlements"
+  | "admins"
+  | "roles"
+  | "userGroups"
+  | "subtenants"
+  | "settings"
+  | "domains"
+  | "identityProviders";
 
 // One literal class per tab — never assembled from a template string, so
 // Tailwind's static scanner can see every combination in source text.
@@ -49,6 +66,7 @@ const TAB_ACTIVE_ACCENT: Record<TabValue, string> = {
   subtenants: "group-data-[state=active]:text-success",
   settings: "group-data-[state=active]:text-nx-ink-2",
   domains: "group-data-[state=active]:text-info",
+  identityProviders: "group-data-[state=active]:text-nx-accent",
 };
 
 /**
@@ -57,6 +75,8 @@ const TAB_ACTIVE_ACCENT: Record<TabValue, string> = {
  */
 export function TenantTabs({ tenantId, tenantName, tenantCode, parentTenantId }: TenantTabsProps) {
   const { t, direction } = useI18n();
+  const user = useAppStore((state) => state.user);
+  const isPlatformAdmin = Boolean(user && !user.tenantId);
   const [activeTab, setActiveTab] = useState<TabValue>("entitlements");
 
   const tabs: { value: TabValue; label: string; icon: typeof Crown }[] = [
@@ -67,6 +87,15 @@ export function TenantTabs({ tenantId, tenantName, tenantCode, parentTenantId }:
     { value: "subtenants", label: t("tenant.tabSubTenants"), icon: Building2 },
     { value: "settings", label: t("tenant.tabSettings"), icon: Settings },
     { value: "domains", label: t("tenant.tabDomains"), icon: Globe },
+    ...(isPlatformAdmin
+      ? [
+          {
+            value: "identityProviders" as const,
+            label: t("tenant.tabIdentityProviders"),
+            icon: KeyRound,
+          },
+        ]
+      : []),
   ];
 
   return (
@@ -121,6 +150,12 @@ export function TenantTabs({ tenantId, tenantName, tenantCode, parentTenantId }:
             <TabsContent value="domains">
               <TenantDomainsTab tenantId={tenantId} tenantName={tenantName} />
             </TabsContent>
+
+            {isPlatformAdmin && (
+              <TabsContent value="identityProviders">
+                <TenantIdentityProvidersTab tenantId={tenantId} tenantName={tenantName} />
+              </TabsContent>
+            )}
           </CardContent>
         </Card>
       </Tabs>

@@ -9,20 +9,31 @@
  */
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { identityContainer } from "@modules/identity/di";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
 import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
-import type { IdentityProviderListItem } from "../../domain/entities/IdentityProvider";
+import type {
+  IdentityProviderListItem,
+  TestConnectionResult,
+} from "../../domain/entities/IdentityProvider";
 import { useRouter } from "next/navigation";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Pencil, Trash2, Zap, Shield, Users, Fingerprint } from "lucide-react";
 import { formatUtc } from "@core/common/utils";
 import Image from "next/image";
+
+/** Diagnostic state produced by a list-view Test Connection check. */
+export interface ProviderTestDiagnosticsState {
+  providerId: string;
+  providerName?: string;
+  result: TestConnectionResult | null;
+  errorMessage?: string | null;
+}
 
 /**
  * Exported constant defining parameters and fields for identity provider keys configurations.
@@ -43,6 +54,8 @@ export function useIdentityProvidersViewModel() {
   const { t } = useI18n();
   const queryClient = useQueryClient();
   const { success, error: toastError } = useEnhancedToast();
+  const [lastTestDiagnostics, setLastTestDiagnostics] =
+    useState<ProviderTestDiagnosticsState | null>(null);
 
   // ============ Core CRUD ViewModel ============
   const vm = useCrudViewModel<IdentityProviderListItem, any, any>([...identityProviderKeys.all], {
@@ -87,10 +100,61 @@ export function useIdentityProvidersViewModel() {
     },
   });
 
+  // ============ Optimistic Active Toggle Mutation ============
+  const toggleActiveMutation = useMutation({
+    mutationFn: async (item: IdentityProviderListItem) => {
+      await identityProviderRepository.update(item.id, { isActive: !item.isActive });
+      return item;
+    },
+    onMutate: async (item) => {
+      await queryClient.cancelQueries({ queryKey: identityProviderKeys.all });
+      const snapshots = queryClient.getQueriesData<{
+        items: IdentityProviderListItem[];
+        pagination: unknown;
+      }>({ queryKey: identityProviderKeys.all });
+      const nextActive = !item.isActive;
+      for (const [key, cached] of snapshots) {
+        if (!cached || !Array.isArray(cached.items)) continue;
+        queryClient.setQueryData(key, {
+          ...cached,
+          items: cached.items.map((entry) =>
+            entry.id === item.id ? entry.copyWith({ isActive: nextActive }) : entry
+          ),
+        });
+      }
+      return { snapshots };
+    },
+    onError: (_err, _item, context) => {
+      if (context?.snapshots) {
+        for (const [key, snapshot] of context.snapshots) {
+          queryClient.setQueryData(key, snapshot);
+        }
+      }
+      toastError({
+        title: t("common.error"),
+        description: t("identityProviders.toggleStatusError"),
+      });
+    },
+    onSuccess: (item) => {
+      success({
+        title: t("identityProviders.updated"),
+        description: t("identityProviders.toggleStatusSuccess", { name: item.name }),
+      });
+      void queryClient.invalidateQueries({ queryKey: identityProviderKeys.all });
+    },
+  });
+
   // ============ Test Connection Mutation ============
   const testMutation = useMutation({
-    mutationFn: (id: string) => identityProviderRepository.testConnection(id),
-    onSuccess: (result) => {
+    mutationFn: async ({ id, providerName }: { id: string; providerName?: string }) => {
+      const result = await identityProviderRepository.testConnection(id);
+      return { id, providerName, result };
+    },
+    onMutate: () => {
+      setLastTestDiagnostics(null);
+    },
+    onSuccess: ({ id, providerName, result }) => {
+      setLastTestDiagnostics({ providerId: id, providerName, result, errorMessage: null });
       if (result.isSuccess) {
         success({
           title: t("identityProviders.testSuccess"),
@@ -103,7 +167,13 @@ export function useIdentityProvidersViewModel() {
         });
       }
     },
-    onError: (err: Error) => {
+    onError: (err: Error, variables) => {
+      setLastTestDiagnostics({
+        providerId: variables.id,
+        providerName: variables.providerName,
+        result: null,
+        errorMessage: err.message,
+      });
       toastError({
         title: t("common.error"),
         description: err.message,
@@ -137,7 +207,7 @@ export function useIdentityProvidersViewModel() {
           options: [
             { value: "oidc", label: "OpenID Connect (OIDC)" },
             { value: "oauth2", label: "OAuth 2.0" },
-            { value: "saml", label: "SAML (Coming Soon)" },
+            { value: "saml", label: "SAML 2.0" },
           ],
         },
         {
@@ -247,7 +317,7 @@ export function useIdentityProvidersViewModel() {
         clientId: "",
         clientSecret: "",
         scopes: "openid profile email",
-        enabledForAdmins: false,
+        enabledForAdmins: true,
         enabledForUsers: true,
         buttonColor: "",
         buttonLabel: "",
@@ -275,7 +345,15 @@ export function useIdentityProvidersViewModel() {
 
   const router = useRouter();
   const configBase = getConfigBase();
-  const handleTestConnection = (id: string) => testMutation.mutate(id);
+  const handleTestConnection = (id: string, providerName?: string) =>
+    testMutation.mutate({ id, providerName });
+  const handleToggleActive = async (item: IdentityProviderListItem) => {
+    try {
+      await toggleActiveMutation.mutateAsync(item);
+    } catch {
+      // Optimistic rollback & error toast are handled by toggleActiveMutation.onError
+    }
+  };
 
   const config: CrudConfig<IdentityProviderListItem> = {
     titleKey: "identityProviders.title",
@@ -400,9 +478,9 @@ export function useIdentityProvidersViewModel() {
               e.stopPropagation();
               handleTestConnection(item.id);
             }}
-            loading={testMutation.isPending && testMutation.variables === item.id}
+            loading={testMutation.isPending && testMutation.variables?.id === item.id}
           >
-            {!(testMutation.isPending && testMutation.variables === item.id) && (
+            {!(testMutation.isPending && testMutation.variables?.id === item.id) && (
               <Zap className="h-3 w-3" aria-hidden="true" />
             )}
             {t("identityProviders.test")}
@@ -443,8 +521,12 @@ export function useIdentityProvidersViewModel() {
     vm,
     config,
     handleTestConnection,
+    handleToggleActive,
+    isTogglingActive: toggleActiveMutation.isPending,
     isTesting: testMutation.isPending,
-    testingId: testMutation.variables,
+    testingId: testMutation.variables?.id,
+    lastTestDiagnostics,
+    clearTestDiagnostics: () => setLastTestDiagnostics(null),
     t,
   };
 }

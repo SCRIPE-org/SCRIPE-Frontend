@@ -44,14 +44,14 @@ function renderDialog(onOpenChange: (open: boolean) => void) {
   );
 }
 
-// Radix's DismissableLayer registers its `pointerdown` listener on
-// `document` inside a `setTimeout(0)` (so the open-triggering pointerdown
-// itself is never seen), and — for a non-"touch" pointerType — dispatches
-// onPointerDownOutside synchronously from that same listener. So a real
-// test has to: wait a tick for the listener to attach, then fire a
-// `pointerdown` (not click) whose `pointerType` is anything but "touch".
+// Radix's DismissableLayer registers its `pointerdown` listener on `document`
+// inside a `setTimeout(0)` (so the open-triggering pointerdown itself is never
+// seen), and `@radix-ui/react-dialog` 1.3+ passes `deferPointerDownOutside: true`,
+// deferring left-click outside dismissal until the completing `click` event.
+// Firing both `pointerDown` and `click` exercises both immediate and deferred paths.
 function pointerDownOutside(target: Element) {
   fireEvent.pointerDown(target, { pointerId: 1, button: 0, pointerType: "mouse" });
+  fireEvent.click(target, { button: 0 });
 }
 
 describe("Dialog outside-click allowlist", () => {

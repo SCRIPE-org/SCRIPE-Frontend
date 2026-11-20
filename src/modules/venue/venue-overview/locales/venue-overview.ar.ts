@@ -192,6 +192,8 @@ export const ar = {
       title: "إجراءات المشغّل السريعة",
       newBooking: "حجز جديد",
       openCalendar: "فتح التقويم",
+      blockTime: "حظر وقت",
+      recordPayment: "تسجيل دفعة",
       attentionCenter: "مركز التنبيهات",
       receivables: "المستحقات",
       payments: "الدفعات اليدوية",

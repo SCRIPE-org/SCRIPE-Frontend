@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from "vitest";
-import { render } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, cleanup } from "@testing-library/react";
 import * as React from "react";
 import { SileoToaster } from "../sileo-toaster";
 
@@ -12,36 +12,36 @@ vi.mock("sileo", () => ({
   sileo: {},
 }));
 
-const mockTheme = { resolvedTheme: "dark" };
-vi.mock("next-themes", () => ({
-  useTheme: () => mockTheme,
-}));
-
-let mockDirection = "ltr";
+let mockDirection: "ltr" | "rtl" = "ltr";
 vi.mock("@core/providers/i18n-provider", () => ({
   useI18n: () => ({ direction: mockDirection }),
 }));
 
 describe("SileoToaster — Component Viewport", () => {
-  it("renders with dark theme fill by default when resolvedTheme is dark", () => {
-    mockTheme.resolvedTheme = "dark";
+  beforeEach(() => {
+    vi.clearAllMocks();
+    cleanup();
     mockDirection = "ltr";
+  });
+
+  it("uses live var(--nx-surface) fill by default and never passes upstream theme inversion prop", () => {
     render(<SileoToaster position="top-right" />);
 
     expect(mockToaster).toHaveBeenCalledWith(
       expect.objectContaining({
         position: "top-right",
         options: expect.objectContaining({
-          fill: "#0d0d0e",
+          fill: "var(--nx-surface)",
           roundness: 16,
           autopilot: true,
         }),
       })
     );
+    const props = mockToaster.mock.calls[0]?.[0];
+    expect(props).not.toHaveProperty("theme");
   });
 
   it("automatically mirrors top-right to top-left when direction is RTL", () => {
-    mockTheme.resolvedTheme = "light";
     mockDirection = "rtl";
     render(<SileoToaster position="top-right" rtlAutoMirror={true} />);
 
@@ -49,7 +49,7 @@ describe("SileoToaster — Component Viewport", () => {
       expect.objectContaining({
         position: "top-left",
         options: expect.objectContaining({
-          fill: "#ffffff",
+          fill: "var(--nx-surface)",
           roundness: 16,
           autopilot: true,
         }),
@@ -57,15 +57,55 @@ describe("SileoToaster — Component Viewport", () => {
     );
   });
 
-  it("allows overriding theme and position explicitly", () => {
-    mockDirection = "ltr";
-    render(<SileoToaster position="bottom-center" options={{ fill: "#222222" }} />);
+  it("applies locked theme='dark' and theme='light' fills with contrast-matched fallback styles", () => {
+    render(<SileoToaster position="top-right" theme="dark" />);
+    expect(mockToaster).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        options: expect.objectContaining({
+          fill: "#15181c",
+          styles: expect.objectContaining({
+            description: expect.stringContaining("text-[#c5ccc6]"),
+          }),
+        }),
+      })
+    );
+
+    render(<SileoToaster position="top-right" theme="light" />);
+    expect(mockToaster).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        options: expect.objectContaining({
+          fill: "#ffffff",
+          styles: expect.objectContaining({
+            description: expect.stringContaining("text-[#4b504c]"),
+          }),
+        }),
+      })
+    );
+  });
+
+  it("allows overriding fill, position, and button.className explicitly", () => {
+    render(
+      <SileoToaster
+        position="bottom-center"
+        options={{
+          fill: "#222222",
+          button: {
+            title: "Retry",
+            onClick: vi.fn(),
+            className: "bg-indigo-500 text-white",
+          },
+        }}
+      />
+    );
 
     expect(mockToaster).toHaveBeenCalledWith(
       expect.objectContaining({
         position: "bottom-center",
         options: expect.objectContaining({
           fill: "#222222",
+          styles: expect.objectContaining({
+            button: expect.stringContaining("bg-indigo-500"),
+          }),
         }),
       })
     );

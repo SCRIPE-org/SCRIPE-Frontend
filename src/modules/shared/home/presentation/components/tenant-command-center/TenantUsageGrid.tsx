@@ -19,8 +19,8 @@ export function TenantUsageGrid({ quotas }: TenantUsageGridProps) {
       {/* Section Header */}
       <div className="mb-3 flex min-w-0 flex-wrap items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-2.5">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary">
-            <Gauge className="h-4 w-4" />
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-nx-line-hi bg-nx-accent-wash text-nx-accent">
+            <Gauge className="h-4 w-4" aria-hidden="true" />
           </div>
           <div className="min-w-0">
             <h3 className="truncate text-sm font-bold text-nx-ink">
@@ -34,10 +34,10 @@ export function TenantUsageGrid({ quotas }: TenantUsageGridProps) {
 
         <Link
           href="/settings"
-          className="flex shrink-0 items-center gap-1 text-xs font-semibold text-primary hover:underline"
+          className="flex shrink-0 items-center gap-1 text-xs font-semibold text-nx-accent hover:underline"
         >
           <span>{t("tenantCommandCenter.usage.viewQuotas") || "View quotas"}</span>
-          <ChevronRight className="h-3 w-3 rtl:rotate-180" />
+          <ChevronRight className="h-3 w-3 rtl:rotate-180" aria-hidden="true" />
         </Link>
       </div>
 
@@ -47,7 +47,7 @@ export function TenantUsageGrid({ quotas }: TenantUsageGridProps) {
           return (
             <div
               key={quota.id}
-              className="flex min-w-0 flex-col justify-between rounded-xl border border-nx-line bg-nx-raised/40 p-3"
+              className="flex min-w-0 flex-col justify-between rounded-xl border border-nx-line bg-nx-raised p-3"
             >
               <div className="flex min-w-0 items-start gap-2.5">
                 <div
@@ -57,7 +57,7 @@ export function TenantUsageGrid({ quotas }: TenantUsageGridProps) {
                       : quota.color === "blue"
                         ? "bg-info/10 text-info"
                         : quota.color === "violet"
-                          ? "bg-primary/10 text-primary"
+                          ? "bg-nx-accent-wash text-nx-accent"
                           : "bg-warning/10 text-warning"
                   }`}
                 >
@@ -90,7 +90,7 @@ export function TenantUsageGrid({ quotas }: TenantUsageGridProps) {
                         : quota.color === "blue"
                           ? "bg-info"
                           : quota.color === "violet"
-                            ? "bg-primary"
+                            ? "bg-nx-accent-fill"
                             : "bg-warning"
                     }`}
                     style={{ width: `${Math.min(100, Math.max(0, quota.percent))}%` }}

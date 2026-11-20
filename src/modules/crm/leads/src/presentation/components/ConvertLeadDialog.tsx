@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import {
   Dialog,
@@ -11,33 +11,30 @@ import {
   DialogFooter,
 } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
-import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
-import { AlertCircle, ArrowRightCircle, ShieldCheck, ShieldAlert } from "lucide-react";
-import { useCrmCurrency, useCrmWorkflowsStore } from "@modules/crm";
-import type { CrmLead, ConvertLeadInput, ConvertLeadResult, DealKind } from "../../domain/entities/LeadEntity";
+import { Alert, AlertDescription } from "@core/ui/alert";
+import { AlertCircle, ArrowRightCircle } from "lucide-react";
+import { useCrmCurrency, useCrmWorkflowsStore, type CrmEntitySearchItem } from "@modules/crm";
+import type { CrmLead, ConvertLeadInput, ConvertLeadResult, DealKind, LinkPartyToLeadInput } from "../../domain/entities/LeadEntity";
+import { buildLeadConversionStageOptions, buildLeadQuickCreateDefaults } from "../utils/leadTransitionHelpers";
 import { ConvertLeadFormFields } from "./ConvertLeadFormFields";
+import { LeadVerificationStatusBanner } from "./LeadVerificationStatusBanner";
 
 interface ConvertLeadDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   lead: CrmLead | null;
+  onLinkPartyBeforeConvert?: (input: LinkPartyToLeadInput) => Promise<CrmLead | null>;
   onSubmit: (input: ConvertLeadInput) => Promise<ConvertLeadResult | null>;
   isSubmitting?: boolean;
   submitError?: string | null;
 }
 
-const DEFAULT_CONVERSION_STAGE_OPTIONS = [
-  { key: "default.discovery", label: "1. Discovery (Initial Stage)", requiresParty: false },
-  { key: "default.qualification", label: "2. Qualification", requiresParty: false },
-  { key: "default.solution_fit", label: "3. Solution Fit", requiresParty: false },
-  { key: "default.proposal", label: "4. Proposal (Account/Contact Required)", requiresParty: true },
-  { key: "default.negotiation", label: "5. Negotiation (Account/Contact Required)", requiresParty: true },
-];
-
+/** Modal dialog for converting a qualified CRM Lead into a commercial Opportunity. */
 export function ConvertLeadDialog({
   open,
   onOpenChange,
   lead,
+  onLinkPartyBeforeConvert,
   onSubmit,
   isSubmitting = false,
   submitError,
@@ -47,53 +44,58 @@ export function ConvertLeadDialog({
   const { baseCurrency, defaultDealCurrency, getConversionPreview } = useCrmCurrency();
   const activeDealWorkflow = useCrmWorkflowsStore((s) => s.getActiveWorkflow("deal"));
 
-  const conversionStageOptions =
-    activeDealWorkflow?.stages && activeDealWorkflow.stages.length >= 2
-      ? [...activeDealWorkflow.stages]
-          .sort((a, b) => a.sortOrder - b.sortOrder)
-          .map((s, idx) => {
-            const requiresParty = Boolean(s.requiresVerifiedParty || s.requiredExitFields?.includes("partyId"));
-            const baseLabel = isRtl && s.labelAr ? s.labelAr : s.labelEn;
-            return {
-              key: s.stageKey,
-              label: `${idx + 1}. ${baseLabel}${requiresParty ? " (Account/Contact Required)" : idx === 0 ? " (Initial Stage)" : ""}`,
-              requiresParty,
-            };
-          })
-      : DEFAULT_CONVERSION_STAGE_OPTIONS;
+  const conversionStageOptions = buildLeadConversionStageOptions(
+    activeDealWorkflow,
+    isRtl,
+    t("crmLeads.conversion.partyRequiredSuffix"),
+    t("crmLeads.conversion.initialStageSuffix")
+  );
 
+  const defaultConversionStageKey = conversionStageOptions[0]?.key || "";
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState(0);
   const [currency, setCurrency] = useState(defaultDealCurrency || "SAR");
-  const [targetStageKey, setTargetStageKey] = useState(conversionStageOptions[0]?.key || "default.discovery");
+  const [targetStageKey, setTargetStageKey] = useState(defaultConversionStageKey);
   const [dealKind, setDealKind] = useState<DealKind>("NewBusiness");
   const [closeDate, setCloseDate] = useState("");
   const [rationale, setRationale] = useState("");
+  const [accountPartyId, setAccountPartyId] = useState("");
+  const [accountId, setAccountId] = useState("");
+  const [contactPartyId, setContactPartyId] = useState("");
   const [validationError, setValidationError] = useState<string | null>(null);
+  const [prevSyncKey, setPrevSyncKey] = useState("");
 
-  useEffect(() => {
-    if (open && lead) {
-      setTitle(lead.title || `${lead.companyName || lead.fullName || "New"} Deal`);
-      setAmount(lead.estimatedValue ?? 0);
-      setCurrency(lead.currency || defaultDealCurrency || "SAR");
-      setTargetStageKey(conversionStageOptions[0]?.key || "default.discovery");
-      setDealKind("NewBusiness");
-      setCloseDate("");
-      setRationale("");
-      setValidationError(null);
-    }
-  }, [open, lead, defaultDealCurrency]);
+  const syncKey = open && lead ? `${lead.id}:${lead.rowVersion ?? ""}:${defaultConversionStageKey}` : "";
+  if (syncKey && syncKey !== prevSyncKey && lead) {
+    setPrevSyncKey(syncKey);
+    setTitle(lead.title || `${lead.companyName || lead.fullName || "New"} Deal`);
+    setAmount(lead.estimatedValue ?? 0);
+    setCurrency(lead.currency || defaultDealCurrency || "SAR");
+    setTargetStageKey(defaultConversionStageKey);
+    setDealKind("NewBusiness");
+    setCloseDate("");
+    setRationale("");
+    setAccountPartyId(lead.organizationPartyId ?? "");
+    setAccountId(lead.accountId ?? "");
+    setContactPartyId(lead.personPartyId ?? "");
+    setValidationError(null);
+  } else if (!open && prevSyncKey !== "") {
+    setPrevSyncKey("");
+  }
 
   const conversionPreview = getConversionPreview(amount, currency);
   const dealKinds: { key: DealKind; label: string }[] = [
-    { key: "NewBusiness", label: t("crmLeads.conversion.dealKinds.newBusiness") || "New Business" },
-    { key: "Expansion", label: t("crmLeads.conversion.dealKinds.expansion") || "Expansion" },
-    { key: "Renewal", label: t("crmLeads.conversion.dealKinds.renewal") || "Renewal" },
-    { key: "Services", label: t("crmLeads.conversion.dealKinds.services") || "Services" },
+    { key: "NewBusiness", label: t("crmLeads.conversion.dealKinds.newBusiness") },
+    { key: "Expansion", label: t("crmLeads.conversion.dealKinds.expansion") },
+    { key: "Renewal", label: t("crmLeads.conversion.dealKinds.renewal") },
+    { key: "Services", label: t("crmLeads.conversion.dealKinds.services") },
   ];
 
   const hasVerifiedOrAutoParty = Boolean(
-    lead?.verifiedPartyId ||
+    accountPartyId ||
+      accountId ||
+      contactPartyId ||
+      lead?.verifiedPartyId ||
       lead?.organizationPartyId ||
       lead?.personPartyId ||
       lead?.companyName?.trim() ||
@@ -108,19 +110,33 @@ export function ConvertLeadDialog({
     e.preventDefault();
     if (!lead) return;
     if (!title.trim()) {
-      return setValidationError(t("crmLeads.conversion.titleRequired") || "Opportunity title is required");
+      return setValidationError(t("crmLeads.conversion.titleRequired"));
     }
     if (!Number.isFinite(amount) || amount <= 0) {
-      return setValidationError(
-        t("crmLeads.conversion.amountRequired") || "Estimated commercial amount must be greater than zero",
-      );
+      return setValidationError(t("crmLeads.conversion.amountRequired"));
     }
     if (lacksPartyForTargetStage) {
-      return setValidationError(
-        "A verified Account or Contact (or company/contact name on the lead) is required before converting directly into this stage.",
-      );
+      return setValidationError(t("crmLeads.conversion.partyRequiredForStage"));
     }
     setValidationError(null);
+
+    let activeRowVersion = lead.rowVersion ?? "";
+    const pickedNewLink =
+      accountPartyId !== (lead.organizationPartyId ?? "") ||
+      contactPartyId !== (lead.personPartyId ?? "") ||
+      accountId !== (lead.accountId ?? "");
+    if (pickedNewLink && onLinkPartyBeforeConvert && (accountPartyId || contactPartyId || accountId)) {
+      const updatedLead = await onLinkPartyBeforeConvert({
+        leadId: lead.id,
+        organizationPartyId: accountPartyId || undefined,
+        personPartyId: contactPartyId || undefined,
+        accountId: accountId || undefined,
+        createMissingParties: true,
+        expectedRowVersion: activeRowVersion,
+      });
+      if (!updatedLead) return;
+      activeRowVersion = updatedLead.rowVersion ?? activeRowVersion;
+    }
 
     const result = await onSubmit({
       leadId: lead.id,
@@ -131,7 +147,7 @@ export function ConvertLeadDialog({
       targetCloseDate: closeDate ? new Date(closeDate).toISOString() : undefined,
       dealKind,
       directCreateRationale: rationale.trim() || undefined,
-      expectedRowVersion: lead.rowVersion ?? "",
+      expectedRowVersion: activeRowVersion,
     });
     if (result) onOpenChange(false);
   };
@@ -153,42 +169,13 @@ export function ConvertLeadDialog({
             </DialogDescription>
           </DialogHeader>
 
-          {!isConvertible && (
-            <Alert variant="destructive" className="py-2.5 px-3">
-              <AlertCircle className="size-4" />
-              <AlertTitle className="text-xs font-bold">{t("crmLeads.conversion.notQualifiedTitle")}</AlertTitle>
-              <AlertDescription className="text-xs mt-1">
-                {t("crmLeads.conversion.notQualifiedDescription")}
-              </AlertDescription>
-            </Alert>
-          )}
-          {isConvertible && !isQualified && (
-            <div className="rounded-nx-md border border-nx-accent/30 bg-nx-accent-wash/40 px-3 py-2 text-xs text-nx-ink-2">
-              {t("crmLeads.conversion.autoQualifyNotice")}
-            </div>
-          )}
-
-          {lead && (
-            <div className="flex items-center justify-between rounded-nx-md border border-nx-line bg-nx-ground px-3 py-2 text-xs">
-              <span className="text-nx-ink-3 font-medium">{t("crmLeads.conversion.accountVerificationLabel")}</span>
-              {lead.verifiedPartyId || lead.organizationPartyId || lead.personPartyId ? (
-                <span className="inline-flex items-center gap-1 font-semibold text-success">
-                  <ShieldCheck className="size-3.5" />
-                  <span>{t("crmLeads.conversion.verifiedAccountLinked")}</span>
-                </span>
-              ) : hasVerifiedOrAutoParty ? (
-                <span className="inline-flex items-center gap-1 font-medium text-nx-accent">
-                  <ShieldCheck className="size-3.5" />
-                  <span>{t("crmLeads.conversion.autoProvisionIntake")}</span>
-                </span>
-              ) : (
-                <span className="inline-flex items-center gap-1 font-medium text-warning">
-                  <ShieldAlert className="size-3.5" />
-                  <span>{t("crmLeads.conversion.unlinkedDiscoveryOnly")}</span>
-                </span>
-              )}
-            </div>
-          )}
+          <LeadVerificationStatusBanner
+            lead={lead}
+            isConvertible={isConvertible}
+            isQualified={isQualified}
+            hasVerifiedOrAutoParty={hasVerifiedOrAutoParty}
+            t={t}
+          />
 
           {(submitError || validationError) && (
             <Alert variant="destructive" className="py-2 px-3">
@@ -215,6 +202,18 @@ export function ConvertLeadDialog({
             dealKind={dealKind}
             onDealKindChange={setDealKind}
             dealKinds={dealKinds}
+            accountPartyId={accountPartyId}
+            accountId={accountId}
+            initialAccountLabel={lead?.organizationDisplayName || lead?.accountDisplayName || undefined}
+            accountQuickCreateDefaults={buildLeadQuickCreateDefaults(lead, "account")}
+            onAccountChange={(val: string, item?: CrmEntitySearchItem) => {
+              setAccountPartyId(val);
+              setAccountId(item?.accountId || "");
+            }}
+            contactPartyId={contactPartyId}
+            initialContactLabel={lead?.personDisplayName || undefined}
+            contactQuickCreateDefaults={buildLeadQuickCreateDefaults(lead, "contact")}
+            onContactChange={setContactPartyId}
             rationale={rationale}
             onRationaleChange={setRationale}
           />

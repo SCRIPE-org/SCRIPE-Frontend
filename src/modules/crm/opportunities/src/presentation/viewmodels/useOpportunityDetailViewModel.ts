@@ -1,275 +1,203 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { qk } from "@core/common/query-keys";
 import { getCrmContainer } from "@modules/crm/di";
+import { useCrmTenantScope, useSafeQueryClient } from "@modules/crm/shared";
 import { getCustomFieldsExtension, normalizeCustomFieldValuesForSave } from "@core/crud/customFieldsExtension";
 import type {
   OpportunityDetailResult,
-  OpportunityStatus,
   MoveOpportunityStageInput,
   CloseOpportunityInput,
   ReopenOpportunityInput,
   AssignOpportunityOwnerInput,
   PipelineDefinition,
-  DealContactRoleDto,
+  DealContactRole,
 } from "../../domain/entities/OpportunityEntity";
-import { lookupOpportunityPartyOptions } from "./useOpportunityViewModelHelpers";
+import {
+  lookupOpportunityPartyOptions,
+  persistOpportunityContactRole,
+} from "../utils/opportunityViewModelHelpers";
 
-export interface OpportunityDetailState {
-  loading: boolean;
-  error: string | null;
-  data: OpportunityDetailResult | null;
-  isMoveStageOpen: boolean;
-  isCloseOpen: boolean;
-  isReopenOpen: boolean;
-  isAssignOwnerOpen: boolean;
-  closeInitialOutcome: OpportunityStatus;
-  isSubmitting: boolean;
-  submitError: string | null;
-}
-
-export function useOpportunityDetailViewModel(opportunityId: string) {
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [data, setData] = useState<OpportunityDetailResult | null>(null);
-  const [pipeline, setPipeline] = useState<PipelineDefinition | null>(null);
-  const [contactRoles, setContactRoles] = useState<DealContactRoleDto[]>([]);
-
-  const [isMoveStageOpen, setIsMoveStageOpen] = useState(false);
-  const [targetMoveStageKey, setTargetMoveStageKey] = useState<string | undefined>(undefined);
-  const [isCloseOpen, setIsCloseOpen] = useState(false);
-  const [isReopenOpen, setIsReopenOpen] = useState(false);
+/** Detail ViewModel hook for Deal 360 powered by TanStack Query v5. */
+export function useOpportunityDetailViewModel(opportunityId: string, enabled = true) {
+  const safeQueryClient = useSafeQueryClient();
+  const { tenantId } = useCrmTenantScope();
   const [isAssignOwnerOpen, setIsAssignOwnerOpen] = useState(false);
-  const [closeInitialOutcome, setCloseInitialOutcome] = useState<OpportunityStatus>("Won");
-
-  const [fulfillmentRequested, setFulfillmentRequested] = useState(false);
-  const [timelineVersion, setTimelineVersion] = useState(0);
-
+  const [fulfillmentOverride, setFulfillmentOverride] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const loadData = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const container = getCrmContainer() as any;
-      const repo = container.opportunityRepository;
-      const [result, pipelineRes, fulfillmentActivities, rolesRes] = await Promise.all([
-        repo.getOpportunityById(opportunityId),
-        typeof repo.getDefaultPipeline === "function" ? repo.getDefaultPipeline().catch(() => null) : Promise.resolve(null),
-        typeof container.activityRepository?.getActivities === "function"
-          ? container.activityRepository
-              .getActivities({
-                opportunityId,
-                activityKind: "FulfillmentRequested",
-                pageNumber: 1,
-                pageSize: 5,
-              })
-              .catch(() => null)
-          : Promise.resolve(null),
-        typeof repo.getContactRoles === "function" ? repo.getContactRoles(opportunityId).catch(() => []) : Promise.resolve([]),
-      ]);
-      setData(result);
-      if (pipelineRes) setPipeline(pipelineRes);
-      if (Array.isArray(rolesRes)) setContactRoles(rolesRes);
-      if (
-        fulfillmentActivities &&
-        ((fulfillmentActivities.items && fulfillmentActivities.items.length > 0) ||
-          (fulfillmentActivities.totalCount && fulfillmentActivities.totalCount > 0))
-      ) {
-        setFulfillmentRequested(true);
+  const detailQuery = useQuery<OpportunityDetailResult>(
+    {
+      queryKey: qk.crm.opportunityDetail(tenantId, opportunityId),
+      queryFn: () => getCrmContainer().opportunityRepository.getOpportunityById(opportunityId),
+      enabled: enabled && Boolean(opportunityId),
+      staleTime: 30_000,
+    },
+    safeQueryClient
+  );
+
+  const pipelineQuery = useQuery<PipelineDefinition | null>(
+    {
+      queryKey: qk.crm.pipelines(tenantId),
+      queryFn: async () => {
+        const wfRepo = getCrmContainer().workflowRepository;
+        if (typeof wfRepo?.getPipelines !== "function") return null;
+        const pipes = await wfRepo.getPipelines("deal");
+        return pipes.find((p) => p.isDefault) ?? pipes[0] ?? null;
+      },
+      enabled,
+      staleTime: 60_000,
+    },
+    safeQueryClient
+  );
+
+  const rolesQuery = useQuery<DealContactRole[]>(
+    {
+      queryKey: [...qk.crm.opportunityDetail(tenantId, opportunityId), "roles"],
+      queryFn: async () => {
+        const repo = getCrmContainer().opportunityRepository;
+        return typeof repo?.getContactRoles === "function" ? repo.getContactRoles(opportunityId) : [];
+      },
+      enabled: enabled && Boolean(opportunityId),
+      staleTime: 30_000,
+    },
+    safeQueryClient
+  );
+
+  const fulfillmentQuery = useQuery<boolean>(
+    {
+      queryKey: qk.crm.activities(tenantId, { opportunityId, activityKind: "FulfillmentRequested" }),
+      queryFn: async () => {
+        const actRepo = getCrmContainer().activityRepository;
+        if (typeof actRepo?.getActivities !== "function") return false;
+        const res = await actRepo.getActivities({ opportunityId, activityKind: "FulfillmentRequested", page: 1, pageSize: 5 });
+        return Boolean((res.items && res.items.length > 0) || (res.totalCount && res.totalCount > 0));
+      },
+      enabled: enabled && Boolean(opportunityId),
+      staleTime: 30_000,
+    },
+    safeQueryClient
+  );
+
+  const invalidateDetail = useCallback(async () => {
+    await safeQueryClient.invalidateQueries({ queryKey: qk.crm.opportunityDetail(tenantId, opportunityId) });
+    await safeQueryClient.invalidateQueries({ queryKey: ["crm", "activities", tenantId] });
+    await safeQueryClient.invalidateQueries({ queryKey: qk.crm.opportunities(tenantId) });
+  }, [opportunityId, safeQueryClient, tenantId]);
+
+  const runDetailMutation = useCallback(
+    async (op: () => Promise<void>, fallbackError: string) => {
+      setIsSubmitting(true);
+      setSubmitError(null);
+      try {
+        await op();
+        await invalidateDetail();
+        setIsSubmitting(false);
+        return true;
+      } catch (err: unknown) {
+        setIsSubmitting(false);
+        setSubmitError(err instanceof Error ? err.message : fallbackError);
+        return false;
       }
-    } catch (err: any) {
-      setError(err.message || "Failed to load opportunity details");
-    } finally {
-      setLoading(false);
-    }
-  }, [opportunityId]);
+    },
+    [invalidateDetail],
+  );
 
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
-
-  const handleMoveStage = async (input: MoveOpportunityStageInput) => {
-    setIsSubmitting(true);
-    setSubmitError(null);
-    try {
-      const repo = (getCrmContainer() as any).opportunityRepository;
-      await repo.moveStage(input);
+  const handleMoveStage = (input: MoveOpportunityStageInput) =>
+    runDetailMutation(async () => {
+      await getCrmContainer().opportunityRepository.moveStage(input);
       if (input.customFieldValues && Object.keys(input.customFieldValues).length > 0) {
         try {
           const normalized = normalizeCustomFieldValuesForSave(input.customFieldValues);
           if (Object.keys(normalized).length > 0) {
             await getCustomFieldsExtension()?.saveValues("crm.opportunity", input.opportunityId, normalized);
           }
-        } catch {
-          // Non-blocking custom fields persistence
-        }
+        } catch { /* non-blocking custom fields write */ }
       }
-      await loadData();
-      setTimelineVersion((v) => v + 1);
-      setIsSubmitting(false);
-      return true;
-    } catch (err: any) {
-      setIsSubmitting(false);
-      setSubmitError(err.message || "Failed to move stage");
-      return false;
-    }
-  };
+    }, "Failed to move stage");
 
-  const handleCloseOpportunity = async (input: CloseOpportunityInput) => {
-    setIsSubmitting(true);
-    setSubmitError(null);
-    try {
-      const repo = (getCrmContainer() as any).opportunityRepository;
-      await repo.closeOpportunity(input);
-      await loadData();
-      setTimelineVersion((v) => v + 1);
-      setIsSubmitting(false);
-      return true;
-    } catch (err: any) {
-      setIsSubmitting(false);
-      setSubmitError(err.message || "Failed to close opportunity");
-      return false;
-    }
-  };
+  const handleCloseOpportunity = (input: CloseOpportunityInput) =>
+    runDetailMutation(() => getCrmContainer().opportunityRepository.closeOpportunity(input).then(() => undefined), "Failed to close opportunity");
 
-  const handleReopenOpportunity = async (input: ReopenOpportunityInput) => {
-    setIsSubmitting(true);
-    setSubmitError(null);
-    try {
-      const repo = (getCrmContainer() as any).opportunityRepository;
-      await repo.reopenOpportunity(input);
-      await loadData();
-      setTimelineVersion((v) => v + 1);
-      setIsSubmitting(false);
-      return true;
-    } catch (err: any) {
-      setIsSubmitting(false);
-      setSubmitError(err.message || "Failed to reopen opportunity");
-      return false;
-    }
-  };
+  const handleReopenOpportunity = (input: ReopenOpportunityInput) =>
+    runDetailMutation(() => getCrmContainer().opportunityRepository.reopenOpportunity(input).then(() => undefined), "Failed to reopen opportunity");
 
-  const handleAssignOwner = async (input: AssignOpportunityOwnerInput) => {
-    setIsSubmitting(true);
-    setSubmitError(null);
-    try {
-      const repo = (getCrmContainer() as any).opportunityRepository;
-      await repo.assignOwner(input);
-      await loadData();
-      setTimelineVersion((v) => v + 1);
-      setIsSubmitting(false);
-      return true;
-    } catch (err: any) {
-      setIsSubmitting(false);
-      setSubmitError(err.message || "Failed to assign owner");
-      return false;
-    }
-  };
+  const handleAssignOwner = (input: AssignOpportunityOwnerInput) =>
+    runDetailMutation(() => getCrmContainer().opportunityRepository.assignOwner(input).then(() => undefined), "Failed to assign owner");
 
-  const handleRequestFulfillment = async () => {
-    const opp = data?.opportunity;
+  const handleRequestFulfillment = async (): Promise<boolean> => {
+    const opp = detailQuery.data?.opportunity;
     if (!opp) return false;
+    setSubmitError(null);
     try {
-      const container = getCrmContainer() as any;
-      if (container.activityRepository?.createActivity) {
-        await container.activityRepository.createActivity({
-          activityKind: "FulfillmentRequested",
-          summary: `HQ Commercial Fulfillment Handoff Requested: ${opp.title}`,
-          bodyText: `Commercial deal (${opp.dealKind} - ${opp.currencyCode} ${
-            opp.estimatedAmount ?? 0
-          }) submitted for platform tenant provisioning & contract activation.`,
-          opportunityId: opp.id,
-          accountId: opp.accountId ?? undefined,
-          containsPii: false,
-        });
+      const actRepo = getCrmContainer().activityRepository;
+      if (typeof actRepo?.createActivity !== "function") {
+        setSubmitError("Activity repository is unavailable for fulfillment dispatch.");
+        return false;
       }
-      setFulfillmentRequested(true);
-      setTimelineVersion((v) => v + 1);
+      await actRepo.createActivity({
+        activityKind: "FulfillmentRequested",
+        summary: `HQ Commercial Fulfillment Handoff Requested: ${opp.title}`,
+        bodyText: `Commercial deal (${opp.dealKind} - ${opp.currencyCode} ${opp.estimatedAmount ?? 0}) submitted for platform tenant provisioning & contract activation.`,
+        opportunityId: opp.id,
+        accountId: opp.accountId ?? undefined,
+        containsPii: false,
+      });
+      setFulfillmentOverride(true);
+      await invalidateDetail();
       return true;
-    } catch {
-      setFulfillmentRequested(true);
-      setTimelineVersion((v) => v + 1);
-      return true;
+    } catch (err: unknown) {
+      setSubmitError(err instanceof Error ? err.message : "Failed to dispatch HQ fulfillment handoff.");
+      return false;
     }
   };
 
   const handleAddContactRole = async (input: {
     contactPartyId: string;
     contactName: string;
-    stakeholderRole: DealContactRoleDto["stakeholderRole"];
+    stakeholderRole: DealContactRole["stakeholderRole"];
     isPrimary: boolean;
     influenceNotes?: string;
   }) => {
-    const opp = data?.opportunity;
+    const opp = detailQuery.data?.opportunity;
     if (!opp) return;
+    setSubmitError(null);
     try {
-      const repo = (getCrmContainer() as any).opportunityRepository;
-      if (typeof repo?.addContactRole === "function") {
-        const created = await repo.addContactRole({
-          opportunityId: opp.id,
-          contactPartyId: input.contactPartyId,
-          contactName: input.contactName,
-          stakeholderRole: input.stakeholderRole,
-          isPrimary: input.isPrimary,
-          influenceNotes: input.influenceNotes,
-        });
-        const normalizedRole: DealContactRoleDto = {
-          ...created,
-          id: created?.id || `role-${Date.now()}`,
-          opportunityId: opp.id,
-          contactPartyId: created?.contactPartyId || input.contactPartyId,
-          contactName: created?.contactName || input.contactName,
-          stakeholderRole: (created?.stakeholderRole || input.stakeholderRole) as DealContactRoleDto["stakeholderRole"],
-          isPrimary: created?.isPrimary ?? input.isPrimary,
-          influenceNotes: created?.influenceNotes ?? (created as any)?.notes ?? input.influenceNotes ?? null,
-          createdAtUtc: created?.createdAtUtc ?? (created as any)?.createdAt ?? new Date().toISOString(),
-        };
-        setContactRoles((prev) => [normalizedRole, ...prev.filter((r) => r.id !== normalizedRole.id)]);
-      }
-    } catch {
-      // Keep UI responsive even if offline
+      await persistOpportunityContactRole(getCrmContainer().opportunityRepository, opp.id, input);
+      await invalidateDetail();
+    } catch (err: unknown) {
+      setSubmitError(err instanceof Error ? err.message : "Unable to add stakeholder role");
     }
   };
 
   const handleRemoveContactRole = async (roleId: string) => {
-    const opp = data?.opportunity;
+    const opp = detailQuery.data?.opportunity;
     if (!opp) return;
+    setSubmitError(null);
     try {
-      const repo = (getCrmContainer() as any).opportunityRepository;
-      if (typeof repo?.removeContactRole === "function") {
-        await repo.removeContactRole(opp.id, roleId);
-      }
-      setContactRoles((prev) => prev.filter((r) => r.id !== roleId));
-    } catch {
-      setContactRoles((prev) => prev.filter((r) => r.id !== roleId));
+      const repo = getCrmContainer().opportunityRepository;
+      if (typeof repo?.removeContactRole === "function") await repo.removeContactRole(opp.id, roleId);
+      await invalidateDetail();
+    } catch (err: unknown) {
+      setSubmitError(err instanceof Error ? err.message : "Unable to remove stakeholder role");
     }
   };
 
   return {
-    loading,
-    error,
-    data,
-    pipeline,
-    contactRoles,
-    loadData,
-    lookupPartyOptions: lookupOpportunityPartyOptions,
-    isMoveStageOpen,
-    setIsMoveStageOpen,
-    targetMoveStageKey,
-    setTargetMoveStageKey,
-    isCloseOpen,
-    setIsCloseOpen,
-    isReopenOpen,
-    setIsReopenOpen,
+    loading: detailQuery.isLoading,
+    error: detailQuery.error instanceof Error ? detailQuery.error.message : null,
+    data: detailQuery.data ?? null,
+    pipeline: pipelineQuery.data ?? null,
+    contactRoles: rolesQuery.data ?? [],
+    loadData: () => detailQuery.refetch().then(() => undefined),
+    lookupPartyOptions: (query?: string) =>
+      lookupOpportunityPartyOptions(getCrmContainer().accountRepository, query),
     isAssignOwnerOpen,
     setIsAssignOwnerOpen,
-    closeInitialOutcome,
-    setCloseInitialOutcome,
-    fulfillmentRequested,
-    setFulfillmentRequested,
-    timelineVersion,
+    fulfillmentRequested: fulfillmentOverride || Boolean(fulfillmentQuery.data),
     isSubmitting,
     submitError,
     setSubmitError,

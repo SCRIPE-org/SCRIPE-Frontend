@@ -88,8 +88,6 @@ export function VenueCustomersView() {
 
   useModuleLocales(() => import("../../../locales"), "venue.customers");
   const isRtl = direction === "rtl";
-  const tr = (key: string, enFallback: string, arFallback: string) =>
-    t(key, { defaultValue: isRtl ? arFallback : enFallback });
 
   const [copiedId, setCopiedId] = useState(false);
 
@@ -164,7 +162,7 @@ export function VenueCustomersView() {
         icon={Users}
         title={
           <span className="flex items-center gap-2.5">
-            <span>{tr("venueCustomers.title", "Customers", "العملاء")}</span>
+            <span>{t("venueCustomers.title")}</span>
             {totalCount > 0 && (
               <Badge variant="outline" className="border-nx-line text-xs font-semibold text-nx-ink-2">
                 {totalCount}
@@ -172,15 +170,11 @@ export function VenueCustomersView() {
             )}
           </span>
         }
-        description={tr(
-          "venueCustomers.description",
-          "View and manage venue customers, contact details, and bookings.",
-          "عرض وإدارة عملاء المنشأة وبيانات الاتصال وسجل الحجوزات."
-        )}
+        description={t("venueCustomers.description")}
         actions={
           <Button onClick={() => setCreateOpen(true)} className="gap-1.5 font-bold">
             <UserPlus className="size-4" />
-            <span>{tr("venueCustomers.newCustomer", "+ New Customer", "+ عميل جديد")}</span>
+            <span>{t("venueCustomers.newCustomer")}</span>
           </Button>
         }
       />
@@ -204,8 +198,8 @@ export function VenueCustomersView() {
                   </CardTitle>
                   <CardDescription className="text-xs">
                     {selectedCustomer.type === "Organization"
-                      ? tr("venueCustomers.types.organization", "Organization", "مؤسسة / شركة")
-                      : tr("venueCustomers.types.individual", "Individual", "فرد")}
+                      ? t("venueCustomers.types.organization")
+                      : t("venueCustomers.types.individual")}
                   </CardDescription>
                 </div>
               </div>
@@ -218,7 +212,7 @@ export function VenueCustomersView() {
                   >
                     <CalendarDays className="size-4" />
                     <span>
-                      {tr("venueCustomers.bookForCustomer", "Book for Customer", "حجز جديد للعميل")}
+                      {t("venueCustomers.bookForCustomer")}
                     </span>
                   </Link>
                 </Button>
@@ -227,10 +221,10 @@ export function VenueCustomersView() {
                   size="sm"
                   onClick={() => setDetailDrawerOpen(true)}
                 >
-                  {tr("venueCustomers.actions.viewDetails", "View Details", "عرض التفاصيل")}
+                  {t("venueCustomers.actions.viewDetails")}
                 </Button>
                 <Button variant="outline" size="sm" onClick={() => setSelectedCustomer(null)}>
-                  {tr("venueCustomers.dismiss", "Dismiss", "إلغاء التحديد")}
+                  {t("venueCustomers.dismiss")}
                 </Button>
               </div>
             </div>
@@ -245,33 +239,31 @@ export function VenueCustomersView() {
           <Input
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={tr(
-              "venueCustomers.search.placeholder",
-              "Search customers by name, phone or email...",
-              "البحث عن عميل بالاسم أو رقم الهاتف..."
-            )}
+            placeholder={t("venueCustomers.search.placeholder")}
             className="pe-8 ps-9"
           />
           {searchQuery && (
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="icon"
               onClick={handleResetSearch}
-              className="absolute end-2.5 top-1/2 -translate-y-1/2 text-nx-ink-3 hover:text-nx-ink"
-              aria-label={tr("venueCustomers.search.clear", "Clear search", "مسح البحث")}
+              className="absolute end-2.5 top-1/2 h-auto w-auto -translate-y-1/2 p-0 text-nx-ink-3 hover:bg-transparent hover:text-nx-ink"
+              aria-label={t("venueCustomers.search.clear")}
             >
               <X className="size-4" />
-            </button>
+            </Button>
           )}
         </div>
         <Button type="submit" variant="secondary">
-          {tr("venueCustomers.search.submit", "Search", "بحث")}
+          {t("venueCustomers.search.submit")}
         </Button>
         <Button
           type="button"
           variant="outline"
           size="icon"
           onClick={handleResetSearch}
-          aria-label={tr("venueCustomers.search.reset", "Reset", "إعادة تعيين")}
+          aria-label={t("venueCustomers.search.reset")}
         >
           <RefreshCw className="size-4" />
         </Button>
@@ -282,7 +274,7 @@ export function VenueCustomersView() {
         <Alert variant="destructive">
           <AlertCircle className="size-4" />
           <AlertTitle>
-            {tr("venueCustomers.errors.loadFailed", "Error loading customers", "خطأ في تحميل العملاء")}
+            {t("venueCustomers.errors.loadFailed")}
           </AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
@@ -296,24 +288,16 @@ export function VenueCustomersView() {
       ) : customers.length === 0 ? (
         <EmptyState
           icon={Users}
-          title={tr("venueCustomers.empty.title", "No customers found", "لم يتم العثور على عملاء")}
+          title={t("venueCustomers.empty.title")}
           description={
             searchQuery
-              ? tr(
-                  "venueCustomers.empty.searchDescription",
-                  "No customers matched your search query.",
-                  "لا توجد نتائج مطابقة لبحثك. جرب كلمة بحث أخرى."
-                )
-              : tr(
-                  "venueCustomers.empty.defaultDescription",
-                  "Get started by adding your first venue customer to take bookings.",
-                  "ابدأ بإضافة أول عميل إلى منشأتك لتسجيل الحجوزات."
-                )
+              ? t("venueCustomers.empty.searchDescription")
+              : t("venueCustomers.empty.defaultDescription")
           }
           action={
             <Button onClick={() => setCreateOpen(true)} className="gap-1.5 font-bold">
               <UserPlus className="size-4" />
-              <span>{tr("venueCustomers.empty.action", "Add Customer", "إضافة عميل")}</span>
+              <span>{t("venueCustomers.empty.action")}</span>
             </Button>
           }
         />
@@ -346,8 +330,8 @@ export function VenueCustomersView() {
                           </p>
                           <Badge variant="outline" className="mt-0.5 border-nx-line text-[10px] text-nx-ink-3">
                             {c.type === "Organization"
-                              ? tr("venueCustomers.types.organization", "Organization", "مؤسسة")
-                              : tr("venueCustomers.types.person", "Person", "فرد")}
+                              ? t("venueCustomers.types.organization")
+                              : t("venueCustomers.types.person")}
                           </Badge>
                         </div>
                       </div>
@@ -365,7 +349,7 @@ export function VenueCustomersView() {
                           onClick={(e) => e.stopPropagation()}
                         >
                           <CalendarDays className="me-1 size-3.5" />
-                          {tr("venueCustomers.actions.book", "Book", "حجز")}
+                          {t("venueCustomers.actions.book")}
                         </Link>
                       </Button>
                     </div>
@@ -386,7 +370,7 @@ export function VenueCustomersView() {
                       ) : null}
                       {!c.phone && !c.email && (
                         <span className="text-nx-ink-3">
-                          {tr("venueCustomers.contact.noPhone", "No phone provided", "لا يوجد رقم هاتف")}
+                          {t("venueCustomers.contact.noPhone")}
                         </span>
                       )}
                     </div>
@@ -400,13 +384,13 @@ export function VenueCustomersView() {
           {totalCount > 0 && (
             <div className="flex flex-wrap items-center justify-between gap-3 border-t border-nx-line pt-4">
               <p className="text-xs text-nx-ink-2">
-                <span>{tr("venueCustomers.pagination.showing", "Showing", "عرض")}</span>{" "}
+                <span>{t("venueCustomers.pagination.showing")}</span>{" "}
                 <span className="font-semibold text-nx-ink">{startItem}</span>{" "}
-                <span>{tr("venueCustomers.pagination.to", "to", "إلى")}</span>{" "}
+                <span>{t("venueCustomers.pagination.to")}</span>{" "}
                 <span className="font-semibold text-nx-ink">{endItem}</span>{" "}
-                <span>{tr("venueCustomers.pagination.of", "of", "من")}</span>{" "}
+                <span>{t("venueCustomers.pagination.of")}</span>{" "}
                 <span className="font-semibold text-nx-ink">{totalCount}</span>{" "}
-                <span>{tr("venueCustomers.pagination.customersCount", "customers", "عميل")}</span>
+                <span>{t("venueCustomers.pagination.customersCount")}</span>
               </p>
 
               <div className="flex items-center gap-2">
@@ -418,7 +402,7 @@ export function VenueCustomersView() {
                   className="gap-1 text-xs"
                 >
                   <ChevronLeft className="size-3.5 rtl:rotate-180" />
-                  <span>{tr("venueCustomers.pagination.previous", "Previous", "السابق")}</span>
+                  <span>{t("venueCustomers.pagination.previous")}</span>
                 </Button>
 
                 <div className="flex items-center gap-1">
@@ -451,7 +435,7 @@ export function VenueCustomersView() {
                   disabled={!hasNextPage || loading}
                   className="gap-1 text-xs"
                 >
-                  <span>{tr("venueCustomers.pagination.next", "Next", "التالي")}</span>
+                  <span>{t("venueCustomers.pagination.next")}</span>
                   <ChevronRight className="size-3.5 rtl:rotate-180" />
                 </Button>
               </div>
@@ -465,11 +449,7 @@ export function VenueCustomersView() {
         open={detailDrawerOpen && selectedCustomer !== null}
         onOpenChange={setDetailDrawerOpen}
         title={selectedCustomer?.displayName ?? "Customer Detail"}
-        description={tr(
-          "venueCustomers.drawer.description",
-          "Customer contact info and historical reservations.",
-          "بيانات الاتصال وسجل الحجوزات للعميل."
-        )}
+        description={t("venueCustomers.drawer.description")}
         width="lg"
       >
         {selectedCustomer && (
@@ -489,8 +469,8 @@ export function VenueCustomersView() {
                   </h2>
                   <Badge variant="outline" className="mt-0.5 border-nx-line text-xs font-semibold text-nx-ink-2">
                     {selectedCustomer.type === "Organization"
-                      ? tr("venueCustomers.types.organization", "Organization", "مؤسسة")
-                      : tr("venueCustomers.types.individual", "Individual", "فرد")}
+                      ? t("venueCustomers.types.organization")
+                      : t("venueCustomers.types.individual")}
                   </Badge>
                 </div>
               </div>
@@ -500,7 +480,7 @@ export function VenueCustomersView() {
               {/* Contact Information & Party ID */}
               <div className="space-y-3 rounded-lg border border-nx-line bg-nx-surface p-4">
                 <h3 className="text-sm font-semibold text-nx-ink">
-                  {tr("venueCustomers.contact.title", "Contact Information", "معلومات الاتصال")}
+                  {t("venueCustomers.contact.title")}
                 </h3>
 
                 <div className="space-y-2 text-xs">
@@ -508,7 +488,7 @@ export function VenueCustomersView() {
                   <div className="flex items-center justify-between gap-2 rounded bg-nx-raised p-2 font-mono">
                     <div className="min-w-0">
                       <span className="text-nx-ink-3">
-                        {tr("venueCustomers.contact.partyId", "Party Kernel ID", "معرّف الهوية المركزي")}:
+                        {t("venueCustomers.contact.partyId")}:
                       </span>{" "}
                       <span className="font-semibold text-nx-ink">{selectedCustomer.id}</span>
                     </div>
@@ -522,12 +502,12 @@ export function VenueCustomersView() {
                       {copiedId ? (
                         <>
                           <Check className="size-3 text-nx-accent" />
-                          <span>{tr("venueCustomers.contact.copiedPartyId", "Copied!", "تم النسخ!")}</span>
+                          <span>{t("venueCustomers.contact.copiedPartyId")}</span>
                         </>
                       ) : (
                         <>
                           <Copy className="size-3 text-nx-ink-3" />
-                          <span>{tr("venueCustomers.contact.copyPartyId", "Copy ID", "نسخ")}</span>
+                          <span>{t("venueCustomers.contact.copyPartyId")}</span>
                         </>
                       )}
                     </Button>
@@ -537,7 +517,7 @@ export function VenueCustomersView() {
                   <div className="flex items-center gap-2 pt-1 text-nx-ink-2">
                     <Phone className="size-3.5 text-nx-ink-3" />
                     <span className="text-nx-ink-3">
-                      {tr("venueCustomers.contact.phone", "Phone", "الهاتف")}:
+                      {t("venueCustomers.contact.phone")}:
                     </span>
                     {selectedCustomer.phone ? (
                       <a
@@ -549,7 +529,7 @@ export function VenueCustomersView() {
                       </a>
                     ) : (
                       <span className="text-nx-ink-3">
-                        {tr("venueCustomers.contact.noPhone", "No phone provided", "لا يوجد رقم هاتف")}
+                        {t("venueCustomers.contact.noPhone")}
                       </span>
                     )}
                   </div>
@@ -558,7 +538,7 @@ export function VenueCustomersView() {
                   <div className="flex items-center gap-2 text-nx-ink-2">
                     <Mail className="size-3.5 text-nx-ink-3" />
                     <span className="text-nx-ink-3">
-                      {tr("venueCustomers.contact.email", "Email", "البريد الإلكتروني")}:
+                      {t("venueCustomers.contact.email")}:
                     </span>
                     {selectedCustomer.email ? (
                       <a
@@ -569,7 +549,7 @@ export function VenueCustomersView() {
                       </a>
                     ) : (
                       <span className="text-nx-ink-3">
-                        {tr("venueCustomers.contact.noEmail", "No email provided", "لا يوجد بريد إلكتروني")}
+                        {t("venueCustomers.contact.noEmail")}
                       </span>
                     )}
                   </div>
@@ -586,7 +566,7 @@ export function VenueCustomersView() {
                   >
                     <CalendarDays className="size-4" />
                     <span>
-                      {tr("venueCustomers.bookForCustomerCTA", "+ Book for Customer", "+ حجز للعميل")}
+                      {t("venueCustomers.bookForCustomerCTA")}
                     </span>
                   </Link>
                 </Button>
@@ -596,7 +576,7 @@ export function VenueCustomersView() {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <h3 className="text-sm font-semibold text-nx-ink">
-                    {tr("venueCustomers.bookingHistory.title", "Booking History", "سجل الحجوزات")}
+                    {t("venueCustomers.bookingHistory.title")}
                   </h3>
                   {customerBookings.length > 0 && (
                     <Badge variant="outline" className="border-nx-line text-xs font-semibold text-nx-ink-2">
@@ -617,11 +597,7 @@ export function VenueCustomersView() {
                 ) : customerBookings.length === 0 ? (
                   <div className="rounded-lg border border-dashed border-nx-line p-6 text-center">
                     <p className="text-xs text-nx-ink-3">
-                      {tr(
-                        "venueCustomers.bookingHistory.noBookings",
-                        "No reservations found for this customer.",
-                        "لا توجد حجوزات سابقة لهذا العميل."
-                      )}
+                      {t("venueCustomers.bookingHistory.noBookings")}
                     </p>
                     <Button asChild size="sm" variant="ghost" className="mt-2 text-xs text-nx-accent">
                       <Link
@@ -629,11 +605,7 @@ export function VenueCustomersView() {
                           selectedCustomer.id
                         )}`}
                       >
-                        {tr(
-                          "venueCustomers.bookingHistory.createFirstBooking",
-                          "Book now",
-                          "احجز الآن"
-                        )}
+                        {t("venueCustomers.bookingHistory.createFirstBooking")}
                       </Link>
                     </Button>
                   </div>
@@ -659,11 +631,7 @@ export function VenueCustomersView() {
                         <Button asChild size="sm" variant="outline" className="gap-1 text-xs">
                           <Link href={`/venue/bookings/${encodeURIComponent(res.id)}`}>
                             <span>
-                              {tr(
-                                "venueCustomers.bookingHistory.viewBooking360",
-                                "View Booking 360",
-                                "عرض تفاصيل الحجز 360"
-                              )}
+                              {t("venueCustomers.bookingHistory.viewBooking360")}
                             </span>
                             <ExternalLink className="size-3" />
                           </Link>
@@ -681,7 +649,7 @@ export function VenueCustomersView() {
                 size="sm"
                 onClick={() => setDetailDrawerOpen(false)}
               >
-                {tr("venueCustomers.actions.cancel", "Cancel", "إغلاق")}
+                {t("venueCustomers.actions.cancel")}
               </Button>
             </DetailSheetFooter>
           </>
@@ -694,14 +662,10 @@ export function VenueCustomersView() {
           <form onSubmit={handleCreateCustomer}>
             <DialogHeader>
               <DialogTitle>
-                {tr("venueCustomers.dialog.title", "Add New Customer", "إضافة عميل جديد")}
+                {t("venueCustomers.dialog.title")}
               </DialogTitle>
               <DialogDescription>
-                {tr(
-                  "venueCustomers.dialog.description",
-                  "Enter the customer details to add them to your venue directory.",
-                  "أدخل اسم العميل لإضافته إلى قائمة عملاء المنشأة."
-                )}
+                {t("venueCustomers.dialog.description")}
               </DialogDescription>
             </DialogHeader>
 
@@ -715,40 +679,32 @@ export function VenueCustomersView() {
 
               <div className="space-y-1.5">
                 <Label htmlFor="customer-name">
-                  {tr("venueCustomers.dialog.customerName", "Customer Name", "اسم العميل")}
+                  {t("venueCustomers.dialog.customerName")}
                 </Label>
                 <Input
                   id="customer-name"
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
-                  placeholder={tr(
-                    "venueCustomers.dialog.namePlaceholder",
-                    "e.g. John Doe",
-                    "مثال: أحمد محمد"
-                  )}
+                  placeholder={t("venueCustomers.dialog.namePlaceholder")}
                   required
                 />
               </div>
 
               <div className="space-y-1.5">
                 <Label htmlFor="customer-phone">
-                  {tr("venueCustomers.dialog.customerPhone", "Phone Number", "رقم الهاتف")}
+                  {t("venueCustomers.dialog.customerPhone")}
                 </Label>
                 <Input
                   id="customer-phone"
                   value={newPhone}
                   onChange={(e) => setNewPhone(e.target.value)}
-                  placeholder={tr(
-                    "venueCustomers.dialog.phonePlaceholder",
-                    "e.g. +20 100 123 4567",
-                    "مثال: ٠١٠٠١٢٣٤٥٦٧"
-                  )}
+                  placeholder={t("venueCustomers.dialog.phonePlaceholder")}
                 />
               </div>
 
               <div className="space-y-1.5">
                 <Label htmlFor="customer-type">
-                  {tr("venueCustomers.dialog.customerType", "Customer Type", "نوع العميل")}
+                  {t("venueCustomers.dialog.customerType")}
                 </Label>
                 <div className="flex gap-2">
                   <Button
@@ -759,7 +715,7 @@ export function VenueCustomersView() {
                     className="flex-1"
                   >
                     <User className="me-1.5 size-3.5" />
-                    {tr("venueCustomers.types.individual", "Individual", "فرد")}
+                    {t("venueCustomers.types.individual")}
                   </Button>
                   <Button
                     type="button"
@@ -769,7 +725,7 @@ export function VenueCustomersView() {
                     className="flex-1"
                   >
                     <Building className="me-1.5 size-3.5" />
-                    {tr("venueCustomers.types.organization", "Organization", "مؤسسة")}
+                    {t("venueCustomers.types.organization")}
                   </Button>
                 </div>
               </div>
@@ -782,12 +738,12 @@ export function VenueCustomersView() {
                 onClick={() => setCreateOpen(false)}
                 disabled={createLoading}
               >
-                {tr("venueCustomers.actions.cancel", "Cancel", "إلغاء")}
+                {t("venueCustomers.actions.cancel")}
               </Button>
               <Button type="submit" disabled={createLoading || !newName.trim()}>
                 {createLoading
-                  ? tr("venueCustomers.actions.saving", "Saving...", "جارٍ الحفظ...")
-                  : tr("venueCustomers.actions.addCustomer", "Add Customer", "إضافة العميل")}
+                  ? t("venueCustomers.actions.saving")
+                  : t("venueCustomers.actions.addCustomer")}
               </Button>
             </DialogFooter>
           </form>

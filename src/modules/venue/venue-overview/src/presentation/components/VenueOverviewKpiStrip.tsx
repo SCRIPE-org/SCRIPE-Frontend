@@ -146,10 +146,18 @@ export function VenueOverviewKpiStrip({ kpis, attentionCount, t }: Props) {
   );
 }
 
+const KPI_DEFAULT_LABELS: Record<string, string> = {
+  todayReservations: "Bookings Today",
+  checkedInNow: "Checked In Now",
+  activeHolds: "Active Holds",
+  needsAttention: "Needs Attention",
+  activeResources: "Active Resources Today",
+};
+
 function MetricHeading({ t, label }: { t: Props["t"]; label: string }) {
   return (
     <p className="truncate text-xs font-semibold text-nx-ink-2">
-      {t(`venueOverview.kpis.${label}`, { defaultValue: label })}
+      {t(`venueOverview.kpis.${label}`, { defaultValue: KPI_DEFAULT_LABELS[label] ?? label })}
     </p>
   );
 }

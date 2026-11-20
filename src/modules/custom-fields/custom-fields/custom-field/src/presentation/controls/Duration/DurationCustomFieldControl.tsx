@@ -8,7 +8,7 @@
  * in storage -- the handler's own doc comment states the unit must be made
  * explicit "at the handler and in the operator guide", the same PD-2
  * ambiguity Percent's 0-100 (not 0-1) storage decision already exists to
- * avoid for a different type. A bare `<input type="number">` showing `90`
+ * avoid for a different type. A bare numeric Input showing `90`
  * with no unit repeats exactly that ambiguity at the UI layer, so this
  * control exists specifically to append a real, localized "minutes"
  * annotation next to the field -- not to add any other behaviour beyond
@@ -42,7 +42,7 @@
  * comment gives for its own dedicated `"currency"` key.
  *
  * **Accessible name:** a single real, directly labelable
- * `<input type="number">` -- `<Label htmlFor>` computes a real accessible
+ * numeric Input -- `<Label htmlFor>` computes a real accessible
  * name here with no decoy element involved (unlike GenericSelect/Slider),
  * verified via `getByRole("spinbutton", { name })` in this file's own test
  * and in `renderCustomFieldControl.test.tsx`'s completeness gate. Matching
@@ -163,7 +163,7 @@ export function DurationCustomFieldControl({
           type="number"
           min={0}
           // `step="any"` is load-bearing here, and measured rather than assumed.
-          // An <input type="number"> with no step steps by 1, and the step BASE
+          // A numeric Input with no step steps by 1, and the step BASE
           // is `min` if present -- which `min={0}` on the line above makes it. So
           // the accepted values were 0, 1, 2 ... and `1.5` was a stepMismatch,
           // which does not merely style the field: a form containing an invalid

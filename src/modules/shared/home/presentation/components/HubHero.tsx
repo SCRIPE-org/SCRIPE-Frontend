@@ -14,14 +14,14 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useAppStore } from "@core/store/useAppStore";
 
 export function HubHero() {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const adminFirstName = useAppStore((s) => s.user?.firstName ?? s.user?.username ?? "");
 
   const greeting = getGreeting(t);
-  const dateStr = formatDate();
+  const dateStr = formatDate(language);
 
   return (
-    <div className="relative pb-5 pt-9">
+    <div className="relative pb-5 pt-6 sm:pt-9">
       {/* Status pill */}
       <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-nx-line bg-nx-hover px-2.5 py-1 text-xs font-medium text-nx-ink-2">
         <span className="h-1.5 w-1.5 rounded-full bg-success" aria-hidden="true" />
@@ -31,13 +31,13 @@ export function HubHero() {
       </div>
 
       {/* Greeting */}
-      <h1 className="text-balance text-4xl font-bold leading-tight tracking-tight text-nx-ink">
+      <h1 className="text-balance text-2xl font-bold leading-tight tracking-tight text-nx-ink sm:text-3xl lg:text-4xl">
         {greeting}
         {adminFirstName ? `, ${adminFirstName}.` : "."}
       </h1>
 
       {/* Subtitle */}
-      <p className="mt-2.5 text-base text-nx-ink-2">{t("workspaceHub.subtitle")}</p>
+      <p className="mt-2.5 text-sm text-nx-ink-2 sm:text-base">{t("workspaceHub.subtitle")}</p>
     </div>
   );
 }
@@ -51,9 +51,9 @@ function getGreeting(t: (key: string) => string): string {
   return t("workspaceHub.greeting.evening");
 }
 
-function formatDate(): string {
+function formatDate(language: string): string {
   const d = new Date();
-  return d.toLocaleDateString("en-US", {
+  return d.toLocaleDateString(language === "ar" ? "ar-EG" : "en-US", {
     weekday: "long",
     month: "long",
     day: "numeric",

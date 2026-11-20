@@ -2,6 +2,8 @@
 
 import * as React from "react";
 import { Input } from "@core/ui/input";
+import { Label } from "@core/ui/label";
+import { Textarea } from "@core/ui/textarea";
 import { Skeleton } from "@core/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -57,10 +59,11 @@ export function FieldVisibilityRuleFormFields({
   if (isAdvancedJson) {
     return (
       <div className="space-y-2">
-        <label className="text-xs font-medium text-nx-ink-2">
+        <Label htmlFor="visibility-raw-json" className="text-xs font-medium text-nx-ink-2">
           {t("customField.visibilityRules.rawJsonPayload")}
-        </label>
-        <textarea
+        </Label>
+        <Textarea
+          id="visibility-raw-json"
           className="h-32 w-full rounded-md border border-nx-line bg-background p-2 font-mono text-xs text-nx-ink focus:outline-none focus:ring-1 focus:ring-primary"
           value={rawJsonInput}
           onChange={(e) => onRawJsonChange(e.target.value)}
@@ -74,18 +77,18 @@ export function FieldVisibilityRuleFormFields({
   return (
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
       <div className="space-y-1.5 sm:col-span-2">
-        <label className="text-xs font-medium text-nx-ink-2">
+        <Label htmlFor="visibility-operand-select" className="text-xs font-medium text-nx-ink-2">
           {t("customField.visibilityRules.operandFieldLabel")}
-        </label>
+        </Label>
         {isSiblingFieldsLoading ? (
           <Skeleton className="h-9 w-full" />
         ) : siblingFields.length === 0 ? (
-          <p className="text-nx-ink-4 text-xs">
+          <p className="text-xs text-nx-ink-3">
             {t("customField.visibilityRules.noSiblingFields")}
           </p>
         ) : (
           <Select value={selectedOperandKey} onValueChange={onOperandChange} disabled={isBusy}>
-            <SelectTrigger className="h-9">
+            <SelectTrigger id="visibility-operand-select" className="h-9">
               <SelectValue
                 placeholder={t("customField.visibilityRules.selectOperandPlaceholder")}
               />
@@ -104,11 +107,11 @@ export function FieldVisibilityRuleFormFields({
       </div>
 
       <div className="space-y-1.5">
-        <label className="text-xs font-medium text-nx-ink-2">
+        <Label htmlFor="visibility-operator-select" className="text-xs font-medium text-nx-ink-2">
           {t("customField.visibilityRules.operatorLabel")}
-        </label>
+        </Label>
         <Select value={selectedOperator} onValueChange={onOperatorChange} disabled={isBusy}>
-          <SelectTrigger className="h-9">
+          <SelectTrigger id="visibility-operator-select" className="h-9">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -123,10 +126,11 @@ export function FieldVisibilityRuleFormFields({
 
       {selectedOperator !== "isEmpty" && selectedOperator !== "isNotEmpty" ? (
         <div className="space-y-1.5">
-          <label className="text-xs font-medium text-nx-ink-2">
+          <Label htmlFor="visibility-value-input" className="text-xs font-medium text-nx-ink-2">
             {t("customField.visibilityRules.valueLabel")}
-          </label>
+          </Label>
           <Input
+            id="visibility-value-input"
             type="text"
             className="h-9 text-xs"
             value={valueInput}
@@ -139,7 +143,7 @@ export function FieldVisibilityRuleFormFields({
             disabled={isBusy}
           />
           {(selectedOperator === "in" || selectedOperator === "notIn") && (
-            <p className="text-nx-ink-4 text-[11px]">
+            <p className="text-[11px] text-nx-ink-3">
               {t("customField.visibilityRules.listValueHelp")}
             </p>
           )}
@@ -151,10 +155,11 @@ export function FieldVisibilityRuleFormFields({
       )}
 
       <div className="space-y-1.5">
-        <label className="text-xs font-medium text-nx-ink-2">
+        <Label htmlFor="visibility-priority-input" className="text-xs font-medium text-nx-ink-2">
           {t("customField.visibilityRules.priorityLabel")}
-        </label>
+        </Label>
         <Input
+          id="visibility-priority-input"
           type="number"
           className="h-9 text-xs"
           value={priorityInput}

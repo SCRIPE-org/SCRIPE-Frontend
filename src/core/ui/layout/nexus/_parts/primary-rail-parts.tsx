@@ -27,8 +27,8 @@ export const NX_FOCUS_RING = "focus-visible:outline-none focus-visible:shadow-nx
 export function DynamicIcon({ name, size = 18 }: { name: string; size?: number }) {
   const PascalName = name?.replace(/(^|[-_])(\w)/g, (_, __, c: string) => c.toUpperCase());
   const Icon = (LucideIcons as Record<string, any>)[PascalName ?? ""];
-  if (Icon) return <Icon width={size} height={size} strokeWidth={1.8} />;
-  return <LayoutDashboard width={size} height={size} strokeWidth={1.8} />;
+  if (Icon) return <Icon width={size} height={size} strokeWidth={1.8} aria-hidden="true" />;
+  return <LayoutDashboard width={size} height={size} strokeWidth={1.8} aria-hidden="true" />;
 }
 
 import { Tooltip, TooltipContent, TooltipTrigger } from "@core/ui/tooltip";
@@ -191,6 +191,7 @@ export function TogglePanelButton({ isRTL, label, isCollapsed, onClick }: Toggle
           ref={btnRef}
           type="button"
           aria-label={label}
+          aria-expanded={!isCollapsed}
           onClick={onClick}
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
@@ -249,42 +250,28 @@ export function PrimaryRailLogo({
   language,
   onClick,
 }: PrimaryRailLogoProps) {
+  const [failedLogoUrl, setFailedLogoUrl] = useState<string | null>(null);
+  const showTenantLogo = Boolean(tenantLogoUrl && failedLogoUrl !== tenantLogoUrl);
+
   return (
-    <div
+    <button
+      type="button"
       className={cn(
-        "flex shrink-0 cursor-pointer items-center justify-center transition-[color,background-color,border-color,box-shadow] duration-nx-panel ease-nx-enter motion-reduce:transition-none",
+        "flex shrink-0 cursor-pointer items-center justify-center border border-transparent bg-transparent transition-[color,background-color,border-color,box-shadow] duration-nx-panel ease-nx-enter hover:border-nx-line-hi hover:bg-nx-raised motion-reduce:transition-none",
         NX_FOCUS_RING
       )}
       style={{
         width: 48,
         height: 48,
         borderRadius: "var(--nx-radius-lg)",
-        // accent (L0.68/0.46) into accent-fill (L0.50) — a token gradient that
-        // deepens naturally in both themes instead of a hardcoded indigo pair
-        background: tenantLogoUrl
-          ? "transparent"
-          : "linear-gradient(135deg, var(--nx-accent) 0%, var(--nx-accent-fill) 100%)",
         marginBottom: isModuleMode ? 12 : 20,
-        // No resting shadow. The hand-rolled `0 6px 20px accent` bloom read as a
-        // second glow next to the ActiveIndicator (the screen gets one), and as
-        // an inline style it also out-specified the focus ring, so the mark was
-        // unfocusable-looking under the keyboard.
         overflow: "hidden",
         flexShrink: 0,
       }}
       onClick={onClick}
-      role="link"
-      tabIndex={0}
-      onKeyDown={(e) => {
-        // role="link" on a div is invisible to the keyboard without this
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          onClick();
-        }
-      }}
       aria-label={resolveBilingualLabel("Go to Home", "الصفحة الرئيسية", language)}
     >
-      {tenantLogoUrl ? (
+      {showTenantLogo && tenantLogoUrl ? (
         <Image
           src={tenantLogoUrl}
           alt={resolveBilingualLabel("Logo", "شعار", language)}
@@ -298,9 +285,7 @@ export function PrimaryRailLogo({
             objectFit: "contain",
             borderRadius: "var(--nx-radius-lg)",
           }}
-          onError={(e) => {
-            e.currentTarget.style.display = "none";
-          }}
+          onError={() => setFailedLogoUrl(tenantLogoUrl)}
         />
       ) : (
         <Image
@@ -313,7 +298,7 @@ export function PrimaryRailLogo({
           aria-hidden="true"
         />
       )}
-    </div>
+    </button>
   );
 }
 

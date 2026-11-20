@@ -145,7 +145,7 @@ export interface PermissionCategoryGroup {
 /**
  * Permission grouped by module → category.
  * Backend delivers this shape from /permissions/grouped and
- * /roles/myTenant/available-permissions/grouped.
+ * /roles/current-tenant/available-permissions/grouped.
  * Zero client-side grouping logic needed.
  */
 export interface PermissionModuleGroup {

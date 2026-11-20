@@ -23,7 +23,7 @@ export function IconRowBlockView({ block }: { block: IconRowBlock }) {
           <>
             <span className={ICON_CLASS[props.iconSize || "md"]}>{item.icon}</span>
             {props.showLabels && item.label && (
-              <span className="text-xs text-muted-foreground">{item.label}</span>
+              <span className="text-xs text-nx-ink-2">{item.label}</span>
             )}
           </>
         );

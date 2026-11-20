@@ -4,35 +4,43 @@ import * as React from "react";
 import { useTheme } from "next-themes";
 import { useI18n } from "@core/providers/i18n-provider";
 import { toast } from "@core/ui/sileo-toast";
+import { Button } from "@core/ui/button";
+import { Card } from "@core/ui/card";
 
 export default function SileoPlaygroundPage() {
   const { resolvedTheme, setTheme } = useTheme();
-  const { direction, setLanguage } = useI18n();
-  const isDark = resolvedTheme === "dark";
+  const { t, direction, setLanguage } = useI18n();
+  const isDark = resolvedTheme !== "light";
   const dir = direction || "ltr";
   const theme = isDark ? "dark" : "light";
-  const [lastAction, setLastAction] = React.useState<string>("Ready");
-
-  const fill = isDark ? "#151719" : "#ffffff";
+  const [lastAction, setLastAction] = React.useState<
+    | { kind: "triggered"; key: string }
+    | { kind: "clicked"; key: string; defaultValue: string }
+    | null
+  >(null);
 
   const triggerToast = (type: string) => {
-    setLastAction(`Triggered ${type}`);
-    const isAr = dir === "rtl";
+    setLastAction({ kind: "triggered", key: type });
 
     switch (type) {
       case "pill":
         toast.success({
-          title: isAr ? "تم حفظ التغييرات بنجاح" : "Changes Saved Successfully",
+          title: t("sileoPlayground.toasts.pillTitle", {
+            defaultValue: "Changes Saved Successfully",
+          }),
           duration: 6000,
         });
         break;
 
       case "success":
         toast.success({
-          title: isAr ? "تم تأكيد حجز الملعب بنجاح" : "Court Booking Confirmed",
-          description: isAr
-            ? "تم حجز الملعب رقم 3 للفريق الأول للنادي الأهلي يوم الجمعة الساعة 18:00 UTC."
-            : "Court 3 reserved for Al-Ahly First Team on Friday at 18:00 UTC. Confirmation dispatched.",
+          title: t("sileoPlayground.toasts.successTitle", {
+            defaultValue: "Court Booking Confirmed",
+          }),
+          description: t("sileoPlayground.toasts.successDescription", {
+            defaultValue:
+              "Court 3 reserved for Al-Ahly First Team on Friday at 18:00 UTC. Confirmation dispatched.",
+          }),
           duration: 10000,
           autopilot: true,
         });
@@ -40,40 +48,59 @@ export default function SileoPlaygroundPage() {
 
       case "error":
         toast.error({
-          title: isAr ? "فشل تفويض بوابة الدفع" : "Payment Authorization Failed",
-          description: isAr
-            ? "رفضت عملية Stripe رقم #ch_9847129: رصيد غير كافٍ في بطاقة العميل."
-            : "Stripe transaction declined: Insufficient funds on merchant card. Automatic retry in 15m.",
+          title: t("sileoPlayground.toasts.errorTitle", {
+            defaultValue: "Payment Authorization Failed",
+          }),
+          description: t("sileoPlayground.toasts.errorDescription", {
+            defaultValue:
+              "Stripe transaction declined: Insufficient funds on merchant card. Automatic retry in 15m.",
+          }),
           duration: 10000,
           autopilot: true,
           button: {
-            title: isAr ? "إعادة المحاولة" : "Retry Payment",
-            onClick: () => setLastAction("Clicked Retry Payment"),
+            title: t("sileoPlayground.toasts.errorAction", { defaultValue: "Retry Payment" }),
+            onClick: () =>
+              setLastAction({
+                kind: "clicked",
+                key: "sileoPlayground.toasts.errorAction",
+                defaultValue: "Retry Payment",
+              }),
           },
         });
         break;
 
       case "warning":
         toast.warning({
-          title: isAr ? "تحذير تجاوز الحصة التشغيلية (92%)" : "Resource Quota Exceeded (92%)",
-          description: isAr
-            ? "اقترب استهلاك باقة المؤسسات الرياضية من الحد الأقصى. متبقي 48 لاعباً فقط."
-            : "Monthly active athlete limit reached for Sports-Enterprise tier. 48 slots remaining before lock.",
+          title: t("sileoPlayground.toasts.warningTitle", {
+            defaultValue: "Resource Quota Exceeded (92%)",
+          }),
+          description: t("sileoPlayground.toasts.warningDescription", {
+            defaultValue:
+              "Monthly active athlete limit reached for Sports-Enterprise tier. 48 slots remaining before lock.",
+          }),
           duration: 10000,
           autopilot: true,
           button: {
-            title: isAr ? "ترقية الباقة" : "Upgrade Tier",
-            onClick: () => setLastAction("Clicked Upgrade Tier"),
+            title: t("sileoPlayground.toasts.warningAction", { defaultValue: "Upgrade Tier" }),
+            onClick: () =>
+              setLastAction({
+                kind: "clicked",
+                key: "sileoPlayground.toasts.warningAction",
+                defaultValue: "Upgrade Tier",
+              }),
           },
         });
         break;
 
       case "info":
         toast.info({
-          title: isAr ? "إشعار صيانة المنصة المجدولة" : "Platform Maintenance Notice",
-          description: isAr
-            ? "ترقية قواعد البيانات ومزامنة الخوادم مجدولة الليلة الساعة 02:00 بالتوقيت العالمي."
-            : "Database schema migration and cluster sync scheduled for tonight at 02:00 UTC (10m downtime).",
+          title: t("sileoPlayground.toasts.infoTitle", {
+            defaultValue: "Platform Maintenance Notice",
+          }),
+          description: t("sileoPlayground.toasts.infoDescription", {
+            defaultValue:
+              "Database schema migration and cluster sync scheduled for tonight at 02:00 UTC (10m downtime).",
+          }),
           duration: 10000,
           autopilot: true,
         });
@@ -81,25 +108,36 @@ export default function SileoPlaygroundPage() {
 
       case "action":
         toast.action({
-          title: isAr ? "تم إنشاء مسودة الفاتورة #INV-2026-089" : "Invoice #INV-2026-089 Drafted",
-          description: isAr
-            ? "عقد الرعاية الرياضية السنوي ($45,000) جاهز للمراجعة والاعتماد والمطابقة."
-            : "Corporate sponsorship package ($45,000) finalized and validated against financial ledger.",
+          title: t("sileoPlayground.toasts.actionTitle", {
+            defaultValue: "Invoice #INV-2026-089 Drafted",
+          }),
+          description: t("sileoPlayground.toasts.actionDescription", {
+            defaultValue:
+              "Corporate sponsorship package ($45,000) finalized and validated against financial ledger.",
+          }),
           duration: 10000,
           autopilot: true,
           button: {
-            title: isAr ? "مراجعة وإرسال" : "Review & Send",
-            onClick: () => setLastAction("Clicked Review & Send"),
+            title: t("sileoPlayground.toasts.actionButton", { defaultValue: "Review & Send" }),
+            onClick: () =>
+              setLastAction({
+                kind: "clicked",
+                key: "sileoPlayground.toasts.actionButton",
+                defaultValue: "Review & Send",
+              }),
           },
         });
         break;
 
       case "loading":
         toast.loading({
-          title: isAr ? "جاري إنشاء الخريطة التكتيكية..." : "Generating Spatial Heatmap...",
-          description: isAr
-            ? "حساب وتحليل تحركات وتمركز اللاعبين وسرعات الركض عبر 90 دقيقة..."
-            : "Computing spatial positioning, acceleration vectors, and ball progression telemetry across 90 minutes.",
+          title: t("sileoPlayground.toasts.loadingTitle", {
+            defaultValue: "Generating Spatial Heatmap...",
+          }),
+          description: t("sileoPlayground.toasts.loadingDescription", {
+            defaultValue:
+              "Computing spatial positioning, acceleration vectors, and ball progression telemetry across 90 minutes.",
+          }),
           duration: 10000,
           autopilot: true,
         });
@@ -108,17 +146,25 @@ export default function SileoPlaygroundPage() {
       case "promise": {
         const promiseFn = new Promise((resolve) => setTimeout(resolve, 2500));
         toast.promise(promiseFn, {
-          loading: isAr ? "جاري مزامنة بيانات الأكاديمية..." : "Synchronizing Academy Rosters...",
-          success: isAr ? "تمت مزامنة 140 سجل بنجاح!" : "140 Youth Rosters Synchronized!",
-          error: isAr ? "فشلت المزامنة" : "Roster Sync Failed",
+          loading: t("sileoPlayground.toasts.promiseLoading", {
+            defaultValue: "Synchronizing Academy Rosters...",
+          }),
+          success: t("sileoPlayground.toasts.promiseSuccess", {
+            defaultValue: "140 Youth Rosters Synchronized!",
+          }),
+          error: t("sileoPlayground.toasts.promiseError", {
+            defaultValue: "Roster Sync Failed",
+          }),
         });
         break;
       }
 
       default:
         toast.show({
-          title: "Sileo Notification",
-          description: "General system status message.",
+          title: t("sileoPlayground.toasts.defaultTitle", { defaultValue: "Sileo Notification" }),
+          description: t("sileoPlayground.toasts.defaultDescription", {
+            defaultValue: "General system status message.",
+          }),
           duration: 6000,
           autopilot: true,
         });
@@ -126,174 +172,283 @@ export default function SileoPlaygroundPage() {
   };
 
   return (
-    <div
+    <main
       id="sileo-playground"
       dir={dir}
-      style={{
-        minHeight: "100vh",
-        backgroundColor: isDark ? "#0d0f11" : "#f8f9fa",
-        color: isDark ? "#f0f2f5" : "#11181c",
-        fontFamily: dir === "rtl" ? "'Tajawal', sans-serif" : "'Plus Jakarta Sans', sans-serif",
-        padding: "40px",
-        transition: "background-color 200ms ease",
-      }}
+      className="min-h-[100dvh] bg-nx-ground p-6 text-nx-ink transition-colors sm:p-10"
     >
-      <div style={{ maxWidth: "880px", margin: "0 auto" }}>
+      <div className="mx-auto max-w-[880px]">
         {/* Header Bar */}
-        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: "16px", borderBottom: `1px solid ${isDark ? "#26292e" : "#e6e8eb"}`, paddingBottom: "24px", marginBottom: "24px" }}>
+        <header className="mb-6 flex flex-wrap items-center justify-between gap-4 border-b border-nx-line pb-6">
           <div>
-            <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "4px 12px", borderRadius: "9999px", background: isDark ? "#151719" : "#ffffff", border: `1px solid ${isDark ? "#26292e" : "#e6e8eb"}`, fontSize: "11px", fontWeight: 600, color: isDark ? "#9ba1a6" : "#687076", marginBottom: "8px" }}>
-              <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#cbfb45" }} />
-              SCRIPE Sovereign OS • Native Sileo Physics Playground
+            <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-nx-line bg-nx-surface px-3 py-1 text-[11px] font-semibold text-nx-ink-2">
+              <span className="h-2 w-2 rounded-full bg-nx-accent" aria-hidden="true" />
+              {t("sileoPlayground.badge", {
+                defaultValue: "SCRIPE Sovereign OS • Native Sileo Physics Playground",
+              })}
             </div>
-            <h1 style={{ fontSize: "26px", fontWeight: 700, letterSpacing: "-0.02em", margin: 0, color: isDark ? "#f0f2f5" : "#11181c" }}>
-              Sileo Spring Dropdown & Hover Morphing
+            <h1 className="text-[26px] font-bold tracking-tight text-nx-ink">
+              {t("sileoPlayground.title", {
+                defaultValue: "Sileo Spring Dropdown & Hover Morphing",
+              })}
             </h1>
-            <p style={{ fontSize: "14px", color: isDark ? "#9ba1a6" : "#687076", marginTop: "4px", margin: 0 }}>
-              Verify SVG gooey filters, spring pill-to-dropdown expansion, hover persistence, and Nexus theme colors.
+            <p className="mt-1 text-sm text-nx-ink-2">
+              {t("sileoPlayground.subtitle", {
+                defaultValue:
+                  "Verify SVG gooey filters, spring pill-to-dropdown expansion, hover persistence, and Nexus theme colors.",
+              })}
             </p>
           </div>
 
-          <div style={{ display: "flex", gap: "8px" }}>
-            <button
+          <div className="flex gap-2">
+            <Button
               id="btn-toggle-theme"
+              type="button"
+              variant="outline"
               onClick={() => setTheme(isDark ? "light" : "dark")}
-              style={{
-                padding: "8px 16px",
-                borderRadius: "8px",
-                border: `1px solid ${isDark ? "#34383e" : "#d7dbdf"}`,
-                background: isDark ? "#151719" : "#ffffff",
-                color: isDark ? "#f0f2f5" : "#11181c",
-                cursor: "pointer",
-                fontWeight: 600,
-                fontSize: "13px",
-              }}
+              className="border-nx-line bg-nx-surface text-nx-ink hover:bg-nx-raised"
             >
-              Theme: {theme.toUpperCase()}
-            </button>
+              {t("sileoPlayground.controls.theme", { defaultValue: "Theme:" })}{" "}
+              {theme.toUpperCase()}
+            </Button>
 
-            <button
+            <Button
               id="btn-toggle-lang"
+              type="button"
+              variant="outline"
               onClick={() => setLanguage(dir === "rtl" ? "en" : "ar")}
-              style={{
-                padding: "8px 16px",
-                borderRadius: "8px",
-                border: `1px solid ${isDark ? "#34383e" : "#d7dbdf"}`,
-                background: isDark ? "#151719" : "#ffffff",
-                color: isDark ? "#f0f2f5" : "#11181c",
-                cursor: "pointer",
-                fontWeight: 600,
-                fontSize: "13px",
-              }}
+              className="border-nx-line bg-nx-surface text-nx-ink hover:bg-nx-raised"
             >
-              Dir: {dir.toUpperCase()}
-            </button>
+              {t("sileoPlayground.controls.dir", { defaultValue: "Dir:" })} {dir.toUpperCase()}
+            </Button>
           </div>
-        </div>
+        </header>
 
         {/* Action Status Banner */}
-        <div style={{ padding: "12px 16px", borderRadius: "10px", border: `1px solid ${isDark ? "#26292e" : "#e6e8eb"}`, background: isDark ? "#151719" : "#ffffff", fontSize: "13px", color: isDark ? "#9ba1a6" : "#687076", display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "24px" }}>
-          <span>Status: <strong style={{ color: isDark ? "#f0f2f5" : "#11181c" }}>{lastAction}</strong></span>
-          <span style={{ fontFamily: "monospace", fontSize: "11px", color: isDark ? "#687076" : "#889096" }}>Engine: sileo native with SVG gooey filter</span>
+        <div className="mb-6 flex items-center justify-between rounded-[10px] border border-nx-line bg-nx-surface px-4 py-3 text-[13px] text-nx-ink-2">
+          <span>
+            {t("sileoPlayground.statusLabel", { defaultValue: "Status:" })}{" "}
+            <strong className="text-nx-ink">
+              {!lastAction
+                ? t("sileoPlayground.statusReady", { defaultValue: "Ready" })
+                : lastAction.kind === "triggered"
+                  ? `${t("sileoPlayground.statusTriggeredPrefix", { defaultValue: "Triggered" })} ${lastAction.key}`
+                  : `${t("sileoPlayground.statusClickedPrefix", { defaultValue: "Clicked" })} ${t(lastAction.key, { defaultValue: lastAction.defaultValue })}`}
+            </strong>
+          </span>
+          <span className="font-mono text-[11px] text-nx-ink-3">
+            {t("sileoPlayground.engineLabel", {
+              defaultValue: "Engine: sileo native with SVG gooey filter",
+            })}
+          </span>
         </div>
 
         {/* Trigger Buttons Grid */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "12px", marginBottom: "24px" }}>
-          <button
+        <div className="mb-6 grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3">
+          <Button
             id="trigger-pill"
+            type="button"
+            variant="outline"
             onClick={() => triggerToast("pill")}
-            style={{ padding: "14px", borderRadius: "12px", border: "1px solid rgba(48, 164, 108, 0.4)", background: "rgba(48, 164, 108, 0.12)", color: "#30a46c", textAlign: "left", fontWeight: 600, fontSize: "13px", cursor: "pointer", display: "flex", flexDirection: "column", gap: "4px" }}
+            className="h-auto flex-col items-start justify-start gap-1 rounded-xl border-success/40 bg-success/10 p-3.5 text-start font-semibold text-nx-success hover:bg-success/15"
           >
-            <span>▶ Compact 40px Pill</span>
-            <span style={{ fontSize: "11px", fontWeight: 400, color: isDark ? "#9ba1a6" : "#687076" }}>Resting Pill State</span>
-          </button>
+            <span>
+              <span aria-hidden="true">▶ </span>
+              {t("sileoPlayground.triggers.pillTitle", { defaultValue: "Compact 40px Pill" })}
+            </span>
+            <span className="text-[11px] font-normal text-nx-ink-2">
+              {t("sileoPlayground.triggers.pillDesc", { defaultValue: "Resting Pill State" })}
+            </span>
+          </Button>
 
-          <button
+          <Button
             id="trigger-success"
+            type="button"
+            variant="outline"
             onClick={() => triggerToast("success")}
-            style={{ padding: "14px", borderRadius: "12px", border: "1px solid rgba(48, 164, 108, 0.4)", background: "rgba(48, 164, 108, 0.12)", color: "#30a46c", textAlign: "left", fontWeight: 600, fontSize: "13px", cursor: "pointer", display: "flex", flexDirection: "column", gap: "4px" }}
+            className="h-auto flex-col items-start justify-start gap-1 rounded-xl border-success/40 bg-success/10 p-3.5 text-start font-semibold text-nx-success hover:bg-success/15"
           >
-            <span>▶ Success Toast</span>
-            <span style={{ fontSize: "11px", fontWeight: 400, color: isDark ? "#9ba1a6" : "#687076" }}>Pill ➔ Spring Dropdown</span>
-          </button>
+            <span>
+              <span aria-hidden="true">▶ </span>
+              {t("sileoPlayground.triggers.successTitle", { defaultValue: "Success Toast" })}
+            </span>
+            <span className="text-[11px] font-normal text-nx-ink-2">
+              {t("sileoPlayground.triggers.successDesc", {
+                defaultValue: "Pill -> Spring Dropdown",
+              })}
+            </span>
+          </Button>
 
-          <button
+          <Button
             id="trigger-error"
+            type="button"
+            variant="outline"
             onClick={() => triggerToast("error")}
-            style={{ padding: "14px", borderRadius: "12px", border: "1px solid rgba(229, 77, 46, 0.4)", background: "rgba(229, 77, 46, 0.12)", color: "#e54d2e", textAlign: "left", fontWeight: 600, fontSize: "13px", cursor: "pointer", display: "flex", flexDirection: "column", gap: "4px" }}
+            className="h-auto flex-col items-start justify-start gap-1 rounded-xl border-destructive/40 bg-destructive/10 p-3.5 text-start font-semibold text-destructive hover:bg-destructive/15"
           >
-            <span>▶ Error Toast</span>
-            <span style={{ fontSize: "11px", fontWeight: 400, color: isDark ? "#9ba1a6" : "#687076" }}>Includes Retry action</span>
-          </button>
+            <span>
+              <span aria-hidden="true">▶ </span>
+              {t("sileoPlayground.triggers.errorTitle", { defaultValue: "Error Toast" })}
+            </span>
+            <span className="text-[11px] font-normal text-nx-ink-2">
+              {t("sileoPlayground.triggers.errorDesc", { defaultValue: "Includes Retry action" })}
+            </span>
+          </Button>
 
-          <button
+          <Button
             id="trigger-warning"
+            type="button"
+            variant="outline"
             onClick={() => triggerToast("warning")}
-            style={{ padding: "14px", borderRadius: "12px", border: "1px solid rgba(241, 161, 13, 0.4)", background: "rgba(241, 161, 13, 0.12)", color: "#f1a10d", textAlign: "left", fontWeight: 600, fontSize: "13px", cursor: "pointer", display: "flex", flexDirection: "column", gap: "4px" }}
+            className="h-auto flex-col items-start justify-start gap-1 rounded-xl border-warning/40 bg-warning/10 p-3.5 text-start font-semibold text-nx-warning-strong hover:bg-warning/15"
           >
-            <span>▶ Warning Toast</span>
-            <span style={{ fontSize: "11px", fontWeight: 400, color: isDark ? "#9ba1a6" : "#687076" }}>Quota threshold notice</span>
-          </button>
+            <span>
+              <span aria-hidden="true">▶ </span>
+              {t("sileoPlayground.triggers.warningTitle", { defaultValue: "Warning Toast" })}
+            </span>
+            <span className="text-[11px] font-normal text-nx-ink-2">
+              {t("sileoPlayground.triggers.warningDesc", {
+                defaultValue: "Quota threshold notice",
+              })}
+            </span>
+          </Button>
 
-          <button
+          <Button
             id="trigger-info"
+            type="button"
+            variant="outline"
             onClick={() => triggerToast("info")}
-            style={{ padding: "14px", borderRadius: "12px", border: "1px solid rgba(0, 144, 255, 0.4)", background: "rgba(0, 144, 255, 0.12)", color: "#0090ff", textAlign: "left", fontWeight: 600, fontSize: "13px", cursor: "pointer", display: "flex", flexDirection: "column", gap: "4px" }}
+            className="h-auto flex-col items-start justify-start gap-1 rounded-xl border-info/40 bg-info/10 p-3.5 text-start font-semibold text-info hover:bg-info/15"
           >
-            <span>▶ Info Toast</span>
-            <span style={{ fontSize: "11px", fontWeight: 400, color: isDark ? "#9ba1a6" : "#687076" }}>System maintenance</span>
-          </button>
+            <span>
+              <span aria-hidden="true">▶ </span>
+              {t("sileoPlayground.triggers.infoTitle", { defaultValue: "Info Toast" })}
+            </span>
+            <span className="text-[11px] font-normal text-nx-ink-2">
+              {t("sileoPlayground.triggers.infoDesc", { defaultValue: "System maintenance" })}
+            </span>
+          </Button>
 
-          <button
+          <Button
             id="trigger-action"
+            type="button"
+            variant="outline"
             onClick={() => triggerToast("action")}
-            style={{ padding: "14px", borderRadius: "12px", border: "1px solid rgba(139, 92, 246, 0.4)", background: "rgba(139, 92, 246, 0.12)", color: "#8b5cf6", textAlign: "left", fontWeight: 600, fontSize: "13px", cursor: "pointer", display: "flex", flexDirection: "column", gap: "4px" }}
+            className="h-auto flex-col items-start justify-start gap-1 rounded-xl border-nx-accent bg-nx-accent-wash p-3.5 text-start font-semibold text-nx-accent hover:brightness-95"
           >
-            <span>▶ Interactive Action</span>
-            <span style={{ fontSize: "11px", fontWeight: 400, color: isDark ? "#9ba1a6" : "#687076" }}>Review & Send button</span>
-          </button>
+            <span>
+              <span aria-hidden="true">▶ </span>
+              {t("sileoPlayground.triggers.actionTitle", { defaultValue: "Interactive Action" })}
+            </span>
+            <span className="text-[11px] font-normal text-nx-ink-2">
+              {t("sileoPlayground.triggers.actionDesc", { defaultValue: "Review & Send button" })}
+            </span>
+          </Button>
 
-          <button
+          <Button
             id="trigger-loading"
+            type="button"
+            variant="outline"
             onClick={() => triggerToast("loading")}
-            style={{ padding: "14px", borderRadius: "12px", border: `1px solid ${isDark ? "#34383e" : "#d7dbdf"}`, background: isDark ? "#1d2024" : "#f1f3f5", color: isDark ? "#f0f2f5" : "#11181c", textAlign: "left", fontWeight: 600, fontSize: "13px", cursor: "pointer", display: "flex", flexDirection: "column", gap: "4px" }}
+            className="h-auto flex-col items-start justify-start gap-1 rounded-xl border-nx-line bg-nx-raised p-3.5 text-start font-semibold text-nx-ink hover:border-nx-line-hi"
           >
-            <span>▶ Loading Spinner</span>
-            <span style={{ fontSize: "11px", fontWeight: 400, color: isDark ? "#9ba1a6" : "#687076" }}>Spatial heatmap calc</span>
-          </button>
+            <span>
+              <span aria-hidden="true">▶ </span>
+              {t("sileoPlayground.triggers.loadingTitle", { defaultValue: "Loading Spinner" })}
+            </span>
+            <span className="text-[11px] font-normal text-nx-ink-2">
+              {t("sileoPlayground.triggers.loadingDesc", { defaultValue: "Spatial heatmap calc" })}
+            </span>
+          </Button>
 
-          <button
+          <Button
             id="trigger-promise"
+            type="button"
+            variant="outline"
             onClick={() => triggerToast("promise")}
-            style={{ padding: "14px", borderRadius: "12px", border: "1px solid rgba(6, 182, 212, 0.4)", background: "rgba(6, 182, 212, 0.12)", color: "#06b6d4", textAlign: "left", fontWeight: 600, fontSize: "13px", cursor: "pointer", display: "flex", flexDirection: "column", gap: "4px" }}
+            className="h-auto flex-col items-start justify-start gap-1 rounded-xl border-info/40 bg-info/10 p-3.5 text-start font-semibold text-info hover:bg-info/15"
           >
-            <span>▶ Promise Morphing</span>
-            <span style={{ fontSize: "11px", fontWeight: 400, color: isDark ? "#9ba1a6" : "#687076" }}>Loading ➔ Success morph</span>
-          </button>
+            <span>
+              <span aria-hidden="true">▶ </span>
+              {t("sileoPlayground.triggers.promiseTitle", { defaultValue: "Promise Morphing" })}
+            </span>
+            <span className="text-[11px] font-normal text-nx-ink-2">
+              {t("sileoPlayground.triggers.promiseDesc", {
+                defaultValue: "Loading -> Success morph",
+              })}
+            </span>
+          </Button>
 
-          <button
+          <Button
             id="trigger-clear"
+            type="button"
+            variant="outline"
             onClick={() => toast.clear()}
-            style={{ padding: "14px", borderRadius: "12px", border: `1px solid ${isDark ? "#26292e" : "#e6e8eb"}`, background: isDark ? "#151719" : "#ffffff", color: isDark ? "#687076" : "#889096", textAlign: "left", fontWeight: 600, fontSize: "13px", cursor: "pointer", display: "flex", flexDirection: "column", gap: "4px" }}
+            className="h-auto flex-col items-start justify-start gap-1 rounded-xl border-nx-line bg-nx-surface p-3.5 text-start font-semibold text-nx-ink-3 hover:border-nx-line-hi hover:text-nx-ink"
           >
-            <span>✕ Clear All</span>
-            <span style={{ fontSize: "11px", fontWeight: 400, color: isDark ? "#687076" : "#889096" }}>Dismiss all active toasts</span>
-          </button>
+            <span>
+              <span aria-hidden="true">✕ </span>
+              {t("sileoPlayground.triggers.clearTitle", { defaultValue: "Clear All" })}
+            </span>
+            <span className="text-[11px] font-normal text-nx-ink-3">
+              {t("sileoPlayground.triggers.clearDesc", {
+                defaultValue: "Dismiss all active toasts",
+              })}
+            </span>
+          </Button>
         </div>
 
         {/* Behavior Specifications Card */}
-        <div style={{ padding: "20px", borderRadius: "12px", border: `1px solid ${isDark ? "#26292e" : "#e6e8eb"}`, background: isDark ? "#151719" : "#ffffff", color: isDark ? "#9ba1a6" : "#687076", fontSize: "13px", lineHeight: 1.6 }}>
-          <div style={{ fontWeight: 600, color: isDark ? "#f0f2f5" : "#11181c", marginBottom: "8px" }}>
-            Sileo Native Behavior Specifications Verified:
+        <Card className="border-nx-line bg-nx-surface p-5 text-[13px] leading-relaxed text-nx-ink-2">
+          <div className="mb-2 font-semibold text-nx-ink">
+            {t("sileoPlayground.specs.title", {
+              defaultValue: "Sileo Native Behavior Specifications Verified:",
+            })}
           </div>
-          <ul style={{ margin: 0, paddingLeft: "20px" }}>
-            <li><strong>Initial Arrival:</strong> Toast pops in as a compact pill with icon and title using spring physics.</li>
-            <li><strong>Autopilot / Hover Dropdown:</strong> At 150ms (or upon mouse hover), the body drops down via SVG gooey filter, morphing into the full card and revealing description and action buttons.</li>
-            <li><strong>Hover Persistence:</strong> Hovering cursor over the expanded toast freezes the timer and keeps the dropdown open for interaction.</li>
-            <li><strong>Spring Collapse:</strong> Mouse exit triggers smooth spring collapse back to resting pill before exiting.</li>
+          <ul className="m-0 list-disc ps-5">
+            <li>
+              <strong>
+                {t("sileoPlayground.specs.arrivalLabel", { defaultValue: "Initial Arrival:" })}
+              </strong>{" "}
+              {t("sileoPlayground.specs.arrivalBody", {
+                defaultValue:
+                  "Toast pops in as a compact pill with icon and title using spring physics.",
+              })}
+            </li>
+            <li>
+              <strong>
+                {t("sileoPlayground.specs.autopilotLabel", {
+                  defaultValue: "Autopilot / Hover Dropdown:",
+                })}
+              </strong>{" "}
+              {t("sileoPlayground.specs.autopilotBody", {
+                defaultValue:
+                  "At 150ms (or upon mouse hover), the body drops down via SVG gooey filter, morphing into the full card and revealing description and action buttons.",
+              })}
+            </li>
+            <li>
+              <strong>
+                {t("sileoPlayground.specs.persistenceLabel", {
+                  defaultValue: "Hover Persistence:",
+                })}
+              </strong>{" "}
+              {t("sileoPlayground.specs.persistenceBody", {
+                defaultValue:
+                  "Hovering cursor over the expanded toast freezes the timer and keeps the dropdown open for interaction.",
+              })}
+            </li>
+            <li>
+              <strong>
+                {t("sileoPlayground.specs.collapseLabel", { defaultValue: "Spring Collapse:" })}
+              </strong>{" "}
+              {t("sileoPlayground.specs.collapseBody", {
+                defaultValue:
+                  "Mouse exit triggers smooth spring collapse back to resting pill before exiting.",
+              })}
+            </li>
           </ul>
-        </div>
+        </Card>
       </div>
-    </div>
+    </main>
   );
 }

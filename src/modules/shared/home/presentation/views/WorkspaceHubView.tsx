@@ -24,13 +24,15 @@
 import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useWorkspace } from "@core/providers/workspace-provider";
-import { useTenantContext } from "@core/providers/tenant-context-provider";
+import { useAdminContext } from "@core/hooks/useAdminContext";
+import { TenantContextSwitcherDialog } from "@core/components/tenant-context";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { useWorkspaceTransition } from "@core/ui/layout/nexus/use-workspace-transition";
 import { UpgradeDialog } from "@core/ui/layout/nexus/nexus-app-launcher";
 
 import { Star, SearchX, LayoutGrid } from "lucide-react";
+import { Button } from "@core/ui/button";
 import { EmptyState } from "@core/ui/empty-state";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import type { WorkspaceGroup } from "@core/navigation/domain/entities/WorkspaceGroup";
@@ -45,14 +47,15 @@ import { useHubActivity } from "../hooks/useHubActivity";
 
 export function WorkspaceHubView() {
   const router = useRouter();
-  const { currentTenant } = useTenantContext();
-  const hasTenantContext = currentTenant !== null;
+  const { activeTenantId } = useAdminContext();
+  const hasTenantContext = Boolean(activeTenantId);
   const { workspaceGroups, isLoading, togglePin } = useWorkspace();
   const { switchWorkspace } = useWorkspaceTransition();
   const { language, t } = useI18n();
   const [searchQuery, setSearchQuery] = useState("");
   const [pinLoadingKeys, setPinLoadingKeys] = useState<Set<string>>(new Set());
   const [upgradeTarget, setUpgradeTarget] = useState<string | null>(null);
+  const [switcherOpen, setSwitcherOpen] = useState(false);
   const hubActivity = useHubActivity();
 
   // ── Hub identity: no workspace is active on the Hub page ──────────────────
@@ -215,15 +218,19 @@ export function WorkspaceHubView() {
     filteredLocked.length > 0;
 
   return (
-    <main className="relative mx-auto max-w-7xl px-10 pb-14 text-nx-ink">
+    <main
+      id="nexus-content"
+      tabIndex={-1}
+      className="relative mx-auto max-w-7xl px-4 pb-14 text-nx-ink outline-none sm:px-6 lg:px-10"
+    >
       <HubHero />
 
       <div className="h-2" />
       <HubSearch value={searchQuery} onChange={setSearchQuery} />
-      <div className="h-8" />
+      <div className="h-6 sm:h-8" />
 
       {/* Main content + side panel */}
-      <div className="flex items-start gap-10">
+      <div className="flex flex-col items-stretch gap-8 lg:flex-row lg:items-start lg:gap-10">
         {/* Left column — grids */}
         <div className="min-w-0 flex-1">
           {/* Pinned strip */}
@@ -231,7 +238,7 @@ export function WorkspaceHubView() {
             <section className="mb-8">
               <HubSectionHeader
                 icon={
-                  <span className="inline-flex text-warning">
+                  <span className="inline-flex text-nx-warning-strong" aria-hidden="true">
                     <Star size={13} fill="currentColor" strokeWidth={0} />
                   </span>
                 }
@@ -242,12 +249,18 @@ export function WorkspaceHubView() {
                     : t("workspaceHub.pinned.apps_other", { count: filteredPinned.length })
                 }
                 action={
-                  <button
+                  <Button
                     type="button"
-                    className="cursor-pointer rounded-nx-sm border-0 bg-transparent p-0 text-xs font-medium text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
+                    variant="ghost"
+                    onClick={() =>
+                      document
+                        .getElementById("hub-modules-section")
+                        ?.scrollIntoView({ behavior: "smooth" })
+                    }
+                    className="h-auto cursor-pointer rounded-nx-sm border-0 bg-transparent p-0 text-xs font-medium text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:bg-transparent hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
                   >
                     {t("workspaceHub.pinned.manage")}
-                  </button>
+                  </Button>
                 }
               />
               <div className="flex flex-wrap gap-3.5">
@@ -275,7 +288,7 @@ export function WorkspaceHubView() {
           {/* Modules grid */}
           {(filteredModules.length > 0 ||
             filteredLocked.some((ws) => ws.workspaceType === "Module")) && (
-            <section className="mb-9">
+            <section id="hub-modules-section" className="mb-9">
               <HubSectionHeader
                 title={t("workspaceHub.sections.modules")}
                 subtitle={
@@ -296,14 +309,7 @@ export function WorkspaceHubView() {
                   ) : undefined
                 }
               />
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(auto-fill, 158px)",
-                  gap: 16,
-                  maxWidth: 870,
-                }}
-              >
+              <div className="grid max-w-[870px] grid-cols-2 gap-3 sm:grid-cols-[repeat(auto-fill,minmax(148px,158px))] sm:gap-4">
                 {filteredModules.map((ws) => (
                   <HubModuleTile
                     key={ws.workspaceKey}
@@ -353,14 +359,7 @@ export function WorkspaceHubView() {
                 title={t("workspaceHub.sections.administration")}
                 subtitle={t("workspaceHub.admin.subtitle")}
               />
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(auto-fill, 158px)",
-                  gap: 16,
-                  maxWidth: 870,
-                }}
-              >
+              <div className="grid max-w-[870px] grid-cols-2 gap-3 sm:grid-cols-[repeat(auto-fill,minmax(148px,158px))] sm:gap-4">
                 {filteredAdmin.map((ws) => (
                   <HubModuleTile
                     key={ws.workspaceKey}
@@ -437,12 +436,16 @@ export function WorkspaceHubView() {
           onUpgrade={() => {
             setUpgradeTarget(null);
             if (!hasTenantContext && upgradeWs?.isModuleWorkspace) {
-              router.push("/tenants");
+              setSwitcherOpen(true);
             } else {
               router.push("/entitlements/editions/compare");
             }
           }}
         />
+      )}
+
+      {switcherOpen && (
+        <TenantContextSwitcherDialog open={switcherOpen} onOpenChange={setSwitcherOpen} />
       )}
     </main>
   );

@@ -45,10 +45,10 @@ interface SubscriptionsDataTableProps {
 const STATUS_COLORS: Record<string, string> = {
   Active: "bg-success/10 text-success border-success/30",
   Trialing: "bg-info/10 text-info border-info/30",
-  Suspended: "bg-warning/10 text-warning border-warning/30",
+  Suspended: "bg-warning/10 text-nx-warning-strong border-warning/30",
   Canceled: "bg-destructive/10 text-destructive border-destructive/30",
   Expired: "bg-nx-raised text-nx-ink-2 border-nx-line",
-  GracePeriod: "bg-warning/10 text-warning border-warning/30",
+  GracePeriod: "bg-warning/10 text-nx-warning-strong border-warning/30",
 };
 
 // See UpcomingRenewalsTimeline for why Monthly/Lifetime borrow the workspace
@@ -216,7 +216,7 @@ export function SubscriptionsDataTable({
                             {sub.editionName}
                           </span>
                           {sub.isDowngraded && (
-                            <span className="text-[10px] font-semibold text-warning">
+                            <span className="text-[10px] font-semibold text-nx-warning-strong">
                               {t("entSubscriptions.downgraded")}
                             </span>
                           )}

@@ -21,32 +21,32 @@ export function BrandedFullLayout({
 }: LoginLayoutProps) {
   return (
     <div
-      className={`relative flex min-h-screen w-full items-center justify-center ${BG_STYLE} login-page selection:bg-primary/20`}
+      className={`relative flex min-h-[100dvh] w-full items-center justify-center ${BG_STYLE} login-page`}
       dir={direction}
       style={WRAPPER_STYLE}
     >
       <OverlayDiv />
       {topActions}
-      <div
-        className="border-[var(--login-border,hsl(var(--border)))]/50 relative z-10 mx-4 w-full border backdrop-blur-xl"
+      <main
+        className="relative z-10 mx-4 w-full border border-[var(--login-border,var(--nx-line))]"
         style={{
           maxWidth: "var(--login-form-width, 480px)",
           borderRadius: "var(--login-radius-card, 16px)",
           padding: "var(--login-card-padding, 32px)",
-          boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))",
+          boxShadow: "var(--login-shadow-card, none)",
           backgroundColor:
-            "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 95%, transparent)",
+            "color-mix(in srgb, var(--login-surface, var(--nx-surface)) 95%, transparent)",
         }}
       >
         <div className="mb-8 flex flex-col items-center gap-3 text-center">
           <div
-            className="flex h-16 w-16 items-center justify-center overflow-hidden border border-border bg-background shadow-sm"
+            className="flex h-16 w-16 items-center justify-center overflow-hidden border border-nx-line bg-nx-surface"
             style={{ borderRadius: "var(--login-radius-card, 12px)" }}
           >
             <LogoImg logoSrc={logoSrc} logoAlt={logoAlt} />
           </div>
           <h1
-            className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
+            className="login-heading tracking-tight text-[var(--login-text,var(--nx-ink))]"
             style={{ fontSize: "var(--login-size-headline, 1.5rem)" }}
           >
             {companyName}
@@ -55,7 +55,7 @@ export function BrandedFullLayout({
         <SlotRenderer slotId="login.form.above" slotConfig={slotConfig} className="mb-4" />
         {formContent}
         {footerSlot}
-      </div>
+      </main>
     </div>
   );
 }

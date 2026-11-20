@@ -107,27 +107,29 @@ export function TenantWidgetCardWrapper({
       ref={setNodeRef}
       style={style}
       className={`widget-container min-w-0 ${colSpanClass} group relative transition-all ${
-        isDragging ? "z-50 opacity-40" : "z-0"
+        isDragging ? "z-sticky opacity-40" : "z-0"
       }`}
     >
       <div
         ref={contentRef}
-        className="border-nx-accent/40 bg-nx-surface/90 relative h-fit rounded-nx-lg border-2 border-dashed p-2.5 transition-all hover:border-nx-accent hover:bg-nx-surface"
+        className="relative h-fit rounded-nx-lg border-2 border-dashed border-nx-accent bg-nx-surface p-2.5 transition-colors hover:border-nx-accent"
       >
         {/* Responsive Customization Controls Toolbar */}
         <div className="widget-toolbar-container mb-2.5 rounded-nx-md border border-nx-line bg-nx-raised px-2.5 py-1.5">
           {/* Header Row: Drag Handle, Title & Category */}
           <div className="widget-toolbar-header-row flex min-w-0 items-center gap-1.5">
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="icon"
               {...attributes}
               {...listeners}
-              className="flex h-7 w-7 shrink-0 cursor-grab items-center justify-center rounded-nx-sm border border-nx-line bg-nx-surface text-nx-ink-3 hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus active:cursor-grabbing"
+              className="flex h-7 w-7 shrink-0 cursor-grab items-center justify-center rounded-nx-sm border border-nx-line bg-nx-surface p-0 text-nx-ink-3 hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus active:cursor-grabbing"
               title={t("tenantCommandCenter.customization.dragToReorder") || "Drag to reorder"}
               aria-label={t("tenantCommandCenter.customization.dragToReorder") || "Drag to reorder"}
             >
               <GripVertical className="h-4 w-4" />
-            </button>
+            </Button>
 
             <span className="truncate text-xs font-semibold text-nx-ink" title={displayTitle}>
               {displayTitle}
@@ -155,24 +157,25 @@ export function TenantWidgetCardWrapper({
                 if (!isAllowed) return null;
 
                 return (
-                  <button
+                  <Button
                     key={span}
                     type="button"
+                    variant="ghost"
                     onClick={() => {
                       if (onResize && definition) {
                         onResize(item.id, clampColSpan(item.widgetId, span));
                       }
                     }}
-                    className={`rounded-nx-xs px-1.5 py-0.5 text-[10px] font-semibold transition-colors focus-visible:outline-none focus-visible:shadow-nx-focus ${
+                    className={`h-auto rounded-nx-sm px-1.5 py-0.5 text-[10px] font-semibold transition-colors focus-visible:outline-none focus-visible:shadow-nx-focus ${
                       isCurrent
-                        ? "bg-nx-accent font-bold text-nx-on-fill"
+                        ? "bg-nx-accent-fill font-bold text-nx-on-fill hover:brightness-95"
                         : "text-nx-ink-3 hover:bg-nx-raised hover:text-nx-ink"
                     }`}
                     title={`Set width to ${label}`}
                     aria-label={`Set width to ${label}`}
                   >
                     {label}
-                  </button>
+                  </Button>
                 );
               })}
             </div>

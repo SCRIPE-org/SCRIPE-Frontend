@@ -7,8 +7,8 @@ export const TENANTS_ENDPOINTS = {
   LIST: `${V1}/Tenants`,
   TREE: `${V1}/Tenants/tree`,
   RESOLVE: `${V1}/customization/resolve`,
-  MY_CHILDREN: `${V1}/Tenants/myChildren`,
-  MY_TENANT_AND_CHILDREN: `${V1}/Tenants/myTenantAndChildren`,
+  CURRENT_TENANT_CHILDREN: `${V1}/tenants/current-tenant/children`,
+  CURRENT_TENANT_HIERARCHY: `${V1}/tenants/current-tenant/hierarchy`,
   CHILDREN: (parentId: string) => `${V1}/Tenants/${parentId}/children`,
   BY_ID: (id: string) => `${V1}/Tenants/${id}`,
   STATS: (id: string) => `${V1}/Tenants/${id}/stats`,
@@ -17,8 +17,8 @@ export const TENANTS_ENDPOINTS = {
   DELETE: (id: string) => `${V1}/Tenants/${id}`,
   CREATION_PERMISSIONS: `${V1}/Tenants/creation-permissions`,
   SETTINGS: (id: string) => `${V1}/Tenants/${id}/settings`,
-  MY_SETTINGS: `${V1}/customization/settings`,
-  MY_BRANDING: `${V1}/customization/branding`,
+  CURRENT_SETTINGS: `${V1}/customization/settings`,
+  CURRENT_BRANDING: `${V1}/customization/branding`,
   PUBLISH_BRANDING: `${V1}/customization/settings/publish`,
   DISCARD_DRAFT: `${V1}/customization/settings/draft`,
   ROLLBACK: (targetVersion: number) => `${V1}/customization/settings/rollback/${targetVersion}`,
@@ -37,6 +37,11 @@ export const TENANTS_ENDPOINTS = {
   DOMAIN_PRIMARY: (id: string, domainId: string) =>
     `${V1}/Tenants/${id}/domains/${domainId}/primary`,
   DOMAIN_VERIFY: (id: string, domainId: string) => `${V1}/Tenants/${id}/domains/${domainId}/verify`,
+  IDENTITY_PROVIDERS: (tenantId: string) => `${V1}/tenants/${tenantId}/identity-providers`,
+  IDENTITY_PROVIDER_BY_ID: (tenantId: string, id: string) =>
+    `${V1}/tenants/${tenantId}/identity-providers/${id}`,
+  IDENTITY_PROVIDER_TEST_CONNECTION: (tenantId: string, id: string) =>
+    `${V1}/tenants/${tenantId}/identity-providers/${id}/test-connection`,
   ENTITLEMENTS: {
     EDITIONS: {
       LIST: `${V1}/editions`,

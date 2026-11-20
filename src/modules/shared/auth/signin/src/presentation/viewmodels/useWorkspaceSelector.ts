@@ -28,7 +28,7 @@ interface UseWorkspaceSelectorOptions {
   isRedirectTriggered: () => boolean;
   onRedirectTriggered: () => void;
   handleRedirect: (path: string) => void;
-  enterTwoFactor: () => void;
+  enterTwoFactor: (pendingToken?: string | null, persistSession?: boolean) => void;
   /** Called by enterTwoFactor so 2FA knows which tenantId to verify against */
   onTenantResolved: (id: string | undefined) => void;
 }
@@ -110,7 +110,7 @@ export function useWorkspaceSelector(opts: UseWorkspaceSelectorOptions) {
           // Persist the selected tenantId so handleVerify2FA verifies against the right tenant
           onTenantResolved(chosenTenantId);
           setTenantId(chosenTenantId);
-          enterTwoFactor();
+          enterTwoFactor(err.twoFactorPendingToken, err.staySignedIn);
           return;
         }
         if (err instanceof WorkspaceSelectionRequiredError) {
@@ -171,7 +171,7 @@ export function useWorkspaceSelector(opts: UseWorkspaceSelectorOptions) {
         if (err instanceof TwoFactorRequiredError) {
           onTenantResolved(chosenTenantId);
           setTenantId(chosenTenantId);
-          enterTwoFactor();
+          enterTwoFactor(err.twoFactorPendingToken, err.staySignedIn);
           return;
         }
         // Rethrow so WorkspaceCard can display inline error

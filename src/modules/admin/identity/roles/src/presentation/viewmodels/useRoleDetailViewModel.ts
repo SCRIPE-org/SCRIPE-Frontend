@@ -137,7 +137,7 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
       if (role?.tenantId) {
         return roleRepository.getTenantAvailablePermissionsGrouped(role.tenantId);
       }
-      return roleRepository.getMyTenantAvailablePermissionsGrouped(searchQuery || undefined);
+      return roleRepository.getCurrentTenantAvailablePermissionsGrouped(searchQuery || undefined);
     },
     enabled: !roleLoading,
   });

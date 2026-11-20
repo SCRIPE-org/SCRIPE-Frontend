@@ -28,7 +28,7 @@ export function StripeTestModeBanner() {
   if (!isStripeTestMode || dismissed) return null;
 
   return (
-    <Alert className="relative border-warning/30 bg-warning/10 text-warning [&>svg]:text-warning">
+    <Alert className="relative border-warning/30 bg-warning/10 text-nx-warning-strong [&>svg]:text-nx-warning-strong">
       <AlertTriangle className="h-4 w-4" aria-hidden="true" />
       <AlertTitle>{t("billing.testMode.label")}</AlertTitle>
       <AlertDescription>{t("billing.testMode.description")}</AlertDescription>

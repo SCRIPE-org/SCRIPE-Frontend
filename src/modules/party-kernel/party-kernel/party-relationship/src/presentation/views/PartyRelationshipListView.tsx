@@ -47,6 +47,7 @@ export const PartyRelationshipListView = React.memo(function PartyRelationshipLi
   ];
 
   const config: CrudConfig<PartyRelationship> = {
+    stickyActions: true,
     titleKey: "partyRelationship.title",
     subtitleKey: "partyRelationship.description",
     resource: "party-relationships",

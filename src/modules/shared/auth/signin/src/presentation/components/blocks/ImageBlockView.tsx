@@ -45,7 +45,7 @@ export function ImageBlockView({ block }: { block: ImageBlock }) {
     <figure className="flex flex-col items-center gap-2" style={wrapperStyle}>
       {content}
       {props.caption && (
-        <figcaption className="text-center text-xs text-muted-foreground">
+        <figcaption className="text-center text-xs text-nx-ink-2">
           {props.caption}
         </figcaption>
       )}

@@ -5,8 +5,8 @@ import { V1 } from "@/core/config/api-endpoints/_shared";
  */
 export const BRANDING_ENDPOINTS = {
   TENANTS: {
-    MY_BRANDING: `${V1}/customization/branding`,
-    MY_SETTINGS: `${V1}/customization/settings`,
+    CURRENT_BRANDING: `${V1}/customization/branding`,
+    CURRENT_SETTINGS: `${V1}/customization/settings`,
     PUBLISH_BRANDING: `${V1}/customization/settings/publish`,
     DISCARD_DRAFT: `${V1}/customization/settings/draft`,
     ROLLBACK: (targetVersion: number) => `${V1}/customization/settings/rollback/${targetVersion}`,

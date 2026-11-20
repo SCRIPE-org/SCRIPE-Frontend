@@ -11,6 +11,7 @@
  */
 
 import { cn, resolveBilingualLabel } from "@core/common/utils";
+import { Button } from "@core/ui/button";
 import { Lock, ChevronRight } from "lucide-react";
 import { DynamicIcon } from "@core/ui/layout/nexus/_parts/primary-rail-parts";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -54,15 +55,16 @@ export function WorkspaceHubCard({
   const accentColorBorder = `oklch(0.65 ${chroma} ${hue} / 0.25)`;
 
   return (
-    <button
+    <Button
       type="button"
+      variant="ghost"
       onClick={onClick}
       disabled={isLocked}
       className={cn(
-        "group relative flex w-full flex-col items-start gap-3 rounded-nx-lg border p-5 text-start",
-        "transition-[border-color] duration-nx-standard ease-nx-enter motion-reduce:transition-none",
+        "group relative flex h-auto w-full flex-col items-start justify-start gap-3 whitespace-normal rounded-nx-lg border p-5 text-start font-normal",
+        "transition-[border-color] duration-nx-standard ease-nx-enter hover:bg-transparent motion-reduce:transition-none",
         "focus-visible:shadow-nx-focus focus-visible:outline-none",
-        isLocked ? "cursor-not-allowed border-nx-line bg-nx-raised" : "cursor-pointer"
+        isLocked ? "cursor-not-allowed border-nx-line bg-nx-raised hover:bg-nx-raised" : "cursor-pointer"
       )}
       style={isLocked ? undefined : { background: accentColorBg, borderColor: accentColorBorder }}
     >
@@ -120,16 +122,7 @@ export function WorkspaceHubCard({
           {lastAccessed}
         </div>
       )}
-
-      {/* Accent bottom border line */}
-      {!isLocked && (
-        <div
-          aria-hidden="true"
-          className="absolute inset-x-0 bottom-0 h-0.5 rounded-b-nx-lg opacity-50 transition-opacity duration-nx-standard ease-nx-enter group-hover:opacity-100 motion-reduce:transition-none"
-          style={{ background: accentColor }}
-        />
-      )}
-    </button>
+    </Button>
   );
 }
 

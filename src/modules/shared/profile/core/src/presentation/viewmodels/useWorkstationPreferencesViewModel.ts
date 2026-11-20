@@ -5,239 +5,258 @@
  *
  * ViewModel for Workstation Preferences & Ergonomics.
  * Coordinates Relay vNext Theme Mode, Brand Accent Hue, UI Density,
- * Bilingual Direction (EN/AR), and Timezone configuration.
- * Hydrates from and persists to backend database (`identity.admin_preferences`) while keeping
- * Zustand (`useAppStore`) and local DOM state synchronized with zero latency.
+ * Broadcast Privacy Blur, Bilingual Direction (EN/AR), Numeral System,
+ * Operating Timezone, Reduced Motion, and Smart Toast Viewport Position.
  */
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useTheme } from "next-themes";
+import { useQueryClient } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useAppStore } from "@core/store/useAppStore";
-import { useAccountPreferencesSliceViewModel } from "./useSovereignAccountSlicesViewModel";
+import { toast } from "@core/ui/sileo-toast";
+import type { SovereignPreferencesSlice } from "../../domain/entities/SovereignAccountWorkstationEntities";
+import {
+  sovereignAccountKeys,
+  useAccountPreferencesSliceViewModel,
+} from "./useSovereignAccountSlicesViewModel";
+import {
+  usePreferencesMutationQueue,
+  type PreferencesSyncStatus,
+} from "./usePreferencesMutationQueue";
+import {
+  invalidateOnConcurrencyConflict,
+  isConcurrencyConflictError,
+  resolveProfileSaveErrorMessage,
+} from "../utils/concurrency";
+import {
+  ACCENT_PALETTES,
+  VALID_TOAST_POSITIONS,
+  applyAccentDom,
+  applyDensityDom,
+  applyNumeralSystemDom,
+  applyPrivacyBlurDom,
+  applyReducedMotionDom,
+  applyTimezoneDom,
+  applyToastPositionDom,
+  detectDefaultTimezone,
+  hydrateErgonomicsFromPreferences,
+  readInitialAccent,
+  readInitialNumeralSystem,
+  readInitialToastPosition,
+  type AccentHue,
+  type NumeralSystem,
+  type ToastPosition,
+  type UiDensity,
+} from "../utils/preferences-ergonomics.utils";
 
-export type AccentHue = "signal-lime" | "electric-emerald" | "ocean-blue" | "amber-gold";
-export type UiDensity = "comfortable" | "compact";
-export type ToastPosition =
-  | "top-right"
-  | "top-left"
-  | "top-center"
-  | "bottom-right"
-  | "bottom-left"
-  | "bottom-center"
-  | "top-end"
-  | "top-start"
-  | "bottom-end"
-  | "bottom-start";
+export {
+  ACCENT_PALETTES,
+  VALID_TOAST_POSITIONS,
+  type AccentHue,
+  type NumeralSystem,
+  type ToastPosition,
+  type UiDensity,
+};
 
-export const VALID_TOAST_POSITIONS: ToastPosition[] = [
-  "top-right",
-  "top-left",
-  "top-center",
-  "bottom-right",
-  "bottom-left",
-  "bottom-center",
-  "top-end",
-  "top-start",
-  "bottom-end",
-  "bottom-start",
-];
-
-export const ACCENT_PALETTES: Array<{ id: AccentHue; label: string; hex: string }> = [
-  { id: "signal-lime", label: "Signal Lime (Standard)", hex: "#84cc16" },
-  { id: "electric-emerald", label: "Electric Emerald", hex: "#10b981" },
-  { id: "ocean-blue", label: "Tactical Cyan", hex: "#06b6d4" },
-  { id: "amber-gold", label: "Executive Amber", hex: "#f59e0b" },
-];
-
+/** ViewModel hook coordinating theme, accent, density, locale, timezone, and FIFO preference sync. */
 export function useWorkstationPreferencesViewModel() {
   const { theme, setTheme: setNextTheme, resolvedTheme } = useTheme();
-  const { language, setLanguage: setI18nLanguage, direction } = useI18n();
+  const { language, setLanguage: setI18nLanguage, direction, t } = useI18n();
+  const queryClient = useQueryClient();
   const setAppStoreDensity = useAppStore((s) => s.setDensity);
-  const { preferences, updatePreferences } = useAccountPreferencesSliceViewModel();
-  const isRtl = direction === "rtl";
+  const {
+    preferences,
+    isLoadingPreferences,
+    isPreferencesError,
+    preferencesError,
+    refetchPreferences,
+    updatePreferences,
+    isUpdatingPreferences,
+  } = useAccountPreferencesSliceViewModel();
+
+  const [persistError, setPersistError] = useState<string | null>(null);
   const hasHydratedFromDbRef = useRef(false);
 
-  const [accent, setAccentState] = useState<AccentHue>(() => {
-    if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("scr_pref_accent") as AccentHue | null;
-      if (stored) return stored;
-    }
-    return "signal-lime";
-  });
-
+  const [accent, setAccentState] = useState<AccentHue>(readInitialAccent);
   const [density, setDensityState] = useState<UiDensity>(() => {
     if (typeof window !== "undefined") {
       const stored = localStorage.getItem("scr_pref_density") as UiDensity | null;
       if (stored === "compact" || stored === "comfortable") return stored;
     }
-    const storeDensity = useAppStore.getState().density;
-    return storeDensity === "compact" ? "compact" : "comfortable";
+    return useAppStore.getState().density === "compact" ? "compact" : "comfortable";
   });
-
-  const [timezone, setTimezoneState] = useState<string>(() => {
-    if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("scr_pref_timezone");
-      if (stored) return stored;
-      try {
-        const detected = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        if (detected) return detected;
-      } catch {
-        // ignore
-      }
-    }
-    return "Africa/Cairo";
-  });
-
-  const [toastPosition, setToastPositionState] = useState<ToastPosition>(() => {
-    if (typeof window !== "undefined") {
-      const stored = localStorage.getItem("scr_pref_toast_position") as ToastPosition | null;
-      if (stored && VALID_TOAST_POSITIONS.includes(stored)) return stored;
-    }
-    return "top-right";
-  });
-
-  const dbAccentHue = preferences?.clubAccentHue;
-  const dbUiDensity = preferences?.density;
-  const dbTimezone = preferences?.operatingTimezone;
-  const dbToastPosition = preferences?.toastPosition;
-
-  // Hydrate Zustand & DOM from DB `identity.admin_preferences` when preferences load
-  useEffect(() => {
-    if (!dbAccentHue && !dbUiDensity && !dbTimezone && !dbToastPosition) return;
-    if (hasHydratedFromDbRef.current) return;
-    hasHydratedFromDbRef.current = true;
-
-    if (
-      dbAccentHue === "signal-lime" ||
-      dbAccentHue === "electric-emerald" ||
-      dbAccentHue === "ocean-blue" ||
-      dbAccentHue === "amber-gold"
-    ) {
-      setAccentState(dbAccentHue);
-      if (typeof window !== "undefined") {
-        localStorage.setItem("scr_pref_accent", dbAccentHue);
-        document.documentElement.setAttribute("data-accent", dbAccentHue);
-      }
-    }
-    if (dbUiDensity === "compact" || dbUiDensity === "comfortable") {
-      setDensityState(dbUiDensity);
-      setAppStoreDensity(dbUiDensity);
-      if (typeof window !== "undefined") {
-        localStorage.setItem("scr_pref_density", dbUiDensity);
-        document.documentElement.setAttribute("data-density", dbUiDensity);
-      }
-    }
-    if (dbTimezone) {
-      setTimezoneState(dbTimezone);
-      if (typeof window !== "undefined") {
-        localStorage.setItem("scr_pref_timezone", dbTimezone);
-      }
-    }
-    if (dbToastPosition && VALID_TOAST_POSITIONS.includes(dbToastPosition as ToastPosition)) {
-      setToastPositionState(dbToastPosition as ToastPosition);
-      if (typeof window !== "undefined") {
-        localStorage.setItem("scr_pref_toast_position", dbToastPosition);
-        window.dispatchEvent(
-          new CustomEvent("scripe:toast-position-changed", { detail: dbToastPosition })
-        );
-      }
-    }
-  }, [dbAccentHue, dbUiDensity, dbTimezone, dbToastPosition, setAppStoreDensity]);
-
-  const persistSettingsToBackend = useCallback(
-    (patch: {
-      themeMode?: string;
-      clubAccentHue?: string;
-      density?: string;
-      languageCode?: string;
-      operatingTimezone?: string;
-      toastPosition?: string;
-    }) => {
-      updatePreferences(patch).catch(() => {
-        // Optimistic local + Zustand update still succeeds if offline
-      });
-    },
-    [updatePreferences]
+  const [timezone, setTimezoneState] = useState<string>(detectDefaultTimezone);
+  const [toastPosition, setToastPositionState] = useState<ToastPosition>(readInitialToastPosition);
+  const [privacyBlur, setPrivacyBlurState] = useState<boolean>(() =>
+    typeof window !== "undefined" ? document.documentElement.hasAttribute("data-privacy-blur") : false
+  );
+  const [numeralSystem, setNumeralSystemState] = useState<NumeralSystem>(readInitialNumeralSystem);
+  const [reducedMotion, setReducedMotionState] = useState<boolean>(() =>
+    typeof window !== "undefined" ? document.documentElement.hasAttribute("data-reduced-motion") : false
   );
 
-  const setTheme = (newTheme: string) => {
-    setNextTheme(newTheme);
-    const mode =
-      newTheme === "light" || newTheme === "dark" || newTheme === "system"
-        ? newTheme
-        : "system";
-    persistSettingsToBackend({ themeMode: mode });
-  };
+  const tRef = useRef(t);
+  useEffect(() => { tRef.current = t; }, [t]);
 
-  const setAccent = (newAccent: AccentHue) => {
-    setAccentState(newAccent);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("scr_pref_accent", newAccent);
-      document.documentElement.setAttribute("data-accent", newAccent);
-    }
-    persistSettingsToBackend({ clubAccentHue: newAccent });
-  };
+  const {
+    enqueue,
+    syncStatus,
+    pendingCount,
+    clearError: clearQueueError,
+  } = usePreferencesMutationQueue({
+    initialRowVersion: preferences?.rowVersion,
+    mutate: (patch) => updatePreferences(patch),
+    onConflict: (error) => {
+      invalidateOnConcurrencyConflict(queryClient, sovereignAccountKeys.preferences(), error);
+      const message = resolveProfileSaveErrorMessage(error, tRef.current);
+      setPersistError(message);
+      toast.warning(message);
+    },
+    onError: (error) => {
+      if (isConcurrencyConflictError(error)) return;
+      const message = resolveProfileSaveErrorMessage(error, tRef.current);
+      setPersistError(message);
+      toast.error(message);
+    },
+  });
 
-  const setDensity = (newDensity: UiDensity) => {
-    setDensityState(newDensity);
-    setAppStoreDensity(newDensity);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("scr_pref_density", newDensity);
-      document.documentElement.setAttribute("data-density", newDensity);
-    }
-    persistSettingsToBackend({ density: newDensity });
-  };
+  useEffect(() => {
+    if (!preferences || hasHydratedFromDbRef.current) return;
+    hasHydratedFromDbRef.current = true;
+    hydrateErgonomicsFromPreferences(preferences, {
+      setAccentState,
+      setDensityState,
+      setAppStoreDensity,
+      setTimezoneState,
+      setToastPositionState,
+      setPrivacyBlurState,
+      setNumeralSystemState,
+      setReducedMotionState,
+    });
+  }, [preferences, setAppStoreDensity]);
 
-  const setLanguage = (newLang: "en" | "ar") => {
-    setI18nLanguage(newLang);
-    persistSettingsToBackend({ languageCode: newLang });
-  };
+  const persistSettingsToBackend = useCallback(
+    (patch: Partial<SovereignPreferencesSlice>) => {
+      setPersistError(null);
+      clearQueueError();
+      void enqueue(patch);
+    },
+    [enqueue, clearQueueError]
+  );
 
-  const setTimezone = (newTz: string) => {
-    setTimezoneState(newTz);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("scr_pref_timezone", newTz);
-    }
-    persistSettingsToBackend({ operatingTimezone: newTz });
-  };
+  const setTheme = useCallback(
+    (newTheme: string) => {
+      setNextTheme(newTheme);
+      const mode =
+        newTheme === "light" || newTheme === "dark" || newTheme === "system" ? newTheme : "system";
+      persistSettingsToBackend({ themeMode: mode });
+    },
+    [setNextTheme, persistSettingsToBackend]
+  );
 
-  const setToastPosition = (newPosition: ToastPosition) => {
-    setToastPositionState(newPosition);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("scr_pref_toast_position", newPosition);
-      window.dispatchEvent(
-        new CustomEvent("scripe:toast-position-changed", { detail: newPosition })
-      );
-    }
-    persistSettingsToBackend({ toastPosition: newPosition });
-  };
+  const setAccent = useCallback(
+    (newAccent: AccentHue) => {
+      setAccentState(newAccent);
+      applyAccentDom(newAccent);
+      persistSettingsToBackend({ clubAccentHue: newAccent });
+    },
+    [persistSettingsToBackend]
+  );
+
+  const setDensity = useCallback(
+    (newDensity: UiDensity) => {
+      setDensityState(newDensity);
+      setAppStoreDensity(newDensity);
+      applyDensityDom(newDensity);
+      persistSettingsToBackend({ density: newDensity });
+    },
+    [setAppStoreDensity, persistSettingsToBackend]
+  );
+
+  const setLanguage = useCallback(
+    (newLang: "en" | "ar") => {
+      setI18nLanguage(newLang);
+      persistSettingsToBackend({ languageCode: newLang });
+    },
+    [setI18nLanguage, persistSettingsToBackend]
+  );
+
+  const setPrivacyBlur = useCallback(
+    (checked: boolean) => {
+      setPrivacyBlurState(checked);
+      applyPrivacyBlurDom(checked);
+      persistSettingsToBackend({ broadcastPrivacyBlurDefault: checked });
+    },
+    [persistSettingsToBackend]
+  );
+
+  const setNumeralSystem = useCallback(
+    (sys: NumeralSystem) => {
+      setNumeralSystemState(sys);
+      applyNumeralSystemDom(sys);
+      persistSettingsToBackend({ numeralSystem: sys });
+    },
+    [persistSettingsToBackend]
+  );
+
+  const setTimezone = useCallback(
+    (newTz: string) => {
+      setTimezoneState(newTz);
+      applyTimezoneDom(newTz);
+      persistSettingsToBackend({ operatingTimezone: newTz });
+    },
+    [persistSettingsToBackend]
+  );
+
+  const setReducedMotion = useCallback(
+    (checked: boolean) => {
+      setReducedMotionState(checked);
+      applyReducedMotionDom(checked);
+      persistSettingsToBackend({ reducedMotionEnabled: checked });
+    },
+    [persistSettingsToBackend]
+  );
+
+  const setToastPosition = useCallback(
+    (newPosition: ToastPosition) => {
+      setToastPositionState(newPosition);
+      applyToastPositionDom(newPosition);
+      persistSettingsToBackend({ toastPosition: newPosition });
+    },
+    [persistSettingsToBackend]
+  );
 
   return {
-    // Theme
     theme: theme || "system",
     setTheme,
     resolvedTheme: resolvedTheme || "dark",
-
-    // Accent
     accent,
     setAccent,
     availableAccents: ACCENT_PALETTES,
-
-    // Density
     density,
     setDensity,
-
-    // Language / Direction
     language,
     setLanguage,
-    isRtl,
-
-    // Timezone
+    isRtl: direction === "rtl",
+    privacyBlur,
+    setPrivacyBlur,
+    numeralSystem,
+    setNumeralSystem,
     timezone,
     setTimezone,
-
-    // Toast Viewport Position
+    reducedMotion,
+    setReducedMotion,
     toastPosition,
     setToastPosition,
+    syncStatus: (isUpdatingPreferences && pendingCount === 0
+      ? "saving"
+      : syncStatus) as PreferencesSyncStatus,
+    pendingCount,
+    persistError,
+    isLoadingPreferences,
+    isPreferencesError,
+    preferencesError,
+    refetchPreferences,
+    preferences,
   };
 }

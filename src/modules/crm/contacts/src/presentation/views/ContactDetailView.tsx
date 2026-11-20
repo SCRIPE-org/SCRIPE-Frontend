@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -7,29 +8,37 @@ import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { Card } from "@core/ui/card";
-import { Input } from "@core/ui/input";
-import { Label } from "@core/ui/label";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@core/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
-import { AlertCircle, User, Building2, Briefcase, ChevronLeft, ChevronRight, Edit2, Mail, Phone, Calendar, ArrowUpRight } from "lucide-react";
-import { CRM_PERMISSIONS, CrmShell, ActivityTimeline } from "@modules/crm";
+import { AlertCircle, Briefcase, Building2, ChevronLeft, ChevronRight, Edit2, ArrowUpRight, Activity } from "lucide-react";
+import { CRM_PERMISSIONS, CrmShell, ActivityTimeline, CRM_TAB_ROUTES } from "@modules/crm";
+import type { CrmTabId } from "@modules/crm";
 import { ContactDetailSkeleton } from "../components/ContactDetailSkeleton";
+import { ContactDetailProfileCard } from "../components/ContactDetailProfileCard";
+import { ContactEditDialog } from "../components/ContactEditDialog";
+import { ContactDealsCard } from "../components/ContactDealsCard";
 import { useContactDetailViewModel } from "../viewmodels/useContactDetailViewModel";
 
 interface ContactDetailViewProps {
   contactId: string;
 }
 
+/** Commercial Contact 360 detail view (<200 lines). */
 export function ContactDetailView({ contactId }: ContactDetailViewProps) {
   const router = useRouter();
   const { t, language } = useI18n();
   const isRtl = language === "ar";
   const canUpdateContact = usePermission(CRM_PERMISSIONS.CONTACTS_UPDATE);
+  const canCreateOpp = usePermission(CRM_PERMISSIONS.OPPORTUNITIES_CREATE);
   const { state, isEditOpen, isSubmitting, submitError, accountOptions, setIsEditOpen, handleUpdateContact } = useContactDetailViewModel(contactId);
+
   const [editPrimaryAccount, setEditPrimaryAccount] = useState("");
   const [editJobTitle, setEditJobTitle] = useState("");
   const [editDepartment, setEditDepartment] = useState("");
   const [editNotes, setEditNotes] = useState("");
+
+  const handleTabChange = (tab: CrmTabId) => {
+    const route = CRM_TAB_ROUTES[tab];
+    if (route) router.push(route);
+  };
 
   const openEditModal = () => {
     if (!state.contact) return;
@@ -40,36 +49,21 @@ export function ContactDetailView({ contactId }: ContactDetailViewProps) {
     setIsEditOpen(true);
   };
 
-  const onSaveEdit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const resolvedAccount = editPrimaryAccount && editPrimaryAccount !== "__none__" ? editPrimaryAccount.trim() : undefined;
-    await handleUpdateContact({
-      primaryAccountId: resolvedAccount,
-      jobTitleSnapshot: editJobTitle.trim() || undefined,
-      departmentName: editDepartment.trim() || undefined,
-      commercialNotes: editNotes.trim() || undefined,
-    });
-  };
-
   if (state.stage === "loading" && !state.contact) {
-    return (
-      <CrmShell activeTab="contacts" onTabChange={() => {}}>
-        <ContactDetailSkeleton />
-      </CrmShell>
-    );
+    return (<CrmShell activeTab="contacts" onTabChange={handleTabChange}><ContactDetailSkeleton /></CrmShell>);
   }
 
   if (state.stage === "failed" && !state.contact) {
     return (
-      <CrmShell activeTab="contacts" onTabChange={() => {}}>
+      <CrmShell activeTab="contacts" onTabChange={handleTabChange}>
         <div className="space-y-4">
           <Button variant="ghost" size="sm" onClick={() => router.push("/crm/contacts")} className="h-8 text-xs text-nx-ink-2 gap-1">
             {isRtl ? <ChevronRight className="size-4" /> : <ChevronLeft className="size-4" />}
-            <span>{t("crmContacts.detail.back") || "Back to Contacts"}</span>
+            <span>{t("crmContacts.detail.back")}</span>
           </Button>
           <Alert variant="destructive" className="border-destructive/20 bg-destructive/10">
             <AlertCircle className="size-4" />
-            <AlertTitle>{t("common.error") || "Error"}</AlertTitle>
+            <AlertTitle>{t("crmContacts.actions.error")}</AlertTitle>
             <AlertDescription className="text-xs">{state.error}</AlertDescription>
           </Alert>
         </div>
@@ -81,200 +75,75 @@ export function ContactDetailView({ contactId }: ContactDetailViewProps) {
   if (!contact) return null;
 
   return (
-    <CrmShell activeTab="contacts" onTabChange={() => {}}>
+    <CrmShell activeTab="contacts" onTabChange={handleTabChange}>
       <div className="space-y-6" dir={isRtl ? "rtl" : "ltr"}>
         <div className="flex items-center justify-between">
           <Button type="button" variant="ghost" size="sm" onClick={() => router.push("/crm/contacts")} className="h-8 text-xs text-nx-ink-2 gap-1 border border-nx-line bg-nx-surface hover:bg-nx-raised">
             {isRtl ? <ChevronRight className="size-3.5" /> : <ChevronLeft className="size-3.5" />}
-            <span>{t("crmContacts.detail.back") || "Back to Contacts"}</span>
+            <span>{t("crmContacts.detail.back")}</span>
           </Button>
-          {canUpdateContact && (
-            <Button type="button" variant="outline" size="sm" onClick={openEditModal} className="h-8 text-xs gap-1.5 border-nx-line bg-nx-surface text-nx-ink hover:bg-nx-raised">
-              <Edit2 className="size-3.5 text-nx-accent" />
-              <span>{t("crmContacts.actions.edit") || "Edit Contact Context"}</span>
+          <div className="flex flex-wrap items-center gap-2">
+            {canCreateOpp && (
+              <Button type="button" variant="outline" size="sm" onClick={() => router.push(`/crm/opportunities?create=1${contact.primaryAccountId ? `&accountId=${contact.primaryAccountId}` : ""}${contact.personPartyId ? `&partyId=${contact.personPartyId}` : ""}`)} className="h-8 text-xs gap-1.5 border-nx-line bg-nx-surface text-nx-ink hover:bg-nx-raised">
+                <Briefcase className="size-3.5 text-nx-accent" />
+                <span>{t("crmContacts.detail.createDealBtn")}</span>
+              </Button>
+            )}
+            <Button type="button" variant="outline" size="sm" onClick={() => router.push(`/crm/activities?contact=${contactId}`)} className="h-8 text-xs gap-1.5 border-nx-line bg-nx-surface text-nx-ink hover:bg-nx-raised">
+              <Activity className="size-3.5 text-nx-accent" />
+              <span>{t("crmContacts.detail.logActivityBtn")}</span>
             </Button>
-          )}
+            {canUpdateContact && (
+              <Button type="button" variant="outline" size="sm" onClick={openEditModal} className="h-8 text-xs gap-1.5 border-nx-line bg-nx-surface text-nx-ink hover:bg-nx-raised">
+                <Edit2 className="size-3.5 text-nx-accent" />
+                <span>{t("crmContacts.actions.edit")}</span>
+              </Button>
+            )}
+          </div>
         </div>
 
-        <Card className="rounded-nx-lg border border-nx-line bg-nx-surface p-5 space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="size-12 rounded-full bg-nx-raised border border-nx-line flex items-center justify-center shrink-0">
-                <User className="size-6 text-nx-accent" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <h1 className="text-xl font-bold text-nx-ink font-heading">
-                    {language === "ar" && contact.personLegalNameAr ? contact.personLegalNameAr : contact.personLegalNameEn}
-                  </h1>
-                  {contact.jobTitleSnapshot && <Badge variant="outline" className="border-nx-line bg-nx-raised text-nx-ink text-xs font-medium">{contact.jobTitleSnapshot}</Badge>}
-                  {contact.departmentName && <Badge variant="outline" className="border-nx-line bg-nx-raised text-nx-ink-2 text-xs">{contact.departmentName}</Badge>}
-                </div>
-                {contact.personLegalNameAr && language !== "ar" && <p className="text-xs text-nx-ink-3 font-arabic mt-0.5">{contact.personLegalNameAr}</p>}
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              {contact.email && (
-                <div className="rounded-nx-md border border-nx-line bg-nx-raised/50 px-3 py-1.5 flex items-center gap-2 text-xs text-nx-ink-2">
-                  <Mail className="size-3.5 text-nx-accent" />
-                  <span>{contact.email}</span>
-                </div>
-              )}
-              {contact.phone && (
-                <div className="rounded-nx-md border border-nx-line bg-nx-raised/50 px-3 py-1.5 flex items-center gap-2 text-xs text-nx-ink font-mono">
-                  <Phone className="size-3.5 text-nx-accent" />
-                  <span>{contact.phone}</span>
-                </div>
-              )}
-            </div>
-          </div>
-          {contact.commercialNotes && (
-            <div className="pt-3 border-t border-nx-line">
-              <span className="text-[11px] font-semibold text-nx-ink-3 uppercase block mb-1">{t("crmContacts.detail.notes") || "Relationship Context & Notes"}</span>
-              <p className="text-xs text-nx-ink-2 leading-relaxed bg-nx-raised/40 p-2.5 rounded-nx-md border border-nx-line/50">{contact.commercialNotes}</p>
-            </div>
-          )}
-        </Card>
+        <ContactDetailProfileCard contact={contact} language={language} isRtl={isRtl} t={t} />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Card className="rounded-nx-lg border border-nx-line bg-nx-surface p-4 space-y-3">
             <div className="flex items-center justify-between border-b border-nx-line pb-3">
               <div className="flex items-center gap-2">
                 <Building2 className="size-4 text-nx-accent" />
-                <h2 className="text-sm font-bold text-nx-ink">{t("crmContacts.detail.accountTitle") || "Primary Account Organization"}</h2>
+                <h2 className="text-sm font-bold text-nx-ink">{t("crmContacts.detail.organizationTitle")}</h2>
               </div>
             </div>
             {contact.primaryAccountId ? (
-              <div className="p-3.5 rounded-nx-md border border-nx-line bg-nx-raised/40 hover:border-nx-accent transition-all cursor-pointer flex items-center justify-between" onClick={() => router.push(`/crm/accounts/${contact.primaryAccountId}`)}>
-                <div className="flex items-center gap-3">
-                  <div className="size-9 rounded-nx-md bg-nx-surface border border-nx-line flex items-center justify-center shrink-0">
-                    <Building2 className="size-4.5 text-nx-accent" />
-                  </div>
-                  <div>
-                    <span className="text-xs font-bold text-nx-ink block hover:text-nx-accent">
-                      {language === "ar" && contact.primaryAccountNameAr ? contact.primaryAccountNameAr : contact.primaryAccountNameEn || t("crmContacts.detail.defaultAccountLabel")}
-                    </span>
-                    <span className="text-[11px] text-nx-ink-3">{t("crmContacts.detail.linkedOrganization")}</span>
-                  </div>
+              <div className="space-y-3 pt-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-semibold text-nx-ink">
+                    {language === "ar" && contact.primaryAccountNameAr ? contact.primaryAccountNameAr : contact.primaryAccountNameEn || t("crmContacts.detail.defaultAccountLabel")}
+                  </span>
+                  <Badge variant="outline" className="border-nx-line bg-nx-raised text-[10px]">{t("crmContacts.detail.primaryBadge")}</Badge>
                 </div>
-                <Button type="button" variant="ghost" size="sm" className="h-7 px-2 text-xs gap-1 text-nx-ink">
-                  <span>{t("crmAccounts.actions.view360")}</span>
-                  <ArrowUpRight className="size-3" />
+                <Button type="button" variant="outline" size="sm" onClick={() => router.push(`/crm/accounts/${contact.primaryAccountId}`)} className="w-full text-xs h-8 border-nx-line bg-nx-raised/60 hover:bg-nx-raised text-nx-ink justify-between">
+                  <span>{t("crmContacts.detail.viewAccount360")}</span>
+                  <ArrowUpRight className="size-3.5 text-nx-accent" />
                 </Button>
               </div>
             ) : (
-              <p className="text-xs text-nx-ink-3 py-6 text-center italic">{t("crmContacts.detail.noPrimaryAccount")}</p>
+              <div className="py-6 text-center space-y-2.5">
+                <p className="text-xs text-nx-ink-3 italic">{t("crmContacts.detail.noPrimaryAccount")}</p>
+                <Button type="button" variant="outline" size="sm" onClick={() => router.push("/crm/accounts")} className="h-7 text-xs gap-1.5 border-nx-line hover:border-nx-accent">
+                  <Building2 className="size-3 text-nx-accent" />
+                  <span>{t("crmContacts.detail.viewAccountsBtn")}</span>
+                </Button>
+              </div>
             )}
           </Card>
 
-          <Card className="rounded-nx-lg border border-nx-line bg-nx-surface p-4 space-y-3" data-testid="contact-buying-committee-rollup-card">
-            <div className="flex items-center justify-between border-b border-nx-line pb-3">
-              <div className="flex items-center gap-2">
-                <Briefcase className="size-4 text-nx-accent" />
-                <h2 className="text-sm font-bold text-nx-ink">{t("crmContacts.detail.dealsTitle")}</h2>
-              </div>
-              <Badge variant="outline" className="border-nx-line text-nx-ink-3 font-mono text-[11px]">{contact.opportunities?.length ?? 0}</Badge>
-            </div>
-            <div className="rounded-nx-md border border-nx-line bg-nx-raised/40 px-3 py-2 flex flex-wrap items-center justify-between gap-2 text-xs" data-testid="contact-buying-committee-summary">
-              <div className="flex items-center gap-2">
-                <span className="text-nx-ink-3">{t("crmContacts.detail.buyingCommitteeRoleLabel")}:</span>
-                <Badge variant="outline" className="text-[10px] font-mono bg-nx-surface">
-                  {contact.jobTitleSnapshot || t("crmContacts.detail.defaultBuyingRole")}
-                </Badge>
-              </div>
-              <div className="font-mono text-xs font-bold text-nx-ink">
-                {t("crmContacts.detail.influencedPipelineValueLabel")}:{" "}
-                {(contact.opportunities ?? []).reduce((sum, o) => sum + (Number(o.estimatedAmount) || 0), 0).toLocaleString()}{" "}
-                {contact.opportunities?.[0]?.currencyCode || "SAR"}
-              </div>
-            </div>
-            {contact.opportunities?.length === 0 ? (
-              <p className="text-xs text-nx-ink-3 py-6 text-center">{t("crmContacts.detail.noDeals")}</p>
-            ) : (
-              <div className="divide-y divide-nx-line">
-                {contact.opportunities?.map((opp) => (
-                  <div key={opp.id} className="py-2.5 flex items-center justify-between gap-3 hover:bg-nx-raised/30 px-1 rounded-nx-md cursor-pointer transition-colors" onClick={() => router.push(`/crm/opportunities/${opp.id}`)}>
-                    <div>
-                      <span className="text-xs font-semibold text-nx-ink block hover:text-nx-accent">{opp.title}</span>
-                      <div className="flex items-center gap-1.5 mt-0.5">
-                        <Badge variant="outline" className="border-nx-line bg-nx-raised text-[10px] py-0 px-1.5 text-nx-ink-2">
-                          {language === "ar" && opp.stageLabelAr ? opp.stageLabelAr : opp.stageLabelEn}
-                        </Badge>
-                        <span className="text-[10px] text-nx-ink-3 uppercase font-medium">{opp.status}</span>
-                      </div>
-                    </div>
-                    <div className="text-end">
-                      <span className="text-xs font-bold text-nx-ink font-mono block">
-                        {opp.estimatedAmount != null ? `${opp.estimatedAmount.toLocaleString()} ${opp.currencyCode}` : "••••••"}
-                      </span>
-                      {opp.targetCloseDate && (
-                        <span className="text-[10px] text-nx-ink-3 flex items-center gap-1 justify-end mt-0.5">
-                          <Calendar className="size-2.5" />
-                          {new Date(opp.targetCloseDate).toLocaleDateString(language === "ar" ? "ar-SA" : "en-US", { month: "short", day: "numeric" })}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </Card>
+          <ContactDealsCard opportunities={contact.opportunities} jobTitleSnapshot={contact.jobTitleSnapshot} language={language} t={t} onSelectOpportunity={(id) => router.push(id ? `/crm/opportunities/${id}` : "/crm/opportunities")} onViewAllOpportunities={() => router.push("/crm/opportunities")} />
         </div>
 
-        {contact.primaryAccountId && (
-          <Card className="p-5 bg-nx-surface border-nx-line">
-            <ActivityTimeline accountId={contact.primaryAccountId} targetLabel={language === "ar" && contact.personLegalNameAr ? contact.personLegalNameAr : contact.personLegalNameEn} />
-          </Card>
-        )}
+        <Card className="p-5 bg-nx-surface border-nx-line">
+          <ActivityTimeline accountId={contact.primaryAccountId || undefined} targetLabel={language === "ar" && contact.personLegalNameAr ? contact.personLegalNameAr : contact.personLegalNameEn} defaultRecipientEmail={contact.email} />
+        </Card>
 
-        <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-          <DialogContent className="sm:max-w-md bg-nx-surface border-nx-line text-nx-ink" dir={isRtl ? "rtl" : "ltr"}>
-            <form onSubmit={onSaveEdit}>
-              <DialogHeader>
-                <DialogTitle className="text-base font-bold text-nx-ink font-heading">{t("crmContacts.edit.title") || "Update Contact Context"}</DialogTitle>
-                <DialogDescription className="text-xs text-nx-ink-2">{t("crmContacts.edit.description") || "Edit primary commercial account assignment, organizational title, and notes."}</DialogDescription>
-              </DialogHeader>
-              {submitError && (
-                <Alert variant="destructive" className="my-3 border-destructive/20 bg-destructive/10 text-destructive text-xs py-2">
-                  <AlertCircle className="size-3.5" />
-                  <AlertDescription>{submitError}</AlertDescription>
-                </Alert>
-              )}
-              <div className="space-y-3.5 py-4 text-xs">
-                <div className="space-y-1.5">
-                  <Label htmlFor="edit-primary-account" className="text-nx-ink-2 font-medium">{t("crmContacts.create.primaryAccount", { defaultValue: "Primary Commercial Account" })}</Label>
-                  <Select value={editPrimaryAccount || "__none__"} onValueChange={setEditPrimaryAccount}>
-                    <SelectTrigger id="edit-primary-account" className="h-8 text-xs bg-nx-ground border-nx-line text-nx-ink">
-                      <SelectValue placeholder={t("crmContacts.create.selectAccountPlaceholder", { defaultValue: "Select primary account..." })} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="__none__">{t("crmContacts.create.noPrimaryAccount", { defaultValue: "None (Unlinked)" })}</SelectItem>
-                      {accountOptions.map((acc) => <SelectItem key={acc.id} value={acc.id}>{acc.displayName}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="edit-job-title" className="text-nx-ink-2 font-medium">{t("crmContacts.create.jobTitle") || "Job Title"}</Label>
-                    <Input id="edit-job-title" value={editJobTitle} onChange={(e) => setEditJobTitle(e.target.value)} className="h-8 text-xs bg-nx-ground border-nx-line text-nx-ink" />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="edit-department" className="text-nx-ink-2 font-medium">{t("crmContacts.create.department") || "Department"}</Label>
-                    <Input id="edit-department" value={editDepartment} onChange={(e) => setEditDepartment(e.target.value)} className="h-8 text-xs bg-nx-ground border-nx-line text-nx-ink" />
-                  </div>
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="edit-contact-notes" className="text-nx-ink-2 font-medium">{t("crmContacts.create.notes") || "Commercial Context Notes"}</Label>
-                  <Input id="edit-contact-notes" value={editNotes} onChange={(e) => setEditNotes(e.target.value)} className="h-8 text-xs bg-nx-ground border-nx-line text-nx-ink" />
-                </div>
-              </div>
-              <DialogFooter className="gap-2 sm:gap-0 pt-2 border-t border-nx-line">
-                <Button type="button" variant="outline" size="sm" onClick={() => setIsEditOpen(false)} disabled={isSubmitting} className="h-8 text-xs border-nx-line text-nx-ink-2">{t("common.cancel") || "Cancel"}</Button>
-                <Button type="submit" size="sm" disabled={isSubmitting} className="h-8 text-xs font-bold">{isSubmitting ? t("common.saving") || "Saving..." : t("common.saveChanges") || "Save Changes"}</Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
+        <ContactEditDialog isOpen={isEditOpen} isSubmitting={isSubmitting} submitError={submitError} accountOptions={accountOptions} initialAccountId={editPrimaryAccount} initialJobTitle={editJobTitle} initialDepartment={editDepartment} initialNotes={editNotes} onOpenChange={setIsEditOpen} onSave={async (data) => { await handleUpdateContact(data); }} isRtl={isRtl} t={t} />
       </div>
     </CrmShell>
   );

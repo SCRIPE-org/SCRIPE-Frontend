@@ -1,9 +1,8 @@
-import { LoadingSpinner } from "@core/ui/loading-spinner";
+"use client";
 
+import { ModulesLoadingSkeleton } from "@core/ui/layout/modules-loading-skeleton";
+
+/** Loading skeleton for `/crm/pipelines`. */
 export default function CrmPipelinesLoading() {
-  return (
-    <div className="flex min-h-[50vh] items-center justify-center">
-      <LoadingSpinner size="lg" />
-    </div>
-  );
+  return <ModulesLoadingSkeleton variant="crm" />;
 }

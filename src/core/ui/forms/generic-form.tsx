@@ -683,24 +683,13 @@ function CustomFieldExtensionControl({
       <Label htmlFor={field.name} className="text-start">
         {field.label}
         {isFieldRequired(field) && (
-          <span className="ms-1 text-destructive" aria-hidden="true">
+          <span className="ms-1 text-nx-danger" aria-hidden="true">
             *
           </span>
         )}
       </Label>
-      {/* eslint-disable-next-line jsx-a11y/role-supports-aria-props --
-          `aria-invalid` is a GLOBAL ARIA state (WAI-ARIA 1.1 promoted it to
-          §6.5 Global States and Properties, and 1.2 keeps it there), so it is
-          valid on any role including `group`. The rule's role table is
-          aria-query's older per-role list, which predates that promotion — the
-          warning is the plugin being out of date, not this markup being wrong.
-          It is kept rather than dropped because this component's every other
-          branch sets it, and the required-field pass genuinely does reject this
-          field; `aria-describedby` alone would leave the rejection unannounced
-          as a state. */}
-      <div
+      <fieldset
         id={field.name}
-        role="group"
         aria-label={field.label ?? field.name}
         aria-disabled="true"
         aria-invalid={invalid || undefined}
@@ -708,10 +697,13 @@ function CustomFieldExtensionControl({
         // Matches Input's own disabled skin (input.tsx: border-nx-line,
         // bg-nx-raised, text-nx-ink-3, no shadow) so it reads as a field that
         // is present but inoperable, not as a paragraph that lost its box.
-        className="flex min-h-10 w-full cursor-not-allowed items-center rounded-nx-control border border-nx-line bg-nx-raised px-3 py-2 text-sm text-nx-ink-3"
+        // Uses semantic <fieldset> (implicit `group` role) and keeps `aria-invalid`
+        // per WAI-ARIA 1.2 §6.5 global states so required-field validation stays
+        // screen-reader announced.
+        className="flex min-h-10 w-full min-w-0 cursor-not-allowed items-center rounded-nx-control border border-nx-line bg-nx-raised px-3 py-2 text-sm text-nx-ink-3"
       >
         {t("errors.module.description", { module: t("errors.module.unnamed") })}
-      </div>
+      </fieldset>
     </div>
   );
 }
@@ -799,6 +791,66 @@ export function GenericForm({
   const { t, direction } = useI18n();
   const { hasPermission, hasAnyPermission } = usePermissions();
 
+  const tr = React.useCallback(
+    (key: string, fallback: string) => {
+      const resolved = t(key, { defaultValue: fallback });
+      return resolved === key ? fallback : resolved;
+    },
+    [t]
+  );
+
+  const focusFirstErrorField = React.useCallback((fieldName: string) => {
+    setTimeout(() => {
+      const escaped =
+        typeof CSS !== "undefined" && typeof CSS.escape === "function"
+          ? CSS.escape(fieldName)
+          : fieldName.replace(/["\\]/g, "\\$&");
+      const container = document.querySelector<HTMLElement>(`[data-field-name="${escaped}"]`);
+      const byId = document.getElementById(fieldName);
+      const byName = document.querySelector<HTMLElement>(`[name="${escaped}"]`);
+      const isFocusableControl = (node: Element | null): node is HTMLElement => {
+        if (!(node instanceof HTMLElement)) return false;
+        if (node.hasAttribute("aria-hidden") && node.getAttribute("aria-hidden") === "true") {
+          return false;
+        }
+        if (node.tabIndex < 0) return false;
+        if (node.classList.contains("sr-only") || node.classList.contains("hidden")) {
+          return false;
+        }
+        if ("disabled" in node && (node as HTMLInputElement).disabled) return false;
+        return true;
+      };
+
+      const rawTarget = byId || byName || container;
+      const anchor = container || rawTarget;
+      anchor?.scrollIntoView?.({ behavior: "smooth", block: "center" });
+
+      let focusTarget: HTMLElement | null = null;
+      if (
+        isFocusableControl(byId) &&
+        (byId instanceof HTMLInputElement ||
+          byId instanceof HTMLTextAreaElement ||
+          byId instanceof HTMLSelectElement ||
+          byId instanceof HTMLButtonElement ||
+          byId.getAttribute("role") === "combobox" ||
+          byId.getAttribute("role") === "button")
+      ) {
+        focusTarget = byId;
+      } else {
+        const searchRoot = container ?? rawTarget;
+        focusTarget =
+          searchRoot?.querySelector<HTMLElement>(
+            "input:not([type='hidden']):not([tabindex='-1']):not([disabled]):not(.sr-only):not(.hidden), textarea:not([disabled]), select:not([disabled]), button:not([disabled]), [role='combobox']:not([tabindex='-1']), [role='button']:not([tabindex='-1']), [tabindex]:not([tabindex='-1'])"
+          ) ??
+          (isFocusableControl(rawTarget) ? rawTarget : null);
+      }
+
+      if (focusTarget && typeof focusTarget.focus === "function") {
+        focusTarget.focus({ preventScroll: true });
+      }
+    }, 50);
+  }, []);
+
   // Helper function to initialize form data with default values
   const initializeFormData = React.useCallback(
     (currentFields: FieldConfig[], currentInitialValues: Record<string, any>) => {
@@ -826,7 +878,7 @@ export function GenericForm({
     []
   );
 
-  const [formData, setFormData] = useState<Record<string, any>>(() =>
+  const [rawFormData, setFormData] = useState<Record<string, any>>(() =>
     initializeFormData(fields, initialValues)
   );
   const [loading, setLoading] = useState(false);
@@ -834,27 +886,38 @@ export function GenericForm({
   /** Rejection from onSubmit. The form used to swallow these entirely. */
   const [serverError, setServerError] = useState<string | null>(null);
 
-  // Re-initialize form data when fields change (for dynamic forms)
-  // IMPORTANT: Only populate values for NEW fields that don't exist in the current
-  // form data. Never overwrite existing user-typed values with initialValues.
-  // The updater MUST return the previous object unchanged when it adds nothing.
-  let added = false;
-  const preservedData = { ...formData };
-  fields.forEach((field) => {
-    // Only set default/initial value if this field has NO value yet
-    if (preservedData[field.name] === undefined) {
-      if (field.defaultValue !== undefined) {
-        preservedData[field.name] = field.defaultValue;
-        added = true;
-      } else if (initialValues[field.name] !== undefined) {
-        preservedData[field.name] = initialValues[field.name];
-        added = true;
+  // Derive defaults for dynamically revealed fields without overwriting
+  // user edits or calling setState synchronously inside render or useEffect.
+  const formData: Record<string, any> = (() => {
+    let added = false;
+    const merged: Record<string, any> = { ...rawFormData };
+    for (const field of fields) {
+      if (merged[field.name] === undefined) {
+        let initialVal: any;
+        if (field.defaultValue !== undefined) {
+          initialVal = field.defaultValue;
+        } else if (initialValues[field.name] !== undefined) {
+          initialVal = initialValues[field.name];
+        }
+        if (initialVal !== undefined) {
+          if (
+            (field.type === "date" ||
+              field.type === "datetime" ||
+              field.type === "datetime-local" ||
+              field.type === "time" ||
+              field.type === "month" ||
+              field.type === "week") &&
+            initialVal
+          ) {
+            initialVal = toDateInputValue(initialVal);
+          }
+          merged[field.name] = initialVal;
+          added = true;
+        }
       }
     }
-  });
-  if (added) {
-    setFormData(preservedData);
-  }
+    return added ? merged : rawFormData;
+  })();
 
   const handleChange = (name: string, value: any, extraKeys?: Record<string, any>) => {
     // Clear error when user changes the field
@@ -871,7 +934,7 @@ export function GenericForm({
       // editor, whose two newline lists are positionally aligned and must be written together or
       // every option after an edit shifts onto the wrong translation. Merged before the field's own
       // onChange runs, so a caller can still override.
-      const newData = { ...prev, [name]: value, ...(extraKeys ?? {}) };
+      const newData = { ...formData, ...prev, [name]: value, ...(extraKeys ?? {}) };
 
       // Find the field that changed and call its onChange callback if it exists
       const field = fields.find((f) => f.name === name);
@@ -887,7 +950,7 @@ export function GenericForm({
     });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // Re-entrancy guard: the fields stay editable while a submit is in flight,
     // and Enter in any of them re-fires this handler.
@@ -995,32 +1058,41 @@ export function GenericForm({
       }
     });
 
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
+    // `<form noValidate>` prevents browser validation popups so inline errors & the accessible
+    // ErrorSummary always render consistently. Bridge native HTML5 constraints (`pattern`, `min`,
+    // `max`, conditional extension `required`) on visible enabled controls when React validation
+    // did not already flag that field.
+    const formEl = e.currentTarget;
+    let firstNativeInvalid: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null =
+      null;
+    if (formEl && typeof formEl.querySelectorAll === "function") {
+      const nativeControls = formEl.querySelectorAll<
+        HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+      >("input, select, textarea");
+      for (const control of nativeControls) {
+        if (control.disabled || control.type === "hidden") continue;
+        if (typeof control.checkValidity === "function" && !control.checkValidity()) {
+          if (!firstNativeInvalid) firstNativeInvalid = control;
+          const wrapper = control.closest("[data-field-name]");
+          const ownerName =
+            wrapper?.getAttribute("data-field-name") || control.name || control.id;
+          if (ownerName && !newErrors[ownerName]) {
+            newErrors[ownerName] = control.validationMessage || t("validation.required");
+          }
+        }
+      }
+    }
+
+    if (Object.keys(newErrors).length > 0 || firstNativeInvalid) {
+      if (Object.keys(newErrors).length > 0) {
+        setErrors(newErrors);
+      }
       // Auto-scroll and focus first invalid field in DOM order
       const firstErrorField = visibleFields.find((f) => newErrors[f.name]);
       if (firstErrorField) {
-        setTimeout(() => {
-          const el =
-            document.getElementById(firstErrorField.name) ||
-            document.querySelector(`[name="${firstErrorField.name}"]`) ||
-            document.querySelector(`[data-field-name="${firstErrorField.name}"]`);
-          if (el) {
-            el.scrollIntoView?.({ behavior: "smooth", block: "center" });
-            const focusTarget =
-              el instanceof HTMLInputElement ||
-              el instanceof HTMLTextAreaElement ||
-              el instanceof HTMLSelectElement ||
-              el instanceof HTMLButtonElement
-                ? el
-                : el.querySelector<HTMLElement>(
-                    "input, textarea, button, select, [tabindex]:not([tabindex='-1'])"
-                  ) || el;
-            if (focusTarget && typeof focusTarget.focus === "function") {
-              focusTarget.focus({ preventScroll: true });
-            }
-          }
-        }, 50);
+        focusFirstErrorField(firstErrorField.name);
+      } else {
+        firstNativeInvalid?.focus?.();
       }
       return;
     }
@@ -1084,27 +1156,7 @@ export function GenericForm({
         setErrors((prev) => ({ ...prev, ...parsed.fieldErrors }));
         const firstErrorField = visibleFields.find((f) => parsed.fieldErrors[f.name]);
         if (firstErrorField) {
-          setTimeout(() => {
-            const el =
-              document.getElementById(firstErrorField.name) ||
-              document.querySelector(`[name="${firstErrorField.name}"]`) ||
-              document.querySelector(`[data-field-name="${firstErrorField.name}"]`);
-            if (el) {
-              el.scrollIntoView?.({ behavior: "smooth", block: "center" });
-              const focusTarget =
-                el instanceof HTMLInputElement ||
-                el instanceof HTMLTextAreaElement ||
-                el instanceof HTMLSelectElement ||
-                el instanceof HTMLButtonElement
-                  ? el
-                  : el.querySelector<HTMLElement>(
-                      "input, textarea, button, select, [tabindex]:not([tabindex='-1'])"
-                    ) || el;
-              if (focusTarget && typeof focusTarget.focus === "function") {
-                focusTarget.focus({ preventScroll: true });
-              }
-            }
-          }, 50);
+          focusFirstErrorField(firstErrorField.name);
         }
       }
       setServerError(
@@ -1260,6 +1312,7 @@ export function GenericForm({
     <div className={cn(getFormContainerClasses(), "text-start")} dir={direction}>
       <form
         onSubmit={handleSubmit}
+        noValidate
         className={getFormSpacing()}
         aria-busy={loading || undefined}
         autoComplete="off"
@@ -1272,19 +1325,19 @@ export function GenericForm({
         {showErrorSummary && Object.keys(errors).length > 0 && (
           <div
             role="alert"
-            className="rounded-nx-md border border-destructive/30 bg-destructive/10 p-3.5 text-destructive"
+            className="rounded-nx-md border border-nx-danger/40 bg-nx-danger/10 p-3.5 text-nx-ink"
           >
             <div className="flex items-start gap-2.5">
-              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-nx-danger" aria-hidden="true" />
               <div className="space-y-1 text-xs">
-                <p className="font-semibold">{t("validation.correctErrorsTitle")}</p>
-                <ul className="list-disc space-y-0.5 ps-4 text-[11px] text-destructive/90">
+                <p className="font-semibold text-nx-danger">{t("validation.correctErrorsTitle")}</p>
+                <ul className="list-disc space-y-0.5 ps-4 text-[11px] text-nx-ink-2">
                   {Object.entries(errors).map(([fieldName, errMsg]) => {
                     const f = fields.find((item) => item.name === fieldName);
                     const label = f?.label ? t(f.label) : fieldName;
                     return (
                       <li key={fieldName}>
-                        <span className="font-medium">{label}:</span> {errMsg}
+                        <span className="font-medium text-nx-ink">{label}:</span> {errMsg}
                       </li>
                     );
                   })}
@@ -1329,6 +1382,7 @@ export function GenericForm({
             ) : (
               <div
                 key={field.name}
+                data-field-name={field.name}
                 className={cn(
                   "relative",
                   getFieldSpacing(),
@@ -1350,11 +1404,19 @@ export function GenericForm({
                   field.type !== "checkbox" &&
                   !EXTENSION_DRAWN_FIELD_TYPES.has(field.type) && (
                     <div className="flex items-center gap-1">
-                      <Label htmlFor={field.name} className={cn(getLabelClasses(), "text-start")}>
+                      <Label
+                        htmlFor={field.name}
+                        className={cn(
+                          getLabelClasses(),
+                          "text-start",
+                          invalid && "text-nx-danger",
+                          field.disabled && "text-nx-ink-3"
+                        )}
+                      >
                         {field.label}
                       </Label>
                       {isFieldRequired(field, formData) && (
-                        <span className="text-sm font-medium text-destructive" aria-hidden="true">
+                        <span className="text-sm font-medium text-nx-danger" aria-hidden="true">
                           *
                         </span>
                       )}
@@ -1440,7 +1502,7 @@ export function GenericForm({
                     id={field.name}
                     aria-label={field.label ?? field.name}
                     invalid={invalid}
-                    required={field.required}
+                    required={isFieldRequired(field, formData)}
                     describedBy={describedBy}
                     loading={field.loading}
                     type="multi"
@@ -1537,10 +1599,12 @@ export function GenericForm({
                     }
                     disabled={field.disabled || inert}
                     readOnly={readOnly}
-                    labelEn={field.placeholder ?? "English"}
-                    labelAr={field.searchPlaceholder ?? "العربية"}
-                    addLabel={field.addLabel ?? "Add option"}
-                    removeLabel={field.removeLabel ?? "Remove"}
+                    labelEn={field.placeholder ?? tr("language.english", "English")}
+                    labelAr={field.searchPlaceholder ?? tr("language.arabic", "Arabic")}
+                    addLabel={
+                      field.addLabel ?? tr("components.bilingualOptions.addOption", "Add option")
+                    }
+                    removeLabel={field.removeLabel ?? tr("common.remove", "Remove")}
                     emptyHint={field.emptyHint ?? ""}
                   />
                 ) : field.type === "phone" || field.type === "tel" ? (
@@ -1550,6 +1614,9 @@ export function GenericForm({
                     onChange={(value) => handleChange(field.name, value)}
                     placeholder={field.placeholder}
                     disabled={inert}
+                    required={isFieldRequired(field, formData)}
+                    aria-invalid={invalid || undefined}
+                    aria-describedby={describedBy}
                     defaultCountry={field.defaultCountry as any}
                     error={errors[field.name]}
                     className={cn(getInputHeight(), "text-start")}
@@ -1563,7 +1630,7 @@ export function GenericForm({
                     className={cn(
                       getInputClasses("min-h-20"),
                       "text-start",
-                      invalid && "border-destructive focus-visible:ring-destructive"
+                      invalid && "border-nx-danger"
                     )}
                     placeholder={field.placeholder}
                     rows={field.rows || 4}
@@ -1577,6 +1644,11 @@ export function GenericForm({
                   />
                 ) : field.type === "richtext" ? (
                   <RichTextEditor
+                    id={field.name}
+                    ariaLabel={field.label ?? field.name}
+                    ariaDescribedBy={describedBy}
+                    ariaInvalid={invalid || undefined}
+                    error={invalid}
                     value={formData[field.name] ?? ""}
                     onChange={(value) => handleChange(field.name, value)}
                     placeholder={field.placeholder}
@@ -1591,10 +1663,17 @@ export function GenericForm({
                   // A switch labels itself on the row; the hint lands in the
                   // shared row below, like every other field type.
                   <div className="flex items-center justify-between gap-3">
-                    <Label htmlFor={field.name} className="text-start">
+                    <Label
+                      htmlFor={field.name}
+                      className={cn(
+                        "text-start",
+                        invalid && "text-nx-danger",
+                        field.disabled && "text-nx-ink-3"
+                      )}
+                    >
                       {field.label}
                       {isFieldRequired(field, formData) && (
-                        <span className="ms-1 text-destructive" aria-hidden="true">
+                        <span className="ms-1 text-nx-danger" aria-hidden="true">
                           *
                         </span>
                       )}
@@ -1603,7 +1682,10 @@ export function GenericForm({
                       id={field.name}
                       checked={formData[field.name] || false}
                       onCheckedChange={(checked) => handleChange(field.name, checked)}
-                      disabled={inert}
+                      disabled={field.disabled}
+                      readOnly={readOnly}
+                      aria-required={isFieldRequired(field, formData) || undefined}
+                      aria-invalid={invalid || undefined}
                       aria-describedby={describedBy}
                     />
                   </div>
@@ -1615,13 +1697,21 @@ export function GenericForm({
                       onCheckedChange={(checked) => handleChange(field.name, checked)}
                       disabled={inert}
                       design={settings.checkboxStyle}
+                      aria-required={isFieldRequired(field, formData) || undefined}
                       aria-describedby={describedBy}
                       aria-invalid={invalid || undefined}
                     />
-                    <Label htmlFor={field.name} className="cursor-pointer text-start">
+                    <Label
+                      htmlFor={field.name}
+                      className={cn(
+                        "cursor-pointer text-start",
+                        inert && "cursor-not-allowed text-nx-ink-3",
+                        invalid && "text-nx-danger"
+                      )}
+                    >
                       {field.label}
                       {isFieldRequired(field, formData) && (
-                        <span className="ms-1 text-destructive" aria-hidden="true">
+                        <span className="ms-1 text-nx-danger" aria-hidden="true">
                           *
                         </span>
                       )}
@@ -1629,10 +1719,13 @@ export function GenericForm({
                   </div>
                 ) : field.type === "radio" ? (
                   <RadioGroup
+                    id={field.name}
+                    aria-label={field.label ?? field.name}
                     value={formData[field.name] ?? ""}
                     onValueChange={(value) => handleChange(field.name, value)}
                     disabled={inert}
                     design={settings.radioStyle}
+                    aria-required={isFieldRequired(field, formData) || undefined}
                     aria-describedby={describedBy}
                     aria-invalid={invalid || undefined}
                   >
@@ -1655,6 +1748,8 @@ export function GenericForm({
                 ) : field.type === "slider" || field.type === "range" ? (
                   <div className="space-y-2">
                     <Slider
+                      aria-label={field.label ?? field.name}
+                      aria-valuetext={String(formData[field.name] ?? field.min ?? 0)}
                       value={[formData[field.name] ?? field.min ?? 0]}
                       onValueChange={(value) => handleChange(field.name, value[0])}
                       min={Number(field.min) || 0}
@@ -1685,9 +1780,13 @@ export function GenericForm({
                     value={formData[field.name] ?? ""}
                     onChange={(value) => handleChange(field.name, value)}
                     required={isFieldRequired(field, formData)}
+                    aria-label={field.label ?? field.name}
+                    aria-invalid={invalid || undefined}
+                    aria-describedby={describedBy}
                     className={cn(
                       getInputClasses(getInputHeight()),
-                      invalid && "border-destructive focus-visible:ring-destructive"
+                      invalid &&
+                        "[&_[role=combobox]]:border-nx-danger [&_[role=combobox]]:focus-visible:shadow-[inset_0_0_0_1px_var(--nx-danger),0_0_0_3px_color-mix(in_srgb,var(--nx-danger)_18%,transparent)]"
                     )}
                     placeholder={field.placeholder}
                     disabled={inert}
@@ -1701,7 +1800,13 @@ export function GenericForm({
                     placeholder={field.placeholder}
                     required={isFieldRequired(field, formData)}
                     disabled={inert}
-                    className={getInputClasses(getInputHeight())}
+                    aria-label={field.label ?? field.name}
+                    aria-invalid={invalid || undefined}
+                    aria-describedby={describedBy}
+                    className={cn(
+                      getInputClasses(getInputHeight()),
+                      invalid && "ring-1 ring-nx-danger rounded-nx-control"
+                    )}
                     accept={field.accept || "image/*"}
                     maxSize={field.maxSize}
                     showPreview={field.showPreview !== false}
@@ -1723,17 +1828,18 @@ export function GenericForm({
                     className={cn(
                       getInputClasses(getInputHeight()),
                       "text-start",
-                      invalid && "border-destructive focus-visible:ring-destructive"
+                      invalid && "border-nx-danger"
                     )}
                     accept={field.accept}
                     multiple={field.multiple}
                     disabled={inert}
+                    aria-required={isFieldRequired(field, formData) || undefined}
                     aria-describedby={describedBy}
                     aria-invalid={invalid || undefined}
                     dir={direction}
                   />
                 ) : field.type === "password" ? (
-                  <div className="relative w-full overflow-hidden rounded-nx-control">
+                  <div className="relative w-full">
                     <PasswordInput
                       id={field.name}
                       value={formData[field.name] ?? ""}
@@ -1742,7 +1848,7 @@ export function GenericForm({
                       className={cn(
                         getInputClasses(getInputHeight()),
                         "text-start",
-                        invalid && "border-destructive focus-visible:ring-destructive"
+                        invalid && "border-nx-danger"
                       )}
                       placeholder={field.placeholder}
                       disabled={field.disabled}
@@ -1759,7 +1865,7 @@ export function GenericForm({
                     />
                   </div>
                 ) : (
-                  <div className="relative w-full overflow-hidden rounded-nx-control">
+                  <div className="relative w-full">
                     <Input
                       id={field.name}
                       type={field.type}
@@ -1769,7 +1875,7 @@ export function GenericForm({
                       className={cn(
                         getInputClasses(getInputHeight()),
                         "text-start",
-                        invalid && "border-destructive focus-visible:ring-destructive"
+                        invalid && "border-nx-danger"
                       )}
                       placeholder={field.placeholder}
                       min={field.min}
@@ -1803,13 +1909,16 @@ export function GenericForm({
                       {errors[field.name] ? (
                         <p
                           id={errorId}
-                          className="flex items-center gap-1.5 text-xs font-medium text-destructive"
+                          className="flex items-center gap-1.5 text-xs font-medium text-nx-danger"
                         >
-                          <AlertCircle className="h-3.5 w-3.5 shrink-0 text-destructive" />
+                          <AlertCircle
+                            className="h-3.5 w-3.5 shrink-0 text-nx-danger"
+                            aria-hidden="true"
+                          />
                           <span>{errors[field.name]}</span>
                         </p>
                       ) : field.description ? (
-                        <p id={hintId} className="text-xs leading-relaxed text-nx-ink-3">
+                        <p id={hintId} className="text-xs leading-relaxed text-nx-ink-2">
                           {field.description}
                         </p>
                       ) : null}

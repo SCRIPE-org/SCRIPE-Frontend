@@ -22,6 +22,8 @@ export interface LoginResponseJson {
   success?: boolean;
   userProfile?: unknown | null;
   requires2FA?: boolean;
+  twoFactorPendingToken?: string | null;
+  staySignedIn?: boolean;
   requiresWorkspaceSelection?: boolean;
   availableWorkspaces?: Array<{
     tenantId: string;
@@ -82,9 +84,11 @@ export interface LoginResponseModel extends LoginResponseJson {
 
 export interface Verify2FARequestJson {
   identifier: string;
-  password: string;
+  password: string | null;
   code: string;
   tenantId?: string;
+  twoFactorPendingToken?: string | null;
+  staySignedIn?: boolean;
 }
 
 export interface Verify2FARequestModel {
@@ -121,4 +125,47 @@ export interface WorkspaceInfoDto {
 export interface DiscoverWorkspacesResponseDto {
   workspaces: WorkspaceInfoDto[];
   hasPlatformAccess: boolean;
+}
+
+export interface PasskeyAuthAllowCredential {
+  id: string;
+  type: "public-key";
+  transports?: string[];
+}
+
+export interface PasskeyAuthBeginOptions {
+  challenge: string;
+  rpId?: string;
+  timeout?: number;
+  allowCredentials?: PasskeyAuthAllowCredential[];
+  userVerification?: UserVerificationRequirement;
+  challengeToken?: string | null;
+  challengeId?: string;
+  options?: PublicKeyCredentialRequestOptions;
+}
+
+export interface VerifyPasskeyAuthRequestData {
+  credentialId: string;
+  rawId?: string;
+  clientDataJSON: string;
+  authenticatorData: string;
+  signature: string;
+  userHandle: string | null;
+  challengeToken?: string | null;
+  clientExtensionResults?: Record<string, unknown>;
+  tenantId?: string | null;
+  challengeId?: string;
+}
+
+export interface PasskeyAuthVerifyResult {
+  accessToken: string;
+  refreshToken: string;
+  expiresAt?: string;
+  mustChangePassword?: boolean;
+  requires2FA?: boolean;
+  subscriptionStatus?: string | null;
+  gracePhase?: string | null;
+  editionName?: string | null;
+  defaultRedirectPath?: string | null;
+  lastWorkspaceKey?: string | null;
 }

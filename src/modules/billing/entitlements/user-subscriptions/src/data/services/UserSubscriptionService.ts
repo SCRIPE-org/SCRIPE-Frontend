@@ -42,9 +42,9 @@ export class UserSubscriptionService implements IUserSubscriptionService {
     return this.api.get<UserSubscriptionModel>(USER_SUBSCRIPTIONS_ENDPOINTS.BY_ID(id));
   }
 
-  async getMySubscription(): Promise<UserSubscriptionModel | null> {
+  async getCurrentSubscription(): Promise<UserSubscriptionModel | null> {
     try {
-      return await this.api.get<UserSubscriptionModel>(USER_SUBSCRIPTIONS_ENDPOINTS.ME);
+      return await this.api.get<UserSubscriptionModel>(USER_SUBSCRIPTIONS_ENDPOINTS.CURRENT);
     } catch {
       // 204 No Content → null
       return null;
@@ -59,8 +59,8 @@ export class UserSubscriptionService implements IUserSubscriptionService {
     await this.api.post(USER_SUBSCRIPTIONS_ENDPOINTS.CANCEL(id), {});
   }
 
-  async cancelMine(): Promise<void> {
-    await this.api.post(USER_SUBSCRIPTIONS_ENDPOINTS.CANCEL_MINE, {});
+  async cancelCurrent(): Promise<void> {
+    await this.api.post(USER_SUBSCRIPTIONS_ENDPOINTS.CANCEL_CURRENT, {});
   }
 
   async renew(id: string): Promise<void> {

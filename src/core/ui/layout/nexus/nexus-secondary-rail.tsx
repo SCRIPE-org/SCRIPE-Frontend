@@ -15,40 +15,46 @@
  * accent only on the active leaf.
  */
 
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { useWorkspace } from "@core/providers/workspace-provider";
 import { useI18n } from "@core/providers/i18n-provider";
-import { usePermissions } from "@core/providers/permission-provider";
 import { MenuItem } from "@core/navigation";
-import { resolveBilingualLabel } from "@core/common/utils";
 import { RailHeader, RailContent } from "./_parts/secondary-rail-parts";
 import { useNexusReducedMotion } from "./nexus-transition";
-import { NEXUS_PANEL_W } from "./_parts/nexus-layout-constants";
+import { NEXUS_PANEL_W, getSecondaryMenuItems } from "./_parts/nexus-layout-constants";
 
 interface NexusSecondaryRailProps {
   mobileOpen?: boolean;
   onMobileClose?: () => void;
   isCollapsed?: boolean;
+  returnFocusRef?: React.RefObject<HTMLButtonElement | null>;
 }
+
+const FOCUSABLE_SELECTOR =
+  'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 // ── Secondary Rail ────────────────────────────────────────────────────────────
 export function NexusSecondaryRail({
   mobileOpen,
   onMobileClose,
   isCollapsed,
+  returnFocusRef,
 }: NexusSecondaryRailProps) {
   const { activeWorkspace, activeRootItem, rootMenuItems, isModuleMode } = useWorkspace();
   const { language, t } = useI18n();
-  const { canAccessPage } = usePermissions();
   const pathname = usePathname();
   const reducedMotion = useNexusReducedMotion();
-// ── Context label ─────────────────────────────────────────────────────────
+  const mobileDrawerRef = useRef<HTMLDivElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+  const wasMobileOpenRef = useRef(false);
+
+  // ── Context label ─────────────────────────────────────────────────────────
   const contextLabel = activeWorkspace
     ? (activeWorkspace.getLocalizedName(language) ?? activeWorkspace.workspaceKey.toUpperCase())
     : isModuleMode
-        ? t("chrome.section.module")
-        : t("chrome.section.platform");
+      ? t("chrome.section.module")
+      : t("chrome.section.platform");
 
   // ── Title: selected root item name ────────────────────────────────────────
   const title = activeRootItem
@@ -57,46 +63,111 @@ export function NexusSecondaryRail({
       : activeRootItem.nameEn || activeRootItem.nameAr
     : (activeWorkspace?.getLocalizedName(language) ?? t("chrome.section.workspace"));
 
-  // ── Menu items to display: children of the selected root item (or focused venue menu) ─────
-  const menuItems: MenuItem[] =
-    activeRootItem?.children && activeRootItem.children.length > 0
-      ? activeRootItem.children
-      : (rootMenuItems.length > 0 ? rootMenuItems : []);
+  // ── Menu items to display: children of selected root item (or workspace/root fallback) ─
+  const menuItems: MenuItem[] = getSecondaryMenuItems(
+    activeWorkspace?.workspaceKey,
+    activeRootItem,
+    rootMenuItems
+  );
   const hasSubmenu = menuItems.length > 0;
 
   const handleNavigate = useCallback(() => onMobileClose?.(), [onMobileClose]);
 
-  // Auto-collapse when panel is explicitly collapsed by user action OR when active root item has no children.
-  // Do NOT collapse when activeWorkspace is null — that is a transient state
-  // during JIT workspace activation (one React tick before useActiveRootSync fires).
-  // Collapsing on null would cause the secondary rail to flash empty on every
-  // page navigation where the workspace key momentarily resets.
+  // Desktop collapse state ONLY — never gates the mobile drawer overlay.
   const effectiveCollapsed = !hasSubmenu || !!isCollapsed;
+  const isMobileDrawerOpen = Boolean(mobileOpen && hasSubmenu);
+
+  // Move focus into the mobile drawer when opened, and restore focus to the
+  // toggle trigger (or previously focused element) when closed.
+  useEffect(() => {
+    if (isMobileDrawerOpen && !wasMobileOpenRef.current) {
+      wasMobileOpenRef.current = true;
+      previousFocusRef.current = document.activeElement as HTMLElement | null;
+      const container = mobileDrawerRef.current;
+      if (container) {
+        const firstFocusable = container.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
+        (firstFocusable ?? container).focus();
+      }
+    } else if (!isMobileDrawerOpen && wasMobileOpenRef.current) {
+      wasMobileOpenRef.current = false;
+      const target = returnFocusRef?.current ?? previousFocusRef.current;
+      previousFocusRef.current = null;
+      target?.focus();
+    }
+  }, [isMobileDrawerOpen, returnFocusRef]);
+
+  // Keyboard handling for the mobile drawer: Escape closes & Tab/Shift+Tab traps focus.
+  useEffect(() => {
+    if (!isMobileDrawerOpen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        if (e.defaultPrevented) return;
+        e.preventDefault();
+        e.stopPropagation();
+        onMobileClose?.();
+        return;
+      }
+
+      if (e.key !== "Tab") return;
+      const container = mobileDrawerRef.current;
+      if (!container) return;
+
+      const focusables = Array.from(
+        container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)
+      ).filter(
+        (el) =>
+          el.getAttribute("aria-hidden") !== "true" &&
+          !el.closest('[aria-hidden="true"], [inert]')
+      );
+
+      if (focusables.length === 0) {
+        e.preventDefault();
+        container.focus();
+        return;
+      }
+
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+
+      if (e.shiftKey) {
+        if (
+          document.activeElement === first ||
+          document.activeElement === container ||
+          !container.contains(document.activeElement)
+        ) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else if (document.activeElement === last || !container.contains(document.activeElement)) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown, true);
+    return () => window.removeEventListener("keydown", handleKeyDown, true);
+  }, [isMobileDrawerOpen, onMobileClose]);
 
   const railStyle: React.CSSProperties = {
     width: effectiveCollapsed ? 0 : NEXUS_PANEL_W,
     opacity: effectiveCollapsed ? 0 : 1,
+    visibility: effectiveCollapsed ? "hidden" : "visible",
     height: "100%",
     minHeight: 0, // critical: allows flex child to scroll
-    // An opaque surface step behind a hairline. The 65%-transparent slab needed
-    // a 20px backdrop blur to stay legible, and that blur repainted the whole
-    // rail on every content scroll behind it.
     background: "var(--nx-surface, hsl(var(--card)))",
     borderInlineEnd: effectiveCollapsed ? "none" : "1px solid var(--nx-line, hsl(var(--border)))",
-    display: "flex",
-    flexDirection: "column",
     flexShrink: 0,
     overflow: "hidden",
     pointerEvents: effectiveCollapsed ? "none" : "auto",
-    // Collapse still animates width because the content column must reflow with
-    // it (a transform cannot do that). Reduced motion keeps only the crossfade.
+    // Opacity-only transition respects DESIGN.md width-animation ban & reduced-motion preference.
     transition: reducedMotion
-      ? "opacity var(--nx-t-micro, 140ms) ease"
-      : "width var(--nx-t-panel, 300ms) var(--nx-ease-enter, cubic-bezier(0.23, 1, 0.32, 1)), opacity var(--nx-t-standard, 200ms) var(--nx-ease-exit, cubic-bezier(0.3, 0, 0.8, 0.15)), background var(--nx-t-standard, 200ms) ease, border-inline-end-color var(--nx-t-standard, 200ms) ease",
+      ? "none"
+      : "opacity var(--nx-t-micro, 140ms) var(--nx-ease-enter, cubic-bezier(0.23, 1, 0.32, 1)), background var(--nx-t-standard, 200ms) ease",
   };
 
   const innerContainerStyle: React.CSSProperties = {
-    width: NEXUS_PANEL_W, // Fixed width to prevent wrapping during collapse animation
+    width: NEXUS_PANEL_W, // Fixed width to prevent wrapping during collapse
     display: "flex",
     flexDirection: "column",
     height: "100%",
@@ -118,39 +189,39 @@ export function NexusSecondaryRail({
 
   return (
     <>
-      {/* Desktop */}
+      {/* Desktop — inline `display` intentionally omitted so Tailwind `hidden lg:flex` governs <1024px */}
       <aside
         style={railStyle}
-        aria-hidden={effectiveCollapsed}
+        aria-hidden={effectiveCollapsed || undefined}
         className="relative z-raised hidden lg:flex lg:flex-col"
       >
         {railContent}
       </aside>
 
-      {/* Mobile overlay */}
-      {mobileOpen && hasSubmenu && !effectiveCollapsed && (
+      {/* Mobile overlay (<1024px) — independent of desktop collapse state */}
+      {isMobileDrawerOpen && (
         <>
-          {/* The scrim pushes the page back by taking light away — that is the
-              whole mechanism, so it carries no blur. */}
           <div
-            className="fixed inset-0 z-overlay bg-scrim lg:hidden"
-            style={{ transition: "opacity var(--nx-t-panel, 300ms) ease" }}
+            className="fixed inset-0 z-overlay bg-scrim transition-opacity duration-nx-micro motion-reduce:transition-none lg:hidden"
             onClick={onMobileClose}
-            aria-hidden
+            aria-hidden="true"
           />
-          <aside
-            className="fixed inset-y-0 z-modal flex flex-col lg:hidden"
-            style={{
-              insetInlineStart: 64, // Logical property matching primary rail mobile width
-              width: 260,
-              // Floating panel → the popover surface, opaque. It read as glass
-              // only because it was 92% of a surface behind a 24px blur.
-              background: "var(--nx-popover, hsl(var(--card)))",
-              borderInlineEnd: "1px solid var(--nx-line, hsl(var(--border)))", // Logical property
-            }}
+          <div
+            ref={mobileDrawerRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label={title || t("nav.secondary")}
+            tabIndex={-1}
+            className="fixed inset-y-0 start-0 z-modal flex flex-col border-e border-nx-line bg-nx-popover shadow-nx-modal outline-none lg:hidden"
+            style={{ width: NEXUS_PANEL_W }}
           >
-            <div style={{ width: 260, height: "100%", display: "flex", flexDirection: "column" }}>
-              <RailHeader contextLabel={contextLabel} title={title} />
+            <div style={innerContainerStyle}>
+              <RailHeader
+                contextLabel={contextLabel}
+                title={title}
+                onClose={onMobileClose}
+                closeLabel={t("common.close")}
+              />
               <RailContent
                 menuItems={menuItems}
                 pathname={pathname}
@@ -158,7 +229,7 @@ export function NexusSecondaryRail({
                 onNavigate={handleNavigate}
               />
             </div>
-          </aside>
+          </div>
         </>
       )}
     </>

@@ -42,8 +42,8 @@ export class UserGroupRepository implements IUserGroupRepository {
     };
   }
 
-  async getMyTenantGroups(params: UserGroupListParams): Promise<PagedResult<UserGroup>> {
-    const result = await this.service.getMyTenantGroups(params);
+  async getCurrentTenantGroups(params: UserGroupListParams): Promise<PagedResult<UserGroup>> {
+    const result = await this.service.getCurrentTenantGroups(params);
     return {
       items: UserGroupMapper.toEntityList(result.items),
       totalCount: result.totalCount,
@@ -70,8 +70,8 @@ export class UserGroupRepository implements IUserGroupRepository {
     return response.id;
   }
 
-  async createForMyTenant(request: Omit<CreateUserGroupRequest, "tenantId">): Promise<string> {
-    const response = await this.service.createForMyTenant(request);
+  async createInCurrentTenant(request: Omit<CreateUserGroupRequest, "tenantId">): Promise<string> {
+    const response = await this.service.createInCurrentTenant(request);
     return response.id;
   }
 

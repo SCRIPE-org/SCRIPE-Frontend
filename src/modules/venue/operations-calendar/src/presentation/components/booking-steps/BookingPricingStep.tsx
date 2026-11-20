@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { AlertCircle, RotateCcw, Timer } from "lucide-react";
 import { Label } from "@core/ui/label";
 import { Input } from "@core/ui/input";
@@ -39,6 +38,9 @@ interface BookingPricingStepProps {
   onApplyOverride?: () => void;
 }
 
+/**
+ * Step 2 authoritative price breakdown, temporary hold countdown, and manager override panel.
+ */
 export function BookingPricingStep({
   t,
   selectedCustomer,
@@ -66,11 +68,10 @@ export function BookingPricingStep({
 }: BookingPricingStepProps) {
   return (
     <div className="space-y-3">
-      {/* Selected Customer Summary */}
       {selectedCustomer && (
-        <div className="border-nx-line bg-nx-raised/30 flex items-center justify-between rounded-xl border p-2.5 text-xs">
+        <div className="flex items-center justify-between rounded-nx-lg border border-nx-line bg-nx-raised/30 p-2.5 text-xs">
           <div className="flex min-w-0 items-center gap-2">
-            <div className="bg-nx-accent flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-bold text-nx-on-fill">
+            <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-nx-accent-fill text-xs font-bold text-nx-on-fill">
               {selectedCustomer.displayName.charAt(0)}
             </div>
             <div className="min-w-0">
@@ -85,18 +86,17 @@ export function BookingPricingStep({
             variant="ghost"
             size="sm"
             onClick={onChangeCustomer}
-            className="text-nx-accent h-auto shrink-0 px-0 text-[11px] font-semibold hover:underline"
+            className="h-auto shrink-0 px-0 text-[11px] font-semibold text-nx-accent hover:underline"
           >
             {t("operationsCalendar.clickToBook.customer.change")}
           </Button>
         </div>
       )}
 
-      {/* Hold Countdown Badge if active */}
       {holdCountdown && (
-        <div className="bg-nx-accent/10 border-nx-accent/30 text-nx-accent-hi flex items-center justify-between rounded-lg border p-2 text-xs">
+        <div className="flex items-center justify-between rounded-nx-control border border-nx-accent/40 bg-nx-accent-wash p-2 text-xs text-nx-accent">
           <span className="flex items-center gap-1.5 font-medium">
-            <Timer className="size-3.5" />
+            <Timer className="size-3.5" aria-hidden="true" />
             {t("operationsCalendar.clickToBook.hold.temporaryBadge")}
           </span>
           <span className="font-mono font-bold">
@@ -105,10 +105,9 @@ export function BookingPricingStep({
         </div>
       )}
 
-      {/* Hold Expired Alert */}
       {holdExpired && (
         <Alert variant="destructive" className="py-2 text-xs">
-          <AlertCircle className="size-4" />
+          <AlertCircle className="size-4" aria-hidden="true" />
           <AlertTitle className="text-xs font-bold">
             {t("operationsCalendar.clickToBook.hold.expired")}
           </AlertTitle>
@@ -120,17 +119,16 @@ export function BookingPricingStep({
               className="h-6 text-[11px] font-bold"
               onClick={onRefreshAvailability}
             >
-              <RotateCcw className="me-1 size-3" />
+              <RotateCcw className="me-1 size-3" aria-hidden="true" />
               {t("operationsCalendar.clickToBook.hold.refreshAvailability")}
             </Button>
           </div>
         </Alert>
       )}
 
-      {/* Price Change Acknowledgment Alert */}
       {priceChangeNotice && (
         <Alert variant="warning" className="py-2 text-xs">
-          <AlertCircle className="size-4" />
+          <AlertCircle className="size-4" aria-hidden="true" />
           <AlertTitle className="text-xs font-bold">
             {t("operationsCalendar.clickToBook.pricing.priceChanged", {
               oldPrice: priceChangeNotice.oldPrice,
@@ -151,15 +149,13 @@ export function BookingPricingStep({
         </Alert>
       )}
 
-      {/* Quote Expired Banner */}
       {quoteExpiredMessage && (
         <Alert variant="warning" className="py-1 text-xs">
           <AlertDescription>{t("operationsCalendar.clickToBook.pricing.expired")}</AlertDescription>
         </Alert>
       )}
 
-      {/* Authoritative Pricing Box */}
-      <div className="border-nx-line bg-nx-raised/40 space-y-2 rounded-xl border p-3.5">
+      <div className="space-y-2 rounded-nx-lg border border-nx-line bg-nx-raised/40 p-3.5">
         <div className="flex items-center justify-between">
           <h5 className="text-xs font-bold text-nx-ink">
             {t("operationsCalendar.clickToBook.pricing.title")}
@@ -177,7 +173,7 @@ export function BookingPricingStep({
               className="h-6 text-[11px]"
               onClick={onRetryQuote}
             >
-              <RotateCcw className="me-1 size-3" />
+              <RotateCcw className="me-1 size-3" aria-hidden="true" />
               {t("operationsCalendar.clickToBook.pricing.retry")}
             </Button>
           </div>
@@ -196,7 +192,7 @@ export function BookingPricingStep({
 
             {quote.discountAmount > 0 && (
               <div className="flex items-center justify-between text-success">
-                <span>Discount</span>
+                <span>{t("operationsCalendar.clickToBook.pricing.discount")}</span>
                 <span>
                   -{quote.discountAmount} {quote.currencyCode}
                 </span>
@@ -205,14 +201,14 @@ export function BookingPricingStep({
 
             {quote.taxAmount > 0 && (
               <div className="flex items-center justify-between text-nx-ink-2">
-                <span>Tax</span>
+                <span>{t("operationsCalendar.clickToBook.pricing.tax")}</span>
                 <span>
                   +{quote.taxAmount} {quote.currencyCode}
                 </span>
               </div>
             )}
 
-            <div className="border-nx-line flex items-center justify-between border-t pt-1.5 text-sm font-bold text-nx-ink">
+            <div className="flex items-center justify-between border-t border-nx-line pt-1.5 text-sm font-bold text-nx-ink">
               <span>{t("operationsCalendar.clickToBook.pricing.total")}</span>
               <span>
                 {quote.grandTotal} {quote.currencyCode}
@@ -222,7 +218,6 @@ export function BookingPricingStep({
         ) : null}
       </div>
 
-      {/* Price Override (Restricted to authorized managers) */}
       {canOverridePrice && quote && (
         <div className="pt-1">
           {!overrideOpen ? (
@@ -231,21 +226,19 @@ export function BookingPricingStep({
               variant="ghost"
               size="sm"
               onClick={onToggleOverride}
-              className="text-nx-primary h-auto px-0 text-[11px] font-semibold hover:underline"
+              className="h-auto px-0 text-[11px] font-semibold text-nx-accent hover:underline"
             >
               {t("operationsCalendar.clickToBook.pricing.override")}
             </Button>
           ) : (
-            <div className="border-nx-line space-y-2 rounded-lg border bg-nx-surface p-2.5 text-xs">
+            <div className="space-y-2 rounded-nx-md border border-nx-line bg-nx-surface p-2.5 text-xs">
               <Label className="text-xs font-bold text-nx-ink">
                 {t("operationsCalendar.clickToBook.pricing.override")}
               </Label>
               {overrideError && <p className="text-xs text-destructive">{overrideError}</p>}
               <Input
                 type="number"
-                placeholder={t("operationsCalendar.clickToBook.pricing.overrideAmountPlaceholder", {
-                  defaultValue: "Adjustment Amount (e.g. -20 for discount)",
-                })}
+                placeholder={t("operationsCalendar.clickToBook.pricing.overrideAmountPlaceholder")}
                 value={overrideAmount}
                 disabled={overrideLoading}
                 onChange={(e) => onOverrideAmountChange(e.target.value)}
@@ -262,7 +255,9 @@ export function BookingPricingStep({
               <div className="flex items-center gap-2 pt-1">
                 <Button
                   type="button"
+                  variant="default"
                   size="sm"
+                  loading={overrideLoading}
                   disabled={
                     overrideLoading ||
                     !Number.isFinite(Number(overrideAmount)) ||
@@ -272,20 +267,9 @@ export function BookingPricingStep({
                   onClick={onApplyOverride}
                   className="h-7 text-xs font-semibold"
                 >
-                  {overrideLoading ? (
-                    <>
-                      <LoadingSpinner size="sm" className="me-1" />
-                      <span>
-                        {t("operationsCalendar.clickToBook.pricing.overriding", {
-                          defaultValue: "Applying...",
-                        })}
-                      </span>
-                    </>
-                  ) : (
-                    t("operationsCalendar.clickToBook.pricing.applyOverride", {
-                      defaultValue: "Apply Override",
-                    })
-                  )}
+                  {overrideLoading
+                    ? t("operationsCalendar.clickToBook.pricing.overriding")
+                    : t("operationsCalendar.clickToBook.pricing.applyOverride")}
                 </Button>
                 <Button
                   type="button"
@@ -295,7 +279,7 @@ export function BookingPricingStep({
                   onClick={onToggleOverride}
                   className="h-7 text-xs"
                 >
-                  {t("common.cancel", { defaultValue: "Cancel" })}
+                  {t("operationsCalendar.clickToBook.confirm.cancel")}
                 </Button>
               </div>
             </div>

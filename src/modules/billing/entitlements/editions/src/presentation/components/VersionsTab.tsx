@@ -35,7 +35,7 @@ interface VersionsTabProps {
 // Status badge color mapping
 const STATUS_COLORS: Record<string, string> = {
   Draft: "bg-nx-raised text-nx-ink-2 border-nx-line",
-  Pending: "bg-warning/10 text-warning border-warning/30",
+  Pending: "bg-warning/10 text-nx-warning-strong border-warning/30",
   Rolling: "bg-info/10 text-info border-info/30",
   Completed: "bg-success/10 text-success border-success/30",
   Canceled: "bg-destructive/10 text-destructive border-destructive/30",

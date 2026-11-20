@@ -73,7 +73,7 @@ export function RotateKeyWizardDialog({
                 required
               />
             </div>
-            <div className="flex items-center space-x-2 pt-1">
+            <div className="flex items-center gap-2 pt-1">
               <Checkbox
                 id="auto-migrate"
                 checked={autoMigrate}

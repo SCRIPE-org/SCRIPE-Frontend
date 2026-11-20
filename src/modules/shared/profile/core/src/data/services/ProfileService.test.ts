@@ -14,23 +14,22 @@
 // useAvatarViewModel/useExternalLoginsViewModel -> ProfileRepository ->
 // ProfileService.
 //
-// The SAME file already defined the CORRECT, live, already-implemented
-// endpoints under the non-legacy top-level keys (ME, UPDATE_ME, AVATAR,
-// CHANGE_PASSWORD, SESSIONS, REVOKE_SESSION, REVOKE_ALL_SESSIONS,
-// BACKUP_CODES_REGENERATE, SECURITY_LOG, EXTERNAL_LOGINS,
+// The SAME file defines the sovereign endpoints under top-level keys
+// (DOSSIER, UPDATE_DOSSIER, AVATAR, CHANGE_PASSWORD, SESSIONS, REVOKE_SESSION,
+// REVOKE_ALL_SESSIONS, BACKUP_CODES_REGENERATE, SECURITY_LOG, EXTERNAL_LOGINS,
 // LINK_EXTERNAL_LOGIN, UNLINK_EXTERNAL_LOGIN) — each backed by a real
 // controller action:
-//   GET/PUT   /v1/admins/me                          AdminsController.GetMe / UpdateMyProfile
-//   POST/DEL  /v1/admins/me/avatar                    AdminsController.UploadAvatar / RemoveAvatar
-//   POST      /v1/admins/{id}/change-password         AdminsController.ChangePassword
-//   GET       /v1/auth/admin/sessions                 AdminAuthController.GetSessions
+//   GET/PUT   /v1/account/dossier                      AccountController.GetDossier / UpdateDossier
+//   POST/DEL  /v1/account/dossier/avatar               AccountController.UploadAvatar / RemoveAvatar
+//   POST      /v1/admins/{id}/change-password          AdminsController.ChangePassword
+//   GET       /v1/auth/admin/sessions                  AdminAuthController.GetSessions
 //   DELETE    /v1/auth/admin/sessions/{tokenId}        AdminAuthController.RevokeSession
 //   POST      /v1/auth/admin/sessions/revoke-all       AdminAuthController.RevokeAllSessions
 //   POST      /v1/auth/admin/2fa/backup-codes/regenerate AdminAuthController.RegenerateBackupCodes
 //   GET       /v1/auth/admin/security-log              AdminAuthController.GetSecurityLog
 //   GET       /v1/auth/admin/external-logins           AdminAuthController.GetExternalLogins
-//   POST      /v1/auth/admin/external-logins/link       AdminAuthController.LinkExternalAccount
-//   DELETE    /v1/auth/admin/external-logins/{id}       AdminAuthController.UnlinkExternalAccount
+//   POST      /v1/auth/admin/external-logins/link      AdminAuthController.LinkExternalAccount
+//   DELETE    /v1/auth/admin/external-logins/{id}      AdminAuthController.UnlinkExternalAccount
 //
 // This test pins ProfileService to call those real endpoints (with the
 // correct HTTP verb) instead of the dead `/v1/profile/*` family, so the
@@ -38,7 +37,7 @@
 //
 // `changePassword` needs the current admin's id to hit
 // `/v1/admins/{id}/change-password` — ProfileService resolves it via a
-// GET to PROFILE_ENDPOINTS.ME first (that response DTO already carries
+// GET to PROFILE_ENDPOINTS.DOSSIER first (that response DTO already carries
 // `id` — see AdminProfileDto in ../models/ProfileModels.ts).
 //
 // `revokeAllSessions` posts an empty body: AdminAuthController's
@@ -51,6 +50,7 @@
 
 import { describe, it, expect, vi } from "vitest";
 import { ProfileService } from "./ProfileService";
+import { SecurityRepository } from "../repositories/SecurityRepository";
 import type { IApiService } from "@core/interfaces/api.interface";
 import { PROFILE_ENDPOINTS } from "./profile.endpoints";
 
@@ -65,20 +65,20 @@ function mockApiService(overrides: Partial<IApiService> = {}): IApiService {
   } as unknown as IApiService;
 }
 
-describe("ProfileService — no call site targets the dead /v1/profile/* or legacy /Admins/me family", () => {
-  it("getProfile() GETs /v1/account/dossier, not /v1/profile or /v1/Admins/me", async () => {
+describe("ProfileService — no call site targets the dead /v1/profile/* or legacy /admins/me family", () => {
+  it("getProfile() GETs /v1/account/dossier, not /v1/profile or /v1/admins/me", async () => {
     const api = mockApiService();
     await new ProfileService(api).getProfile();
-    expect(api.get).toHaveBeenCalledWith(PROFILE_ENDPOINTS.ME);
-    expect(PROFILE_ENDPOINTS.ME).toBe("/v1/account/dossier");
+    expect(api.get).toHaveBeenCalledWith(PROFILE_ENDPOINTS.DOSSIER);
+    expect(PROFILE_ENDPOINTS.DOSSIER).toBe("/v1/account/dossier");
   });
 
   it("updateProfile() PUTs /v1/account/dossier, not /v1/profile", async () => {
     const api = mockApiService();
     const data = { firstName: "A", lastName: "B", phoneNumber: "1" };
     await new ProfileService(api).updateProfile(data);
-    expect(api.put).toHaveBeenCalledWith(PROFILE_ENDPOINTS.UPDATE_ME, data);
-    expect(PROFILE_ENDPOINTS.UPDATE_ME).toBe("/v1/account/dossier");
+    expect(api.put).toHaveBeenCalledWith(PROFILE_ENDPOINTS.UPDATE_DOSSIER, data);
+    expect(PROFILE_ENDPOINTS.UPDATE_DOSSIER).toBe("/v1/account/dossier");
   });
 
   it("uploadAvatar() POSTs /v1/account/dossier/avatar, not /v1/profile/avatar", async () => {
@@ -95,11 +95,11 @@ describe("ProfileService — no call site targets the dead /v1/profile/* or lega
     expect(api.delete).toHaveBeenCalledWith(PROFILE_ENDPOINTS.AVATAR);
   });
 
-  it("changePassword() resolves the current admin id via ME then POSTs /v1/admins/{id}/change-password", async () => {
+  it("changePassword() resolves the current admin id via DOSSIER then POSTs /v1/admins/{id}/change-password", async () => {
     const api = mockApiService({ get: vi.fn().mockResolvedValue({ id: "admin-123" }) });
     const data = { currentPassword: "old", newPassword: "new" };
     await new ProfileService(api).changePassword(data);
-    expect(api.get).toHaveBeenCalledWith(PROFILE_ENDPOINTS.ME);
+    expect(api.get).toHaveBeenCalledWith(PROFILE_ENDPOINTS.DOSSIER);
     expect(api.post).toHaveBeenCalledWith(PROFILE_ENDPOINTS.CHANGE_PASSWORD("admin-123"), data);
   });
 
@@ -121,12 +121,66 @@ describe("ProfileService — no call site targets the dead /v1/profile/* or lega
     expect(api.post).toHaveBeenCalledWith(PROFILE_ENDPOINTS.REVOKE_ALL_SESSIONS, {});
   });
 
-  it("regenerateBackupCodes() POSTs /v1/auth/admin/2fa/backup-codes/regenerate, not /v1/profile/2fa/backup-codes", async () => {
-    const api = mockApiService();
-    await new ProfileService(api).regenerateBackupCodes("123456");
-    expect(api.post).toHaveBeenCalledWith(PROFILE_ENDPOINTS.BACKUP_CODES_REGENERATE, {
-      twoFactorCode: "123456",
+  it("regenerateBackupCodes() POSTs { code } to /v1/auth/admin/2fa/backup-codes/regenerate and unwraps backupCodes[]", async () => {
+    const api = mockApiService({
+      post: vi.fn().mockResolvedValue({ backupCodes: ["CODE-1", "CODE-2"] }),
     });
+    const codes = await new ProfileService(api).regenerateBackupCodes("123456");
+    expect(api.post).toHaveBeenCalledWith(PROFILE_ENDPOINTS.BACKUP_CODES_REGENERATE, {
+      code: "123456",
+    });
+    expect(codes).toEqual(["CODE-1", "CODE-2"]);
+  });
+
+  it("SecurityRepository.emergencyLockdown() PUTs /v1/account/security with triggerEmergencyLockdown and LOCKDOWN phrase", async () => {
+    const api = mockApiService();
+    await new SecurityRepository(api).emergencyLockdown();
+    expect(api.put).toHaveBeenCalledWith(PROFILE_ENDPOINTS.ACCOUNT.SECURITY, {
+      triggerEmergencyLockdown: true,
+      lockdownConfirmationPhrase: "LOCKDOWN",
+    });
+  });
+
+  it("SecurityRepository passkey registration forwards challengeToken, mode, transports, and credentialIdBase64", async () => {
+    const api = mockApiService({
+      post: vi
+        .fn()
+        .mockResolvedValueOnce({
+          challenge: "ch-b64url",
+          rpId: "localhost",
+          challengeToken: "reg-challenge-token-abc",
+          mode: "hybrid",
+        })
+        .mockResolvedValueOnce({
+          id: "pk-1",
+          deviceName: "Phone Passkey",
+          createdAt: "2026-11-15T22:00:00Z",
+        }),
+    });
+    const repo = new SecurityRepository(api);
+    const begin = await repo.beginPasskeyRegistration("Phone Passkey", "hybrid");
+    expect(begin.challengeToken).toBe("reg-challenge-token-abc");
+    const completed = await repo.completePasskeyRegistration({
+      attestationObjectBase64: "att-obj",
+      clientDataJsonBase64: "client-data",
+      deviceName: "Phone Passkey",
+      transports: ["hybrid", "internal"],
+      clientExtensionResults: { credProps: { rk: true } },
+      challengeToken: begin.challengeToken,
+      attestationMode: begin.mode,
+      credentialIdBase64: "cred-raw-id",
+    });
+    expect(api.post).toHaveBeenNthCalledWith(2, PROFILE_ENDPOINTS.PASSKEYS.REGISTER_COMPLETE, {
+      attestationObjectBase64: "att-obj",
+      clientDataJsonBase64: "client-data",
+      deviceName: "Phone Passkey",
+      transports: ["hybrid", "internal"],
+      clientExtensionResults: { credProps: { rk: true } },
+      challengeToken: "reg-challenge-token-abc",
+      attestationMode: "hybrid",
+      credentialIdBase64: "cred-raw-id",
+    });
+    expect(completed.id).toBe("pk-1");
   });
 
   it("getSecurityLog() GETs /v1/auth/admin/security-log, not /v1/profile/security-log", async () => {
@@ -143,26 +197,70 @@ describe("ProfileService — no call site targets the dead /v1/profile/* or lega
     expect(api.get).toHaveBeenCalledWith(PROFILE_ENDPOINTS.EXTERNAL_LOGINS);
   });
 
-  it("linkExternalLogin() POSTs /v1/auth/admin/external-logins/link, not /v1/profile/external-logins", async () => {
+  it("initiateExternalLoginLink() POSTs /v1/auth/admin/external-logins/initiate-link with optional X-Sudo-Token header", async () => {
     const api = mockApiService();
     const data = {
-      identityProviderId: "p1",
-      providerName: "google",
-      providerKey: "k1",
-      email: null,
-      displayName: null,
+      identityProviderId: "enc-idp-1",
+      redirectUri: "http://localhost:3000/sso/callback",
     };
-    await new ProfileService(api).linkExternalLogin(data);
-    expect(api.post).toHaveBeenCalledWith(PROFILE_ENDPOINTS.LINK_EXTERNAL_LOGIN, data);
+    await new ProfileService(api).initiateExternalLoginLink(data, "sudo-tok-123");
+    expect(api.post).toHaveBeenCalledWith(
+      PROFILE_ENDPOINTS.INITIATE_EXTERNAL_LOGIN_LINK,
+      data,
+      undefined,
+      { headers: { "X-Sudo-Token": "sudo-tok-123" } }
+    );
   });
 
-  it("unlinkExternalLogin() DELETEs /v1/auth/admin/external-logins/{id}, not /v1/profile/external-logins/{id}", async () => {
+  it("unlinkExternalLogin() DELETEs /v1/auth/admin/external-logins/{id} with optional X-Sudo-Token header", async () => {
     const api = mockApiService();
-    await new ProfileService(api).unlinkExternalLogin("ext-1");
-    expect(api.delete).toHaveBeenCalledWith(PROFILE_ENDPOINTS.UNLINK_EXTERNAL_LOGIN("ext-1"));
+    await new ProfileService(api).unlinkExternalLogin("ext-1", "sudo-tok-456");
+    expect(api.delete).toHaveBeenCalledWith(
+      PROFILE_ENDPOINTS.UNLINK_EXTERNAL_LOGIN("ext-1"),
+      undefined,
+      { headers: { "X-Sudo-Token": "sudo-tok-456" } }
+    );
   });
 
   it("PROFILE_ENDPOINTS no longer exposes a LEGACY family (removed — dead, no backend ProfileController)", () => {
     expect((PROFILE_ENDPOINTS as Record<string, unknown>).LEGACY).toBeUndefined();
+  });
+
+  it("getProfile() and updateProfile() preserve rowVersion across AdminProfileDto -> AdminProfile round-trips", async () => {
+    const api = mockApiService();
+    (api.get as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+      id: "u1",
+      firstName: "A",
+      lastName: "B",
+      email: "a@b.com",
+      username: "ab",
+      phoneNumber: "1",
+      rowVersion: "rv-profile-get",
+    });
+    (api.put as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+      id: "u1",
+      firstName: "A",
+      lastName: "B",
+      email: "a@b.com",
+      username: "ab",
+      phoneNumber: "1",
+      rowVersion: "rv-profile-put",
+    });
+
+    const service = new ProfileService(api);
+    const loaded = await service.getProfile();
+    expect(loaded.rowVersion).toBe("rv-profile-get");
+
+    const updated = await service.updateProfile({
+      firstName: "A",
+      lastName: "B",
+      phoneNumber: "1",
+      rowVersion: loaded.rowVersion,
+    });
+    expect(api.put).toHaveBeenCalledWith(
+      PROFILE_ENDPOINTS.UPDATE_DOSSIER,
+      expect.objectContaining({ rowVersion: "rv-profile-get" })
+    );
+    expect(updated.rowVersion).toBe("rv-profile-put");
   });
 });

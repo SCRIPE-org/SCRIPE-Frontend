@@ -29,7 +29,8 @@ import { memo, type ReactNode } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { ErrorMessage } from "@core/ui/error-message";
 import { EmptyState } from "@core/ui/empty-state";
-import { InboxIcon, type LucideIcon } from "lucide-react";
+import { Button } from "@core/ui/button";
+import { InboxIcon, RotateCcw } from "lucide-react";
 
 interface SectionStateProps {
   /** Content to render when loaded and not empty */
@@ -38,12 +39,22 @@ interface SectionStateProps {
   isLoading: boolean;
   /** Error object if the query failed */
   error?: Error | null;
+  /** Optional custom error headline overriding the localized default */
+  errorMessage?: string;
   /** Callback to retry the failed query */
   onRetry?: () => void;
   /** Whether the data set is empty (after loading) */
   isEmpty?: boolean;
+  /** Marks empty results as filtered out so users can distinguish filtered vs truly empty */
+  isFiltered?: boolean;
+  /** Optional callback to clear active filters when isEmpty & isFiltered */
+  onResetFilters?: () => void;
   /** Override the default empty state message */
   emptyMessage?: string;
+  /** Optional description rendered below emptyMessage */
+  emptyDescription?: string;
+  /** Optional action slot rendered inside the empty state */
+  emptyAction?: ReactNode;
   /** Override the default empty state icon */
   emptyIcon?: ReactNode;
   /** Height of the loading skeleton/placeholder (default: 280px) */
@@ -66,15 +77,24 @@ export const SectionState = memo(function SectionState({
   children,
   isLoading,
   error,
+  errorMessage,
   onRetry,
   isEmpty = false,
+  isFiltered = false,
+  onResetFilters,
   emptyMessage,
+  emptyDescription,
+  emptyAction,
   emptyIcon,
   height = 280,
   skeletonType = "chart",
   skeletonRows = 5,
 }: SectionStateProps) {
   const { t } = useI18n();
+  const tr = (key: string, defaultValue: string) => {
+    const resolved = t(key, { defaultValue });
+    return resolved === key ? defaultValue : resolved;
+  };
 
   // ── Loading ─────────────────────────────────────────────────────
   if (isLoading) {
@@ -143,20 +163,38 @@ export const SectionState = memo(function SectionState({
   if (error) {
     return (
       <div className="flex flex-col justify-center" style={{ minHeight: height }}>
-        <ErrorMessage size="sm" message={t("common.error")} onRetry={onRetry} />
+        <ErrorMessage
+          size="sm"
+          message={errorMessage ?? tr("common.error", "An error occurred")}
+          onRetry={onRetry}
+        />
       </div>
     );
   }
 
-  // ── Empty — the shared empty anatomy, compact ───────────────────
+  // ── Empty / Filtered — differentiated empty/filtered anatomy ────
   if (isEmpty) {
-    // emptyIcon predates EmptyState and arrives as a ReactNode; EmptyState
-    // wants a component. The adapter renders the caller's node verbatim
-    // (its own classes included) so the legacy prop keeps working.
-    const Icon = emptyIcon ? ((() => <>{emptyIcon}</>) as unknown as LucideIcon) : InboxIcon;
+    const resolvedEmptyAction =
+      emptyAction ??
+      (isFiltered && onResetFilters ? (
+        <Button type="button" variant="outline" size="sm" onClick={onResetFilters}>
+          <RotateCcw className="me-1.5 h-3.5 w-3.5" aria-hidden="true" />
+          {tr("common.reset", "Reset")}
+        </Button>
+      ) : undefined);
+
     return (
       <div className="flex flex-col justify-center" style={{ minHeight: height }}>
-        <EmptyState size="sm" bare icon={Icon} title={emptyMessage ?? t("common.noData")} />
+        <EmptyState
+          size="sm"
+          bare
+          variant={isFiltered ? "filtered" : "empty"}
+          icon={emptyIcon ? undefined : isFiltered ? undefined : InboxIcon}
+          iconNode={emptyIcon}
+          title={emptyMessage ?? tr("common.noData", "No data available")}
+          description={emptyDescription}
+          action={resolvedEmptyAction}
+        />
       </div>
     );
   }

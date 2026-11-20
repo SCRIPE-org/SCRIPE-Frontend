@@ -2,6 +2,8 @@
 
 import * as React from "react";
 import { CheckCircle, AlertCircle, Info, AlertTriangle, X } from "lucide-react";
+import { translateCore } from "@core/common/i18n-outside-react";
+import { Button } from "@core/ui/button";
 import { cn } from "@core/common/utils";
 
 // Re-export Sileo components and types for complete backward-and-forward ergonomics
@@ -71,11 +73,11 @@ export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
         role="status"
         aria-live="polite"
         className={cn(
-          "relative flex w-full items-center justify-between gap-3 overflow-hidden rounded-nx-lg border p-3.5 shadow-nx-popover transition-all",
+          "relative flex w-full items-center justify-between gap-3 overflow-hidden rounded-nx-lg border p-3.5 shadow-nx-popover transition-colors motion-reduce:transition-none",
           "border-nx-line-hi bg-nx-surface text-nx-ink",
           variant === "success" && "border-success/40",
           variant === "destructive" && "border-destructive/40",
-          variant === "warning" && "border-warning/40",
+          variant === "warning" && "border-warning-strong/40",
           variant === "info" && "border-info/40",
           design === "minimal" && "shadow-none border-nx-line",
           design === "modern" && "bg-nx-raised shadow-nx-modal",
@@ -120,18 +122,21 @@ ToastDescription.displayName = "ToastDescription";
 export const ToastClose = React.forwardRef<
   HTMLButtonElement,
   React.ButtonHTMLAttributes<HTMLButtonElement>
->(({ className, ...props }, ref) => (
-  <button
+>(({ className, "aria-label": ariaLabel, ...props }, ref) => (
+  <Button
     ref={ref}
     type="button"
+    variant="ghost"
+    size="icon"
+    aria-label={ariaLabel ?? translateCore("common.close")}
     className={cn(
-      "absolute end-1.5 top-1.5 grid h-7 w-7 place-items-center rounded-nx-sm text-nx-ink-3 hover:bg-nx-hover hover:text-nx-ink transition-colors",
+      "absolute end-1.5 top-1.5 h-8 w-8 rounded-nx-sm text-nx-ink-3 hover:text-nx-ink",
       className
     )}
     {...props}
   >
     <X aria-hidden="true" className="h-3.5 w-3.5" />
-  </button>
+  </Button>
 ));
 ToastClose.displayName = "ToastClose";
 
@@ -139,13 +144,12 @@ export const ToastAction = React.forwardRef<
   HTMLButtonElement,
   React.ButtonHTMLAttributes<HTMLButtonElement>
 >(({ className, ...props }, ref) => (
-  <button
+  <Button
     ref={ref}
     type="button"
-    className={cn(
-      "inline-flex h-8 shrink-0 items-center justify-center rounded-nx-control border border-nx-line-hi bg-transparent px-3 text-xs font-medium text-nx-ink hover:bg-nx-hover transition-colors",
-      className
-    )}
+    variant="outline"
+    size="sm"
+    className={cn("h-8 shrink-0 px-3 text-xs", className)}
     {...props}
   />
 ));
@@ -155,7 +159,7 @@ const TOAST_ICON = {
   default: { Glyph: Info, tint: "text-nx-ink-3", bg: "bg-nx-raised" },
   destructive: { Glyph: AlertCircle, tint: "text-destructive", bg: "bg-destructive/10" },
   success: { Glyph: CheckCircle, tint: "text-success", bg: "bg-success/10" },
-  warning: { Glyph: AlertTriangle, tint: "text-warning", bg: "bg-warning/10" },
+  warning: { Glyph: AlertTriangle, tint: "text-nx-warning-strong", bg: "bg-warning/15" },
   info: { Glyph: Info, tint: "text-info", bg: "bg-info/10" },
 } as const;
 

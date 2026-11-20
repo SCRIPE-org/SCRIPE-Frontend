@@ -8,62 +8,113 @@
  *  - NO localStorage read/write (Zustand persist handles this)
  *
  * Call sequence (v2 — Option B / Eager Routes):
- *   1. fetchRoutes()           → GET /Menus/my/routes    (login, eager)
- *   2. fetchDefaultWorkspace() → GET /Menus/my           (login, eager)
- *   3. fetchWorkspaceMenu(key) → GET /Menus/my?workspace={key} (JIT on switch)
+ *   1. fetchRoutes()           → GET /menus/navigation/routes    (login, eager)
+ *   2. fetchDefaultWorkspace() → GET /menus/navigation           (login, eager)
+ *   3. fetchWorkspaceMenu(key) → GET /menus/navigation?workspace={key} (JIT on switch)
  */
 
 import type { IApiService } from "@core/interfaces/api.interface";
 import { NAVIGATION_ENDPOINTS } from "@core/config/api-endpoints";
 import { appLogger } from "@core/common/logger";
+import { normalizeRoutePath } from "@core/config/app-route-manifest";
 
-import type { INavigationRepository } from "../../domain/interfaces/INavigationRepository";
+import type {
+  AuthorizedRouteDescriptor,
+  AuthorizedRoutesResult,
+  INavigationRepository,
+  RouteAccessState,
+} from "../../domain/interfaces/INavigationRepository";
 import { NavigationData, type NavigationDataInput } from "../../domain/entities/NavigationData";
 import { WorkspaceGroupMapper } from "../mappers/WorkspaceGroupMapper";
 import { MenuItemMapper } from "../mappers/MenuItemMapper";
 import type { WorkspaceGroupData } from "../../domain/entities/WorkspaceGroup";
 
+const VALID_ROUTE_ACCESS_STATES = new Set<RouteAccessState>([
+  "authorized",
+  "tenant_context_required",
+  "platform_context_required",
+  "feature_disabled",
+]);
+
+export function parseRouteDescriptors(rawDescriptors: unknown): AuthorizedRouteDescriptor[] {
+  if (!Array.isArray(rawDescriptors)) return [];
+
+  const parsed: AuthorizedRouteDescriptor[] = [];
+  for (const item of rawDescriptors) {
+    if (!item || typeof item !== "object") continue;
+    const record = item as Record<string, unknown>;
+    if (typeof record.route !== "string" || !record.route.trim()) continue;
+    const rawState = record.accessState;
+    if (
+      typeof rawState !== "string" ||
+      !VALID_ROUTE_ACCESS_STATES.has(rawState as RouteAccessState)
+    ) {
+      appLogger.warn(
+        `[NavigationRepository] Skipping route descriptor "${record.route}" with unrecognized accessState: ${String(rawState)}`
+      );
+      continue;
+    }
+
+    parsed.push({
+      route: normalizeRoutePath(record.route),
+      accessState: rawState as RouteAccessState,
+      workspaceKey: typeof record.workspaceKey === "string" ? record.workspaceKey : null,
+      requiredFeature: typeof record.requiredFeature === "string" ? record.requiredFeature : null,
+      requiresTenantContext: Boolean(record.requiresTenantContext),
+    });
+  }
+  return parsed;
+}
+
 // ── Response shapes from backend ──────────────────────────────────────────
 interface RoutesApiResponse {
   data?: {
-    routes: string[];
-    workspaceRouteMap: Record<string, string[]>;
+    routes?: string[];
+    workspaceRouteMap?: Record<string, string[]>;
+    routeDescriptors?: AuthorizedRouteDescriptor[];
   };
   routes?: string[];
   workspaceRouteMap?: Record<string, string[]>;
+  routeDescriptors?: AuthorizedRouteDescriptor[];
 }
 
 export class NavigationRepository implements INavigationRepository {
   constructor(private readonly apiService: IApiService) {}
 
   /**
-   * Fetches ALL accessible routes across ALL workspaces in one lightweight call.
-   * Called ONCE on login — feeds useNavigationStore.allRoutes immediately.
+   * Fetches ALL accessible routes and route descriptors across ALL workspaces in one lightweight call.
+   * Called on login and tenant/platform context switches.
    */
-  async fetchRoutes(): Promise<{
-    routes: string[];
-    workspaceRouteMap: Record<string, string[]>;
-  }> {
+  async fetchRoutes(): Promise<AuthorizedRoutesResult> {
     appLogger.debug("[NavigationRepository] Fetching all routes (eager)…");
 
-    const raw = await this.apiService.get<RoutesApiResponse>(NAVIGATION_ENDPOINTS.MENUS.MY_ROUTES);
-    const payload = (raw as RoutesApiResponse)?.data ?? raw ?? {};
+    const raw = await this.apiService.get<RoutesApiResponse>(
+      NAVIGATION_ENDPOINTS.MENUS.AUTHORIZED_ROUTES
+    );
+    const payload = ((raw as RoutesApiResponse)?.data ?? raw ?? {}) as RoutesApiResponse;
 
-    const routes = Array.isArray((payload as RoutesApiResponse).routes)
-      ? ((payload as RoutesApiResponse).routes as string[])
+    const routes = Array.isArray(payload.routes)
+      ? payload.routes.filter((r): r is string => typeof r === "string" && r.trim().length > 0).map(normalizeRoutePath)
       : [];
 
-    const workspaceRouteMap =
-      typeof (payload as RoutesApiResponse).workspaceRouteMap === "object" &&
-      (payload as RoutesApiResponse).workspaceRouteMap !== null
-        ? ((payload as RoutesApiResponse).workspaceRouteMap as Record<string, string[]>)
-        : {};
+    const workspaceRouteMap: Record<string, string[]> = {};
+    if (typeof payload.workspaceRouteMap === "object" && payload.workspaceRouteMap !== null) {
+      for (const [key, list] of Object.entries(payload.workspaceRouteMap)) {
+        if (Array.isArray(list)) {
+          workspaceRouteMap[key] = list
+            .filter((r): r is string => typeof r === "string" && r.trim().length > 0)
+            .map(normalizeRoutePath);
+        }
+      }
+    }
+
+    const routeDescriptors = parseRouteDescriptors(payload.routeDescriptors);
 
     appLogger.debug(
-      `[NavigationRepository] Got ${routes.length} total routes across ${Object.keys(workspaceRouteMap).length} workspace(s)`
+      `[NavigationRepository] Got ${routes.length} total routes (${routeDescriptors.length} descriptor(s)) across ${Object.keys(workspaceRouteMap).length} workspace(s)`
     );
 
-    return { routes, workspaceRouteMap };
+    return { routes, workspaceRouteMap, routeDescriptors };
   }
 
   /**
@@ -84,8 +135,8 @@ export class NavigationRepository implements INavigationRepository {
 
     const endpoint =
       workspaceKey && workspaceKey !== "admin"
-        ? NAVIGATION_ENDPOINTS.MENUS.MY_WORKSPACE(workspaceKey)
-        : NAVIGATION_ENDPOINTS.MENUS.MY;
+        ? NAVIGATION_ENDPOINTS.MENUS.WORKSPACE_NAVIGATION(workspaceKey)
+        : NAVIGATION_ENDPOINTS.MENUS.NAVIGATION;
 
     const raw = await this.apiService.get<unknown>(endpoint);
 
@@ -126,7 +177,9 @@ export class NavigationRepository implements INavigationRepository {
    */
   async fetchWorkspaceStubs(): Promise<WorkspaceGroupData[]> {
     appLogger.debug("[NavigationRepository] Fetching workspace stubs...");
-    const raw = await this.apiService.get<unknown>(NAVIGATION_ENDPOINTS.MENUS.MY_WORKSPACES);
+    const raw = await this.apiService.get<unknown>(
+      NAVIGATION_ENDPOINTS.MENUS.AUTHORIZED_WORKSPACES
+    );
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const payload = ((raw as any)?.data ?? raw ?? []) as Record<string, unknown>[];
@@ -145,7 +198,7 @@ export class NavigationRepository implements INavigationRepository {
     appLogger.debug(`[NavigationRepository] Toggling pin for workspace "${workspaceKey}"…`);
 
     const raw = await this.apiService.post<unknown>(
-      NAVIGATION_ENDPOINTS.MENUS.TOGGLE_PIN(workspaceKey),
+      NAVIGATION_ENDPOINTS.MENUS.TOGGLE_WORKSPACE_PIN(workspaceKey),
       {}
     );
 

@@ -1,10 +1,10 @@
-// UI-EXCEPTION: compact studio layout
 "use client";
 
 import { useEffect, useRef } from "react";
 import { ArrowRight, Check } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSignupTheme } from "@core/providers/signup-theme";
+import { Button } from "@core/ui/button";
 import type { SignupWizardViewModel } from "../../viewmodels/useSignupWizard";
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -114,14 +114,14 @@ export function CompleteStep({ wizard }: CompleteStepProps) {
       </ul>
 
       {/* ── Primary CTA — go to the workspace now ── */}
-      <button
+      <Button
         type="button"
+        variant="ghost"
         onClick={wizard.goToLogin}
-        className="group mt-8 inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl text-[0.9375rem] font-semibold transition-transform duration-200 hover:-translate-y-0.5 motion-reduce:transform-none"
+        className="group mt-8 inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl text-[0.9375rem] font-semibold transition-transform duration-200 hover:-translate-y-0.5 hover:bg-transparent motion-reduce:transform-none"
         style={{
           background: tokens.gradientCta,
           color: tokens.accentContrast,
-          boxShadow: tokens.shadowCard,
         }}
       >
         {t("signup.complete.goToWorkspace")}
@@ -129,7 +129,7 @@ export function CompleteStep({ wizard }: CompleteStepProps) {
           className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:transform-none rtl:scale-x-[-1]"
           aria-hidden="true"
         />
-      </button>
+      </Button>
 
       <p className="mt-4 text-[0.6875rem]" style={{ color: tokens.inkFaint }}>
         {t("signup.complete.redirecting")}

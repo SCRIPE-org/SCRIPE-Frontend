@@ -39,28 +39,33 @@ const menuSelectionBarClasses =
 const menuPanelClasses =
   "z-dropdown min-w-[12rem] max-h-[var(--radix-menubar-content-available-height)] rounded-nx-md p-1";
 
-/** 140ms fade + 0.98 scale from the trigger origin; reduced motion keeps the
- *  crossfade and drops the scale. */
+/** Micro-speed fade + 0.95 scale + tight 2px directional shift from the trigger
+ *  origin; reduced motion keeps the crossfade and drops the scale/slide.
+ *  transition-none keeps Floating UI's post-mount transform-origin update instant. */
 const menuMotionClasses =
-  "origin-[--radix-menubar-content-transform-origin] duration-nx-micro ease-nx-enter data-[state=open]:animate-in data-[state=open]:fade-in-0 motion-safe:data-[state=open]:zoom-in-[0.98] data-[state=closed]:animate-out data-[state=closed]:ease-nx-exit data-[state=closed]:fade-out-0 motion-safe:data-[state=closed]:zoom-out-[0.98]";
+  "origin-[var(--radix-menubar-content-transform-origin)] transition-none duration-nx-micro ease-nx-enter data-[state=open]:duration-nx-micro data-[state=closed]:duration-nx-micro data-[state=closed]:ease-nx-exit data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 motion-safe:data-[state=open]:zoom-in-95 motion-safe:data-[state=closed]:zoom-out-95 motion-safe:data-[side=bottom]:slide-in-from-top-0.5 motion-safe:data-[side=top]:slide-in-from-bottom-0.5 motion-safe:data-[side=left]:slide-in-from-right-0.5 motion-safe:data-[side=right]:slide-in-from-left-0.5";
 
 const Menubar = React.forwardRef<
   React.ElementRef<typeof MenubarPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof MenubarPrimitive.Root>
->(({ className, ...props }, ref) => (
-  <MenubarPrimitive.Root
-    ref={ref}
-    className={cn(
-      // gap-1 instead of the old inter-item margin utility: that one was a
-      // physical margin and reversed wrongly in RTL. The bar is chrome, so it
-      // sits on the plain surface step behind a hairline — no shadow: it is
-      // anchored to the page, not floating above it.
-      "flex h-10 items-center gap-1 rounded-nx-control border border-nx-line bg-nx-surface p-1",
-      className
-    )}
-    {...props}
-  />
-));
+>(({ className, dir, ...props }, ref) => {
+  const { direction } = useI18n();
+  return (
+    <MenubarPrimitive.Root
+      ref={ref}
+      dir={dir ?? direction}
+      className={cn(
+        // gap-1 instead of the old inter-item margin utility: that one was a
+        // physical margin and reversed wrongly in RTL. The bar is chrome, so it
+        // sits on the plain surface step behind a hairline — no shadow: it is
+        // anchored to the page, not floating above it.
+        "flex h-10 items-center gap-1 rounded-nx-control border border-nx-line bg-nx-surface p-1",
+        className
+      )}
+      {...props}
+    />
+  );
+});
 Menubar.displayName = MenubarPrimitive.Root.displayName;
 
 const MenubarTrigger = React.forwardRef<

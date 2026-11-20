@@ -11,6 +11,7 @@
 
 import { useResolvedFileUrl } from "@core/hooks/use-resolved-file-url";
 import { useI18n } from "@core/providers/i18n-provider";
+import { isValidCtaUrl } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 import { BookOpen } from "lucide-react";
 import { Button } from "@core/ui/button";
 import Link from "next/link";
@@ -53,7 +54,7 @@ export function ProductionComponent({
     case "logo":
       return (
         <div
-          className="login-logo flex items-center justify-center overflow-hidden border border-border bg-background shadow-sm"
+          className="login-logo flex items-center justify-center overflow-hidden border border-nx-line bg-nx-ground"
           style={{
             maxWidth: `${(props.maxWidth as number) || 200}px`,
             width: "100%",
@@ -145,7 +146,7 @@ export function ProductionComponent({
             <footer className="text-xs font-medium">
               — {props.author as string}
               {(props.role as string) && (
-                <span className="ml-1 text-muted-foreground">({props.role as string})</span>
+                <span className="ms-1 text-nx-ink-2">({props.role as string})</span>
               )}
             </footer>
           )}
@@ -170,7 +171,9 @@ export function ProductionComponent({
         />
       ) : null;
 
-    case "ctaButton":
+    case "ctaButton": {
+      const rawUrl = typeof props.url === "string" ? props.url : "";
+      const safeHref = isValidCtaUrl(rawUrl) ? rawUrl.trim() : null;
       return (
         <Button
           variant={(props.variant as "default" | "outline") || "default"}
@@ -179,15 +182,16 @@ export function ProductionComponent({
             backgroundColor: "var(--login-primary, hsl(var(--primary)))",
             borderRadius: "var(--login-radius-button, 8px)",
           }}
-          asChild={(props.url as string) ? true : undefined}
+          asChild={safeHref ? true : undefined}
         >
-          {(props.url as string) ? (
-            <Link href={props.url as string}>{(props.label as string) || "Get Started"}</Link>
+          {safeHref ? (
+            <Link href={safeHref}>{(props.label as string) || "Get Started"}</Link>
           ) : (
             <span>{(props.label as string) || "Get Started"}</span>
           )}
         </Button>
       );
+    }
 
     case "divider":
       return (
@@ -204,7 +208,7 @@ export function ProductionComponent({
         <div className="flex items-center justify-center gap-4 text-xs text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
           <Button variant="ghost" size="sm" className="text-xs" asChild>
             <Link href="/docs">
-              <BookOpen className="mr-1 h-3 w-3" />
+              <BookOpen className="me-1 h-3 w-3" />
               {t("auth.branding.docs")}
             </Link>
           </Button>

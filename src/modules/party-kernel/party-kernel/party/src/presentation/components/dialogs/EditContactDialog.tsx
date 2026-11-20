@@ -95,7 +95,7 @@ export function EditContactDialog({
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <div className="flex items-center gap-2">
-              <div className="bg-nx-accent/10 flex h-9 w-9 items-center justify-center rounded-lg text-nx-accent">
+              <div className="bg-nx-accent-wash flex h-9 w-9 items-center justify-center rounded-lg text-nx-accent">
                 <Edit3 className="h-5 w-5" />
               </div>
               <DialogTitle>
@@ -171,7 +171,7 @@ export function EditContactDialog({
             <Button type="submit" disabled={isSubmitting || !value.trim()}>
               {isSubmitting ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="me-2 h-4 w-4 animate-spin" />
                   {t("party.dialog.save")}...
                 </>
               ) : (

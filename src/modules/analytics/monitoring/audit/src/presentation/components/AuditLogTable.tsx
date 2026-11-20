@@ -62,7 +62,7 @@ function getActionBadgeStyle(eventType: string) {
     eventType.includes("TwoFactor") ||
     eventType.includes("Locked")
   ) {
-    return "border-warning/40 text-warning bg-warning/10";
+    return "border-warning/40 text-nx-warning-strong bg-warning/10";
   }
   return "border-nx-line text-nx-ink bg-nx-raised";
 }
@@ -86,7 +86,7 @@ function getSeverityBadge(log: AuditLogEntry) {
     return (
       <Badge
         variant="outline"
-        className="border-warning/50 bg-warning/10 px-1.5 py-0 text-[10px] font-bold uppercase tracking-wider text-warning"
+        className="border-warning/50 bg-warning/10 px-1.5 py-0 text-[10px] font-bold uppercase tracking-wider text-nx-warning-strong"
       >
         Warning
       </Badge>
@@ -96,7 +96,7 @@ function getSeverityBadge(log: AuditLogEntry) {
     return (
       <Badge
         variant="outline"
-        className="border-warning/50 bg-warning/10 px-1.5 py-0 text-[10px] font-bold uppercase tracking-wider text-warning"
+        className="border-warning/50 bg-warning/10 px-1.5 py-0 text-[10px] font-bold uppercase tracking-wider text-nx-warning-strong"
       >
         Warning
       </Badge>

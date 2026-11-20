@@ -20,6 +20,7 @@ export function EditionCategoriesView() {
     () => ({
       titleKey: "entitlements.editions.categories.title",
       subtitleKey: "entitlements.editions.categories.description",
+      stickyActions: true,
 
       columns: [
         {

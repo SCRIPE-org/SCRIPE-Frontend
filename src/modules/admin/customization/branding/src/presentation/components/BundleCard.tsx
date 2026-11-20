@@ -1,5 +1,4 @@
 // FILE-EXCEPTION: file length
-// UI-EXCEPTION: compact studio layout
 "use client";
 
 /**
@@ -195,17 +194,19 @@ export function BundleCard({
         {/* Quick actions */}
         <div className="flex shrink-0 items-center gap-0.5">
           {onPreview && (
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="icon"
               onClick={(e) => {
                 e.stopPropagation();
                 onPreview(bundle);
               }}
               aria-label={t("studio.marketplace.preview")}
-              className="flex h-6 w-6 items-center justify-center rounded-nx-sm text-nx-ink-3 transition-colors duration-nx-micro hover:bg-nx-accent-wash hover:text-nx-accent focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
+              className="flex h-6 w-6 items-center justify-center rounded-nx-sm p-0 text-nx-ink-3 transition-colors duration-nx-micro hover:bg-nx-accent-wash hover:text-nx-accent focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
             >
               <Eye className="h-3 w-3" aria-hidden="true" />
-            </button>
+            </Button>
           )}
           {bundle.isApplied && (
             <Check className="h-3.5 w-3.5 shrink-0 text-nx-accent" aria-hidden="true" />
@@ -225,7 +226,7 @@ export function BundleCard({
       )}
     >
       {/* ── Preview Header ── */}
-      {/* A real <button> can't host the nested quick-preview button, so this
+      {/* A real native button can't host the nested quick-preview button, so this
           follows the stat-card.tsx activatable-card pattern instead. */}
       <div
         role="button"
@@ -284,19 +285,20 @@ export function BundleCard({
 
         {/* Quick preview button */}
         {onPreview && (
-          <button
+          <Button
             type="button"
+            variant="ghost"
             onClick={(e) => {
               e.stopPropagation();
               onPreview(bundle);
             }}
             className={cn(
-              "absolute bottom-2.5 end-2.5 flex h-7 items-center gap-1.5 rounded-nx-control px-2.5 text-xs text-nx-ink opacity-0 shadow-nx-sm transition-opacity duration-nx-standard hover:bg-nx-popover focus-visible:opacity-100 focus-visible:shadow-nx-focus focus-visible:outline-none group-hover:opacity-100 motion-reduce:transition-none",
+              "absolute bottom-2.5 end-2.5 flex h-7 items-center gap-1.5 rounded-nx-control px-2.5 text-xs font-normal text-nx-ink opacity-0 shadow-nx-sm transition-opacity duration-nx-standard hover:bg-nx-popover focus-visible:opacity-100 focus-visible:shadow-nx-focus focus-visible:outline-none group-hover:opacity-100 motion-reduce:transition-none",
               FLOATING_CHIP
             )}
           >
             <Eye className="h-3 w-3" aria-hidden="true" /> {t("studio.marketplace.preview")}
-          </button>
+          </Button>
         )}
 
         {/* Pricing badge */}
@@ -312,9 +314,10 @@ export function BundleCard({
       {/* ── Card Body ── */}
       <div className="flex flex-1 flex-col p-4">
         {/* Title + Author */}
-        <button
+        <Button
           type="button"
-          className="cursor-pointer text-start focus-visible:shadow-nx-focus focus-visible:outline-none"
+          variant="ghost"
+          className="h-auto flex-col items-start justify-start whitespace-normal rounded-none p-0 text-start font-normal hover:bg-transparent focus-visible:shadow-nx-focus focus-visible:outline-none"
           onClick={() => onOpenDetail(bundle)}
         >
           <h3 className="line-clamp-1 text-sm font-semibold text-nx-ink transition-colors duration-nx-micro group-hover:text-nx-accent motion-reduce:transition-none">
@@ -327,7 +330,7 @@ export function BundleCard({
           <p className="mt-1.5 line-clamp-2 text-xs leading-relaxed text-nx-ink-2">
             {bundle.description}
           </p>
-        </button>
+        </Button>
 
         {/* Color palette dots + tags */}
         <div className="mt-3 flex items-center gap-2">
@@ -383,8 +386,10 @@ export function BundleCard({
 
           <div className="flex items-center gap-1">
             {/* Favorite */}
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="icon"
               onClick={(e) => {
                 e.stopPropagation();
                 onToggleFavorite(bundle.slug);
@@ -396,9 +401,9 @@ export function BundleCard({
               }
               aria-pressed={bundle.isFavorited}
               className={cn(
-                "flex h-7 w-7 items-center justify-center rounded-nx-control transition-colors duration-nx-micro focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
+                "flex h-7 w-7 items-center justify-center rounded-nx-control p-0 transition-colors duration-nx-micro focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
                 bundle.isFavorited
-                  ? "bg-destructive/10 text-destructive"
+                  ? "bg-destructive/10 text-destructive hover:bg-destructive/10 hover:text-destructive"
                   : "text-nx-ink-3 hover:bg-destructive/10 hover:text-destructive"
               )}
             >
@@ -406,7 +411,7 @@ export function BundleCard({
                 className={cn("h-3.5 w-3.5", bundle.isFavorited && "fill-current")}
                 aria-hidden="true"
               />
-            </button>
+            </Button>
 
             {/* Apply */}
             {bundle.isAvailable && !bundle.isApplied && (

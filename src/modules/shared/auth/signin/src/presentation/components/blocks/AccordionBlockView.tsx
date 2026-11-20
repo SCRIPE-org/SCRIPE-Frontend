@@ -33,21 +33,22 @@ export function AccordionBlockView({ block }: { block: AccordionBlock }) {
               props.style === "ghost"
                 ? ""
                 : props.style === "card"
-                  ? "rounded-lg bg-background shadow-sm"
-                  : "rounded-lg border"
+                  ? "rounded-lg border border-nx-line bg-nx-surface"
+                  : "rounded-lg border border-nx-line"
             }
           >
             <Button
               variant="ghost"
               type="button"
-              className="flex h-auto w-full items-center justify-between px-3 py-2 text-start text-sm font-medium"
+              aria-expanded={isOpen}
+              className="flex h-auto w-full items-center justify-between px-3 py-2 text-start text-sm font-medium text-nx-ink"
               onClick={() => toggle(index)}
             >
               <span>{item.title}</span>
               <span>{isOpen ? "-" : "+"}</span>
             </Button>
             {isOpen && (
-              <div className="px-3 pb-3 text-sm text-muted-foreground">{item.content}</div>
+              <div className="px-3 pb-3 text-sm text-nx-ink-2">{item.content}</div>
             )}
           </div>
         );

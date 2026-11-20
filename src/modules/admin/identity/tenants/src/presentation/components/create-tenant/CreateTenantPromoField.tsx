@@ -8,6 +8,7 @@
 "use client";
 
 import React from "react";
+import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Badge } from "@core/ui/badge";
@@ -37,10 +38,11 @@ export function CreateTenantPromoField({ vm, t }: CreateTenantPromoFieldProps) {
             const isSelected = vm.form.promotionId === promo.id;
 
             return (
-              <button
+              <Button
                 key={promo.id}
                 type="button"
-                className="rounded-full transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
+                variant="ghost"
+                className="h-auto rounded-full p-0 transition-colors duration-nx-micro ease-nx-enter hover:bg-transparent focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
                 aria-pressed={isSelected}
                 onClick={() => {
                   if (isSelected) {
@@ -68,7 +70,7 @@ export function CreateTenantPromoField({ vm, t }: CreateTenantPromoFieldProps) {
                     : `$${promo.discountValue}`}
                   )
                 </Badge>
-              </button>
+              </Button>
             );
           })}
         </div>

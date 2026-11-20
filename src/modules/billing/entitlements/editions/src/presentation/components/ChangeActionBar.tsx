@@ -155,7 +155,7 @@ export function ChangeActionBar({
       <Dialog open={showDirectApplyDialog} onOpenChange={setShowDirectApplyDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-warning">
+            <DialogTitle className="flex items-center gap-2 text-nx-warning-strong">
               <Bolt className="h-5 w-5" />
               {t("entitlements.editions.directApplyConfirmTitle")}
             </DialogTitle>
@@ -164,7 +164,7 @@ export function ChangeActionBar({
             </DialogDescription>
           </DialogHeader>
           <div className="flex items-center gap-2 rounded-nx-sm border border-warning/20 bg-warning/5 p-2.5 text-xs text-nx-ink-3">
-            <Bolt className="h-3.5 w-3.5 shrink-0 text-warning" />
+            <Bolt className="h-3.5 w-3.5 shrink-0 text-nx-warning-strong" />
             <span>{t("entitlements.editions.pendingChangesCount", { count: modifiedCount })}</span>
           </div>
           <DialogFooter>

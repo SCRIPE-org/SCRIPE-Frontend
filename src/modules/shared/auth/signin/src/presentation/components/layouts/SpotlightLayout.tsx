@@ -20,7 +20,7 @@ export function SpotlightLayout({
 }: LoginLayoutProps) {
   return (
     <div
-      className={`relative flex min-h-screen w-full items-center justify-center ${BG_STYLE} login-page selection:bg-primary/20`}
+      className={`relative flex min-h-[100dvh] w-full items-center justify-center ${BG_STYLE} login-page`}
       dir={direction}
       style={WRAPPER_STYLE}
     >
@@ -29,26 +29,26 @@ export function SpotlightLayout({
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(ellipse 50% 60% at 50% 50%, var(--login-primary, hsl(var(--primary)))/0.12 0%, transparent 70%)",
+            "radial-gradient(ellipse 50% 60% at 50% 50%, color-mix(in srgb, var(--login-primary, var(--nx-accent)) 12%, transparent) 0%, transparent 70%)",
         }}
       />
       {topActions}
-      <div
-        className="relative z-10 mx-4 w-full border border-[var(--login-accent,hsl(var(--border)))]"
+      <main
+        className="relative z-10 mx-4 w-full border border-[var(--login-accent,var(--nx-line))]"
         style={cardStyle("420px")}
       >
         <div className="mb-8 flex flex-col items-center gap-3 text-center">
-          <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border border-border bg-background shadow-sm">
+          <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border border-nx-line bg-nx-surface">
             <LogoImg logoSrc={logoSrc} logoAlt={logoAlt} />
           </div>
           <h1
-            className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
+            className="login-heading tracking-tight text-[var(--login-text,var(--nx-ink))]"
             style={{ fontSize: "var(--login-size-headline, 1.5rem)" }}
           >
             {companyName}
           </h1>
           <p
-            className="text-[var(--login-text-muted,hsl(var(--muted-foreground)))]"
+            className="text-[var(--login-text-muted,var(--nx-ink-2))]"
             style={{ fontSize: "var(--login-size-subtitle, 0.875rem)" }}
           >
             {t("auth.pleaseLogin")}
@@ -56,7 +56,7 @@ export function SpotlightLayout({
         </div>
         {formContent}
         {footerSlot}
-      </div>
+      </main>
     </div>
   );
 }

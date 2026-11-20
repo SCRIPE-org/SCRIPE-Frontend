@@ -46,11 +46,11 @@ export function DynamicCustomField({
       return (
         <div
           className={cn(
-            "flex items-center justify-between rounded-lg border border-border bg-card/40 p-3",
+            "flex items-center justify-between rounded-lg border border-nx-line bg-nx-surface p-3",
             invalid && "border-destructive/60"
           )}
         >
-          <span className="text-sm font-medium text-foreground">{label}</span>
+          <span className="text-sm font-medium text-nx-ink">{label}</span>
           <Switch
             id={field.key}
             checked={Boolean(value)}
@@ -190,12 +190,12 @@ export function DynamicCustomField({
         <div className="flex items-center justify-between">
           <Label htmlFor={field.key} className="flex items-center gap-1 text-xs font-medium">
             <span>{label}</span>
-            {field.isRequired && <span className="text-destructive">*</span>}
+            {field.isRequired && <span className="text-nx-danger">*</span>}
           </Label>
           {field.isSensitive && (
             <Badge
               variant="secondary"
-              className="gap-1 border border-border bg-muted/40 px-1.5 py-0 text-[10px] font-normal text-muted-foreground"
+              className="gap-1 border border-nx-line bg-nx-raised px-1.5 py-0 text-[10px] font-normal text-nx-ink-2"
             >
               <Lock className="h-2.5 w-2.5" />
               <span>Encrypted</span>
@@ -205,7 +205,7 @@ export function DynamicCustomField({
       )}
       {renderControl()}
       {invalid && error && (
-        <p className="mt-1 flex items-center gap-1 text-xs text-destructive">
+        <p className="mt-1 flex items-center gap-1 text-xs text-nx-danger">
           <AlertCircle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
           <span>{error}</span>
         </p>

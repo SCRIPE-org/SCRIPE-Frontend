@@ -33,9 +33,17 @@ export type StatTone = "neutral" | "success" | "warning" | "danger" | "info";
 const TONE_ICON: Record<StatTone, string> = {
   neutral: "border-nx-line bg-nx-raised text-nx-ink-2",
   success: "border-success/30 bg-success/10 text-success",
-  warning: "border-warning/30 bg-warning/10 text-warning",
+  warning: "border-warning-strong/30 bg-warning/15 text-nx-warning-strong",
   danger: "border-destructive/30 bg-destructive/10 text-destructive",
   info: "border-info/30 bg-info/10 text-info",
+};
+
+const TONE_CARD: Record<StatTone, string> = {
+  neutral: "",
+  success: "border-success/30 hover:border-success/50",
+  warning: "border-warning-strong/30 hover:border-warning-strong/50",
+  danger: "border-destructive/30 hover:border-destructive/50",
+  info: "border-info/30 hover:border-info/50",
 };
 
 export interface StatCardProps {
@@ -110,14 +118,14 @@ export function StatCard({
   const trendIsGood = trend ? (invertTrend ? trend.value <= 0 : trend.value >= 0) : false;
   const trendClass =
     direction === 0
-      ? "border-nx-line text-nx-ink-2"
+      ? "border-nx-line bg-nx-raised text-nx-ink-2"
       : trendIsGood
-        ? "border-success/30 text-success"
-        : "border-destructive/30 text-destructive";
+        ? "border-success/30 bg-success/10 text-success"
+        : "border-destructive/30 bg-destructive/10 text-destructive";
   const trendSign = direction > 0 ? "+" : direction < 0 ? "−" : "";
 
   const body = (
-    <CardContent className="flex items-start gap-4 p-4">
+    <CardContent className={cn("flex items-start gap-4 p-4", isInteractive && "pointer-events-none relative z-10")}>
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-1">
           <p className="min-w-0 truncate text-xs font-medium text-nx-ink-2">{label}</p>
@@ -125,16 +133,16 @@ export function StatCard({
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  {/* Negative block margins keep the 32px hit target from
-                      changing the label's line box. */}
-                  <span
-                    role="button"
-                    tabIndex={0}
+                  {/* Native button sibling to the card's primary stretched trigger
+                      so keyboard/AT navigation never hits nested interactive nodes. */}
+                  <button
+                    type="button"
                     aria-label={tooltip}
-                    className="-my-2 -me-1 inline-grid h-8 w-8 shrink-0 place-items-center rounded-nx-sm text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink-2 focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
+                    onClick={(event) => event.stopPropagation()}
+                    className="pointer-events-auto relative z-20 -my-2 -me-1 inline-grid h-8 w-8 shrink-0 place-items-center rounded-nx-sm text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink-2 focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
                   >
                     <Info className="h-3.5 w-3.5" aria-hidden="true" />
-                  </span>
+                  </button>
                 </TooltipTrigger>
                 <TooltipContent className="max-w-[260px]">{tooltip}</TooltipContent>
               </Tooltip>
@@ -148,7 +156,7 @@ export function StatCard({
         </p>
 
         {(subtitle || trend) && (
-          <div className="mt-2.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-nx-ink-3">
+          <div className="mt-2.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-nx-ink-2">
             {trend && (
               <span
                 className={cn(
@@ -161,7 +169,7 @@ export function StatCard({
                 {Math.abs(trend.value)}%{trend.label ? ` ${trend.label}` : ""}
               </span>
             )}
-            {subtitle && <span className="min-w-0 truncate">{subtitle}</span>}
+            {subtitle && <span className="min-w-0 truncate text-nx-ink-3">{subtitle}</span>}
           </div>
         )}
       </div>
@@ -183,29 +191,23 @@ export function StatCard({
   );
 
   if (!isInteractive) {
-    return <Card className={className}>{body}</Card>;
+    return <Card className={cn(TONE_CARD[tone], className)}>{body}</Card>;
   }
 
   return (
     <Card
-      role="button"
-      tabIndex={0}
-      onClick={onClick}
-      onKeyDown={(event) => {
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          onClick();
-        }
-      }}
       className={cn(
-        // Light collects on the active thing: hover is the card's own hairline
-        // brightening, press is the lit inset edge (the same one Button wears),
-        // focus is the shared nx ring. No lift, no coloured shadow.
-        "cursor-pointer active:shadow-[inset_0_0_0_1px_var(--nx-accent)]",
-        "focus-visible:shadow-nx-focus focus-visible:outline-none",
+        "relative focus-within:border-nx-line-hi",
+        TONE_CARD[tone],
         className
       )}
     >
+      <button
+        type="button"
+        onClick={onClick}
+        aria-label={label}
+        className="absolute inset-0 z-0 cursor-pointer rounded-nx-lg focus-visible:shadow-nx-focus focus-visible:outline-none active:shadow-[inset_0_0_0_1px_var(--nx-accent)] transition-[box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none"
+      />
       {body}
     </Card>
   );

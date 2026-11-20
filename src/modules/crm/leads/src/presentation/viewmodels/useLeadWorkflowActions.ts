@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { useI18n } from "@core/providers/i18n-provider";
 import { getCrmContainer } from "@modules/crm/di";
 import { useCrmWorkflowsStore } from "@modules/crm";
 import type {
@@ -13,21 +14,11 @@ import type {
   LeadStatus,
 } from "../../domain/models/crm-lead.types";
 
-function toLeadStageKey(statusOrKey: string): string {
-  const wf = useCrmWorkflowsStore.getState().getActiveWorkflow("lead");
-  const matchedStage = wf?.stages?.find(
-    (s) =>
-      s.stageKey.toLowerCase() === statusOrKey.toLowerCase() ||
-      s.labelEn.toLowerCase() === statusOrKey.toLowerCase() ||
-      s.labelAr === statusOrKey
-  );
-  if (matchedStage) return matchedStage.stageKey;
-  if (statusOrKey.startsWith("lead.")) return statusOrKey;
-  return `lead.${statusOrKey.trim().toLowerCase().replace(/[^a-z0-9]+/g, "_")}`;
-}
+import { stageKeyToLeadStatus, toLeadStageKey } from "../utils/leadTransitionHelpers";
 
 const STANDARD_LEAD_STATUSES = new Set(["New", "Working", "Qualified", "Converted", "Disqualified"]);
 
+/** Manages lead qualification, party linking, conversion, and stage-transition modals and handlers. */
 export function useLeadWorkflowActions(
   items: CrmLead[],
   page: number,
@@ -40,6 +31,7 @@ export function useLeadWorkflowActions(
   setIsSubmitting: (val: boolean) => void,
   setSubmitError: (val: string | null) => void,
 ) {
+  const { t } = useI18n();
   const [isQualifyOpen, setIsQualifyOpen] = useState(false);
   const [qualifyDefaultDecision, setQualifyDefaultDecision] = useState<QualificationDecision>("Qualified");
   const [isLinkPartyOpen, setIsLinkPartyOpen] = useState(false);
@@ -109,27 +101,30 @@ export function useLeadWorkflowActions(
 
   const handleUpdateLeadStatus = useCallback(
     async (lead: CrmLead, newStatus: string): Promise<boolean> => {
-      if (lead.status === newStatus && lead.stageKey === toLeadStageKey(newStatus)) return true;
       const fromKey = lead.stageKey || toLeadStageKey(lead.status);
       const toKey = toLeadStageKey(newStatus);
+      const matchedStage = useCrmWorkflowsStore
+        .getState()
+        .getActiveWorkflow("lead")
+        ?.stages?.find((s) => s.stageKey.toLowerCase() === toKey.toLowerCase());
+      const resolvedStatus = stageKeyToLeadStatus(toKey, matchedStage?.labelEn || newStatus, lead.status);
+      if (lead.status === resolvedStatus && fromKey === toKey) return true;
+
       const evalResult = useCrmWorkflowsStore.getState().evaluateTransition("lead", fromKey, toKey, {
-        hasVerifiedParty: Boolean(lead.organizationPartyId || lead.personPartyId),
+        hasVerifiedParty: Boolean(lead.organizationPartyId || lead.personPartyId || lead.verifiedPartyId),
+        partyId: lead.verifiedPartyId || lead.organizationPartyId || lead.personPartyId || null,
         estimatedAmount: lead.estimatedValue ?? null,
+        estimatedValue: lead.estimatedValue ?? null,
         targetCloseDate: null,
+        disqualificationReason: lead.disqualificationReason ?? null,
+        qualificationNotes: (lead as unknown as { qualificationNotes?: string }).qualificationNotes ?? null,
+        fields: (lead as unknown as { customFields?: Record<string, unknown> }).customFields,
       });
 
       if (!evalResult.allowed) {
-        const msg = evalResult.reason || "Status transition blocked by active Lead workflow.";
+        const msg = evalResult.reason || t("crmLeads.detail.transitionBlockedTitle");
         setSubmitError(msg);
         setStateError(msg);
-        return false;
-      }
-      if (newStatus === "Disqualified") {
-        openQualifyDialog(lead, "Disqualified");
-        return false;
-      }
-      if ((newStatus === "Qualified" || (evalResult.promptForComment && newStatus !== "New" && newStatus !== "Working")) && !evalResult.shouldTriggerDealConversion && lead.status !== "Converted") {
-        openQualifyDialog(lead, "Qualified");
         return false;
       }
 
@@ -138,7 +133,7 @@ export function useLeadWorkflowActions(
       setStateItemsAndError(
         items.map((item) =>
           item.id === lead.id
-            ? { ...item, status: newStatus as LeadStatus, statusName: newStatus, stageKey: toKey }
+            ? { ...item, status: resolvedStatus, statusName: resolvedStatus, stageKey: toKey }
             : item,
         ),
         null,
@@ -146,7 +141,7 @@ export function useLeadWorkflowActions(
 
       try {
         const container = getCrmContainer();
-        const isCustomStage = !STANDARD_LEAD_STATUSES.has(newStatus);
+        const isCustomStage = !STANDARD_LEAD_STATUSES.has(resolvedStatus);
         if (typeof container.leadRepository.moveLeadStage === "function" && (isCustomStage || evalResult.shouldTriggerDealConversion || lead.status !== "Converted")) {
           const moved = await container.leadRepository.moveLeadStage({
             leadId: lead.id,
@@ -160,8 +155,8 @@ export function useLeadWorkflowActions(
         } else {
           await container.leadRepository.updateLead({
             leadId: lead.id,
-            markWorking: newStatus === "Working",
-            targetStatus: (STANDARD_LEAD_STATUSES.has(newStatus) ? newStatus : "Working") as LeadStatus,
+            markWorking: resolvedStatus === "Working",
+            targetStatus: (STANDARD_LEAD_STATUSES.has(resolvedStatus) ? resolvedStatus : "Working") as LeadStatus,
             expectedRowVersion: lead.rowVersion,
           });
           if (evalResult.shouldTriggerDealConversion) {
@@ -181,82 +176,61 @@ export function useLeadWorkflowActions(
         return false;
       }
     },
-    [
-      items,
-      page,
-      pageSize,
-      search,
-      statusFilter,
-      loadLeads,
-      openConvertDialog,
-      openQualifyDialog,
-      setStateError,
-      setStateItemsAndError,
-      setSubmitError,
-    ],
+    [items, page, pageSize, search, statusFilter, loadLeads, openConvertDialog, setStateError, setStateItemsAndError, setSubmitError, t],
   );
 
-  const handleQualifyLead = useCallback(
-    async (input: QualifyLeadInput): Promise<boolean> => {
+  const runDialogMutation = useCallback(
+    async <T,>(op: () => Promise<T>, closeDialog: () => void, fallbackError: string): Promise<T | null> => {
       setIsSubmitting(true);
       setSubmitError(null);
       try {
-        const container = getCrmContainer();
-        await container.leadRepository.qualifyLead(input);
+        const result = await op();
         setIsSubmitting(false);
-        setIsQualifyOpen(false);
-        setActiveLead(null);
-        loadLeads(page, search, statusFilter, pageSize);
-        return true;
-      } catch (err) {
-        setIsSubmitting(false);
-        setSubmitError(err instanceof Error ? err.message : "Failed to qualify lead");
-        return false;
-      }
-    },
-    [loadLeads, page, pageSize, search, statusFilter, setIsSubmitting, setSubmitError],
-  );
-
-  const handleLinkParty = useCallback(
-    async (input: LinkPartyToLeadInput): Promise<boolean> => {
-      setIsSubmitting(true);
-      setSubmitError(null);
-      try {
-        const container = getCrmContainer();
-        await container.leadRepository.linkParty(input);
-        setIsSubmitting(false);
-        setIsLinkPartyOpen(false);
-        setActiveLead(null);
-        loadLeads(page, search, statusFilter, pageSize);
-        return true;
-      } catch (err) {
-        setIsSubmitting(false);
-        setSubmitError(err instanceof Error ? err.message : "Failed to link contact or organization");
-        return false;
-      }
-    },
-    [loadLeads, page, pageSize, search, statusFilter, setIsSubmitting, setSubmitError],
-  );
-
-  const handleConvertLead = useCallback(
-    async (input: ConvertLeadInput): Promise<ConvertLeadResult | null> => {
-      setIsSubmitting(true);
-      setSubmitError(null);
-      try {
-        const container = getCrmContainer();
-        const result = await container.leadRepository.convertLead(input);
-        setIsSubmitting(false);
-        setIsConvertOpen(false);
+        closeDialog();
         setActiveLead(null);
         loadLeads(page, search, statusFilter, pageSize);
         return result;
       } catch (err) {
         setIsSubmitting(false);
-        setSubmitError(err instanceof Error ? err.message : "Failed to convert lead");
+        setSubmitError(err instanceof Error ? err.message : fallbackError);
         return null;
       }
     },
     [loadLeads, page, pageSize, search, statusFilter, setIsSubmitting, setSubmitError],
+  );
+
+  const handleQualifyLead = useCallback(
+    async (input: QualifyLeadInput): Promise<boolean> => {
+      const res = await runDialogMutation(
+        () => getCrmContainer().leadRepository.qualifyLead(input),
+        () => setIsQualifyOpen(false),
+        "Failed to qualify lead",
+      );
+      return res !== null;
+    },
+    [runDialogMutation],
+  );
+
+  const handleLinkParty = useCallback(
+    async (input: LinkPartyToLeadInput): Promise<boolean> => {
+      const res = await runDialogMutation(
+        () => getCrmContainer().leadRepository.linkParty(input),
+        () => setIsLinkPartyOpen(false),
+        "Failed to link contact or organization",
+      );
+      return res !== null;
+    },
+    [runDialogMutation],
+  );
+
+  const handleConvertLead = useCallback(
+    (input: ConvertLeadInput): Promise<ConvertLeadResult | null> =>
+      runDialogMutation(
+        () => getCrmContainer().leadRepository.convertLead(input),
+        () => setIsConvertOpen(false),
+        "Failed to convert lead",
+      ),
+    [runDialogMutation],
   );
 
   const lookupCandidateParties = useCallback(
@@ -268,22 +242,11 @@ export function useLeadWorkflowActions(
   );
 
   return {
-    isQualifyOpen,
-    qualifyDefaultDecision,
-    isLinkPartyOpen,
-    isConvertOpen,
-    activeLead,
-    setActiveLead,
+    isQualifyOpen, qualifyDefaultDecision, isLinkPartyOpen, isConvertOpen, activeLead, setActiveLead,
     setIsQualifyOpen: handleSetIsQualifyOpen,
     setIsLinkPartyOpen: handleSetIsLinkPartyOpen,
     setIsConvertOpen: handleSetIsConvertOpen,
-    openQualifyDialog,
-    openLinkPartyDialog,
-    openConvertDialog,
-    handleUpdateLeadStatus,
-    handleQualifyLead,
-    handleLinkParty,
-    handleConvertLead,
-    lookupCandidateParties,
+    openQualifyDialog, openLinkPartyDialog, openConvertDialog,
+    handleUpdateLeadStatus, handleQualifyLead, handleLinkParty, handleConvertLead, lookupCandidateParties,
   };
 }

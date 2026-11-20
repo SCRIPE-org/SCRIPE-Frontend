@@ -117,4 +117,34 @@ describe("TopbarBreadcrumbs Deduplication", () => {
     expect(screen.getByText("Contact Profile")).toBeInTheDocument();
     expect(screen.getAllByTestId("breadcrumb-separator")).toHaveLength(2);
   });
+
+  it("uses semantic <nav><ol><li> structure with aria-current='page' on final crumb and rtl:rotate-180 separators", () => {
+    render(
+      <TopbarBreadcrumbs
+        isRTL={true}
+        workspaceName="Operations"
+        activeRootName="Directory"
+        intermediateSegments={["Teams", "Directory", "Academy"]}
+        displayPageName="Contact Profile"
+      />
+    );
+
+    const nav = screen.getByRole("navigation", { name: "nav.breadcrumb" });
+    const list = nav.querySelector("ol");
+    expect(list).toBeInTheDocument();
+
+    const items = list!.querySelectorAll("li");
+    expect(items.length).toBeGreaterThanOrEqual(4);
+
+    const currentCrumb = screen.getByText("Contact Profile").closest("[aria-current='page']");
+    expect(currentCrumb).not.toBeNull();
+
+    // "Directory" is duplicated across activeRootName and intermediateSegments -> rendered only once
+    expect(screen.getAllByText("Directory")).toHaveLength(1);
+
+    const separators = screen.getAllByTestId("breadcrumb-separator");
+    for (const sep of separators) {
+      expect(sep.getAttribute("class")).toContain("rtl:rotate-180");
+    }
+  });
 });

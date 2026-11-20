@@ -114,7 +114,7 @@ export function AuditKpiSummary({
             {kpis.yesterdayActionCount > 0 && (
               <span
                 className={`inline-flex items-center text-xs font-semibold ${
-                  isTrendPositive ? "text-success" : "text-warning"
+                  isTrendPositive ? "text-success" : "text-nx-warning-strong"
                 }`}
               >
                 {isTrendPositive ? (

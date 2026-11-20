@@ -15,14 +15,14 @@ export function TestimonialBlockView({ block }: { block: TestimonialBlock }) {
 
   return (
     <figure
-      className={framed ? "rounded-lg border bg-background/80 p-4 shadow-sm" : "space-y-3"}
+      className={framed ? "rounded-lg border border-nx-line bg-nx-surface p-4" : "space-y-3"}
       style={{ borderColor: props.borderColor }}
     >
       {rating > 0 && (
         <div className="mb-2 text-sm text-nx-accent">{"*".repeat(Math.round(rating))}</div>
       )}
       <blockquote
-        className={props.displayStyle === "large-quote" ? "text-xl font-semibold" : "text-sm"}
+        className={props.displayStyle === "large-quote" ? "text-xl font-semibold text-nx-ink" : "text-sm text-nx-ink"}
       >
         &ldquo;{props.quote}&rdquo;
       </blockquote>
@@ -38,9 +38,9 @@ export function TestimonialBlockView({ block }: { block: TestimonialBlock }) {
           />
         )}
         <span>
-          <span className="block font-medium">{props.author}</span>
+          <span className="block font-medium text-nx-ink">{props.author}</span>
           {(props.role || props.companyName) && (
-            <span className="text-xs text-muted-foreground">
+            <span className="text-xs text-nx-ink-2">
               {[props.role, props.companyName].filter(Boolean).join(", ")}
             </span>
           )}

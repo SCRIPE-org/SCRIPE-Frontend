@@ -75,7 +75,7 @@ export function IndustrySwitch({
         <SelectTrigger
           className="h-9 w-[160px] rounded-lg border text-[0.9375rem] font-semibold focus-visible:ring-2 focus-visible:ring-offset-2"
           style={{
-            background: theme === "dark" ? "#140c2e" : "#ffffff", // Enforce fully opaque solid background
+            background: theme === "dark" ? tokens.surface : tokens.surfaceRaised, // Enforce fully opaque solid background
             borderColor: tokens.border,
             color: tokens.ink,
           }}
@@ -84,7 +84,7 @@ export function IndustrySwitch({
         </SelectTrigger>
         <SelectContent
           style={{
-            background: theme === "dark" ? "#100826" : "#ffffff", // Enforce fully opaque solid background
+            background: theme === "dark" ? tokens.surface : tokens.surfaceRaised, // Enforce fully opaque solid background
             borderColor: tokens.border,
             color: tokens.ink,
           }}

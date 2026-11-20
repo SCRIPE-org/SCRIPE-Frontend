@@ -10,20 +10,36 @@
 import type { NavigationData } from "../entities/NavigationData";
 import type { WorkspaceGroupData } from "../entities/WorkspaceGroup";
 
+export type RouteAccessState =
+  | "authorized"
+  | "tenant_context_required"
+  | "platform_context_required"
+  | "feature_disabled";
+
+export interface AuthorizedRouteDescriptor {
+  route: string;
+  accessState: RouteAccessState;
+  workspaceKey?: string | null;
+  requiredFeature?: string | null;
+  requiresTenantContext: boolean;
+}
+
+export interface AuthorizedRoutesResult {
+  routes: string[];
+  workspaceRouteMap: Record<string, string[]>;
+  routeDescriptors: AuthorizedRouteDescriptor[];
+}
+
 export interface INavigationRepository {
   /**
-   * Phase 0 — Eager routes load (called ONCE on login, before any menu trees).
+   * Phase 0 — Eager routes load (called ONCE on login/context switch, before any menu trees).
    *
-   * Fetches ALL accessible routes across ALL workspaces in a single lightweight call.
-   * This seeds the allRoutes Set in useNavigationStore, guaranteeing that the
-   * RouteGuard never gets a false "not-authorized" while menu trees are loading.
+   * Fetches ALL accessible routes and unified context/feature route descriptors across ALL workspaces
+   * in a single lightweight call.
    *
-   * Backend: GET /Menus/my/routes
+   * Backend: GET /menus/navigation/routes
    */
-  fetchRoutes(): Promise<{
-    routes: string[];
-    workspaceRouteMap: Record<string, string[]>;
-  }>;
+  fetchRoutes(): Promise<AuthorizedRoutesResult>;
 
   /**
    * Phase 1 — Default workspace load (login / hard reload).
@@ -31,7 +47,7 @@ export interface INavigationRepository {
    * Fetches the default (admin) workspace menu tree + workspace group metadata.
    * No workspace stubs are fetched separately — groups come in this response.
    *
-   * Backend: GET /Menus/my  (no workspace param)
+   * Backend: GET /menus/navigation  (no workspace param)
    */
   fetchDefaultWorkspace(): Promise<NavigationData>;
 
@@ -41,14 +57,14 @@ export interface INavigationRepository {
    * Fetches (and in-memory caches) the full menu tree for a specific workspace.
    * Returns the cached copy instantly if already loaded.
    *
-   * Backend: GET /Menus/my?workspace={key}
+   * Backend: GET /menus/navigation?workspace={key}
    */
   fetchWorkspaceMenu(workspaceKey: string): Promise<NavigationData>;
 
   /**
    * Toggle pin state for a workspace.
    *
-   * Backend: POST /Menus/my/workspaces/{key}/pin
+   * Backend: POST /menus/navigation/workspaces/{key}/pin
    * Returns both the new isPinned state AND the backend-authoritative pinSortOrder.
    * Never compute pinSortOrder client-side — always use the value returned here.
    */
@@ -62,7 +78,7 @@ export interface INavigationRepository {
    * Fetches lightweight workspace stubs so the provider can discover
    * which module workspaces are available. Never called at startup.
    *
-   * Backend: GET /Menus/my/workspaces
+   * Backend: GET /menus/navigation/workspaces
    */
   fetchWorkspaceStubs(): Promise<WorkspaceGroupData[]>;
 

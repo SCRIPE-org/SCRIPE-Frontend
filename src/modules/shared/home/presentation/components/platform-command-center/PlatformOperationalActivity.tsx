@@ -26,10 +26,10 @@ export function PlatformOperationalActivity({
   return (
     <Card className="flex h-[280px] flex-col overflow-hidden border-nx-line bg-nx-surface p-0 text-nx-ink hover:border-nx-line-hi">
       {/* Header */}
-      <div className="flex h-[58px] items-center justify-between border-b border-nx-line bg-nx-raised/40 px-4 py-3">
+      <div className="flex h-[58px] items-center justify-between border-b border-nx-line bg-nx-raised px-4 py-3">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary">
-            <History className="h-4 w-4" />
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-nx-line-hi bg-nx-accent-wash text-nx-accent">
+            <History className="h-4 w-4" aria-hidden="true" />
           </div>
           <div>
             <h3 className="text-sm font-bold tracking-tight text-nx-ink">
@@ -44,10 +44,10 @@ export function PlatformOperationalActivity({
 
         <Link
           href="/audit"
-          className="group flex items-center gap-1 text-xs font-semibold text-nx-ink-3 transition-colors hover:text-primary"
+          className="group flex items-center gap-1 text-xs font-semibold text-nx-ink-3 transition-colors hover:text-nx-accent"
         >
           <span>{t("platformCommandCenter.operationalActivity.auditLog") || "Audit log"}</span>
-          <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+          <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5" aria-hidden="true" />
         </Link>
       </div>
 
@@ -69,22 +69,22 @@ export function PlatformOperationalActivity({
                   ? "bg-info/10 border-info/20 text-info"
                   : item.iconTheme === "warning"
                     ? "bg-warning/10 border-warning/20 text-warning"
-                    : "bg-primary/10 border-primary/20 text-primary";
+                    : "bg-nx-accent-wash border-nx-line-hi text-nx-accent";
 
             return (
               <Link
                 key={item.id}
                 href="/audit"
-                className="group flex items-center justify-between gap-3 rounded-lg px-2 py-2.5 transition-colors hover:bg-nx-raised/40"
+                className="group flex items-center justify-between gap-3 rounded-lg px-2 py-2.5 transition-colors hover:bg-nx-raised"
               >
                 <div className="flex min-w-0 flex-1 items-center gap-2.5">
                   <div
                     className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border ${iconStyles}`}
                   >
-                    <Icon className="h-3.5 w-3.5" />
+                    <Icon className="h-3.5 w-3.5" aria-hidden="true" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <b className="block truncate text-xs font-semibold text-nx-ink group-hover:text-primary">
+                    <b className="block truncate text-xs font-semibold text-nx-ink group-hover:text-nx-accent">
                       {item.title}
                     </b>
                     <small className="mt-0.5 block truncate text-[10px] text-nx-ink-3">
@@ -95,7 +95,7 @@ export function PlatformOperationalActivity({
 
                 <div className="flex shrink-0 items-center gap-2 font-mono text-[10px] text-nx-ink-3">
                   <span>{item.timeAgo}</span>
-                  <ChevronRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+                  <ChevronRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5" aria-hidden="true" />
                 </div>
               </Link>
             );

@@ -20,10 +20,10 @@ export function StatsRowBlockView({ block }: { block: StatsRowBlock }) {
       {safeItems(props.items, 4).map((item, index) => (
         <div key={`${item.label}-${index}`} className="text-center">
           {item.icon && <div className="mb-1 text-lg">{item.icon}</div>}
-          <div className={`${VALUE_CLASS[props.size || "md"]} font-bold text-foreground`}>
+          <div className={`${VALUE_CLASS[props.size || "md"]} font-bold text-nx-ink`}>
             {item.value}
           </div>
-          <div className="text-xs text-muted-foreground">{item.label}</div>
+          <div className="text-xs text-nx-ink-2">{item.label}</div>
         </div>
       ))}
     </div>

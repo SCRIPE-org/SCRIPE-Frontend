@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
-import { ChevronRight, ChevronLeft, MoreHorizontal } from "lucide-react";
+import { ChevronRight, MoreHorizontal } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 
 import { cn } from "@core/common/utils";
@@ -20,9 +20,10 @@ const Breadcrumb = React.forwardRef<
   React.ComponentPropsWithoutRef<"nav"> & {
     separator?: React.ReactNode;
   }
->(({ separator: _separator, ...props }, ref) => (
-  <nav ref={ref} aria-label="breadcrumb" {...props} />
-));
+>(({ separator: _separator, ...props }, ref) => {
+  const { t } = useI18n();
+  return <nav ref={ref} aria-label={t("nav.breadcrumb")} {...props} />;
+});
 Breadcrumb.displayName = "Breadcrumb";
 
 const BreadcrumbList = React.forwardRef<HTMLOListElement, React.ComponentPropsWithoutRef<"ol">>(
@@ -107,11 +108,8 @@ const BreadcrumbSeparator = ({ children, className, ...props }: React.ComponentP
 };
 BreadcrumbSeparator.displayName = "BreadcrumbSeparator";
 
-// Internal component that uses useI18n hook
+// Internal direction-aware separator via CSS logical flip (`rtl:rotate-180`)
 const BreadcrumbSeparatorWithDirection = ({ className, ...props }: React.ComponentProps<"li">) => {
-  const { direction } = useI18n();
-  const SeparatorIcon = direction === "rtl" ? ChevronLeft : ChevronRight;
-
   return (
     <li
       role="presentation"
@@ -119,7 +117,7 @@ const BreadcrumbSeparatorWithDirection = ({ className, ...props }: React.Compone
       className={cn("text-nx-ink-3 [&>svg]:h-3.5 [&>svg]:w-3.5 [&>svg]:shrink-0", className)}
       {...props}
     >
-      <SeparatorIcon />
+      <ChevronRight className="rtl:rotate-180" />
     </li>
   );
 };

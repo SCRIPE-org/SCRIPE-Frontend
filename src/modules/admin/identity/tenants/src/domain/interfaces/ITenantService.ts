@@ -41,7 +41,13 @@ import type {
   TenantTreeListResult,
   TenantDomainsResponse,
   TenantDomainJson,
+  TenantIdentityProviderPagedDto,
+  TenantIdentityProviderDetailDto,
+  CreateTenantIdentityProviderDto,
+  UpdateTenantIdentityProviderDto,
+  TenantIdpTestConnectionDto,
 } from "./tenantServiceTypes";
+import type { TenantIdentityProviderListParams } from "../entities/TenantIdentityProvider";
 
 /**
  * Http API network service for i tenant.
@@ -51,9 +57,9 @@ export interface ITenantService {
   getAll(params: ServiceTenantListParams): Promise<TenantListResult>;
   getTree(): Promise<TenantTreeNodeModel[]>;
   /**
-   * Get MY children tenants (for /tenants page - shows only my direct children)
+   * Get current tenant's direct children tenants (for /tenants page)
    */
-  getMyChildren(params?: ServiceTenantListParams): Promise<TenantTreeListResult>;
+  getCurrentTenantChildren(params?: ServiceTenantListParams): Promise<TenantTreeListResult>;
   /**
    * Get children of a specific tenant (for /tenants/{id}/children tab)
    */
@@ -63,7 +69,7 @@ export interface ITenantService {
    * For Admin Transfer dialog - returns own tenant + all descendants
    * System admins get a "System" pseudo-tenant (null ID)
    */
-  getMyTenantAndChildren(search?: string): Promise<TenantTreeNodeModel[]>;
+  getCurrentTenantHierarchy(search?: string): Promise<TenantTreeNodeModel[]>;
   getById(id: string): Promise<TenantModel>;
   getStats(id: string): Promise<TenantStats>;
   create(json: CreateTenantJson): Promise<CreateTenantResultJson>;
@@ -273,4 +279,12 @@ export interface ITenantService {
   setDomainPrimary(tenantId: string, domainId: string): Promise<void>;
   /** Remove a custom domain */
   removeDomain(tenantId: string, domainId: string): Promise<void>;
+
+  // ── Platform-Admin Tenant-Scoped Identity Providers ───────
+  getIdentityProviders(tenantId: string, params?: TenantIdentityProviderListParams): Promise<TenantIdentityProviderPagedDto>;
+  getIdentityProviderById(tenantId: string, id: string): Promise<TenantIdentityProviderDetailDto>;
+  createIdentityProvider(tenantId: string, payload: CreateTenantIdentityProviderDto): Promise<{ id: string }>;
+  updateIdentityProvider(tenantId: string, id: string, payload: UpdateTenantIdentityProviderDto): Promise<void>;
+  deleteIdentityProvider(tenantId: string, id: string): Promise<void>;
+  testIdentityProviderConnection(tenantId: string, id: string): Promise<TenantIdpTestConnectionDto>;
 }

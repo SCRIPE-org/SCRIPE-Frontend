@@ -133,8 +133,8 @@ export function AssignDialog({ vm, editionsVm }: SubscriptionEditionDialogProps)
             <p className="ms-6 text-xs text-nx-ink-3">{t("entSubscriptions.skipPaymentDesc")}</p>
             {vm.skipPayment && (
               <div className="ms-6 flex items-start gap-2 rounded-nx-md border border-warning/30 bg-warning/10 p-2">
-                <Shield className="mt-0.5 h-4 w-4 shrink-0 text-warning" aria-hidden="true" />
-                <span className="text-xs text-warning">
+                <Shield className="mt-0.5 h-4 w-4 shrink-0 text-nx-warning-strong" aria-hidden="true" />
+                <span className="text-xs text-nx-warning-strong">
                   {t("entSubscriptions.skipPaymentWarning")}
                 </span>
               </div>

@@ -20,50 +20,47 @@ export function OverlayLayout({
 }: LoginLayoutProps) {
   return (
     <div
-      className={`relative flex min-h-screen w-full items-center justify-center ${BG_STYLE} login-page selection:bg-primary/20`}
+      className={`relative flex min-h-[100dvh] w-full items-center justify-center ${BG_STYLE} login-page`}
       dir={direction}
       style={WRAPPER_STYLE}
     >
       <div
         className="absolute inset-0"
         style={{
-          backgroundColor: "var(--login-overlay-color, hsl(var(--background)))",
+          backgroundColor: "var(--login-overlay-color, var(--nx-ground))",
           opacity: "var(--login-overlay-opacity, 0.7)",
-          backdropFilter: "blur(var(--login-overlay-blur, 6px))",
         }}
       />
       {topActions}
-      <div
-        className="border-[var(--login-accent,hsl(var(--border)))]/30 relative z-10 mx-4 w-full border shadow-2xl backdrop-blur-2xl"
+      <main
+        className="relative z-10 mx-4 w-full border border-[var(--login-border,var(--nx-line))]"
         style={{
           maxWidth: "var(--login-form-width, 420px)",
           padding: "var(--login-card-padding, 32px)",
           borderRadius: "var(--login-radius-card, 24px)",
-          boxShadow: "var(--login-shadow-card, 0 25px 50px -12px rgba(0,0,0,.25))",
+          boxShadow: "var(--login-shadow-card, none)",
           backgroundColor:
-            "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 85%, transparent)",
+            "color-mix(in srgb, var(--login-surface, var(--nx-surface)) 92%, transparent)",
         }}
       >
-        <div className="from-[var(--login-primary,hsl(var(--primary)))]/20 to-[var(--login-primary,hsl(var(--primary)))]/10 pointer-events-none absolute -inset-px rounded-3xl bg-gradient-to-b via-transparent" />
         <div className="relative z-10">
           <div className="mb-8 flex flex-col items-center gap-3 text-center">
             <div
-              className="border-[var(--login-accent,hsl(var(--border)))]/30 flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border shadow-lg backdrop-blur-sm"
+              className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border border-[var(--login-border,var(--nx-line))]"
               style={{
-                backgroundColor:
-                  "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 60%, transparent)",
+                backgroundColor: "var(--login-surface, var(--nx-raised))",
               }}
             >
               <LogoImg logoSrc={logoSrc} logoAlt={logoAlt} />
             </div>
             <h1
-              className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
+              className="login-heading tracking-tight text-[var(--login-text,var(--nx-ink))]"
               style={{ fontSize: "var(--login-size-headline, 1.5rem)" }}
             >
               {companyName}
             </h1>
             <p
-              className="text-[var(--login-text-muted,hsl(var(--muted-foreground)))]"
+              className="text-[var(--login-text-muted,var(--nx-ink-2))]"
               style={{ fontSize: "var(--login-size-subtitle, 0.875rem)" }}
             >
               {t("auth.pleaseLogin")}
@@ -72,7 +69,7 @@ export function OverlayLayout({
           {formContent}
           {footerSlot}
         </div>
-      </div>
+      </main>
     </div>
   );
 }

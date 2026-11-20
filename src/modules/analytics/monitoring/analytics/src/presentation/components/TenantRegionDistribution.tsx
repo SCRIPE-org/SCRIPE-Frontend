@@ -52,7 +52,7 @@ export function TenantRegionDistribution({ data, isLoading }: TenantRegionDistri
                 <div key={item.region} className="space-y-1.5">
                   <div className="flex items-center justify-between text-xs">
                     <div className="flex items-center gap-2">
-                      <span className="rounded-xs flex h-5 w-7 items-center justify-center bg-nx-raised font-mono text-[10px] font-bold text-nx-ink-3">
+                      <span className="rounded-nx-sm flex h-5 w-7 items-center justify-center bg-nx-raised font-mono text-[10px] font-bold text-nx-ink-3">
                         {item.code}
                       </span>
                       <span className="font-medium text-nx-ink">{item.region}</span>

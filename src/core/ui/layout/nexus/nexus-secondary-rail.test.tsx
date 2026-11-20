@@ -1,4 +1,6 @@
-import { render, screen } from "@testing-library/react";
+import * as React from "react";
+import { fireEvent, render, screen } from "@testing-library/react";
+import "@testing-library/jest-dom/vitest";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { NexusSecondaryRail } from "./nexus-secondary-rail";
 import { MenuItem } from "@core/navigation/domain/entities/MenuItem";
@@ -124,5 +126,117 @@ describe("NexusSecondaryRail — Generic Multi-Group Workspace Secondary Rail", 
     expect(screen.getByRole("link", { name: /operations dashboard/i })).toHaveAttribute("href", "/venue");
     expect(screen.getByRole("link", { name: /calendar grid/i })).toHaveAttribute("href", "/venue/calendar");
     expect(screen.getByRole("link", { name: /new booking/i })).toHaveAttribute("href", "/venue/bookings/new");
+  });
+
+  it("4. Opens mobile drawer cleanly when mobileOpen is true even when desktop isCollapsed is true", () => {
+    const onMobileClose = vi.fn();
+    render(
+      <NexusSecondaryRail
+        mobileOpen={true}
+        isCollapsed={true}
+        onMobileClose={onMobileClose}
+      />
+    );
+
+    const dialog = screen.getByRole("dialog", { name: /courts & facilities/i });
+    expect(dialog).toBeInTheDocument();
+    expect(dialog).toHaveAttribute("aria-modal", "true");
+    expect(dialog).toHaveStyle({ width: "240px" });
+    expect(screen.getByRole("button", { name: "common.close" })).toBeInTheDocument();
+  });
+
+  it("5. Closes mobile drawer on Escape (respecting defaultPrevented), traps Tab focus, and restores focus to returnFocusRef", () => {
+    const onMobileClose = vi.fn();
+    const openerBtn = document.createElement("button");
+    openerBtn.textContent = "Toggle Panel";
+    document.body.appendChild(openerBtn);
+    openerBtn.focus();
+    const returnFocusRef = { current: openerBtn };
+
+    const { rerender } = render(
+      <NexusSecondaryRail
+        mobileOpen={true}
+        isCollapsed={true}
+        onMobileClose={onMobileClose}
+        returnFocusRef={returnFocusRef}
+      />
+    );
+
+    const dialog = screen.getByRole("dialog");
+    expect(dialog.contains(document.activeElement)).toBe(true);
+
+    // Pre-cancelled Escape must NOT close the drawer
+    const preventedEscape = new KeyboardEvent("keydown", { key: "Escape", cancelable: true });
+    preventedEscape.preventDefault();
+    document.dispatchEvent(preventedEscape);
+    expect(onMobileClose).not.toHaveBeenCalled();
+
+    // Tabbing from last focusable wraps back to first focusable inside drawer
+    const focusable = Array.from(
+      dialog.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      )
+    );
+    expect(focusable.length).toBeGreaterThan(1);
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+
+    last.focus();
+    fireEvent.keyDown(document, { key: "Tab" });
+    expect(document.activeElement).toBe(first);
+
+    first.focus();
+    fireEvent.keyDown(document, { key: "Tab", shiftKey: true });
+    expect(document.activeElement).toBe(last);
+
+    // Clicking blank dialog padding focuses container; Shift+Tab still wraps to last
+    dialog.focus();
+    expect(document.activeElement).toBe(dialog);
+    fireEvent.keyDown(document, { key: "Tab", shiftKey: true });
+    expect(document.activeElement).toBe(last);
+
+    // Uncancelled Escape closes drawer and rerender(mobileOpen=false) restores focus
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(onMobileClose).toHaveBeenCalledTimes(1);
+
+    rerender(
+      <NexusSecondaryRail
+        mobileOpen={false}
+        isCollapsed={true}
+        onMobileClose={onMobileClose}
+        returnFocusRef={returnFocusRef}
+      />
+    );
+    expect(document.activeElement).toBe(openerBtn);
+    openerBtn.remove();
+  });
+
+  it("6. Renders collapsible sub-groups using native <button type='button'> with aria-expanded", () => {
+    const nestedGroup = makeMockItem("venue-nested-group", "Facility Settings", "", [
+      makeMockItem("venue-rules", "Booking Rules", "/venue/rules"),
+    ]);
+    const sectionGroup = makeMockItem("venue-section-config", "Configuration", "", [nestedGroup]);
+    mockActiveRootItem = makeMockItem("venue-root-nested", "Settings Root", "", [sectionGroup]);
+
+    const { container } = render(<NexusSecondaryRail />);
+
+    const groupBtn = screen.getByRole("button", { name: /facility settings/i });
+    expect(groupBtn.tagName).toBe("BUTTON");
+    expect(groupBtn).toHaveAttribute("type", "button");
+    expect(groupBtn).toHaveAttribute("aria-expanded", "false");
+    expect(container.querySelector('div[role="button"]')).toBeNull();
+
+    // Collapsed submenu items must stay hidden from accessibility tree & Tab order
+    expect(screen.queryByRole("link", { name: /booking rules/i })).toBeNull();
+    const hiddenLink = container.querySelector('a[href="/venue/rules"]');
+    expect(hiddenLink).not.toBeNull();
+    const submenuWrapper = hiddenLink!.closest("[aria-hidden='true']");
+    expect(submenuWrapper).not.toBeNull();
+    expect(submenuWrapper).toHaveAttribute("inert");
+    expect(submenuWrapper!.className).toContain("invisible");
+
+    fireEvent.click(groupBtn);
+    expect(groupBtn).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByRole("link", { name: /booking rules/i })).toBeInTheDocument();
   });
 });

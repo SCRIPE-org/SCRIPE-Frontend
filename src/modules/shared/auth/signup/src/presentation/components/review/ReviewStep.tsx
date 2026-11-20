@@ -1,5 +1,4 @@
 // FILE-EXCEPTION: file length
-// UI-EXCEPTION: compact studio layout
 "use client";
 
 import {
@@ -14,6 +13,7 @@ import {
 } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSignupTheme } from "@core/providers/signup-theme";
+import { Button } from "@core/ui/button";
 import { BRAND } from "@core/config/branding";
 import { reviewCopyKeysForMode } from "../../viewmodels/helpers/reviewLogic";
 import type { SignupWizardViewModel } from "../../viewmodels/useSignupWizard";
@@ -103,15 +103,16 @@ export function ReviewStep({ wizard }: ReviewStepProps) {
           <p className="text-[0.8125rem] font-medium" style={{ color: tokens.inkMuted }}>
             {t("signup.review.checkoutCanceled")}
           </p>
-          <button
+          <Button
             type="button"
+            variant="ghost"
             onClick={wizard.dismissCheckoutCanceled}
             aria-label={t("signup.review.dismiss")}
-            className="shrink-0 text-xs font-semibold transition-opacity hover:opacity-70"
+            className="h-auto shrink-0 p-0 text-xs font-semibold transition-opacity hover:bg-transparent hover:opacity-70"
             style={{ color: tokens.inkFaint }}
           >
             ✕
-          </button>
+          </Button>
         </div>
       )}
 
@@ -164,15 +165,16 @@ export function ReviewStep({ wizard }: ReviewStepProps) {
             className="flex justify-end px-4 py-2.5"
             style={{ borderTop: `1px solid ${tokens.border}` }}
           >
-            <button
+            <Button
               type="button"
+              variant="ghost"
               onClick={wizard.editPlan}
-              className="inline-flex items-center gap-1.5 text-[0.75rem] font-semibold transition-opacity hover:opacity-80"
+              className="inline-flex h-auto items-center gap-1.5 p-0 text-[0.75rem] font-semibold transition-opacity hover:bg-transparent hover:opacity-80"
               style={{ color: tokens.accent }}
             >
               <Pencil className="h-3 w-3" aria-hidden="true" />
               {t("signup.review.editPlan")}
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -289,16 +291,16 @@ export function ReviewStep({ wizard }: ReviewStepProps) {
         )}
 
         {/* ── Primary CTA — the single accent moment, copy per checkoutMode ── */}
-        <button
+        <Button
           type="button"
+          variant="ghost"
           onClick={wizard.submitRegister}
           disabled={wizard.isSubmitting}
           aria-busy={wizard.isSubmitting}
-          className="group inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl text-[0.9375rem] font-semibold transition-transform duration-200 hover:-translate-y-0.5 disabled:opacity-60 motion-reduce:transform-none"
+          className="group inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl text-[0.9375rem] font-semibold transition-transform duration-200 hover:-translate-y-0.5 hover:bg-transparent disabled:opacity-60 motion-reduce:transform-none"
           style={{
             background: tokens.gradientCta,
             color: tokens.accentContrast,
-            boxShadow: tokens.shadowCard,
           }}
         >
           {wizard.isSubmitting ? (
@@ -315,19 +317,20 @@ export function ReviewStep({ wizard }: ReviewStepProps) {
               {ctaLabel}
             </>
           )}
-        </button>
+        </Button>
 
         {/* ── Back ── */}
-        <button
+        <Button
           type="button"
+          variant="ghost"
           onClick={wizard.back}
           disabled={wizard.isSubmitting}
-          className="mx-auto inline-flex items-center gap-1.5 text-[0.8125rem] font-medium transition-opacity duration-200 hover:opacity-80 disabled:opacity-50"
+          className="mx-auto inline-flex h-auto items-center gap-1.5 p-0 text-[0.8125rem] font-medium transition-opacity duration-200 hover:bg-transparent hover:opacity-80 disabled:opacity-50"
           style={{ color: tokens.inkMuted }}
         >
           <ArrowLeft className="h-3.5 w-3.5 rtl:scale-x-[-1]" aria-hidden="true" />
           {t("signup.common.back")}
-        </button>
+        </Button>
       </div>
     </div>
   );

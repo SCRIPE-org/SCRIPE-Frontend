@@ -5,6 +5,10 @@ import { useAppStore } from "@core/store/useAppStore";
 import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
 import { VenueOverviewView } from "./VenueOverviewView";
 
+vi.mock("@core/providers/i18n-provider", () => ({
+  useI18n: () => ({ t: (key: string) => key, language: "en", direction: "ltr" }),
+}));
+
 vi.mock("@modules/venue/di", () => ({ getVenueContainer: vi.fn(), venueContainer: {} }));
 
 describe("VenueOverviewView", () => {
@@ -146,6 +150,10 @@ describe("VenueOverviewView", () => {
     // Deferred Recent Activity Banner
     expect(screen.getByTestId("recent-activity-deferred")).toBeInTheDocument();
     expect(screen.getByText("venueOverview.deferred.recentActivity")).toBeInTheDocument();
+
+    // Header Quick Actions use localized keys (never hardcoded English literals)
+    expect(screen.getByText("venueOverview.quickActions.blockTime")).toBeInTheDocument();
+    expect(screen.getByText("venueOverview.quickActions.recordPayment")).toBeInTheDocument();
 
     // Strict Live Courts truth: verify "Free" is NOT rendered for court without active booking
     expect(screen.queryByText("Free")).not.toBeInTheDocument();

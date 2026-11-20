@@ -5,6 +5,9 @@
  * DB exceptions, or dev overlay error strings.
  */
 
+import { en as sharedEn } from "../../locales/shared.en";
+import { ar as sharedAr } from "../../locales/shared.ar";
+
 export interface VenueMappedError {
   code: string;
   message: string;
@@ -15,20 +18,18 @@ export interface VenueMappedError {
 }
 
 export function mapVenueError(error: unknown, language = "en"): VenueMappedError {
-  const isAr = language === "ar";
+  const errorsDict = (language === "ar" ? sharedAr : sharedEn).venueShared.errors;
 
   if (!error) {
     return {
       code: "UNKNOWN",
-      message: isAr
-        ? "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى."
-        : "An unexpected error occurred. Please try again.",
+      message: errorsDict.unexpectedTryAgain,
     };
   }
 
   // Handle strings directly
   if (typeof error === "string") {
-    return mapCodeOrMessage(error, isAr);
+    return mapCodeOrMessage(error, language);
   }
 
   // Handle standard Error / Axios-like Error objects
@@ -47,11 +48,9 @@ export function mapVenueError(error: unknown, language = "en"): VenueMappedError
   ) {
     return {
       code: "QUOTA_EXCEEDED",
-      message: isAr
-        ? "تم الوصول إلى الحد الأقصى للفروع في باقتك الحالية. يمكنك ترقية الخطة لإضافة فروع جديدة."
-        : "Branch limit reached for your current subscription. Upgrade your plan to add more branches.",
+      message: errorsDict.quotaExceeded,
       action: {
-        label: isAr ? "ترقية الباقة" : "Upgrade Plan",
+        label: errorsDict.upgradePlan,
         href: "/billing",
       },
     };
@@ -65,11 +64,9 @@ export function mapVenueError(error: unknown, language = "en"): VenueMappedError
   ) {
     return {
       code: "COURT_NOT_READY",
-      message: isAr
-        ? "هذا الملعب أو المساحة غير جاهز للحجوزات بعد. يرجى استكمال الإعداد أولاً."
-        : "This court or space is not ready for bookings. Please complete configuration first.",
+      message: errorsDict.courtNotReady,
       action: {
-        label: isAr ? "إكمال الإعداد" : "Complete Setup",
+        label: errorsDict.completeSetup,
         href: "/venue/resources",
       },
     };
@@ -83,9 +80,7 @@ export function mapVenueError(error: unknown, language = "en"): VenueMappedError
   ) {
     return {
       code: "SETUP_CONTEXT_MISSING",
-      message: isAr
-        ? "تعذر إكمال العملية بسبب نقص في إعدادات المنشأة الأساسية. جاري إعادة ضبط السياق."
-        : "Could not complete action because branch profile configuration is incomplete.",
+      message: errorsDict.setupContextMissing,
     };
   }
 
@@ -93,18 +88,14 @@ export function mapVenueError(error: unknown, language = "en"): VenueMappedError
   if (status === 403 || code === "Forbidden" || rawMessage.includes("permissionDenied")) {
     return {
       code: "FORBIDDEN",
-      message: isAr
-        ? "ليس لديك الصلاحية لتنفيذ هذا الإجراء في المنشأة."
-        : "You do not have permission to perform this action.",
+      message: errorsDict.forbidden,
     };
   }
 
   if (status === 404 || code === "NotFound") {
     return {
       code: "NOT_FOUND",
-      message: isAr
-        ? "العنصر المطلوب غير موجود أو تم حذفه."
-        : "The requested item was not found or has been removed.",
+      message: errorsDict.notFound,
     };
   }
 
@@ -115,9 +106,7 @@ export function mapVenueError(error: unknown, language = "en"): VenueMappedError
   ) {
     return {
       code: "CONFLICT",
-      message: isAr
-        ? "تعارض في البيانات أو تم حجز هذا الموعد للتو في جلسة أخرى. يرجى التحديث والمحاولة ثانية."
-        : "Booking or time slot was modified in another session. Please refresh and try again.",
+      message: errorsDict.conflict,
     };
   }
 
@@ -129,9 +118,7 @@ export function mapVenueError(error: unknown, language = "en"): VenueMappedError
   ) {
     return {
       code: "NETWORK_ERROR",
-      message: isAr
-        ? "تعذر الاتصال بالخادم. يرجى التحقق من اتصالك بالإنترنت وإعادة المحاولة."
-        : "Could not connect to the server. Please check your network connection and retry.",
+      message: errorsDict.networkError,
     };
   }
 
@@ -150,21 +137,19 @@ export function mapVenueError(error: unknown, language = "en"): VenueMappedError
 
   return {
     code: "GENERIC_ERROR",
-    message: isAr
-      ? "حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى."
-      : "An unexpected error occurred. Please try again.",
+    message: errorsDict.unexpectedTryAgain,
   };
 }
 
-function mapCodeOrMessage(text: string, isAr: boolean): VenueMappedError {
+function mapCodeOrMessage(text: string, language: string): VenueMappedError {
+  const errorsDict = (language === "ar" ? sharedAr : sharedEn).venueShared.errors;
+
   if (text.includes("quota") || text.includes("facility.quotaExceeded")) {
     return {
       code: "QUOTA_EXCEEDED",
-      message: isAr
-        ? "تم الوصول إلى الحد الأقصى للفروع في باقتك الحالية. يمكنك ترقية الخطة لإضافة فروع جديدة."
-        : "Branch limit reached for your current subscription. Upgrade your plan to add more branches.",
+      message: errorsDict.quotaExceeded,
       action: {
-        label: isAr ? "ترقية الباقة" : "Upgrade Plan",
+        label: errorsDict.upgradePlan,
         href: "/billing",
       },
     };
@@ -173,16 +158,12 @@ function mapCodeOrMessage(text: string, isAr: boolean): VenueMappedError {
   if (text.includes("VenueProfileId")) {
     return {
       code: "SETUP_CONTEXT_MISSING",
-      message: isAr
-        ? "تعذر إكمال العملية بسبب نقص في إعدادات المنشأة الأساسية."
-        : "Could not complete action because branch profile configuration is incomplete.",
+      message: errorsDict.setupContextMissingShort,
     };
   }
 
   return {
     code: "ERROR",
-    message: isAr
-      ? "حدث خطأ أثناء تنفيذ العملية. يرجى المحاولة لاحقاً."
-      : "An error occurred while processing the request.",
+    message: errorsDict.operationFailedTryLater,
   };
 }

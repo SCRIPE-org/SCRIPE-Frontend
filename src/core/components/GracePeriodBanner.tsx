@@ -24,15 +24,15 @@ const PHASES: Record<
 > = {
   Warning: {
     icon: Clock,
-    surface: "border-warning/30 bg-warning/10",
-    glyph: "text-warning",
+    surface: "border-warning-strong/30 bg-warning/15",
+    glyph: "text-nx-warning-strong",
     titleKey: "subscription.grace.warningTitle",
     descKey: "subscription.grace.warningDesc",
   },
   Reduced: {
     icon: AlertTriangle,
-    surface: "border-warning-strong/30 bg-warning-strong/10",
-    glyph: "text-warning-strong",
+    surface: "border-warning-strong/40 bg-warning-strong/15",
+    glyph: "text-nx-warning-strong",
     titleKey: "subscription.grace.reducedTitle",
     descKey: "subscription.grace.reducedDesc",
   },
@@ -65,16 +65,16 @@ export function GracePeriodBanner() {
 
   return (
     <div
-      role="status"
+      role={gracePhase === "Fallback" ? "alert" : "status"}
       className={cn(
-        "flex items-center gap-3 border-b px-4 py-2.5 text-sm text-nx-ink",
+        "flex items-start gap-3 border-b px-4 py-2.5 text-sm text-nx-ink sm:items-center",
         phase.surface
       )}
     >
-      <Icon className={cn("h-4 w-4 shrink-0", phase.glyph)} aria-hidden="true" />
+      <Icon className={cn("mt-0.5 h-4 w-4 shrink-0 sm:mt-0", phase.glyph)} aria-hidden="true" />
       <div className="flex min-w-0 flex-col gap-0.5 sm:flex-row sm:items-center sm:gap-2">
         <span className="whitespace-nowrap font-semibold">{t(phase.titleKey)}</span>
-        <span className="truncate text-xs text-nx-ink-2 sm:text-sm">
+        <span className="text-pretty text-xs text-nx-ink-2 sm:text-sm">
           {t(phase.descKey, { edition: editionName || "" })}
         </span>
       </div>

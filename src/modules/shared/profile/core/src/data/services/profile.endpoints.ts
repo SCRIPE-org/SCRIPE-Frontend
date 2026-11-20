@@ -4,23 +4,24 @@ import { V1 } from "@/core/config/api-endpoints/_shared";
  * Sovereign Account World v3.0 API Endpoints
  */
 export const PROFILE_ENDPOINTS = {
-  ME: `${V1}/account/dossier`,
-  UPDATE_ME: `${V1}/account/dossier`,
+  DOSSIER: `${V1}/account/dossier`,
+  UPDATE_DOSSIER: `${V1}/account/dossier`,
   AVATAR: `${V1}/account/dossier/avatar`,
-  CHANGE_PASSWORD: (id: string) => `${V1}/Admins/${id}/change-password`,
+  CHANGE_PASSWORD: (id: string) => `${V1}/admins/${id}/change-password`,
   SESSIONS: `${V1}/auth/admin/sessions`,
   REVOKE_SESSION: (tokenId: string) => `${V1}/auth/admin/sessions/${tokenId}`,
   REVOKE_ALL_SESSIONS: `${V1}/auth/admin/sessions/revoke-all`,
   BACKUP_CODES_REGENERATE: `${V1}/auth/admin/2fa/backup-codes/regenerate`,
   SECURITY_LOG: `${V1}/auth/admin/security-log`,
   EXTERNAL_LOGINS: `${V1}/auth/admin/external-logins`,
-  LINK_EXTERNAL_LOGIN: `${V1}/auth/admin/external-logins/link`,
+  INITIATE_EXTERNAL_LOGIN_LINK: `${V1}/auth/admin/external-logins/initiate-link`,
   UNLINK_EXTERNAL_LOGIN: (id: string) => `${V1}/auth/admin/external-logins/${id}`,
   TWO_FA: {
     ENABLE: `${V1}/auth/admin/2fa/enable`,
     CONFIRM: `${V1}/auth/admin/2fa/confirm`,
     DISABLE: `${V1}/auth/admin/2fa/disable`,
   },
+  FORCE_CHANGE_PASSWORD: `${V1}/auth/admin/force-change-password`,
   PASSKEYS: {
     LIST: `${V1}/auth/passkeys`,
     REGISTER_BEGIN: `${V1}/auth/passkeys/registration/begin`,
@@ -29,7 +30,16 @@ export const PROFILE_ENDPOINTS = {
     DELETE: (id: string) => `${V1}/auth/passkeys/${id}`,
     RENAME: (id: string) => `${V1}/auth/passkeys/${id}/name`,
   },
-  SUDO_VERIFY: `${V1}/auth/me/sudo-verify`,
+  SUDO_VERIFY: `${V1}/auth/passkeys/sudo-verify`,
+  SUDO: {
+    STATUS: `${V1}/auth/sudo/status`,
+    PASSKEY_BEGIN: `${V1}/auth/sudo/passkey/begin`,
+    VERIFY: `${V1}/auth/sudo/verify`,
+    LOCK: `${V1}/auth/sudo/lock`,
+  },
+  COLLEAGUES: `${V1}/account/colleagues`,
+  INTEGRATION_PAT_ROLL: (id: string) => `${V1}/account/integrations/pats/${id}/roll`,
+  INTEGRATION_PAT_UPDATE: (id: string) => `${V1}/account/integrations/pats/${id}`,
   ACCOUNT: {
     CONTEXT: `${V1}/account/context`,
     DOSSIER: `${V1}/account/dossier`,

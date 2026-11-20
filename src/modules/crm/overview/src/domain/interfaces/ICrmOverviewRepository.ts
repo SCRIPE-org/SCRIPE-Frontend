@@ -1,18 +1,9 @@
-import type {
-  CrmOverviewData,
-  CrmPipelineReport,
-  CrmSettingsResponseData,
-  CrmTenantSettingsPayload,
-  CrmUserPreferencePayload,
-} from "../models/crm-overview.types";
+import type { OverviewEntity } from "../entities/OverviewEntity";
 
 /**
- * Repository interface for CRM overview, pipeline analytics, and server-persisted CRM settings.
+ * Repository interface mediating CRM Overview dashboard domain entities.
  */
 export interface ICrmOverviewRepository {
-  getOverview(searchQuery?: string): Promise<CrmOverviewData>;
-  getPipelineReport(currencyCode?: string): Promise<CrmPipelineReport>;
-  getSettings(): Promise<CrmSettingsResponseData>;
-  updateTenantSettings(input: Partial<CrmTenantSettingsPayload>): Promise<CrmSettingsResponseData>;
-  updateUserPreferences(input: Partial<CrmUserPreferencePayload>): Promise<CrmSettingsResponseData>;
+  /** Loads and maps the CRM Overview command center entity. */
+  getOverview(searchQuery?: string): Promise<OverviewEntity>;
 }

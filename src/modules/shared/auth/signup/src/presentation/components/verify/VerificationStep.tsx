@@ -1,8 +1,8 @@
-// UI-EXCEPTION: compact studio layout
 "use client";
 
 import { Fragment, useEffect } from "react";
 import { ArrowLeft, Loader2, MailCheck, RotateCcw } from "lucide-react";
+import { Button } from "@core/ui/button";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@core/ui/input-otp";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSignupTheme } from "@core/providers/signup-theme";
@@ -57,7 +57,7 @@ export function VerificationStep({ wizard }: VerificationStepProps) {
   );
 
   const slotBase =
-    "relative flex h-14 w-12 items-center justify-center rounded-xl border text-[1.375rem] font-semibold transition-all duration-150 first:rounded-l-xl last:rounded-r-xl";
+    "relative flex h-14 w-12 items-center justify-center rounded-xl border text-[1.375rem] font-semibold transition-all duration-150 first:rounded-s-xl last:rounded-e-xl";
 
   return (
     <div className="mx-auto w-full max-w-md flex-1 px-5 py-10 sm:px-8 sm:py-14" dir={direction}>
@@ -154,16 +154,16 @@ export function VerificationStep({ wizard }: VerificationStepProps) {
       )}
 
       {/* ── Verify CTA — single accent moment ── */}
-      <button
+      <Button
         type="button"
+        variant="ghost"
         onClick={wizard.verifyOtp}
         disabled={isSubmitting || otpCode.length < OTP_LENGTH}
         aria-busy={isSubmitting}
-        className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl text-[0.9375rem] font-semibold transition-transform duration-200 hover:-translate-y-0.5 disabled:opacity-60 motion-reduce:transform-none"
+        className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl text-[0.9375rem] font-semibold transition-transform duration-200 hover:-translate-y-0.5 hover:bg-transparent disabled:opacity-60 motion-reduce:transform-none"
         style={{
           background: tokens.gradientCta,
           color: tokens.accentContrast,
-          boxShadow: tokens.shadowCard,
         }}
       >
         {isSubmitting ? (
@@ -177,33 +177,35 @@ export function VerificationStep({ wizard }: VerificationStepProps) {
         ) : (
           t("signup.verification.verifyAndContinue")
         )}
-      </button>
+      </Button>
 
       {/* ── Resend + change email ── */}
       <div className="mt-5 flex items-center justify-between">
-        <button
+        <Button
           type="button"
+          variant="ghost"
           onClick={wizard.changeEmail}
           disabled={isSubmitting}
-          className="inline-flex items-center gap-1.5 text-[0.8125rem] font-medium transition-opacity duration-200 hover:opacity-80 disabled:opacity-50"
+          className="inline-flex h-auto items-center gap-1.5 p-0 text-[0.8125rem] font-medium transition-opacity duration-200 hover:bg-transparent hover:opacity-80 disabled:opacity-50"
           style={{ color: tokens.inkMuted }}
         >
           <ArrowLeft className="h-3.5 w-3.5 rtl:scale-x-[-1]" aria-hidden="true" />
           {t("signup.verification.changeEmail")}
-        </button>
+        </Button>
 
-        <button
+        <Button
           type="button"
+          variant="ghost"
           onClick={wizard.resendOtp}
           disabled={otpResendCooldown > 0 || isSubmitting}
-          className="inline-flex items-center gap-1.5 text-[0.8125rem] font-medium transition-opacity duration-200 hover:opacity-80 disabled:opacity-40"
+          className="inline-flex h-auto items-center gap-1.5 p-0 text-[0.8125rem] font-medium transition-opacity duration-200 hover:bg-transparent hover:opacity-80 disabled:opacity-40"
           style={{ color: otpResendCooldown > 0 ? tokens.inkFaint : tokens.accent }}
         >
           <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
           {otpResendCooldown > 0
             ? t("signup.verification.resendIn", { seconds: String(otpResendCooldown) })
             : t("signup.verification.resendCode")}
-        </button>
+        </Button>
       </div>
     </div>
   );

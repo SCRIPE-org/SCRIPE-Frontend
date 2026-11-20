@@ -2,6 +2,7 @@ import type {
   CrmLead,
   CreateLeadInput,
   UpdateLeadInput,
+  AssignLeadOwnerInput,
   QualifyLeadInput,
   LinkPartyToLeadInput,
   ConvertLeadInput,
@@ -11,11 +12,13 @@ import type {
   PagedLeadsResult,
 } from "../models/crm-lead.types";
 
+/** Repository port abstracting CRM Lead lifecycle persistence and transitions. */
 export interface ICrmLeadRepository {
   getLeads(params?: LeadsFilterParams): Promise<PagedLeadsResult>;
   getLeadById(id: string): Promise<CrmLead>;
   createLead(input: CreateLeadInput): Promise<CrmLead>;
   updateLead(input: UpdateLeadInput): Promise<CrmLead>;
+  assignOwner?(input: AssignLeadOwnerInput): Promise<CrmLead>;
   qualifyLead(input: QualifyLeadInput): Promise<CrmLead>;
   linkParty(input: LinkPartyToLeadInput): Promise<CrmLead>;
   convertLead(input: ConvertLeadInput): Promise<ConvertLeadResult>;

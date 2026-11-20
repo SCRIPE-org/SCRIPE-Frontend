@@ -428,7 +428,25 @@ export function useSubscriptionsViewModel(tenantId: string) {
       return result;
     },
     onSuccess: (result) => {
-      window.open(result.url, "_blank");
+      let parsed: URL | null = null;
+      if (result.url && result.url.trim().length > 0) {
+        try {
+          const candidate = new URL(result.url, window.location.origin);
+          if (candidate.protocol === "https:" || candidate.protocol === "http:") {
+            parsed = candidate;
+          }
+        } catch {
+          parsed = null;
+        }
+      }
+      if (!parsed) {
+        showError({
+          title: t("common.error"),
+          description: t("billing.errors.invalidPortalUrl"),
+        });
+        return;
+      }
+      window.open(parsed.toString(), "_blank", "noopener,noreferrer");
       success({
         title: t("billing.portalSuccess"),
         description: t("billing.dialogs.portalOpened"),

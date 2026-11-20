@@ -44,13 +44,13 @@ const SEVERITY_CONFIG: Record<
   high: {
     icon: Lock,
     badgeVariant: "destructive",
-    colorClass: "text-warning",
+    colorClass: "text-nx-warning-strong",
     bgClass: "border border-warning/20 bg-warning/10",
   },
   medium: {
     icon: AlertTriangle,
     badgeVariant: "warning",
-    colorClass: "text-warning",
+    colorClass: "text-nx-warning-strong",
     bgClass: "border border-warning/20 bg-warning/10",
   },
   low: {
@@ -84,7 +84,7 @@ export const SecurityAttentionPanel = memo(function SecurityAttentionPanel({
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="rounded-md border border-warning/20 bg-warning/10 p-1.5 text-warning">
+            <div className="rounded-md border border-warning/20 bg-warning/10 p-1.5 text-nx-warning-strong">
               <AlertTriangle className="h-4 w-4" aria-hidden="true" />
             </div>
             <div>

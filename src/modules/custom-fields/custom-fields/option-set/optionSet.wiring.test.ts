@@ -335,16 +335,19 @@ describe("CustomFieldListView Option Sets link (real source)", () => {
     // Without this the link keeps its first-render visibility after the permission set resolves,
     // which for a newly-seeded permission means "hidden from the admin who has it".
     //
-    // The dependency array is isolated by its CLOSING boundary rather than by searching for a name
-    // inside it: every identifier in that list also appears earlier in the file (that is what a
-    // dependency array is), so an `indexOf` on any of them lands on the declaration or a use site
-    // instead. `isPlatformContext,` followed by the array's own closing bracket occurs once.
-    const depsEnd = source.indexOf("      isPlatformContext,\n    ]\n  );");
+    // Anchor on the `config` useMemo call and locate its closing `    ]\n  );` boundary so valid
+    // additions to the dependency list after `isPlatformContext` do not break slice extraction.
+    const normalizedSource = source.replace(/\r\n/g, "\n");
+    const configAnchor = normalizedSource.indexOf(
+      "const config: CrudConfig<CustomField> = useMemo("
+    );
+    expect(configAnchor).toBeGreaterThan(-1);
+    const depsEnd = normalizedSource.indexOf("\n    ]\n  );", configAnchor);
     expect(depsEnd).toBeGreaterThan(-1);
-    const depsStart = source.lastIndexOf("    [\n", depsEnd);
-    expect(depsStart).toBeGreaterThan(-1);
+    const depsStart = normalizedSource.lastIndexOf("    [\n", depsEnd);
+    expect(depsStart).toBeGreaterThan(configAnchor);
 
-    const deps = source.slice(depsStart, depsEnd);
+    const deps = normalizedSource.slice(depsStart, depsEnd);
     expect(deps).toContain("canViewOptionSets,");
     // Sanity check on the extraction itself, so a bracket-matching mistake cannot make the assertion
     // above pass against the whole file.

@@ -198,7 +198,7 @@ export function PlaceholderSchemaBuilder({
             <p>{t("messaging.templates.noPlaceholders")}</p>
             <p className="mt-1 text-xs">{t("messaging.templates.addFieldsHint")}</p>
             {bodyVarKeys.size > 0 && (
-              <div className="mt-3 flex items-center justify-center gap-1.5 text-warning">
+              <div className="mt-3 flex items-center justify-center gap-1.5 text-nx-warning-strong">
                 <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
                 <span className="text-xs">
                   {bodyVarKeys.size} {t("messaging.templates.varsDetected")}
@@ -249,7 +249,7 @@ export function PlaceholderSchemaBuilder({
                   {isOrphaned && (
                     <span role="img" aria-label={t("messaging.templates.orphanedVar")}>
                       <AlertTriangle
-                        className="h-3.5 w-3.5 shrink-0 text-warning"
+                        className="h-3.5 w-3.5 shrink-0 text-nx-warning-strong"
                         aria-hidden="true"
                       />
                     </span>
@@ -265,7 +265,7 @@ export function PlaceholderSchemaBuilder({
                 {expandedId === field.id && (
                   <div className="space-y-3 border-t border-nx-line px-3 pb-3 pt-3">
                     {isOrphaned && (
-                      <div className="flex items-center gap-2 rounded bg-warning/10 p-2 text-xs text-warning">
+                      <div className="flex items-center gap-2 rounded bg-warning/10 p-2 text-xs text-nx-warning-strong">
                         <AlertTriangle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                         <span>{t("messaging.templates.orphanedVar")}</span>
                       </div>

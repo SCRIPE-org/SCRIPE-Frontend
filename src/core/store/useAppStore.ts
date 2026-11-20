@@ -4,6 +4,8 @@ import { User } from "@modules/auth/core/domain/entities/User";
 import { PermissionCode, AdminRole } from "@core/common/types/permissions";
 import { secureTokenService } from "@core/common/secure-token-service";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
+import { useSudoStore } from "@core/store/useSudoStore";
+import { usePatOneTimeSecretStore } from "@core/store/usePatOneTimeSecretStore";
 
 interface AppState {
   // Sidebar State
@@ -89,20 +91,40 @@ export const useAppStore = create<AppState>()(
             /* ignore */
           }
         }
-        set({
-          user,
-          isAuthenticated: true,
-          permissions,
-          roles,
-          restrictedFields: user.restrictedFields ?? {},
+        set(() => {
+          const resolvedRoles =
+            roles && roles.length > 0
+              ? roles
+              : Array.isArray(user.roles)
+                ? user.roles
+                : [];
+          const resolvedPermissions = Array.isArray(permissions)
+            ? permissions
+            : Array.isArray(user.permissions)
+              ? (user.permissions as PermissionCode[])
+              : [];
+          const resolvedRestrictedFields =
+            user.restrictedFields && !Array.isArray(user.restrictedFields)
+              ? (user.restrictedFields as Record<string, string[]>)
+              : {};
+
+          return {
+            user,
+            isAuthenticated: true,
+            permissions: resolvedPermissions,
+            roles: resolvedRoles,
+            restrictedFields: resolvedRestrictedFields,
+          };
         });
       },
       logout: () => {
         if (typeof document !== "undefined") {
           document.cookie = `${STORAGE_KEYS.scr_auth_state}=; path=/; max-age=0; samesite=Lax`;
         }
-        // Also clear tokens when logging out from store
+        // Also clear tokens, sudo elevation, and ephemeral PAT secrets when logging out from store
         secureTokenService.clearTokens();
+        useSudoStore.getState().reset();
+        usePatOneTimeSecretStore.getState().clearPendingReceipt();
         set({
           user: null,
           isAuthenticated: false,

@@ -11,6 +11,7 @@ import {
 } from "@modules/crm";
 import type { CrmOpportunity } from "../../domain/entities/OpportunityEntity";
 
+/** Stepper item descriptor for the Opportunity stage progression header. */
 export interface OpportunityStageStepItem {
   key: string;
   label: string;
@@ -20,6 +21,7 @@ export interface OpportunityStageStepItem {
   requiresParty: boolean;
 }
 
+/** Interactive horizontal pipeline stepper card for transitioning an open Opportunity. */
 export function OpportunityStageProgressionCard({
   t,
   opp,
@@ -68,10 +70,8 @@ export function OpportunityStageProgressionCard({
               data-testid={`stage-step-${st.key}`}
               data-stage-color={st.color}
               data-custom-color-hex={st.customColorHex || undefined}
-              disabled={!isOpen}
-              onClick={() => {
-                if (isOpen) onSelectStageStep(st.key);
-              }}
+              disabled={isCurrent}
+              onClick={() => onSelectStageStep(st.key)}
               style={customHexStyles.isValidHex ? customHexStyles.cardStyle : undefined}
               className={cn(
                 "h-auto flex items-center justify-between gap-1 rounded-nx-md border px-2 py-1.5 text-start text-[11px] transition-all min-w-0",
@@ -80,14 +80,14 @@ export function OpportunityStageProgressionCard({
                       "ring-2 ring-nx-accent font-bold",
                       !customHexStyles.isValidHex
                         ? colorMeta.badgeClass
-                        : "border-nx-accent bg-nx-accent-wash/30 text-nx-accent",
+                        : "border-nx-accent bg-nx-accent-wash text-nx-accent",
                     )
                   : isCompleted
                     ? "border-success/30 bg-success/10 text-success font-semibold"
                     : cn(
                         "hover:border-nx-line-hi",
                         !customHexStyles.isValidHex
-                          ? colorMeta.cardClass
+                          ? colorMeta.borderClass
                           : "border-nx-line bg-nx-ground text-nx-ink-2",
                       ),
               )}

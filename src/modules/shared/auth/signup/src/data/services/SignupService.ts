@@ -45,6 +45,13 @@ export class SignupService implements ISignupService {
     private readonly _apiService?: IApiService
   ) {}
 
+  private fastSignal(timeoutMs = 2500): AbortSignal | undefined {
+    if (typeof AbortSignal !== "undefined" && typeof AbortSignal.timeout === "function") {
+      return AbortSignal.timeout(timeoutMs);
+    }
+    return undefined;
+  }
+
   /**
    * Detects the visitor's country (via Cloudflare/proxy headers on the backend)
    * and returns the recommended display currency + all supported currencies with
@@ -53,14 +60,18 @@ export class SignupService implements ISignupService {
    * Cached 10 min client-side by TanStack Query in the orchestrator ViewModel.
    */
   async getPricingContext(): Promise<PricingContextDto> {
-    return this.api.get<PricingContextDto>(SIGNUP_ENDPOINTS.PRICING_CONTEXT);
+    return this.api.get<PricingContextDto>(
+      SIGNUP_ENDPOINTS.PRICING_CONTEXT,
+      undefined,
+      this.fastSignal()
+    );
   }
 
   async getCategories(currency: string | undefined, lang: string): Promise<PublicCategoryDto[]> {
     const params: Record<string, string> = { lang };
     if (currency) params.currency = currency;
     const url = buildUrl(SIGNUP_ENDPOINTS.GET_CATEGORIES, params);
-    return this.api.get<PublicCategoryDto[]>(url);
+    return this.api.get<PublicCategoryDto[]>(url, undefined, this.fastSignal());
   }
 
   async getEditions(
@@ -72,7 +83,7 @@ export class SignupService implements ISignupService {
     if (currency) params.currency = currency;
     if (categoryKey) params.categoryId = categoryKey;
     const url = buildUrl(SIGNUP_ENDPOINTS.GET_EDITIONS, params);
-    return this.api.get<PublicEditionDto[]>(url);
+    return this.api.get<PublicEditionDto[]>(url, undefined, this.fastSignal());
   }
 
   async getRecommendation(params: {
@@ -194,7 +205,7 @@ export class SignupService implements ISignupService {
     };
     if (params.category) query.category = params.category;
     const url = buildUrl(SIGNUP_ENDPOINTS.ONBOARDING_FLOW, query);
-    return this.api.get<OnboardingFlowDto>(url);
+    return this.api.get<OnboardingFlowDto>(url, undefined, this.fastSignal());
   }
 
   /**
@@ -204,7 +215,7 @@ export class SignupService implements ISignupService {
    */
   async getWelcomeContent(lang: string): Promise<SignupWelcomeContentDto> {
     const url = buildUrl(SIGNUP_ENDPOINTS.ONBOARDING_WELCOME_CONTENT, { lang });
-    return this.api.get<SignupWelcomeContentDto>(url);
+    return this.api.get<SignupWelcomeContentDto>(url, undefined, this.fastSignal());
   }
 
   /**

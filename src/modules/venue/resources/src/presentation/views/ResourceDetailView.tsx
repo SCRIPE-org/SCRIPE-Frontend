@@ -171,7 +171,7 @@ export function ResourceDetailView({ resourceId }: Props) {
             ) : (
               <Badge
                 variant="outline"
-                className="border-warning/20 bg-warning/10 text-xs text-warning"
+                className="border-warning/20 bg-warning/10 text-xs text-nx-warning-strong"
               >
                 {t("resources.card.setupRequired", { defaultValue: "Setup Required" })}
               </Badge>
@@ -208,7 +208,7 @@ export function ResourceDetailView({ resourceId }: Props) {
             <Button
               size="sm"
               variant="outline"
-              className="gap-1.5 border-warning/30 text-xs font-bold text-warning hover:bg-warning/10"
+              className="gap-1.5 border-warning/30 text-xs font-bold text-nx-warning-strong hover:bg-warning/10"
               onClick={() => {
                 if (readiness.missingActions.length > 0) {
                   setActiveTab(readiness.missingActions[0].tab);
@@ -237,10 +237,10 @@ export function ResourceDetailView({ resourceId }: Props) {
 
       {/* Setup Required Banner with exact actionable missing steps */}
       {!isReady && (
-        <Alert className="flex flex-col gap-2 border-warning/30 bg-warning/10 py-2.5 text-warning sm:flex-row sm:items-center sm:justify-between">
+        <Alert className="flex flex-col gap-2 border-warning/30 bg-warning/10 py-2.5 text-nx-warning-strong sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-2">
             <AlertCircle
-              className="size-4 shrink-0 text-warning"
+              className="size-4 shrink-0 text-nx-warning-strong"
               aria-hidden="true"
             />
             <AlertDescription className="text-xs font-semibold">
@@ -262,10 +262,10 @@ export function ResourceDetailView({ resourceId }: Props) {
                     setActiveTab(action.tab);
                   }
                 }}
-                className="h-7 border-warning/40 text-xs text-warning hover:bg-warning/10"
+                className="h-7 border-warning/40 text-xs text-nx-warning-strong hover:bg-warning/10"
               >
                 {(action.id === "publish" || action.id === "publish-court") && vm.saving
-                  ? "Publishing..."
+                  ? t("resources.advanced.publishing", { defaultValue: "Publishing..." })
                   : action.label}
               </Button>
             ))}

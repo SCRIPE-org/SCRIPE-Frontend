@@ -4,10 +4,10 @@
  * Renders the preview charts row inside the customizer studio dashboard preview.
  * Includes a monthly revenue bar chart simulation and a traffic source distribution donut chart.
  */
-// UI-EXCEPTION: compact studio layout - mock dashboard canvas preview controls
 "use client";
 
 import { MoreHorizontal } from "lucide-react";
+import { Button } from "@core/ui/button";
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@core/common/utils";
 
@@ -38,15 +38,19 @@ export function MockChartsRow({ className }: MockChartsRowProps) {
           </div>
           <div className="flex gap-1">
             {["7d", "30d", "90d"].map((period, i) => (
-              <button
+              <Button
                 key={period}
+                type="button"
+                variant="ghost"
                 className={cn(
-                  "rounded-nx-control px-2 py-1 text-xs",
-                  i === 1 ? "bg-nx-accent-fill text-nx-on-fill" : "text-nx-ink-3 hover:bg-nx-hover"
+                  "h-auto rounded-nx-control px-2 py-1 text-xs font-normal",
+                  i === 1
+                    ? "bg-nx-accent-fill text-nx-on-fill hover:bg-nx-accent-fill hover:text-nx-on-fill"
+                    : "text-nx-ink-3 hover:bg-nx-hover"
                 )}
               >
                 {period}
-              </button>
+              </Button>
             ))}
           </div>
         </div>

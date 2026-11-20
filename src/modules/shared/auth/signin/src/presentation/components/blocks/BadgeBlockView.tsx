@@ -6,8 +6,8 @@ const VARIANT_CLASS = {
   success: "bg-success/10 text-success",
   warning: "bg-warning/10 text-warning",
   info: "bg-info/10 text-info",
-  neutral: "bg-muted text-muted-foreground",
-  premium: "bg-primary/10 text-nx-accent",
+  neutral: "border border-nx-line bg-nx-raised text-nx-ink-2",
+  premium: "bg-nx-accent-wash text-nx-accent",
 };
 
 /**

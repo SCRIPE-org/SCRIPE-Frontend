@@ -4,9 +4,6 @@
  * Now page-aware: each auth page can have its own layout, headline, subtitle.
  */
 "use client";
-// UI-EXCEPTION: compact studio layout — native <button> used for pixel-precise
-// compact controls (toggle switches, gradient pickers, layout thumbnails, etc.)
-// where @core/ui/button's padding/sizing would break the layout.
 
 import {
   CheckCircle,
@@ -26,6 +23,7 @@ import { cn } from "@/core/common/utils";
 import { ALL_LAYOUTS } from "../../domain/entities/StudioDraft";
 import type { LoginLayout } from "@core/domain/entities/LoginBrandingTypes";
 import type { AuthPageId, AuthPageOverride } from "../../domain/entities/StudioDraft";
+import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
@@ -395,32 +393,34 @@ export function LayoutPanel({
       {/* Mode Toggle: Presets / Builder */}
       {onCanvasModeChange && (
         <div className="flex gap-1 rounded-nx-control border border-nx-line bg-nx-raised p-1">
-          <button
+          <Button
             type="button"
+            variant="ghost"
             onClick={() => onCanvasModeChange("layout")}
             className={cn(
-              "flex flex-1 items-center justify-center gap-1.5 rounded-nx-sm px-3 py-2 text-xs font-medium transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
+              "flex h-auto flex-1 items-center justify-center gap-1.5 rounded-nx-sm px-3 py-2 text-xs font-medium transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
               canvasMode === "layout" || !canvasMode
-                ? "bg-nx-surface text-nx-ink"
+                ? "bg-nx-surface text-nx-ink hover:bg-nx-surface"
                 : "text-nx-ink-2 hover:bg-nx-hover hover:text-nx-ink"
             )}
           >
             <Layout className="h-3.5 w-3.5" aria-hidden="true" />
             {t("studio.builder.mode.presets")}
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
+            variant="ghost"
             onClick={() => onCanvasModeChange("builder")}
             className={cn(
-              "flex flex-1 items-center justify-center gap-1.5 rounded-nx-sm px-3 py-2 text-xs font-medium transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
+              "flex h-auto flex-1 items-center justify-center gap-1.5 rounded-nx-sm px-3 py-2 text-xs font-medium transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
               canvasMode === "builder"
-                ? "bg-nx-surface text-nx-ink"
+                ? "bg-nx-surface text-nx-ink hover:bg-nx-surface"
                 : "text-nx-ink-2 hover:bg-nx-hover hover:text-nx-ink"
             )}
           >
             <LayoutGrid className="h-3.5 w-3.5" aria-hidden="true" />
             {t("studio.builder.mode.builder")}
-          </button>
+          </Button>
         </div>
       )}
 
@@ -489,19 +489,20 @@ export function LayoutPanel({
                 <Label className="text-[10px] text-nx-ink-3">{t("studio.fields.bgType")}</Label>
                 <div className="flex gap-1">
                   {(["solid", "gradient", "image"] as const).map((type) => (
-                    <button
+                    <Button
                       key={type}
                       type="button"
+                      variant="ghost"
                       onClick={() => onUpdatePageField("bgType", type)}
                       className={cn(
-                        "h-7 flex-1 rounded-nx-control border text-[10px] font-medium transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
+                        "h-7 flex-1 rounded-nx-control border p-0 text-[10px] font-medium transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
                         (pageOverride.bgType || "solid") === type
-                          ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
+                          ? "border-nx-accent bg-nx-accent-wash text-nx-accent hover:bg-nx-accent-wash hover:text-nx-accent"
                           : "border-nx-line bg-nx-surface text-nx-ink-2 hover:bg-nx-hover"
                       )}
                     >
                       {t(`studio.bg.${type}`)}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </div>
@@ -683,15 +684,16 @@ export function LayoutPanel({
         {ALL_LAYOUTS.map((layout) => {
           const isSelected = selectedLayout === layout.id;
           return (
-            <button
+            <Button
               key={layout.id}
               type="button"
+              variant="ghost"
               aria-pressed={isSelected}
               onClick={() => onSelectLayout(layout.id)}
               className={cn(
-                "group relative flex flex-col gap-1.5 rounded-nx-md border p-2 text-start transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
+                "group relative flex h-auto flex-col items-stretch justify-start gap-1.5 whitespace-normal rounded-nx-md border p-2 text-start font-normal transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
                 isSelected
-                  ? "border-nx-accent bg-nx-accent-wash"
+                  ? "border-nx-accent bg-nx-accent-wash hover:bg-nx-accent-wash"
                   : "border-nx-line hover:border-nx-line-hi hover:bg-nx-hover"
               )}
             >
@@ -714,7 +716,7 @@ export function LayoutPanel({
                   <CheckCircle className="h-3 w-3 shrink-0 text-nx-accent" aria-hidden="true" />
                 )}
               </div>
-            </button>
+            </Button>
           );
         })}
       </div>

@@ -39,7 +39,7 @@ export function OptionSetBindingActions({
 
   return (
     <>
-      <div className="space-y-3 rounded-lg border border-nx-line bg-nx-surface p-4 shadow-sm">
+      <div className="space-y-3 rounded-lg border border-nx-line bg-nx-surface p-4">
         <div className="flex items-start gap-2.5">
           {boundSet ? (
             <ArrowRightLeft className="mt-0.5 h-4 w-4 shrink-0 text-nx-accent" aria-hidden="true" />

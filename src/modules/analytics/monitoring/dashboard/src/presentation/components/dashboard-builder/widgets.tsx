@@ -1,4 +1,3 @@
-// UI-EXCEPTION: compact studio layout
 /**
  * Dashboard Builder Widget Components — Placeholder renderers for dashboard builder preview.
  * Each widget renders demo/placeholder data in the builder canvas.
@@ -263,7 +262,7 @@ export function WidgetQuickActions({ props }: { props: Record<string, unknown> }
         <div className={cn("grid h-full gap-2", columns === 2 ? "grid-cols-2" : "grid-cols-3")}>
           {actions.map((action, i) => (
             // A preview of a button, not a button: these carry no action, so
-            // rendering them as <button> would put dead stops in the tab order
+            // rendering them as interactive buttons would put dead stops in the tab order
             // of every canvas tile.
             <span
               key={i}
@@ -297,7 +296,7 @@ export function WidgetActivityFeed({ props }: { props: Record<string, unknown> }
     },
     {
       icon: AlertTriangle,
-      color: "text-warning",
+      color: "text-nx-warning-strong",
       text: t("dashboard.builder.preview.activity.loginFailed"),
       time: t("common.timeAgo.minutesAgo", { count: 5 }),
     },
@@ -535,7 +534,7 @@ export function WidgetAnnouncement({ props }: { props: Record<string, unknown> }
     warning: {
       bg: "bg-warning/10",
       border: "border-warning/30 hover:border-warning/30",
-      tone: "text-warning",
+      tone: "text-nx-warning-strong",
       icon: AlertTriangle,
     },
   };

@@ -408,25 +408,24 @@ export function HistorySection(vm: HistorySectionProps) {
 
                 return (
                   <React.Fragment key={email.id || idx}>
-                    <TableRow
-                      clickable
-                      selected={isExpanded}
-                      aria-expanded={isExpanded}
-                      onClick={() => toggleExpand(email.id)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          e.preventDefault();
-                          toggleExpand(email.id);
-                        }
-                      }}
-                    >
+                    <TableRow selected={isExpanded}>
                       {/* Expand toggle */}
                       <TableCell className="pe-0">
-                        {isExpanded ? (
-                          <ChevronUp className="h-4 w-4 text-nx-ink-3" aria-hidden="true" />
-                        ) : (
-                          <ChevronDown className="h-4 w-4 text-nx-ink-3" aria-hidden="true" />
-                        )}
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className="h-7 w-7 text-nx-ink-3 hover:text-nx-ink"
+                          aria-expanded={isExpanded}
+                          aria-label={`${t("messaging.email.bodyPreview")}: ${email.subject}`}
+                          onClick={() => toggleExpand(email.id)}
+                        >
+                          {isExpanded ? (
+                            <ChevronUp className="h-4 w-4" aria-hidden="true" />
+                          ) : (
+                            <ChevronDown className="h-4 w-4" aria-hidden="true" />
+                          )}
+                        </Button>
                       </TableCell>
 
                       {/* To */}
@@ -461,10 +460,7 @@ export function HistorySection(vm: HistorySectionProps) {
 
                       {/* Quick Actions */}
                       <TableCell>
-                        <div
-                          className="flex items-center gap-1"
-                          onClick={(e) => e.stopPropagation()}
-                        >
+                        <div className="flex items-center gap-1">
                           {email.status === "Failed" && vm.onResend && (
                             <Button
                               variant="ghost"

@@ -8,12 +8,13 @@ import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { PhoneInput } from "@core/ui/phone-input";
 import { Textarea } from "@core/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@core/ui/dialog";
-import { AlertCircle, User, PlusCircle, Search, Building2 } from "lucide-react";
+import { AlertCircle, User, PlusCircle, Building2 } from "lucide-react";
 import { CustomFieldsSection } from "@core/crud/customFieldsExtension";
+import { CrmEntitySearchSelect } from "@modules/crm";
 import type { CreateContactInput } from "../../domain/entities/ContactEntity";
 
+/** Lookup projection for candidate PartyKernel person records when creating a contact. */
 export interface ContactCandidatePersonLookup {
   partyId: string;
   legalNameEn: string;
@@ -22,6 +23,7 @@ export interface ContactCandidatePersonLookup {
   isVerified: boolean;
 }
 
+/** Lookup projection for commercial accounts selectable during contact creation. */
 export interface ContactAccountLookup {
   id: string;
   partyLegalNameEn: string;
@@ -39,12 +41,11 @@ interface CreateContactDialogProps {
   defaultAccountId?: string;
 }
 
+/** Modal dialog for creating a new CRM Contact linked to a PartyKernel person and account. */
 export function CreateContactDialog({
   open,
   onOpenChange,
   onSubmit,
-  onLookupPeople,
-  onLookupAccounts,
   isSubmitting,
   error,
   defaultAccountId = "",
@@ -64,30 +65,12 @@ export function CreateContactDialog({
   const [commercialNotes, setCommercialNotes] = useState("");
   const [customFields, setCustomFields] = useState<Record<string, unknown>>({});
   const [validationError, setValidationError] = useState<string | null>(null);
-  const [candidatePeople, setCandidatePeople] = useState<ContactCandidatePersonLookup[]>([]);
-  const [personSearch, setPersonSearch] = useState("");
-  const [accounts, setAccounts] = useState<ContactAccountLookup[]>([]);
 
   useEffect(() => {
-    if (!open) return;
-    let active = true;
-    Promise.all([
-      onLookupPeople ? onLookupPeople(personSearch) : Promise.resolve([]),
-      onLookupAccounts ? onLookupAccounts() : Promise.resolve([]),
-    ])
-      .then(([peopleRes, accountsRes]) => {
-        if (active) {
-          setCandidatePeople(peopleRes);
-          setAccounts(accountsRes ?? []);
-        }
-      })
-      .catch(() => {
-        if (active) setCandidatePeople([]);
-      });
-    return () => {
-      active = false;
-    };
-  }, [open, personSearch, onLookupPeople, onLookupAccounts]);
+    if (open && defaultAccountId) {
+      setPrimaryAccountId(defaultAccountId);
+    }
+  }, [open, defaultAccountId]);
 
   const resetForm = () => {
     setMode("create");
@@ -102,7 +85,6 @@ export function CreateContactDialog({
     setCommercialNotes("");
     setCustomFields({});
     setValidationError(null);
-    setPersonSearch("");
   };
 
   const handleOpenChange = (nextOpen: boolean) => {
@@ -114,11 +96,11 @@ export function CreateContactDialog({
     e.preventDefault();
     setValidationError(null);
     if (mode === "select" && !personPartyId.trim()) {
-      setValidationError(t("crmContacts.create.personSelectRequired") || "Please select an existing contact person from the directory.");
+      setValidationError(t("crmContacts.create.personSelectRequired"));
       return;
     }
     if (mode === "create" && !fullNameEn.trim()) {
-      setValidationError(t("crmContacts.create.fullNameRequired") || "Contact full name is required.");
+      setValidationError(t("crmContacts.create.fullNameRequired"));
       return;
     }
     const resolvedAccountId = primaryAccountId && primaryAccountId !== "__none" ? primaryAccountId.trim() : undefined;
@@ -147,17 +129,17 @@ export function CreateContactDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-base font-bold text-nx-ink">
             <User className="size-4 text-nx-accent" />
-            <span>{t("crmContacts.create.title") || "Register Commercial Contact"}</span>
+            <span>{t("crmContacts.create.title")}</span>
           </DialogTitle>
           <DialogDescription className="text-xs text-nx-ink-2">
-            {t("crmContacts.create.description") || "Create a new contact stakeholder or link an existing person and assign their commercial account."}
+            {t("crmContacts.create.description")}
           </DialogDescription>
         </DialogHeader>
 
         {activeError && (
           <Alert variant="destructive" className="py-2.5 border-destructive/20 bg-destructive/10">
             <AlertCircle className="size-4" />
-            <AlertTitle className="text-xs font-semibold">{t("common.error") || "Validation Error"}</AlertTitle>
+            <AlertTitle className="text-xs font-semibold">{t("crmContacts.actions.error")}</AlertTitle>
             <AlertDescription className="text-xs">{activeError}</AlertDescription>
           </Alert>
         )}
@@ -166,11 +148,11 @@ export function CreateContactDialog({
           <div className="grid grid-cols-2 gap-2 p-1 rounded-nx-md bg-nx-raised border border-nx-line">
             <Button type="button" variant={mode === "create" ? "default" : "ghost"} size="sm" onClick={() => { setMode("create"); setValidationError(null); }} className="h-8 text-xs font-semibold gap-1.5">
               <PlusCircle className="size-3.5" />
-              <span>{t("crmContacts.create.modeCreateNew") || "New Contact Person"}</span>
+              <span>{t("crmContacts.create.modeCreateNew")}</span>
             </Button>
             <Button type="button" variant={mode === "select" ? "default" : "ghost"} size="sm" onClick={() => { setMode("select"); setValidationError(null); }} className="h-8 text-xs font-semibold gap-1.5">
               <User className="size-3.5" />
-              <span>{t("crmContacts.create.modeSelectExisting") || "Existing Person"}</span>
+              <span>{t("crmContacts.create.modeSelectExisting")}</span>
             </Button>
           </div>
 
@@ -205,26 +187,15 @@ export function CreateContactDialog({
               <Label className="text-xs font-medium text-nx-ink">
                 {t("crmContacts.create.selectPerson")} <span className="text-destructive">*</span>
               </Label>
-              <div className="relative">
-                <Search className="absolute start-2.5 top-1/2 -translate-y-1/2 size-3.5 text-nx-ink-3 pointer-events-none" />
-                <Input value={personSearch} onChange={(e) => setPersonSearch(e.target.value)} placeholder={t("crmContacts.create.searchPeople")} disabled={isSubmitting} className="h-8 ps-8 text-xs bg-nx-surface border-nx-line mb-2" />
-              </div>
-              <Select value={personPartyId} onValueChange={setPersonPartyId} disabled={isSubmitting}>
-                <SelectTrigger className="h-9 text-xs bg-nx-surface border-nx-line">
-                  <SelectValue placeholder={t("crmContacts.create.choosePerson")} />
-                </SelectTrigger>
-                <SelectContent>
-                  {candidatePeople.length === 0 ? (
-                    <SelectItem value="__empty" disabled>{t("crmContacts.create.noPeopleFound")}</SelectItem>
-                  ) : (
-                    candidatePeople.map((person) => (
-                      <SelectItem key={person.partyId} value={person.partyId}>
-                        {person.legalNameEn}{person.legalNameAr ? ` — ${person.legalNameAr}` : ""}
-                      </SelectItem>
-                    ))
-                  )}
-                </SelectContent>
-              </Select>
+              <CrmEntitySearchSelect
+                id="contact-person-select"
+                entityKind="party"
+                value={personPartyId}
+                onChange={(val) => setPersonPartyId(val)}
+                placeholder={t("crmContacts.create.choosePerson")}
+                allowClear
+                disabled={isSubmitting}
+              />
             </div>
           )}
 
@@ -233,19 +204,18 @@ export function CreateContactDialog({
               <Building2 className="size-3.5 text-nx-accent" />
               <span>{t("crmContacts.create.primaryAccountId")}</span>
             </Label>
-            <Select value={primaryAccountId} onValueChange={setPrimaryAccountId} disabled={isSubmitting}>
-              <SelectTrigger id="contact-account-id" className="h-9 text-xs bg-nx-surface border-nx-line">
-                <SelectValue placeholder={t("crmContacts.create.selectPrimaryAccount")} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="__none">{t("crmContacts.table.noAccount")}</SelectItem>
-                {accounts.map((acc) => (
-                  <SelectItem key={acc.id} value={acc.id}>
-                    {language === "ar" && acc.partyLegalNameAr ? acc.partyLegalNameAr : acc.partyLegalNameEn}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <CrmEntitySearchSelect
+              id="contact-account-id"
+              entityKind="account"
+              valueMode="id"
+              value={primaryAccountId === "__none" ? "" : primaryAccountId}
+              onChange={(val) => setPrimaryAccountId(val || "__none")}
+              placeholder={t("crmContacts.create.selectPrimaryAccount")}
+              enableQuickCreate
+              quickCreateDefaultKind="account"
+              allowClear
+              disabled={isSubmitting}
+            />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
@@ -267,7 +237,7 @@ export function CreateContactDialog({
 
           <CustomFieldsSection
             entityTypeKey="crm.contact"
-            entityDisplayName={t("crmContacts.title") || "Commercial Contact"}
+            entityDisplayName={t("crmContacts.title")}
             values={customFields}
             onChange={(key, value) => setCustomFields((prev) => ({ ...prev, [key]: value }))}
             disabled={isSubmitting}
@@ -275,10 +245,10 @@ export function CreateContactDialog({
 
           <DialogFooter className="pt-2">
             <Button type="button" variant="outline" size="sm" onClick={() => handleOpenChange(false)} disabled={isSubmitting} className="text-xs border-nx-line bg-nx-surface text-nx-ink">
-              {t("common.cancel") || "Cancel"}
+              {t("crmContacts.actions.cancel")}
             </Button>
             <Button type="submit" size="sm" disabled={isSubmitting} className="text-xs font-bold">
-              {isSubmitting ? t("common.saving") || "Saving..." : t("crmContacts.create.submit") || "Create Contact"}
+              {isSubmitting ? t("crmContacts.actions.saving") : t("crmContacts.create.submit")}
             </Button>
           </DialogFooter>
         </form>

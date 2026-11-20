@@ -1,3 +1,4 @@
+/** Wire DTO aliases mapping CRM Lead domain types to API payloads. */
 export type {
   CrmLead as CrmLeadDto,
   CreateLeadInput as CreateLeadDto,

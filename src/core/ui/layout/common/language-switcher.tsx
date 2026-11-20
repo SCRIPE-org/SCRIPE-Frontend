@@ -105,7 +105,7 @@ export function LanguageSwitcher({ buttonClassName, contentClassName }: Language
           // borrowed from a label that is not always in the DOM.
           aria-label={t("chrome.language.change")}
           className={cn(
-            "group flex h-9 items-center gap-1.5 rounded-full border border-transparent px-2.5",
+            "group flex h-9 min-w-[36px] items-center gap-1.5 rounded-full border border-transparent px-2.5",
             "transition-[color,background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
             "hover:border-nx-line-hi hover:bg-nx-hover",
             "focus-visible:shadow-nx-focus focus-visible:outline-none",

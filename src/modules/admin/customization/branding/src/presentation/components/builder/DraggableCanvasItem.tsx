@@ -9,8 +9,8 @@
  * overlap warning, type icon, and WYSIWYG preview via ComponentRenderer.
  */
 "use client";
-// UI-EXCEPTION: compact studio layout — native elements used for resize handles
-// and compact drag handles where @core/ui sizing conflicts with precision layout.
+// Compact studio layout — pointer-drag div resize handles used where @core/ui
+// sizing conflicts with precision pixel positioning.
 
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";

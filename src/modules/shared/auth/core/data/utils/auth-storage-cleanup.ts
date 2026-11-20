@@ -14,6 +14,10 @@ import { secureTokenService } from "@core/common/secure-token-service";
 import { STORAGE_KEYS, AUTH_STORAGE_KEYS_TO_CLEAR } from "@core/config/storage-keys";
 import { appLogger } from "@core/common/logger";
 import { useAppStore } from "@core/store/useAppStore";
+import { useSudoStore } from "@core/store/useSudoStore";
+import { usePatOneTimeSecretStore } from "@core/store/usePatOneTimeSecretStore";
+import { clearAllDataExchangeCaches } from "@core/data-exchange/data/repositories/DataExchangeRepository";
+import { useDataExchangeJobsStore } from "@core/data-exchange/presentation/store/useDataExchangeJobsStore";
 
 /**
  * Purge the navigation store and its localStorage cache.
@@ -53,6 +57,8 @@ export function clearAllLocalStorage(): void {
 
   // Clear SecureTokenService tokens (in-memory + legacy localStorage keys)
   secureTokenService.clearTokens();
+  useSudoStore.getState().reset();
+  usePatOneTimeSecretStore.getState().clearPendingReceipt();
 
   // TARGETED sessionStorage cleanup — NEVER call sessionStorage.clear()!
   sessionStorage.removeItem(STORAGE_KEYS.admin_backup_token);
@@ -61,6 +67,11 @@ export function clearAllLocalStorage(): void {
   sessionStorage.removeItem(STORAGE_KEYS.IMPERSONATING);
   // Clear tenant drill-down context so subsequent logins start un-scoped
   sessionStorage.removeItem(STORAGE_KEYS.tenant_context);
+  sessionStorage.removeItem("scr_tenant_breadcrumbs");
+
+  // Purge Data Exchange entity/descriptor caches and scoped background jobs
+  clearAllDataExchangeCaches();
+  useDataExchangeJobsStore.getState().reset();
 
   appLogger.auth(
     "[auth-storage-cleanup] Auth data, settings, and cache cleared (drill-down state cleared)"
@@ -84,10 +95,13 @@ export function clearSessionOnLoginMount(): void {
   sessionStorage.removeItem(STORAGE_KEYS.IMPERSONATING);
   sessionStorage.removeItem(STORAGE_KEYS.admin_backup_token);
   sessionStorage.removeItem(STORAGE_KEYS.tenant_context);
+  sessionStorage.removeItem("scr_tenant_breadcrumbs");
 
-  // Clear in-memory tokens immediately — prevents RouteGuard Case 1 redirect
+  // Clear in-memory tokens, sudo elevation, and PAT secrets immediately — prevents RouteGuard Case 1 redirect
   // (hasToken && isAuthenticated → redirect to dashboard)
   secureTokenService.clearTokens();
+  useSudoStore.getState().reset();
+  usePatOneTimeSecretStore.getState().clearPendingReceipt();
 
   // Clear stale isAuthenticated from Zustand SYNCHRONOUSLY — prevents RouteGuard
   // Case 2 silent refresh from running and auto-redirecting to dashboard, which
@@ -103,6 +117,10 @@ export function clearSessionOnLoginMount(): void {
   // Purge navigation store cache — prevents stale menus from a previous
   // (possibly impersonated) session bleeding into the next login.
   clearNavigationCaches();
+
+  // Purge Data Exchange caches & scoped jobs store on login mount
+  clearAllDataExchangeCaches();
+  useDataExchangeJobsStore.getState().reset();
 
   appLogger.auth(
     "[auth-storage-cleanup] Login page mounted: stale flags, tokens, auth state, and navigation cache cleared"

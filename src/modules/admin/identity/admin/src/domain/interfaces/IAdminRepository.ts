@@ -46,7 +46,7 @@ export interface IAdminRepository {
   /**
    * Get admins belonging to current user's tenant
    */
-  getMyTenantAdmins(params: AdminListParams): Promise<PagedResult<Admin>>;
+  getCurrentTenantAdmins(params: AdminListParams): Promise<PagedResult<Admin>>;
 
   /**
    * Get admin by ID
@@ -61,7 +61,7 @@ export interface IAdminRepository {
   /**
    * Create admin for current user's tenant (tenantId from token)
    */
-  createForMyTenant(request: Omit<CreateAdminRequest, "tenantId">): Promise<string>;
+  createInCurrentTenant(request: Omit<CreateAdminRequest, "tenantId">): Promise<string>;
 
   /**
    * Update an existing admin

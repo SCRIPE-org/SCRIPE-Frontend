@@ -25,11 +25,11 @@ export interface UserGroupListParams {
  */
 export interface IUserGroupRepository {
   getAll(params: UserGroupListParams): Promise<PagedResult<UserGroup>>;
-  getMyTenantGroups(params: UserGroupListParams): Promise<PagedResult<UserGroup>>;
+  getCurrentTenantGroups(params: UserGroupListParams): Promise<PagedResult<UserGroup>>;
   getById(id: string): Promise<UserGroup>;
   getByTenantId(tenantId: string): Promise<UserGroup[]>;
   create(request: CreateUserGroupRequest): Promise<string>;
-  createForMyTenant(request: Omit<CreateUserGroupRequest, "tenantId">): Promise<string>;
+  createInCurrentTenant(request: Omit<CreateUserGroupRequest, "tenantId">): Promise<string>;
   update(id: string, request: UpdateUserGroupRequest): Promise<void>;
   delete(id: string, cascadeAdmins?: boolean): Promise<void>;
   addMembers(groupId: string, request: AddMembersRequest): Promise<void>;

@@ -57,11 +57,18 @@ export function useAuthRefresh(options: UseAuthRefreshOptions = {}) {
 
     try {
       appLogger.debug("[AuthRefresh] Refreshing user data...");
-      const user = await authRepository.getMe();
+      const user = await authRepository.getCurrentPrincipal();
 
-      if (user) {
-        // Update store with fresh data
-        setAuth(user, user.permissions || [], []);
+      if (user && user.id) {
+        const state = useAppStore.getState();
+        const resolvedRoles = user.roles && user.roles.length > 0 ? user.roles : state.roles;
+        const resolvedPermissions =
+          user.permissions && user.permissions.length > 0
+            ? (user.permissions as any[])
+            : state.permissions;
+
+        // Update store with fresh data, preserving roles & permissions
+        setAuth(user, resolvedPermissions, resolvedRoles);
         appLogger.debug("[AuthRefresh] User data refreshed successfully");
       }
     } catch (error) {

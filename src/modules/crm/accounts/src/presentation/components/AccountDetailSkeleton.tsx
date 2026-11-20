@@ -4,6 +4,7 @@ import { Card } from "@core/ui/card";
 import { Skeleton } from "@core/ui/skeleton";
 import { ActivityTimelineSkeleton } from "@modules/crm";
 
+/** Loading skeleton placeholder for the CRM Account 360 detail workspace. */
 export function AccountDetailSkeleton() {
   return (
     <div className="space-y-6" data-testid="account-detail-skeleton">

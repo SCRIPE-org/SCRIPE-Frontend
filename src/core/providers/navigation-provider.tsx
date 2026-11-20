@@ -4,9 +4,9 @@
  * NavigationProvider — Thin TanStack Query Orchestrator (v2)
  *
  * Responsibilities (v2 — dramatically simplified):
- *  1. On login: fire GET /Menus/my/routes → seeds useNavigationStore.allRoutes (eager)
- *  2. On login: fire GET /Menus/my → seeds useNavigationStore.defaultWorkspace + groups
- *  3. Expose fetchWorkspaceMenu(key) → fires GET /Menus/my?workspace={key} (JIT)
+ *  1. On login: fire GET /menus/navigation/routes → seeds useNavigationStore.allRoutes (eager)
+ *  2. On login: fire GET /menus/navigation → seeds useNavigationStore.defaultWorkspace + groups
+ *  3. Expose fetchWorkspaceMenu(key) → fires GET /menus/navigation?workspace={key} (JIT)
  *  4. Listen for impersonation/tenant changes → store.reset() + queryClient.invalidate
  *
  * What this provider does NOT do (v2):
@@ -41,7 +41,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { authBroadcast } from "@core/common/broadcast-auth";
 import { useAppStore } from "@core/store/useAppStore";
 import { useServices } from "@core/providers/service-provider";
-import { useTenantContext } from "@core/providers/tenant-context-provider";
+import { useAdminContext } from "@core/hooks/useAdminContext";
 import { appLogger } from "@core/common/logger";
 import { secureTokenService } from "@core/common/secure-token-service";
 
@@ -87,8 +87,8 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   const { navigationRepository } = useServices();
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
   const hasHydrated = useAppStore((s) => s._hasHydrated);
-  const { currentTenant } = useTenantContext();
-  const tenantId = currentTenant?.id ?? null;
+  const { activeTenantId } = useAdminContext();
+  const tenantId = activeTenantId;
   const queryClient = useQueryClient();
 
   // ── Granular selectors — only the two slices we need in the render path ───
@@ -97,12 +97,12 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   const isInitialLoading = useNavigationStore((s) => s.isInitialLoading);
   const defaultWorkspace = useNavigationStore((s) => s.defaultWorkspace);
   // Read persisted contextKey exactly once — used in the one-time guard effect.
-  const persistedContextKey = useNavigationStore((s) => s.contextKey);
+  const persistedContextKey = useNavigationStore((s) => s.routesContextKey || s.contextKey);
 
   // ── Context key — identifies this user+tenant combination ─────────────────
   // MUST be username, not user.id: id is IIdEncryptionService.Encrypt(guid),
   // which is randomized-IV AEAD ciphertext — a fresh, different string on
-  // every /Admins/me response for the SAME underlying admin. Keying the nav
+  // every /auth/admin/principal response for the SAME underlying admin. Keying the nav
   // queries (and the store's own persisted contextKey guard above) off a
   // value that never repeats for "the same user" means the eager routes/
   // default-workspace queries restart under a brand new cache key on every
@@ -138,6 +138,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
       appLogger.auth(
         `[NavigationProvider] Context mismatch (${persistedContextKey} ≠ ${contextKey}) — resetting store`
       );
+      useNavigationStore.getState().clearRouteData();
       useNavigationStore.getState().reset();
       autoFetchDone.current = false; // Allow auto-fetch to fire for the new context
     }
@@ -149,9 +150,22 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   useQuery({
     queryKey: NAV_QUERY_KEYS.routes(contextKey),
     queryFn: async () => {
-      const { routes, workspaceRouteMap } = await navigationRepository.fetchRoutes();
-      useNavigationStore.getState().initializeRoutes(routes, workspaceRouteMap, contextKey);
-      return { routes, workspaceRouteMap };
+      try {
+        const { routes, workspaceRouteMap, routeDescriptors } =
+          await navigationRepository.fetchRoutes();
+        useNavigationStore.getState().setRouteData({
+          routes,
+          workspaceRouteMap,
+          routeDescriptors,
+          contextKey,
+        });
+        return { routes, workspaceRouteMap, routeDescriptors };
+      } catch (err) {
+        const message =
+          err instanceof Error ? err.message : "Failed to load navigation routes";
+        useNavigationStore.getState().setRoutesError(message, contextKey);
+        throw err;
+      }
     },
     enabled: isReady,
     staleTime: CACHE_EXPIRY.NAVIGATION,
@@ -211,45 +225,58 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   );
 
   const refreshNavigation = useCallback(async () => {
+    useNavigationStore.getState().clearRouteData();
     useNavigationStore.getState().reset();
     autoFetchDone.current = false; // Allow auto-fetch to fire after full refresh
     await queryClient.invalidateQueries({ queryKey: ["navigation"] });
   }, [queryClient]);
 
   // ── Impersonation listener ─────────────────────────────────────────────────
-  // Note: authBroadcast is a singleton with no unsubscribe API — this is intentional.
-  // The handler is registered once and lives for the lifetime of the app.
-  const impersonationListenerRegistered = useRef(false);
   useEffect(() => {
-    if (impersonationListenerRegistered.current) return;
-    impersonationListenerRegistered.current = true;
-
-    authBroadcast.onImpersonation(async () => {
+    return authBroadcast.onImpersonation(() => {
       appLogger.auth("[NavigationProvider] Impersonation event — resetting navigation");
+      useNavigationStore.getState().clearRouteData();
       useNavigationStore.getState().reset();
       autoFetchDone.current = false; // Allow auto-fetch for impersonated user
-      await queryClient.invalidateQueries({ queryKey: ["navigation"] });
+      void queryClient.invalidateQueries({ queryKey: ["navigation"] });
     });
-    // authBroadcast is a singleton — no cleanup needed (matches pattern in useImpersonation.ts)
   }, [queryClient]);
 
-  // When tenant context changes, reset and refetch
-  const prevTenantRef = useRef<string | null | undefined>("__initial__");
+  // When auth ends, purge cached navigation state immediately so the next user starts clean
+  const wasReadyRef = useRef<boolean>(isReady);
+  const prevContextRef = useRef<string | "__initial__">("__initial__");
+
   useEffect(() => {
-    if (prevTenantRef.current === "__initial__") {
-      prevTenantRef.current = tenantId;
+    if (wasReadyRef.current && !isReady) {
+      appLogger.auth("[NavigationProvider] Auth session ended — clearing navigation store");
+      useNavigationStore.getState().clearRouteData();
+      useNavigationStore.getState().reset();
+      autoFetchDone.current = false;
+      queryClient.removeQueries({ queryKey: ["navigation"] });
+      prevContextRef.current = "__initial__";
+    }
+    wasReadyRef.current = isReady;
+  }, [isReady, queryClient]);
+
+  // When tenant context OR authenticated user changes, clear and refetch cleanly
+  useEffect(() => {
+    if (!isReady) return;
+    if (prevContextRef.current === "__initial__") {
+      prevContextRef.current = contextKey;
       return;
     }
-    if (prevTenantRef.current !== tenantId) {
-      prevTenantRef.current = tenantId;
+    if (prevContextRef.current !== contextKey) {
+      const previousContext = prevContextRef.current;
+      prevContextRef.current = contextKey;
       appLogger.auth(
-        `[NavigationProvider] Tenant changed (${prevTenantRef.current} → ${tenantId}) — resetting navigation`
+        `[NavigationProvider] Context changed (${previousContext} → ${contextKey}) — resetting navigation`
       );
+      useNavigationStore.getState().clearRouteData();
       useNavigationStore.getState().reset();
-      autoFetchDone.current = false; // Allow auto-fetch for the new tenant context
+      autoFetchDone.current = false; // Allow auto-fetch for the new context
       queryClient.invalidateQueries({ queryKey: ["navigation"] });
     }
-  }, [tenantId, queryClient]);
+  }, [isReady, contextKey, queryClient]);
 
   // ── Auto-fetch active workspace on boot (Gap 1 + Gap 5 fix) ───────────────
   // After page refresh, activeWorkspaceKey is restored from localStorage but

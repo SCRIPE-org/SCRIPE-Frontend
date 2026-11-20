@@ -5,6 +5,7 @@
  * Pure function — returns CSS string, no DOM side-effects.
  */
 import { TOKEN_TO_CSS_VAR } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
+import { sanitizeCssUrl, sanitizeCssValue } from "./sanitizeBrandingCss";
 
 export function buildTokenCss(tokens: Record<string, string | undefined>): string {
   const rootRules: string[] = [];
@@ -13,39 +14,44 @@ export function buildTokenCss(tokens: Record<string, string | undefined>): strin
   // Map known tokens to CSS vars
   for (const [tokenKey, value] of Object.entries(tokens)) {
     const cssVar = TOKEN_TO_CSS_VAR[tokenKey];
-    if (cssVar && value) rootRules.push(`  ${cssVar}: ${value};`);
+    const safeValue = sanitizeCssValue(value);
+    if (cssVar && safeValue) rootRules.push(`  ${cssVar}: ${safeValue};`);
   }
 
   // Split bg mode
-  if (tokens["split.bg.mode"]) {
-    rootRules.push(`  --login-split-bg-mode: ${tokens["split.bg.mode"]};`);
+  const safeSplitMode = sanitizeCssValue(tokens["split.bg.mode"]);
+  if (safeSplitMode) {
+    rootRules.push(`  --login-split-bg-mode: ${safeSplitMode};`);
   }
 
   // Background image — ALWAYS emit
-  rootRules.push(
-    `  --login-bg-image: ${tokens["bg.image"] ? `url(${tokens["bg.image"]})` : "none"};`
-  );
-  if (tokens["bg.image.fit"]) rootRules.push(`  --login-bg-image-fit: ${tokens["bg.image.fit"]};`);
-  if (tokens["bg.image.position"])
-    rootRules.push(`  --login-bg-image-position: ${tokens["bg.image.position"]};`);
+  const safeBgImage = sanitizeCssUrl(tokens["bg.image"]);
+  rootRules.push(`  --login-bg-image: ${safeBgImage ? `url(${safeBgImage})` : "none"};`);
+  const safeBgFit = sanitizeCssValue(tokens["bg.image.fit"]);
+  if (safeBgFit) rootRules.push(`  --login-bg-image-fit: ${safeBgFit};`);
+  const safeBgPos = sanitizeCssValue(tokens["bg.image.position"]);
+  if (safeBgPos) rootRules.push(`  --login-bg-image-position: ${safeBgPos};`);
 
   // Gradient overrides solid bg
-  if (tokens["bg.gradient"]) {
-    rootRules.push(`  --login-bg-gradient: ${tokens["bg.gradient"]};`);
-    rootRules.push(`  --login-bg: ${tokens["bg.gradient"]};`);
+  const safeBgGradient = sanitizeCssValue(tokens["bg.gradient"]);
+  if (safeBgGradient) {
+    rootRules.push(`  --login-bg-gradient: ${safeBgGradient};`);
+    rootRules.push(`  --login-bg: ${safeBgGradient};`);
   }
 
   // Panel bg image — ALWAYS emit
+  const safePanelBgImage = sanitizeCssUrl(tokens["panel.bg.image"]);
   rootRules.push(
-    `  --login-panel-bg-image: ${tokens["panel.bg.image"] ? `url(${tokens["panel.bg.image"]})` : "none"};`
+    `  --login-panel-bg-image: ${safePanelBgImage ? `url(${safePanelBgImage})` : "none"};`
   );
-  if (tokens["panel.bg.image.fit"])
-    rootRules.push(`  --login-panel-bg-image-fit: ${tokens["panel.bg.image.fit"]};`);
-  if (tokens["panel.bg.image.position"])
-    rootRules.push(`  --login-panel-bg-image-position: ${tokens["panel.bg.image.position"]};`);
-  if (tokens["panel.bg.gradient"]) {
-    rootRules.push(`  --login-panel-bg-gradient: ${tokens["panel.bg.gradient"]};`);
-    rootRules.push(`  --login-panel-bg: ${tokens["panel.bg.gradient"]};`);
+  const safePanelBgFit = sanitizeCssValue(tokens["panel.bg.image.fit"]);
+  if (safePanelBgFit) rootRules.push(`  --login-panel-bg-image-fit: ${safePanelBgFit};`);
+  const safePanelBgPos = sanitizeCssValue(tokens["panel.bg.image.position"]);
+  if (safePanelBgPos) rootRules.push(`  --login-panel-bg-image-position: ${safePanelBgPos};`);
+  const safePanelBgGradient = sanitizeCssValue(tokens["panel.bg.gradient"]);
+  if (safePanelBgGradient) {
+    rootRules.push(`  --login-panel-bg-gradient: ${safePanelBgGradient};`);
+    rootRules.push(`  --login-panel-bg: ${safePanelBgGradient};`);
   }
 
   // Overlay CSS vars (use != null: "0" is valid)
@@ -57,8 +63,8 @@ export function buildTokenCss(tokens: Record<string, string | undefined>): strin
     ["panel.overlay.color", "--login-panel-overlay-color"],
     ["panel.overlay.blur", "--login-panel-overlay-blur"],
   ] as const) {
-    const v = tokens[key];
-    if (v != null && v !== "") rootRules.push(`  ${cssVar}: ${v};`);
+    const safeV = sanitizeCssValue(tokens[key]);
+    if (safeV) rootRules.push(`  ${cssVar}: ${safeV};`);
   }
 
   // Dark color map
@@ -74,8 +80,8 @@ export function buildTokenCss(tokens: Record<string, string | undefined>): strin
     "dark.color.success": "--login-success",
   };
   for (const [tokenKey, cssVar] of Object.entries(darkColorMap)) {
-    const value = tokens[tokenKey];
-    if (value) darkRules.push(`  ${cssVar}: ${value};`);
+    const safeValue = sanitizeCssValue(tokens[tokenKey]);
+    if (safeValue) darkRules.push(`  ${cssVar}: ${safeValue};`);
   }
 
   // Dark overlay vars
@@ -87,24 +93,27 @@ export function buildTokenCss(tokens: Record<string, string | undefined>): strin
     ["dark.panel.overlay.color", "--login-panel-overlay-color"],
     ["dark.panel.overlay.blur", "--login-panel-overlay-blur"],
   ] as const) {
-    const v = tokens[key];
-    if (v != null && v !== "") darkRules.push(`  ${cssVar}: ${v};`);
+    const safeV = sanitizeCssValue(tokens[key]);
+    if (safeV) darkRules.push(`  ${cssVar}: ${safeV};`);
   }
 
-  if (tokens["dark.bg.gradient"]) {
-    darkRules.push(`  --login-bg: ${tokens["dark.bg.gradient"]};`);
-    darkRules.push(`  --login-bg-gradient: ${tokens["dark.bg.gradient"]};`);
+  const safeDarkBgGradient = sanitizeCssValue(tokens["dark.bg.gradient"]);
+  if (safeDarkBgGradient) {
+    darkRules.push(`  --login-bg: ${safeDarkBgGradient};`);
+    darkRules.push(`  --login-bg-gradient: ${safeDarkBgGradient};`);
   }
+  const safeDarkBgImage = sanitizeCssUrl(tokens["dark.bg.image"]);
   darkRules.push(
-    `  --login-bg-image: ${tokens["dark.bg.image"] ? `url(${tokens["dark.bg.image"]})` : "none"};`
+    `  --login-bg-image: ${safeDarkBgImage ? `url(${safeDarkBgImage})` : "none"};`
   );
 
-  if (tokens["dark.panel.color.background"])
-    darkRules.push(`  --login-panel-bg: ${tokens["dark.panel.color.background"]};`);
-  if (tokens["dark.panel.bg.gradient"])
-    darkRules.push(`  --login-panel-bg: ${tokens["dark.panel.bg.gradient"]};`);
+  const safeDarkPanelBg = sanitizeCssValue(tokens["dark.panel.color.background"]);
+  if (safeDarkPanelBg) darkRules.push(`  --login-panel-bg: ${safeDarkPanelBg};`);
+  const safeDarkPanelGradient = sanitizeCssValue(tokens["dark.panel.bg.gradient"]);
+  if (safeDarkPanelGradient) darkRules.push(`  --login-panel-bg: ${safeDarkPanelGradient};`);
+  const safeDarkPanelImage = sanitizeCssUrl(tokens["dark.panel.bg.image"]);
   darkRules.push(
-    `  --login-panel-bg-image: ${tokens["dark.panel.bg.image"] ? `url(${tokens["dark.panel.bg.image"]})` : "none"};`
+    `  --login-panel-bg-image: ${safeDarkPanelImage ? `url(${safeDarkPanelImage})` : "none"};`
   );
 
   const blocks: string[] = [];

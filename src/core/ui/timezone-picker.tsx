@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { GenericSelect } from "@core/crud/components/generic-select";
+import { useI18n } from "@core/providers/i18n-provider";
 
 const FALLBACK_TIME_ZONES: readonly string[] = [
   "UTC",
@@ -88,18 +89,27 @@ export function TimezonePicker({
   id,
   value,
   onChange,
-  "aria-label": ariaLabel = "Time zone",
+  "aria-label": ariaLabel,
   describedBy,
   disabled,
-  placeholder = "Select time zone...",
+  placeholder,
   className,
 }: TimezonePickerProps): React.ReactElement {
+  const { t } = useI18n();
   const options = React.useMemo(() => optionsFor(value), [value]);
+  const resolvedAriaLabel =
+    ariaLabel ?? t("components.timezonePicker.label", { defaultValue: "Time zone" });
+  const resolvedPlaceholder =
+    placeholder ??
+    t("components.timezonePicker.placeholder", { defaultValue: "Select time zone..." });
+  const resolvedSearchPlaceholder = t("components.timezonePicker.searchPlaceholder", {
+    defaultValue: "Search time zone or city...",
+  });
 
   return (
     <GenericSelect
       id={id}
-      aria-label={ariaLabel}
+      aria-label={resolvedAriaLabel}
       describedBy={describedBy}
       type="searchable"
       searchType="client"
@@ -107,8 +117,8 @@ export function TimezonePicker({
       options={options}
       value={value}
       onValueChange={(v: string | string[]) => onChange(Array.isArray(v) ? (v[0] ?? value) : v)}
-      placeholder={placeholder}
-      searchPlaceholder="Search time zone or city..."
+      placeholder={resolvedPlaceholder}
+      searchPlaceholder={resolvedSearchPlaceholder}
       disabled={disabled}
       className={className}
     />

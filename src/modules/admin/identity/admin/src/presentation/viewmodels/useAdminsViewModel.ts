@@ -27,7 +27,7 @@ import { useAdminOperations } from "./useAdminOperations";
 interface AdminsViewModelOptions {
   /** Optional tenant ID to filter admins for a specific tenant */
   tenantId?: string;
-  /** If true, uses /myTenantAdmins endpoint */
+  /** If true, uses /admins/current-tenant endpoint */
   useMyTenant?: boolean;
 }
 
@@ -44,7 +44,7 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
   const contextTenantId = useCurrentTenantId();
 
   // Use prop tenantId if provided (Priority 1)
-  // Otherwise if useMyTenant is true, use undefined (to trigger myTenant endpoint)
+  // Otherwise if useMyTenant is true, use undefined (to trigger current-tenant endpoint)
   // Otherwise use context tenantId (System Admin browsing context)
   const rawTenantId = propTenantId ?? (useMyTenant ? undefined : contextTenantId);
   const tenantId = rawTenantId ?? undefined; // Normalize null to undefined
@@ -58,7 +58,7 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
     return tenantId
       ? [...qk.admins.active(tenantId)]
       : useMyTenant
-        ? [...qk.admins.all, "myTenant"]
+        ? [...qk.admins.all, "currentTenant"]
         : [...qk.admins.all];
   }, [tenantId, useMyTenant]);
 
@@ -83,7 +83,7 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
             search: params.search,
           });
         } else if (useMyTenant) {
-          res = await adminRepository.getMyTenantAdmins({
+          res = await adminRepository.getCurrentTenantAdmins({
             page: params.page,
             pageSize: params.pageSize,
             search: params.search,
@@ -110,7 +110,7 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
         if (tenantId) {
           id = await adminRepository.create({ ...data, tenantId });
         } else if (useMyTenant) {
-          id = await adminRepository.createForMyTenant(data);
+          id = await adminRepository.createInCurrentTenant(data);
         } else {
           id = await adminRepository.create(data);
         }

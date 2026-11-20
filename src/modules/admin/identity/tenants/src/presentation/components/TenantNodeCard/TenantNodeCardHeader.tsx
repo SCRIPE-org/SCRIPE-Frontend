@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// UI-EXCEPTION: compact studio layout
 "use client";
 
 import React from "react";
 import { ChevronDown, Building2, CreditCard, Clock } from "lucide-react";
 import { Badge } from "@core/ui/badge";
+import { Button } from "@core/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@core/ui/tooltip";
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@core/common/utils";
@@ -49,10 +49,11 @@ export function TenantNodeCardHeader({
   const { t } = useI18n();
 
   return (
-    <button
+    <Button
       type="button"
+      variant="ghost"
       className={cn(
-        "flex w-full items-center gap-3 p-4",
+        "flex h-auto w-full items-center gap-3 whitespace-normal rounded-none p-4 font-normal",
         "text-start transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
         "hover:bg-nx-hover",
         "focus-visible:shadow-nx-focus focus-visible:outline-none"
@@ -141,6 +142,6 @@ export function TenantNodeCardHeader({
           isExpanded && "rotate-180"
         )}
       />
-    </button>
+    </Button>
   );
 }

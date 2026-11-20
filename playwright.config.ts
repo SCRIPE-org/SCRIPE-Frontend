@@ -1,5 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
 
+const baseURL = process.env.PLAYWRIGHT_BASE_URL || "http://localhost:3000";
+const basePort = Number(new URL(baseURL).port) || 3000;
+
 /**
  * Playwright configuration for SCRIPE E2E tests.
  * @see https://playwright.dev/docs/test-configuration
@@ -14,7 +17,7 @@ export default defineConfig({
   timeout: 60_000,
 
   use: {
-    baseURL: "http://localhost:3000",
+    baseURL,
     trace: "on-first-retry",
     screenshot: "only-on-failure",
     video: "on-first-retry",
@@ -36,7 +39,7 @@ export default defineConfig({
 
   webServer: {
     command: "pnpm run dev",
-    port: 3000,
+    port: basePort,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
   },

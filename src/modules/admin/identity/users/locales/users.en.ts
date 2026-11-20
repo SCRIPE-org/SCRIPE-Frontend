@@ -1,9 +1,11 @@
 export const en = {
   users: {
     title: "Users",
-    description: "Manage tenant client users and their access",
+    description:
+      "Manage client users who self-registered or were bulk-imported via Data Exchange",
     empty: "No users yet",
-    emptyDesc: "Users will appear here once they register",
+    emptyDesc:
+      "Client users appear here after self-registration or Data Exchange bulk import",
     searchPlaceholder: "Search users...",
 
     // Column headers

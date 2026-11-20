@@ -103,7 +103,7 @@ import {
 import { en as communicationEn, ar as communicationAr } from "@modules/communication/core/locales";
 import { en as webhooksEn, ar as webhooksAr } from "@modules/integrations/webhooks/locales";
 import { en as apikeysEn, ar as apikeysAr } from "@modules/integrations/apikeys/locales";
-import { en as mediaEn, ar as mediaAr } from "@modules/media/locales";
+import { en as mediaEn, ar as mediaAr } from "@modules/media/library/locales";
 
 // ─── Ecosystem ─────────────────────────────────────────
 import { en as recycleBinEn, ar as recycleBinAr } from "@modules/ecosystem/recycle-bin/locales";
@@ -303,12 +303,21 @@ import { en as venueSharedEn, ar as venueSharedAr } from "@modules/venue/shared/
 import { en as guestPortalEn, ar as guestPortalAr } from "@modules/venue/guest-portal/locales";
 
 // ─── CRM ───────────────────────────────────────────────
+import { en as crmSharedEn, ar as crmSharedAr } from "@modules/crm/shared/locales";
 import { en as crmOverviewEn, ar as crmOverviewAr } from "@modules/crm/overview/locales";
+import { en as crmWorkflowsEn, ar as crmWorkflowsAr } from "@modules/crm/workflows/locales";
+import { en as crmReportsEn, ar as crmReportsAr } from "@modules/crm/reports/locales";
+import { en as crmSettingsEn, ar as crmSettingsAr } from "@modules/crm/settings/locales";
 import { en as crmLeadsEn, ar as crmLeadsAr } from "@modules/crm/leads/locales";
 import { en as crmOpportunitiesEn, ar as crmOpportunitiesAr } from "@modules/crm/opportunities/locales";
 import { en as crmAccountsEn, ar as crmAccountsAr } from "@modules/crm/accounts/locales";
 import { en as crmContactsEn, ar as crmContactsAr } from "@modules/crm/contacts/locales";
 import { en as crmActivitiesEn, ar as crmActivitiesAr } from "@modules/crm/activities/locales";
+
+// ─── Data Transfer (3 sub-modules) ─────────────────────────
+import { en as dataTransferEntitiesEn, ar as dataTransferEntitiesAr } from "@modules/data-transfer/entities/locales";
+import { en as dataTransferJobsEn, ar as dataTransferJobsAr } from "@modules/data-transfer/jobs/locales";
+import { en as dataTransferPresetsEn, ar as dataTransferPresetsAr } from "@modules/data-transfer/presets/locales";
 
 
 
@@ -433,12 +442,20 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   venueSharedEn,
   guestPortalEn,
   // CRM
+  crmSharedEn,
   crmOverviewEn,
+  crmWorkflowsEn,
+  crmReportsEn,
+  crmSettingsEn,
   crmLeadsEn,
   crmOpportunitiesEn,
   crmAccountsEn,
   crmContactsEn,
   crmActivitiesEn,
+  // Data Transfer
+  dataTransferEntitiesEn,
+  dataTransferJobsEn,
+  dataTransferPresetsEn,
 );
 
 export const allModulesAr: Record<string, unknown> = deepMerge(
@@ -561,10 +578,18 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   venueSharedAr,
   guestPortalAr,
   // CRM
+  crmSharedAr,
   crmOverviewAr,
+  crmWorkflowsAr,
+  crmReportsAr,
+  crmSettingsAr,
   crmLeadsAr,
   crmOpportunitiesAr,
   crmAccountsAr,
   crmContactsAr,
   crmActivitiesAr,
+  // Data Transfer
+  dataTransferEntitiesAr,
+  dataTransferJobsAr,
+  dataTransferPresetsAr,
 );

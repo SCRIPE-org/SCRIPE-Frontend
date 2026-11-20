@@ -18,7 +18,8 @@
  * └──────┴─────────┴────────────────────────────────────────────┘
  */
 
-import React, { useState, useCallback, createContext, useContext, useEffect } from "react";
+import React, { useState, useCallback, createContext, useContext, useEffect, useRef } from "react";
+import dynamic from "next/dynamic";
 import { NexusPrimaryRail } from "./nexus-primary-rail";
 import { NexusSecondaryRail } from "./nexus-secondary-rail";
 import { NexusTopbar } from "./nexus-topbar";
@@ -35,11 +36,20 @@ import {
   NEXUS_PANEL_W,
   NEXUS_PRIMARY_RAIL_W,
   NEXUS_TOPBAR_H,
+  hasSecondarySubmenu,
 } from "./_parts/nexus-layout-constants";
 import { NexusFooter } from "./_parts/nexus-footer";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { useWorkspace } from "@core/providers/workspace-provider";
 import { HubTopBar } from "@modules/home";
+
+const AI_COPILOT_DEMO_ENABLED = process.env.NEXT_PUBLIC_SCRIPE_AI_DEMO === "true";
+const AiCopilotDemoHost = AI_COPILOT_DEMO_ENABLED
+  ? dynamic(
+      () => import("@/features/ai-copilot-demo").then((m) => ({ default: m.AiCopilotDemoHost })),
+      { ssr: false }
+    )
+  : null;
 
 // ── Workspace transition context ─────────────────────────────────────────────
 interface WorkspaceTransitionContextType {
@@ -63,7 +73,8 @@ export function NexusLayout({ children }: NexusLayoutProps) {
   const [isPanelCollapsed, setIsPanelCollapsed] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [appLauncherOpen, setAppLauncherOpen] = useState(false);
-  const { direction } = useI18n();
+  const mobileToggleRef = useRef<HTMLButtonElement>(null);
+  const { direction, t } = useI18n();
   const { showFooter, collapsibleSidebar } = useSettings();
   const pathname = usePathname();
   const activeWorkspaceKey = useNavigationStore((s) => s.activeWorkspaceKey);
@@ -94,11 +105,23 @@ export function NexusLayout({ children }: NexusLayoutProps) {
     if (!collapsibleSidebar) return;
     setIsPanelCollapsed((prev) => !prev);
   }, [collapsibleSidebar]);
-  const { activeRootItem, activeWorkspace } = useWorkspace();
-  const isVenueWorkspace = activeWorkspace?.workspaceKey === "venue";
-  const hasSubmenu =
-    isVenueWorkspace || Boolean(activeRootItem?.children && activeRootItem.children.length > 0);
+  const { activeRootItem, activeWorkspace, rootMenuItems } = useWorkspace();
+  const hasSubmenu = hasSecondarySubmenu(
+    activeWorkspace?.workspaceKey,
+    activeRootItem,
+    rootMenuItems
+  );
   const effectivePanelCollapsed = (collapsibleSidebar && isPanelCollapsed) || !hasSubmenu;
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !mobileMenuOpen) return;
+    const mq = window.matchMedia("(min-width: 1024px)");
+    const handleChange = (e: MediaQueryListEvent) => {
+      if (e.matches) setMobileMenuOpen(false);
+    };
+    mq.addEventListener("change", handleChange);
+    return () => mq.removeEventListener("change", handleChange);
+  }, [mobileMenuOpen]);
 
   // Workspace transition (loader + navigation)
   const { loaderState, switchWorkspace, goBackWorkspace } = useWorkspaceTransition();
@@ -118,7 +141,7 @@ export function NexusLayout({ children }: NexusLayoutProps) {
     };
   }, []);
 
-  return (
+  const renderShell = (copilotTrigger: React.ReactNode, copilotPanel: React.ReactNode) => (
     <WorkspaceTransitionContext.Provider value={{ switchWorkspace, goBackWorkspace }}>
       {/* ── Hub Mode: Full-screen app launcher on the nexus ground ────────── */}
       {isHubPage ? (
@@ -136,6 +159,12 @@ export function NexusLayout({ children }: NexusLayoutProps) {
             color: "var(--nx-ink, hsl(var(--foreground)))",
           }}
         >
+          <a
+            href="#nexus-content"
+            className="sr-only focus:not-sr-only focus:fixed focus:start-2 focus:top-2 focus:z-tooltip focus:rounded-nx-control focus:bg-nx-accent-fill focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-nx-on-fill focus:shadow-nx-focus focus:outline-none"
+          >
+            {t("nav.skipToContent")}
+          </a>
           {/* Workspace transition overlay still works in hub mode */}
           <NexusTransitionOverlay />
           <NexusWorkspaceLoader
@@ -181,7 +210,10 @@ export function NexusLayout({ children }: NexusLayoutProps) {
             onAppLauncherClick={() => setAppLauncherOpen(true)}
           />
 
-          <div
+          <main
+            id="nexus-content"
+            tabIndex={-1}
+            className="focus:outline-none"
             style={{
               flex: 1,
               overflowY: "auto",
@@ -191,7 +223,7 @@ export function NexusLayout({ children }: NexusLayoutProps) {
             }}
           >
             {children}
-          </div>
+          </main>
 
           <NexusSearchPalette open={searchOpen} onOpenChange={setSearchOpen} />
           <NexusAppLauncher open={appLauncherOpen} onOpenChange={setAppLauncherOpen} />
@@ -215,6 +247,12 @@ export function NexusLayout({ children }: NexusLayoutProps) {
             } as React.CSSProperties
           }
         >
+          <a
+            href="#nexus-content"
+            className="sr-only focus:not-sr-only focus:fixed focus:start-2 focus:top-2 focus:z-tooltip focus:rounded-nx-control focus:bg-nx-accent-fill focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-nx-on-fill focus:shadow-nx-focus focus:outline-none"
+          >
+            {t("nav.skipToContent")}
+          </a>
           <NexusTransitionOverlay />
           <NexusWorkspaceLoader
             show={loaderState.show}
@@ -241,11 +279,13 @@ export function NexusLayout({ children }: NexusLayoutProps) {
               mobileOpen={mobileMenuOpen}
               onMobileClose={closeMobile}
               isCollapsed={effectivePanelCollapsed}
+              returnFocusRef={mobileToggleRef}
             />
             <div
               style={{
                 display: "flex",
                 flex: 1,
+                minWidth: 0,
                 flexDirection: "column",
                 overflow: "hidden",
                 background: "var(--nx-ground, hsl(var(--background)))",
@@ -271,9 +311,14 @@ export function NexusLayout({ children }: NexusLayoutProps) {
                   onTogglePanel={togglePanel}
                   onOpenSearch={() => setSearchOpen(true)}
                   isPanelCollapsed={effectivePanelCollapsed}
+                  isMobileMenuOpen={mobileMenuOpen}
+                  toggleButtonRef={mobileToggleRef}
+                  extraActions={copilotTrigger}
                 />
                 <main
                   id="nexus-content"
+                  tabIndex={-1}
+                  className="focus:outline-none"
                   style={{
                     // Grow to fill short pages so the footer sits on the bottom
                     // edge; never shrink, so long pages scroll past it.
@@ -292,6 +337,7 @@ export function NexusLayout({ children }: NexusLayoutProps) {
                 {showFooter && <NexusFooter />}
               </div>
             </div>
+            {copilotPanel}
           </div>
 
           <NexusSearchPalette open={searchOpen} onOpenChange={setSearchOpen} />
@@ -300,4 +346,14 @@ export function NexusLayout({ children }: NexusLayoutProps) {
       )}
     </WorkspaceTransitionContext.Provider>
   );
+
+  if (AiCopilotDemoHost) {
+    return (
+      <AiCopilotDemoHost>
+        {({ triggerNode, panelNode }) => renderShell(triggerNode, panelNode)}
+      </AiCopilotDemoHost>
+    );
+  }
+
+  return renderShell(null, null);
 }

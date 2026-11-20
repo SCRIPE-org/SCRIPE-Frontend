@@ -37,13 +37,13 @@ export interface UserGroupListResult {
  */
 export interface IUserGroupService {
   getAll(params: UserGroupServiceListParams): Promise<UserGroupListResult>;
-  getMyTenantGroups(
+  getCurrentTenantGroups(
     params: Omit<UserGroupServiceListParams, "tenantId">
   ): Promise<UserGroupListResult>;
   getById(id: string): Promise<UserGroupModel>;
   getByTenantId(tenantId: string): Promise<UserGroupModel[]>;
   create(request: CreateUserGroupRequest): Promise<{ id: string }>;
-  createForMyTenant(request: Omit<CreateUserGroupRequest, "tenantId">): Promise<{ id: string }>;
+  createInCurrentTenant(request: Omit<CreateUserGroupRequest, "tenantId">): Promise<{ id: string }>;
   update(id: string, request: UpdateUserGroupRequest): Promise<void>;
   delete(id: string, cascadeAdmins?: boolean): Promise<void>;
   toggleStatus(id: string, isActive: boolean, cascadeAdmins?: boolean): Promise<void>;

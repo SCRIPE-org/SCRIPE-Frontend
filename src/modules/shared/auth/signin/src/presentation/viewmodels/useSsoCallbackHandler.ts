@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -13,30 +12,33 @@ import {
   handleOidcCallback,
   handleSamlCallback,
   completeAdminLogin,
+  type SsoTwoFactorPendingData,
 } from "./useSsoCallbackHandlers";
 import type { WorkspaceChoice } from "@modules/auth/core/domain/errors/AuthErrors";
+import type { AdminRole, PermissionCode } from "@core/common/types/permissions";
+import { getSafeRedirectPath } from "../utils/redirect-safety";
 
-/**
- * Exported type defining parameters and fields for sso callback kind configurations.
- */
+/** Supported SSO callback protocol types. */
 export type SsoCallbackKind = "oidc" | "saml";
-/**
- * Exported type defining parameters and fields for sso callback state configurations.
- */
-export type SsoCallbackState =
-  "processing" | "success" | "error" | "no_linked_account" | "workspace_selection";
 
-/**
- * Interface defining property specifications, keys types, and structural contract rules for sso callback error.
- */
+/** State machine for the SSO callback page. */
+export type SsoCallbackState =
+  | "processing"
+  | "success"
+  | "error"
+  | "no_linked_account"
+  | "workspace_selection"
+  | "two_factor";
+
+/** Structured error presentation for failed SSO callbacks. */
 export interface SsoCallbackError {
   title: string;
   message: string;
 }
 
 /**
- * React hook/ViewModel orchestrating state and data flows for sso callback handler.
- * Coordinates query synchronization (TanStack Query) with application client store indicators (Zustand) and returns validation fields.
+ * ViewModel hook coordinating OIDC/OAuth2 and SAML 2.0 callback completion,
+ * multi-workspace selection, and hybrid IdP MFA (`twoFactorPendingToken`) verification.
  */
 export function useSsoCallbackHandler(kind: SsoCallbackKind) {
   const router = useRouter();
@@ -44,15 +46,10 @@ export function useSsoCallbackHandler(kind: SsoCallbackKind) {
   const { t } = useI18n();
   const setAuth = useAppStore((state) => state.setAuth);
   const setSubscriptionInfo = useAppStore((state) => state.setSubscriptionInfo);
+  const setMustChangePassword = useAppStore((state) => state.setMustChangePassword);
+  const setDefaultRedirectPath = useAppStore((state) => state.setDefaultRedirectPath);
   const { refreshNavigation } = useNavigation();
   const queryClient = useQueryClient();
-  // useSsoCallbackHandlers' SsoDeps.operationSuccess is typed (msg: string) => void — a
-  // bare, already-localized message (see the deps.operationSuccess(deps.t(...)) call
-  // sites below) — not useEnhancedToast's templated operationSuccess(operation,
-  // itemName?), which wraps its first argument as "{operation} Successful" and would
-  // tack the literal English word "Successful" onto an already-translated Arabic
-  // string. `success` is the plain "show this message" toast method that actually
-  // matches the contract this hook's dependents expect.
   const { success: operationSuccess } = useEnhancedToast();
   const hasProcessed = useRef(false);
 
@@ -67,16 +64,37 @@ export function useSsoCallbackHandler(kind: SsoCallbackKind) {
   const [isSelectingWorkspace, setIsSelectingWorkspace] = useState(false);
   const [selectionError, setSelectionError] = useState<string | undefined>(undefined);
 
+  // Hybrid MFA step-up state (BAM-01)
+  const [twoFactorPending, setTwoFactorPending] = useState<SsoTwoFactorPendingData | null>(null);
+  const [twoFactorCode, setTwoFactorCode] = useState("");
+  const [useBackupCode, setUseBackupCode] = useState(false);
+  const [isVerifying2FA, setIsVerifying2FA] = useState(false);
+  const [twoFactorError, setTwoFactorError] = useState("");
+
   const handleSelectWorkspace = async (workspace: WorkspaceChoice) => {
     if (!workspaceData) return;
     setIsSelectingWorkspace(true);
     setSelectionError(undefined);
     try {
       const { ssoRepository, authRepository } = getAuthContainer();
+      const targetTenantId = workspace.isPlatformAdmin ? "" : workspace.tenantId;
       const result = await ssoRepository.completeWorkspaceSelection(
         workspaceData.token,
-        workspace.tenantId
+        targetTenantId
       );
+
+      // Hybrid MFA step-up after workspace selection
+      if (result.requires2FA && result.twoFactorPendingToken) {
+        setTwoFactorPending({
+          token: result.twoFactorPendingToken,
+          staySignedIn: Boolean(result.staySignedIn),
+          email: result.email,
+        });
+        setTwoFactorCode("");
+        setTwoFactorError("");
+        setState("two_factor");
+        return;
+      }
 
       if (result.type === "admin" && result.accessToken) {
         const deps = {
@@ -84,6 +102,7 @@ export function useSsoCallbackHandler(kind: SsoCallbackKind) {
           ssoRepository,
           setAuth,
           setSubscriptionInfo,
+          setMustChangePassword,
           refreshNavigation,
           invalidateQueries: () => queryClient.invalidateQueries(),
           operationSuccess,
@@ -100,6 +119,7 @@ export function useSsoCallbackHandler(kind: SsoCallbackKind) {
             status: result.subscriptionStatus,
             gracePhase: result.gracePhase,
             editionName: result.editionName,
+            mustChangePassword: result.mustChangePassword,
           },
           deps,
           setters
@@ -111,11 +131,69 @@ export function useSsoCallbackHandler(kind: SsoCallbackKind) {
           message: t("auth.sso.unsupportedAccountType"),
         });
       }
-    } catch (err: any) {
-      setSelectionError(err.message || t("auth.sso.callbackErrorGeneric"));
+    } catch (err: unknown) {
+      setSelectionError(err instanceof Error ? err.message : t("auth.sso.callbackErrorGeneric"));
     } finally {
       setIsSelectingWorkspace(false);
     }
+  };
+
+  const handleVerify2FA = async () => {
+    if (!twoFactorPending) return;
+    if (!twoFactorCode.trim()) {
+      setTwoFactorError(t("auth.twoFactor.enterCode"));
+      return;
+    }
+
+    setTwoFactorError("");
+    setIsVerifying2FA(true);
+    try {
+      const { authRepository } = getAuthContainer();
+      const result = await authRepository.verify2FA(
+        "",
+        null,
+        twoFactorCode.trim(),
+        undefined,
+        twoFactorPending.token,
+        twoFactorPending.staySignedIn
+      );
+
+      const { user } = result;
+      setAuth(
+        user,
+        (user.permissions || []) as PermissionCode[],
+        (user.roles || []) as AdminRole[],
+        true
+      );
+      setSubscriptionInfo(result.subscriptionStatus, result.gracePhase, result.editionName);
+      const mustChange = Boolean(result.mustChangePassword);
+      setMustChangePassword(mustChange);
+
+      const rawPath = result.defaultRedirectPath;
+      const normalizedPath =
+        rawPath && rawPath !== "/" ? getSafeRedirectPath(rawPath, "/overview") : "/overview";
+      setDefaultRedirectPath(normalizedPath);
+
+      if (!mustChange) {
+        queryClient.invalidateQueries();
+      }
+
+      operationSuccess(t("auth.welcomeBack"));
+      setState("success");
+      setTimeout(() => {
+        router.replace(mustChange ? "/change-password" : normalizedPath);
+      }, 200);
+    } catch (err: unknown) {
+      setTwoFactorError(err instanceof Error ? err.message : t("auth.twoFactor.invalidCode"));
+    } finally {
+      setIsVerifying2FA(false);
+    }
+  };
+
+  const toggleBackupCode = () => {
+    setUseBackupCode((prev) => !prev);
+    setTwoFactorCode("");
+    setTwoFactorError("");
   };
 
   const handleBack = () => {
@@ -133,6 +211,7 @@ export function useSsoCallbackHandler(kind: SsoCallbackKind) {
       ssoRepository,
       setAuth,
       setSubscriptionInfo,
+      setMustChangePassword,
       refreshNavigation,
       invalidateQueries: () => queryClient.invalidateQueries(),
       operationSuccess,
@@ -151,13 +230,18 @@ export function useSsoCallbackHandler(kind: SsoCallbackKind) {
         setWorkspaceData(data);
         setWorkspaceEmail(data.email || "");
       },
+      setTwoFactorPending: (data: SsoTwoFactorPendingData) => {
+        setTwoFactorPending(data);
+        setTwoFactorCode("");
+        setTwoFactorError("");
+      },
     };
 
     setTimeout(() => {
       if (kind === "oidc") {
-        handleOidcCallback(searchParams, deps, setters);
+        void handleOidcCallback(searchParams, deps, setters);
       } else {
-        handleSamlCallback(searchParams, deps, setters);
+        void handleSamlCallback(searchParams, deps, setters);
       }
     }, 0);
   }, [
@@ -168,6 +252,7 @@ export function useSsoCallbackHandler(kind: SsoCallbackKind) {
     router,
     searchParams,
     setAuth,
+    setMustChangePassword,
     setSubscriptionInfo,
     t,
   ]);
@@ -181,5 +266,12 @@ export function useSsoCallbackHandler(kind: SsoCallbackKind) {
     selectionError,
     handleSelectWorkspace,
     handleBack,
+    twoFactorCode,
+    setTwoFactorCode,
+    useBackupCode,
+    isVerifying2FA,
+    twoFactorError,
+    handleVerify2FA,
+    toggleBackupCode,
   };
 }

@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
-import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { ModulesLoadingSkeleton } from "@core/ui/layout/modules-loading-skeleton";
 
 const BillingHubView = dynamic(() =>
   import("@modules/entitlements/billing-hub").then((m) => ({ default: m.BillingHubView }))
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 export default function BillingHubPage() {
   return (
     <ModuleErrorBoundary moduleName="entitlements.hub.title">
-      <Suspense fallback={<LoadingSpinner size="md" />}>
+      <Suspense fallback={<ModulesLoadingSkeleton />}>
         <BillingHubView />
       </Suspense>
     </ModuleErrorBoundary>

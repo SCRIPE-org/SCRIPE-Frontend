@@ -6,6 +6,7 @@
  * @module tenant-settings/data
  */
 export type {
+  IdentityProviderMode,
   TenantSettingsModel,
   UpdateTenantSettingsRequest,
 } from "../../domain/types/SettingsTypes";

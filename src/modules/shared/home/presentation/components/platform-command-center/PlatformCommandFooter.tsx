@@ -12,7 +12,7 @@ export function PlatformCommandFooter() {
         {t("platformCommandCenter.footer.copyright") || "© 2026 SCRIPE. All rights reserved."}
       </div>
       <div className="flex items-center gap-2">
-        <span className="text-sm font-bold leading-none text-primary">—</span>
+        <span className="text-sm font-bold leading-none text-nx-accent">—</span>
         <span className="text-[11px] font-semibold tracking-widest text-nx-ink-2">
           {t("platformCommandCenter.footer.tagline") || "BUILT FOR A MORE ACTIVE WORLD."}
         </span>

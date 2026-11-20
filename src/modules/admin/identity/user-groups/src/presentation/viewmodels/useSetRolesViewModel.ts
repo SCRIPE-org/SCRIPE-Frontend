@@ -27,7 +27,7 @@ export function useSetRolesViewModel({ tenantId, open }: UseSetRolesViewModelPro
             tenantId,
             strict: true,
           })
-        : identityContainer.roleRepository.getMyTenantRoles({
+        : identityContainer.roleRepository.getCurrentTenantRoles({
             page: 1,
             pageSize: 100,
           }),

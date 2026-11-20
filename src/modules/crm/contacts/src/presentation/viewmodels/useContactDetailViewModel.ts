@@ -1,15 +1,13 @@
 "use client";
 
-import { useState, useEffect, useCallback, useTransition } from "react";
+import { useState, useCallback } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { qk } from "@core/common/query-keys";
 import { getCrmContainer } from "@modules/crm/di";
-import type {
-  CrmContactContext,
-  UpdateContactInput,
-} from "../../domain/models/crm-contact.types";
+import { useCrmTenantScope, useSafeQueryClient } from "@modules/crm/shared";
+import type { CrmContactContext, UpdateContactInput } from "../../domain/models/crm-contact.types";
 
-/**
- * State contract for the single contact detail and stakeholder view.
- */
+/** State contract for the single contact detail and stakeholder view. */
 export interface ContactDetailState {
   stage: "idle" | "loading" | "success" | "failed";
   contact: CrmContactContext | null;
@@ -17,93 +15,74 @@ export interface ContactDetailState {
 }
 
 /**
- * ViewModel hook orchestrating single contact context retrieval and stakeholder updates.
- * @param contactId - Unique contact identifier.
- * @returns State and mutation methods for the contact detail view.
+ * ViewModel hook orchestrating single contact context retrieval and stakeholder updates
+ * powered by TanStack Query v5.
  */
 export function useContactDetailViewModel(contactId: string) {
-  const [state, setState] = useState<ContactDetailState>({
-    stage: "loading",
-    contact: null,
-    error: null,
-  });
-
+  const safeQueryClient = useSafeQueryClient();
+  const { tenantId } = useCrmTenantScope();
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [accountOptions, setAccountOptions] = useState<
-    Array<{ id: string; displayName: string }>
-  >([]);
-  const [, startTransition] = useTransition();
 
-  const loadContact = useCallback(async () => {
-    if (!contactId) return;
-    setState((prev) => ({ ...prev, stage: "loading", error: null }));
-    try {
-      const container = getCrmContainer();
-      const [result, accountsRes] = await Promise.all([
-        container.contactRepository.getContactById(contactId),
-        container.accountRepository
-          .getAccounts({ page: 1, pageSize: 50 })
-          .catch(() => ({ items: [] })),
-      ]);
+  const detailQuery = useQuery<CrmContactContext>(
+    {
+      queryKey: qk.crm.contactDetail(tenantId, contactId),
+      queryFn: () => getCrmContainer().contactRepository.getContactById(contactId),
+      enabled: Boolean(contactId),
+      staleTime: 30_000,
+    },
+    safeQueryClient
+  );
 
-      startTransition(() => {
-        setState({
-          stage: "success",
-          contact: result,
-          error: null,
-        });
-        setAccountOptions(
-          (accountsRes?.items || []).map((a) => ({
-            id: a.id,
-            displayName:
-              a.partyLegalNameEn ||
-              a.partyLegalNameAr ||
-              "Commercial Account",
-          }))
-        );
-      });
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Failed to load contact context";
-      startTransition(() => {
-        setState({
-          stage: "failed",
-          contact: null,
-          error: message,
-        });
-      });
-    }
-  }, [contactId]);
+  const accountsQuery = useQuery<Array<{ id: string; displayName: string }>>(
+    {
+      queryKey: qk.crm.accounts(tenantId, { page: 1, pageSize: 50, lookup: "contactDetail" }),
+      queryFn: async () => {
+        const repo = getCrmContainer().accountRepository;
+        if (typeof repo?.getAccounts !== "function") return [];
+        const res = await repo.getAccounts({ page: 1, pageSize: 50 }).catch(() => null);
+        return (res?.items ?? []).map((a) => ({
+          id: a.id,
+          displayName: a.partyLegalNameEn || a.partyLegalNameAr || "Commercial Account",
+        }));
+      },
+      staleTime: 60_000,
+    },
+    safeQueryClient
+  );
 
-  useEffect(() => {
-    loadContact();
-  }, [loadContact]);
+  const currentContact = detailQuery.data ?? null;
+  const errorMsg = detailQuery.error instanceof Error ? detailQuery.error.message : null;
+  const state: ContactDetailState = {
+    stage: detailQuery.isLoading ? "loading" : detailQuery.isError ? "failed" : "success",
+    contact: currentContact,
+    error: errorMsg,
+  };
 
   const handleUpdateContact = useCallback(
     async (input: Omit<UpdateContactInput, "id">): Promise<boolean> => {
-      if (!state.contact) return false;
+      if (!currentContact) return false;
       setIsSubmitting(true);
       setSubmitError(null);
       try {
-        const container = getCrmContainer();
-        await container.contactRepository.updateContact({
+        await getCrmContainer().contactRepository.updateContact({
           id: contactId,
           ...input,
-          rowVersion: state.contact.rowVersion,
+          rowVersion: currentContact.rowVersion,
         });
         setIsEditOpen(false);
-        await loadContact();
+        await safeQueryClient.invalidateQueries({ queryKey: qk.crm.contactDetail(tenantId, contactId) });
+        await safeQueryClient.invalidateQueries({ queryKey: qk.crm.contacts(tenantId) });
         return true;
       } catch (err: unknown) {
-        const message = err instanceof Error ? err.message : "Failed to update contact details";
-        setSubmitError(message);
+        setSubmitError(err instanceof Error ? err.message : "Failed to update contact details");
         return false;
       } finally {
         setIsSubmitting(false);
       }
     },
-    [contactId, state.contact, loadContact]
+    [contactId, currentContact, safeQueryClient, tenantId]
   );
 
   return {
@@ -111,9 +90,9 @@ export function useContactDetailViewModel(contactId: string) {
     isEditOpen,
     isSubmitting,
     submitError,
-    accountOptions,
+    accountOptions: accountsQuery.data ?? [],
     setIsEditOpen,
     handleUpdateContact,
-    refresh: loadContact,
+    refresh: () => detailQuery.refetch().then(() => undefined),
   };
 }

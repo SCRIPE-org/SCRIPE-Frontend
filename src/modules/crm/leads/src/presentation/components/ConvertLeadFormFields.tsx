@@ -7,9 +7,15 @@ import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { cn } from "@core/common/utils";
-import { CRM_CURRENCY_OPTIONS } from "@modules/crm";
+import {
+  CRM_CURRENCY_OPTIONS,
+  CrmEntitySearchSelect,
+  type CrmEntityQuickCreateInitialValues,
+  type CrmEntitySearchItem,
+} from "@modules/crm";
 import type { DealKind } from "../../domain/entities/LeadEntity";
 
+/** Props for `ConvertLeadFormFields`. */
 export interface ConvertLeadFormFieldsProps {
   t: (key: string, params?: Record<string, any>) => string;
   title: string;
@@ -28,10 +34,20 @@ export interface ConvertLeadFormFieldsProps {
   dealKind: DealKind;
   onDealKindChange: (val: DealKind) => void;
   dealKinds: Array<{ key: DealKind; label: string }>;
+  accountPartyId: string;
+  accountId: string;
+  initialAccountLabel?: string;
+  accountQuickCreateDefaults?: CrmEntityQuickCreateInitialValues;
+  onAccountChange: (partyId: string, item?: CrmEntitySearchItem) => void;
+  contactPartyId: string;
+  initialContactLabel?: string;
+  contactQuickCreateDefaults?: CrmEntityQuickCreateInitialValues;
+  onContactChange: (partyId: string) => void;
   rationale: string;
   onRationaleChange: (val: string) => void;
 }
 
+/** Form controls for opportunity details, party linkage, and currency preview during lead conversion. */
 export function ConvertLeadFormFields({
   t,
   title,
@@ -50,6 +66,15 @@ export function ConvertLeadFormFields({
   dealKind,
   onDealKindChange,
   dealKinds,
+  accountPartyId,
+  accountId,
+  initialAccountLabel,
+  accountQuickCreateDefaults,
+  onAccountChange,
+  contactPartyId,
+  initialContactLabel,
+  contactQuickCreateDefaults,
+  onContactChange,
   rationale,
   onRationaleChange,
 }: ConvertLeadFormFieldsProps) {
@@ -93,7 +118,7 @@ export function ConvertLeadFormFields({
             step="any"
             value={amount || ""}
             onChange={(e) => onAmountChange(Number(e.target.value))}
-            placeholder="10000"
+            placeholder={t("crmLeads.conversion.amountPlaceholder")}
             className="h-9 text-xs border-nx-line bg-nx-ground text-nx-ink flex-1 font-mono"
             required
           />
@@ -101,9 +126,9 @@ export function ConvertLeadFormFields({
         {conversionPreview.isDifferent && amount > 0 && (
           <div
             data-testid="convert-lead-conversion-preview"
-            className="text-[11px] font-mono text-nx-accent bg-nx-accent-wash/30 border border-nx-accent/30 rounded-nx-sm px-2 py-1"
+            className="text-[11px] font-mono tabular-nums text-nx-accent bg-nx-accent-wash border border-nx-accent/30 rounded-nx-sm px-2 py-1"
           >
-            ≈ {conversionPreview.formattedConverted} (Base {baseCurrency})
+            ≈ {conversionPreview.formattedConverted} ({t("crmLeads.conversion.baseCurrencyLabel")} {baseCurrency})
           </div>
         )}
       </div>
@@ -123,7 +148,7 @@ export function ConvertLeadFormFields({
 
       <div className="sm:col-span-2 space-y-1.5">
         <Label htmlFor="opp-target-stage" className="text-xs font-semibold text-nx-ink">
-          {t("crmLeads.conversion.initialStageLabel", { defaultValue: "Initial Pipeline Stage" })}
+          {t("crmLeads.conversion.initialStageLabel")}
         </Label>
         <Select value={targetStageKey} onValueChange={onTargetStageKeyChange}>
           <SelectTrigger id="opp-target-stage" className="h-9 text-xs border-nx-line bg-nx-ground text-nx-ink">
@@ -163,6 +188,41 @@ export function ConvertLeadFormFields({
             );
           })}
         </div>
+      </div>
+
+      <div className="space-y-1.5">
+        <Label className="text-xs font-semibold text-nx-ink">{t("crmLeads.conversion.existingAccountLabel")}</Label>
+        <CrmEntitySearchSelect
+          data-testid="convert-lead-account-select"
+          entityKind="account"
+          valueMode="partyId"
+          value={accountPartyId}
+          initialLabel={initialAccountLabel}
+          onChange={onAccountChange}
+          placeholder={t("crmLeads.conversion.existingAccountPlaceholder")}
+          enableQuickCreate
+          quickCreateDefaultKind="account"
+          quickCreateInitialValues={accountQuickCreateDefaults}
+          allowClear
+        />
+      </div>
+
+      <div className="space-y-1.5">
+        <Label className="text-xs font-semibold text-nx-ink">{t("crmLeads.conversion.existingContactLabel")}</Label>
+        <CrmEntitySearchSelect
+          data-testid="convert-lead-contact-select"
+          entityKind="contact"
+          valueMode="partyId"
+          accountId={accountId || undefined}
+          value={contactPartyId}
+          initialLabel={initialContactLabel}
+          onChange={(val: string) => onContactChange(val)}
+          placeholder={t("crmLeads.conversion.existingContactPlaceholder")}
+          enableQuickCreate
+          quickCreateDefaultKind="contact"
+          quickCreateInitialValues={contactQuickCreateDefaults}
+          allowClear
+        />
       </div>
 
       <div className="sm:col-span-2 space-y-1.5">

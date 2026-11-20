@@ -39,6 +39,8 @@ export interface TenantSecuritySettings {
   loginLockoutMinutes: number;
   /** Require 2FA for all admins */
   require2FA: boolean;
+  /** Identity provider resolution mode for this tenant */
+  identityProviderMode: "inherit" | "custom";
 }
 
 /**
@@ -132,6 +134,7 @@ export const DEFAULT_TENANT_SETTINGS: TenantSettings = {
     loginLockoutThreshold: 5,
     loginLockoutMinutes: 15,
     require2FA: false,
+    identityProviderMode: "inherit",
   },
   audit: {
     auditRetentionDays: 90,

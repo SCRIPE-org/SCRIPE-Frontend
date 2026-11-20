@@ -31,9 +31,9 @@ export class SubscriptionService implements ISubscriptionService {
     return this.api.get<SubscriptionModel>(SUBSCRIPTION_ENDPOINTS.GET_BY_ID(id));
   }
 
-  async getMyTenantSubscription(): Promise<SubscriptionModel | null> {
+  async getCurrentTenantSubscription(): Promise<SubscriptionModel | null> {
     try {
-      return await this.api.get<SubscriptionModel>(SUBSCRIPTION_ENDPOINTS.GET_MY_SUBSCRIPTION);
+      return await this.api.get<SubscriptionModel>(SUBSCRIPTION_ENDPOINTS.CURRENT_TENANT);
     } catch {
       // 204 No Content → null
       return null;

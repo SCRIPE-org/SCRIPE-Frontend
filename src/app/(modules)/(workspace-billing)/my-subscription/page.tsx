@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { MySubscriptionView } from "@modules/entitlements/user-subscriptions/src/presentation/views/MySubscriptionView";
+import { CurrentTenantSubscriptionView } from "@modules/entitlements/user-subscriptions/src/presentation/views/CurrentTenantSubscriptionView";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
 
 export const metadata: Metadata = {
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function MySubscriptionPage() {
   return (
     <ModuleErrorBoundary moduleName="entitlements.mySubscription.title">
-      <MySubscriptionView />
+      <CurrentTenantSubscriptionView />
     </ModuleErrorBoundary>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Star } from "lucide-react";
 import { useSignupTheme } from "@core/providers/signup-theme";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -26,14 +26,11 @@ import type { OnboardingQuestion } from "../../../domain/entities/OnboardingEnti
 // Pure UI — questions + answers come from the viewmodel via props.
 // ═══════════════════════════════════════════════════════════════════════════
 
-const prefersReducedMotion =
-  typeof window !== "undefined"
-    ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    : false;
-
-const chipTransition = prefersReducedMotion
-  ? { duration: 0 }
-  : { duration: 0.2, ease: [0.16, 1, 0.3, 1] as const };
+function getChipTransition(shouldReduce: boolean) {
+  return shouldReduce
+    ? { duration: 0 }
+    : { duration: 0.2, ease: [0.16, 1, 0.3, 1] as const };
+}
 
 interface ProfileLine {
   questionKey: string;
@@ -56,9 +53,11 @@ interface ProfilePreviewProps {
  * Presentation UI component rendering the profile preview.
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
-export function ProfilePreview({ questions, answers, variant = "sidebar" }: ProfilePreviewProps) {
+export function ProfilePreview({ questions, answers }: ProfilePreviewProps) {
   const { tokens } = useSignupTheme();
   const { t } = useI18n();
+  const prefersReducedMotion = Boolean(useReducedMotion());
+  const chipTransition = getChipTransition(prefersReducedMotion);
 
   // Resolve each answered question into labelled chips, preserving pick order.
   const lines = useMemo<ProfileLine[]>(() => {
@@ -82,7 +81,6 @@ export function ProfilePreview({ questions, answers, variant = "sidebar" }: Prof
   }, [questions, answers]);
 
   const hasAnswers = lines.length > 0;
-  const isInline = variant === "inline";
 
   return (
     <aside
@@ -91,7 +89,6 @@ export function ProfilePreview({ questions, answers, variant = "sidebar" }: Prof
       style={{
         background: tokens.surfaceCard,
         border: tokens.borderCard,
-        boxShadow: isInline ? "none" : tokens.shadowCard,
       }}
     >
       <div className="flex flex-col gap-1.5">

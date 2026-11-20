@@ -43,7 +43,7 @@ export function AddRoleDialog({ open, onOpenChange, onSubmit }: AddRoleDialogPro
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!roleType.trim()) {
-      setError("Role type is required");
+      setError(t("party.dialog.roleTypeRequired"));
       return;
     }
 
@@ -57,21 +57,21 @@ export function AddRoleDialog({ open, onOpenChange, onSubmit }: AddRoleDialogPro
       });
       handleClose();
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Failed to assign role";
+      const message = err instanceof Error ? err.message : t("party.dialog.failedAssignRole");
       setError(message);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const CANONICAL_ROLES = [
-    { value: "Customer", labelEn: "Customer", labelAr: "عميل" },
-    { value: "Booker", labelEn: "Booker", labelAr: "حاجز" },
-    { value: "Payer", labelEn: "Payer", labelAr: "دافع" },
-    { value: "Partner", labelEn: "Partner", labelAr: "شريك" },
-    { value: "Vendor", labelEn: "Vendor", labelAr: "مورد" },
-    { value: "AcademyOrganization", labelEn: "Academy Organization", labelAr: "منظمة أكاديمية" },
-  ];
+  const CANONICAL_ROLE_VALUES = [
+    "Customer",
+    "Booker",
+    "Payer",
+    "Partner",
+    "Vendor",
+    "AcademyOrganization",
+  ] as const;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -79,7 +79,7 @@ export function AddRoleDialog({ open, onOpenChange, onSubmit }: AddRoleDialogPro
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <div className="flex items-center gap-2">
-              <div className="bg-nx-accent/10 flex h-9 w-9 items-center justify-center rounded-lg text-nx-accent">
+              <div className="bg-nx-accent-wash flex h-9 w-9 items-center justify-center rounded-lg text-nx-accent">
                 <Briefcase className="h-5 w-5" />
               </div>
               <DialogTitle>{t("party.dialog.addRoleTitle")}</DialogTitle>
@@ -101,14 +101,14 @@ export function AddRoleDialog({ open, onOpenChange, onSubmit }: AddRoleDialogPro
                 <Label htmlFor="role-type" className="font-medium text-nx-ink">
                   {t("party.dialog.roleType")} <span className="text-destructive">*</span>
                 </Label>
-                <span className="text-[11px] text-nx-ink-3">Operational Role</span>
+                <span className="text-[11px] text-nx-ink-3">{t("party.dialog.operationalRoleTag")}</span>
               </div>
               {/* Standard Role Dropdown Selector */}
               <Select
-                value={CANONICAL_ROLES.some((r) => r.value === roleType) ? roleType : "custom"}
+                value={CANONICAL_ROLE_VALUES.includes(roleType as (typeof CANONICAL_ROLE_VALUES)[number]) ? roleType : "custom"}
                 onValueChange={(val) => {
                   if (val === "custom") {
-                    if (CANONICAL_ROLES.some((r) => r.value === roleType)) {
+                    if (CANONICAL_ROLE_VALUES.includes(roleType as (typeof CANONICAL_ROLE_VALUES)[number])) {
                       setRoleType("");
                     }
                   } else {
@@ -119,37 +119,37 @@ export function AddRoleDialog({ open, onOpenChange, onSubmit }: AddRoleDialogPro
                 disabled={isSubmitting}
               >
                 <SelectTrigger id="role-type-select" className="h-9 text-xs">
-                  <SelectValue placeholder="Choose standard role (اختيار دور تشغيلي)" />
+                  <SelectValue placeholder={t("party.dialog.chooseStandardRole")} />
                 </SelectTrigger>
                 <SelectContent>
-                  {CANONICAL_ROLES.map((r) => (
-                    <SelectItem key={r.value} value={r.value}>
-                      {r.labelEn} ({r.labelAr})
+                  {CANONICAL_ROLE_VALUES.map((val) => (
+                    <SelectItem key={val} value={val}>
+                      {t(`party.dialog.canonicalRoles.${val}`)}
                     </SelectItem>
                   ))}
-                  <SelectItem value="custom">Custom / Other (دور مخصص)</SelectItem>
+                  <SelectItem value="custom">{t("party.dialog.customOtherRole")}</SelectItem>
                 </SelectContent>
               </Select>
 
               {/* Quick Select Preset Buttons using @core/ui/button */}
               <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                {CANONICAL_ROLES.map((r) => (
+                {CANONICAL_ROLE_VALUES.map((val) => (
                   <Button
-                    key={r.value}
+                    key={val}
                     type="button"
                     size="sm"
-                    variant={roleType === r.value ? "default" : "outline"}
+                    variant={roleType === val ? "default" : "outline"}
                     onClick={() => {
-                      setRoleType(r.value);
+                      setRoleType(val);
                       if (error) setError(null);
                     }}
                     className={`h-7 rounded-lg px-2.5 text-xs transition-colors ${
-                      roleType === r.value
+                      roleType === val
                         ? "bg-nx-accent-fill font-semibold text-nx-on-fill"
                         : "border-nx-line text-nx-ink-2 hover:text-nx-ink"
                     }`}
                   >
-                    {r.value}
+                    {val}
                   </Button>
                 ))}
               </div>
@@ -164,7 +164,6 @@ export function AddRoleDialog({ open, onOpenChange, onSubmit }: AddRoleDialogPro
                 }}
                 placeholder={t("party.dialog.rolePlaceholder") || "e.g. Coach, Player, Vendor"}
                 disabled={isSubmitting}
-                autoFocus
                 required
               />
               <p className="text-[11px] text-nx-ink-3">
@@ -208,7 +207,7 @@ export function AddRoleDialog({ open, onOpenChange, onSubmit }: AddRoleDialogPro
             <Button type="submit" disabled={isSubmitting || !roleType.trim()}>
               {isSubmitting ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="me-2 h-4 w-4 animate-spin" />
                   {t("party.dialog.save")}...
                 </>
               ) : (

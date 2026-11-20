@@ -6,6 +6,8 @@
  * purely on user data and business logic.
  */
 
+import type { AdminRole } from "@core/common/types/permissions";
+
 export interface UserData {
   id: string;
   username: string;
@@ -16,10 +18,12 @@ export interface UserData {
   email?: string | null;
   profileImageUrl?: string | null;
   role?: string;
+  roles?: AdminRole[];
   permissions?: string[];
   isProtected?: boolean;
+  isSuperAdmin?: boolean;
   tenantId?: string | null;
-  restrictedFields?: Record<string, string[]>;
+  restrictedFields?: Record<string, string[]> | string[];
 }
 
 export class User {
@@ -32,10 +36,12 @@ export class User {
   public readonly email?: string | null;
   public readonly profileImageUrl?: string | null;
   public readonly role?: string;
+  public readonly roles?: AdminRole[];
   public readonly permissions?: string[];
   public readonly isProtected: boolean;
+  public readonly isSuperAdmin?: boolean;
   public readonly tenantId?: string | null;
-  public readonly restrictedFields?: Record<string, string[]>;
+  public readonly restrictedFields?: Record<string, string[]> | string[];
 
   constructor(data: UserData) {
     this.id = data.id;
@@ -47,8 +53,10 @@ export class User {
     this.email = data.email ?? null;
     this.profileImageUrl = data.profileImageUrl ?? null;
     this.role = data.role;
+    this.roles = data.roles;
     this.permissions = data.permissions;
     this.isProtected = data.isProtected ?? false;
+    this.isSuperAdmin = data.isSuperAdmin;
     this.tenantId = data.tenantId ?? null;
     this.restrictedFields = data.restrictedFields;
   }
@@ -88,9 +96,12 @@ export class User {
       email: this.email,
       profileImageUrl: this.profileImageUrl,
       role: this.role,
+      roles: this.roles,
       permissions: this.permissions,
       isProtected: this.isProtected,
+      isSuperAdmin: this.isSuperAdmin,
       tenantId: this.tenantId,
+      restrictedFields: this.restrictedFields,
       ...updates,
     });
   }

@@ -9,6 +9,7 @@
 "use client";
 
 import React from "react";
+import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import {
@@ -123,16 +124,17 @@ export function CreateTenantStep1({ vm, t }: CreateTenantStep1Props) {
             const isSelected = vm.form.organizationType === type.id;
             const Icon = type.icon;
             return (
-              <button
+              <Button
                 key={type.id}
                 type="button"
+                variant="ghost"
                 role="radio"
                 aria-checked={isSelected}
                 onClick={() => vm.updateField("organizationType", type.id)}
                 className={cn(
-                  "duration-nx-fast ease-nx-ease group relative flex flex-col justify-between rounded-nx-lg border p-3.5 text-start transition-all",
+                  "duration-nx-fast ease-nx-ease group relative flex h-auto flex-col items-stretch justify-between whitespace-normal rounded-nx-lg border p-3.5 text-start font-normal transition-all",
                   isSelected
-                    ? "bg-nx-accent-wash/60 ring-nx-accent/30 border-nx-accent shadow-nx-sm ring-1"
+                    ? "bg-nx-accent-wash/60 ring-nx-accent/30 border-nx-accent shadow-nx-sm ring-1 hover:bg-nx-accent-wash/60"
                     : "hover:border-nx-line-strong hover:bg-nx-raised/40 border-nx-line bg-nx-ground text-nx-ink"
                 )}
               >
@@ -172,7 +174,7 @@ export function CreateTenantStep1({ vm, t }: CreateTenantStep1Props) {
                     {type.desc}
                   </p>
                 </div>
-              </button>
+              </Button>
             );
           })}
         </div>

@@ -14,6 +14,9 @@ export const en = {
     // list row, whose response omits options, both placeholders and the
     // validator, and saving it would silently erase all of them.
     editLoadFailed: "Couldn't load this custom field for editing. Please try again.",
+    loadFailedTitle: "Couldn't load custom fields",
+    loadFailedDescription: "Unable to load custom field definitions right now. Please try again.",
+    retry: "Retry",
 
     // Field labels — shared between the table columns and the create/edit forms
     columns: {
@@ -1064,6 +1067,7 @@ export const en = {
     },
     sensitive: {
       permissionRequired: "Requires 'custom-fields.view-sensitive' permission",
+      encryptedConfidential: "Encrypted confidential field",
     },
   },
 };

@@ -32,7 +32,7 @@ interface SearchableItem {
 }
 
 export function NexusSearchPalette({ open, onOpenChange }: NexusSearchPaletteProps) {
-  const { t, language } = useI18n();
+  const { t, language, direction } = useI18n();
   const router = useRouter();
   const { workspaceGroups, setActiveWorkspace, setActiveRootItemId } = useWorkspace();
 
@@ -124,28 +124,35 @@ export function NexusSearchPalette({ open, onOpenChange }: NexusSearchPalettePro
     onOpenChange(false);
   };
 
+  const iconRegistry = LucideIcons as unknown as Record<
+    string,
+    React.ComponentType<{ className?: string; "aria-hidden"?: boolean }>
+  >;
+
   return (
-    <CommandDialog open={open} onOpenChange={onOpenChange}>
-      <CommandInput placeholder={t("common.search")} />
-      <CommandList>
+    <CommandDialog open={open} onOpenChange={onOpenChange} label={t("nav.search")}>
+      <CommandInput placeholder={t("nav.search")} />
+      <CommandList dir={direction}>
         <CommandEmpty>{t("common.noResultsFound")}</CommandEmpty>
 
         {Object.entries(groupedItems).map(([groupName, items]) => (
           <CommandGroup key={groupName} heading={groupName}>
             {items.map((item) => {
-              // Dynamically resolve icon from Lucide
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              const IconComponent = (LucideIcons as any)[item.iconName] || LucideIcons.FileText;
+              const IconComponent = iconRegistry[item.iconName] || LucideIcons.FileText;
 
               return (
                 <CommandItem
                   key={item.id}
                   value={item.title + " " + item.href} // Index by title and href for better matching
                   onSelect={() => handleSelect(item)}
-                  className="flex cursor-pointer items-center gap-2"
+                  className="flex cursor-pointer items-center gap-2.5"
                 >
-                  <IconComponent className="h-4 w-4 text-nx-ink-3" />
-                  <span>{item.title}</span>
+                  <IconComponent className="h-4 w-4 shrink-0 text-nx-ink-2" aria-hidden />
+                  <span className="min-w-0 flex-1 truncate text-start">{item.title}</span>
+                  <LucideIcons.ChevronRight
+                    className="ms-auto h-3.5 w-3.5 shrink-0 text-nx-ink-3 rtl:rotate-180"
+                    aria-hidden="true"
+                  />
                 </CommandItem>
               );
             })}

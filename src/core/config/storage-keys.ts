@@ -21,6 +21,8 @@ export const STORAGE_KEYS = {
   ACCESS_TOKEN: "scr_access_token",
 
   // ── Auth State ─────────────────────────────────────────────────────────────
+  /** Zustand persist key for primary app/auth store */
+  APP_STORE: "app-storage",
   /** Tenant context (tenantId + tenantName for drilldown) */
   tenant_context: "scr_tenant_ctx",
   /** Auth state cookie — derived from BRAND config */
@@ -104,6 +106,7 @@ export type StorageKey = (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS];
  * settings from a previous user/tenant context do not cause a FOUC/flash for the next user.
  */
 export const AUTH_STORAGE_KEYS_TO_CLEAR: readonly StorageKey[] = [
+  STORAGE_KEYS.APP_STORE,
   STORAGE_KEYS.ACCESS_TOKEN,
   STORAGE_KEYS.USER_DATA,
   STORAGE_KEYS.PERMISSIONS,

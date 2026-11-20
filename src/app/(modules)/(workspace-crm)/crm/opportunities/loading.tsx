@@ -1,9 +1,7 @@
-import { LoadingSpinner } from "@core/ui/loading-spinner";
+"use client";
+
+import { ModulesLoadingSkeleton } from "@core/ui/layout/modules-loading-skeleton";
 
 export default function CrmOpportunitiesLoading() {
-  return (
-    <div className="flex min-h-[50vh] items-center justify-center">
-      <LoadingSpinner size="lg" />
-    </div>
-  );
+  return <ModulesLoadingSkeleton variant="crm" />;
 }

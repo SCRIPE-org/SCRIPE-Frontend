@@ -51,6 +51,7 @@ export const ContactPointListView = React.memo(function ContactPointListView() {
   ];
 
   const config: CrudConfig<ContactPoint> = {
+    stickyActions: true,
     titleKey: "contactPoint.title",
     subtitleKey: "contactPoint.description",
     resource: "contact-points",

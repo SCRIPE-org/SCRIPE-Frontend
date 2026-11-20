@@ -4,7 +4,7 @@ import { cn, resolveIntlLocale } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
-import { Check, Infinity, PhoneCall, Zap } from "lucide-react";
+import { Check, Infinity as InfinityIcon, PhoneCall, Zap } from "lucide-react";
 import type { Edition } from "../../../domain/entities/Edition";
 import type {
   BillingCycle,
@@ -210,7 +210,7 @@ export function EditionPricingCard({
           {highlights.slice(0, MAX_HIGHLIGHTS).map((highlight, index) => (
             <div key={`${highlight.label}-${index}`} className="flex items-start gap-2.5">
               {highlight.isUnlimited ? (
-                <Infinity
+                <InfinityIcon
                   aria-hidden="true"
                   className="mt-0.5 h-3.5 w-3.5 shrink-0 text-nx-accent"
                 />

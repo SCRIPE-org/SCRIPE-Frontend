@@ -3,7 +3,7 @@ import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useNavigation } from "@core/providers/navigation-provider";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
-import { useAppStore } from "@core/store/useAppStore";
+import { useAdminContext } from "@core/hooks/useAdminContext";
 import { firstPageOf } from "../utils/navigation-helpers";
 import { appLogger } from "@core/common/logger";
 import { usePermissions } from "@core/providers/permission-provider";
@@ -12,10 +12,7 @@ export function useWorkspaceActions() {
   const router = useRouter();
   const { fetchWorkspaceMenu } = useNavigation();
   const { canAccessPage } = usePermissions();
-  const tenantCode = useAppStore((s) => s.tenantCode);
-
-  /** True when no tenant is drilled-into — i.e. the admin is in platform context. */
-  const isPlatformContext = tenantCode === null;
+  const { isPlatform: isPlatformContext } = useAdminContext();
 
   const setActiveWorkspace = useCallback(
     async (workspaceKey: string, navigateTo = false) => {

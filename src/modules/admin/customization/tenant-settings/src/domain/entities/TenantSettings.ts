@@ -3,6 +3,11 @@
  * Represents the configuration settings for a tenant
  */
 
+import type { IdentityProviderMode } from "../types/SettingsTypes";
+
+/**
+ * Domain entity representing tenant-level quotas, security policies, IdP governance, audit, and branding settings.
+ */
 export interface TenantSettings {
   // Quotas
   maxAdmins: number; // -1 = unlimited
@@ -20,6 +25,9 @@ export interface TenantSettings {
   loginLockoutThreshold: number;
   loginLockoutMinutes: number;
   require2FA: boolean;
+
+  // Identity Provider Governance
+  identityProviderMode: IdentityProviderMode;
 
   // Audit
   auditEnabled: boolean;
@@ -48,6 +56,9 @@ export interface TenantSettings {
   privacyPolicyUrl: string | null;
   settingsVersion: number;
   isSafeMode: boolean;
+
+  // Context mode returned by backend
+  mode?: "my" | "system" | "tenant";
 }
 
 /**
@@ -66,6 +77,7 @@ export const DEFAULT_TENANT_SETTINGS: TenantSettings = {
   loginLockoutThreshold: 5,
   loginLockoutMinutes: 15,
   require2FA: false,
+  identityProviderMode: "inherit",
   auditEnabled: true,
   auditRetentionDays: 90,
   logoUrl: null,
@@ -89,4 +101,5 @@ export const DEFAULT_TENANT_SETTINGS: TenantSettings = {
   privacyPolicyUrl: null,
   settingsVersion: 0,
   isSafeMode: false,
+  mode: "my",
 };

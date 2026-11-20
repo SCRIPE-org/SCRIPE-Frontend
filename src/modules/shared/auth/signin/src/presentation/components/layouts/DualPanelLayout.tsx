@@ -24,20 +24,20 @@ export function DualPanelLayout({
 }: LoginLayoutProps) {
   return (
     <div
-      className={`flex min-h-screen w-full flex-col ${BG_STYLE} login-page selection:bg-primary/20`}
+      className={`flex min-h-[100dvh] w-full flex-col ${BG_STYLE} login-page`}
       dir={direction}
       style={SPLIT_WRAPPER_STYLE}
     >
       {/* Top header bar */}
-      <div
-        className="flex items-center justify-between border-b border-border px-8 py-4"
-        style={{ backgroundColor: "var(--login-surface, hsl(var(--muted)/0.4))" }}
+      <header
+        className="flex items-center justify-between border-b border-nx-line px-8 py-4"
+        style={{ backgroundColor: "var(--login-surface, var(--nx-surface))" }}
       >
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-lg border border-border bg-background">
+          <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-lg border border-nx-line bg-nx-surface">
             <LogoImg logoSrc={logoSrc} logoAlt={logoAlt} />
           </div>
-          <span className="text-sm font-semibold text-[var(--login-text,hsl(var(--foreground)))]">
+          <span className="text-sm font-semibold text-[var(--login-text,var(--nx-ink))]">
             {companyName}
           </span>
         </div>
@@ -45,26 +45,26 @@ export function DualPanelLayout({
           <LanguageSwitcher />
           <ThemeSwitcher />
         </div>
-      </div>
+      </header>
       {/* Two-column body */}
       <div className="flex flex-1">
         <div
-          className="hidden flex-col justify-center border-e border-border px-12 lg:flex lg:w-1/2 xl:px-16"
-          style={{ backgroundColor: "var(--login-surface, hsl(var(--muted)/0.2))" }}
+          className="hidden flex-col justify-center border-e border-nx-line px-12 lg:flex lg:w-1/2 xl:px-16"
+          style={{ backgroundColor: "var(--login-surface, var(--nx-raised))" }}
         >
-          <h2 className="text-3xl font-bold tracking-tight text-[var(--login-text,hsl(var(--foreground)))]">
+          <h2 className="text-3xl font-bold tracking-tight text-[var(--login-text,var(--nx-ink))]">
             {branding?.loginHeadline || t("auth.branding.headline")}
           </h2>
-          <p className="mt-3 text-base text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
+          <p className="mt-3 text-base text-[var(--login-text-muted,var(--nx-ink-2))]">
             {branding?.loginSubtitle || t("auth.branding.subtitle")}
           </p>
           <SlotRenderer slotId="login.sidebar.content" slotConfig={slotConfig} className="mt-10" />
         </div>
-        <div className="flex flex-1 flex-col items-center justify-center px-6 py-12">
+        <main className="flex flex-1 flex-col items-center justify-center px-6 py-12">
           <MobileLogo logoSrc={logoSrc} logoAlt={logoAlt} companyName={companyName} />
           {formContent}
           {footerSlot}
-        </div>
+        </main>
       </div>
     </div>
   );

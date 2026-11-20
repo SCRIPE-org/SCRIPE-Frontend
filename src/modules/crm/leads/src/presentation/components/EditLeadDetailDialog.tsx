@@ -18,26 +18,29 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { AlertCircle } from "lucide-react";
 import { CustomFieldsSection } from "@core/crud/customFieldsExtension";
+import type { FieldConfig } from "@core/ui/forms/generic-form";
 import { CRM_CURRENCY_OPTIONS } from "@modules/crm";
-import type { CrmLead } from "../../domain/entities/LeadEntity";
+import type { CrmLead, UpdateLeadInput } from "../../domain/entities/LeadEntity";
 
+/** Props for `EditLeadDetailDialog`. */
 export interface EditLeadDetailDialogProps {
-  t: (key: string, params?: Record<string, any>) => string;
+  t: (key: string, params?: Record<string, string | number>) => string;
   isRtl: boolean;
   lead: CrmLead;
   defaultDealCurrency: string;
   isEditOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  onSaveLead: (payload: Record<string, any>) => Promise<void>;
+  onSaveLead: (payload: Omit<UpdateLeadInput, "leadId" | "expectedRowVersion">) => Promise<void>;
   submitError: string | null;
-  leadCustomFieldConfigs: any[];
+  leadCustomFieldConfigs: FieldConfig[];
   isLeadCfLoading: boolean;
-  refetchLeadCustomFields: () => Promise<any>;
+  refetchLeadCustomFields: () => Promise<unknown>;
   editCustomFields: Record<string, unknown>;
   onCustomFieldChange: (key: string, value: unknown) => void;
   isSubmitting: boolean;
 }
 
+/** Modal dialog for editing a CRM Lead's profile fields and custom attributes. */
 export function EditLeadDetailDialog({
   t,
   isRtl,

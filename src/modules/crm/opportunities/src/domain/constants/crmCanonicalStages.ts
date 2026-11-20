@@ -3,6 +3,7 @@ import type {
   CrmWorkflowStageCategory,
 } from "@modules/crm";
 
+/** Definition of a canonical opportunity Kanban pipeline stage column. */
 export interface KanbanStageDef {
   key: string;
   labelKey: string;
@@ -16,6 +17,7 @@ export interface KanbanStageDef {
   customColorHex?: string;
 }
 
+/** Default five-stage commercial Kanban pipeline definitions with bilingual labels and probabilities. */
 export const CANONICAL_KANBAN_STAGES: KanbanStageDef[] = [
   { key: "default.discovery", labelKey: "crmOpportunities.stages.discovery", defaultLabelEn: "Discovery", labelAr: "استكشاف", sortOrder: 1, winProbabilityPercent: 10, category: "todo", color: "blue" },
   { key: "default.qualification", labelKey: "crmOpportunities.stages.qualification", defaultLabelEn: "Qualification", labelAr: "تأهيل", sortOrder: 2, winProbabilityPercent: 25, category: "in_progress", color: "cyan" },
@@ -24,19 +26,5 @@ export const CANONICAL_KANBAN_STAGES: KanbanStageDef[] = [
   { key: "default.negotiation", labelKey: "crmOpportunities.stages.negotiation", defaultLabelEn: "Negotiation", labelAr: "تفاوض", sortOrder: 5, winProbabilityPercent: 90, requiresParty: true, category: "in_progress", color: "amber" },
 ];
 
-export const CANONICAL_TERMINAL_LABELS = {
-  wonStageEn: "Closed Won",
-  wonStageAr: "مغلق ناجح",
-  lostStageEn: "Closed Lost",
-  lostStageAr: "مغلق خاسر",
-  wonColumnAr: "مغلقة — رابحة",
-  lostColumnAr: "مغلقة — خاسرة",
-  closeWonTransitionEn: "Close as Won",
-  closeWonTransitionAr: "إغلاق كصفقة رابحة",
-  markLostTransitionEn: "Mark as Lost",
-  markLostTransitionAr: "تسجيل كصفقة خاسرة",
-  reopenLostTransitionEn: "Reopen Deal",
-  reopenLostTransitionAr: "إعادة فتح الصفقة",
-  moveToPrefixEn: "Move to",
-  moveToPrefixAr: "الانتقال إلى",
-} as const;
+/** Re-exported canonical bilingual terminal stage labels for Opportunities views. */
+export { CANONICAL_TERMINAL_LABELS } from "@modules/crm/shared";

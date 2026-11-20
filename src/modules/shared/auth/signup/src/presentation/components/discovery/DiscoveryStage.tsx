@@ -1,11 +1,11 @@
 // FILE-EXCEPTION: file length
-// UI-EXCEPTION: compact studio layout
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSignupTheme } from "@core/providers/signup-theme";
+import { Button } from "@core/ui/button";
 import { useDiscovery } from "../../../presentation/viewmodels/useDiscovery";
 import { ProgressDots } from "./ProgressDots";
 import { QuestionPanel } from "./QuestionPanel";
@@ -30,31 +30,28 @@ import { ProfilePreview } from "./ProfilePreview";
 // repository directly — the recommendation fetch lives in useSignupWizard.
 // ═══════════════════════════════════════════════════════════════════════════
 
-const prefersReducedMotion =
-  typeof window !== "undefined"
-    ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    : false;
-
 // Horizontal slide between questions; `dir` is pre-mirrored for RTL by the stage.
-const slideVariants = {
-  enter: (dir: number) =>
-    prefersReducedMotion ? { opacity: 0 } : { x: dir > 0 ? 48 : -48, opacity: 0 },
-  center: prefersReducedMotion
-    ? { opacity: 1 }
-    : {
-        x: 0,
-        opacity: 1,
-        transition: { duration: 0.24, ease: [0.16, 1, 0.3, 1] as const },
-      },
-  exit: (dir: number) =>
-    prefersReducedMotion
-      ? { opacity: 0 }
+function getSlideVariants(shouldReduce: boolean) {
+  return {
+    enter: (dir: number) =>
+      shouldReduce ? { opacity: 0 } : { x: dir > 0 ? 48 : -48, opacity: 0 },
+    center: shouldReduce
+      ? { opacity: 1 }
       : {
-          x: dir > 0 ? -48 : 48,
-          opacity: 0,
-          transition: { duration: 0.18, ease: [0.4, 0, 1, 1] as const },
+          x: 0,
+          opacity: 1,
+          transition: { duration: 0.24, ease: [0.16, 1, 0.3, 1] as const },
         },
-};
+    exit: (dir: number) =>
+      shouldReduce
+        ? { opacity: 0 }
+        : {
+            x: dir > 0 ? -48 : 48,
+            opacity: 0,
+            transition: { duration: 0.18, ease: [0.4, 0, 1, 1] as const },
+          },
+  };
+}
 
 interface DiscoveryStageProps {
   /**
@@ -72,6 +69,7 @@ export function DiscoveryStage({ onComplete }: DiscoveryStageProps) {
   const { t, direction } = useI18n();
   const { tokens } = useSignupTheme();
   const vm = useDiscovery();
+  const shouldReduceMotion = Boolean(useReducedMotion());
 
   const isRtl = direction === "rtl";
   // Slide direction is "next" (forward) by default; mirror sign under RTL so the
@@ -112,22 +110,24 @@ export function DiscoveryStage({ onComplete }: DiscoveryStageProps) {
             {t("signup.discovery.stage.errorBody")}
           </p>
           <div className="mt-1 flex flex-wrap items-center gap-3">
-            <button
+            <Button
               type="button"
+              variant="ghost"
               onClick={vm.retry}
-              className="rounded-lg px-4 py-2.5 text-[0.875rem] font-semibold transition-transform duration-200 hover:-translate-y-0.5 motion-reduce:transform-none"
+              className="h-auto rounded-lg px-4 py-2.5 text-[0.875rem] font-semibold transition-transform duration-200 hover:-translate-y-0.5 hover:bg-transparent motion-reduce:transform-none"
               style={{ background: tokens.gradientCta, color: tokens.accentContrast }}
             >
               {t("signup.discovery.stage.retry")}
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant="ghost"
               onClick={skipAll}
-              className="text-[0.875rem] font-semibold underline-offset-2 hover:underline"
+              className="h-auto p-0 text-[0.875rem] font-semibold underline-offset-2 hover:bg-transparent hover:underline"
               style={{ color: tokens.accent }}
             >
               {t("signup.discovery.stage.skipToPlans")}
-            </button>
+            </Button>
           </div>
         </div>
       </Centered>
@@ -146,14 +146,15 @@ export function DiscoveryStage({ onComplete }: DiscoveryStageProps) {
           current={vm.currentIndex}
           label={t("signup.discovery.stage.progressLabel")}
         />
-        <button
+        <Button
           type="button"
+          variant="ghost"
           onClick={skipAll}
-          className="text-[0.8125rem] font-medium underline-offset-2 transition-colors hover:underline"
+          className="h-auto p-0 text-[0.8125rem] font-medium underline-offset-2 transition-colors hover:bg-transparent hover:underline"
           style={{ color: tokens.inkFaint }}
         >
           {t("signup.discovery.stage.skipAll")}
-        </button>
+        </Button>
       </div>
 
       <div className="grid flex-1 items-start gap-10 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,0.75fr)] lg:gap-14">
@@ -172,7 +173,7 @@ export function DiscoveryStage({ onComplete }: DiscoveryStageProps) {
               <motion.div
                 key={question.key}
                 custom={slideDir}
-                variants={slideVariants}
+                variants={getSlideVariants(shouldReduceMotion)}
                 initial="enter"
                 animate="center"
                 exit="exit"
@@ -195,37 +196,39 @@ export function DiscoveryStage({ onComplete }: DiscoveryStageProps) {
               Fixed min-height keeps the row at a STABLE vertical position across
               every question regardless of whether the optional Skip link shows. */}
           <div className="mt-8 flex min-h-[2.75rem] items-center justify-between gap-4">
-            <button
+            <Button
               type="button"
+              variant="ghost"
               onClick={vm.goBack}
               disabled={!vm.canGoBack}
-              className="inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2.5 text-[0.875rem] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex h-auto items-center gap-1.5 rounded-lg px-3.5 py-2.5 text-[0.875rem] font-medium transition-colors hover:bg-transparent disabled:cursor-not-allowed disabled:opacity-40"
               style={{ color: tokens.inkMuted }}
             >
               <BackArrow size={16} aria-hidden />
               {t("signup.discovery.stage.back")}
-            </button>
+            </Button>
 
             <div className="flex items-center gap-3">
               {!vm.isCurrentRequired && (
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
                   onClick={handleNextOrFinish}
-                  className="text-[0.875rem] font-medium underline-offset-2 transition-colors hover:underline"
+                  className="h-auto p-0 text-[0.875rem] font-medium underline-offset-2 transition-colors hover:bg-transparent hover:underline"
                   style={{ color: tokens.inkFaint }}
                 >
                   {t("signup.discovery.stage.skipStep")}
-                </button>
+                </Button>
               )}
-              <button
+              <Button
                 type="button"
+                variant="ghost"
                 onClick={handleNextOrFinish}
                 disabled={!vm.canAdvance}
-                className="group inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-[0.875rem] font-semibold transition-transform duration-200 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transform-none"
+                className="group inline-flex h-auto items-center gap-2 rounded-xl px-5 py-2.5 text-[0.875rem] font-semibold transition-transform duration-200 hover:-translate-y-0.5 hover:bg-transparent disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transform-none"
                 style={{
                   background: tokens.gradientCta,
                   color: tokens.accentContrast,
-                  boxShadow: tokens.shadowCard,
                 }}
               >
                 {nextLabel}
@@ -234,7 +237,7 @@ export function DiscoveryStage({ onComplete }: DiscoveryStageProps) {
                   aria-hidden
                   className="transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:transform-none"
                 />
-              </button>
+              </Button>
             </div>
           </div>
 

@@ -36,11 +36,19 @@ export function buildBaseStylesheet(): string {
   height: var(--login-input-height, 44px) !important;
   background-color: var(--login-primary, hsl(var(--primary)));
   border-radius: var(--login-radius-button, 8px) !important;
-  color: white;
+  color: var(--login-button-text, hsl(var(--primary-foreground)));
   width: 100%;
   font-weight: 600;
   font-size: 0.875rem;
   transition: all 0.2s ease;
+}
+
+.login-page .login-button:disabled {
+  background-color: var(--nx-raised) !important;
+  color: var(--nx-ink-2) !important;
+  border: 1px solid var(--nx-line-hi) !important;
+  opacity: 1 !important;
+  cursor: not-allowed !important;
 }
 .login-page .login-button:hover {
   opacity: 0.9;

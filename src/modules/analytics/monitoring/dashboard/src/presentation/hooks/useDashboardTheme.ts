@@ -42,10 +42,11 @@ const radiusClassMap: Record<CardRadius, string> = {
 };
 
 const shadowClassMap: Record<ShadowLevel, string> = {
+  // Resting dashboard cards use flat matte surfaces with hairline borders per Nexus design rules.
   none: "shadow-none",
-  sm: "shadow-nx-sm",
-  md: "shadow-nx-popover",
-  lg: "shadow-nx-modal",
+  sm: "shadow-none",
+  md: "shadow-none",
+  lg: "shadow-none",
 };
 
 const densityGapMap: Record<LayoutDensity, string> = {

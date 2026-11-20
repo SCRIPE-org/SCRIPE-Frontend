@@ -32,8 +32,8 @@ export class PermissionRepository implements IPermissionRepository {
     return PermissionMapper.toEntityList(models);
   }
 
-  async getMyPermissions(params?: PermissionListParams): Promise<Permission[]> {
-    const models = await this.service.getMyPermissions(params);
+  async getEffectivePermissions(params?: PermissionListParams): Promise<Permission[]> {
+    const models = await this.service.getEffectivePermissions(params);
     return PermissionMapper.toEntityList(models);
   }
 

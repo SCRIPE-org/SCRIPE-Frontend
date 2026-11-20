@@ -1,4 +1,3 @@
-// UI-EXCEPTION: compact studio layout
 /**
  * RecycleBinView
  *

@@ -2,9 +2,10 @@
 
 import React, { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
-import { ChevronRight, ArrowRightLeft } from "lucide-react";
+import { ChevronRight, ArrowRightLeft, X } from "lucide-react";
 import type { MenuItem } from "@core/navigation";
 import { cn, resolveBilingualLabel } from "@core/common/utils";
+import { Button } from "@core/ui/button";
 import { useWorkspaceTransitionContext } from "../nexus-layout";
 
 // All colour reads the --nx- token layer — theme resolves in CSS, so these
@@ -134,29 +135,23 @@ export function NavItem({
   if (hasChildren) {
     return (
       <div className="mb-1">
-        <div
-          role="button"
-          tabIndex={0}
+        <button
+          type="button"
           aria-expanded={isExpanded || hasActiveChild}
           style={itemStyle}
-          className={cn(rowClassName, FOCUS_RING)}
+          className={cn(rowClassName, "w-full border-0 text-start", FOCUS_RING)}
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
           onClick={() => onToggle(item.id)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              onToggle(item.id);
-            }
-          }}
         >
-          <div
+          <span
+            aria-hidden="true"
             style={dotStyle}
             className="transition-[background-color,transform] duration-nx-standard ease-nx-enter motion-reduce:transition-none"
           />
           <span
             style={labelStyle}
-            className="transition-colors duration-nx-micro motion-reduce:transition-none"
+            className="min-w-0 truncate transition-colors duration-nx-micro motion-reduce:transition-none"
           >
             {label}
           </span>
@@ -164,21 +159,28 @@ export function NavItem({
             size={14}
             aria-hidden="true"
             className={cn(
-              "transition-transform duration-nx-standard ease-nx-enter motion-reduce:transition-none",
+              "shrink-0 transition-transform duration-nx-standard ease-nx-enter motion-reduce:transition-none",
               isExpanded || hasActiveChild ? "rotate-90 rtl:-rotate-90" : "rtl:rotate-180"
             )}
             style={{
               color: "var(--nx-ink-3, hsl(var(--muted-foreground)))",
             }}
           />
-        </div>
+        </button>
         <div
           className="grid transition-[grid-template-rows] duration-nx-standard ease-nx-enter motion-reduce:transition-none"
           style={{
             gridTemplateRows: isExpanded || hasActiveChild ? "1fr" : "0fr",
           }}
         >
-          <div style={{ overflow: "hidden" }}>
+          <div
+            aria-hidden={!(isExpanded || hasActiveChild) || undefined}
+            inert={!(isExpanded || hasActiveChild)}
+            className={cn(
+              "min-h-0 overflow-hidden",
+              !(isExpanded || hasActiveChild) && "invisible"
+            )}
+          >
             <div style={{ paddingTop: 4, paddingBottom: 4 }}>
               {item.children.map((child) => (
                 <NavItem
@@ -201,38 +203,29 @@ export function NavItem({
     );
   }
 
-  // Workspace-switcher items render as interactive divs (not links)
+  // Workspace-switcher items render as native buttons (not links)
   if (isWorkspaceSwitcher) {
     return (
       <div className="mb-0.5">
-        <div
-          role="button"
-          tabIndex={0}
-          style={{
-            ...itemStyle,
-            cursor: "pointer",
-          }}
-          className={cn(rowClassName, FOCUS_RING)}
+        <button
+          type="button"
+          style={itemStyle}
+          className={cn(rowClassName, "w-full border-0 text-start", FOCUS_RING)}
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
           onClick={() => {
             switchWorkspace(workspaceKey!);
             onNavigate();
           }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              switchWorkspace(workspaceKey!);
-              onNavigate();
-            }
-          }}
         >
-          <div
+          <span
+            aria-hidden="true"
             style={dotStyle}
             className="transition-[background-color,transform] duration-nx-standard ease-nx-enter motion-reduce:transition-none"
           />
           <span
             style={labelStyle}
-            className="transition-colors duration-nx-micro motion-reduce:transition-none"
+            className="min-w-0 truncate transition-colors duration-nx-micro motion-reduce:transition-none"
           >
             {label}
           </span>
@@ -241,7 +234,7 @@ export function NavItem({
             aria-hidden="true"
             style={{ color: "var(--nx-ink-3, hsl(var(--muted-foreground)))", flexShrink: 0 }}
           />
-        </div>
+        </button>
       </div>
     );
   }
@@ -257,20 +250,22 @@ export function NavItem({
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
       >
-        <div
+        <span
+          aria-hidden="true"
           style={dotStyle}
           className="transition-[background-color,transform] duration-nx-standard ease-nx-enter motion-reduce:transition-none"
         />
         <span
           style={labelStyle}
-          className="transition-colors duration-nx-micro motion-reduce:transition-none"
+          className="min-w-0 truncate transition-colors duration-nx-micro motion-reduce:transition-none"
         >
           {label}
         </span>
 
         {/* Active leaf edge light — accent bar at the inline start, no glow */}
         {isActive && (
-          <div
+          <span
+            aria-hidden="true"
             style={{
               position: "absolute",
               insetInlineStart: 0,
@@ -416,7 +411,17 @@ export function RailContent({
   );
 }
 
-export function RailHeader({ contextLabel, title }: { contextLabel: string; title: string }) {
+export function RailHeader({
+  contextLabel,
+  title,
+  onClose,
+  closeLabel,
+}: {
+  contextLabel: string;
+  title: string;
+  onClose?: () => void;
+  closeLabel?: string;
+}) {
   return (
     <div
       style={{
@@ -428,6 +433,7 @@ export function RailHeader({ contextLabel, title }: { contextLabel: string; titl
     >
       {/* Subtle accent wash bleeding from the top edge — a wash, not a glow */}
       <div
+        aria-hidden="true"
         style={{
           position: "absolute",
           top: 0,
@@ -441,31 +447,45 @@ export function RailHeader({ contextLabel, title }: { contextLabel: string; titl
         }}
       />
 
-      <div
-        className="transition-colors duration-nx-standard ease-nx-enter motion-reduce:transition-none"
-        style={{
-          fontSize: 10,
-          color: "var(--nx-ink-3, hsl(var(--muted-foreground)))",
-          textTransform: "uppercase",
-          letterSpacing: "1px",
-          fontWeight: 700,
-          marginBottom: 8,
-          position: "relative",
-        }}
-      >
-        {contextLabel}
-      </div>
-      <div
-        style={{
-          fontSize: 16,
-          fontWeight: 700,
-          color: "var(--nx-ink, hsl(var(--foreground)))",
-          whiteSpace: "nowrap",
-          letterSpacing: "-0.3px",
-          position: "relative",
-        }}
-      >
-        {title}
+      <div className="relative flex items-start justify-between gap-2">
+        <div className="min-w-0 flex-1">
+          <div
+            className="truncate transition-colors duration-nx-standard ease-nx-enter motion-reduce:transition-none"
+            style={{
+              fontSize: 10,
+              color: "var(--nx-ink-3, hsl(var(--muted-foreground)))",
+              textTransform: "uppercase",
+              letterSpacing: "1px",
+              fontWeight: 700,
+              marginBottom: 8,
+            }}
+          >
+            {contextLabel}
+          </div>
+          <div
+            className="truncate"
+            style={{
+              fontSize: 16,
+              fontWeight: 700,
+              color: "var(--nx-ink, hsl(var(--foreground)))",
+              letterSpacing: "-0.3px",
+            }}
+          >
+            {title}
+          </div>
+        </div>
+        {onClose && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={onClose}
+            aria-label={closeLabel}
+            className="-mt-1 h-9 w-9 shrink-0 text-nx-ink-2 hover:text-nx-ink"
+          >
+            <X className="h-4 w-4" aria-hidden="true" />
+          </Button>
+        )}
       </div>
     </div>
   );

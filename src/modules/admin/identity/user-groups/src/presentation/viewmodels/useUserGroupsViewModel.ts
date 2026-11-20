@@ -68,7 +68,7 @@ export function useUserGroupsViewModel(options?: { useMyTenant?: boolean; tenant
   // nowhere left to surface (design doc W0-1). Same pattern as
   // useAdminsViewModel/useUsersViewModel/useWorkItemViewModel.
   const vm = useCrudViewModel<UserGroupListItem, CreateUserGroupRequest, UpdateUserGroupRequest>(
-    [...userGroupKeys.all, useMyTenant ? "my-tenant" : tenantId || "all"],
+    [...userGroupKeys.all, useMyTenant ? "current-tenant" : tenantId || "all"],
     {
       getAll: async (params) => {
         const payload = {
@@ -78,7 +78,7 @@ export function useUserGroupsViewModel(options?: { useMyTenant?: boolean; tenant
           tenantId,
         };
         const result = useMyTenant
-          ? await repo.getMyTenantGroups(payload)
+          ? await repo.getCurrentTenantGroups(payload)
           : await repo.getAll(payload);
         return {
           items: result.items.map((g) => ({
@@ -107,7 +107,7 @@ export function useUserGroupsViewModel(options?: { useMyTenant?: boolean; tenant
         const id = tenantId
           ? await repo.create({ ...data, tenantId })
           : useMyTenant
-            ? await repo.createForMyTenant(data)
+            ? await repo.createInCurrentTenant(data)
             : await repo.create(data);
         // Return a placeholder item — list will be refreshed
         return { id } as any;
@@ -153,7 +153,7 @@ export function useUserGroupsViewModel(options?: { useMyTenant?: boolean; tenant
   const handleRoleSearch = async (query: string) => {
     try {
       const result = useMyTenant
-        ? await identityContainer.roleRepository.getMyTenantRoles({
+        ? await identityContainer.roleRepository.getCurrentTenantRoles({
             search: query,
             page: 1,
             pageSize: 20,

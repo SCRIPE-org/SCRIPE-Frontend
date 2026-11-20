@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import React, { useMemo } from "react";
+import React from "react";
 import { cn } from "@core/common/utils";
 import { AlertCircle, CalendarPlus, Lock } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
@@ -81,14 +81,14 @@ export const BookingWorkspaceView = React.memo(function BookingWorkspaceView({
     !vm.criteria.date ||
     vm.criteria.quantity < 1 ||
     !endLocalFor(vm.criteria);
-  const currentStepIndex = useMemo(() => {
+  const currentStepIndex = (() => {
     if (vm.state.stage === "confirmed" || vm.state.stage === "confirming") return 4;
     if (vm.state.stage === "held" || vm.state.stage === "holding") return 3;
     if (vm.state.selectedCandidate) return 3;
     if (vm.state.candidates.length > 0) return 2;
     if (vm.customer) return 1;
     return 0;
-  }, [vm.customer, vm.state.candidates.length, vm.state.selectedCandidate, vm.state.stage]);
+  })();
 
   const workflowLocked =
     vm.state.stage === "holding" ||
@@ -164,7 +164,7 @@ export const BookingWorkspaceView = React.memo(function BookingWorkspaceView({
                 className={cn(
                   "flex size-5 shrink-0 items-center justify-center rounded-full text-xs font-bold transition-all sm:size-6",
                   isCurrent
-                    ? "bg-nx-accent text-nx-on-fill shadow-[0_0_8px_rgba(198,255,0,0.5)]"
+                    ? "bg-nx-accent text-nx-on-fill"
                     : isCompleted
                       ? "bg-success/20 text-success"
                       : "border border-nx-line text-nx-ink-3"

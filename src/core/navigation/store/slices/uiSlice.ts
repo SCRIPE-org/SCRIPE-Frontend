@@ -1,5 +1,5 @@
 import { StateCreator } from "zustand";
-import { NavigationStoreState, UiSlice } from "../types";
+import { type AuthorizedRouteDescriptor, NavigationStoreState, UiSlice } from "../types";
 import type { NavigationData } from "@core/navigation/domain/entities/NavigationData";
 
 export const createUiSlice: StateCreator<NavigationStoreState, [], [], UiSlice> = (set, get) => ({
@@ -43,6 +43,10 @@ export const createUiSlice: StateCreator<NavigationStoreState, [], [], UiSlice> 
       allRoutes: new Set<string>(),
       allRoutesSorted: [],
       workspaceRouteMap: {},
+      routeDescriptors: new Map<string, AuthorizedRouteDescriptor>(),
+      routesLoaded: false,
+      routesContextKey: null,
+      routesError: null,
       routesLoadedAt: null,
       workspaceGroups: [],
       workspaces: new Map<string, NavigationData>(),

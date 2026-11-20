@@ -27,9 +27,9 @@ export interface RoleListParams {
 }
 
 /**
- * Interface defining property specifications, keys types, and structural contract rules for my tenant role list params.
+ * Interface defining property specifications, keys types, and structural contract rules for current tenant role list params.
  */
-export interface MyTenantRoleListParams {
+export interface CurrentTenantRoleListParams {
   page: number;
   pageSize: number;
   search?: string;
@@ -47,7 +47,7 @@ export interface IRoleRepository {
   /**
    * Get paginated list of roles belonging to current user's tenant
    */
-  getMyTenantRoles(params: MyTenantRoleListParams): Promise<PagedResult<Role>>;
+  getCurrentTenantRoles(params: CurrentTenantRoleListParams): Promise<PagedResult<Role>>;
 
   /**
    * Get role by ID
@@ -62,7 +62,7 @@ export interface IRoleRepository {
   /**
    * Create a role for the current user's tenant (tenantId from JWT)
    */
-  createForMyTenant(request: Omit<CreateRoleRequest, "tenantId">): Promise<string>;
+  createInCurrentTenant(request: Omit<CreateRoleRequest, "tenantId">): Promise<string>;
 
   /**
    * Update an existing role
@@ -93,13 +93,13 @@ export interface IRoleRepository {
   /**
    * Get available permissions for role assignment in current user's tenant
    */
-  getMyTenantAvailablePermissions(category?: string): Promise<Permission[]>;
+  getCurrentTenantAvailablePermissions(category?: string): Promise<Permission[]>;
 
   /**
    * Get available permissions grouped by Module → Category (backend-driven).
    * Used by Role Detail page permission tree — zero client-side grouping.
    */
-  getMyTenantAvailablePermissionsGrouped(search?: string): Promise<PermissionModuleGroup[]>;
+  getCurrentTenantAvailablePermissionsGrouped(search?: string): Promise<PermissionModuleGroup[]>;
 
   /**
    * Get available permissions for a specific tenant (for role permissions dialog)

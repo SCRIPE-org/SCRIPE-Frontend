@@ -11,116 +11,90 @@ import type {
   ReopenOpportunityInput,
   OpportunitiesFilterParams,
   PagedOpportunitiesResult,
-  PipelineDefinition,
-  UpdateDefaultPipelineInput,
-  DealContactRoleDto,
+  DealContactRole,
   AddDealContactRoleInput,
 } from "../../domain/entities/OpportunityEntity";
+import type { CrmOpportunityDto } from "../models/OpportunityModel";
+import { CrmOpportunityMapper } from "../mappers/CrmOpportunityMapper";
 
 /**
- * Concrete repository mediating between viewmodels and the Opportunity data service.
+ * Concrete repository mediating between viewmodels and the Opportunity data service
+ * while mapping raw DTOs into `OpportunityEntity` domain objects.
  */
 export class CrmOpportunityRepository implements ICrmOpportunityRepository {
   constructor(private readonly service: ICrmOpportunityService) {}
 
-  getOpportunities(params?: OpportunitiesFilterParams): Promise<PagedOpportunitiesResult> {
-    return this.service.getOpportunities(params);
+  /** Queries paginated CRM Opportunities and normalizes items via `CrmOpportunityMapper`. */
+  async getOpportunities(params?: OpportunitiesFilterParams): Promise<PagedOpportunitiesResult> {
+    const res = await this.service.getOpportunities(params);
+    return {
+      ...res,
+      items: (res.items ?? []).map((dto) => CrmOpportunityMapper.toEntity(dto as unknown as CrmOpportunityDto).data),
+    };
   }
 
-  getOpportunityById(id: string): Promise<OpportunityDetailResult> {
-    return this.service.getOpportunityById(id);
+  /** Fetches a single Opportunity detail aggregate with stage history and normalizes it. */
+  async getOpportunityById(id: string): Promise<OpportunityDetailResult> {
+    const res = await this.service.getOpportunityById(id);
+    return {
+      ...res,
+      opportunity: CrmOpportunityMapper.toEntity(res.opportunity as unknown as CrmOpportunityDto).data,
+    };
   }
 
-  createOpportunity(input: CreateOpportunityInput): Promise<CrmOpportunity> {
-    return this.service.createOpportunity(input);
+  /** Creates a new commercial Opportunity and normalizes the returned record. */
+  async createOpportunity(input: CreateOpportunityInput): Promise<CrmOpportunity> {
+    const dto = await this.service.createOpportunity(input);
+    return CrmOpportunityMapper.toEntity(dto as unknown as CrmOpportunityDto).data;
   }
 
-  updateOpportunity(input: UpdateOpportunityInput): Promise<CrmOpportunity> {
-    return this.service.updateOpportunity(input);
+  /** Updates core commercial Opportunity attributes and normalizes the returned record. */
+  async updateOpportunity(input: UpdateOpportunityInput): Promise<CrmOpportunity> {
+    const dto = await this.service.updateOpportunity(input);
+    return CrmOpportunityMapper.toEntity(dto as unknown as CrmOpportunityDto).data;
   }
 
-  assignOwner(input: AssignOpportunityOwnerInput): Promise<CrmOpportunity> {
-    return this.service.assignOwner(input);
+  /** Reassigns ownership of an Opportunity and normalizes the returned record. */
+  async assignOwner(input: AssignOpportunityOwnerInput): Promise<CrmOpportunity> {
+    const dto = await this.service.assignOwner(input);
+    return CrmOpportunityMapper.toEntity(dto as unknown as CrmOpportunityDto).data;
   }
 
-  moveStage(input: MoveOpportunityStageInput): Promise<CrmOpportunity> {
-    return this.service.moveStage(input);
+  /** Advances or transitions an Opportunity to a target pipeline stage. */
+  async moveStage(input: MoveOpportunityStageInput): Promise<CrmOpportunity> {
+    const dto = await this.service.moveStage(input);
+    return CrmOpportunityMapper.toEntity(dto as unknown as CrmOpportunityDto).data;
   }
 
-  closeOpportunity(input: CloseOpportunityInput): Promise<CrmOpportunity> {
-    return this.service.closeOpportunity(input);
+  /** Closes an Opportunity as Won or Lost and normalizes the returned record. */
+  async closeOpportunity(input: CloseOpportunityInput): Promise<CrmOpportunity> {
+    const dto = await this.service.closeOpportunity(input);
+    return CrmOpportunityMapper.toEntity(dto as unknown as CrmOpportunityDto).data;
   }
 
-  reopenOpportunity(input: ReopenOpportunityInput): Promise<CrmOpportunity> {
-    return this.service.reopenOpportunity(input);
+  /** Reopens a closed Opportunity and normalizes the returned record. */
+  async reopenOpportunity(input: ReopenOpportunityInput): Promise<CrmOpportunity> {
+    const dto = await this.service.reopenOpportunity(input);
+    return CrmOpportunityMapper.toEntity(dto as unknown as CrmOpportunityDto).data;
   }
 
-  getDefaultPipeline(): Promise<PipelineDefinition> {
-    return this.service.getDefaultPipeline();
-  }
-
-  updateDefaultPipeline(input: UpdateDefaultPipelineInput): Promise<PipelineDefinition> {
-    return this.service.updateDefaultPipeline(input);
-  }
-
-  getPipelines(entityType?: string): Promise<PipelineDefinition[]> {
-    return this.service.getPipelines ? this.service.getPipelines(entityType) : Promise.resolve([]);
-  }
-
-  savePipeline(
-    pipelineId: string,
-    input: UpdateDefaultPipelineInput & { entityType?: string; isActive?: boolean }
-  ): Promise<PipelineDefinition> {
-    return this.service.savePipeline
-      ? this.service.savePipeline(pipelineId, input)
-      : this.service.updateDefaultPipeline(input);
-  }
-
-  activatePipeline(pipelineId: string): Promise<PipelineDefinition> {
-    return this.service.activatePipeline
-      ? this.service.activatePipeline(pipelineId)
-      : this.service.getDefaultPipeline();
-  }
-
-  deletePipeline(pipelineId: string): Promise<boolean> {
-    return this.service.deletePipeline ? this.service.deletePipeline(pipelineId) : Promise.resolve(true);
-  }
-
-  replacePipelineStage(
-    pipelineId: string,
-    stageKeyToRemove: string,
-    replacementStageKey: string
-  ): Promise<{ migratedRecordCount: number }> {
-    return this.service.replacePipelineStage
-      ? this.service.replacePipelineStage(pipelineId, stageKeyToRemove, replacementStageKey)
-      : Promise.resolve({ migratedRecordCount: 0 });
-  }
-
-  getContactRoles(opportunityId: string): Promise<DealContactRoleDto[]> {
+  /** Retrieves buying-committee stakeholder roles attached to an Opportunity. */
+  getContactRoles(opportunityId: string): Promise<DealContactRole[]> {
     return this.service.getContactRoles ? this.service.getContactRoles(opportunityId) : Promise.resolve([]);
   }
 
-  addContactRole(input: AddDealContactRoleInput): Promise<DealContactRoleDto> {
-    if (this.service.addContactRole) {
-      return this.service.addContactRole(input);
+  /** Adds a buying-committee contact role to an Opportunity. */
+  addContactRole(input: AddDealContactRoleInput): Promise<DealContactRole> {
+    if (!this.service.addContactRole) {
+      return Promise.reject(new Error("Contact role service not configured"));
     }
-    return Promise.resolve({
-      id: `role-${Date.now()}`,
-      opportunityId: input.opportunityId,
-      contactPartyId: input.contactPartyId || `party-${Date.now()}`,
-      contactName: input.contactName,
-      contactEmail: input.contactEmail,
-      stakeholderRole: input.stakeholderRole,
-      isPrimary: Boolean(input.isPrimary),
-      influenceNotes: input.influenceNotes,
-      createdAtUtc: new Date().toISOString(),
-    });
+    return this.service.addContactRole(input);
   }
 
+  /** Removes a buying-committee contact role from an Opportunity. */
   removeContactRole(opportunityId: string, roleId: string): Promise<boolean> {
     return this.service.removeContactRole
       ? this.service.removeContactRole(opportunityId, roleId)
       : Promise.resolve(true);
   }
 }
-

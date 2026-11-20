@@ -75,7 +75,7 @@ export function GuestBookingHeader({
             aria-label="Toggle Language"
           >
             <Globe className="size-3.5 text-nx-ink-3" aria-hidden="true" />
-            <span className="uppercase">{language === "ar" ? "EN" : "عربي"}</span>
+            <span className="uppercase">{t("guestPortal.actions.switchLanguageShort")}</span>
           </Button>
         </div>
       </div>

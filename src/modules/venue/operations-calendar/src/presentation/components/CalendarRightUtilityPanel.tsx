@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import { useState } from "react";
 import { ChevronLeft, ChevronRight, Plus, Clock, Search, List } from "lucide-react";
 import { Card } from "@core/ui/card";
 import { Button } from "@core/ui/button";
@@ -21,6 +21,9 @@ interface Props {
   t: (key: string, values?: Record<string, string | number>) => string;
 }
 
+/**
+ * Right-hand utility rail providing mini-month navigation, quick actions, and live occupancy counts.
+ */
 export function CalendarRightUtilityPanel({
   currentDate,
   onDateChange,
@@ -32,62 +35,41 @@ export function CalendarRightUtilityPanel({
   t,
 }: Props) {
   const { language } = useI18n();
-  const locale = language === "ar" ? "ar-EG" : "en-US";
-  // Parse year & month from currentDate
-  const { year, month, day, daysInMonth, startDayOfWeek, monthName } = useMemo(() => {
-    const parts = (currentDate || new Date().toISOString().slice(0, 10)).split("-").map(Number);
-    const y = parts[0] || new Date().getFullYear();
-    const m = parts[1] || new Date().getMonth() + 1;
-    const d = parts[2] || new Date().getDate();
+  const [fallbackToday] = useState(() => new Date().toISOString().slice(0, 10));
+  const fallbackParts = fallbackToday.split("-").map(Number);
 
-    const firstDate = new Date(Date.UTC(y, m - 1, 1));
-    const startDow = (firstDate.getUTCDay() + 6) % 7; // Monday-first index
-    const lastDate = new Date(Date.UTC(y, m, 0));
-    const dim = lastDate.getUTCDate();
+  const parts = (currentDate || fallbackToday).split("-").map(Number);
+  const year = parts[0] || fallbackParts[0];
+  const month = parts[1] || fallbackParts[1];
+  const day = parts[2] || fallbackParts[2];
 
-    const mName = new Intl.DateTimeFormat(locale, { month: "long" }).format(firstDate);
-
-    return {
-      year: y,
-      month: m,
-      day: d,
-      daysInMonth: dim,
-      startDayOfWeek: startDow,
-      monthName: mName,
-    };
-  }, [currentDate, locale]);
+  const firstDate = new Date(Date.UTC(year, month - 1, 1));
+  const startDayOfWeek = (firstDate.getUTCDay() + 6) % 7;
+  const daysInMonth = new Date(Date.UTC(year, month, 0)).getUTCDate();
+  const monthName = new Intl.DateTimeFormat(language, { month: "long" }).format(firstDate);
 
   const handlePrevMonth = () => {
-    let newYear = year;
-    let newMonth = month - 1;
-    if (newMonth < 1) {
-      newMonth = 12;
-      newYear -= 1;
-    }
-    const newDateStr = `${newYear}-${String(newMonth).padStart(2, "0")}-01`;
-    onDateChange(newDateStr);
+    const newYear = month - 1 < 1 ? year - 1 : year;
+    const newMonth = month - 1 < 1 ? 12 : month - 1;
+    onDateChange(`${newYear}-${String(newMonth).padStart(2, "0")}-01`);
   };
 
   const handleNextMonth = () => {
-    let newYear = year;
-    let newMonth = month + 1;
-    if (newMonth > 12) {
-      newMonth = 1;
-      newYear += 1;
-    }
-    const newDateStr = `${newYear}-${String(newMonth).padStart(2, "0")}-01`;
-    onDateChange(newDateStr);
+    const newYear = month + 1 > 12 ? year + 1 : year;
+    const newMonth = month + 1 > 12 ? 1 : month + 1;
+    onDateChange(`${newYear}-${String(newMonth).padStart(2, "0")}-01`);
   };
 
   const handleSelectDay = (selectedDay: number) => {
-    const newDateStr = `${year}-${String(month).padStart(2, "0")}-${String(selectedDay).padStart(2, "0")}`;
-    onDateChange(newDateStr);
+    onDateChange(
+      `${year}-${String(month).padStart(2, "0")}-${String(selectedDay).padStart(2, "0")}`,
+    );
   };
 
   const weekdays = Array.from({ length: 7 }, (_, index) =>
-    new Intl.DateTimeFormat(locale, { weekday: "short", timeZone: "UTC" }).format(
-      new Date(Date.UTC(2024, 0, 1 + index))
-    )
+    new Intl.DateTimeFormat(language, { weekday: "short", timeZone: "UTC" }).format(
+      new Date(Date.UTC(2024, 0, 1 + index)),
+    ),
   );
 
   const inUseVal = statusCounts?.inUse ?? 0;
@@ -99,8 +81,8 @@ export function CalendarRightUtilityPanel({
       className="w-full shrink-0 select-none space-y-4 lg:w-72"
       data-testid="calendar-right-utility-panel"
     >
-      {/* 1. Small Month Calendar */}
-      <Card className="rounded-xl border border-nx-line bg-nx-surface p-3.5">
+      {/* 1. Mini Month Calendar */}
+      <Card className="p-3.5">
         <div className="mb-3 flex items-center justify-between">
           <span className="text-xs font-bold text-nx-ink">
             {monthName} {year}
@@ -111,27 +93,24 @@ export function CalendarRightUtilityPanel({
               size="sm"
               type="button"
               onClick={handlePrevMonth}
-              className="hover:bg-nx-raised rounded p-1 text-nx-ink-3 transition-colors hover:text-nx-ink"
-              aria-label={t("operationsCalendar.utility.previousMonth", {
-                defaultValue: "Previous month",
-              })}
+              className="rounded p-1 text-nx-ink-3 transition-colors hover:bg-nx-raised hover:text-nx-ink"
+              aria-label={t("operationsCalendar.utility.previousMonth")}
             >
-              <ChevronLeft className="size-3.5 rtl:rotate-180" />
+              <ChevronLeft className="size-3.5 rtl:rotate-180" aria-hidden="true" />
             </Button>
             <Button
               variant="ghost"
               size="sm"
               type="button"
               onClick={handleNextMonth}
-              className="hover:bg-nx-raised rounded p-1 text-nx-ink-3 transition-colors hover:text-nx-ink"
-              aria-label={t("operationsCalendar.utility.nextMonth", { defaultValue: "Next month" })}
+              className="rounded p-1 text-nx-ink-3 transition-colors hover:bg-nx-raised hover:text-nx-ink"
+              aria-label={t("operationsCalendar.utility.nextMonth")}
             >
-              <ChevronRight className="size-3.5 rtl:rotate-180" />
+              <ChevronRight className="size-3.5 rtl:rotate-180" aria-hidden="true" />
             </Button>
           </div>
         </div>
 
-        {/* Weekday initials */}
         <div className="mb-1.5 grid grid-cols-7 gap-1 text-center">
           {weekdays.map((w, i) => (
             <span key={i} className="text-[10px] font-bold text-nx-ink-3">
@@ -140,7 +119,6 @@ export function CalendarRightUtilityPanel({
           ))}
         </div>
 
-        {/* Days grid */}
         <div className="grid grid-cols-7 gap-1 text-center">
           {Array.from({ length: startDayOfWeek }).map((_, i) => (
             <div key={`empty-${i}`} className="h-7 w-7" />
@@ -159,8 +137,8 @@ export function CalendarRightUtilityPanel({
                 onClick={() => handleSelectDay(dayNum)}
                 className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold transition-all ${
                   isSelected
-                    ? "text-nx-on-fill shadow-xs bg-nx-accent font-bold"
-                    : "hover:bg-nx-raised text-nx-ink"
+                    ? "bg-nx-accent-fill font-bold text-nx-on-fill hover:bg-nx-accent-fill hover:text-nx-on-fill"
+                    : "text-nx-ink hover:bg-nx-raised"
                 }`}
               >
                 {dayNum}
@@ -171,75 +149,63 @@ export function CalendarRightUtilityPanel({
       </Card>
 
       {/* 2. Quick Actions */}
-      <Card className="rounded-nx-xl shadow-xs border border-nx-line bg-nx-surface p-3.5">
+      <Card className="p-3.5">
         <h3 className="mb-2.5 text-xs font-bold text-nx-ink">
-          {t("operationsCalendar.quickActions.title", { defaultValue: "Quick Actions" })}
+          {t("operationsCalendar.quickActions.title")}
         </h3>
         <div className="space-y-1">
           <Button
             variant="ghost"
             size="sm"
             onClick={onNewBooking}
-            className="hover:bg-nx-raised h-8 w-full justify-start gap-2.5 text-xs font-semibold text-nx-ink"
+            className="h-8 w-full justify-start gap-2.5 text-xs font-semibold text-nx-ink hover:bg-nx-raised"
           >
-            <Plus className="size-3.5 text-info" />
-            <span>
-              {t("operationsCalendar.quickActions.newBooking", { defaultValue: "New Booking" })}
-            </span>
+            <Plus className="size-3.5 text-info" aria-hidden="true" />
+            <span>{t("operationsCalendar.quickActions.newBooking")}</span>
           </Button>
 
           <Button
             variant="ghost"
             size="sm"
             onClick={onBlockTime}
-            className="hover:bg-nx-raised h-8 w-full justify-start gap-2.5 text-xs font-semibold text-nx-ink"
+            className="h-8 w-full justify-start gap-2.5 text-xs font-semibold text-nx-ink hover:bg-nx-raised"
           >
-            <Clock className="size-3.5 text-warning" />
-            <span>
-              {t("operationsCalendar.quickActions.blockTime", { defaultValue: "Block Time" })}
-            </span>
+            <Clock className="size-3.5 text-warning" aria-hidden="true" />
+            <span>{t("operationsCalendar.quickActions.blockTime")}</span>
           </Button>
 
           <Button
             variant="ghost"
             size="sm"
             onClick={onFindSlots || onNewBooking}
-            className="hover:bg-nx-raised h-8 w-full justify-start gap-2.5 text-xs font-semibold text-nx-ink"
+            className="h-8 w-full justify-start gap-2.5 text-xs font-semibold text-nx-ink hover:bg-nx-raised"
           >
-            <Search className="size-3.5 text-primary" />
-            <span>
-              {t("operationsCalendar.quickActions.findSlots", {
-                defaultValue: "Find Available Slots",
-              })}
-            </span>
+            <Search className="size-3.5 text-nx-accent" aria-hidden="true" />
+            <span>{t("operationsCalendar.quickActions.findSlots")}</span>
           </Button>
 
           <Button
             variant="ghost"
             size="sm"
             onClick={onViewToday}
-            className="hover:bg-nx-raised h-8 w-full justify-start gap-2.5 text-xs font-semibold text-nx-ink"
+            className="h-8 w-full justify-start gap-2.5 text-xs font-semibold text-nx-ink hover:bg-nx-raised"
           >
-            <List className="size-3.5 text-success" />
-            <span>
-              {t("operationsCalendar.quickActions.viewToday", {
-                defaultValue: "View Today's List",
-              })}
-            </span>
+            <List className="size-3.5 text-success" aria-hidden="true" />
+            <span>{t("operationsCalendar.quickActions.viewToday")}</span>
           </Button>
         </div>
       </Card>
 
       {/* 3. Court Status */}
-      <Card className="rounded-nx-xl shadow-xs border border-nx-line bg-nx-surface p-3.5">
+      <Card className="p-3.5">
         <h3 className="mb-2.5 text-xs font-bold text-nx-ink">
-          {t("operationsCalendar.courtStatus.title", { defaultValue: "Court Status" })}
+          {t("operationsCalendar.courtStatus.title")}
         </h3>
         <div className="space-y-2">
           <div className="flex items-center justify-between text-xs">
             <div className="flex items-center gap-2 font-medium text-nx-ink-2">
               <span className="size-2 rounded-full bg-success" />
-              <span>{t("operationsCalendar.courtStatus.inUse", { defaultValue: "In Use" })}</span>
+              <span>{t("operationsCalendar.courtStatus.inUse")}</span>
             </div>
             <span className="font-bold tabular-nums text-nx-ink">{inUseVal}</span>
           </div>
@@ -247,7 +213,7 @@ export function CalendarRightUtilityPanel({
           <div className="flex items-center justify-between text-xs">
             <div className="flex items-center gap-2 font-medium text-nx-ink-2">
               <span className="size-2 rounded-full bg-info" />
-              <span>{t("operationsCalendar.courtStatus.free", { defaultValue: "Free" })}</span>
+              <span>{t("operationsCalendar.courtStatus.free")}</span>
             </div>
             <span className="font-bold tabular-nums text-nx-ink">{freeVal}</span>
           </div>
@@ -255,9 +221,7 @@ export function CalendarRightUtilityPanel({
           <div className="flex items-center justify-between text-xs">
             <div className="flex items-center gap-2 font-medium text-nx-ink-2">
               <span className="size-2 rounded-full bg-destructive" />
-              <span>
-                {t("operationsCalendar.courtStatus.maintenance", { defaultValue: "Maintenance" })}
-              </span>
+              <span>{t("operationsCalendar.courtStatus.maintenance")}</span>
             </div>
             <span className="font-bold tabular-nums text-nx-ink">{maintVal}</span>
           </div>

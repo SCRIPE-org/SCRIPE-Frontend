@@ -69,22 +69,14 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
         </Button>
 
         {showStrengthIndicator && props.value && (
-          // Rides the shared Progress primitive; the child selector re-hues
-          // its indicator through the measured status tokens per tier. The
-          // meter is decoration for a screen reader (the tiers carry no text),
-          // so it is hidden from the a11y tree rather than announced as an
-          // unlabelled progressbar.
+          // Rides the shared Progress primitive with semantic status variants.
+          // The meter is decoration for a screen reader (tiers carry no text),
+          // so it stays hidden from the a11y tree.
           <Progress
             value={strength}
             aria-hidden="true"
-            className={cn(
-              "mt-2 h-1 bg-nx-raised",
-              strength < 50
-                ? "[&>div]:bg-nx-danger"
-                : strength < 75
-                  ? "[&>div]:bg-nx-warning"
-                  : "[&>div]:bg-nx-success"
-            )}
+            variant={strength < 50 ? "danger" : strength < 75 ? "warning" : "success"}
+            className="mt-2 h-1 bg-nx-raised"
           />
         )}
       </div>

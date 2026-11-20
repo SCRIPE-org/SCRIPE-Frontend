@@ -236,6 +236,7 @@ export function UserSubscriptionsView() {
       ],
       getItemDisplayName: (sub: UserSubscription) =>
         sub.userName ? `${sub.planName} — ${sub.userName}` : `${sub.planName} (${sub.userId})`,
+      stickyActions: true,
       getActions: (
         _vmInstance: ReturnType<typeof useUserSubscriptionsViewModel>,
         tFn: (key: string) => string

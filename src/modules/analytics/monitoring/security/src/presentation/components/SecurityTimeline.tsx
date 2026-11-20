@@ -25,9 +25,9 @@ interface Props {
 const EVENT_ICONS: Record<string, { icon: typeof Shield; color: string }> = {
   LoginSuccess: { icon: LogIn, color: "text-success" },
   LoginFailed: { icon: LogOut, color: "text-destructive" },
-  AccountLocked: { icon: Lock, color: "text-warning" },
+  AccountLocked: { icon: Lock, color: "text-nx-warning-strong" },
   AccountUnlocked: { icon: Unlock, color: "text-info" },
-  AccessDenied: { icon: UserX, color: "text-warning" },
+  AccessDenied: { icon: UserX, color: "text-nx-warning-strong" },
   PasswordReset: { icon: Key, color: "text-nx-accent" },
   PermissionGranted: { icon: Shield, color: "text-success" },
   PermissionRevoked: { icon: AlertTriangle, color: "text-destructive" },

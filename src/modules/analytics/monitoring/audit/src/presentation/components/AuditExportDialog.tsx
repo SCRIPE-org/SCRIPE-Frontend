@@ -1,4 +1,3 @@
-// UI-EXCEPTION: compact studio layout
 "use client";
 
 /**
@@ -142,14 +141,15 @@ export function AuditExportDialog({ open, onClose, filters }: AuditExportDialogP
           aria-label={t("audit.export.formatLabel")}
         >
           {FORMAT_OPTIONS.map((opt) => (
-            <button
+            <Button
               key={opt.value}
               type="button"
+              variant="ghost"
               onClick={() => setSelectedFormat(opt.value)}
               disabled={isExporting}
               aria-pressed={selectedFormat === opt.value}
               className={cn(
-                "flex flex-col items-center gap-2 rounded-nx-md border p-4 text-center",
+                "flex h-auto flex-col items-center gap-2 whitespace-normal rounded-nx-md border p-4 text-center",
                 "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
                 "disabled:cursor-not-allowed disabled:opacity-50",
                 selectedFormat === opt.value
@@ -164,7 +164,7 @@ export function AuditExportDialog({ open, onClose, filters }: AuditExportDialogP
               <span className="text-center text-[10px] leading-tight text-nx-ink-3">
                 {t(`audit.export.formats.${opt.value}`)}
               </span>
-            </button>
+            </Button>
           ))}
         </div>
 

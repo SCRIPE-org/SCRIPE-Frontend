@@ -125,7 +125,7 @@ export function DefinitionFormDialog({
     if (!form.key.trim()) errs.key = t("common.required");
     if (!form.name.trim()) errs.name = t("common.required");
     // Validate key format: lowercase letters, numbers, hyphens, dots
-    if (form.key.trim() && !/^[a-z0-9][a-z0-9\-\.]*$/.test(form.key.trim())) {
+    if (form.key.trim() && !/^[a-z0-9][a-z0-9\-.]*$/.test(form.key.trim())) {
       errs.key = t("plugins.defErrKeyFormat");
     }
     // Validate manifestJson is valid JSON

@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { ShieldCheck, AlertCircle, ArrowUpRight, User } from "lucide-react";
 import { Button } from "@core/ui/button";
+import { Card } from "@core/ui/card";
 import { EmptyState } from "@core/ui/empty-state";
 import {
   Table,
@@ -15,14 +16,17 @@ import {
 } from "@core/ui/table";
 import { cn } from "@core/common/utils";
 import type { CrmRecentDeal } from "../../domain/entities/OverviewEntity";
-import { CrmStatusBadge } from "./CrmStatusBadge";
-import { useCrmCurrency } from "../viewmodels/useCrmCurrency";
+import { CrmStatusBadge, useCrmCurrency } from "@modules/crm/shared";
 
-interface CrmRecentDealsTableProps {
+/** Props for `CrmRecentDealsTable`. */
+export interface CrmRecentDealsTableProps {
   deals: CrmRecentDeal[];
   className?: string;
 }
 
+/**
+ * Displays active deals scoped to the selected pipeline/stage in a Nexus surface card.
+ */
 export function CrmRecentDealsTable({ deals, className }: CrmRecentDealsTableProps) {
   const router = useRouter();
   const { t, language } = useI18n();
@@ -32,19 +36,19 @@ export function CrmRecentDealsTable({ deals, className }: CrmRecentDealsTablePro
 
   if (deals.length === 0) {
     return (
-      <div className="rounded-nx-lg border border-nx-line bg-nx-surface p-8 text-center">
+      <Card className="rounded-nx-lg border border-nx-line bg-nx-surface p-8 text-center">
         <EmptyState
           title={t("crm.recentDeals.emptyTitle")}
           description={t("crm.recentDeals.emptyDescription")}
         />
-      </div>
+      </Card>
     );
   }
 
   return (
-    <div
+    <Card
       className={cn(
-        "rounded-nx-lg border border-nx-line bg-nx-surface overflow-hidden",
+        "rounded-nx-lg border border-nx-line bg-nx-surface overflow-hidden p-0 gap-0",
         className
       )}
       dir={isRtl ? "rtl" : "ltr"}
@@ -71,14 +75,14 @@ export function CrmRecentDealsTable({ deals, className }: CrmRecentDealsTablePro
       </div>
 
       <div className="w-full overflow-x-auto" dir={isRtl ? "rtl" : "ltr"}>
-        <Table className="w-full text-left text-xs border-collapse">
+        <Table className="w-full text-start text-xs border-collapse">
           <TableHeader>
             <TableRow className="border-b border-nx-line bg-nx-raised/50 text-nx-ink-2 font-semibold">
               <TableHead className="px-4 py-3 text-start">{t("crm.recentDeals.dealName")}</TableHead>
               <TableHead className="px-4 py-3 text-start">{t("crm.recentDeals.party")}</TableHead>
               <TableHead className="px-4 py-3 text-start">{t("crm.recentDeals.stage")}</TableHead>
               <TableHead className="px-4 py-3 text-start">
-                {t("crm.recentDeals.value")} ({autoConvertToBase ? baseCurrency : "Native"})
+                {t("crm.recentDeals.value")} ({autoConvertToBase ? baseCurrency : t("crm.recentDeals.nativeCurrency")})
               </TableHead>
               <TableHead className="px-4 py-3 text-start">{t("crm.recentDeals.owner")}</TableHead>
               <TableHead className="px-4 py-3 text-end">{t("crm.recentDeals.actions")}</TableHead>
@@ -107,7 +111,7 @@ export function CrmRecentDealsTable({ deals, className }: CrmRecentDealsTablePro
                   <TableCell className="px-4 py-3">
                     <div className="flex items-center gap-1.5">
                       <span className="font-medium text-nx-ink-2 truncate max-w-[180px]">
-                        {deal.partyName}
+                        {deal.partyName || t("crm.recentDeals.unlinkedParty")}
                       </span>
                       {deal.partyVerified ? (
                         <span
@@ -119,9 +123,9 @@ export function CrmRecentDealsTable({ deals, className }: CrmRecentDealsTablePro
                       ) : (
                         <span
                           title={t("crm.recentDeals.unverified")}
-                          className="text-warning inline-flex items-center"
+                          className="text-nx-warning-strong inline-flex items-center"
                         >
-                          <AlertCircle className="size-3.5 text-warning shrink-0" />
+                          <AlertCircle className="size-3.5 text-nx-warning-strong shrink-0" />
                         </span>
                       )}
                     </div>
@@ -131,7 +135,7 @@ export function CrmRecentDealsTable({ deals, className }: CrmRecentDealsTablePro
                     <CrmStatusBadge stage={deal.stageKey} />
                   </TableCell>
 
-                  <TableCell className="px-4 py-3 font-bold font-mono text-nx-ink">
+                  <TableCell className="px-4 py-3 font-bold font-mono tabular-nums text-nx-ink">
                     <span>
                       {targetCurr} {converted.toLocaleString()}
                     </span>
@@ -147,7 +151,9 @@ export function CrmRecentDealsTable({ deals, className }: CrmRecentDealsTablePro
                       <div className="size-5 rounded-full bg-nx-raised border border-nx-line flex items-center justify-center shrink-0">
                         <User className="size-3 text-nx-ink-3" />
                       </div>
-                      <span className="truncate max-w-[120px]">{deal.ownerName}</span>
+                      <span className="truncate max-w-[120px]">
+                        {deal.ownerName || t("crm.recentDeals.unassignedOwner")}
+                      </span>
                     </div>
                   </TableCell>
 
@@ -165,7 +171,7 @@ export function CrmRecentDealsTable({ deals, className }: CrmRecentDealsTablePro
                       onClick={() => router.push(`/crm/opportunities/${deal.id}`)}
                       className="h-7 px-2 text-xs text-nx-ink-2 hover:text-nx-ink hover:bg-nx-raised gap-1"
                     >
-                      <span>{t("crmOpportunities.actions.viewDetails", { defaultValue: "View" })}</span>
+                      <span>{t("crm.recentDeals.viewDeal")}</span>
                       <ArrowUpRight className="size-3" />
                     </Button>
                   </TableCell>
@@ -175,6 +181,6 @@ export function CrmRecentDealsTable({ deals, className }: CrmRecentDealsTablePro
           </TableBody>
         </Table>
       </div>
-    </div>
+    </Card>
   );
 }

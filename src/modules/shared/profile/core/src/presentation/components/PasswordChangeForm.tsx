@@ -3,7 +3,6 @@
 /**
  * PasswordChangeForm — Password change with optional 2FA code
  */
-import { useMemo } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -92,7 +91,7 @@ export function PasswordChangeForm({
   success,
 }: PasswordChangeFormProps) {
   const { t } = useI18n();
-  const schema = useMemo(() => buildSchema(t), [t]);
+  const schema = buildSchema(t);
 
   const form = useForm<PasswordChangeFormValues>({
     resolver: zodResolver(schema),
@@ -115,12 +114,16 @@ export function PasswordChangeForm({
   ];
 
   const handleValid = async (values: PasswordChangeFormValues) => {
-    await onSubmit({
-      currentPassword: values.currentPassword,
-      newPassword: values.newPassword,
-      twoFactorCode: isTwoFactorEnabled ? values.twoFactorCode : undefined,
-    });
-    form.reset(EMPTY_VALUES);
+    try {
+      await onSubmit({
+        currentPassword: values.currentPassword,
+        newPassword: values.newPassword,
+        twoFactorCode: isTwoFactorEnabled ? values.twoFactorCode : undefined,
+      });
+      form.reset(EMPTY_VALUES);
+    } catch {
+      // Error surfaced via parent submitError prop without clearing user input
+    }
   };
 
   return (

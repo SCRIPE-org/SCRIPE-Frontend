@@ -10,6 +10,7 @@ import {
   type SalesActivityKind,
 } from "../../domain/entities/CrmActivityEntity";
 
+/** Mapper converting raw sales activity wire DTOs into domain entities. */
 export class CrmActivityMapper {
   static toEntity(dto: CrmSalesActivityDto): CrmActivityEntity {
     const model: CrmActivity = {

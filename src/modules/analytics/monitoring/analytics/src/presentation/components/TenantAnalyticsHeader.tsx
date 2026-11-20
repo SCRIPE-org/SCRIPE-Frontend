@@ -259,7 +259,7 @@ export function TenantAnalyticsHeader({
           type="button"
           size="sm"
           onClick={onExport}
-          className="h-8.5 cursor-pointer gap-1.5 bg-primary px-3.5 text-xs font-bold text-nx-on-fill hover:bg-primary/90"
+          className="h-8.5 cursor-pointer gap-1.5 bg-nx-accent-fill px-3.5 text-xs font-bold text-nx-on-fill hover:bg-nx-accent-fill/90"
         >
           <Download className="h-3.5 w-3.5" />
           <span>{t("tenantAnalytics.header.export") || "Export"}</span>

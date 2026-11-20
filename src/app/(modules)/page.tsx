@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAppStore } from "@core/store/useAppStore";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
+import { ModulesLoadingSkeleton } from "@core/ui/layout/modules-loading-skeleton";
 
 export default function HomePage() {
   const router = useRouter();
@@ -20,5 +21,5 @@ export default function HomePage() {
     router.replace(firstAccessible || "/hub");
   }, [router]);
 
-  return null;
+  return <ModulesLoadingSkeleton />;
 }

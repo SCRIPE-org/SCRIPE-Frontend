@@ -7,14 +7,17 @@ import type { CrmLead } from "../models/crm-lead.types";
 export class LeadEntity {
   constructor(private readonly data: CrmLead) {}
 
+  /** Unique identifier of the CRM Lead record. */
   get id(): string {
     return this.data.id;
   }
 
+  /** Display title or subject of the commercial Lead. */
   get title(): string {
     return this.data.title;
   }
 
+  /** Current qualification lifecycle status of the Lead. */
   get status(): CrmLead["status"] {
     return this.data.status;
   }
@@ -24,5 +27,10 @@ export class LeadEntity {
    */
   copyWith(updates: Partial<CrmLead>): LeadEntity {
     return new LeadEntity({ ...this.data, ...updates });
+  }
+
+  /** Serializes back to a plain `CrmLead` domain model. */
+  toDto(): CrmLead {
+    return this.data;
   }
 }

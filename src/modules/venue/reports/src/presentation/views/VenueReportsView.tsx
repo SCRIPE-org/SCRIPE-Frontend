@@ -14,6 +14,7 @@ import {
   FileSpreadsheet,
 } from "lucide-react";
 import { Button } from "@core/ui/button";
+import { Label } from "@core/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import { PageHeader } from "@core/ui/page-header";
@@ -261,9 +262,9 @@ export function VenueReportsView() {
         <Card className="rounded-nx-xl border-nx-line bg-nx-surface">
           <CardContent className="p-4">
             <div className="max-w-sm space-y-1">
-              <label className="text-[11px] font-semibold text-nx-ink-2">
+              <Label className="text-[11px] font-semibold text-nx-ink-2">
                 {t("venueReports.ui.court")}
-              </label>
+              </Label>
               <Select
                 value={filters.resourceId || "all"}
                 onValueChange={(resourceId) =>

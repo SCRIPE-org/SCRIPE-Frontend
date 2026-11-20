@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-// FILE-EXCEPTION: file length
 "use client";
 
 import { useState } from "react";
@@ -11,6 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@core/ui/dialog";
+import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
@@ -21,20 +20,25 @@ import type {
   TenantSettingsModel,
   UpdateTenantSettingsRequest,
 } from "@modules/customization/tenant-settings/src/domain/types/SettingsTypes";
-import { ImageUploadField } from "@core/ui/image-upload-field";
+import { TenantSettingsSecurityFields } from "./TenantSettingsSecurityFields";
+import { TenantSettingsBrandingFields } from "./TenantSettingsBrandingFields";
+
+type EditSection = "security" | "audit" | "branding";
 
 interface TenantSettingsEditDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  initialSection: "security" | "audit" | "branding" | null;
+  initialSection: EditSection | null;
   settings: TenantSettingsModel;
   onSave: (data: UpdateTenantSettingsRequest) => void;
   isSaving: boolean;
+  /** SEC-07: Platform / ancestor admins can edit audit/quota controls; self-tenant admins cannot. */
+  canEditPlatformManagedFields?: boolean;
 }
 
 /**
  * Presentation UI component rendering the tenant settings edit dialog.
- * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ * Supports Security (including BAM-03 `identityProviderMode`), Audit (gated by SEC-07), and Branding.
  */
 export function TenantSettingsEditDialog({
   open,
@@ -43,12 +47,19 @@ export function TenantSettingsEditDialog({
   settings,
   onSave,
   isSaving,
+  canEditPlatformManagedFields = true,
 }: TenantSettingsEditDialogProps) {
   const { t, direction } = useI18n();
-  const [activeTab, setActiveTab] = useState(initialSection || "security");
-  const [formData, setFormData] = useState<TenantSettingsModel>({ ...settings });
+  const [activeTab, setActiveTab] = useState<EditSection>(
+    initialSection === "audit" && !canEditPlatformManagedFields
+      ? "security"
+      : initialSection || "security"
+  );
+  const [formData, setFormData] = useState<TenantSettingsModel>({
+    ...settings,
+    identityProviderMode: settings.identityProviderMode === "custom" ? "custom" : "inherit",
+  });
 
-  // Update local state when dialog opens
   const [prevOpen, setPrevOpen] = useState(open);
   const [prevSettings, setPrevSettings] = useState(settings);
   const [prevInitialSection, setPrevInitialSection] = useState(initialSection);
@@ -59,19 +70,23 @@ export function TenantSettingsEditDialog({
     setPrevInitialSection(initialSection);
 
     if (open) {
-      setFormData({ ...settings });
+      setFormData({
+        ...settings,
+        identityProviderMode: settings.identityProviderMode === "custom" ? "custom" : "inherit",
+      });
       if (initialSection) {
-        setActiveTab(initialSection);
+        setActiveTab(
+          initialSection === "audit" && !canEditPlatformManagedFields ? "security" : initialSection
+        );
       }
     }
   }
 
-  const handleChange = (field: keyof TenantSettingsModel, value: any) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+  const handlePatch = (patch: Partial<TenantSettingsModel>) => {
+    setFormData((prev) => ({ ...prev, ...patch }));
   };
 
   const handleSave = () => {
-    // Construct request payload based on active tab ONLY (Granular updates)
     const request: UpdateTenantSettingsRequest = {};
 
     if (activeTab === "security") {
@@ -83,7 +98,9 @@ export function TenantSettingsEditDialog({
       request.loginLockoutMinutes = formData.loginLockoutMinutes;
       request.passwordExpiryDays = formData.passwordExpiryDays;
       request.require2FA = formData.require2FA;
-    } else if (activeTab === "audit") {
+      request.identityProviderMode =
+        formData.identityProviderMode === "custom" ? "custom" : "inherit";
+    } else if (activeTab === "audit" && canEditPlatformManagedFields) {
       request.auditRetentionDays = formData.auditRetentionDays;
       request.auditEnabled = formData.auditEnabled;
     } else if (activeTab === "branding") {
@@ -101,193 +118,63 @@ export function TenantSettingsEditDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl" dir={direction}>
+      <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto" dir={direction}>
         <DialogHeader>
           <DialogTitle>{t("tenant.editSettings")}</DialogTitle>
           <DialogDescription>{t("tenant.editSettingsDesc")}</DialogDescription>
         </DialogHeader>
 
-        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)} className="w-full">
+        <Tabs
+          value={activeTab}
+          onValueChange={(v) => setActiveTab(v as EditSection)}
+          className="w-full"
+        >
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="security">{t("tenant.security")}</TabsTrigger>
-            <TabsTrigger value="audit">{t("tenant.audit")}</TabsTrigger>
+            <TabsTrigger value="audit" disabled={!canEditPlatformManagedFields}>
+              {t("tenant.audit")}
+            </TabsTrigger>
             <TabsTrigger value="branding">{t("tenant.branding")}</TabsTrigger>
           </TabsList>
 
-          {/* SECURITY TAB */}
-          <TabsContent value="security" className="space-y-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>{t("tenant.passwordMinLength")}</Label>
-                <Input
-                  type="number"
-                  value={formData.passwordMinLength}
-                  onChange={(e) => handleChange("passwordMinLength", parseInt(e.target.value))}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>{t("tenant.lockoutThreshold")}</Label>
-                <Input
-                  type="number"
-                  value={formData.loginLockoutThreshold}
-                  onChange={(e) => handleChange("loginLockoutThreshold", parseInt(e.target.value))}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>{t("tenant.passwordExpiryDays")}</Label>
-                <Input
-                  type="number"
-                  value={formData.passwordExpiryDays ?? ""}
-                  onChange={(e) =>
-                    handleChange(
-                      "passwordExpiryDays",
-                      e.target.value ? parseInt(e.target.value) : undefined
-                    )
-                  }
-                  placeholder={t("tenant.neverExpires")}
-                />
-                <p className="text-xs text-nx-ink-2">{t("tenant.passwordExpiryHelp")}</p>
-              </div>
-              <div className="space-y-2">
-                <Label>{t("tenant.lockoutDuration")}</Label>
-                <Input
-                  type="number"
-                  value={formData.loginLockoutMinutes}
-                  onChange={(e) => handleChange("loginLockoutMinutes", parseInt(e.target.value))}
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex items-center gap-2">
-                <Switch
-                  checked={formData.passwordRequireUppercase}
-                  onCheckedChange={(c) => handleChange("passwordRequireUppercase", c)}
-                />
-                <Label>{t("tenant.requireUppercase")}</Label>
-              </div>
-              <div className="flex items-center gap-2">
-                <Switch
-                  checked={formData.passwordRequireNumber}
-                  onCheckedChange={(c) => handleChange("passwordRequireNumber", c)}
-                />
-                <Label>{t("tenant.requireNumber")}</Label>
-              </div>
-              <div className="flex items-center gap-2">
-                <Switch
-                  checked={formData.passwordRequireSpecial}
-                  onCheckedChange={(c) => handleChange("passwordRequireSpecial", c)}
-                />
-                <Label>{t("tenant.requireSpecial")}</Label>
-              </div>
-              <div className="flex items-center gap-2">
-                <Switch
-                  checked={formData.require2FA}
-                  onCheckedChange={(c) => handleChange("require2FA", c)}
-                />
-                <Label>{t("tenant.require2FA")}</Label>
-              </div>
-            </div>
+          <TabsContent value="security">
+            <TenantSettingsSecurityFields formData={formData} onPatch={handlePatch} />
           </TabsContent>
 
-          {/* AUDIT TAB */}
           <TabsContent value="audit" className="space-y-4 py-4">
+            {!canEditPlatformManagedFields && (
+              <div className="flex items-center justify-between rounded-nx-md border border-nx-line bg-nx-raised px-3 py-2 text-xs text-nx-ink-2">
+                <span>{t("tenant.auditReadOnlyNotice")}</span>
+                <Badge variant="secondary">{t("tenant.platformManaged")}</Badge>
+              </div>
+            )}
             <div className="flex items-center gap-2">
               <Switch
+                id="dialog-audit-enabled"
+                disabled={!canEditPlatformManagedFields}
                 checked={formData.auditEnabled}
-                onCheckedChange={(c) => handleChange("auditEnabled", c)}
+                onCheckedChange={(c) => handlePatch({ auditEnabled: c })}
               />
-              <Label>{t("tenant.auditEnabled")}</Label>
+              <Label htmlFor="dialog-audit-enabled">{t("tenant.auditEnabled")}</Label>
             </div>
             <div className="space-y-2">
-              <Label>{t("tenant.auditRetention")}</Label>
+              <Label htmlFor="dialog-audit-retention">{t("tenant.auditRetention")}</Label>
               <Input
+                id="dialog-audit-retention"
                 type="number"
+                min={30}
+                disabled={!canEditPlatformManagedFields}
                 value={formData.auditRetentionDays}
-                onChange={(e) => handleChange("auditRetentionDays", parseInt(e.target.value))}
+                onChange={(e) => {
+                  const parsed = parseInt(e.target.value, 10);
+                  if (!Number.isNaN(parsed)) handlePatch({ auditRetentionDays: parsed });
+                }}
               />
             </div>
           </TabsContent>
 
-          {/* BRANDING TAB */}
-          <TabsContent value="branding" className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label>{t("tenant.companyName")}</Label>
-              <Input
-                value={formData.companyName || ""}
-                onChange={(e) => handleChange("companyName", e.target.value)}
-                placeholder={t("tenant.companyNamePlaceholder")}
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>{t("tenant.primaryColor")}</Label>
-                <div className="flex gap-2">
-                  <Input
-                    type="color"
-                    value={formData.primaryColor || "#000000"}
-                    onChange={(e) => handleChange("primaryColor", e.target.value)}
-                    className="h-10 w-12 p-1"
-                  />
-                  <Input
-                    value={formData.primaryColor || ""}
-                    onChange={(e) => handleChange("primaryColor", e.target.value)}
-                    placeholder="#000000"
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label>{t("tenant.secondaryColor")}</Label>
-                <div className="flex gap-2">
-                  <Input
-                    type="color"
-                    value={formData.secondaryColor || "#3F4347"}
-                    onChange={(e) => handleChange("secondaryColor", e.target.value)}
-                    className="h-10 w-12 p-1"
-                  />
-                  <Input
-                    value={formData.secondaryColor || ""}
-                    onChange={(e) => handleChange("secondaryColor", e.target.value)}
-                    placeholder="#3F4347"
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <ImageUploadField
-                value={formData.logoUrl || ""}
-                onChange={(url) => handleChange("logoUrl", url)}
-                label={t("tenant.logoUrl")}
-                maxSizeBytes={2 * 1024 * 1024}
-                accept="image/png,image/jpeg,image/webp,image/svg+xml"
-              />
-              <ImageUploadField
-                value={formData.faviconUrl || ""}
-                onChange={(url) => handleChange("faviconUrl", url)}
-                label={t("tenant.faviconUrl")}
-                description={t("tenant.faviconUrlHelp")}
-                maxSizeBytes={512 * 1024}
-                accept="image/x-icon,image/png,image/svg+xml,image/webp"
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>{t("tenant.loginHeadline")}</Label>
-                <Input
-                  value={formData.loginHeadline || ""}
-                  onChange={(e) => handleChange("loginHeadline", e.target.value)}
-                  placeholder={t("tenant.loginHeadlinePlaceholder")}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>{t("tenant.loginSubtitle")}</Label>
-                <Input
-                  value={formData.loginSubtitle || ""}
-                  onChange={(e) => handleChange("loginSubtitle", e.target.value)}
-                  placeholder={t("tenant.loginSubtitlePlaceholder")}
-                />
-              </div>
-            </div>
+          <TabsContent value="branding">
+            <TenantSettingsBrandingFields formData={formData} onPatch={handlePatch} />
           </TabsContent>
         </Tabs>
 
@@ -295,7 +182,11 @@ export function TenantSettingsEditDialog({
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSaving}>
             {t("common.cancel")}
           </Button>
-          <Button onClick={handleSave} loading={isSaving}>
+          <Button
+            onClick={handleSave}
+            loading={isSaving}
+            disabled={activeTab === "audit" && !canEditPlatformManagedFields}
+          >
             {t("common.save")}
           </Button>
         </DialogFooter>

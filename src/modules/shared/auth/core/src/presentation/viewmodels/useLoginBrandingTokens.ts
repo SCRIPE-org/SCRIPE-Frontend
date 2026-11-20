@@ -18,6 +18,7 @@
 "use client";
 
 import { useEffect, useMemo } from "react";
+import { sanitizeCss } from "@core/common/sanitize";
 import {
   parseLoginBrandingJson,
   parseSlotConfig,
@@ -168,11 +169,11 @@ export function useLoginBrandingTokens({
     let customCss = "";
     try {
       const raw = loginBrandingJson ? JSON.parse(loginBrandingJson) : {};
-      customCss = raw.customCss || "";
+      customCss = sanitizeCss(raw.customCss || "").replace(/vbscript\s*:/gi, "");
     } catch {
       /* ignore */
     }
-    if (!customCss) return;
+    if (!customCss.trim()) return;
 
     document.querySelector("[data-studio-custom-css]")?.remove();
     const styleEl = document.createElement("style");

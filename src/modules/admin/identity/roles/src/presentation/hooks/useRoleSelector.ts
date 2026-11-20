@@ -47,7 +47,7 @@ export function useRoleSelector(options: UseRoleSelectorOptions = {}): UseRoleSe
 
       // If useMyTenant is true (default), fetch current tenant's roles strictly
       if (useMyTenant) {
-        const response = await roleRepository.getMyTenantRoles({
+        const response = await roleRepository.getCurrentTenantRoles({
           page: 1,
           pageSize: 100,
         });

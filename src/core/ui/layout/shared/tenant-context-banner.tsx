@@ -3,10 +3,10 @@
 import { useRef, useEffect } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useTenantContext } from "@core/providers/tenant-context-provider";
+import { useAdminContext } from "@core/hooks/useAdminContext";
 import { useImpersonation } from "@modules/auth/core/src/presentation/viewmodels/useImpersonation";
 import { UserCheck, Building2, X } from "lucide-react";
 import { Button } from "@core/ui/button";
-import { useRouter } from "next/navigation";
 import { cn } from "@core/common/utils";
 
 /**
@@ -38,12 +38,12 @@ const BANNER_ACTION = "h-8 text-xs";
 export function TenantContextBanner() {
   const { t } = useI18n();
   const { currentTenant, exitTenantWorld } = useTenantContext();
+  const { activeTenantId, activeTenantName, isImpersonating: isTenantOverride } = useAdminContext();
   const { isImpersonating, stopImpersonation } = useImpersonation();
-  const router = useRouter();
   const bannerRef = useRef<HTMLDivElement>(null);
 
-  const activeTenantId = currentTenant?.id;
-  const isActive = isImpersonating || !!(activeTenantId && currentTenant);
+  const hasDrilldownBanner = Boolean(activeTenantId && currentTenant && isTenantOverride);
+  const isActive = isImpersonating || hasDrilldownBanner;
 
   // Sync the banner height → CSS variable on <html>
   // so fixed headers/sidebars offset themselves automatically (see globals.css).
@@ -88,7 +88,7 @@ export function TenantContextBanner() {
   }
 
   // ── Tenant Drilldown Banner ──
-  if (activeTenantId && currentTenant) {
+  if (hasDrilldownBanner) {
     return (
       <div ref={bannerRef} role="status" className={cn(BANNER_SHELL, "border-info/30 bg-info/10")}>
         <Building2 className="h-4 w-4 shrink-0 text-info" aria-hidden="true" />
@@ -96,7 +96,7 @@ export function TenantContextBanner() {
           <span className="text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
             {t("chrome.tenantBanner.tenantContext")}
           </span>
-          <span className="text-sm font-semibold">{currentTenant.name}</span>
+          <span className="text-sm font-semibold">{activeTenantName ?? currentTenant?.name}</span>
         </div>
         <Button
           variant="outline"
@@ -104,8 +104,7 @@ export function TenantContextBanner() {
           className={BANNER_ACTION}
           aria-label={t("chrome.tenantBanner.exitTenantContext")}
           onClick={() => {
-            exitTenantWorld();
-            router.push("/tenants");
+            exitTenantWorld({ redirectTo: "/hub" });
           }}
         >
           <X className="me-1 h-3 w-3" aria-hidden="true" />

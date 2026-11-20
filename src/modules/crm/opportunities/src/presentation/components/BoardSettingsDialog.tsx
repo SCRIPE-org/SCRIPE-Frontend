@@ -9,20 +9,25 @@ import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 
+/** Swimlane grouping modes supported by the Opportunities Kanban board. */
 export type KanbanSwimlaneMode = "none" | "assignee" | "account" | "dealType";
+/** Visual card density presets for Opportunities Kanban cards. */
 export type KanbanCardDensity = "Compact" | "Standard" | "Executive";
 
+/** Minimum and maximum work-in-progress card thresholds for a pipeline stage column. */
 export interface StageWipLimit {
   min?: number;
   max?: number;
 }
 
+/** Persisted Kanban board layout, density, and per-stage WIP limit configuration. */
 export interface BoardSettingsConfig {
   swimlaneMode: KanbanSwimlaneMode;
   cardDensity?: KanbanCardDensity;
   wipLimits: Record<string, StageWipLimit>;
 }
 
+/** Props for `BoardSettingsDialog`. */
 export interface BoardSettingsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -97,7 +102,7 @@ export function BoardSettingsDialog({
                 <SelectTrigger className="h-8 text-xs" data-testid="board-swimlane-select">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="z-[10002]">
+                <SelectContent>
                   <SelectItem value="none" className="text-xs">{t("crmOpportunities.boardSettings.swimlaneNone")}</SelectItem>
                   <SelectItem value="assignee" className="text-xs">{t("crmOpportunities.boardSettings.swimlaneAssignee")}</SelectItem>
                   <SelectItem value="account" className="text-xs">{t("crmOpportunities.boardSettings.swimlaneAccount")}</SelectItem>
@@ -117,7 +122,7 @@ export function BoardSettingsDialog({
                 <SelectTrigger className="h-8 text-xs" data-testid="board-card-density-select">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="z-[10002]">
+                <SelectContent>
                   <SelectItem value="Compact" className="text-xs">{t("crmOpportunities.boardSettings.densityCompact")}</SelectItem>
                   <SelectItem value="Standard" className="text-xs">{t("crmOpportunities.boardSettings.densityStandard")}</SelectItem>
                   <SelectItem value="Executive" className="text-xs">{t("crmOpportunities.boardSettings.densityExecutive")}</SelectItem>
@@ -130,7 +135,7 @@ export function BoardSettingsDialog({
             <Label className="text-xs font-semibold text-nx-ink block">
               {t("crmOpportunities.boardSettings.wipMappingLabel")}
             </Label>
-            <div className="space-y-1.5 max-h-[360px] overflow-y-auto pr-1">
+            <div className="space-y-1.5 max-h-[360px] overflow-y-auto pe-1">
               {[
                 ...stages,
                 ...(stages.some((s) => s.stageKey === "terminal-won" || s.stageKey.includes("won"))

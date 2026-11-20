@@ -182,7 +182,7 @@ export function ResourceWorkingHoursTab({ vm }: Props) {
               <div className="overflow-hidden rounded-nx-md border border-nx-line bg-nx-surface">
                 <div className="flex items-center justify-between border-b border-nx-line bg-nx-raised p-3 text-xs font-semibold text-nx-ink">
                   <span>{t("resources.workingHours.day", { defaultValue: "Day" })}</span>
-                  <div className="mr-4 flex items-center gap-8 rtl:ml-4 rtl:mr-0">
+                  <div className="me-4 flex items-center gap-8">
                     <span>
                       {t("resources.workingHours.openingTime", { defaultValue: "Opening Time" })}
                     </span>
@@ -247,7 +247,7 @@ export function ResourceWorkingHoursTab({ vm }: Props) {
                             </Button>
                           </div>
                         ) : (
-                          <span className="mr-16 text-xs italic text-nx-ink-3 rtl:ml-16 rtl:mr-0">
+                          <span className="me-16 text-xs italic text-nx-ink-3">
                             {t("resources.workingHours.closed", { defaultValue: "Closed" })}
                           </span>
                         )}

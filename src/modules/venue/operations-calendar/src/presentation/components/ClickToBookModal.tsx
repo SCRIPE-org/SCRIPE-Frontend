@@ -1,16 +1,13 @@
-// FILE-EXCEPTION: rule bypass for existing large file
-
 "use client";
 
-import React from "react";
 import { ArrowRight, Timer } from "lucide-react";
 import {
   Sheet,
   SheetContent,
+  SheetDescription,
   SheetFooter,
   SheetHeader,
   SheetTitle,
-  SheetDescription,
 } from "@core/ui/sheet";
 import { Button } from "@core/ui/button";
 import { Alert, AlertDescription } from "@core/ui/alert";
@@ -20,55 +17,19 @@ import {
   useClickToBookViewModel,
   type UseClickToBookProps,
 } from "../viewmodels/useClickToBookViewModel";
+import { BookingStepperHeader } from "./booking-steps/BookingStepperHeader";
+import { BookingContextSummary } from "./booking-steps/BookingContextSummary";
 import { BookingCourtStep } from "./booking-steps/BookingCourtStep";
 import { BookingCustomerStep } from "./booking-steps/BookingCustomerStep";
 import { BookingPricingStep } from "./booking-steps/BookingPricingStep";
 import { BookingPaymentStep } from "./booking-steps/BookingPaymentStep";
 
-function getCourtImage(resourceName?: string, sportType?: string): string {
-  const n = (resourceName || "").toLowerCase();
-  const s = (sportType || "").toLowerCase();
-  if (s.includes("5-a-side") || n.includes("5-a-side") || n.includes("5a")) {
-    return "https://images.unsplash.com/photo-1575361204480-aadea25e6e68?auto=format&fit=crop&w=1200&q=80";
-  }
-  if (s.includes("foot") || n.includes("foot") || n.includes("pitch") || s.includes("soccer") || n.includes("turf")) {
-    return "https://images.unsplash.com/photo-1529900748604-07564a03e7a6?auto=format&fit=crop&w=1200&q=80";
-  }
-  if (s.includes("tennis") || n.includes("tennis") || n.includes("clay") || n.includes("hardcourt")) {
-    return "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?auto=format&fit=crop&w=1200&q=80";
-  }
-  if (s.includes("swim") || n.includes("swim") || n.includes("pool") || n.includes("lane") || s.includes("aqua")) {
-    return "https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&w=1200&q=80";
-  }
-  if (s.includes("squash") || n.includes("squash")) {
-    return "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1200&q=80";
-  }
-  if (s.includes("basket") || n.includes("basket") || n.includes("fieldhouse")) {
-    return "https://images.unsplash.com/photo-1519861531473-9200262188bf?auto=format&fit=crop&w=1200&q=80";
-  }
-  if (s.includes("badmin") || n.includes("badmin")) {
-    return "https://images.unsplash.com/photo-1626224583764-f87db24ac4ea?auto=format&fit=crop&w=1200&q=80";
-  }
-  if (s.includes("volley") || n.includes("volley") || n.includes("beach")) {
-    return "https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?auto=format&fit=crop&w=1200&q=80";
-  }
-  if (s.includes("gym") || s.includes("crossfit") || s.includes("fit") || n.includes("gym") || n.includes("crossfit")) {
-    return "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=1200&q=80";
-  }
-  if (s.includes("run") || s.includes("track") || s.includes("athletic") || n.includes("track")) {
-    return "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=1200&q=80";
-  }
-  if (n.includes("outdoor") || s.includes("outdoor") || n.includes("panoramic")) {
-    return "https://images.unsplash.com/photo-1599474924187-334a4ae5bd3c?auto=format&fit=crop&w=1200&q=80";
-  }
-  if (s.includes("padel") || n.includes("padel")) {
-    return "https://images.unsplash.com/photo-1626248801379-51a0748a5f96?auto=format&fit=crop&w=1200&q=80";
-  }
-  return "/images/venue/padel-court-indoor.svg";
-}
-
 export type ClickToBookModalProps = UseClickToBookProps;
 
+/**
+ * Multi-step Click-to-Book slide-over sheet orchestrating court selection,
+ * customer assignment, authoritative quote verification, and payment recording.
+ */
 export function ClickToBookModal(props: ClickToBookModalProps) {
   const { open, onOpenChange, resources = [], onFindSlots, onSuccess } = props;
   const vm = useClickToBookViewModel(props);
@@ -79,171 +40,82 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
     language === "ar" ||
     (typeof document !== "undefined" && document.documentElement.dir === "rtl");
 
+  const paymentStepProps = {
+    t,
+    stage: vm.stage,
+    onClose: () => onOpenChange(false),
+    onSuccess,
+    onFindSlots,
+    selectedResource: vm.selectedResource,
+    selectedCustomer: vm.selectedCustomer,
+    formatDateDisplay: vm.formatDateDisplay,
+    formatTimeRange: vm.formatTimeRange,
+    paymentPartialFailure: vm.paymentPartialFailure,
+    paymentErrorMessage: vm.paymentErrorMessage,
+    quote: vm.quote,
+    amountPaid: vm.amountPaid,
+    remainingBalance: vm.remainingBalance,
+    canRecordPayment: vm.canRecordPayment,
+    recordingPaymentManual: vm.recordingPaymentManual,
+    onManualRecordPayment: vm.handleManualRecordPayment,
+    reservationId: vm.reservationId,
+    paymentChoice: vm.paymentChoice,
+    onPaymentChoiceChange: vm.setPaymentChoice,
+    payNowAmount: vm.payNowAmount,
+    onPayNowAmountChange: vm.setPayNowAmount,
+    paymentMethod: vm.paymentMethod,
+    onPaymentMethodChange: vm.setPaymentMethod,
+    paymentReference: vm.paymentReference,
+    onPaymentReferenceChange: vm.setPaymentReference,
+  };
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side={isRtl ? "left" : "right"}
         dir={isRtl ? "rtl" : "ltr"}
         className={cn(
-          "border-nx-line flex h-full w-full flex-col overflow-y-auto border-s bg-nx-surface p-6 shadow-xl sm:max-w-lg",
-          vm.stage === "confirmed" ? "justify-start space-y-4" : "justify-between"
+          "flex h-full w-full flex-col overflow-y-auto border-s border-nx-line bg-nx-surface p-6 shadow-nx-modal sm:max-w-lg",
+          vm.stage === "confirmed" ? "justify-start space-y-4" : "justify-between",
         )}
       >
-        <SheetHeader className="border-nx-line border-b pb-3 pe-8 text-start">
+        <SheetHeader className="border-b border-nx-line pb-3 pe-8 text-start">
           <SheetTitle className="text-base font-bold text-nx-ink">
-            {t("operationsCalendar.clickToBook.title", { defaultValue: "New Booking" })}
+            {t("operationsCalendar.clickToBook.title")}
           </SheetTitle>
           <SheetDescription className="text-xs text-nx-ink-2">
             {vm.selectedResource?.name
-              ? `${vm.selectedResource.name} • ${vm.selectedResource.facilityName || ""}`
-              : t("operationsCalendar.clickToBook.dialogDescription", {
-                  defaultValue: "Schedule court time, select customer, and confirm booking.",
-                })}
+              ? `${vm.selectedResource.name}${vm.selectedResource.facilityName ? ` • ${vm.selectedResource.facilityName}` : ""}`
+              : t("operationsCalendar.clickToBook.dialogDescription")}
           </SheetDescription>
         </SheetHeader>
 
-        {/* Stepper Header (Only during normal booking flow) */}
         {vm.stage === "booking" && (
-          <div
-            data-testid="click-to-book-stepper"
-            className="border-nx-line bg-nx-raised/40 flex items-center justify-between rounded-xl border px-3.5 py-2.5"
-          >
-            {!vm.isContextual && (
-              <>
-                <div className="flex items-center gap-2 shrink-0">
-                  <span
-                    className={`flex size-5 items-center justify-center rounded-full text-[10px] font-bold ${
-                      vm.step >= 0 ? "bg-nx-accent text-nx-on-fill ring-1 ring-nx-accent"
-                        : "bg-nx-raised text-nx-ink-3"
-                    }`}
-                  >
-                    1
-                  </span>
-                  <span
-                    className={`text-xs font-semibold ${vm.step >= 0 ? "font-bold text-nx-ink" : "text-nx-ink-3"}`}
-                  >
-                    {t("operationsCalendar.clickToBook.stepper.courtAndTime")}
-                  </span>
-                </div>
-                <div className={`h-px flex-1 mx-2 sm:mx-3 ${vm.step >= 1 ? "bg-nx-accent" : "bg-nx-line"}`} />
-              </>
-            )}
-
-            <div className="flex items-center gap-2 shrink-0">
-              <span
-                className={`flex size-5 items-center justify-center rounded-full text-[10px] font-bold ${
-                  vm.step >= 1 ? "bg-nx-accent text-nx-on-fill ring-1 ring-nx-accent"
-                    : "bg-nx-raised text-nx-ink-3"
-                }`}
-              >
-                {vm.isContextual ? 1 : 2}
-              </span>
-              <span
-                className={`text-xs font-semibold ${vm.step >= 1 ? "font-bold text-nx-ink" : "text-nx-ink-3"}`}
-              >
-                {t("operationsCalendar.clickToBook.stepper.customer")}
-              </span>
-            </div>
-
-            <div className={`h-px flex-1 mx-2 sm:mx-3 ${vm.step >= 2 ? "bg-nx-accent" : "bg-nx-line"}`} />
-
-            <div data-testid="click-to-book-step-3" className="flex items-center gap-2 shrink-0">
-              <span
-                className={`flex size-5 items-center justify-center rounded-full text-[10px] font-bold ${
-                  vm.step >= 2 ? "bg-nx-accent text-nx-on-fill ring-1 ring-nx-accent"
-                    : "bg-nx-raised text-nx-ink-3"
-                }`}
-              >
-                {vm.isContextual ? 2 : 3}
-              </span>
-              <span
-                className={`text-xs font-semibold ${vm.step >= 2 ? "font-bold text-nx-ink" : "text-nx-ink-3"}`}
-              >
-                {t("operationsCalendar.clickToBook.stepper.confirm")}
-              </span>
-            </div>
-          </div>
+          <BookingStepperHeader isContextual={vm.isContextual} step={vm.step} t={t} />
         )}
 
-        {/* Global Error Banner */}
         {vm.error && (
           <Alert variant="destructive" className="my-2 py-2">
             <AlertDescription className="text-xs">{vm.error}</AlertDescription>
           </Alert>
         )}
 
-        {/* Conflict & Confirmed Stages */}
         {vm.stage !== "booking" ? (
-          <BookingPaymentStep
-            t={t}
-            stage={vm.stage}
-            onClose={() => onOpenChange(false)}
-            onSuccess={onSuccess}
-            onFindSlots={onFindSlots}
-            selectedResource={vm.selectedResource}
-            selectedCustomer={vm.selectedCustomer}
-            formatDateDisplay={vm.formatDateDisplay}
-            formatTimeRange={vm.formatTimeRange}
-            paymentPartialFailure={vm.paymentPartialFailure}
-            paymentErrorMessage={vm.paymentErrorMessage}
-            quote={vm.quote}
-            amountPaid={vm.amountPaid}
-            remainingBalance={vm.remainingBalance}
-            canRecordPayment={vm.canRecordPayment}
-            recordingPaymentManual={vm.recordingPaymentManual}
-            onManualRecordPayment={vm.handleManualRecordPayment}
-            reservationId={vm.reservationId}
-            paymentChoice={vm.paymentChoice}
-            onPaymentChoiceChange={vm.setPaymentChoice}
-            payNowAmount={vm.payNowAmount}
-            onPayNowAmountChange={vm.setPayNowAmount}
-            paymentMethod={vm.paymentMethod}
-            onPaymentMethodChange={vm.setPaymentMethod}
-            paymentReference={vm.paymentReference}
-            onPaymentReferenceChange={vm.setPaymentReference}
-          />
+          <BookingPaymentStep {...paymentStepProps} />
         ) : (
-          /* Active Booking Flow */
           <div className="space-y-4 py-2">
-            {/* Context Summary Card (Shown in Steps 1 & 2) */}
             {vm.step >= 1 && vm.selectedResource && (
-              <div className="border-nx-line bg-nx-raised/40 flex items-center gap-3 rounded-xl border p-3">
-                <div className="border-nx-line relative size-12 shrink-0 overflow-hidden rounded-lg border bg-nx-surface">
-                  <img
-                    src={getCourtImage(vm.selectedResource.name)}
-                    alt={vm.selectedResource.name}
-                    className="size-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center justify-between">
-                    <h4 className="truncate text-xs font-bold text-nx-ink">
-                      {vm.selectedResource.name}
-                    </h4>
-                    {!vm.isContextual && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        type="button"
-                        onClick={() => vm.setStep(0)}
-                        className="h-auto px-0 text-[11px] font-semibold text-primary hover:underline"
-                      >
-                        {t("operationsCalendar.clickToBook.context.change")}
-                      </Button>
-                    )}
-                  </div>
-                  <p className="truncate text-[11px] text-nx-ink-2">
-                    {vm.selectedResource.facilityName}
-                  </p>
-                  <p className="mt-0.5 text-[11px] font-medium text-nx-ink">
-                    {vm.formatDateDisplay()} • {vm.formatTimeRange()} ({vm.duration} min)
-                  </p>
-                </div>
-              </div>
+              <BookingContextSummary
+                resource={vm.selectedResource}
+                isContextual={vm.isContextual}
+                duration={vm.duration}
+                dateDisplay={vm.formatDateDisplay()}
+                timeRange={vm.formatTimeRange()}
+                onChangeCourt={() => vm.setStep(0)}
+                t={t}
+              />
             )}
 
-            {/* Step 0: Court & Time */}
             {vm.step === 0 && (
               <BookingCourtStep
                 resources={resources}
@@ -261,14 +133,11 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
               />
             )}
 
-            {/* Step 1: Customer Selection */}
             {vm.step === 1 && (
               <BookingCustomerStep
                 t={t}
                 quickAddOpen={vm.quickAddOpen}
-                onToggleQuickAdd={() => {
-                  vm.setQuickAddOpen(!vm.quickAddOpen);
-                }}
+                onToggleQuickAdd={() => vm.setQuickAddOpen(!vm.quickAddOpen)}
                 quickName={vm.quickName}
                 onQuickNameChange={vm.setQuickName}
                 quickPhone={vm.quickPhone}
@@ -290,7 +159,6 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
               />
             )}
 
-            {/* Step 2: Pricing Summary & Payment Option */}
             {vm.step === 2 && (
               <>
                 <BookingPricingStep
@@ -322,41 +190,14 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
                   onApplyOverride={vm.handleApplyPriceOverride}
                 />
 
-                <BookingPaymentStep
-                  t={t}
-                  stage={vm.stage}
-                  onClose={() => onOpenChange(false)}
-                  onSuccess={onSuccess}
-                  onFindSlots={onFindSlots}
-                  selectedResource={vm.selectedResource}
-                  selectedCustomer={vm.selectedCustomer}
-                  formatDateDisplay={vm.formatDateDisplay}
-                  formatTimeRange={vm.formatTimeRange}
-                  paymentPartialFailure={vm.paymentPartialFailure}
-                  quote={vm.quote}
-                  amountPaid={vm.amountPaid}
-                  remainingBalance={vm.remainingBalance}
-                  canRecordPayment={vm.canRecordPayment}
-                  recordingPaymentManual={vm.recordingPaymentManual}
-                  onManualRecordPayment={vm.handleManualRecordPayment}
-                  reservationId={vm.reservationId}
-                  paymentChoice={vm.paymentChoice}
-                  onPaymentChoiceChange={vm.setPaymentChoice}
-                  payNowAmount={vm.payNowAmount}
-                  onPayNowAmountChange={vm.setPayNowAmount}
-                  paymentMethod={vm.paymentMethod}
-                  onPaymentMethodChange={vm.setPaymentMethod}
-                  paymentReference={vm.paymentReference}
-                  onPaymentReferenceChange={vm.setPaymentReference}
-                />
+                <BookingPaymentStep {...paymentStepProps} />
               </>
             )}
           </div>
         )}
 
-        {/* Footer Controls */}
         {vm.stage === "booking" && (
-          <SheetFooter className="border-nx-line flex items-center justify-between border-t pt-3">
+          <SheetFooter className="flex items-center justify-between border-t border-nx-line pt-3">
             {vm.step === 2 && vm.canCreateHold && !vm.holdExpiresAtUtc ? (
               <Button
                 type="button"
@@ -366,14 +207,14 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
                 disabled={vm.submitting || !vm.selectedCustomer}
                 className="text-xs text-nx-ink-2"
               >
-                <Timer className="me-1 size-3.5" />
+                <Timer className="me-1 size-3.5" aria-hidden="true" />
                 {t("operationsCalendar.clickToBook.hold.holdAction")}
               </Button>
             ) : (
               <div />
             )}
 
-            <div className="flex items-center gap-2 shrink-0">
+            <div className="flex shrink-0 items-center gap-2">
               <Button
                 type="button"
                 variant="outline"
@@ -395,6 +236,7 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
               {vm.step < 2 ? (
                 <Button
                   type="button"
+                  variant="default"
                   size="sm"
                   onClick={() => {
                     if (vm.step === 0) {
@@ -408,20 +250,21 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
                     (vm.step === 0 && (vm.step0Checking || !vm.selectedResource)) ||
                     (vm.step === 1 && !vm.selectedCustomer)
                   }
-                  className="bg-nx-accent text-xs font-bold text-nx-on-fill hover:opacity-90 disabled:opacity-50"
+                  className="text-xs font-bold"
                 >
                   {vm.step === 0 && vm.step0Checking ? (
                     <span>{t("operationsCalendar.clickToBook.courtStep.checking")}</span>
                   ) : (
                     <>
                       {t("operationsCalendar.clickToBook.confirm.next")}
-                      <ArrowRight className="ms-1 size-3.5 rtl:rotate-180" />
+                      <ArrowRight className="ms-1 size-3.5 rtl:rotate-180" aria-hidden="true" />
                     </>
                   )}
                 </Button>
               ) : (
                 <Button
                   type="button"
+                  variant="default"
                   size="sm"
                   onClick={vm.handleConfirm}
                   loading={vm.submitting}
@@ -433,7 +276,7 @@ export function ClickToBookModal(props: ClickToBookModalProps) {
                     Boolean(vm.priceChangeNotice) ||
                     !vm.canCreateBooking
                   }
-                  className="bg-nx-accent text-xs font-bold text-nx-on-fill hover:opacity-90 disabled:opacity-50"
+                  className="text-xs font-bold"
                 >
                   {vm.submitting ? (
                     <span>{t("operationsCalendar.clickToBook.courtStep.confirming")}</span>

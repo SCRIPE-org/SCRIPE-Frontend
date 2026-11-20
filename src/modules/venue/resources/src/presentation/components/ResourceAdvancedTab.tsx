@@ -12,8 +12,10 @@ import {
 } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
+import { Checkbox } from "@core/ui/checkbox";
 import { Label } from "@core/ui/label";
 import { Input } from "@core/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { Badge } from "@core/ui/badge";
 import { Alert, AlertDescription } from "@core/ui/alert";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
@@ -79,7 +81,7 @@ export function ResourceAdvancedTab({ vm }: Props) {
               ) : (
                 <Badge
                   variant="outline"
-                  className="border-warning/20 bg-warning/10 text-xs text-warning"
+                  className="border-warning/20 bg-warning/10 text-xs text-nx-warning-strong"
                 >
                   {t("resources.card.statusDraft", { defaultValue: "Draft" })}
                 </Badge>
@@ -119,7 +121,7 @@ export function ResourceAdvancedTab({ vm }: Props) {
                 size="sm"
                 disabled={vm.saving}
                 onClick={() => void vm.publishCourt()}
-                className="gap-1.5 bg-nx-accent text-xs font-bold text-nx-on-fill hover:bg-nx-accent/90"
+                className="gap-1.5 bg-nx-accent-fill text-xs font-bold text-nx-on-fill hover:bg-nx-accent-fill/90"
               >
                 <Send className="size-3.5" aria-hidden="true" />
                 <span>
@@ -145,15 +147,15 @@ export function ResourceAdvancedTab({ vm }: Props) {
               </Alert>
             ) : (
               <div className="space-y-2">
-                <Alert className="border-warning/30 bg-warning/10 py-2.5 text-warning">
-                  <AlertCircle className="size-4 shrink-0 text-warning" aria-hidden="true" />
+                <Alert className="border-warning/30 bg-warning/10 py-2.5 text-nx-warning-strong">
+                  <AlertCircle className="size-4 shrink-0 text-nx-warning-strong" aria-hidden="true" />
                   <AlertDescription className="text-xs font-semibold">
                     {t("resources.advanced.hasBlockers", {
                       defaultValue: "Publication blockers found:",
                     })}
                   </AlertDescription>
                 </Alert>
-                <ul className="space-y-1.5 pl-6 text-xs text-nx-ink-2">
+                <ul className="space-y-1.5 ps-6 text-xs text-nx-ink-2">
                   {vm.checklist.blockers.map((b) => (
                     <li key={b.code} className="flex items-center gap-2">
                       <span className="size-1.5 rounded-full bg-warning" />
@@ -284,12 +286,10 @@ export function ResourceAdvancedTab({ vm }: Props) {
                     })}
                   </p>
                 </div>
-                <input
-                  type="checkbox"
+                <Checkbox
                   id="is-composite-toggle"
                   checked={isComposite}
-                  onChange={(e) => setIsComposite(e.target.checked)}
-                  className="size-4 rounded border-nx-line text-nx-accent focus:ring-nx-accent"
+                  onCheckedChange={(checked) => setIsComposite(Boolean(checked))}
                 />
               </div>
 
@@ -298,23 +298,26 @@ export function ResourceAdvancedTab({ vm }: Props) {
                 <Label htmlFor="adv-parent" className="text-xs font-bold text-nx-ink">
                   {t("resources.advanced.parentCourt", { defaultValue: "Parent Court / Space" })}
                 </Label>
-                <select
-                  id="adv-parent"
-                  value={parentId}
-                  onChange={(e) => setParentId(e.target.value)}
-                  className="h-9 w-full rounded-lg border border-nx-line bg-nx-surface px-3 text-xs text-nx-ink focus:outline-hidden focus:ring-1 focus:ring-nx-accent"
+                <Select
+                  value={parentId || "__none__"}
+                  onValueChange={(value) => setParentId(value === "__none__" ? "" : value)}
                 >
-                  <option value="">
-                    {t("resources.advanced.parentCourtNone", {
-                      defaultValue: "None (Top-Level Court)",
-                    })}
-                  </option>
-                  {vm.availableParentResources.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.name}
-                    </option>
-                  ))}
-                </select>
+                  <SelectTrigger id="adv-parent" className="h-9 w-full text-xs">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__none__">
+                      {t("resources.advanced.parentCourtNone", {
+                        defaultValue: "None (Top-Level Court)",
+                      })}
+                    </SelectItem>
+                    {vm.availableParentResources.map((p) => (
+                      <SelectItem key={p.id} value={p.id}>
+                        {p.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
@@ -323,7 +326,7 @@ export function ResourceAdvancedTab({ vm }: Props) {
                 type="submit"
                 disabled={vm.saving}
                 size="sm"
-                className="gap-1.5 bg-nx-accent text-xs font-bold text-nx-on-fill hover:bg-nx-accent/90"
+                className="gap-1.5 bg-nx-accent-fill text-xs font-bold text-nx-on-fill hover:bg-nx-accent-fill/90"
               >
                 {vm.saving ? (
                   <LoadingSpinner size="sm" showText={false} />

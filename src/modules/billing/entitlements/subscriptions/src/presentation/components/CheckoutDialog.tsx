@@ -27,6 +27,19 @@ import Image from "next/image";
 /** Stripe checkout sessions expire after 24 hours by default */
 const SESSION_EXPIRY_MS = 24 * 60 * 60 * 1000;
 
+function parseSafeHttpUrl(rawUrl: string | null | undefined): string | null {
+  if (!rawUrl) return null;
+  try {
+    const parsed = new URL(rawUrl);
+    if (parsed.protocol === "https:" || parsed.protocol === "http:") {
+      return parsed.toString();
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 function useCountdown(isActive: boolean) {
   const [remaining, setRemaining] = useState(SESSION_EXPIRY_MS);
 
@@ -78,6 +91,7 @@ export function CheckoutDialog({ vm }: SubscriptionDialogProps) {
   const countdown = useCountdown(vm.showCheckoutDialog);
 
   const checkoutUrl = vm.checkoutUrl;
+  const safeCheckoutUrl = parseSafeHttpUrl(checkoutUrl);
   const handleCopyLink = useCallback(() => {
     if (checkoutUrl) {
       navigator.clipboard.writeText(checkoutUrl);
@@ -113,7 +127,7 @@ export function CheckoutDialog({ vm }: SubscriptionDialogProps) {
                 countdown.isExpired
                   ? "text-destructive"
                   : countdown.isUrgent
-                    ? "text-warning"
+                    ? "text-nx-warning-strong"
                     : "text-nx-ink-3"
               )}
               aria-hidden="true"
@@ -124,7 +138,7 @@ export function CheckoutDialog({ vm }: SubscriptionDialogProps) {
                 countdown.isExpired
                   ? "text-destructive"
                   : countdown.isUrgent
-                    ? "text-warning"
+                    ? "text-nx-warning-strong"
                     : "text-nx-ink-3"
               )}
             >
@@ -146,10 +160,8 @@ export function CheckoutDialog({ vm }: SubscriptionDialogProps) {
           {vm.checkoutQrCode && (
             <div className="flex flex-col items-center gap-2">
               <p className="text-xs text-nx-ink-3">{t("billing.dialogs.scanQrCode")}</p>
-              {/* The plate is pinned to the one ink-neutral surface rather
-                  than an nx step — a QR scanner needs guaranteed maximum
-                  contrast against the code regardless of the active theme. */}
-              <div className="rounded-nx-lg border border-nx-line bg-[var(--nx-on-fill)] p-3 shadow-nx-sm">
+              {/* Explicit white QR backing ensures black QR modules remain scannable in both light and dark themes. */}
+              <div className="rounded-nx-lg border border-nx-line bg-white p-3 text-neutral-950">
                 <Image
                   src={vm.checkoutQrCode}
                   alt={t("billing.dialogs.qrCodeAlt")}
@@ -183,9 +195,13 @@ export function CheckoutDialog({ vm }: SubscriptionDialogProps) {
             {t("billing.actions.copyLink")}
           </Button>
           <Button
-            onClick={() => window.open(vm.checkoutUrl, "_blank")}
+            onClick={() => {
+              if (safeCheckoutUrl) {
+                window.open(safeCheckoutUrl, "_blank", "noopener,noreferrer");
+              }
+            }}
             className="gap-2"
-            disabled={countdown.isExpired}
+            disabled={countdown.isExpired || !safeCheckoutUrl}
           >
             <ExternalLink className="h-4 w-4" aria-hidden="true" />
             {t("billing.actions.openLink")}

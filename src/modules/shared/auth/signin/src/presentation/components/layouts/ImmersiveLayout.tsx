@@ -28,7 +28,7 @@ export function ImmersiveLayout({
       // "login-page" is the scope every global auth accessibility rule is
       // written under; this was the only one of the 23 layouts missing it, so
       // those rules silently did nothing here.
-      className={`login-page relative flex min-h-screen w-full ${BG_STYLE} font-sans selection:bg-primary/20`}
+      className={`login-page relative flex min-h-[100dvh] w-full ${BG_STYLE} font-sans`}
       dir={direction}
       style={WRAPPER_STYLE}
     >
@@ -36,30 +36,29 @@ export function ImmersiveLayout({
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(to bottom right, var(--login-overlay-color, hsl(var(--background)))/0.8, transparent/0.4, var(--login-overlay-color, hsl(var(--background)))/0.8)",
+            "linear-gradient(to bottom right, color-mix(in srgb, var(--login-overlay-color, var(--nx-ground)) 80%, transparent), transparent, color-mix(in srgb, var(--login-overlay-color, var(--nx-ground)) 80%, transparent))",
           opacity: "var(--login-overlay-opacity, 0.7)",
-          backdropFilter: "blur(var(--login-overlay-blur, 0px))",
         }}
       />
       {topActions}
       {/* Left: Big cinematic headline */}
       <div className="relative z-10 hidden flex-col justify-center px-16 lg:flex lg:w-3/5 xl:px-24">
-        <h1 className="login-heading text-7xl font-black leading-[0.95] tracking-tighter text-[var(--login-text,hsl(var(--foreground)))]">
+        <h1 className="login-heading text-7xl font-black leading-[0.95] tracking-tighter text-[var(--login-text,var(--nx-ink))]">
           {branding?.loginHeadline || companyName}
         </h1>
-        <p className="mt-6 max-w-lg text-xl text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
+        <p className="mt-6 max-w-lg text-xl text-[var(--login-text-muted,var(--nx-ink-2))]">
           {branding?.loginSubtitle || t("auth.branding.subtitle")}
         </p>
         <SlotRenderer slotId="login.sidebar.content" slotConfig={slotConfig} className="mt-10" />
       </div>
       {/* Right: Form on surface (no card) */}
-      <div className="relative z-10 flex w-full flex-col items-center justify-center px-8 py-12 lg:w-2/5">
+      <main className="relative z-10 flex w-full flex-col items-center justify-center px-8 py-12 lg:w-2/5">
         <MobileLogo logoSrc={logoSrc} logoAlt={logoAlt} companyName={companyName} />
         {loginStep === "credentials" && <DesktopHeading companyName={companyName} />}
         {formContent}
         {footer}
         {footerSlot}
-      </div>
+      </main>
     </div>
   );
 }

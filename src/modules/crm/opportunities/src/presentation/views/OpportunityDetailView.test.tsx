@@ -1,15 +1,16 @@
-import { render, screen, waitFor, fireEvent } from "@testing-library/react";
+import { render, renderHook, act, screen, waitFor, fireEvent } from "@testing-library/react";
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { OpportunityDetailView } from "./OpportunityDetailView";
-import { setCrmContainer } from "@modules/crm/di";
-import type { CrmContainer } from "@modules/crm/di";
-import { useCrmSettingsStore } from "@modules/crm";
+import { useOpportunityDetailViewModel } from "../viewmodels/useOpportunityDetailViewModel";
+import { setCrmContainer, type CrmContainer } from "@modules/crm/di";
+import { queryClient } from "@core/query-client";
+import { useCrmClientPrefsStore } from "@modules/crm";
 import {
   type OpportunityDetailResult,
   OpportunityStageTransitionKind,
 } from "../../domain/models/crm-opportunity.types";
 
-import { crmOpportunitiesEn } from "../../../locales/crm-opportunities.en";
+import { en as crmOpportunitiesEn } from "../../../locales/crm-opportunities.en";
 
 vi.mock("@core/providers/i18n-provider", () => ({
   useI18n: () => ({
@@ -26,8 +27,10 @@ vi.mock("@core/providers/i18n-provider", () => ({
   }),
 }));
 
+const mockUsePermission = vi.fn((_perm?: string) => true);
+
 vi.mock("@core/hooks/use-permission", () => ({
-  usePermission: () => true,
+  usePermission: (perm: string) => mockUsePermission(perm),
 }));
 
 vi.mock("@core/providers/permission-provider", () => ({
@@ -56,6 +59,7 @@ vi.mock("next/navigation", () => ({
     prefetch: vi.fn(),
   }),
   usePathname: () => "/crm/opportunities/opp-123",
+  useSearchParams: () => new URLSearchParams(),
 }));
 
 describe("OpportunityDetailView Component", () => {
@@ -128,10 +132,13 @@ describe("OpportunityDetailView Component", () => {
 
   let mockRepo: any;
   let mockOverviewRepo: any;
+  let mockActivityRepo: any;
 
   beforeEach(() => {
     vi.clearAllMocks();
-    useCrmSettingsStore.getState().resetDefaults();
+    mockUsePermission.mockReturnValue(true);
+    queryClient.clear();
+    useCrmClientPrefsStore.getState().resetClientPrefs();
 
     mockRepo = {
       getOpportunities: vi.fn(),
@@ -145,14 +152,36 @@ describe("OpportunityDetailView Component", () => {
     };
 
     mockOverviewRepo = {
+      getOverview: vi.fn(),
+    };
+    const mockSettingsRepo = {
       getSettings: vi.fn().mockResolvedValue({}),
+      getGovernanceCatalog: vi.fn().mockResolvedValue({}),
+      lookupAssignees: vi.fn().mockResolvedValue([]),
       updateTenantSettings: vi.fn().mockResolvedValue({}),
       updateUserPreferences: vi.fn().mockResolvedValue({}),
+    };
+
+    // Required so ActivityTimeline (force-mounted in the activity tab) doesn't throw
+    // when useCrmActivitiesViewModel checks container.activityRepository.
+    mockActivityRepo = {
+      getActivities: vi.fn().mockResolvedValue({ items: [], totalCount: 0, page: 1, pageSize: 20 }),
+      createActivity: vi.fn().mockResolvedValue({}),
+      createFollowUp: vi.fn().mockResolvedValue({}),
+      completeFollowUpWorkItem: vi.fn().mockResolvedValue({}),
     };
 
     const container: CrmContainer = {
       overviewService: {} as any,
       overviewRepository: mockOverviewRepo,
+
+      workflowService: {} as never,
+
+      workflowRepository: {} as never,
+      reportsService: {} as any,
+      reportsRepository: {} as any,
+      settingsService: {} as any,
+      settingsRepository: mockSettingsRepo as any,
       leadService: {} as any,
       leadRepository: {} as any,
       opportunityService: {} as any,
@@ -161,6 +190,9 @@ describe("OpportunityDetailView Component", () => {
       accountRepository: {} as any,
       contactService: {} as any,
       contactRepository: {} as any,
+      activityService: {} as any,
+      activityRepository: mockActivityRepo,
+      entityLookup: {} as any,
     };
 
     setCrmContainer(container);
@@ -177,7 +209,7 @@ describe("OpportunityDetailView Component", () => {
 
     await waitFor(() => {
       expect(screen.getByText("Saudi Pro League Broadcast Rights Extension")).toBeDefined();
-      expect(screen.getByText("SAR 1,200,000")).toBeDefined();
+      expect(screen.getAllByText("SAR 1,200,000").length).toBeGreaterThanOrEqual(1);
       expect(screen.getByText("Renewal")).toBeDefined();
       expect(screen.getByText("Verified Account / Contact Linked")).toBeDefined();
     });
@@ -194,7 +226,7 @@ describe("OpportunityDetailView Component", () => {
     expect(mockRepo.getOpportunityById).toHaveBeenCalledWith("opp-123");
   });
 
-  it("persists Deal Commercial Package quote items and handoff statuses to the backend server via CustomFieldsConfigJson", async () => {
+  it("manages Opportunity-scoped commercial package quote items and handoff statuses without mutating tenant-wide settings", async () => {
     render(<OpportunityDetailView opportunityId="opp-123" />);
 
     await waitFor(() => {
@@ -204,7 +236,6 @@ describe("OpportunityDetailView Component", () => {
     fireEvent.click(screen.getByTestId("venue-block-booking-hold-btn"));
     fireEvent.click(screen.getByTestId("academy-b2b-sponsorship-btn"));
 
-    // Add a new commercial quote line item
     fireEvent.change(screen.getByTestId("quote-item-name-input"), {
       target: { value: "VIP Hospitality Suite Add-On" },
     });
@@ -214,22 +245,87 @@ describe("OpportunityDetailView Component", () => {
     fireEvent.click(screen.getByTestId("quote-add-item-btn"));
 
     await waitFor(() => {
-      const pkg = useCrmSettingsStore.getState().dealCommercialPackages["opp-123"];
-      expect(pkg).toBeDefined();
-      expect(pkg.venueHoldStatus).toBe("reserved");
-      expect(pkg.academyCohortStatus).toBe("provisioned");
-      expect(pkg.quoteItems.some((item) => item.itemName === "VIP Hospitality Suite Add-On")).toBe(true);
-      expect(mockOverviewRepo.updateTenantSettings).toHaveBeenCalled();
+      expect(screen.getByText("VIP Hospitality Suite Add-On")).toBeDefined();
     });
 
-    const lastPayload =
-      mockOverviewRepo.updateTenantSettings.mock.calls[
-        mockOverviewRepo.updateTenantSettings.mock.calls.length - 1
-      ][0];
-    const parsedEnvelope = JSON.parse(lastPayload.customFieldsConfigJson);
-    expect(parsedEnvelope.dealCommercialPackages["opp-123"].venueHoldStatus).toBe("reserved");
-    expect(parsedEnvelope.dealCommercialPackages["opp-123"].academyCohortStatus).toBe("provisioned");
-    expect(parsedEnvelope.dealCommercialPackages["opp-123"].quoteItems).toHaveLength(3);
+    const cachedRaw = window.sessionStorage.getItem("scripe:crm:deal-package:platform:anon:opp-123");
+    expect(cachedRaw).not.toBeNull();
+    const parsedPkg = JSON.parse(cachedRaw!);
+    expect(parsedPkg.venueHoldStatus).toBe("reserved");
+    expect(parsedPkg.academyCohortStatus).toBe("provisioned");
+    expect(parsedPkg.quoteItems).toHaveLength(3);
+  });
+
+  it("silently refreshes opportunity rowVersion via getOpportunityById after addContactRole and removeContactRole", async () => {
+    mockRepo.addContactRole = vi.fn().mockResolvedValue({
+      id: "role-new-1",
+      opportunityId: "opp-123",
+      contactPartyId: "party-contact-9",
+      contactName: "Khalid Al-Subaie",
+      stakeholderRole: "DecisionMaker",
+      isPrimary: true,
+      createdAtUtc: "2026-11-18T08:00:00Z",
+    });
+    mockRepo.removeContactRole = vi.fn().mockResolvedValue(undefined);
+
+    const { result } = renderHook(() => useOpportunityDetailViewModel("opp-123"));
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+    expect(mockRepo.getOpportunityById).toHaveBeenCalledTimes(1);
+
+    mockRepo.getOpportunityById.mockResolvedValueOnce({
+      ...mockDetailData,
+      opportunity: { ...mockDetailData.opportunity, rowVersion: "rv-after-add", primaryContactRole: "DecisionMaker" },
+    });
+
+    await act(async () => {
+      await result.current.handleAddContactRole({
+        contactPartyId: "party-contact-9",
+        contactName: "Khalid Al-Subaie",
+        stakeholderRole: "DecisionMaker",
+        isPrimary: true,
+      });
+    });
+
+    expect(result.current.loading).toBe(false);
+    expect(mockRepo.getOpportunityById).toHaveBeenCalledTimes(2);
+    expect(result.current.data?.opportunity.rowVersion).toBe("rv-after-add");
+
+    mockRepo.getOpportunityById.mockResolvedValueOnce({
+      ...mockDetailData,
+      opportunity: { ...mockDetailData.opportunity, rowVersion: "rv-after-remove", primaryContactRole: null },
+    });
+
+    await act(async () => {
+      await result.current.handleRemoveContactRole("role-new-1");
+    });
+
+    expect(result.current.loading).toBe(false);
+    expect(mockRepo.getOpportunityById).toHaveBeenCalledTimes(3);
+    expect(result.current.data?.opportunity.rowVersion).toBe("rv-after-remove");
+  });
+
+  it("propagates fulfillment dispatch failures via submitError and returns false", async () => {
+    mockActivityRepo.createActivity = vi.fn().mockRejectedValueOnce(new Error("HQ Fulfillment Endpoint Offline"));
+    const { result } = renderHook(() => useOpportunityDetailViewModel("opp-123"));
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    let ok = true;
+    await act(async () => {
+      ok = await result.current.handleRequestFulfillment();
+    });
+
+    expect(ok).toBe(false);
+    expect(result.current.fulfillmentRequested).toBe(false);
+    expect(result.current.submitError).toBe("HQ Fulfillment Endpoint Offline");
+  });
+
+  it("blocks Deal 360 rendering when OPPORTUNITIES_READ permission is denied", () => {
+    mockUsePermission.mockReturnValue(false);
+    render(<OpportunityDetailView opportunityId="opp-123" />);
+    expect(screen.getByText("crm.errors.accessDenied")).toBeDefined();
+    expect(mockRepo.getOpportunityById).not.toHaveBeenCalled();
   });
 });
 

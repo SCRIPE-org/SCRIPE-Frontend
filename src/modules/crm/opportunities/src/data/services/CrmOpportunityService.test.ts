@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { CrmOpportunityService } from "./CrmOpportunityService";
+import { CrmOpportunityMapper } from "../mappers/CrmOpportunityMapper";
 import type { IApiService } from "@core/interfaces/api.interface";
-import type { UpdateDefaultPipelineInput } from "../../domain/entities/OpportunityEntity";
 
-describe("CrmOpportunityService - Default Pipeline Administration", () => {
+describe("CrmOpportunityService - Lifecycle & Mapper", () => {
   let mockApi: {
     get: ReturnType<typeof vi.fn>;
     post: ReturnType<typeof vi.fn>;
@@ -14,148 +14,62 @@ describe("CrmOpportunityService - Default Pipeline Administration", () => {
   let service: CrmOpportunityService;
 
   beforeEach(() => {
-    mockApi = {
-      get: vi.fn(),
-      post: vi.fn(),
-      put: vi.fn(),
-      delete: vi.fn(),
-      patch: vi.fn(),
-    };
+    mockApi = { get: vi.fn(), post: vi.fn(), put: vi.fn(), delete: vi.fn(), patch: vi.fn() };
     service = new CrmOpportunityService(mockApi as unknown as IApiService);
   });
 
-  it("getDefaultPipeline queries default endpoint and normalizes backend wire DTO", async () => {
-    const wireBackendResponse = {
-      pipelineId: "pipe-backend-uuid",
-      code: "default",
-      nameEn: "Standard Commercial Pipeline",
-      nameAr: "مسار المبيعات التجاري القياسي",
-      version: 1,
-      rowVersion: "ROWVER123==",
-      stages: [
-        {
-          stageId: "stg-01",
-          stageKey: "default.discovery",
-          sortOrder: 1,
-          labelEn: "Discovery",
-          labelAr: "استكشاف",
-          probabilityPercent: 10,
-          requiredExitFields: [],
-          requiresVerifiedParty: false,
-          rowVersion: "STGROVER1==",
-        },
-        {
-          stageId: "stg-04",
-          stageKey: "default.proposal",
-          sortOrder: 4,
-          labelEn: "Proposal",
-          labelAr: "عرض السعر",
-          probabilityPercent: 60,
-          requiredExitFields: ["partyId"],
-          requiresVerifiedParty: true,
-          rowVersion: "STGROVER4==",
-        },
-      ],
-    };
+  it("getOpportunities queries /v1/crm/opportunities with sanitized filters", async () => {
+    mockApi.get.mockResolvedValueOnce({
+      success: true,
+      data: { items: [], totalCount: 0, page: 1, pageSize: 20 },
+    });
 
-    mockApi.get.mockResolvedValueOnce(wireBackendResponse);
-
-    const result = await service.getDefaultPipeline();
-
-    expect(mockApi.get).toHaveBeenCalledWith("/v1/crm/pipelines/default");
-    expect(result.pipelineId).toBe("pipe-backend-uuid");
-    expect(result.nameEn).toBe("Standard Commercial Pipeline");
-    expect(result.name).toBe("Standard Commercial Pipeline");
-    expect(result.rowVersion).toBe("ROWVER123==");
-    expect(result.stages).toHaveLength(2);
-
-    const discovery = result.stages[0];
-    expect(discovery.stageKey).toBe("default.discovery");
-    expect(discovery.probabilityPercent).toBe(10);
-    expect(discovery.winProbabilityPercent).toBe(10);
-
-    const proposal = result.stages[1];
-    expect(proposal.stageKey).toBe("default.proposal");
-    expect(proposal.requiresVerifiedParty).toBe(true);
-    expect(proposal.probabilityPercent).toBe(60);
+    const result = await service.getOpportunities({ page: 2, pageSize: 50, search: "  Sponsorship  ", stageKey: "default.proposal" });
+    expect(mockApi.get).toHaveBeenCalledWith(
+      "/v1/crm/opportunities",
+      expect.objectContaining({ page: 2, pageSize: 50, search: "Sponsorship", stageKey: "default.proposal" })
+    );
+    expect(result.items).toEqual([]);
   });
 
-  it("updateDefaultPipeline serializes nameEn, nameAr, probabilityPercent and expectedRowVersion", async () => {
-    const input: UpdateDefaultPipelineInput = {
-      nameEn: "Updated Pipeline Name",
-      nameAr: "الاسم المحدث",
-      expectedRowVersion: "ROWVER123==",
-      stages: [
-        {
-          stageKey: "default.discovery",
-          sortOrder: 1,
-          labelEn: "Initial Contact",
-          labelAr: "اتصال أولي",
-          winProbabilityPercent: 15,
-          requiredExitFields: [],
-        },
-        {
-          stageKey: "default.proposal",
-          sortOrder: 4,
-          labelEn: "Formal Proposal",
-          labelAr: "عرض رسمي",
-          probabilityPercent: 75,
-          requiredExitFields: ["partyId", "estimatedAmount"],
-        },
-      ],
-    };
+  it("moveStage posts transition payload with idempotency headers and maps entity via CrmOpportunityMapper", async () => {
+    mockApi.post.mockResolvedValueOnce({
+      success: true,
+      data: {
+        id: "opp-101",
+        title: "Stadium Naming Rights",
+        pipelineId: "wf-deal-default",
+        stageId: "stg-4",
+        stageKey: "default.proposal",
+        stageLabelEnSnapshot: "Proposal",
+        pipelineVersionSnapshot: 2,
+        estimatedAmount: "250000",
+        currencyCode: "SAR",
+        status: "Open",
+        statusName: "Open",
+        createdAt: "2026-11-01T00:00:00Z",
+        rowVersion: "rv-9",
+      },
+    });
 
-    const wireBackendResponse = {
-      pipelineId: "pipe-backend-uuid",
-      code: "default",
-      nameEn: "Updated Pipeline Name",
-      nameAr: "الاسم المحدث",
-      version: 2,
-      rowVersion: "ROWVER456==",
-      stages: [
-        {
-          stageId: "stg-01",
-          stageKey: "default.discovery",
-          sortOrder: 1,
-          labelEn: "Initial Contact",
-          labelAr: "اتصال أولي",
-          probabilityPercent: 15,
-          requiredExitFields: [],
-          requiresVerifiedParty: false,
-          rowVersion: "STGROVER1A==",
-        },
-        {
-          stageId: "stg-04",
-          stageKey: "default.proposal",
-          sortOrder: 4,
-          labelEn: "Formal Proposal",
-          labelAr: "عرض رسمي",
-          probabilityPercent: 75,
-          requiredExitFields: ["partyId", "estimatedAmount"],
-          requiresVerifiedParty: true,
-          rowVersion: "STGROVER4A==",
-        },
-      ],
-    };
+    const dto = await service.moveStage({
+      opportunityId: "opp-101",
+      targetStageKey: "default.proposal",
+      transitionId: "tr-prop",
+      expectedRowVersion: "rv-8",
+      partyId: "party-1",
+      estimatedAmount: 250000,
+    });
 
-    mockApi.put.mockResolvedValueOnce(wireBackendResponse);
+    expect(mockApi.post).toHaveBeenCalledWith(
+      "/v1/crm/opportunities/opp-101/stage",
+      expect.objectContaining({ targetStageKey: "default.proposal", transitionId: "tr-prop", expectedRowVersion: "rv-8" }),
+      undefined,
+      expect.objectContaining({ headers: expect.objectContaining({ "Idempotency-Key": expect.any(String) }) })
+    );
 
-    const result = await service.updateDefaultPipeline(input);
-
-    expect(mockApi.put).toHaveBeenCalledTimes(1);
-    const [endpoint, payload, , options] = mockApi.put.mock.calls[0];
-
-    expect(endpoint).toBe("/v1/crm/pipelines/default");
-    expect(payload.nameEn).toBe("Updated Pipeline Name");
-    expect(payload.nameAr).toBe("الاسم المحدث");
-    expect(payload.expectedRowVersion).toBe("ROWVER123==");
-    expect(payload.stages).toHaveLength(2);
-    expect(payload.stages[0].probabilityPercent).toBe(15);
-    expect(payload.stages[1].probabilityPercent).toBe(75);
-    expect(options.headers["Idempotency-Key"]).toBeDefined();
-
-    expect(result.nameEn).toBe("Updated Pipeline Name");
-    expect(result.rowVersion).toBe("ROWVER456==");
-    expect(result.version).toBe(2);
+    const entity = CrmOpportunityMapper.toEntity(dto as never);
+    expect(entity.estimatedAmount).toBe(250000);
+    expect(entity.stageKey).toBe("default.proposal");
   });
 });

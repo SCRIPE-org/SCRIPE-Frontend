@@ -9,7 +9,11 @@ export interface CrmOpportunityDto {
   title: string;
   leadId?: string | null;
   accountId?: string | null;
+  accountDisplayName?: string | null;
   partyId?: string | null;
+  partyDisplayName?: string | null;
+  contactId?: string | null;
+  primaryContactName?: string | null;
   pipelineId: string;
   stageId: string;
   stageKey: string;
@@ -18,11 +22,15 @@ export interface CrmOpportunityDto {
   pipelineVersionSnapshot: number;
   lastActiveStageKey?: string | null;
   ownerUserId?: string | null;
+  ownerDisplayName?: string | null;
   ownerTeamId?: string | null;
+  ownerTeamDisplayName?: string | null;
   dealKind: string;
   hqOutcomeKind?: string | null;
   targetExistingTenantId?: string | null;
   estimatedAmount?: number | null;
+  discountPercent?: number | null;
+  nextStepSummary?: string | null;
   currencyCode: string;
   targetCloseDate?: string | null;
   status: string;
@@ -38,6 +46,7 @@ export interface CrmOpportunityDto {
   exitChecklistJson?: string | null;
   primaryContactRole?: string | null;
   solutionFitConfirmed?: boolean;
+  enteredStageAtUtc?: string | null;
   createdAt: string;
   rowVersion: string;
   maskedFieldKeys?: string[];

@@ -102,7 +102,10 @@ interface ScreenPair {
  * exactly once — an unambiguous pairing without a TS parser. A file with two
  * configs is reported as unpaired rather than guessed at.
  */
+let cachedFrontendScan: { pairs: ScreenPair[]; unpaired: string[] } | undefined;
+
 function scanFrontendScreens(): { pairs: ScreenPair[]; unpaired: string[] } {
+  if (cachedFrontendScan) return cachedFrontendScan;
   const pairs: ScreenPair[] = [];
   const unpaired: string[] = [];
   for (const file of collectSourceFiles(path.join(FRONTEND_ROOT, "src"))) {
@@ -121,7 +124,8 @@ function scanFrontendScreens(): { pairs: ScreenPair[]; unpaired: string[] } {
       where: relative,
     });
   }
-  return { pairs, unpaired };
+  cachedFrontendScan = { pairs, unpaired };
+  return cachedFrontendScan;
 }
 
 /** Same regex as the entity-screen pin; group 5 is the PermissionResource. */
@@ -141,7 +145,10 @@ function collectCatalogFiles(dir: string, out: string[] = []): string[] {
   return out;
 }
 
+let cachedBackendResources: Map<string, string> | undefined;
+
 function parseBackendResources(): Map<string, string> {
+  if (cachedBackendResources) return cachedBackendResources;
   const byKey = new Map<string, string>();
   for (const file of collectCatalogFiles(path.join(BACKEND_ROOT, "src"))) {
     const source = fs.readFileSync(file, "utf8");
@@ -151,7 +158,8 @@ function parseBackendResources(): Map<string, string> {
       byKey.set(match[1], match[5]);
     }
   }
-  return byKey;
+  cachedBackendResources = byKey;
+  return cachedBackendResources;
 }
 
 // Always runs, in both states — this is what makes an unpinned run legible

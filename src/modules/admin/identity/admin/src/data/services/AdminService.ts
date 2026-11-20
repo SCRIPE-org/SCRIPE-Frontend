@@ -74,8 +74,8 @@ export class AdminService implements IAdminService {
     };
   }
 
-  async getMyTenantAdmins(params: ServiceAdminListParams): Promise<AdminListResult> {
-    const url = buildUrl(ADMIN_ENDPOINTS.MY_TENANT_ADMINS, {
+  async getCurrentTenantAdmins(params: ServiceAdminListParams): Promise<AdminListResult> {
+    const url = buildUrl(ADMIN_ENDPOINTS.CURRENT_TENANT, {
       page: params.page,
       pageSize: params.pageSize,
       search: params.search,
@@ -104,8 +104,8 @@ export class AdminService implements IAdminService {
     return this.api.post<{ id: string }>(ADMIN_ENDPOINTS.CREATE, json);
   }
 
-  async createForMyTenant(json: Omit<CreateAdminJson, "tenantId">): Promise<{ id: string }> {
-    return this.api.post<{ id: string }>(ADMIN_ENDPOINTS.CREATE_FOR_MY_TENANT, json);
+  async createInCurrentTenant(json: Omit<CreateAdminJson, "tenantId">): Promise<{ id: string }> {
+    return this.api.post<{ id: string }>(ADMIN_ENDPOINTS.CREATE_IN_CURRENT_TENANT, json);
   }
 
   async update(id: string, json: UpdateAdminJson): Promise<void> {

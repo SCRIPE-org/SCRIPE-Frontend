@@ -40,7 +40,8 @@
 import React, { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useWorkspace } from "@core/providers/workspace-provider";
-import { useTenantContext } from "@core/providers/tenant-context-provider";
+import { useAdminContext } from "@core/hooks/useAdminContext";
+import { TenantContextSwitcherDialog } from "@core/components/tenant-context";
 import { useI18n } from "@core/providers/i18n-provider";
 import { toast } from "@core/hooks/use-enhanced-toast";
 import { startRoutingProgress } from "@core/ui/routing-progress-bar";
@@ -103,16 +104,24 @@ function useFocusTrap(containerRef: React.RefObject<HTMLElement | null>, active:
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key !== "Tab") return;
       const focusable = getFocusable();
-      if (focusable.length === 0) return;
+      if (focusable.length === 0) {
+        e.preventDefault();
+        el.focus();
+        return;
+      }
       const first = focusable[0];
       const last = focusable[focusable.length - 1];
       if (e.shiftKey) {
-        if (document.activeElement === first) {
+        if (
+          document.activeElement === first ||
+          document.activeElement === el ||
+          !el.contains(document.activeElement)
+        ) {
           e.preventDefault();
           last.focus();
         }
       } else {
-        if (document.activeElement === last) {
+        if (document.activeElement === last || !el.contains(document.activeElement)) {
           e.preventDefault();
           first.focus();
         }
@@ -154,6 +163,8 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
   const [phase, setPhase] = useState<LauncherPhase>("closed");
   const searchRef = useRef<HTMLInputElement>(null);
   const launcherRef = useRef<HTMLDivElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+  const wasOpenRef = useRef(false);
   const titleId = React.useId();
 
   const isRTL = direction === "rtl";
@@ -187,14 +198,26 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
     };
   }, [open]);
 
-  // Focus search on open, clear state
+  // Focus search on open, clear state, and restore previous focus on close
   useEffect(() => {
     if (open) {
+      if (!wasOpenRef.current) {
+        wasOpenRef.current = true;
+        previousFocusRef.current = document.activeElement as HTMLElement | null;
+      }
       queueMicrotask(() => {
         setSearch("");
         setUpgradeTarget(null);
       });
-      setTimeout(() => searchRef.current?.focus(), 120);
+      const focusTimer = window.setTimeout(() => searchRef.current?.focus(), 120);
+      return () => window.clearTimeout(focusTimer);
+    }
+
+    if (wasOpenRef.current) {
+      wasOpenRef.current = false;
+      const target = previousFocusRef.current;
+      previousFocusRef.current = null;
+      target?.focus();
     }
   }, [open]);
 
@@ -203,6 +226,7 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
     if (!open) return;
     const handler = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
+        if (e.defaultPrevented) return;
         e.stopPropagation();
         if (upgradeTarget) setUpgradeTarget(null);
         else onOpenChange(false);
@@ -265,8 +289,9 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
     [filteredWorkspaces, sortByPinThenCatalog, activeWorkspaceKey]
   );
 
-  const { currentTenant } = useTenantContext();
-  const hasTenantContext = !!currentTenant;
+  const { activeTenantId } = useAdminContext();
+  const hasTenantContext = Boolean(activeTenantId);
+  const [switcherOpen, setSwitcherOpen] = useState(false);
 
   // Handle card click — locked → show upgrade/context dialog, else switch
   const handleSelect = useCallback(
@@ -325,6 +350,7 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
           !open && "pointer-events-none"
         )}
         onClick={() => onOpenChange(false)}
+        aria-hidden="true"
       />
 
       {/* ── Launcher Panel ───────────────────────────────────────────────── */}
@@ -338,8 +364,9 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
         data-testid="nexus-app-launcher"
         aria-modal="true"
         aria-labelledby={titleId}
+        tabIndex={-1}
         className={cn(
-          "fixed left-1/2 top-1/2 z-overlay flex -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden",
+          "fixed left-1/2 top-1/2 z-overlay flex -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden outline-none",
           "rounded-nx-lg border border-nx-line-hi bg-nx-popover shadow-nx-modal",
           "transition-[transform,opacity] motion-reduce:transition-none",
           isRTL ? "rtl origin-bottom-right" : "ltr origin-bottom-left",
@@ -375,7 +402,7 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
               variant="ghost"
               size="icon"
               onClick={() => onOpenChange(false)}
-              className="ms-auto h-8 w-8 shrink-0"
+              className="ms-auto h-9 w-9 shrink-0"
               aria-label={t("common.close")}
             >
               <X className="h-4 w-4" aria-hidden="true" />
@@ -500,7 +527,7 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
           />
           <LegendItem
             icon={<Lock className="h-2.5 w-2.5" aria-hidden="true" />}
-            colorClass="text-warning"
+            colorClass="text-nx-warning-strong"
             label={t("shell.launcher.legend.locked")}
           />
           <LegendItem
@@ -526,13 +553,19 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
           onClose={() => setUpgradeTarget(null)}
           onUpgrade={() => {
             setUpgradeTarget(null);
+            if (!hasTenantContext) {
+              setSwitcherOpen(true);
+              return;
+            }
             onOpenChange(false);
-            // If the user has no tenant context, navigate to the tenants list
-            // so they can drill into one. Otherwise go to billing/subscription.
             startRoutingProgress();
-            router.push(hasTenantContext ? "/my-subscription" : "/tenants");
+            router.push("/my-subscription");
           }}
         />
+      )}
+
+      {switcherOpen && (
+        <TenantContextSwitcherDialog open={switcherOpen} onOpenChange={setSwitcherOpen} />
       )}
     </>
   );
@@ -595,28 +628,11 @@ function WorkspaceCard({
 
   return (
     <div
-      role="button"
       data-testid="nexus-workspace-card"
       data-status={status}
-      // Locked cards stay in the tab order — clicking OR keying one opens the
-      // upgrade dialog, and that upsell must be keyboard-reachable. Only
-      // coming-soon (a true no-op) leaves the tab order.
-      tabIndex={isComingSoon ? -1 : 0}
-      onClick={onClick}
-      onKeyDown={(e) => {
-        if (isComingSoon) return;
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          onClick();
-        }
-      }}
-      aria-pressed={isActive}
-      aria-disabled={isComingSoon}
       className={cn(
-        "group relative flex flex-col items-center gap-2 rounded-nx-md border px-2.5 pb-3.5 pt-4",
+        "group relative flex flex-col items-center rounded-nx-md border",
         "transition-[color,background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-        NX_FOCUS_RING,
-        isComingSoon ? "cursor-default" : "cursor-pointer",
         // Hover brightens the hairline and steps the fill. Nothing lifts.
         isActive
           ? "border-nx-accent bg-nx-accent-wash"
@@ -625,86 +641,98 @@ function WorkspaceCard({
             : "border-nx-line bg-transparent hover:border-nx-line-hi hover:bg-nx-raised"
       )}
     >
-      {/* Pin toggle — reveals on hover AND keyboard focus-within; always
-          visible on coarse pointers, where there is no hover to reveal it */}
+      {/* Primary card trigger — locked cards remain clickable to trigger upgrade dialog;
+          coming-soon cards are true no-ops and disabled natively. */}
+      <button
+        type="button"
+        disabled={isComingSoon}
+        onClick={onClick}
+        aria-pressed={isActive}
+        className={cn(
+          "flex w-full flex-col items-center gap-2 rounded-nx-md px-2.5 pb-3.5 pt-4 text-center",
+          NX_FOCUS_RING,
+          isComingSoon ? "cursor-default" : "cursor-pointer"
+        )}
+      >
+        {/* Icon container — the workspace's own accent, mixed token-safely so a
+            hex, an hsl(), an oklch() or a var() all tint identically. */}
+        <div
+          className={cn(
+            "flex h-10 w-10 items-center justify-center rounded-nx-md",
+            isDisabled && "bg-nx-raised text-nx-ink-3"
+          )}
+          style={
+            isDisabled
+              ? undefined
+              : {
+                  background: `color-mix(in oklch, ${color} 12%, transparent)`,
+                  color,
+                }
+          }
+        >
+          <DynamicIcon name={icon} size={20} />
+        </div>
+
+        {/* Name */}
+        <span
+          className={cn(
+            "max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-xs font-medium leading-tight",
+            isActive ? "text-nx-accent" : isDisabled ? "text-nx-ink-3" : "text-nx-ink-2"
+          )}
+        >
+          {name}
+        </span>
+      </button>
+
+      {/* Sibling pin toggle — not nested inside the card button; reveals on hover AND keyboard focus-within;
+          always visible on coarse pointers where hover does not exist. */}
       {onTogglePin && !isLocked && !isComingSoon && (
         <button
           type="button"
           onClick={onTogglePin}
-          onKeyDown={(e) => e.stopPropagation()}
           disabled={isPinLoading}
           aria-label={isPinned ? t("shell.launcher.unpin") : t("shell.launcher.pin")}
           className={cn(
-            "absolute top-1 flex h-5 w-5 items-center justify-center rounded-nx-sm border",
+            "absolute start-1 top-1 z-10 flex h-6 w-6 items-center justify-center rounded-nx-sm border",
             "transition-opacity duration-nx-micro motion-reduce:transition-none",
-            "start-1 disabled:cursor-wait",
+            "disabled:cursor-wait",
             "opacity-0 group-focus-within:opacity-100 group-hover:opacity-100 [@media(pointer:coarse)]:opacity-100",
             isPinned
               ? "border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] bg-nx-accent-wash text-nx-accent opacity-100"
-              : "border-transparent bg-nx-raised-2 text-nx-ink-2",
+              : "border-transparent bg-nx-raised-2 text-nx-ink-2 hover:text-nx-ink",
             NX_FOCUS_RING
           )}
         >
           {isPinned ? (
-            <PinOff className="h-2.5 w-2.5" aria-hidden="true" />
+            <PinOff className="h-3 w-3" aria-hidden="true" />
           ) : (
-            <Pin className="h-2.5 w-2.5" aria-hidden="true" />
+            <Pin className="h-3 w-3" aria-hidden="true" />
           )}
         </button>
       )}
 
-      {/* Status badge — only for active, locked, coming-soon. The glyph is
-          decorative: the accessible name is the legend plus the card label. */}
+      {/* Status badge — only for active, locked, coming-soon. Decorative glyph. */}
       {(isActive || isLocked || isComingSoon) && (
         <div
+          aria-hidden="true"
           className={cn(
-            "absolute end-1 top-1 flex items-center rounded-nx-sm px-1 py-0.5",
-            // Measured global status tokens — read, never redefined here
+            "pointer-events-none absolute end-1 top-1 flex items-center rounded-nx-sm px-1 py-0.5",
             isLocked
-              ? "bg-warning/10 text-warning"
+              ? "bg-warning/15 text-nx-warning-strong"
               : isComingSoon
                 ? "bg-nx-raised-2 text-nx-ink-3"
                 : "bg-success/10 text-success"
           )}
         >
           {isLocked ? (
-            <Lock className="h-2 w-2" aria-hidden="true" />
+            <Lock className="h-2.5 w-2.5" aria-hidden="true" />
           ) : isComingSoon ? (
-            <Clock className="h-2 w-2" aria-hidden="true" />
+            <Clock className="h-2.5 w-2.5" aria-hidden="true" />
           ) : (
-            <Check className="h-2 w-2" aria-hidden="true" />
+            <Check className="h-2.5 w-2.5" aria-hidden="true" />
           )}
         </div>
       )}
-
-      {/* Icon container — the workspace's own accent, mixed token-safely so a
-          hex, an hsl(), an oklch() or a var() all tint identically. */}
-      <div
-        className={cn(
-          "flex h-10 w-10 items-center justify-center rounded-nx-md",
-          isDisabled && "bg-nx-raised text-nx-ink-3"
-        )}
-        style={
-          isDisabled
-            ? undefined
-            : {
-                background: `color-mix(in oklch, ${color} 12%, transparent)`,
-                color,
-              }
-        }
-      >
-        <DynamicIcon name={icon} size={20} />
-      </div>
-
-      {/* Name */}
-      <span
-        className={cn(
-          "max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-xs font-medium leading-tight",
-          isActive ? "text-nx-accent" : isDisabled ? "text-nx-ink-3" : "text-nx-ink-2"
-        )}
-      >
-        {name}
-      </span>
     </div>
   );
 }
@@ -755,7 +783,7 @@ export function UpgradeDialog({
               "flex h-12 w-12 items-center justify-center rounded-nx-md border",
               isNeedsTenant
                 ? "border-info/30 bg-info/10 text-info"
-                : "border-warning/30 bg-warning/10 text-warning"
+                : "border-warning/30 bg-warning/15 text-nx-warning-strong"
             )}
           >
             <ArrowUpCircle className="h-6 w-6" aria-hidden="true" />

@@ -19,37 +19,76 @@ export type {
 interface UseSsoProvidersOptions {
   tenantId?: string | null;
   mode?: string;
+  /** When false (e.g. tenant resolution still loading or failed), suppresses fetching so platform providers never leak onto tenant login pages. */
+  enabled?: boolean;
+}
+
+function resolveDiscoveryErrorKey(err: unknown): string {
+  if (err && typeof err === "object") {
+    const candidate = err as {
+      status?: unknown;
+      response?: { status?: unknown };
+      message?: unknown;
+    };
+    const status = candidate.status ?? candidate.response?.status;
+    if (status === 429) return "auth.sso.discoveryRateLimited";
+    if (
+      typeof candidate.message === "string" &&
+      /\b429\b|too many requests/i.test(candidate.message)
+    ) {
+      return "auth.sso.discoveryRateLimited";
+    }
+  }
+  return "auth.sso.discoveryError";
 }
 
 /**
- * React hook/ViewModel orchestrating state and data flows for sso providers.
- * Handles active states updates, form fields validations, and browser navigation controllers.
+ * React hook/ViewModel orchestrating SSO provider discovery and login initiation.
  */
 export function useSsoProviders(options: UseSsoProvidersOptions = {}) {
-  const { tenantId, mode = "inherit" } = options;
-  const [providers, setProviders] = useState<SsoProvider[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { tenantId, mode = "inherit", enabled = true } = options;
+  const [retryCount, setRetryCount] = useState(0);
+  const requestKey = enabled ? `${tenantId ?? ""}:${mode}:${retryCount}` : null;
+  const [fetched, setFetched] = useState<{
+    key: string | null;
+    providers: SsoProvider[];
+    discoveryError: string | null;
+  }>({
+    key: null,
+    providers: [],
+    discoveryError: null,
+  });
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!requestKey) return;
+
     let cancelled = false;
 
-    async function fetchProviders() {
+    async function fetchProviders(activeKey: string) {
       try {
         const data = await getAuthContainer().ssoRepository.getProviders({ tenantId, mode });
-        if (!cancelled) setProviders(data);
-      } catch {
-        if (!cancelled) setProviders([]);
-      } finally {
-        if (!cancelled) setIsLoading(false);
+        if (!cancelled) setFetched({ key: activeKey, providers: data, discoveryError: null });
+      } catch (err) {
+        if (!cancelled) {
+          setFetched({
+            key: activeKey,
+            providers: [],
+            discoveryError: resolveDiscoveryErrorKey(err),
+          });
+        }
       }
     }
 
-    fetchProviders();
+    void fetchProviders(requestKey);
     return () => {
       cancelled = true;
     };
-  }, [tenantId, mode]);
+  }, [requestKey, tenantId, mode]);
+
+  const retryProviders = useCallback(() => {
+    setRetryCount((prev) => prev + 1);
+  }, []);
 
   const initiateSsoLogin = useCallback(async (providerId: string, protocol?: string) => {
     setError(null);
@@ -60,17 +99,24 @@ export function useSsoProviders(options: UseSsoProvidersOptions = {}) {
     }
   }, []);
 
+  const isMatched = Boolean(requestKey && fetched.key === requestKey);
+  const providers = isMatched ? fetched.providers : [];
+  const discoveryError = isMatched ? fetched.discoveryError : null;
+  const isLoading = Boolean(requestKey && fetched.key !== requestKey);
+
   return {
     providers,
     isLoading,
     error,
+    discoveryError,
     hasProviders: providers.length > 0,
     initiateSsoLogin,
+    retryProviders,
   };
 }
 
 /**
- * Exported function defining parameters and fields for complete sso callback configurations.
+ * Exchanges an OIDC callback code and state via the auth container's SSO repository.
  */
 export function completeSsoCallback(code: string, state: string): Promise<SsoCallbackResult> {
   return getAuthContainer().ssoRepository.completeCallback(code, state);

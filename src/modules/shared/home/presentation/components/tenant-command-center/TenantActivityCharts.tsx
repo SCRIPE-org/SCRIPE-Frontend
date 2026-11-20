@@ -63,7 +63,7 @@ export function TenantActivityCharts({
               {t("tenantCommandCenter.charts.bookings") || "Bookings"}
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-primary" />
+              <span className="h-2 w-2 rounded-full bg-nx-accent-fill" />
               {t("tenantCommandCenter.charts.staff") || "Staff"}
             </span>
           </div>

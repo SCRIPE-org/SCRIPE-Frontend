@@ -121,22 +121,23 @@ function WidgetSettingsForm({
               const isSelected = colSpan === span;
 
               return (
-                <button
+                <Button
                   key={span}
                   type="button"
+                  variant="ghost"
                   disabled={!isAllowed}
                   onClick={() => setColSpan(span)}
-                  className={`flex flex-col items-center justify-center rounded-nx-md border p-2 text-center transition-all ${
+                  className={`h-auto flex-col items-center justify-center rounded-nx-md border p-2 text-center transition-all ${
                     isSelected
-                      ? "border-nx-accent bg-nx-accent-wash font-semibold text-nx-accent"
+                      ? "border-nx-accent bg-nx-accent-wash font-semibold text-nx-accent hover:bg-nx-accent-wash"
                       : isAllowed
                         ? "border-nx-line bg-nx-surface text-nx-ink hover:border-nx-line-hi hover:bg-nx-raised"
-                        : "border-nx-line/40 bg-nx-raised/20 text-nx-ink-3/40 cursor-not-allowed"
+                        : "cursor-not-allowed border-nx-line bg-nx-raised text-nx-ink-3 opacity-50"
                   }`}
                 >
                   <span className="text-xs">{label}</span>
                   <span className="text-[10px] text-nx-ink-3">{fraction}</span>
-                </button>
+                </Button>
               );
             })}
           </div>

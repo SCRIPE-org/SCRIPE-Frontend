@@ -39,8 +39,8 @@ export class SubscriptionRepository implements ISubscriptionRepository {
     return SubscriptionMapper.toEntity(model);
   }
 
-  async getMyTenantSubscription(): Promise<Subscription | null> {
-    const model = await this.service.getMyTenantSubscription();
+  async getCurrentTenantSubscription(): Promise<Subscription | null> {
+    const model = await this.service.getCurrentTenantSubscription();
     return model ? SubscriptionMapper.toEntity(model) : null;
   }
 

@@ -189,6 +189,7 @@ export function useConnectViewModel() {
       titleKey: "entitlements.stripeConnect.accounts",
       subtitleKey: "entitlements.stripeConnect.accountsDesc",
       resource: "stripe_connect",
+      stickyActions: true,
       columns: [
         {
           key: "tenantName",

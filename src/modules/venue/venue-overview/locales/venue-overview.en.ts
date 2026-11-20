@@ -195,6 +195,8 @@ export const en = {
       title: "Quick Operator Actions",
       newBooking: "New Booking",
       openCalendar: "Open Calendar",
+      blockTime: "Block Time",
+      recordPayment: "Record Payment",
       attentionCenter: "Attention Center",
       receivables: "Receivables",
       payments: "Manual Payments",

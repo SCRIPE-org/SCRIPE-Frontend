@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// UI-EXCEPTION: compact studio layout
 "use client";
 
 import { useMemo, useCallback, useRef } from "react";
@@ -15,6 +14,7 @@ import type {
 } from "../../domain/entities/MessageTemplate";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
+import { Input } from "@core/ui/input";
 import { Copy, Eye, Pencil, Trash2, Download, Upload, BarChart3 } from "lucide-react";
 import { formatUtc } from "@core/common/utils";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
@@ -133,6 +133,7 @@ export function MessageTemplatesView() {
   const config: CrudConfig<MessageTemplate> = useMemo(
     () => ({
       ...configBase,
+      stickyActions: true,
       createFields: [], // No modal form — we navigate to full-page form
       // Override: navigate to full-page form instead of modal
       onCreateClick: handleCreateClick,
@@ -264,7 +265,7 @@ export function MessageTemplatesView() {
             <Upload className="h-3.5 w-3.5" aria-hidden="true" />
             {t("messaging.templates.import")}
           </Button>
-          <input
+          <Input
             ref={fileInputRef}
             type="file"
             accept=".json"

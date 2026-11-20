@@ -89,7 +89,7 @@ export function useTenantsViewModel() {
     queryFn: () =>
       isSystemAdmin
         ? tenantRepository.getTree()
-        : tenantRepository.getMyChildren().then((res) => res.items),
+        : tenantRepository.getCurrentTenantChildren().then((res) => res.items),
   });
 
   const tree = useMemo(() => treeData ?? [], [treeData]);

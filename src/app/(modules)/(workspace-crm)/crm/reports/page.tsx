@@ -1,16 +1,19 @@
 import type { Metadata } from "next";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
-import { CrmReportsView } from "@modules/crm/overview";
+import { CrmReportsView } from "@modules/crm/reports";
 
 export const metadata: Metadata = {
-  title: "CRM Commercial Reports & Analytics | SCRIPE",
+  title: "CRM Commercial Reports | SCRIPE",
   description:
-    "Multi-currency isolated pipeline velocity, lead qualification funnel, and commercial execution analytics.",
+    "Pipeline velocity, currency-isolated revenue breakdowns, lead funnel metrics, and executive CSV exports.",
 };
 
+/**
+ * Next.js App Router entry point for CRM Pipeline & Funnel Reports.
+ */
 export default function CrmReportsPage() {
   return (
-    <ModuleErrorBoundary moduleName="crm.tabs.reports">
+    <ModuleErrorBoundary moduleName="crm.reports.title">
       <CrmReportsView />
     </ModuleErrorBoundary>
   );

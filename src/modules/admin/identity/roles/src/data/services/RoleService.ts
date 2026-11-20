@@ -23,7 +23,7 @@ import type {
   IRoleService,
   RoleListResult,
   ServiceRoleListParams,
-  MyTenantRoleListParams,
+  CurrentTenantRoleListParams,
 } from "../../domain/interfaces/IRoleService";
 import { ROLES_ENDPOINTS } from "./roles.endpoints";
 
@@ -56,8 +56,8 @@ export class RoleService implements IRoleService {
     };
   }
 
-  async getMyTenantRoles(params: MyTenantRoleListParams): Promise<RoleListResult> {
-    const url = buildUrl(ROLES_ENDPOINTS.MY_TENANT_ROLES, {
+  async getCurrentTenantRoles(params: CurrentTenantRoleListParams): Promise<RoleListResult> {
+    const url = buildUrl(ROLES_ENDPOINTS.CURRENT_TENANT, {
       page: params.page,
       pageSize: params.pageSize,
       search: params.search,
@@ -85,8 +85,8 @@ export class RoleService implements IRoleService {
     return this.api.post<{ id: string }>(ROLES_ENDPOINTS.CREATE, json);
   }
 
-  async createForMyTenant(json: Omit<CreateRoleJson, "tenantId">): Promise<{ id: string }> {
-    return this.api.post<{ id: string }>(ROLES_ENDPOINTS.CREATE_FOR_MY_TENANT, json);
+  async createInCurrentTenant(json: Omit<CreateRoleJson, "tenantId">): Promise<{ id: string }> {
+    return this.api.post<{ id: string }>(ROLES_ENDPOINTS.CREATE_IN_CURRENT_TENANT, json);
   }
 
   async update(id: string, json: UpdateRoleJson): Promise<void> {
@@ -132,8 +132,8 @@ export class RoleService implements IRoleService {
     return this.api.get(url);
   }
 
-  async getMyTenantAvailablePermissions(category?: string): Promise<PermissionModel[]> {
-    const url = buildUrl(ROLES_ENDPOINTS.MY_TENANT_AVAILABLE_PERMISSIONS, {
+  async getCurrentTenantAvailablePermissions(category?: string): Promise<PermissionModel[]> {
+    const url = buildUrl(ROLES_ENDPOINTS.CURRENT_TENANT_AVAILABLE_PERMISSIONS, {
       category: category || undefined,
     });
 
@@ -141,10 +141,12 @@ export class RoleService implements IRoleService {
     return response.map((p) => PermissionModel.fromJson(p));
   }
 
-  async getMyTenantAvailablePermissionsGrouped(
+  async getCurrentTenantAvailablePermissionsGrouped(
     search?: string
   ): Promise<PermissionModuleGroupJson[]> {
-    const url = buildUrl(ROLES_ENDPOINTS.MY_TENANT_AVAILABLE_PERMISSIONS_GROUPED, { search });
+    const url = buildUrl(ROLES_ENDPOINTS.CURRENT_TENANT_AVAILABLE_PERMISSIONS_GROUPED, {
+      search,
+    });
     return this.api.get(url);
   }
 

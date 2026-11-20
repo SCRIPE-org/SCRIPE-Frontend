@@ -22,12 +22,14 @@ import {
 } from "lucide-react";
 import type { WorkstationSession } from "../../domain/entities/WorkstationSession";
 
+/** Props for {@link SessionCard}. */
 interface SessionCardProps {
   session: WorkstationSession;
   onRevoke: (id: string) => Promise<unknown>;
   isRevoking: boolean;
 }
 
+/** Workstation session summary card displaying device telemetry and remote revocation control. */
 export function SessionCard({ session, onRevoke, isRevoking }: SessionCardProps) {
   const { t } = useI18n();
 

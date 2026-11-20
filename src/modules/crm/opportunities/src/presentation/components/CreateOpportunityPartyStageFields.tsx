@@ -7,8 +7,10 @@ import { Textarea } from "@core/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { AlertTriangle, Building2 } from "lucide-react";
 import { CustomFieldsSection } from "@core/crud/customFieldsExtension";
+import { CrmEntitySearchSelect, type CrmEntitySearchItem } from "@modules/crm";
 import type { CreateOpportunityInput, DealKind } from "../../domain/entities/OpportunityEntity";
 
+/** Lookup option representing a PartyKernel organization/account for an Opportunity. */
 export interface OpportunityPartyOption {
   partyId: string;
   accountId?: string;
@@ -16,14 +18,23 @@ export interface OpportunityPartyOption {
   subtitle?: string;
 }
 
+/** Selectable initial pipeline stage option when creating an Opportunity. */
+export interface OpportunityStageOption {
+  stageKey: string;
+  labelEn: string;
+  labelAr?: string | null;
+  requiresParty?: boolean;
+}
+
+/** Props for `CreateOpportunityPartyStageFields`. */
 export interface CreateOpportunityPartyStageFieldsProps {
   t: (key: string, params?: Record<string, any>) => string;
+  isRtl: boolean;
   formData: CreateOpportunityInput;
   onChangeFormData: React.Dispatch<React.SetStateAction<CreateOpportunityInput>>;
-  partySearch: string;
-  onPartySearchChange: (val: string) => void;
-  partyOptions: OpportunityPartyOption[];
-  onSelectParty: (val: string) => void;
+  stageOptions: OpportunityStageOption[];
+  selectedPartyLabel?: string;
+  onSelectParty: (val: string, selectedItem?: CrmEntitySearchItem) => void;
   isProposalOrLater: boolean;
   errors: Record<string, string>;
   customFieldValues: Record<string, unknown>;
@@ -31,13 +42,14 @@ export interface CreateOpportunityPartyStageFieldsProps {
   isSubmitting: boolean;
 }
 
+/** Party linkage, stage selection, and custom field controls inside `CreateOpportunityDialog`. */
 export function CreateOpportunityPartyStageFields({
   t,
+  isRtl,
   formData,
   onChangeFormData,
-  partySearch,
-  onPartySearchChange,
-  partyOptions,
+  stageOptions,
+  selectedPartyLabel,
   onSelectParty,
   isProposalOrLater,
   errors,
@@ -58,11 +70,11 @@ export function CreateOpportunityPartyStageFields({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="default.discovery">{t("crmOpportunities.stages.discovery")}</SelectItem>
-              <SelectItem value="default.qualification">{t("crmOpportunities.stages.qualification")}</SelectItem>
-              <SelectItem value="default.solution_fit">{t("crmOpportunities.stages.solutionFit")}</SelectItem>
-              <SelectItem value="default.proposal">{t("crmOpportunities.stages.proposal")}</SelectItem>
-              <SelectItem value="default.negotiation">{t("crmOpportunities.stages.negotiation")}</SelectItem>
+              {stageOptions.map((st) => (
+                <SelectItem key={st.stageKey} value={st.stageKey}>
+                  {isRtl && st.labelAr ? st.labelAr : st.labelEn}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
@@ -92,34 +104,21 @@ export function CreateOpportunityPartyStageFields({
           <span>{t("crmOpportunities.dialogs.create.partyIdLabel")}</span>
           {isProposalOrLater && <span className="text-destructive">*</span>}
         </Label>
-        <Input
-          placeholder={t("crmOpportunities.dialogs.create.partySearchPlaceholder", {
-            defaultValue: "Filter Accounts or Contacts...",
-          })}
-          value={partySearch}
-          onChange={(e) => onPartySearchChange(e.target.value)}
-          className="h-8 text-xs mb-1"
+        <CrmEntitySearchSelect
+          id="opp-party-id"
+          data-testid="create-opp-party-select"
+          entityKind="party"
+          value={formData.partyId || ""}
+          initialLabel={selectedPartyLabel || undefined}
+          onChange={onSelectParty}
+          placeholder={t("crmOpportunities.dialogs.create.partyIdPlaceholder")}
+          enableQuickCreate
+          quickCreateDefaultKind="account"
+          allowClear
         />
-        <Select value={formData.partyId || "__none__"} onValueChange={onSelectParty}>
-          <SelectTrigger id="opp-party-id">
-            <SelectValue placeholder={t("crmOpportunities.dialogs.create.partyIdPlaceholder")} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="__none__">
-              {t("crmOpportunities.dialogs.create.noAccountOption", {
-                defaultValue: "No linked Account / Contact yet (Link later)",
-              })}
-            </SelectItem>
-            {partyOptions.map((opt) => (
-              <SelectItem key={opt.partyId} value={opt.partyId}>
-                {opt.label} {opt.subtitle ? `(${opt.subtitle})` : ""}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
         {errors.partyId && <p className="text-xs text-destructive">{errors.partyId}</p>}
         {isProposalOrLater && !formData.partyId && (
-          <p className="text-xs text-warning flex items-center gap-1 mt-1">
+          <p className="text-xs text-nx-warning-strong flex items-center gap-1 mt-1">
             <AlertTriangle className="size-3" />
             {t("crmOpportunities.dialogs.create.partyRequiredHint", {
               defaultValue: "Advancing to Proposal or Negotiation requires a linked Account or Contact.",

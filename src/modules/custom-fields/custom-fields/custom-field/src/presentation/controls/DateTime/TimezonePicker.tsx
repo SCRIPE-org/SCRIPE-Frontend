@@ -27,7 +27,7 @@
  * to "still usable for the common cases" rather than throwing or rendering
  * an empty, unusable picker.
  *
- * **Searchable, not a flat `<select>`.** §5.1's own GOV.UK citation ("The
+ * **Searchable, not a flat native select element.** §5.1's own GOV.UK citation ("The
  * select component should only be used as a last resort") disqualifies a
  * flat list at ~400 entries -- `GenericSelect type="searchable"` with the
  * default `searchType="client"` is the right shape: cmdk's own client-side

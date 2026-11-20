@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
 import { Button } from "@core/ui/button";
@@ -10,8 +10,9 @@ import { PhoneInput } from "@core/ui/phone-input";
 import { Textarea } from "@core/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@core/ui/dialog";
-import { AlertCircle, Building2, PlusCircle, Search } from "lucide-react";
+import { AlertCircle, Building2, PlusCircle } from "lucide-react";
 import { CustomFieldsSection } from "@core/crud/customFieldsExtension";
+import { CRM_CURRENCY_OPTIONS, CrmEntitySearchSelect } from "@modules/crm";
 import type { CreateAccountInput, CrmCandidatePartyLookup } from "../../domain/entities/AccountEntity";
 
 interface CreateAccountDialogProps {
@@ -23,11 +24,11 @@ interface CreateAccountDialogProps {
   error: string | null;
 }
 
+/** Modal dialog for creating a CRM Account from an existing Party or inline organization. */
 export function CreateAccountDialog({
   open,
   onOpenChange,
   onSubmit,
-  onLookupOrganizations,
   isSubmitting,
   error,
 }: CreateAccountDialogProps) {
@@ -45,28 +46,6 @@ export function CreateAccountDialog({
   const [commercialNotes, setCommercialNotes] = useState("");
   const [customFields, setCustomFields] = useState<Record<string, unknown>>({});
   const [validationError, setValidationError] = useState<string | null>(null);
-  const [candidateOrgs, setCandidateOrgs] = useState<CrmCandidatePartyLookup[]>([]);
-  const [orgSearch, setOrgSearch] = useState("");
-  const [isLoadingOrgs, setIsLoadingOrgs] = useState(false);
-
-  useEffect(() => {
-    if (!open || !onLookupOrganizations) return;
-    let active = true;
-    setIsLoadingOrgs(true);
-    onLookupOrganizations(orgSearch)
-      .then((items) => {
-        if (active) setCandidateOrgs(items);
-      })
-      .catch(() => {
-        if (active) setCandidateOrgs([]);
-      })
-      .finally(() => {
-        if (active) setIsLoadingOrgs(false);
-      });
-    return () => {
-      active = false;
-    };
-  }, [open, orgSearch, onLookupOrganizations]);
 
   const resetForm = () => {
     setMode("create");
@@ -80,7 +59,6 @@ export function CreateAccountDialog({
     setCommercialNotes("");
     setCustomFields({});
     setValidationError(null);
-    setOrgSearch("");
   };
 
   const handleOpenChange = (nextOpen: boolean) => {
@@ -92,11 +70,11 @@ export function CreateAccountDialog({
     e.preventDefault();
     setValidationError(null);
     if (mode === "select" && !partyId.trim()) {
-      setValidationError(t("crmAccounts.create.organizationSelectRequired") || "Please select an existing organization from the list.");
+      setValidationError(t("crmAccounts.create.organizationSelectRequired"));
       return;
     }
     if (mode === "create" && !organizationNameEn.trim()) {
-      setValidationError(t("crmAccounts.create.organizationNameRequired") || "Organization name is required.");
+      setValidationError(t("crmAccounts.create.organizationNameRequired"));
       return;
     }
     const ok = await onSubmit(
@@ -123,17 +101,17 @@ export function CreateAccountDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-base font-bold text-nx-ink">
             <Building2 className="size-4 text-nx-accent" />
-            <span>{t("crmAccounts.create.title") || "Register Commercial Account"}</span>
+            <span>{t("crmAccounts.create.title")}</span>
           </DialogTitle>
           <DialogDescription className="text-xs text-nx-ink-2">
-            {t("crmAccounts.create.description") || "Create a new commercial organization or link an existing organization from your directory."}
+            {t("crmAccounts.create.description")}
           </DialogDescription>
         </DialogHeader>
 
         {activeError && (
           <Alert variant="destructive" className="py-2.5 border-destructive/20 bg-destructive/10">
             <AlertCircle className="size-4" />
-            <AlertTitle className="text-xs font-semibold">{t("common.error") || "Validation Error"}</AlertTitle>
+            <AlertTitle className="text-xs font-semibold">{t("crmAccounts.actions.error")}</AlertTitle>
             <AlertDescription className="text-xs">{activeError}</AlertDescription>
           </Alert>
         )}
@@ -142,11 +120,11 @@ export function CreateAccountDialog({
           <div className="grid grid-cols-2 gap-2 p-1 rounded-nx-md bg-nx-raised border border-nx-line">
             <Button type="button" variant={mode === "create" ? "default" : "ghost"} size="sm" onClick={() => { setMode("create"); setValidationError(null); }} className="h-8 text-xs font-semibold gap-1.5">
               <PlusCircle className="size-3.5" />
-              <span>{t("crmAccounts.create.modeCreateNew") || "New Organization"}</span>
+              <span>{t("crmAccounts.create.modeCreateNew")}</span>
             </Button>
             <Button type="button" variant={mode === "select" ? "default" : "ghost"} size="sm" onClick={() => { setMode("select"); setValidationError(null); }} className="h-8 text-xs font-semibold gap-1.5">
               <Building2 className="size-3.5" />
-              <span>{t("crmAccounts.create.modeSelectExisting") || "Existing Organization"}</span>
+              <span>{t("crmAccounts.create.modeSelectExisting")}</span>
             </Button>
           </div>
 
@@ -168,11 +146,11 @@ export function CreateAccountDialog({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <Label className="text-xs font-medium text-nx-ink">{t("crmAccounts.create.email")}</Label>
-                  <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="partnerships@club.sa" disabled={isSubmitting} className="h-9 text-xs bg-nx-surface border-nx-line" />
+                  <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t("crmAccounts.create.emailPlaceholder")} disabled={isSubmitting} className="h-9 text-xs bg-nx-surface border-nx-line" />
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs font-medium text-nx-ink">{t("crmAccounts.create.phone")}</Label>
-                  <PhoneInput value={phone} onChange={(val) => setPhone(val)} defaultCountry="SA" disabled={isSubmitting} placeholder="5X XXX XXXX" />
+                  <PhoneInput value={phone} onChange={(val) => setPhone(val)} defaultCountry="SA" disabled={isSubmitting} placeholder={t("crmAccounts.create.phonePlaceholder")} />
                 </div>
               </div>
             </div>
@@ -181,26 +159,15 @@ export function CreateAccountDialog({
               <Label className="text-xs font-medium text-nx-ink">
                 {t("crmAccounts.create.selectOrganization")} <span className="text-destructive">*</span>
               </Label>
-              <div className="relative">
-                <Search className="absolute start-2.5 top-1/2 -translate-y-1/2 size-3.5 text-nx-ink-3 pointer-events-none" />
-                <Input value={orgSearch} onChange={(e) => setOrgSearch(e.target.value)} placeholder={t("crmAccounts.create.searchOrganizations")} disabled={isSubmitting} className="h-8 ps-8 text-xs bg-nx-surface border-nx-line mb-2" />
-              </div>
-              <Select value={partyId} onValueChange={setPartyId} disabled={isSubmitting}>
-                <SelectTrigger className="h-9 text-xs bg-nx-surface border-nx-line">
-                  <SelectValue placeholder={isLoadingOrgs ? t("common.loading") : t("crmAccounts.create.chooseOrganization")} />
-                </SelectTrigger>
-                <SelectContent>
-                  {candidateOrgs.length === 0 ? (
-                    <SelectItem value="__empty" disabled>{t("crmAccounts.create.noOrganizationsFound")}</SelectItem>
-                  ) : (
-                    candidateOrgs.map((org) => (
-                      <SelectItem key={org.partyId} value={org.partyId}>
-                        {org.legalNameEn}{org.legalNameAr ? ` — ${org.legalNameAr}` : ""}
-                      </SelectItem>
-                    ))
-                  )}
-                </SelectContent>
-              </Select>
+              <CrmEntitySearchSelect
+                id="account-org-select"
+                entityKind="party"
+                value={partyId}
+                onChange={(val) => setPartyId(val)}
+                placeholder={t("crmAccounts.create.chooseOrganization")}
+                allowClear
+                disabled={isSubmitting}
+              />
             </div>
           )}
 
@@ -223,24 +190,29 @@ export function CreateAccountDialog({
               <Select value={preferredCurrencyCode} onValueChange={setPreferredCurrencyCode} disabled={isSubmitting}>
                 <SelectTrigger id="account-currency" className="h-9 text-xs bg-nx-surface border-nx-line"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="SAR">{t("crmAccounts.currencies.SAR")}</SelectItem>
-                  <SelectItem value="AED">{t("crmAccounts.currencies.AED")}</SelectItem>
-                  <SelectItem value="USD">{t("crmAccounts.currencies.USD")}</SelectItem>
-                  <SelectItem value="EUR">{t("crmAccounts.currencies.EUR")}</SelectItem>
-                  <SelectItem value="EGP">{t("crmAccounts.currencies.EGP")}</SelectItem>
+                  {CRM_CURRENCY_OPTIONS.map((curr) => {
+                    const labelKey = `crmAccounts.currencies.${curr.code}`;
+                    const translated = t(labelKey);
+                    const display = translated && translated !== labelKey ? translated : `${curr.code} — ${curr.nameEn}`;
+                    return (
+                      <SelectItem key={curr.code} value={curr.code}>
+                        {display}
+                      </SelectItem>
+                    );
+                  })}
                 </SelectContent>
               </Select>
             </div>
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="account-notes" className="text-xs font-medium text-nx-ink">{t("crmAccounts.create.notes") || "Commercial Account Notes"}</Label>
-            <Textarea id="account-notes" rows={3} value={commercialNotes} onChange={(e) => setCommercialNotes(e.target.value)} placeholder={t("crmAccounts.create.notesPlaceholder") || "Key strategic partnership notes, contract preferences, or facility scope..."} disabled={isSubmitting} className="text-xs bg-nx-surface border-nx-line resize-none" />
+            <Label htmlFor="account-notes" className="text-xs font-medium text-nx-ink">{t("crmAccounts.create.notes")}</Label>
+            <Textarea id="account-notes" rows={3} value={commercialNotes} onChange={(e) => setCommercialNotes(e.target.value)} placeholder={t("crmAccounts.create.notesPlaceholder")} disabled={isSubmitting} className="text-xs bg-nx-surface border-nx-line resize-none" />
           </div>
 
           <CustomFieldsSection
             entityTypeKey="crm.account"
-            entityDisplayName={t("crmAccounts.title") || "Commercial Account"}
+            entityDisplayName={t("crmAccounts.title")}
             values={customFields}
             onChange={(key, value) => setCustomFields((prev) => ({ ...prev, [key]: value }))}
             disabled={isSubmitting}
@@ -248,10 +220,10 @@ export function CreateAccountDialog({
 
           <DialogFooter className="pt-2">
             <Button type="button" variant="outline" size="sm" onClick={() => handleOpenChange(false)} disabled={isSubmitting} className="text-xs border-nx-line bg-nx-surface text-nx-ink">
-              {t("common.cancel") || "Cancel"}
+              {t("crmAccounts.actions.cancel")}
             </Button>
             <Button type="submit" size="sm" disabled={isSubmitting} className="text-xs font-bold">
-              {isSubmitting ? t("common.saving") || "Saving..." : t("crmAccounts.create.submit") || "Create Account"}
+              {isSubmitting ? t("crmAccounts.actions.saving") : t("crmAccounts.create.submit")}
             </Button>
           </DialogFooter>
         </form>

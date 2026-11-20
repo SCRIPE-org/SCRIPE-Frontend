@@ -33,19 +33,19 @@ export function UnactivatedAccountAlert({
   return (
     <div
       id="login-unactivated-alert"
-      className="shadow-xs flex flex-col gap-3 rounded-xl border border-sky-500/30 bg-sky-500/10 p-4 text-sky-900 duration-300 animate-in fade-in dark:bg-sky-950/25 dark:text-sky-200"
+      className="flex flex-col gap-3 rounded-xl border border-info/30 bg-info/10 p-4 text-nx-info duration-300 animate-in fade-in"
       role="alert"
       aria-live="polite"
     >
       <div className="flex items-start gap-3">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-sky-500/20 text-sky-600 dark:text-sky-400">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-info/20 text-nx-info">
           <Mail className="h-5 w-5" aria-hidden="true" />
         </div>
         <div className="flex-1 space-y-1">
-          <h4 className="text-sm font-semibold text-foreground">
+          <h4 className="text-sm font-semibold text-nx-ink">
             {t("auth.accountSetup.activationRequiredTitle") || "Account Setup Required"}
           </h4>
-          <p className="text-xs leading-relaxed text-muted-foreground">
+          <p className="text-xs leading-relaxed text-nx-ink-2">
             {accountNotActivatedMessage ||
               t("auth.accountSetup.activationRequiredDesc") ||
               "Your account is not active yet. A setup link was automatically sent to your email address."}
@@ -53,8 +53,8 @@ export function UnactivatedAccountAlert({
         </div>
       </div>
 
-      <div className="flex items-center justify-between border-t border-sky-500/20 pt-2.5 text-xs">
-        <span className="font-mono text-[11px] text-muted-foreground">
+      <div className="flex items-center justify-between border-t border-info/20 pt-2.5 text-xs">
+        <span className="font-mono text-[11px] text-nx-ink-2">
           {isCooldownActive
             ? `Resend available in ${cooldownSeconds}s`
             : "Didn't receive the email?"}
@@ -65,7 +65,7 @@ export function UnactivatedAccountAlert({
           size="sm"
           disabled={isLoading || isCooldownActive}
           onClick={onResendSetupEmail}
-          className="h-7 gap-1.5 border-sky-500/30 text-xs hover:bg-sky-500/15"
+          className="h-7 gap-1.5 border-info/30 text-xs hover:bg-info/15"
         >
           {isLoading ? (
             <LoadingSpinner className="h-3 w-3" />

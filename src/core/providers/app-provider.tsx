@@ -4,7 +4,7 @@
 import type React from "react";
 import dynamic from "next/dynamic";
 import { ThemeProvider } from "@core/providers/theme-provider";
-import { I18nProvider } from "@core/providers/i18n-provider";
+import { I18nProvider, type Language } from "@core/providers/i18n-provider";
 import { ServiceProvider } from "@core/providers/service-provider";
 import { SettingsProvider } from "@core/providers/settings-provider";
 import { NavigationProvider } from "@core/providers/navigation-provider";
@@ -83,16 +83,22 @@ import { queryClient } from "@core/query-client";
  *
  * @param children - The app content to be wrapped
  */
-export function AppProvider({ children }: { children: React.ReactNode }) {
+export function AppProvider({
+  children,
+  initialLanguage = "en",
+}: {
+  children: React.ReactNode;
+  initialLanguage?: Language;
+}) {
   return (
     <>
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider attribute="class" disableTransitionOnChange={false}>
+        <ThemeProvider attribute="class" disableTransitionOnChange={true}>
           <TooltipProvider>
             <RoutingProgressBar />
             <ServiceProvider>
               <SettingsProvider>
-                <I18nProvider>
+                <I18nProvider initialLanguage={initialLanguage}>
                   <QueryAwareErrorBoundary>
                     <PermissionProvider>
                       <TenantContextProvider>

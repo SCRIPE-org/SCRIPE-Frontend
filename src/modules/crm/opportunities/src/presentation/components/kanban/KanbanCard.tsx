@@ -11,6 +11,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useCrmCurrency, useCrmWorkflowsStore } from "@modules/crm";
 import type { CrmOpportunity } from "../../../domain/entities/OpportunityEntity";
 
+/** Props for `KanbanCard`. */
 export interface KanbanCardProps {
   opportunity: CrmOpportunity;
   currentStageIndex: number;
@@ -24,6 +25,7 @@ export interface KanbanCardProps {
   onDragEnd?: () => void;
 }
 
+/** Draggable Kanban deal card displaying SLA aging, verified party status, and quick-move buttons. */
 export function KanbanCard({
   opportunity, currentStageIndex, totalStages, slaTargetDays, cardDensity = "Standard",
   onMoveForward, onMoveBackward, isDragging = false, onDragStart, onDragEnd,
@@ -53,20 +55,14 @@ export function KanbanCard({
   const convertedInBase = showConvertedBadge ? Math.round(convertAmount(Number(opportunity.estimatedAmount), currencyCode, baseCurrency)) : null;
 
   const closeDateObj = opportunity.targetCloseDate ? new Date(opportunity.targetCloseDate) : null;
-  const formattedCloseDate = closeDateObj && !isNaN(closeDateObj.getTime())
-    ? closeDateObj.toLocaleDateString(isRtl ? "ar-SA" : "en-US", { month: "short", day: "numeric" })
-    : null;
+  const formattedCloseDate =
+    closeDateObj && !isNaN(closeDateObj.getTime()) && closeDateObj.getFullYear() > 1900
+      ? closeDateObj.toLocaleDateString(isRtl ? "ar-SA" : "en-US", { month: "short", day: "numeric" })
+      : null;
 
-  const hasParty = Boolean(opportunity.partyId);
+  const hasParty = Boolean(opportunity.partyId || opportunity.accountId);
   const canMoveBackward = currentStageIndex > 0;
   const canMoveForward = currentStageIndex < totalStages - 1;
-
-  const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
-    e.dataTransfer.setData("application/json", JSON.stringify(opportunity));
-    e.dataTransfer.setData("text/plain", opportunity.id);
-    e.dataTransfer.effectAllowed = "move";
-    onDragStart?.(opportunity);
-  };
 
   const handleCardClick = () => router.push(`/crm/opportunities/${opportunity.id}`);
 
@@ -88,11 +84,10 @@ export function KanbanCard({
 
   return (
     <Card
-      draggable
-      onDragStart={handleDragStart}
-      onDragEnd={() => onDragEnd?.()}
       onClick={handleCardClick}
       onKeyDown={handleKeyDown}
+      onDragStart={() => onDragStart?.(opportunity)}
+      onDragEnd={() => onDragEnd?.()}
       tabIndex={0}
       role="article"
       data-testid="kanban-card"
@@ -120,7 +115,7 @@ export function KanbanCard({
               defaultValue: opportunity.dealKind === "NewBusiness" ? "New Business" : opportunity.dealKind,
             })}
           </Badge>
-          {isRotting && (
+          {isRotting ? (
             <Badge
               variant="outline"
               data-testid="kanban-card-rotting-badge"
@@ -130,7 +125,15 @@ export function KanbanCard({
               <Flame className="size-2.5" />
               <span>{ageDays}d</span>
             </Badge>
-          )}
+          ) : effectiveSlaDays > 0 && ageDays >= Math.floor(effectiveSlaDays * 0.7) ? (
+            <Badge
+              variant="outline"
+              title={t("crmOpportunities.kanban.approachingSlaTooltip", { ageDays, slaDays: effectiveSlaDays })}
+              className="shrink-0 text-[9px] px-1.5 py-0 font-semibold border-warning-strong/40 text-nx-warning-strong bg-warning/10"
+            >
+              {ageDays}d/{effectiveSlaDays}d
+            </Badge>
+          ) : null}
         </div>
 
         {hasParty ? (
@@ -139,7 +142,7 @@ export function KanbanCard({
             <span>{t("crmOpportunities.kanban.partyVerified", { defaultValue: "Verified" })}</span>
           </span>
         ) : (
-          <span className="inline-flex items-center gap-0.5 text-[9px] font-semibold text-warning shrink-0" title={t("crmOpportunities.kanban.partyUnlinked", { defaultValue: "Unlinked" })}>
+          <span className="inline-flex items-center gap-0.5 text-[9px] font-semibold text-nx-warning-strong shrink-0" title={t("crmOpportunities.kanban.partyUnlinked", { defaultValue: "Unlinked" })}>
             <ShieldAlert className="size-2.5" />
             <span>{t("crmOpportunities.kanban.partyUnlinked", { defaultValue: "Unlinked" })}</span>
           </span>
@@ -149,6 +152,19 @@ export function KanbanCard({
       <h4 className="text-xs font-bold text-nx-ink group-hover:text-nx-accent transition-colors line-clamp-2 text-start leading-snug" title={opportunity.title}>
         {opportunity.title}
       </h4>
+
+      {(opportunity.accountDisplayName || opportunity.partyDisplayName || opportunity.primaryContactName || opportunity.ownerDisplayName) && (
+        <div className="flex items-center justify-between gap-1.5 text-[10px] text-nx-ink-2">
+          <span className="truncate font-medium">
+            {opportunity.accountDisplayName || opportunity.partyDisplayName || opportunity.primaryContactName || ""}
+          </span>
+          {opportunity.ownerDisplayName && (
+            <span className="shrink-0 rounded bg-nx-raised px-1.5 py-0.5 text-[9px] font-semibold text-nx-ink-3 truncate max-w-24">
+              {opportunity.ownerDisplayName}
+            </span>
+          )}
+        </div>
+      )}
 
       <div
         className={cn(
@@ -167,8 +183,8 @@ export function KanbanCard({
       {cardDensity === "Executive" && (
         <div data-testid="kanban-card-executive-strip" className="flex items-center justify-between gap-1 text-[10px] font-mono text-nx-ink-3 px-1">
           <span>{t("crmOpportunities.kanban.slaPrefix", { defaultValue: "SLA" })}: {ageDays}d{effectiveSlaDays > 0 ? ` / ${effectiveSlaDays}d` : ""}</span>
-          {matchedStage?.probabilityPercent !== undefined && (
-            <span className="text-nx-accent font-semibold">{matchedStage.probabilityPercent}% {t("crmOpportunities.kanban.winSuffix", { defaultValue: "win" })}</span>
+          {matchedStage?.winProbabilityPercent !== undefined && (
+            <span className="text-nx-accent font-semibold">{matchedStage.winProbabilityPercent}% {t("crmOpportunities.kanban.winSuffix", { defaultValue: "win" })}</span>
           )}
         </div>
       )}
@@ -186,13 +202,18 @@ export function KanbanCard({
           </span>
         )}
 
-        <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="flex items-center gap-1"
+          onClick={(e) => e.stopPropagation()}
+          onPointerDown={(e) => e.stopPropagation()}
+        >
           <Button
             type="button"
             variant="ghost"
             size="icon"
             disabled={!canMoveBackward}
             onClick={() => onMoveBackward?.(opportunity)}
+            onPointerDown={(e) => e.stopPropagation()}
             aria-label={t("crmOpportunities.kanban.moveBackward", { defaultValue: "Move backward" })}
             className="size-6 p-0 text-nx-ink-3 hover:text-nx-ink hover:bg-nx-raised rounded disabled:opacity-30"
           >
@@ -204,6 +225,7 @@ export function KanbanCard({
             size="icon"
             disabled={!canMoveForward}
             onClick={() => onMoveForward?.(opportunity)}
+            onPointerDown={(e) => e.stopPropagation()}
             aria-label={t("crmOpportunities.kanban.moveForward", { defaultValue: "Move forward" })}
             className="size-6 p-0 text-nx-ink-3 hover:text-nx-ink hover:bg-nx-raised rounded disabled:opacity-30"
           >

@@ -1,7 +1,7 @@
 /**
  * useUserFeature — Frontend hook for user-level feature gating (Tier 2).
  *
- * Fetches the current user's active subscription features from the /me endpoint
+ * Fetches the current user's active subscription features from the /user-subscriptions/current endpoint
  * and provides utilities to check feature access and quota limits.
  *
  * Usage:
@@ -9,10 +9,10 @@
  *   const projectLimit = useUserFeatureValue("max_projects");
  *
  * When external billing is wired, this hook's data
- * will be populated from subscription metadata via the same /me endpoint.
+ * will be populated from subscription metadata via the same /user-subscriptions/current endpoint.
  *
  * Architecture Note:
- * - Fetches from /me endpoint (UserSubscriptionsController)
+ * - Fetches from /user-subscriptions/current endpoint (UserSubscriptionsController)
  * - Uses TanStack Query with long stale time (features don't change frequently)
  * - Does NOT import IApiService — goes through the DI container
  */
@@ -56,7 +56,7 @@ export function useUserFeatures(): UseUserFeatureResult {
 
   const { data: subscription, isLoading } = useQuery({
     queryKey: ["user-subscription", "me"],
-    queryFn: () => userSubscriptionRepository.getMySubscription(),
+    queryFn: () => userSubscriptionRepository.getCurrentSubscription(),
     staleTime: 5 * 60 * 1000, // 5 minutes — features rarely change mid-session
     retry: 1,
   });

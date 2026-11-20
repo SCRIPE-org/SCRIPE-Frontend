@@ -1,19 +1,13 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
+import { CrmEntitySearchSelect } from "@modules/crm";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Textarea } from "@core/ui/textarea";
 import { Label } from "@core/ui/label";
 import { Alert, AlertDescription } from "@core/ui/alert";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@core/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -24,25 +18,6 @@ import {
 } from "@core/ui/dialog";
 import { AlertCircle, CalendarClock } from "lucide-react";
 import type { CrmActivity } from "../../domain/entities/CrmActivityEntity";
-
-const COMMERCIAL_ASSIGNEES: Array<{ id: string; labelKey: string }> = [
-  {
-    id: "11111111-1111-1111-1111-111111111111",
-    labelKey: "crmActivities.followup.assignees.rep1",
-  },
-  {
-    id: "22222222-2222-2222-2222-222222222222",
-    labelKey: "crmActivities.followup.assignees.rep2",
-  },
-  {
-    id: "33333333-3333-3333-3333-333333333333",
-    labelKey: "crmActivities.followup.assignees.rep3",
-  },
-  {
-    id: "44444444-4444-4444-4444-444444444444",
-    labelKey: "crmActivities.followup.assignees.rep4",
-  },
-];
 
 interface CreateFollowUpModalProps {
   readonly activity: CrmActivity | null;
@@ -60,6 +35,7 @@ interface CreateFollowUpModalProps {
   readonly error: string | null;
 }
 
+/** Modal dialog for scheduling a follow-up work item linked to a sales activity. */
 export function CreateFollowUpModal({
   activity,
   onClose,
@@ -72,41 +48,36 @@ export function CreateFollowUpModal({
   const actorUserId = activity?.actorUserId ?? "";
   const actorDisplaySnapshot = activity?.actorDisplaySnapshot ?? "";
 
-  const [title, setTitle] = useState(
-    activity
-      ? `${t("crmActivities.followup.defaultTitlePrefix")}: ${activity.summary}`
-      : ""
-  );
+  const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [dueDate, setDueDate] = useState(
-    new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString().split("T")[0]
+    () => new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString().split("T")[0]
   );
-  const [assigneeId, setAssigneeId] = useState(
-    actorUserId || COMMERCIAL_ASSIGNEES[0].id
-  );
+  const [assigneeId, setAssigneeId] = useState("");
+  const [validationError, setValidationError] = useState<string | null>(null);
 
-  const assigneeOptions = useMemo(() => {
-    const base = COMMERCIAL_ASSIGNEES.map((a) => ({
-      id: a.id,
-      label: t(a.labelKey),
-    }));
-    if (actorUserId && !base.some((b) => b.id === actorUserId)) {
-      base.unshift({
-        id: actorUserId,
-        label: actorDisplaySnapshot || t("crmActivities.followup.currentActorLabel"),
-      });
-    }
-    return base;
-  }, [actorDisplaySnapshot, actorUserId, t]);
+  useEffect(() => {
+    if (!activity) return;
+    setTitle(`${t("crmActivities.followup.defaultTitlePrefix")}: ${activity.summary}`);
+    setDescription("");
+    setDueDate(new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).toISOString().split("T")[0]);
+    setAssigneeId(activity.actorUserId ?? "");
+    setValidationError(null);
+  }, [activity, t]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!activity || !title.trim()) return;
+    if (!assigneeId.trim()) {
+      setValidationError(t("crmActivities.followup.assigneeRequiredError"));
+      return;
+    }
+    setValidationError(null);
 
     const success = await onSubmit(activity.activityId, {
       title: title.trim(),
       description: description.trim() || undefined,
-      assigneeUserId: assigneeId.trim() || COMMERCIAL_ASSIGNEES[0].id,
+      assigneeUserId: assigneeId.trim(),
       dueAtUtc: dueDate ? new Date(dueDate).toISOString() : undefined,
     });
 
@@ -124,7 +95,7 @@ export function CreateFollowUpModal({
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle className="text-base font-bold text-nx-ink font-heading flex items-center gap-2">
-              <CalendarClock className="size-4 text-warning" />
+              <CalendarClock className="size-4 text-nx-warning-strong" />
               {t("crmActivities.followup.title")}
             </DialogTitle>
             <DialogDescription className="text-xs text-nx-ink-2">
@@ -205,25 +176,32 @@ export function CreateFollowUpModal({
 
               <div className="space-y-1.5">
                 <Label htmlFor="followup-assignee" className="text-nx-ink font-semibold">
-                  {t("crmActivities.followup.assignee")}
+                  {t("crmActivities.followup.assignee")} *
                 </Label>
-                <Select value={assigneeId} onValueChange={setAssigneeId}>
-                  <SelectTrigger
-                    id="followup-assignee"
-                    className="h-8 text-xs bg-nx-ground border-nx-line text-nx-ink"
-                  >
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {assigneeOptions.map((opt) => (
-                      <SelectItem key={opt.id} value={opt.id}>
-                        {opt.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <CrmEntitySearchSelect
+                  id="followup-assignee"
+                  entityKind="user"
+                  value={assigneeId}
+                  initialLabel={
+                    actorDisplaySnapshot ||
+                    (actorUserId ? t("crmActivities.followup.currentActorLabel") : undefined)
+                  }
+                  onChange={(val) => {
+                    setAssigneeId(val);
+                    if (validationError) setValidationError(null);
+                  }}
+                  placeholder={t("crmActivities.followup.assigneePlaceholder")}
+                  allowClear={false}
+                  required
+                />
               </div>
             </div>
+            {(validationError || error) && (
+              <Alert variant="destructive" className="text-xs">
+                <AlertCircle className="size-3.5" />
+                <AlertDescription>{validationError || error}</AlertDescription>
+              </Alert>
+            )}
           </div>
 
           <DialogFooter className="gap-2 sm:gap-0 pt-2 border-t border-nx-line">
@@ -240,7 +218,7 @@ export function CreateFollowUpModal({
             <Button
               type="submit"
               size="sm"
-              disabled={isSubmitting || !title.trim()}
+              disabled={isSubmitting || !title.trim() || !assigneeId.trim()}
               className="h-8 text-xs font-bold"
             >
               {isSubmitting

@@ -56,12 +56,7 @@ export class SecureTokenService {
       }
 
       this._accessToken = token;
-      if (
-        typeof window !== "undefined" &&
-        (process.env.NODE_ENV === "development" ||
-          window.location.hostname === "localhost" ||
-          window.location.hostname === "127.0.0.1")
-      ) {
+      if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
         try {
           sessionStorage.setItem("dev_access_token", token);
         } catch {}
@@ -120,9 +115,7 @@ export class SecureTokenService {
       if (
         !this._accessToken &&
         typeof window !== "undefined" &&
-        (process.env.NODE_ENV === "development" ||
-          window.location.hostname === "localhost" ||
-          window.location.hostname === "127.0.0.1")
+        process.env.NODE_ENV === "development"
       ) {
         try {
           const devToken = sessionStorage.getItem("dev_access_token");

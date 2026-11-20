@@ -5,33 +5,35 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
-import { Input } from "@core/ui/input";
-import { Label } from "@core/ui/label";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@core/ui/dialog";
-import { Download, AlertTriangle, ShieldAlert, CheckCircle2, FileJson } from "lucide-react";
+import { Download, AlertTriangle, CheckCircle2, FileJson } from "lucide-react";
+import { AccountDeactivateDialog } from "./AccountDeactivateDialog";
 import type { AdminProfile, AdminCustomFieldItem } from "../../domain/entities/AdminProfile";
 
-interface AccountLifecycleCardProps {
+/** Props for {@link AccountLifecycleCard}. */
+export interface AccountLifecycleCardProps {
+  /** Administrator profile data included in compliance JSON export. */
   profile: AdminProfile;
+  /** Enterprise custom fields included in exported archive. */
   customFields?: AdminCustomFieldItem[];
+  /** Whether the operator is the sole primary owner of their organization. */
   isSolePrimaryOwner?: boolean;
+  /** Primary organization display name shown in sole-owner guardrail banner. */
   primaryOrgName?: string;
+  /** Fetches additional backend account export archive payload. */
   onExportData?: () => Promise<Record<string, unknown>>;
-  onDeactivateAccount?: () => Promise<unknown>;
+  /** Executes account deactivation once confirmed with 6-digit step-up sudo code. */
+  onDeactivateAccount?: (sudoCode: string) => Promise<unknown>;
 }
 
+/**
+ * Compliance card providing GDPR/SOC2 JSON account archive export and
+ * guardrailed account deactivation workflow.
+ */
 export function AccountLifecycleCard({
   profile,
   customFields = [],
   isSolePrimaryOwner = true,
-  primaryOrgName = "Al-Ahly Sporting Club",
+  primaryOrgName = "",
   onExportData,
   onDeactivateAccount,
 }: AccountLifecycleCardProps) {
@@ -40,6 +42,8 @@ export function AccountLifecycleCard({
   const [deactivateOpen, setDeactivateOpen] = useState(false);
   const [confirmUsername, setConfirmUsername] = useState("");
   const [sudoCode, setSudoCode] = useState("");
+  const [isDeactivating, setIsDeactivating] = useState(false);
+  const [deactivateError, setDeactivateError] = useState<string | null>(null);
 
   const handleExportData = async () => {
     setExportStatus("exporting");
@@ -76,9 +80,7 @@ export function AccountLifecycleCard({
         ],
       };
 
-      const blob = new Blob([JSON.stringify(payload, null, 2)], {
-        type: "application/json",
-      });
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
@@ -93,12 +95,31 @@ export function AccountLifecycleCard({
     }
   };
 
+  const handleDeactivateOpenChange = (nextOpen: boolean) => {
+    setDeactivateOpen(nextOpen);
+    if (!nextOpen) {
+      setConfirmUsername("");
+      setSudoCode("");
+      setDeactivateError(null);
+    }
+  };
+
   const handleConfirmDeactivate = async () => {
-    if (isSolePrimaryOwner || confirmUsername !== profile.username || sudoCode.length < 6) return;
+    const trimmedCode = sudoCode.trim();
+    if (isSolePrimaryOwner || confirmUsername !== profile.username || trimmedCode.length < 6) {
+      return;
+    }
+    setDeactivateError(null);
+    setIsDeactivating(true);
     try {
-      await onDeactivateAccount?.();
+      await onDeactivateAccount?.(trimmedCode);
+      handleDeactivateOpenChange(false);
+    } catch (err: unknown) {
+      setDeactivateError(
+        err instanceof Error && err.message ? err.message : t("profile.common.error")
+      );
     } finally {
-      setDeactivateOpen(false);
+      setIsDeactivating(false);
     }
   };
 
@@ -125,11 +146,10 @@ export function AccountLifecycleCard({
           </Badge>
         </CardHeader>
 
-        <CardContent className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {/* Left: Export Account Data Archive */}
-          <div className="rounded-xl border border-nx-line bg-nx-ground p-4 flex flex-col justify-between gap-3">
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between gap-2">
+        <CardContent className="grid grid-cols-1 xl:grid-cols-2 gap-4 min-w-0">
+          <div className="rounded-xl border border-nx-line bg-nx-ground p-4 flex flex-col justify-between gap-3 min-w-0">
+            <div className="space-y-1.5 min-w-0">
+              <div className="flex items-center justify-between gap-2 flex-wrap">
                 <span className="text-xs font-bold text-nx-ink">
                   {t("profile.lifecycle.exportTitle")}
                 </span>
@@ -142,7 +162,7 @@ export function AccountLifecycleCard({
               </p>
             </div>
 
-            <div className="flex items-center justify-between gap-2 pt-1">
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-1 min-w-0">
               {exportStatus === "done" ? (
                 <span
                   data-testid="export-account-data-success"
@@ -172,12 +192,11 @@ export function AccountLifecycleCard({
             </div>
           </div>
 
-          {/* Right: Deactivate / Delete Account with Sole Owner Guardrail */}
-          <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-4 flex flex-col justify-between gap-3">
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between gap-2">
+          <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-4 flex flex-col justify-between gap-3 min-w-0">
+            <div className="space-y-1.5 min-w-0">
+              <div className="flex items-center justify-between gap-2 flex-wrap">
                 <span className="text-xs font-bold text-nx-ink flex items-center gap-1.5">
-                  <AlertTriangle className="h-3.5 w-3.5 text-destructive" style={{ minWidth: 14, minHeight: 14 }} />
+                  <AlertTriangle className="h-3.5 w-3.5 text-destructive shrink-0" style={{ minWidth: 14, minHeight: 14 }} />
                   <span>{t("profile.lifecycle.deactivateTitle")}</span>
                 </span>
                 <Badge variant="outline" className="border-destructive/40 text-destructive text-[10px]">
@@ -189,7 +208,7 @@ export function AccountLifecycleCard({
               </p>
             </div>
 
-            <div className="flex items-center justify-between gap-2 pt-1">
+            <div className="flex flex-wrap items-center justify-between gap-2 pt-1 min-w-0">
               <span className="text-[11px] text-nx-ink-3">
                 {t("profile.lifecycle.soleOwnerGuardrailShort")}
               </span>
@@ -208,88 +227,26 @@ export function AccountLifecycleCard({
         </CardContent>
       </Card>
 
-      <Dialog open={deactivateOpen} onOpenChange={setDeactivateOpen}>
-        <DialogContent
-          data-testid="deactivate-account-modal"
-          className="sm:max-w-lg border border-nx-line bg-nx-surface text-nx-ink"
-        >
-          <DialogHeader>
-            <div className="flex items-center gap-2">
-              <ShieldAlert className="h-5 w-5 text-destructive" style={{ minWidth: 20, minHeight: 20 }} />
-              <DialogTitle className="text-base font-bold text-nx-ink">
-                {t("profile.lifecycle.modalTitle")}
-              </DialogTitle>
-            </div>
-            <DialogDescription className="text-xs text-nx-ink-2 pt-1">
-              {t("profile.lifecycle.modalSubtitle")}
-            </DialogDescription>
-          </DialogHeader>
-
-          {isSolePrimaryOwner && (
-            <div
-              data-testid="sole-owner-guardrail-banner"
-              className="rounded-xl border border-warning/40 bg-warning/10 p-3.5 space-y-1.5"
-            >
-              <div className="flex items-center gap-2 text-xs font-bold text-warning">
-                <AlertTriangle className="h-4 w-4 shrink-0" style={{ minWidth: 16, minHeight: 16 }} />
-                <span>{t("profile.lifecycle.soleOwnerGuardrailTitle")}</span>
-              </div>
-              <p className="text-xs text-nx-ink-2 leading-relaxed">
-                {t("profile.lifecycle.soleOwnerGuardrailBody", { org: primaryOrgName })}
-              </p>
-            </div>
-          )}
-
-          <div className="space-y-3 py-1">
-            <div className="space-y-1.5">
-              <Label htmlFor="deactivate-confirm-username" className="text-xs font-semibold text-nx-ink">
-                {t("profile.lifecycle.confirmUsernameLabel", { username: profile.username })}
-              </Label>
-              <Input
-                id="deactivate-confirm-username"
-                data-testid="deactivate-confirm-username-input"
-                value={confirmUsername}
-                onChange={(e) => setConfirmUsername(e.target.value)}
-                placeholder={profile.username}
-                className="font-mono text-xs"
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="deactivate-sudo-code" className="text-xs font-semibold text-nx-ink">
-                {t("profile.lifecycle.sudoCodeLabel")}
-              </Label>
-              <Input
-                id="deactivate-sudo-code"
-                data-testid="deactivate-sudo-code-input"
-                value={sudoCode}
-                onChange={(e) => setSudoCode(e.target.value)}
-                placeholder="000000"
-                maxLength={6}
-                className="font-mono text-xs"
-              />
-            </div>
-          </div>
-
-          <DialogFooter className="flex items-center justify-between gap-2">
-            <Button type="button" variant="outline" size="sm" onClick={() => setDeactivateOpen(false)}>
-              {t("profile.cancel")}
-            </Button>
-            <Button
-              type="button"
-              size="sm"
-              data-testid="confirm-deactivate-account-btn"
-              disabled={isSolePrimaryOwner || confirmUsername !== profile.username || sudoCode.length < 6}
-              onClick={() => void handleConfirmDeactivate()}
-              className="bg-destructive text-nx-on-fill font-semibold"
-            >
-              {isSolePrimaryOwner
-                ? t("profile.lifecycle.transferOwnershipRequiredBtn")
-                : t("profile.lifecycle.confirmDeactivateBtn")}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <AccountDeactivateDialog
+        open={deactivateOpen}
+        onOpenChange={handleDeactivateOpenChange}
+        username={profile.username}
+        isSolePrimaryOwner={isSolePrimaryOwner}
+        primaryOrgName={primaryOrgName}
+        confirmUsername={confirmUsername}
+        sudoCode={sudoCode}
+        isSubmitting={isDeactivating}
+        error={deactivateError}
+        onConfirmUsernameChange={(val) => {
+          setConfirmUsername(val);
+          if (deactivateError) setDeactivateError(null);
+        }}
+        onSudoCodeChange={(val) => {
+          setSudoCode(val);
+          if (deactivateError) setDeactivateError(null);
+        }}
+        onConfirmDeactivate={handleConfirmDeactivate}
+      />
     </>
   );
 }

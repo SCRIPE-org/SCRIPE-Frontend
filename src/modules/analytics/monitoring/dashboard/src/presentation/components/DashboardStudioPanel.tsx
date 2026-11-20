@@ -1,5 +1,4 @@
 // FILE-EXCEPTION: file length
-// UI-EXCEPTION: compact studio layout
 /**
  * DashboardStudioPanel — Slide-over settings panel for dashboard theming (M9 + M11)
  *
@@ -87,19 +86,20 @@ function OptionPicker<T extends string>({
   return (
     <div className="flex flex-wrap gap-1.5">
       {options.map((opt) => (
-        <button
+        <Button
           key={opt.value}
           type="button"
+          variant="ghost"
           aria-pressed={value === opt.value}
           onClick={() => onChange(opt.value)}
           className={cn(
-            "rounded-nx-md border px-3 py-1.5 text-xs font-medium",
+            "h-auto rounded-nx-md border px-3 py-1.5 text-xs font-medium",
             TILE_BASE,
             value === opt.value ? TILE_SELECTED : TILE_REST
           )}
         >
           {opt.label}
-        </button>
+        </Button>
       ))}
     </div>
   );
@@ -297,13 +297,14 @@ export function DashboardStudioPanel({
                         JSON.stringify(palette.colors);
 
                       return (
-                        <button
+                        <Button
                           key={palette.id}
                           type="button"
+                          variant="ghost"
                           aria-pressed={isSelected}
                           onClick={() => onUpdateNested("charts", "colorPalette", palette.colors)}
                           className={cn(
-                            "flex w-full items-center gap-3 rounded-nx-md border p-2.5",
+                            "flex h-auto w-full items-center justify-start gap-3 rounded-nx-md border p-2.5",
                             TILE_BASE,
                             isSelected ? TILE_SELECTED : TILE_REST
                           )}
@@ -325,7 +326,7 @@ export function DashboardStudioPanel({
                               {t("common.active")}
                             </Badge>
                           )}
-                        </button>
+                        </Button>
                       );
                     })}
                   </div>

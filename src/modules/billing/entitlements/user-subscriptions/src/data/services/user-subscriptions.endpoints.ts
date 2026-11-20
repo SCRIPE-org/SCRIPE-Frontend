@@ -9,8 +9,8 @@ export const USER_SUBSCRIPTIONS_ENDPOINTS = {
   CREATE: `${V1}/user-subscriptions`,
   CANCEL: (id: string) => `${V1}/user-subscriptions/${id}/cancel`,
   RENEW: (id: string) => `${V1}/user-subscriptions/${id}/renew`,
-  ME: `${V1}/user-subscriptions/me`,
-  CANCEL_MINE: `${V1}/user-subscriptions/me/cancel`,
+  CURRENT: `${V1}/user-subscriptions/current`,
+  CANCEL_CURRENT: `${V1}/user-subscriptions/current/cancel`,
   CHANGE_PLAN: (id: string) => `${V1}/user-subscriptions/${id}/change-plan`,
   USERS_LIST: `${V1}/Users`,
 } as const;

@@ -78,7 +78,7 @@ export function GuestBookingPortalView() {
               aria-label="Toggle Language"
             >
               <Globe className="size-3.5" aria-hidden="true" />
-              <span className="font-semibold">{language === "ar" ? "English" : "العربية"}</span>
+              <span className="font-semibold">{t("guestPortal.actions.switchLanguage")}</span>
             </Button>
           </div>
         </header>

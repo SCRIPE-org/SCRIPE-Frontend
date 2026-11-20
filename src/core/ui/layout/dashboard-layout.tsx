@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useSettings } from "@core/providers/settings-provider";
 import { useAdminSettingsSync } from "@core/providers/useAdminSettingsSync";
 import {
   TenantBrandingProvider,
@@ -24,6 +23,7 @@ import { useResolvedFileUrl } from "@core/hooks/use-resolved-file-url";
 // every user renders nexus.
 import { NexusLayout } from "@core/ui/layout/nexus/nexus-layout";
 import { useIsFetching } from "@tanstack/react-query";
+import { DataExchangeFloatingDock } from "@core/data-exchange/presentation/components/DataExchangeFloatingDock";
 
 // ── Content gate fallback ───────────────────────────────────────────────────
 // Shown on page refresh while the settings/branding/routes gates settle (see
@@ -140,45 +140,7 @@ function DashboardLayoutContent({
   isFreshLogin: boolean;
 }) {
   const { isSettingsReady, isTransitioning } = useAdminSettingsSync();
-  const settings = useSettings();
   const { isLoading: isBrandingLoading } = useTenantBranding();
-  const [sidebarOpen, setSidebarOpen] = useState(settings.collapsibleSidebar ? false : true);
-  // No useI18n() here: this component renders no copy of its own and NexusLayout
-  // reads the direction itself, so the subscription was a re-render for nothing.
-  const { collapsibleSidebar } = settings;
-
-  // Sync sidebar when collapsibleSidebar setting changes
-  const [prevCollapsibleSidebar, setPrevCollapsibleSidebar] = useState(collapsibleSidebar);
-  if (collapsibleSidebar !== prevCollapsibleSidebar) {
-    setPrevCollapsibleSidebar(collapsibleSidebar);
-    if (!collapsibleSidebar && !sidebarOpen) {
-      setSidebarOpen(true);
-    }
-  }
-
-  // Close sidebar when clicking outside on mobile if collapsible
-  useEffect(() => {
-    if (!collapsibleSidebar) return;
-    const handleClickOutside = (event: MouseEvent) => {
-      const sidebar = document.querySelector(".sidebar");
-      const sidebarTrigger = document.querySelector(".sidebar-trigger");
-
-      if (
-        sidebar &&
-        !sidebar.contains(event.target as Node) &&
-        sidebarTrigger &&
-        !sidebarTrigger.contains(event.target as Node) &&
-        window.innerWidth < 1024
-      ) {
-        setSidebarOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [collapsibleSidebar]);
 
   const isInitialLoading = useNavigationStore((s) => s.isInitialLoading);
   const routesLoadedAt = useNavigationStore((s) => s.routesLoadedAt);
@@ -305,6 +267,7 @@ function DashboardLayoutContent({
         <GracePeriodBanner />
         {renderLayout()}
       </div>
+      <DataExchangeFloatingDock />
     </>
   );
 }

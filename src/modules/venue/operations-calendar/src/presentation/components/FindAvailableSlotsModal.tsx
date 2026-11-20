@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { Search, CheckCircle2, AlertCircle, ArrowRight } from "lucide-react";
 import {
   Dialog,
@@ -15,6 +15,7 @@ import { Label } from "@core/ui/label";
 import { GenericSelect } from "@core/crud/components/generic-select";
 import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
 import { useI18n } from "@core/providers/i18n-provider";
+import { localToUtcInstant } from "../viewmodels/useCalendarLayout";
 import { useFindAvailableSlotsViewModel } from "../viewmodels/useFindAvailableSlotsViewModel";
 import type { CalendarResource } from "../../domain/entities/OperationsCalendar";
 
@@ -27,6 +28,9 @@ interface FindAvailableSlotsModalProps {
   onSelectSlot: (resource: CalendarResource, startIso: string, durationMinutes?: number) => void;
 }
 
+/**
+ * Dialog for checking court availability before launching the click-to-book flow.
+ */
 export function FindAvailableSlotsModal({
   open,
   onOpenChange,
@@ -37,22 +41,15 @@ export function FindAvailableSlotsModal({
 }: FindAvailableSlotsModalProps) {
   const { t } = useI18n();
 
-  const [selectedResourceId, setSelectedResourceId] = useState<string>(resources[0]?.id ?? "");
-  const [selectedDate, setSelectedDate] = useState<string>(currentDate);
+  const [selectedResourceId, setSelectedResourceId] = useState<string>("");
+  const [dateSelection, setDateSelection] = useState<{ base: string; value: string } | null>(null);
   const [startTime, setStartTime] = useState<string>("09:00");
   const [durationMinutes, setDurationMinutes] = useState<number>(60);
   const { checking, result, setResult, checkSlot } = useFindAvailableSlotsViewModel();
 
-  // Update resource default when resources load
-  React.useEffect(() => {
-    if (!selectedResourceId && resources.length > 0) {
-      setSelectedResourceId(resources[0].id);
-    }
-  }, [resources, selectedResourceId]);
-
-  React.useEffect(() => {
-    setSelectedDate(currentDate);
-  }, [currentDate]);
+  const effectiveResourceId = selectedResourceId || (resources[0]?.id ?? "");
+  const effectiveDate =
+    dateSelection && dateSelection.base === currentDate ? dateSelection.value : currentDate;
 
   const resourceOptions = resources.map((r) => ({
     value: r.id,
@@ -60,25 +57,29 @@ export function FindAvailableSlotsModal({
   }));
 
   const handleCheck = () => {
-    if (!selectedResourceId) return;
+    if (!effectiveResourceId) return;
     checkSlot(
       {
-        resourceId: selectedResourceId,
-        selectedDate,
+        resourceId: effectiveResourceId,
+        selectedDate: effectiveDate,
         startTime,
         durationMinutes,
         timeZoneId,
       },
       t("operationsCalendar.findSlots.available"),
       t("operationsCalendar.findSlots.unavailable"),
-      t("operationsCalendar.findSlots.verificationFailed")
+      t("operationsCalendar.findSlots.verificationFailed"),
     );
   };
 
   const handleProceedToBooking = () => {
-    const resource = resources.find((r) => r.id === selectedResourceId);
+    const resource = resources.find((r) => r.id === effectiveResourceId);
     if (!resource) return;
-    const startIso = new Date(`${selectedDate}T${startTime}:00`).toISOString();
+    const startIso = localToUtcInstant(
+      effectiveDate,
+      startTime,
+      resource.timeZoneId || timeZoneId || "UTC",
+    );
     onOpenChange(false);
     onSelectSlot(resource, startIso, durationMinutes);
   };
@@ -88,20 +89,19 @@ export function FindAvailableSlotsModal({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Search className="text-nx-primary h-5 w-5" />
+            <Search className="size-5 text-nx-accent" aria-hidden="true" />
             {t("operationsCalendar.findSlots.title")}
           </DialogTitle>
           <DialogDescription>{t("operationsCalendar.findSlots.description")}</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-2">
-          {/* Court Selection */}
           <div className="space-y-1.5">
             <Label>{t("operationsCalendar.findSlots.court")}</Label>
             <GenericSelect
               id="availability-modal-resource"
               options={resourceOptions}
-              value={selectedResourceId}
+              value={effectiveResourceId}
               onValueChange={(val: string | string[]) => {
                 setSelectedResourceId(Array.isArray(val) ? val[0] : val);
                 setResult(null);
@@ -111,22 +111,18 @@ export function FindAvailableSlotsModal({
             />
           </div>
 
-          {/* Date Picker */}
           <div className="space-y-1.5">
             <Label>{t("operationsCalendar.findSlots.date")}</Label>
-            <div className="relative">
-              <Input
-                type="date"
-                value={selectedDate}
-                onChange={(e) => {
-                  setSelectedDate(e.target.value);
-                  setResult(null);
-                }}
-              />
-            </div>
+            <Input
+              type="date"
+              value={effectiveDate}
+              onChange={(e) => {
+                setDateSelection({ base: currentDate, value: e.target.value });
+                setResult(null);
+              }}
+            />
           </div>
 
-          {/* Start Time & Duration */}
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <Label>{t("operationsCalendar.findSlots.startTime")}</Label>
@@ -170,20 +166,19 @@ export function FindAvailableSlotsModal({
             disabled={checking || !selectedResourceId}
             onClick={handleCheck}
           >
-            <Search className="me-2 h-4 w-4" />
+            <Search className="me-2 size-4" aria-hidden="true" />
             {checking
               ? t("operationsCalendar.findSlots.checking")
               : t("operationsCalendar.findSlots.check")}
           </Button>
 
-          {/* Result Feedback */}
           {result && (
             <div className="pt-2">
               <Alert variant={result.isAvailable ? "success" : "warning"}>
                 {result.isAvailable ? (
-                  <CheckCircle2 className="h-4 w-4" />
+                  <CheckCircle2 className="size-4" aria-hidden="true" />
                 ) : (
-                  <AlertCircle className="h-4 w-4" />
+                  <AlertCircle className="size-4" aria-hidden="true" />
                 )}
                 <AlertTitle>
                   {result.isAvailable
@@ -196,11 +191,12 @@ export function FindAvailableSlotsModal({
               {result.isAvailable && (
                 <Button
                   type="button"
-                  className="mt-3 w-full bg-nx-accent font-bold text-nx-on-fill shadow-sm hover:opacity-90"
+                  variant="default"
+                  className="mt-3 w-full font-bold"
                   onClick={handleProceedToBooking}
                 >
                   {t("operationsCalendar.findSlots.proceed")}
-                  <ArrowRight className="ms-2 h-4 w-4 rtl:rotate-180" />
+                  <ArrowRight className="ms-2 size-4 rtl:rotate-180" aria-hidden="true" />
                 </Button>
               )}
             </div>

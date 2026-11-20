@@ -8,7 +8,18 @@ import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 import { floatingScrollClasses, floatingSurfaceClasses } from "@core/ui/popover";
 
-const ContextMenu = ContextMenuPrimitive.Root;
+/**
+ * RTL-aware ContextMenu wrapper.
+ * Automatically injects `dir` from the i18n context so Radix handles
+ * RTL submenu alignment and arrow navigation cleanly.
+ */
+function ContextMenu({
+  dir,
+  ...props
+}: React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Root>) {
+  const { direction } = useI18n();
+  return <ContextMenuPrimitive.Root dir={dir ?? direction} {...props} />;
+}
 
 const ContextMenuTrigger = ContextMenuPrimitive.Trigger;
 
@@ -49,10 +60,11 @@ const menuSelectionBarClasses =
 const menuPanelClasses =
   "z-dropdown min-w-[8rem] max-h-[var(--radix-context-menu-content-available-height)] rounded-nx-md p-1";
 
-/** 140ms fade + 0.98 scale from the pointer origin; reduced motion keeps the
- *  crossfade and drops the scale. */
+/** Micro-speed fade + 0.95 scale + tight 2px directional shift from the pointer
+ *  origin; reduced motion keeps the crossfade and drops the scale/slide.
+ *  transition-none keeps Floating UI's post-mount transform-origin update instant. */
 const menuMotionClasses =
-  "origin-[--radix-context-menu-content-transform-origin] duration-nx-micro ease-nx-enter data-[state=open]:animate-in data-[state=open]:fade-in-0 motion-safe:data-[state=open]:zoom-in-[0.98] data-[state=closed]:animate-out data-[state=closed]:ease-nx-exit data-[state=closed]:fade-out-0 motion-safe:data-[state=closed]:zoom-out-[0.98]";
+  "origin-[var(--radix-context-menu-content-transform-origin)] transition-none duration-nx-micro ease-nx-enter data-[state=open]:duration-nx-micro data-[state=closed]:duration-nx-micro data-[state=closed]:ease-nx-exit data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 motion-safe:data-[state=open]:zoom-in-95 motion-safe:data-[state=closed]:zoom-out-95 motion-safe:data-[side=bottom]:slide-in-from-top-0.5 motion-safe:data-[side=top]:slide-in-from-bottom-0.5 motion-safe:data-[side=left]:slide-in-from-right-0.5 motion-safe:data-[side=right]:slide-in-from-left-0.5";
 
 const ContextMenuSubTrigger = React.forwardRef<
   React.ElementRef<typeof ContextMenuPrimitive.SubTrigger>,

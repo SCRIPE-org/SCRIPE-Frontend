@@ -1,4 +1,3 @@
-// UI-EXCEPTION: compact studio layout
 "use client";
 
 /**
@@ -13,6 +12,7 @@
 import { useRef, useState, useCallback } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@core/ui/avatar";
 import { Button } from "@core/ui/button";
+import { Input } from "@core/ui/input";
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@core/common/utils";
 import { useResolvedFileUrl } from "@core/hooks/use-resolved-file-url";
@@ -114,18 +114,12 @@ export function AvatarUpload({
             : "border-nx-line hover:border-nx-line-hi"
         )}
       >
-        <div
-          role="button"
-          tabIndex={0}
+        <Button
+          type="button"
+          variant="ghost"
           onClick={openFilePicker}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              openFilePicker();
-            }
-          }}
           aria-label={t("profile.avatar.changePhoto")}
-          className="group relative cursor-pointer rounded-full focus-visible:shadow-nx-focus focus-visible:outline-none"
+          className="group relative h-24 w-24 cursor-pointer rounded-full p-0 hover:bg-transparent focus-visible:shadow-nx-focus focus-visible:outline-none"
         >
           <Avatar className="h-24 w-24 border border-nx-line">
             {displayUrl && !imageError && (
@@ -148,7 +142,7 @@ export function AvatarUpload({
           >
             <Camera className="h-6 w-6 text-nx-on-fill" aria-hidden="true" />
           </div>
-        </div>
+        </Button>
 
         <div className="space-y-1.5 text-center sm:text-start">
           <p className="text-sm font-medium text-nx-ink">{t("profile.avatar.clickOrDrag")}</p>
@@ -157,7 +151,7 @@ export function AvatarUpload({
         </div>
       </div>
 
-      <input
+      <Input
         ref={inputRef}
         type="file"
         accept="image/jpeg,image/png,image/webp"

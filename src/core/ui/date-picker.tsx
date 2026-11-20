@@ -30,8 +30,12 @@ export const resolveDatePickerVariant = (value: string | null | undefined): Date
   return (value && LEGACY_DATE_PICKER_VARIANT[value]) || "default";
 };
 
+const FOCUSABLE_DIALOG_SELECTOR =
+  'button:not([disabled]):not([tabindex="-1"]), input:not([disabled]):not([tabindex="-1"]), select:not([disabled]):not([tabindex="-1"]), textarea:not([disabled]):not([tabindex="-1"]), [href]:not([tabindex="-1"]), [tabindex]:not([tabindex="-1"]):not([disabled])';
+
 interface DatePickerProps {
   id?: string;
+  name?: string;
   value?: string;
   onChange?: (value: string) => void;
   placeholder?: string;
@@ -45,6 +49,9 @@ interface DatePickerProps {
   maxDate?: string;
   /** Per-day veto for booking-style rules the min/max window cannot express. */
   isDateDisabled?: (date: Date) => boolean;
+  "aria-invalid"?: boolean | "true" | "false";
+  "aria-label"?: string;
+  "aria-describedby"?: string;
 }
 
 interface PositionCalcParams {
@@ -133,6 +140,7 @@ function parseDateSafe(dateStr: string | null | undefined): Date | null {
 
 export function DatePicker({
   id,
+  name,
   value = "",
   onChange,
   placeholder,
@@ -143,9 +151,12 @@ export function DatePicker({
   minDate,
   maxDate,
   isDateDisabled,
+  "aria-invalid": ariaInvalid,
+  "aria-label": ariaLabelProp,
+  "aria-describedby": ariaDescribedByProp,
 }: DatePickerProps) {
   const { datePickerStyle, borderRadius } = useSettings();
-  const { t, language } = useI18n();
+  const { t, language, direction } = useI18n();
   const [showCalendar, setShowCalendar] = useState(false);
   const [animateOpen, setAnimateOpen] = useState(false);
   const [calendarPosition, setCalendarPosition] = useState<DropdownPosition>({
@@ -159,6 +170,15 @@ export function DatePicker({
   const calendarRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLDivElement>(null);
   const shouldShowAboveRef = useRef(false);
+  const animateTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (animateTimerRef.current !== null) {
+        clearTimeout(animateTimerRef.current);
+      }
+    };
+  }, []);
 
   const variant = resolveDatePickerVariant(datePickerStyle);
 
@@ -208,8 +228,15 @@ export function DatePicker({
 
       scrollIntoViewIfNeeded(containerRef.current);
       setAnimateOpen(false);
-      setTimeout(() => setAnimateOpen(true), 10);
+      if (animateTimerRef.current !== null) {
+        clearTimeout(animateTimerRef.current);
+      }
+      animateTimerRef.current = setTimeout(() => setAnimateOpen(true), 10);
     } else {
+      if (animateTimerRef.current !== null) {
+        clearTimeout(animateTimerRef.current);
+        animateTimerRef.current = null;
+      }
       setAnimateOpen(false);
     }
     setShowCalendar(!showCalendar);
@@ -351,9 +378,46 @@ export function DatePicker({
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && showCalendar) {
+      if (!showCalendar) return;
+
+      if (event.key === "Escape") {
+        if (event.defaultPrevented) return;
+        event.preventDefault();
+        setAnimateOpen(false);
         setShowCalendar(false);
         triggerRef.current?.focus();
+        return;
+      }
+
+      if (event.key === "Tab" && calendarRef.current) {
+        const focusable = Array.from(
+          calendarRef.current.querySelectorAll<HTMLElement>(FOCUSABLE_DIALOG_SELECTOR)
+        ).filter(
+          (el) => !el.hasAttribute("disabled") && el.getAttribute("aria-disabled") !== "true"
+        );
+
+        if (focusable.length === 0) {
+          event.preventDefault();
+          return;
+        }
+
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        const active = document.activeElement as HTMLElement | null;
+
+        if (!active || !calendarRef.current.contains(active)) {
+          event.preventDefault();
+          (event.shiftKey ? last : first).focus();
+          return;
+        }
+
+        if (event.shiftKey && (active === first || active === calendarRef.current)) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && active === last) {
+          event.preventDefault();
+          first.focus();
+        }
       }
     };
 
@@ -388,19 +452,26 @@ export function DatePicker({
     }
   }, [borderRadius]);
 
+  const isInvalid = ariaInvalid === true || ariaInvalid === "true";
+
   // The trigger IS the field, so it wears the field surface: 40px tall on the
-  // sunken --nx-ground behind a hairline, hover lifts the hairline, focus and
-  // the open state light the edge. "elegant" is the accent take — the same
-  // skeleton plus an accent underline and an accent-wash tint while the
-  // calendar is up. Inert is the raised slab with ink-3, never a 50% wash.
+  // sunken --nx-ground behind a 3:1 line-hi border, hover lifts to ink-3, focus
+  // and the open state light the edge.
   const triggerStyles = useMemo(() => {
     const base = cn(
       "relative flex h-10 w-full items-center justify-between gap-2 px-3 py-2 text-sm",
-      "border border-nx-line bg-nx-ground",
+      "border border-nx-line-hi bg-nx-ground",
       "transition-[color,border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
       "focus-visible:outline-none focus-visible:border-nx-accent focus-visible:shadow-nx-focus",
       borderRadiusClass
     );
+
+    if (isInvalid && !disabled) {
+      return cn(
+        base,
+        "border-nx-danger hover:border-nx-danger focus-visible:border-nx-danger focus-visible:shadow-[inset_0_0_0_1px_var(--nx-danger),0_0_0_3px_color-mix(in_srgb,var(--nx-danger)_18%,transparent)]"
+      );
+    }
 
     if (variant === "elegant") {
       return cn(
@@ -412,10 +483,10 @@ export function DatePicker({
 
     return cn(
       base,
-      "hover:border-nx-line-hi",
+      "hover:border-nx-ink-3",
       showCalendar ? "border-nx-accent shadow-nx-focus" : ""
     );
-  }, [variant, borderRadiusClass, showCalendar]);
+  }, [variant, borderRadiusClass, showCalendar, isInvalid, disabled]);
 
   const displayValue = useMemo(() => {
     if (!value) return placeholder || t("common.selectDate");
@@ -423,16 +494,19 @@ export function DatePicker({
   }, [value, placeholder, formatDisplayValue, t]);
 
   const ariaLabel = useMemo(() => {
+    const baseLabel = ariaLabelProp || placeholder || t("common.selectDate");
     if (value) {
-      return `${placeholder || t("common.selectDate")}: ${formatDisplayValue(value)}`;
+      return `${baseLabel}: ${formatDisplayValue(value)}`;
     }
-    return placeholder || t("common.selectDate");
-  }, [value, placeholder, formatDisplayValue, t]);
+    return baseLabel;
+  }, [value, ariaLabelProp, placeholder, formatDisplayValue, t]);
+
+  const combinedDescribedBy = [ariaDescribedByProp, descriptionId].filter(Boolean).join(" ");
 
   return (
     <div ref={containerRef} className={cn("group relative w-full", className)}>
       <input
-        id={id}
+        name={name}
         type={type}
         value={value}
         onChange={handleChange}
@@ -441,9 +515,11 @@ export function DatePicker({
         className="sr-only"
         tabIndex={-1}
         aria-hidden="true"
+        aria-label={ariaLabelProp || placeholder}
       />
       <div
         ref={triggerRef}
+        id={id}
         className={cn(
           triggerStyles,
           disabled
@@ -458,7 +534,8 @@ export function DatePicker({
         aria-haspopup="dialog"
         aria-controls={showCalendar ? calendarId : undefined}
         aria-label={ariaLabel}
-        aria-describedby={descriptionId}
+        aria-describedby={combinedDescribedBy}
+        aria-invalid={ariaInvalid}
         aria-disabled={disabled}
       >
         <span id={descriptionId} className="sr-only">
@@ -506,6 +583,7 @@ export function DatePicker({
           <div
             ref={calendarRef}
             id={calendarId}
+            dir={direction === "rtl" ? "rtl" : undefined}
             data-dropdown-portal="true"
             data-date-picker="true"
             role="dialog"
@@ -518,15 +596,16 @@ export function DatePicker({
               // this file.
               "pointer-events-auto fixed z-dropdown rounded-nx-md border border-nx-line bg-nx-popover shadow-nx-popover",
               calendarPosition.placement === "top-start"
-                ? "rounded-b-none border-b-0"
-                : "rounded-t-none border-t-0",
-              // transform+opacity entrance at micro speed; reduced motion keeps
-              // the crossfade and drops the slide
-              "transition-[transform,opacity] duration-nx-micro ease-nx-enter motion-reduce:translate-y-0 motion-reduce:transition-none",
+                ? "origin-bottom rounded-b-none border-b-0"
+                : "origin-top rounded-t-none border-t-0",
+              // transform+opacity entrance at micro speed from trigger edge;
+              // transition-[transform,opacity] ensures top/left/width coordinates
+              // snap instantaneously while reduced motion drops scale and slide.
+              "transition-[transform,opacity] duration-nx-micro ease-nx-enter motion-reduce:translate-y-0 motion-reduce:scale-100 motion-reduce:transition-none",
               animateOpen
-                ? "translate-y-0 opacity-100"
+                ? "translate-y-0 scale-100 opacity-100"
                 : cn(
-                    "opacity-0",
+                    "scale-[0.98] opacity-0",
                     calendarPosition.placement === "top-start"
                       ? "translate-y-1.5"
                       : "-translate-y-1.5"

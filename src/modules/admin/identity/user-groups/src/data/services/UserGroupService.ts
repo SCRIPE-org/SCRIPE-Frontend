@@ -75,10 +75,10 @@ export class UserGroupService {
     };
   }
 
-  async getMyTenantGroups(
+  async getCurrentTenantGroups(
     params: Omit<UserGroupServiceListParams, "tenantId">
   ): Promise<UserGroupListResult> {
-    const url = buildUrl(USER_GROUPS_ENDPOINTS.MY_TENANT_GROUPS, {
+    const url = buildUrl(USER_GROUPS_ENDPOINTS.CURRENT_TENANT, {
       page: params.page,
       pageSize: params.pageSize,
       search: params.search,
@@ -112,10 +112,10 @@ export class UserGroupService {
     return this.api.post<{ id: string }>(USER_GROUPS_ENDPOINTS.CREATE, request);
   }
 
-  async createForMyTenant(
+  async createInCurrentTenant(
     request: Omit<CreateUserGroupRequest, "tenantId">
   ): Promise<{ id: string }> {
-    return this.api.post<{ id: string }>(USER_GROUPS_ENDPOINTS.CREATE_FOR_MY_TENANT, request);
+    return this.api.post<{ id: string }>(USER_GROUPS_ENDPOINTS.CREATE_IN_CURRENT_TENANT, request);
   }
 
   async update(id: string, request: UpdateUserGroupRequest): Promise<void> {

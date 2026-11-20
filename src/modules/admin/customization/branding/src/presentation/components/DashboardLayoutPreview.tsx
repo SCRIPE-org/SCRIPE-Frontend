@@ -1,4 +1,3 @@
-// UI-EXCEPTION: compact studio layout
 /**
  * DashboardLayoutPreview — Iframe-based preview using the REAL layout components.
  *
@@ -18,6 +17,7 @@ import { useEffect, useRef, useCallback, useState } from "react";
 import { LayoutDashboard, Monitor, Tablet, Smartphone, RefreshCw } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@/core/common/utils";
+import { Button } from "@core/ui/button";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import type { DashboardThemeSettings } from "../../domain/entities/StudioDraft";
 import { defaultSettings } from "@core/settings/defaults";
@@ -128,34 +128,38 @@ export function DashboardLayoutPreview({ settings }: Props) {
           {(["desktop", "tablet", "mobile"] as DeviceSize[]).map((key) => {
             const Icon = key === "desktop" ? Monitor : key === "tablet" ? Tablet : Smartphone;
             return (
-              <button
+              <Button
                 key={key}
                 type="button"
+                variant="ghost"
+                size="icon"
                 onClick={() => setDevice(key)}
                 aria-label={t(DEVICE_DIMS[key].labelKey)}
                 aria-pressed={device === key}
                 className={cn(
-                  "rounded-nx-sm p-1 transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
+                  "h-auto w-auto rounded-nx-sm p-1 transition-colors duration-nx-micro ease-nx-enter hover:bg-transparent focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
                   device === key
-                    ? "bg-nx-accent-wash text-nx-accent"
+                    ? "bg-nx-accent-wash text-nx-accent hover:bg-nx-accent-wash"
                     : "text-nx-ink-2 hover:text-nx-ink"
                 )}
               >
                 <Icon className="h-3.5 w-3.5" aria-hidden="true" />
-              </button>
+              </Button>
             );
           })}
 
           <div className="mx-1 h-4 w-px bg-nx-line" />
 
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="icon"
             onClick={handleRefresh}
             aria-label={t("common.refresh")}
-            className="rounded-nx-sm p-1 text-nx-ink-2 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
+            className="h-auto w-auto rounded-nx-sm p-1 text-nx-ink-2 transition-colors duration-nx-micro ease-nx-enter hover:bg-transparent hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
           >
             <RefreshCw className="h-3.5 w-3.5" aria-hidden="true" />
-          </button>
+          </Button>
 
           <span className="ms-2 text-[10px] text-nx-ink-3">
             {settings.colorTheme} •{" "}

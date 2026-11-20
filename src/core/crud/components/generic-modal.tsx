@@ -98,7 +98,7 @@ function GenericModalInner({
     // A sized drawer keeps its edge-pinned height and takes only the width;
     // every other style collapses to the standard centered footprint.
     return cn(
-      isDrawerSurface ? "h-[95vh] max-h-none" : "w-[95vw] max-h-[90vh]",
+      isDrawerSurface ? "h-[95dvh] max-h-none" : "w-[95vw] max-h-[90dvh]",
       widths[size]
     );
   };
@@ -113,16 +113,16 @@ function GenericModalInner({
     const baseClasses = "p-0 overflow-visible flex flex-col";
 
     if (surface === "SlideOverDrawer") {
-      return cn(baseClasses, "w-full h-[95vh] max-w-md sm:max-w-lg md:max-w-xl max-h-none");
+      return cn(baseClasses, "w-full h-[95dvh] max-w-md sm:max-w-lg md:max-w-xl max-h-none");
     }
     if (surface === "FullPage") {
       return cn(
         baseClasses,
-        "w-[98vw] h-[95vh] max-w-none max-h-none sm:w-[95vw] sm:h-[90vh] md:w-[92vw] md:h-[88vh]"
+        "w-[98vw] h-[95dvh] max-w-none max-h-none sm:w-[95vw] sm:h-[90dvh] md:w-[92vw] md:h-[88dvh]"
       );
     }
     if (surface === "Wizard") {
-      return cn(baseClasses, "w-[95vw] max-w-3xl max-h-[90vh]");
+      return cn(baseClasses, "w-[95vw] max-w-3xl max-h-[90dvh]");
     }
 
     // Explicit size supplies the footprint — see getSizeClasses at the
@@ -134,31 +134,31 @@ function GenericModalInner({
         // Keep default centering behavior
         return cn(
           baseClasses,
-          "w-[95vw] max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl max-h-[90vh]"
+          "w-[95vw] max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl max-h-[90dvh]"
         );
       case "fullscreen":
         // Responsive fullscreen - full on mobile, large on desktop
         return cn(
           baseClasses,
-          "w-[98vw] h-[95vh] max-w-none max-h-none sm:w-[95vw] sm:h-[90vh] md:w-[90vw] md:h-[85vh]"
+          "w-[98vw] h-[95dvh] max-w-none max-h-none sm:w-[95vw] sm:h-[90dvh] md:w-[90vw] md:h-[85dvh]"
         );
       case "drawer":
         // Drawer from the inline-end edge - responsive width. Position, slide
         // and radius come from DialogContent's explicit variant="drawer" (see
         // below); the old !important overrides existed only to fight the
         // centered layout from outside.
-        return cn(baseClasses, "w-full h-[95vh] max-w-md sm:max-w-lg md:max-w-xl max-h-none");
+        return cn(baseClasses, "w-full h-[95dvh] max-w-md sm:max-w-lg md:max-w-xl max-h-none");
       case "glass":
-        return cn(baseClasses, "w-[85vw] max-w-2xl max-h-[80vh]");
+        return cn(baseClasses, "w-[85vw] max-w-2xl max-h-[80dvh]");
       case "floating":
-        return cn(baseClasses, "w-[70vw] max-w-sm max-h-[60vh]");
+        return cn(baseClasses, "w-[70vw] max-w-sm max-h-[60dvh]");
       case "card":
-        return cn(baseClasses, "w-[95vw] max-w-4xl max-h-[85vh]");
+        return cn(baseClasses, "w-[95vw] max-w-4xl max-h-[85dvh]");
       case "overlay":
-        return cn(baseClasses, "w-[98vw] h-[95vh] max-w-none max-h-none");
+        return cn(baseClasses, "w-[98vw] h-[95dvh] max-w-none max-h-none");
       default:
         // Default modal with responsive sizing
-        return cn(baseClasses, "w-[95vw] max-h-[90vh]");
+        return cn(baseClasses, "w-[95vw] max-h-[90dvh]");
     }
   };
 
@@ -201,7 +201,7 @@ function GenericModalInner({
           </DialogHeader>
         )}
 
-        <ScrollArea className="flex-1">
+        <ScrollArea className="flex-1 min-h-0">
           <div className={cn(sectionPaddingClasses, "pe-4", contentClassName)}>
             {formKey ? <div key={formKey}>{children}</div> : children}
           </div>

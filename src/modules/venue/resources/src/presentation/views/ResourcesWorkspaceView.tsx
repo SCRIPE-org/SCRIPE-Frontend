@@ -57,7 +57,7 @@ export function ResourcesWorkspaceView() {
       }
       return true;
     });
-  }, [vm.items, selectedCategory, selectedStatus, allCategoriesLabel]);
+  }, [vm.items, selectedCategory, selectedStatus]);
 
   useEffect(() => {
     if (searchParams.get("setup") === "new") {
@@ -95,7 +95,7 @@ export function ResourcesWorkspaceView() {
           <Button
             size="sm"
             onClick={() => setSetupWizardOpen(true)}
-            className="gap-1.5 rounded-xl bg-nx-accent text-xs font-bold text-nx-on-fill shadow-sm hover:bg-nx-accent/90"
+            className="gap-1.5 rounded-xl bg-nx-accent-fill text-xs font-bold text-nx-on-fill hover:bg-nx-accent-fill/90"
           >
             <Plus className="size-4" aria-hidden="true" />
             <span>{t("resources.addCourt", { defaultValue: "+ Add Court / Space" })}</span>
@@ -136,11 +136,11 @@ export function ResourcesWorkspaceView() {
               {t("resources.metrics.setupRequired", { defaultValue: "Setup Required" })}
             </p>
             <div className="mt-0.5 flex items-center gap-1.5">
-              <p className="text-xl font-bold text-warning">
+              <p className="text-xl font-bold text-nx-warning-strong">
                 {vm.metrics.setupRequired}
               </p>
               {vm.metrics.setupRequired > 0 && (
-                <span className="rounded-full bg-warning/10 px-1.5 py-0.5 text-[10px] font-bold text-warning">
+                <span className="rounded-full bg-warning/10 px-1.5 py-0.5 text-[10px] font-bold text-nx-warning-strong">
                   {t("resources.metrics.actionNeeded", { defaultValue: "Action needed" })}
                 </span>
               )}
@@ -164,14 +164,14 @@ export function ResourcesWorkspaceView() {
           {/* Search Input */}
           <div className="relative w-full">
             <Search
-              className="absolute left-2.5 top-2.5 size-3.5 text-nx-ink-3 rtl:left-auto rtl:right-2.5"
+              className="absolute start-2.5 top-2.5 size-3.5 text-nx-ink-3"
               aria-hidden="true"
             />
             <Input
               value={vm.searchQuery}
               onChange={(e) => vm.setSearchQuery(e.target.value)}
               placeholder={t("resources.search", { defaultValue: "Search courts & spaces..." })}
-              className="h-9 rounded-lg pl-8 text-xs rtl:pl-3 rtl:pr-8"
+              className="h-9 rounded-lg ps-8 pe-3 text-xs"
             />
           </div>
 
@@ -244,56 +244,67 @@ export function ResourcesWorkspaceView() {
             {selectedCategory !== "__all_categories__" && (
               <span className="inline-flex items-center gap-1.5 rounded-md bg-nx-accent/15 px-2 py-0.5 text-[11px] font-bold text-nx-accent border border-nx-accent/30">
                 {categories.find((c) => c.value === selectedCategory)?.label || selectedCategory}
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="icon"
                   onClick={() => setSelectedCategory("__all_categories__")}
-                  className="hover:opacity-75"
-                  aria-label="Remove category filter"
+                  className="h-auto w-auto p-0 hover:bg-transparent hover:opacity-75"
+                  aria-label={t("resources.filters.removeCategory", { defaultValue: "Remove category filter" })}
                 >
                   ×
-                </button>
+                </Button>
               </span>
             )}
 
             {selectedStatus !== "all" && (
               <span className="inline-flex items-center gap-1.5 rounded-md bg-primary/10 px-2 py-0.5 text-[11px] font-semibold text-nx-ink border border-primary/20">
-                {selectedStatus === "active" ? "Active & Bookable" : "Setup Required"}
-                <button
+                {selectedStatus === "active"
+                  ? t("resources.filters.activeAndBookable", { defaultValue: "Active & Bookable" })
+                  : t("resources.filters.setupRequired", { defaultValue: "Setup Required" })}
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="icon"
                   onClick={() => setSelectedStatus("all")}
-                  className="hover:opacity-75"
-                  aria-label="Remove status filter"
+                  className="h-auto w-auto p-0 hover:bg-transparent hover:opacity-75"
+                  aria-label={t("resources.filters.removeStatus", { defaultValue: "Remove status filter" })}
                 >
                   ×
-                </button>
+                </Button>
               </span>
             )}
 
             {vm.selectedFacilityId && (
               <span className="inline-flex items-center gap-1.5 rounded-md bg-nx-raised px-2 py-0.5 text-[11px] font-semibold text-nx-ink-2 border border-nx-line">
-                {vm.facilities.find((f) => f.id === vm.selectedFacilityId)?.name || "Facility"}
-                <button
+                {vm.facilities.find((f) => f.id === vm.selectedFacilityId)?.name ||
+                  t("resources.filters.facility", { defaultValue: "Facility" })}
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="icon"
                   onClick={() => vm.setSelectedFacilityId("")}
-                  className="hover:opacity-75"
-                  aria-label="Remove facility filter"
+                  className="h-auto w-auto p-0 hover:bg-transparent hover:opacity-75"
+                  aria-label={t("resources.filters.removeFacility", { defaultValue: "Remove facility filter" })}
                 >
                   ×
-                </button>
+                </Button>
               </span>
             )}
 
             {vm.searchQuery && (
               <span className="inline-flex items-center gap-1.5 rounded-md bg-nx-raised px-2 py-0.5 text-[11px] font-semibold text-nx-ink-2 border border-nx-line">
                 &ldquo;{vm.searchQuery}&rdquo;
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="icon"
                   onClick={() => vm.setSearchQuery("")}
-                  className="hover:opacity-75"
-                  aria-label="Remove search filter"
+                  className="h-auto w-auto p-0 hover:bg-transparent hover:opacity-75"
+                  aria-label={t("resources.filters.removeSearch", { defaultValue: "Remove search filter" })}
                 >
                   ×
-                </button>
+                </Button>
               </span>
             )}
 
@@ -307,7 +318,7 @@ export function ResourcesWorkspaceView() {
                 vm.setSelectedFacilityId("");
                 vm.setSearchQuery("");
               }}
-              className="h-6 px-2 text-[10px] text-nx-ink-3 hover:text-nx-ink ml-auto"
+              className="h-6 px-2 text-[10px] text-nx-ink-3 hover:text-nx-ink ms-auto"
             >
               {t("resources.filters.resetAll", { defaultValue: "Reset All" })}
             </Button>
@@ -332,7 +343,7 @@ export function ResourcesWorkspaceView() {
           action={
             <Button
               onClick={() => setSetupWizardOpen(true)}
-              className="gap-2 bg-nx-accent font-bold text-nx-on-fill hover:bg-nx-accent/90"
+              className="gap-2 bg-nx-accent-fill font-bold text-nx-on-fill hover:bg-nx-accent-fill/90"
             >
               <Sparkles className="size-4" aria-hidden="true" />
               <span>{t("resources.empty.action", { defaultValue: "Start Setup Journey" })}</span>

@@ -27,19 +27,19 @@ export function SetupStep1Security({ vm }: SetupStep1SecurityProps) {
   return (
     <div className="min-w-0 space-y-5">
       {/* Account Meta Box */}
-      <div className="min-w-0 space-y-2 rounded-xl border border-border/50 bg-muted/25 p-3.5">
+      <div className="min-w-0 space-y-2 rounded-xl border border-nx-line bg-nx-raised p-3.5">
         <InfoRow
-          icon={<Building2 className="h-4 w-4 shrink-0 text-primary" />}
+          icon={<Building2 className="h-4 w-4 shrink-0 text-nx-accent" />}
           label={t("auth.accountSetup.organization")}
           value={vm.tokenData?.tenantName}
         />
         <InfoRow
-          icon={<User className="h-4 w-4 shrink-0 text-muted-foreground" />}
+          icon={<User className="h-4 w-4 shrink-0 text-nx-ink-2" />}
           label={t("auth.accountSetup.username")}
           value={vm.tokenData?.adminUsername}
         />
         <InfoRow
-          icon={<Mail className="h-4 w-4 shrink-0 text-muted-foreground" />}
+          icon={<Mail className="h-4 w-4 shrink-0 text-nx-ink-2" />}
           label={t("auth.accountSetup.emailAddress")}
           value={vm.tokenData?.adminEmail}
         />
@@ -66,7 +66,7 @@ export function SetupStep1Security({ vm }: SetupStep1SecurityProps) {
 
       {/* Password Requirements Checklist */}
       {vm.password.length > 0 && (
-        <div className="grid grid-cols-2 gap-2 rounded-lg border border-border/40 bg-muted/15 p-3 text-xs">
+        <div className="grid grid-cols-2 gap-2 rounded-lg border border-nx-line bg-nx-raised p-3 text-xs">
           <PasswordCheck
             label={t("auth.accountSetup.passwordMinLengthShort", {
               min: vm.tokenData?.passwordMinLength ?? 8,
@@ -119,9 +119,9 @@ export function SetupStep1Security({ vm }: SetupStep1SecurityProps) {
 
       {/* Validation Errors */}
       {vm.validationErrors.length > 0 && (
-        <div className="space-y-1.5 rounded-lg border border-destructive/20 bg-destructive/5 p-3">
+        <div className="space-y-1.5 rounded-lg border border-destructive/30 bg-destructive/10 p-3">
           {vm.validationErrors.map((err, i) => (
-            <p key={i} className="flex items-center gap-1.5 text-xs text-destructive">
+            <p key={i} className="flex items-center gap-1.5 text-xs text-nx-danger">
               <XCircle className="h-3.5 w-3.5 shrink-0" />
               {err}
             </p>
@@ -131,13 +131,13 @@ export function SetupStep1Security({ vm }: SetupStep1SecurityProps) {
 
       {/* Step 1 Action */}
       <Button
-        className="w-full gap-2 font-semibold shadow-sm"
+        className="w-full gap-2 font-semibold"
         size="lg"
         disabled={!vm.isPasswordValid}
         onClick={vm.goToNextStep}
       >
         <span>{t("auth.accountSetup.next")}</span>
-        <ArrowRight className="h-4 w-4" />
+        <ArrowRight className="h-4 w-4 rtl:rotate-180" />
       </Button>
     </div>
   );

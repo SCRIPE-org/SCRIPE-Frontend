@@ -41,5 +41,5 @@ export const SUBSCRIPTION_ENDPOINTS = {
     return `${V1}/subscriptions/export?${params.toString()}`;
   },
   RECEIPT: (tenantId: string) => `${V1}/tenants/${tenantId}/subscription/receipt`,
-  GET_MY_SUBSCRIPTION: `${V1}/subscriptions/my-tenant`,
+  CURRENT_TENANT: `${V1}/subscriptions/current-tenant`,
 } as const;

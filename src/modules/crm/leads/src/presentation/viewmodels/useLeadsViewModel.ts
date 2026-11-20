@@ -1,10 +1,18 @@
 "use client";
 
 import { useState, useEffect, useCallback, useTransition } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { qk } from "@core/common/query-keys";
 import { getCrmContainer } from "@modules/crm/di";
-import type { CrmLead, CreateLeadInput, LeadStatus } from "../../domain/models/crm-lead.types";
+import { useCrmTenantScope, useSafeQueryClient } from "@modules/crm/shared";
+import { useCrmWorkflowsStore, type CrmWorkflowTransitionSubmitPayload } from "@modules/crm";
+import type { CrmLead, CreateLeadInput, LeadStatus, AssignLeadOwnerInput, LinkPartyToLeadInput, PagedLeadsResult } from "../../domain/models/crm-lead.types";
+import { buildLeadsPagination } from "../utils/leadTransitionHelpers";
+import { executeAssignLeadOwnerMutation, executeCreateLeadMutation, executeLeadTransitionMutation, executeLinkLeadPartyMutation } from "../utils/leadMutationHelpers";
 import { useLeadWorkflowActions } from "./useLeadWorkflowActions";
+import { useLeadModalState } from "./useLeadModalState";
 
+/** State snapshot for CRM leads list and pagination. */
 export interface LeadsState {
   stage: "idle" | "loading" | "success" | "failed";
   items: CrmLead[];
@@ -14,225 +22,198 @@ export interface LeadsState {
   error: string | null;
 }
 
+/** Primary ViewModel hook for CRM Leads workspace powered by TanStack Query v5. */
 export function useLeadsViewModel(initialSearch?: string) {
-  const [state, setState] = useState<LeadsState>({
-    stage: "loading",
-    items: [],
-    totalCount: 0,
-    page: 1,
-    pageSize: 20,
-    error: null,
-  });
-
+  const safeQueryClient = useSafeQueryClient();
+  const { tenantId } = useCrmTenantScope();
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
   const [search, setSearch] = useState<string>(initialSearch ?? "");
   const [statusFilter, setStatusFilter] = useState<LeadStatus | undefined>(undefined);
-  const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [optimisticItems, setOptimisticItems] = useState<CrmLead[] | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [viewModalOpen, setViewModalOpen] = useState(false);
-  const [editingItem, setEditingItem] = useState<CrmLead | null>(null);
-  const [viewItem, setViewItem] = useState<CrmLead | null>(null);
+  const modalState = useLeadModalState();
+  const { handleSetIsCreateOpen, setIsAssignOwnerOpen, setIsSubmitting, setSubmitError } = modalState;
 
-  const handleSetIsCreateOpen = useCallback((open: boolean) => {
-    setIsCreateOpen(open);
-    if (!open) setSubmitError(null);
-  }, []);
+  const queryParams = { page, pageSize, search: search.trim() || undefined, status: statusFilter || undefined };
+  const leadsQuery = useQuery<PagedLeadsResult>(
+    { queryKey: qk.crm.leads(tenantId, queryParams), queryFn: () => getCrmContainer().leadRepository.getLeads(queryParams), staleTime: 30_000 },
+    safeQueryClient
+  );
+
+  const pipelinesQuery = useQuery(
+    {
+      queryKey: qk.crm.pipelines(tenantId),
+      queryFn: async () => {
+        const wfRepo = getCrmContainer().workflowRepository;
+        return typeof wfRepo?.getPipelines === "function" ? wfRepo.getPipelines("lead") : [];
+      },
+      staleTime: 60_000,
+    },
+    safeQueryClient
+  );
+
+  const pipelinesData = pipelinesQuery.data;
+  useEffect(() => {
+    if (Array.isArray(pipelinesData) && pipelinesData.length > 0) {
+      useCrmWorkflowsStore.getState().hydrateFromBackendPipelines(pipelinesData);
+    }
+  }, [pipelinesData]);
+
+  const queryItems = leadsQuery.data?.items ?? [];
+  const items = optimisticItems ?? queryItems;
+  const totalCount = leadsQuery.data?.totalCount ?? 0;
+  const currentPage = leadsQuery.data?.page ?? page;
+  const currentSize = leadsQuery.data?.pageSize ?? pageSize;
+  const queryError = leadsQuery.error instanceof Error ? leadsQuery.error.message : null;
+  const state: LeadsState = {
+    stage: leadsQuery.isLoading ? "loading" : leadsQuery.isError ? "failed" : "success",
+    items,
+    totalCount,
+    page: currentPage,
+    pageSize: currentSize,
+    error: actionError ?? queryError,
+  };
 
   const loadLeads = useCallback(
-    async (pageToLoad = 1, searchQuery?: string, status?: LeadStatus, sizeToLoad = 20) => {
-      setState((prev) => ({ ...prev, stage: "loading", error: null }));
-      try {
-        const container = getCrmContainer();
-        const result = await container.leadRepository.getLeads({
-          page: pageToLoad,
-          pageSize: sizeToLoad,
-          search: searchQuery,
-          status,
-        });
-        setState({
-          stage: "success",
-          items: result.items,
-          totalCount: result.totalCount,
-          page: result.page,
-          pageSize: result.pageSize || sizeToLoad,
-          error: null,
-        });
-      } catch (err) {
-        setState((prev) => ({
-          ...prev,
-          stage: "failed",
-          error: err instanceof Error ? err.message : "Failed to load leads",
-        }));
-      }
+    async (pageToLoad?: number, _search?: string, _status?: LeadStatus, _size?: number) => {
+      setOptimisticItems(null);
+      if (typeof pageToLoad === "number" && pageToLoad !== page) setPage(pageToLoad);
+      await safeQueryClient.invalidateQueries({ queryKey: qk.crm.leads(tenantId) });
     },
-    [],
+    [page, safeQueryClient, tenantId]
   );
-
-  useEffect(() => {
-    startTransition(() => {
-      loadLeads(1, search, statusFilter, state.pageSize);
-    });
-  }, [loadLeads, search, statusFilter, state.pageSize]);
 
   const refresh = useCallback(() => {
-    loadLeads(state.page, search, statusFilter, state.pageSize);
-  }, [loadLeads, state.page, search, statusFilter, state.pageSize]);
+    setOptimisticItems(null);
+    return leadsQuery.refetch().then(() => undefined);
+  }, [leadsQuery]);
 
-  const handleSearchChange = useCallback((newSearch: string) => setSearch(newSearch), []);
-  const handleStatusFilterChange = useCallback((newStatus?: LeadStatus) => setStatusFilter(newStatus), []);
-  const handlePageChange = useCallback(
-    (newPage: number) => loadLeads(newPage, search, statusFilter, state.pageSize),
-    [loadLeads, search, statusFilter, state.pageSize],
-  );
-  const handlePageSizeChange = useCallback(
-    (newSize: number) => {
-      setState((prev) => ({ ...prev, pageSize: newSize, page: 1 }));
-      loadLeads(1, search, statusFilter, newSize);
-    },
-    [loadLeads, search, statusFilter],
-  );
+  const handleSearchChange = useCallback((newSearch: string) => {
+    setSearch(newSearch);
+    startTransition(() => { setPage(1); });
+  }, []);
 
-  const handleCreateLead = useCallback(
-    async (input: CreateLeadInput, customFieldValues?: Record<string, unknown>): Promise<boolean> => {
+  const handleStatusFilterChange = useCallback((newStatus?: LeadStatus) => {
+    setStatusFilter(newStatus);
+    startTransition(() => { setPage(1); });
+  }, []);
+
+  const handlePageChange = useCallback((newPage: number) => {
+    setOptimisticItems(null);
+    setPage(newPage);
+  }, []);
+
+  const handlePageSizeChange = useCallback((newSize: number) => {
+    setOptimisticItems(null);
+    setPageSize(newSize);
+    setPage(1);
+  }, []);
+
+  const runMutation = useCallback(
+    async (op: () => Promise<void>, fallbackError: string, onSuccess?: () => void): Promise<boolean> => {
       setIsSubmitting(true);
       setSubmitError(null);
       try {
-        const container = getCrmContainer();
-        const created = await container.leadRepository.createLead(input);
-        if (created?.id && customFieldValues && Object.keys(customFieldValues).length > 0) {
-          try {
-            const { getCustomFieldsExtension, normalizeCustomFieldValuesForSave } = await import(
-              "@core/crud/customFieldsExtension"
-            );
-            const ext = getCustomFieldsExtension();
-            const normalized = normalizeCustomFieldValuesForSave(customFieldValues);
-            if (ext?.saveValues && Object.keys(normalized).length > 0) {
-              await ext.saveValues("crm.lead", created.id, normalized);
-            }
-          } catch {}
-        }
+        await op();
         setIsSubmitting(false);
-        loadLeads(1, search, statusFilter, state.pageSize);
+        onSuccess?.();
+        await loadLeads();
         return true;
       } catch (err) {
         setIsSubmitting(false);
-        const errMsg = err instanceof Error ? err.message : "Failed to create lead";
-        setSubmitError(errMsg);
-        setState((prev) => ({ ...prev, error: errMsg }));
+        const msg = err instanceof Error ? err.message : fallbackError;
+        setSubmitError(msg);
+        setActionError(msg);
         return false;
       }
     },
-    [loadLeads, search, statusFilter, state.pageSize],
+    [loadLeads, setIsSubmitting, setSubmitError]
   );
 
-  const setStateItemsAndError = useCallback((items: CrmLead[], error: string | null) => {
-    setState((prev) => ({ ...prev, items, error }));
-  }, []);
+  const handleCreateLead = useCallback(
+    (input: CreateLeadInput, customFieldValues?: Record<string, unknown>) =>
+      runMutation(async () => {
+        await executeCreateLeadMutation(getCrmContainer().leadRepository, input, customFieldValues);
+        setPage(1);
+      }, "Failed to create lead"),
+    [runMutation]
+  );
 
-  const setStateError = useCallback((error: string | null) => {
-    setState((prev) => ({ ...prev, error }));
+  const setStateItemsAndError = useCallback((nextItems: CrmLead[], err: string | null) => {
+    setOptimisticItems(nextItems);
+    setActionError(err);
   }, []);
 
   const wfActions = useLeadWorkflowActions(
-    state.items,
-    state.page,
-    state.pageSize,
-    search,
-    statusFilter,
-    loadLeads,
-    setStateItemsAndError,
-    setStateError,
-    setIsSubmitting,
-    setSubmitError,
+    items, currentPage, currentSize, search, statusFilter,
+    loadLeads, setStateItemsAndError, setActionError, setIsSubmitting, setSubmitError
+  );
+
+  const handleTransitionSubmit = useCallback(
+    (payload: CrmWorkflowTransitionSubmitPayload) =>
+      runMutation(() => executeLeadTransitionMutation(getCrmContainer().leadRepository, payload), "Failed to move stage"),
+    [runMutation]
+  );
+
+  const openAssignOwnerDialog = useCallback(
+    (lead: CrmLead) => {
+      setSubmitError(null);
+      wfActions.setActiveLead(lead);
+      setIsAssignOwnerOpen(true);
+    },
+    [wfActions, setSubmitError, setIsAssignOwnerOpen]
+  );
+
+  const handleAssignLeadOwner = useCallback(
+    (input: AssignLeadOwnerInput) =>
+      runMutation(
+        () => executeAssignLeadOwnerMutation(getCrmContainer().leadRepository, input),
+        "Failed to assign lead owner",
+        () => { setIsAssignOwnerOpen(false); wfActions.setActiveLead(null); }
+      ),
+    [runMutation, setIsAssignOwnerOpen, wfActions]
+  );
+
+  const linkPartyBeforeConvert = useCallback(
+    async (input: LinkPartyToLeadInput): Promise<CrmLead | null> => {
+      setIsSubmitting(true);
+      setSubmitError(null);
+      try {
+        const updated = await executeLinkLeadPartyMutation(getCrmContainer().leadRepository, input);
+        setIsSubmitting(false);
+        return updated;
+      } catch (err) {
+        setIsSubmitting(false);
+        setSubmitError(err instanceof Error ? err.message : "Failed to link account or contact");
+        return null;
+      }
+    },
+    [setIsSubmitting, setSubmitError]
   );
 
   const clearError = useCallback(() => {
     setSubmitError(null);
-    setState((prev) => ({ ...prev, error: null }));
-  }, []);
+    setActionError(null);
+  }, [setSubmitError]);
 
   return {
-    state,
-    search,
-    statusFilter,
-    isCreateOpen,
-    isQualifyOpen: wfActions.isQualifyOpen,
-    qualifyDefaultDecision: wfActions.qualifyDefaultDecision,
-    isLinkPartyOpen: wfActions.isLinkPartyOpen,
-    isConvertOpen: wfActions.isConvertOpen,
-    activeLead: wfActions.activeLead,
-    isSubmitting,
-    submitError,
-    isPending,
-    setIsCreateOpen: handleSetIsCreateOpen,
-    setIsQualifyOpen: wfActions.setIsQualifyOpen,
-    setIsLinkPartyOpen: wfActions.setIsLinkPartyOpen,
-    setIsConvertOpen: wfActions.setIsConvertOpen,
-    setActiveLead: wfActions.setActiveLead,
-    setSubmitError,
-    handleSearchChange,
-    handleStatusFilterChange,
-    handlePageChange,
-    handleCreateLead,
-    handleQualifyLead: wfActions.handleQualifyLead,
-    handleLinkParty: wfActions.handleLinkParty,
-    handleConvertLead: wfActions.handleConvertLead,
-    openQualifyDialog: wfActions.openQualifyDialog,
-    openLinkPartyDialog: wfActions.openLinkPartyDialog,
-    openConvertDialog: wfActions.openConvertDialog,
-    handleUpdateLeadStatus: wfActions.handleUpdateLeadStatus,
-    lookupCandidateParties: wfActions.lookupCandidateParties,
-    refresh,
-    items: state.items,
-    loading: state.stage === "loading",
-    error: state.error,
-    pagination: {
-      page: state.page || 1,
-      currentPage: state.page || 1,
-      pageSize: state.pageSize || 20,
-      itemsCount: state.totalCount,
-      pagesCount: Math.max(1, Math.ceil(state.totalCount / (state.pageSize || 20))),
-      totalCount: state.totalCount,
-      totalPages: Math.max(1, Math.ceil(state.totalCount / (state.pageSize || 20))),
-      hasNextPage: state.page * state.pageSize < state.totalCount,
-      hasPreviousPage: state.page > 1,
-      onPageChange: handlePageChange,
-      onPageSizeChange: handlePageSizeChange,
-    },
-    searchValue: search,
-    selectedItems,
-    setSelectedItems,
-    isCreateModalOpen: false,
-    setIsCreateModalOpen: handleSetIsCreateOpen,
-    isEditModalOpen,
-    setIsEditModalOpen,
-    viewModalOpen,
-    setViewModalOpen,
-    editingItem,
-    viewItem,
-    openEditModal: (item: CrmLead) => {
-      setEditingItem(item);
-      setIsEditModalOpen(true);
-    },
-    closeEditModal: () => {
-      setIsEditModalOpen(false);
-      setEditingItem(null);
-    },
-    openViewModal: (item: CrmLead) => {
-      setViewItem(item);
-      setViewModalOpen(true);
-    },
-    closeViewModal: () => {
-      setViewModalOpen(false);
-      setViewItem(null);
-    },
-    changePage: handlePageChange,
-    changePageSize: handlePageSizeChange,
-    refreshItems: refresh,
-    createItem: handleCreateLead,
-    clearError,
+    ...modalState, state, search, statusFilter, isPending,
+    isQualifyOpen: wfActions.isQualifyOpen, qualifyDefaultDecision: wfActions.qualifyDefaultDecision,
+    isLinkPartyOpen: wfActions.isLinkPartyOpen, isConvertOpen: wfActions.isConvertOpen, activeLead: wfActions.activeLead,
+    setIsCreateOpen: handleSetIsCreateOpen, setIsQualifyOpen: wfActions.setIsQualifyOpen,
+    setIsLinkPartyOpen: wfActions.setIsLinkPartyOpen, setIsConvertOpen: wfActions.setIsConvertOpen, setActiveLead: wfActions.setActiveLead,
+    handleSearchChange, handleStatusFilterChange, handlePageChange, handleCreateLead,
+    handleQualifyLead: wfActions.handleQualifyLead, handleLinkParty: wfActions.handleLinkParty,
+    handleConvertLead: wfActions.handleConvertLead, handleAssignLeadOwner, linkPartyBeforeConvert,
+    openQualifyDialog: wfActions.openQualifyDialog, openLinkPartyDialog: wfActions.openLinkPartyDialog,
+    openConvertDialog: wfActions.openConvertDialog, openAssignOwnerDialog,
+    handleUpdateLeadStatus: wfActions.handleUpdateLeadStatus, handleTransitionSubmit,
+    lookupCandidateParties: wfActions.lookupCandidateParties, refresh, items,
+    loading: state.stage === "loading", error: state.error,
+    pagination: buildLeadsPagination(currentPage, currentSize, totalCount, handlePageChange, handlePageSizeChange),
+    searchValue: search, isCreateModalOpen: false, setIsCreateModalOpen: handleSetIsCreateOpen,
+    changePage: handlePageChange, changePageSize: handlePageSizeChange, refreshItems: refresh, createItem: handleCreateLead, clearError,
   };
 }

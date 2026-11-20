@@ -1,3 +1,5 @@
+import { buildUrl } from "@/core/config/api-endpoints/_shared";
+import { stripHtmlTags } from "@core/common/sanitize";
 import type { IApiService } from "@/core/interfaces/api.interface";
 import type { ICrmAccountService } from "../../domain/interfaces/ICrmAccountService";
 import type {
@@ -16,26 +18,24 @@ interface ApiSuccessResponse<T> {
   data: T;
 }
 
+/** HTTP API client service for CRM Account queries, lookups, and mutations. */
 export class CrmAccountService implements ICrmAccountService {
   constructor(private readonly api: IApiService) {}
 
+  /** Fetches a paginated list of CRM Accounts matching the given search and tier filters. */
   async getAccounts(params?: AccountsFilterParams): Promise<PagedAccountsResult> {
-    const queryParams: Record<string, unknown> = {
+    const cleanSearch = stripHtmlTags(params?.search ?? "").trim();
+    const cleanTier = stripHtmlTags(params?.tierCode ?? "").trim();
+    const url = buildUrl(CRM_ACCOUNT_ENDPOINTS.ACCOUNTS, {
       page: params?.page ?? 1,
       pageSize: params?.pageSize ?? 20,
-    };
-
-    if (params?.search && params.search.trim() !== "") {
-      queryParams.search = params.search.trim();
-    }
-
-    if (params?.tierCode && params.tierCode.trim() !== "") {
-      queryParams.tierCode = params.tierCode.trim();
-    }
+      search: cleanSearch || undefined,
+      tierCode: cleanTier || undefined,
+    });
 
     const response = await this.api.get<
       ApiSuccessResponse<PagedAccountsResult> | PagedAccountsResult
-    >(CRM_ACCOUNT_ENDPOINTS.ACCOUNTS, queryParams);
+    >(url);
 
     if (response && typeof response === "object" && "data" in response && response.data) {
       return response.data;
@@ -43,6 +43,7 @@ export class CrmAccountService implements ICrmAccountService {
     return response as PagedAccountsResult;
   }
 
+  /** Fetches a single CRM Account 360 profile by its identifier. */
   async getAccountById(id: string): Promise<CrmAccount360> {
     const response = await this.api.get<
       ApiSuccessResponse<CrmAccount360> | CrmAccount360
@@ -54,18 +55,18 @@ export class CrmAccountService implements ICrmAccountService {
     return response as CrmAccount360;
   }
 
+  /** Searches candidate PartyKernel organizations or persons available for account creation. */
   async lookupCandidateParties(search?: string, partyKind?: string): Promise<CrmCandidatePartyLookup[]> {
-    const queryParams: Record<string, unknown> = {};
-    if (search && search.trim() !== "") {
-      queryParams.search = search.trim();
-    }
-    if (partyKind && partyKind.trim() !== "") {
-      queryParams.partyKind = partyKind.trim();
-    }
+    const cleanSearch = stripHtmlTags(search ?? "").trim();
+    const cleanKind = stripHtmlTags(partyKind ?? "").trim();
+    const url = buildUrl(CRM_ACCOUNT_ENDPOINTS.PARTIES, {
+      search: cleanSearch || undefined,
+      partyKind: cleanKind || undefined,
+    });
 
     const response = await this.api.get<
       ApiSuccessResponse<CrmCandidatePartyLookup[]> | CrmCandidatePartyLookup[]
-    >(CRM_ACCOUNT_ENDPOINTS.PARTIES, queryParams);
+    >(url);
 
     if (Array.isArray(response)) {
       return response;
@@ -76,6 +77,7 @@ export class CrmAccountService implements ICrmAccountService {
     return [];
   }
 
+  /** Submits an idempotent POST request to create a new CRM Account. */
   async createAccount(input: CreateAccountInput): Promise<CrmAccount> {
     const idempotencyKey = `crm-acc-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
     const response = await this.api.post<
@@ -94,6 +96,7 @@ export class CrmAccountService implements ICrmAccountService {
     return response as CrmAccount;
   }
 
+  /** Submits an idempotent PUT request to update an existing CRM Account. */
   async updateAccount(input: UpdateAccountInput): Promise<CrmAccount> {
     const idempotencyKey = `crm-acc-upd-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
     const { id, ...payload } = input;

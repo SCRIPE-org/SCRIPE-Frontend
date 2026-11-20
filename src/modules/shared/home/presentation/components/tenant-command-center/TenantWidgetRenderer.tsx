@@ -4,6 +4,7 @@ import React, { Component, type ReactNode } from "react";
 import { AlertTriangle } from "lucide-react";
 import { Card } from "@core/ui/card";
 import { useI18n } from "@core/providers/i18n-provider";
+import { appLogger } from "@core/common/logger";
 import type { TenantOverviewWidgetItem } from "./tenantCustomizationTypes";
 import type { TenantOverviewData, TenantLoginActivityItem } from "./tenantTypes";
 import {
@@ -45,7 +46,10 @@ class WidgetErrorBoundary extends Component<WidgetErrorBoundaryProps, WidgetErro
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error(`[SCRIPE Widget Error] ${this.props.widgetTitle}:`, error, errorInfo);
+    appLogger.error(`[SCRIPE Widget Error] ${this.props.widgetTitle}`, {
+      error: error.message,
+      componentStack: errorInfo.componentStack,
+    });
   }
 
   render() {

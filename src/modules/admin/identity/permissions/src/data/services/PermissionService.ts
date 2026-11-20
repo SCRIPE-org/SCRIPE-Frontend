@@ -38,8 +38,8 @@ export class PermissionService implements IPermissionService {
     return jsonList.map((json) => PermissionModel.fromJson(json));
   }
 
-  async getMyPermissions(params?: PermissionListParams): Promise<PermissionModel[]> {
-    const url = buildUrl(PERMISSIONS_ENDPOINTS.MY, {
+  async getEffectivePermissions(params?: PermissionListParams): Promise<PermissionModel[]> {
+    const url = buildUrl(PERMISSIONS_ENDPOINTS.EFFECTIVE, {
       category: params?.category,
       search: params?.search,
     });

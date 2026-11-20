@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
-import { PipelineManagementView } from "@modules/crm/opportunities";
+import { PipelineManagementView } from "@modules/crm/workflows";
 
 export const metadata: Metadata = {
   title: "CRM Pipeline & Stage Gates | SCRIPE",
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function CrmPipelinesPage() {
   return (
-    <ModuleErrorBoundary moduleName="crmOpportunities.title">
+    <ModuleErrorBoundary moduleName="crmWorkflows.title">
       <PipelineManagementView />
     </ModuleErrorBoundary>
   );

@@ -89,9 +89,9 @@ export function PageHeader({
           </div>
         )}
 
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0 flex-1 basis-60">
           <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5">
-            <h1 className="min-w-0 truncate text-balance text-xl font-bold leading-tight tracking-tight text-nx-ink">
+            <h1 className="min-w-0 break-words text-balance text-xl font-bold leading-tight tracking-tight text-nx-ink">
               {title}
             </h1>
             {badges}
@@ -103,7 +103,11 @@ export function PageHeader({
           )}
         </div>
 
-        {actions && <div className="ms-auto flex flex-wrap items-center gap-2">{actions}</div>}
+        {actions && (
+          <div className="flex w-full shrink-0 flex-wrap items-center justify-start gap-2 sm:ms-auto sm:w-auto sm:justify-end">
+            {actions}
+          </div>
+        )}
       </div>
 
       {meta && meta.length > 0 && (

@@ -3,6 +3,7 @@
 import { Card } from "@core/ui/card";
 import { Skeleton } from "@core/ui/skeleton";
 
+/** Loading skeleton placeholder for CRM Overview command center. */
 export function CrmOverviewSkeleton() {
   return (
     <div className="space-y-6" data-testid="crm-overview-skeleton">

@@ -4,6 +4,7 @@ import React from "react";
 import { AlertTriangle, ArrowRight, CheckCircle2, Info, XCircle } from "lucide-react";
 import { Badge } from "@core/ui/badge";
 import { Checkbox } from "@core/ui/checkbox";
+import { Label } from "@core/ui/label";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { ConversionKind } from "../../domain/entities/FieldInsight";
 
@@ -78,7 +79,7 @@ export function ConvertValueTypePreview({
           <Badge variant="outline" className="font-mono">
             {currentType}
           </Badge>
-          <ArrowRight className="text-nx-ink-4 h-3.5 w-3.5" />
+          <ArrowRight className="h-3.5 w-3.5 text-nx-ink-3 rtl:rotate-180" />
           <Badge variant="outline" className="font-mono">
             {selectedTargetType}
           </Badge>
@@ -93,7 +94,7 @@ export function ConvertValueTypePreview({
 
       {conversionKind === "Lossy" && (
         <div className="space-y-2">
-          <p className="text-xs text-warning">{t("customField.convertValueType.notes.lossy")}</p>
+          <p className="text-xs text-nx-warning-strong">{t("customField.convertValueType.notes.lossy")}</p>
           <div className="flex items-start gap-2 pt-1">
             <Checkbox
               id="confirm-data-loss"
@@ -101,12 +102,12 @@ export function ConvertValueTypePreview({
               onCheckedChange={(c) => onConfirmDataLossChange(Boolean(c))}
               disabled={isConverting || isApplied}
             />
-            <label
+            <Label
               htmlFor="confirm-data-loss"
               className="cursor-pointer pt-0.5 text-xs font-medium leading-none text-nx-ink"
             >
               {t("customField.convertValueType.confirmDataLossCheckbox")}
-            </label>
+            </Label>
           </div>
         </div>
       )}
@@ -118,7 +119,7 @@ export function ConvertValueTypePreview({
       )}
 
       {conversionKind === "NoChange" && (
-        <p className="text-nx-ink-4 text-xs">{t("customField.convertValueType.notes.noChange")}</p>
+        <p className="text-xs text-nx-ink-3">{t("customField.convertValueType.notes.noChange")}</p>
       )}
     </div>
   );

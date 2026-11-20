@@ -31,6 +31,18 @@ export const ar = {
     loginLockoutMinutesHelp: "الدقائق قبل فتح الحساب المقفل.",
     require2FA: "تتطلب المصادقة الثنائية",
     require2FAHelp: "يجب على جميع المستخدمين تفعيل المصادقة الثنائية.",
+    identityProviderMode: "وضع موفري الهوية الموحد (SSO)",
+    identityProviderModeHelp:
+      "يتحكم في موفري تسجيل الدخول الموحد الذين يظهرون في صفحة تسجيل الدخول وإعدادات الأمان لمنظمتك.",
+    identityProviderModeInherit: "وراثة الموفرين العامين + المنظمة",
+    identityProviderModeInheritDesc:
+      "عرض موفري المنصة العامين إلى جانب موفري منظمتك. يتجاوز موفر المنظمة الموفر العام الذي يحمل نفس المعرف (Slug).",
+    identityProviderModeCustom: "موفرو المنظمة المخصصون فقط",
+    identityProviderModeCustomDesc:
+      "إخفاء موفري المنصة العامين والسماح فقط بموفري الهوية المهيئين خصيصاً لمنظمتك.",
+    platformManaged: "تدار بواسطة المنصة",
+    quotasReadOnlyNotice:
+      "تُدار حصص الموارد بواسطة مدير المنصة وتظهر للقراءة فقط لمشرفي المنظمة.",
     auditEnabled: "تفعيل سجل التدقيق",
     auditEnabledHelp: "تتبع جميع إجراءات المستخدم في سجل التدقيق.",
     auditRetentionDays: "فترة الاحتفاظ بالتدقيق (أيام)",

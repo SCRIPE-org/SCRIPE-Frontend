@@ -9,7 +9,7 @@ import { formatDistanceToNow } from "date-fns";
 import { cn, formatUtc } from "@core/common/utils";
 import { Card, CardContent, CardHeader } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
-import { CalendarDays, Crown, DollarSign, Infinity, Tag, Timer } from "lucide-react";
+import { CalendarDays, Crown, DollarSign, Infinity as InfinityIcon, Tag, Timer } from "lucide-react";
 import { STATUS_VARIANTS, TYPE_VARIANTS, TYPE_KEY_MAP, STATUS_KEY_MAP } from "../../constants";
 import { STATUS_STYLES, DEFAULT_STATUS_STYLE } from "./status-styles";
 import { HeroActions } from "./HeroActions";
@@ -101,7 +101,7 @@ export function HeroCard({ sub, vm, t }: HeroCardProps) {
                 formatUtc(sub.endDate, "MMM d, yyyy")
               ) : (
                 <span className="inline-flex items-center gap-1">
-                  <Infinity className="h-3.5 w-3.5" aria-hidden="true" />
+                  <InfinityIcon className="h-3.5 w-3.5" aria-hidden="true" />
                   <span>{t("entSubscriptions.lifetime")}</span>
                 </span>
               )}

@@ -5,11 +5,12 @@ import type { AdminProfile } from "../../domain/entities/AdminProfile";
 import type { ActiveSession } from "../../domain/entities/ActiveSession";
 import type { SecurityLogEntry } from "../../domain/entities/SecurityLogEntry";
 import type { ExternalLogin } from "../../domain/entities/ExternalLogin";
-import type { LinkExternalLoginDto } from "../../domain/types/ProfileTypes";
 import type {
   UpdateProfileRequest,
   ChangePasswordRequest,
   Enable2FAResult,
+  InitiateExternalLoginLinkRequest,
+  InitiateExternalLoginLinkResponse,
 } from "../../domain/interfaces/IProfileRepository";
 import { PROFILE_ENDPOINTS } from "./profile.endpoints";
 
@@ -21,11 +22,11 @@ export class ProfileService implements IProfileService {
   constructor(private readonly api: IApiService) {}
 
   async getProfile(): Promise<AdminProfile> {
-    return this.api.get<AdminProfile>(PROFILE_ENDPOINTS.ME);
+    return this.api.get<AdminProfile>(PROFILE_ENDPOINTS.DOSSIER);
   }
 
   async updateProfile(data: UpdateProfileRequest): Promise<AdminProfile> {
-    return this.api.put<AdminProfile>(PROFILE_ENDPOINTS.UPDATE_ME, data);
+    return this.api.put<AdminProfile>(PROFILE_ENDPOINTS.UPDATE_DOSSIER, data);
   }
 
   async uploadAvatar(file: File): Promise<{ profileImageUrl: string }> {
@@ -41,10 +42,10 @@ export class ProfileService implements IProfileService {
   /**
    * AdminsController.ChangePassword is `POST /v1/admins/{id}/change-password` — it needs
    * the current admin's own id, which this service doesn't otherwise hold. Resolve it via
-   * GET /v1/admins/me (AdminProfileDto always carries `id`) before posting.
+   * GET /v1/account/dossier (AdminProfileDto always carries `id`) before posting.
    */
   async changePassword(data: ChangePasswordRequest): Promise<void> {
-    const me = await this.api.get<{ id: string }>(PROFILE_ENDPOINTS.ME);
+    const me = await this.api.get<{ id: string }>(PROFILE_ENDPOINTS.DOSSIER);
     return this.api.post<void>(PROFILE_ENDPOINTS.CHANGE_PASSWORD(me.id), data);
   }
 
@@ -78,7 +79,11 @@ export class ProfileService implements IProfileService {
   }
 
   async regenerateBackupCodes(twoFactorCode: string): Promise<string[]> {
-    return this.api.post<string[]>(PROFILE_ENDPOINTS.BACKUP_CODES_REGENERATE, { twoFactorCode });
+    const res = await this.api.post<{ backupCodes: string[] }>(
+      PROFILE_ENDPOINTS.BACKUP_CODES_REGENERATE,
+      { code: twoFactorCode }
+    );
+    return res?.backupCodes ?? [];
   }
 
   async getSecurityLog(page: number = 1, pageSize: number = 10): Promise<SecurityLogEntry[]> {
@@ -90,11 +95,32 @@ export class ProfileService implements IProfileService {
     return this.api.get<ExternalLogin[]>(PROFILE_ENDPOINTS.EXTERNAL_LOGINS);
   }
 
-  async linkExternalLogin(data: LinkExternalLoginDto): Promise<ExternalLogin> {
-    return this.api.post<ExternalLogin>(PROFILE_ENDPOINTS.LINK_EXTERNAL_LOGIN, data);
+  async initiateExternalLoginLink(
+    data: InitiateExternalLoginLinkRequest,
+    sudoToken?: string
+  ): Promise<InitiateExternalLoginLinkResponse> {
+    if (sudoToken) {
+      return this.api.post<InitiateExternalLoginLinkResponse>(
+        PROFILE_ENDPOINTS.INITIATE_EXTERNAL_LOGIN_LINK,
+        data,
+        undefined,
+        { headers: { "X-Sudo-Token": sudoToken } }
+      );
+    }
+    return this.api.post<InitiateExternalLoginLinkResponse>(
+      PROFILE_ENDPOINTS.INITIATE_EXTERNAL_LOGIN_LINK,
+      data
+    );
   }
 
-  async unlinkExternalLogin(externalLoginId: string): Promise<void> {
+  async unlinkExternalLogin(externalLoginId: string, sudoToken?: string): Promise<void> {
+    if (sudoToken) {
+      return this.api.delete<void>(
+        PROFILE_ENDPOINTS.UNLINK_EXTERNAL_LOGIN(externalLoginId),
+        undefined,
+        { headers: { "X-Sudo-Token": sudoToken } }
+      );
+    }
     return this.api.delete<void>(PROFILE_ENDPOINTS.UNLINK_EXTERNAL_LOGIN(externalLoginId));
   }
 }

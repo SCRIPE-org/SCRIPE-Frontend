@@ -1,18 +1,9 @@
-import type {
-  CrmOverviewData,
-  CrmPipelineReport,
-  CrmSettingsResponseData,
-  CrmTenantSettingsPayload,
-  CrmUserPreferencePayload,
-} from "../models/crm-overview.types";
+import type { CrmOverviewCompositeDto } from "../../data/models/OverviewModel";
 
 /**
- * Service interface for CRM overview, pipeline analytics, and server-persisted CRM settings.
+ * Service interface for fetching CRM Overview composite data.
  */
 export interface ICrmOverviewService {
-  getOverviewData(searchQuery?: string): Promise<CrmOverviewData>;
-  getPipelineReport(currencyCode?: string): Promise<CrmPipelineReport>;
-  getSettings(): Promise<CrmSettingsResponseData>;
-  updateTenantSettings(input: Partial<CrmTenantSettingsPayload>): Promise<CrmSettingsResponseData>;
-  updateUserPreferences(input: Partial<CrmUserPreferencePayload>): Promise<CrmSettingsResponseData>;
+  /** Fetches parallel default pipeline, recent opportunities, and pipeline report payloads. */
+  getOverviewData(searchQuery?: string): Promise<CrmOverviewCompositeDto>;
 }

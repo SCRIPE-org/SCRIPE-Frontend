@@ -1,5 +1,4 @@
 // FILE-EXCEPTION: file length
-// UI-EXCEPTION: compact studio layout
 "use client";
 
 import { useState } from "react";
@@ -204,32 +203,37 @@ export function AppDetailView({ id }: AppDetailViewProps) {
           />
           {listing.screenshotUrls.length > 1 && (
             <>
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon"
                 onClick={vm.prevScreenshot}
                 disabled={vm.screenshotIndex === 0}
                 className="absolute start-3 top-1/2 flex size-8 -translate-y-1/2 items-center justify-center rounded-full border border-nx-line bg-nx-popover text-nx-ink transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-raised-2 focus-visible:shadow-nx-focus focus-visible:outline-none disabled:pointer-events-none disabled:text-nx-ink-3 motion-reduce:transition-none"
                 aria-label={t("marketplace.detailPrevScreenshot")}
               >
                 <ChevronLeft className="size-4 rtl:rotate-180" aria-hidden="true" />
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon"
                 onClick={vm.nextScreenshot}
                 disabled={vm.screenshotIndex === listing.screenshotUrls.length - 1}
                 className="absolute end-3 top-1/2 flex size-8 -translate-y-1/2 items-center justify-center rounded-full border border-nx-line bg-nx-popover text-nx-ink transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-raised-2 focus-visible:shadow-nx-focus focus-visible:outline-none disabled:pointer-events-none disabled:text-nx-ink-3 motion-reduce:transition-none"
                 aria-label={t("marketplace.detailNextScreenshot")}
               >
                 <ChevronRight className="size-4 rtl:rotate-180" aria-hidden="true" />
-              </button>
+              </Button>
               {/* Dot indicators */}
               <div className="absolute bottom-3 start-1/2 flex -translate-x-1/2 gap-1.5 rtl:translate-x-1/2">
                 {listing.screenshotUrls.map((_, i) => (
-                  <button
+                  <Button
                     key={i}
                     type="button"
+                    variant="ghost"
                     onClick={() => vm.setScreenshotIndex(i)}
-                    className={`size-2 rounded-full transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none ${
+                    className={`size-2 rounded-full p-0 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none ${
                       i === vm.screenshotIndex
                         ? "bg-nx-on-fill"
                         : "bg-[color:color-mix(in_srgb,var(--nx-on-fill)_50%,transparent)] hover:bg-[color:color-mix(in_srgb,var(--nx-on-fill)_80%,transparent)]"

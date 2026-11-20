@@ -64,7 +64,7 @@ export function LoginFormRouter({
       id="login-main-content"
       className="mx-auto w-full"
       style={{ maxWidth: "var(--login-form-width, 380px)" }}
-      {...(a11y.ariaLandmarks ? { role: "main", "aria-label": t("auth.loginFormAriaLabel") } : {})}
+      {...(a11y.ariaLandmarks ? { role: "region", "aria-label": t("auth.loginFormAriaLabel") } : {})}
     >
       {/* Safe-mode notice */}
       {safeModeActive && (
@@ -133,6 +133,8 @@ export function LoginFormRouter({
             providers={sso.providers}
             isLoading={sso.isLoading}
             error={sso.error}
+            discoveryError={sso.discoveryError}
+            onRetryProviders={sso.retryProviders}
             onProviderClick={sso.initiateSsoLogin}
           />
           <CredentialsFormFooter isPlatformMode={isPlatformMode} arrow={isRTL ? "←" : "→"} t={t} />
@@ -144,6 +146,10 @@ export function LoginFormRouter({
           }}
           onBack={vm.goBackToCredentials}
           isRTL={isRTL}
+          tenantId={tenantId}
+          onTwoFactorRequired={(pendingToken, staySignedIn) =>
+            vm.enterTwoFactor(pendingToken, staySignedIn)
+          }
         />
       ) : vm.loginStep === "passkey" ? (
         <PasskeyPrompt
@@ -153,6 +159,7 @@ export function LoginFormRouter({
           onBack={vm.goBackToCredentials}
           isRTL={isRTL}
           tenantId={tenantId}
+          identifier={vm.formData.identifier}
         />
       ) : vm.loginStep === "qr-login" ? (
         <QrSignInView
@@ -161,6 +168,7 @@ export function LoginFormRouter({
           }}
           onBack={vm.goBackToCredentials}
           isRTL={isRTL}
+          tenantId={tenantId}
         />
       ) : (
         <TwoFactorForm

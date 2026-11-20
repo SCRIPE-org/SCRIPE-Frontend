@@ -1,8 +1,35 @@
 "use client";
 
-import { useState } from "react";
+import { Fragment, useState, type ReactNode } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import Image from "next/image";
+
+const BIDI_ARABIC_SEGMENT_RE =
+  /(\([^)]*[\u0600-\u06FF][^)]*\)|[\u0600-\u06FF]+(?:\s+[\u0600-\u06FF]+)*)/g;
+
+/**
+ * Isolates parenthetical or inline Arabic segments inside `<bdi>` so bilingual
+ * tenant titles (e.g. `Arab Contractors FC (نادي المقاولون العرب)`) never split
+ * parentheses across lines on narrow viewports.
+ */
+export function formatBidiCompanyName(companyName: string): ReactNode {
+  if (!/[\u0600-\u06FF]/.test(companyName)) {
+    return companyName;
+  }
+
+  const parts = companyName.split(BIDI_ARABIC_SEGMENT_RE);
+  return parts.map((part, index) => {
+    if (!part) return null;
+    if (/[\u0600-\u06FF]/.test(part)) {
+      return (
+        <bdi key={index} className="inline-block" dir="auto">
+          {part}
+        </bdi>
+      );
+    }
+    return <Fragment key={index}>{part}</Fragment>;
+  });
+}
 
 /** Reusable logo image — falls back to the canonical SCRIPE mark if a
  * tenant-configured logo URL 404s, rather than leaving a layout gap. */
@@ -46,7 +73,7 @@ export function MobileLogo({
       style={{ marginBottom: "var(--login-logo-margin, 48px)" }}
     >
       <div
-        className="flex items-center justify-center overflow-hidden border border-border bg-background shadow-sm"
+        className="flex items-center justify-center overflow-hidden border border-nx-line bg-nx-surface"
         style={{
           borderRadius: "var(--login-radius-card, 24px)",
           width: "var(--login-logo-size, 96px)",
@@ -56,10 +83,10 @@ export function MobileLogo({
         <LogoImg logoSrc={logoSrc} logoAlt={logoAlt} />
       </div>
       <h1
-        className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
+        className="login-heading text-center tracking-tight text-[var(--login-text,var(--nx-ink))]"
         style={{ fontSize: "var(--login-size-headline, 24px)" }}
       >
-        {companyName}
+        {formatBidiCompanyName(companyName)}
       </h1>
     </div>
   );
@@ -74,13 +101,13 @@ export function DesktopHeading({ companyName }: { companyName: string }) {
       style={{ maxWidth: "var(--login-form-width, 380px)" }}
     >
       <h2
-        className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
+        className="login-heading tracking-tight text-[var(--login-text,var(--nx-ink))]"
         style={{ fontSize: "var(--login-size-headline, 30px)" }}
       >
-        {companyName}
+        {formatBidiCompanyName(companyName)}
       </h2>
       <p
-        className="mt-2 text-[var(--login-text-muted,hsl(var(--muted-foreground)))]"
+        className="mt-2 text-[var(--login-text-muted,var(--nx-ink-2))]"
         style={{ fontSize: "var(--login-size-subtitle, 0.9375rem)" }}
       >
         {t("auth.pleaseLogin")}
@@ -106,19 +133,19 @@ export function CenteredLogoHeader({
   return (
     <div className="mb-8 flex flex-col items-center gap-3 text-center">
       <div
-        className={`flex ${logoSize} items-center justify-center overflow-hidden rounded-xl border border-border bg-background shadow-sm`}
+        className={`flex ${logoSize} items-center justify-center overflow-hidden rounded-xl border border-nx-line bg-nx-surface`}
       >
         <LogoImg logoSrc={logoSrc} logoAlt={logoAlt} />
       </div>
       <h1
-        className="login-heading tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
+        className="login-heading tracking-tight text-[var(--login-text,var(--nx-ink))]"
         style={{ fontSize: "var(--login-size-headline, 1.5rem)" }}
       >
-        {companyName}
+        {formatBidiCompanyName(companyName)}
       </h1>
       {subtitle && (
         <p
-          className="text-[var(--login-text-muted,hsl(var(--muted-foreground)))]"
+          className="text-[var(--login-text-muted,var(--nx-ink-2))]"
           style={{ fontSize: "var(--login-size-subtitle, 0.875rem)" }}
         >
           {subtitle}
@@ -134,7 +161,7 @@ export function OverlayDiv() {
     <div
       className="absolute inset-0"
       style={{
-        backgroundColor: "var(--login-overlay-color, #000000)",
+        backgroundColor: "var(--login-overlay-color, var(--scripe-void))",
         opacity: "var(--login-overlay-opacity, 0.5)",
         backdropFilter: "blur(var(--login-overlay-blur, 0px))",
       }}

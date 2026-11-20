@@ -22,6 +22,7 @@ interface OtpInputFieldProps {
   variant?: "nexus" | "vault" | "glass";
   id?: string;
   disabled?: boolean;
+  "aria-invalid"?: boolean | "true" | "false";
 }
 
 export function OtpInputField({
@@ -32,7 +33,10 @@ export function OtpInputField({
   variant = "nexus",
   id = "otp-field",
   disabled = false,
+  "aria-invalid": ariaInvalid,
 }: OtpInputFieldProps) {
+  const isInvalid = ariaInvalid === true || ariaInvalid === "true";
+
   return (
     <InputOTP
       maxLength={length}
@@ -43,6 +47,7 @@ export function OtpInputField({
       id={id}
       autoFocus={autoFocus}
       disabled={disabled}
+      aria-invalid={isInvalid ? true : undefined}
       containerClassName="justify-center w-full"
       dir="ltr"
     >
@@ -56,10 +61,10 @@ export function OtpInputField({
               // Auth-shell opt-in — fixed Signal Lime, literals by design.
               return {
                 className:
-                  "w-[46px] h-[56px] rounded-xl text-center text-[22px] font-semibold font-mono outline-none transition-all duration-200 border-none ring-0 ring-offset-0 ring-transparent focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none",
+                  "w-[46px] h-[56px] rounded-xl text-center text-[22px] font-semibold font-mono outline-none transition-[border-color,background-color,box-shadow] duration-200 motion-reduce:transition-none border-none ring-0 ring-offset-0 ring-transparent focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none",
                 style: {
                   background: ch ? "rgba(198,255,0,0.1)" : "rgba(255,255,255,0.03)",
-                  border: `1.5px solid ${ch ? "rgba(198,255,0,0.5)" : "rgba(255,255,255,0.08)"}`,
+                  border: `1.5px solid ${ch ? "rgba(198,255,0,0.5)" : "rgba(255,255,255,0.42)"}`,
                   color: "#F7F8F5",
                   boxShadow: ch ? "0 0 8px rgba(198,255,0,0.18)" : "none",
                 },
@@ -72,7 +77,7 @@ export function OtpInputField({
               // Auth-shell opt-in — the reset flow's --sx- palette.
               return {
                 className:
-                  "w-[46px] h-[56px] rounded-xl text-center text-[22px] font-semibold font-mono outline-none transition-all duration-200 border ring-0 ring-offset-0 ring-transparent focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none",
+                  "w-[46px] h-[56px] rounded-xl text-center text-[22px] font-semibold font-mono outline-none transition-[border-color,background-color,box-shadow] duration-200 motion-reduce:transition-none border ring-0 ring-offset-0 ring-transparent focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none",
                 style: {
                   background: ch ? "var(--sx-accent-soft)" : "var(--sx-chip-bg)",
                   borderColor: ch ? "var(--sx-accent-soft-border)" : "var(--sx-chip-border)",
@@ -83,20 +88,22 @@ export function OtpInputField({
               };
             }
 
-            // Default: nexus — core tokens only. Empty slots are the sunken
-            // field surface; filled slots take the accent wash behind a 40%
-            // accent hairline. The active lit edge (shadow-nx-focus) comes
-            // from the base InputOTPSlot; no inline styles here so the
-            // workspace accent and theme resolve through the tokens.
+            // Default: nexus — core tokens only. Empty slots take 3:1 line-hi
+            // hairline; filled slots take the accent wash; invalid outranks idle.
             return {
               className: cn(
                 "h-14 w-11 rounded-nx-control border text-center font-mono text-xl font-semibold tabular-nums transition-[background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-                ch
-                  ? "border-[color:color-mix(in_srgb,var(--nx-accent)_40%,transparent)] bg-nx-accent-wash text-nx-ink"
-                  : "border-nx-line bg-nx-ground text-nx-ink"
+                isInvalid && !disabled
+                  ? "border-nx-danger bg-nx-ground text-nx-ink"
+                  : ch
+                    ? "border-[color:color-mix(in_srgb,var(--nx-accent)_65%,transparent)] bg-nx-accent-wash text-nx-ink"
+                    : "border-nx-line-hi bg-nx-ground text-nx-ink"
               ),
               style: undefined,
-              activeClass: "",
+              activeClass:
+                isInvalid && !disabled
+                  ? "data-[active=true]:border-nx-danger data-[active=true]:shadow-[inset_0_0_0_1px_var(--nx-danger),0_0_0_3px_color-mix(in_srgb,var(--nx-danger)_18%,transparent)]"
+                  : "",
             };
           };
 

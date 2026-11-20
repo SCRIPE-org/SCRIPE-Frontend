@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-// UI-EXCEPTION: compact studio layout
 /**
  * DashboardBuilderPanel — Full drag-and-drop builder panel for dashboard (M11)
  *
@@ -128,15 +127,16 @@ function PaletteItem({
         silently stops working. They stay together on this button.
 
         The quick-add control is a SIBLING of the drag handle rather than a
-        child, because a <button> inside a <button> is invalid markup and the
+        child, because nested interactive controls are invalid markup and the
         inner one stops being reachable.
       */}
-      <button
+      <Button
         type="button"
+        variant="ghost"
         ref={setNodeRef}
         {...listeners}
         {...attributes}
-        className="flex min-w-0 flex-1 cursor-grab items-center gap-2.5 rounded-nx-sm text-start focus-visible:shadow-nx-focus focus-visible:outline-none"
+        className="flex h-auto min-w-0 flex-1 cursor-grab items-center justify-start gap-2.5 whitespace-normal rounded-nx-sm p-0 text-start hover:bg-transparent focus-visible:shadow-nx-focus focus-visible:outline-none"
       >
         <span className="shrink-0 rounded-nx-md bg-nx-accent-wash p-1.5">
           {React.createElement(resolvedIconComponent, {
@@ -148,17 +148,19 @@ function PaletteItem({
           <span className="block truncate text-xs font-medium text-nx-ink">{t(labelKey)}</span>
           <span className="block truncate text-[10px] text-nx-ink-3">{t(descriptionKey)}</span>
         </span>
-      </button>
+      </Button>
       {isEnterprise ? (
         <Badge variant="outline" className="shrink-0 px-1.5 py-0 text-[10px]">
           <span aria-hidden="true">{t("dashboard.builder.enterpriseShort")}</span>
           <span className="sr-only">{t("dashboard.builder.enterpriseOnly")}</span>
         </Badge>
       ) : (
-        <button
+        <Button
           type="button"
+          variant="ghost"
           aria-label={t("dashboard.builder.quickAdd")}
           className={cn(
+            "h-auto",
             ICON_CONTROL,
             "shrink-0 text-nx-accent hover:bg-nx-accent-wash hover:text-nx-accent"
           )}
@@ -168,7 +170,7 @@ function PaletteItem({
           }}
         >
           <Plus className="h-3 w-3" aria-hidden="true" />
-        </button>
+        </Button>
       )}
     </div>
   );
@@ -278,9 +280,10 @@ function WidgetPropsPanel() {
           {catalog ? t(catalog.labelKey) : widget.type}
         </h4>
         <div className="flex items-center gap-1">
-          <button
+          <Button
             type="button"
-            className={ICON_CONTROL}
+            variant="ghost"
+            className={cn("h-auto", ICON_CONTROL)}
             aria-label={t("dashboard.builder.visibility")}
             aria-pressed={widget.visible}
             onClick={() => store.toggleVisibility(widget.id)}
@@ -290,18 +293,21 @@ function WidgetPropsPanel() {
             ) : (
               <EyeOff className="h-3 w-3" aria-hidden="true" />
             )}
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
-            className={ICON_CONTROL}
+            variant="ghost"
+            className={cn("h-auto", ICON_CONTROL)}
             aria-label={t("dashboard.builder.duplicate")}
             onClick={() => store.duplicateWidget(widget.id)}
           >
             <Copy className="h-3 w-3" aria-hidden="true" />
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
+            variant="ghost"
             className={cn(
+              "h-auto",
               ICON_CONTROL,
               "text-nx-danger hover:bg-destructive/10 hover:text-nx-danger"
             )}
@@ -309,7 +315,7 @@ function WidgetPropsPanel() {
             onClick={() => store.removeWidget(widget.id)}
           >
             <Trash2 className="h-3 w-3" aria-hidden="true" />
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -350,25 +356,27 @@ function WidgetPropsPanel() {
       <div className="flex items-center justify-between">
         <Label className="text-[10px] text-nx-ink-3">{t("dashboard.builder.props.zIndex")}</Label>
         <div className="flex items-center gap-1">
-          <button
+          <Button
             type="button"
-            className={ICON_CONTROL}
+            variant="ghost"
+            className={cn("h-auto", ICON_CONTROL)}
             aria-label={t("dashboard.builder.props.sendBackward")}
             onClick={() => store.reorderZ(widget.id, "back")}
           >
             <ArrowDown className="h-3 w-3" aria-hidden="true" />
-          </button>
+          </Button>
           <span className="min-w-[20px] text-center text-xs tabular-nums text-nx-ink">
             {widget.zIndex}
           </span>
-          <button
+          <Button
             type="button"
-            className={ICON_CONTROL}
+            variant="ghost"
+            className={cn("h-auto", ICON_CONTROL)}
             aria-label={t("dashboard.builder.props.bringForward")}
             onClick={() => store.reorderZ(widget.id, "forward")}
           >
             <ArrowUp className="h-3 w-3" aria-hidden="true" />
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -647,25 +655,27 @@ export function DashboardBuilderPanel({
           <div className="flex items-center gap-2">
             <Label className="text-xs">{t("dashboard.builder.gridRows")}</Label>
             <div className="flex items-center gap-1">
-              <button
+              <Button
                 type="button"
-                className={cn(ICON_CONTROL, "p-0.5")}
+                variant="ghost"
+                className={cn("h-auto", ICON_CONTROL, "p-0.5")}
                 aria-label={t("dashboard.builder.fewerRows")}
                 onClick={() => store.setGridRows(store.gridRows - 1)}
               >
                 <MinusIcon className="h-3 w-3" aria-hidden="true" />
-              </button>
+              </Button>
               <span className="min-w-[20px] text-center text-xs font-medium tabular-nums text-nx-ink">
                 {store.gridRows}
               </span>
-              <button
+              <Button
                 type="button"
-                className={cn(ICON_CONTROL, "p-0.5")}
+                variant="ghost"
+                className={cn("h-auto", ICON_CONTROL, "p-0.5")}
                 aria-label={t("dashboard.builder.moreRows")}
                 onClick={() => store.setGridRows(store.gridRows + 1)}
               >
                 <PlusIcon className="h-3 w-3" aria-hidden="true" />
-              </button>
+              </Button>
             </div>
           </div>
         </div>

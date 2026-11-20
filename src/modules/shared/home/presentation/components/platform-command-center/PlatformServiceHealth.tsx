@@ -91,33 +91,31 @@ export function PlatformServiceHealth({ healthVm }: PlatformServiceHealthProps) 
   const { t } = useI18n();
 
   // If backend health has specific infrastructure signals, adapt latency and status
-  const services: ServiceHealthRow[] = React.useMemo(() => {
-    const infra = healthVm?.health?.infrastructure;
-    return DEFAULT_PLATFORM_SERVICES.map((svc) => {
-      if (svc.id === "svc-database" && infra?.database) {
-        return {
-          ...svc,
-          status: infra.database.isConnected ? "Healthy" : "Outage",
-          latencyMs: infra.database.latencyMs ?? svc.latencyMs,
-        };
-      }
-      if (svc.id === "svc-redis" && infra?.redis) {
-        return {
-          ...svc,
-          status: infra.redis.isConnected ? "Healthy" : "Degraded",
-        };
-      }
-      return svc;
-    });
-  }, [healthVm?.health]);
+  const infra = healthVm?.health?.infrastructure;
+  const services: ServiceHealthRow[] = DEFAULT_PLATFORM_SERVICES.map((svc) => {
+    if (svc.id === "svc-database" && infra?.database) {
+      return {
+        ...svc,
+        status: infra.database.isConnected ? "Healthy" : "Outage",
+        latencyMs: infra.database.latencyMs ?? svc.latencyMs,
+      };
+    }
+    if (svc.id === "svc-redis" && infra?.redis) {
+      return {
+        ...svc,
+        status: infra.redis.isConnected ? "Healthy" : "Degraded",
+      };
+    }
+    return svc;
+  });
 
   return (
     <Card className="flex h-[400px] flex-col overflow-hidden p-0">
       {/* Header */}
-      <div className="flex h-[60px] shrink-0 items-center justify-between border-b border-nx-line bg-nx-raised/40 px-4 py-3">
+      <div className="flex h-[60px] shrink-0 items-center justify-between border-b border-nx-line bg-nx-raised px-4 py-3">
         <div className="flex min-w-0 items-center gap-2.5">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary">
-            <Database className="h-4 w-4" />
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-nx-line-hi bg-nx-accent-wash text-nx-accent">
+            <Database className="h-4 w-4" aria-hidden="true" />
           </div>
           <div className="min-w-0">
             <h2 className="truncate text-sm font-bold tracking-tight text-nx-ink sm:text-base">
@@ -135,7 +133,7 @@ export function PlatformServiceHealth({ healthVm }: PlatformServiceHealthProps) 
           className="group flex shrink-0 items-center gap-1 text-xs font-semibold text-nx-ink-3 transition-colors hover:text-nx-ink"
         >
           <span>{t("platformCommandCenter.serviceHealth.viewAll") || "View All"}</span>
-          <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+          <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5" aria-hidden="true" />
         </Link>
       </div>
 
@@ -146,15 +144,15 @@ export function PlatformServiceHealth({ healthVm }: PlatformServiceHealthProps) 
           const isDegraded = svc.status === "Degraded";
 
           const dotColor = isHealthy
-            ? "bg-success shadow-[0_0_6px_rgba(34,197,94,0.7)]"
+            ? "bg-success"
             : isDegraded
-              ? "bg-warning shadow-[0_0_6px_rgba(234,179,8,0.7)]"
-              : "bg-destructive shadow-[0_0_6px_rgba(239,68,68,0.7)]";
+              ? "bg-warning"
+              : "bg-destructive";
 
           const statusTextColor = isHealthy
-            ? "text-success"
+            ? "text-nx-success"
             : isDegraded
-              ? "text-warning"
+              ? "text-nx-warning-strong"
               : "text-destructive";
 
           const statusLabel = isHealthy
@@ -169,7 +167,7 @@ export function PlatformServiceHealth({ healthVm }: PlatformServiceHealthProps) 
               className="flex items-center justify-between gap-3 rounded-lg px-2 py-2.5 transition-colors hover:bg-nx-raised"
             >
               {/* Service Name */}
-              <div className="w-[140px] shrink-0 truncate text-xs font-medium text-nx-ink">
+              <div className="min-w-0 flex-1 truncate text-xs font-medium text-nx-ink sm:w-[140px] sm:flex-none sm:shrink-0">
                 {svc.name}
               </div>
 

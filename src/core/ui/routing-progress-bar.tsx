@@ -32,9 +32,34 @@ function RoutingProgressBarInner() {
 
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
   const fadeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const safetyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const done = useCallback(() => {
+    if (timer.current) {
+      clearInterval(timer.current);
+      timer.current = null;
+    }
+    if (safetyTimer.current) {
+      clearTimeout(safetyTimer.current);
+      safetyTimer.current = null;
+    }
+
+    // Instantly fill to 100%
+    setProgress(100);
+
+    // Gracefully fade out and reset
+    fadeTimer.current = setTimeout(() => {
+      setOpacity(0);
+      fadeTimer.current = setTimeout(() => {
+        setVisible(false);
+        setProgress(0);
+      }, 300); // Outlasts the fade (duration-nx-standard) before unmounting
+    }, 180);
+  }, []);
 
   const start = useCallback(() => {
     if (fadeTimer.current) clearTimeout(fadeTimer.current);
+    if (safetyTimer.current) clearTimeout(safetyTimer.current);
 
     // Initialize animation values
     setProgress(0);
@@ -53,26 +78,12 @@ function RoutingProgressBarInner() {
         return prev;
       });
     }, 120);
-  }, []);
 
-  const done = useCallback(() => {
-    if (timer.current) {
-      clearInterval(timer.current);
-      timer.current = null;
-    }
-
-    // Instantly fill to 100%
-    setProgress(100);
-
-    // Gracefully fade out and reset
-    fadeTimer.current = setTimeout(() => {
-      setOpacity(0);
-      fadeTimer.current = setTimeout(() => {
-        setVisible(false);
-        setProgress(0);
-      }, 300); // Outlasts the fade (duration-nx-standard) before unmounting
-    }, 180);
-  }, []);
+    // Prevent stuck indicator if a programmatic navigation aborts or stays on the same route
+    safetyTimer.current = setTimeout(() => {
+      done();
+    }, 8000);
+  }, [done]);
 
   // 1. Intercept global relative anchor tag clicks
   useEffect(() => {

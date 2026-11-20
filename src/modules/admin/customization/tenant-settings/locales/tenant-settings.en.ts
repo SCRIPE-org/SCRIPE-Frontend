@@ -31,6 +31,18 @@ export const en = {
     loginLockoutMinutesHelp: "Minutes before locked account is released.",
     require2FA: "Require 2FA",
     require2FAHelp: "All users must enable two-factor authentication.",
+    identityProviderMode: "SSO Identity Provider Mode",
+    identityProviderModeHelp:
+      "Controls which Single Sign-On providers appear on your organization's login page and security settings.",
+    identityProviderModeInherit: "Inherit Global + Organization",
+    identityProviderModeInheritDesc:
+      "Show both platform-wide global providers and your organization's providers. Organization providers override global ones with the same slug.",
+    identityProviderModeCustom: "Custom Organization Only",
+    identityProviderModeCustomDesc:
+      "Hide platform-wide global providers and allow only identity providers configured specifically for your organization.",
+    platformManaged: "Platform Managed",
+    quotasReadOnlyNotice:
+      "Resource quotas are managed by the platform administrator and are read-only for organization admins.",
     auditEnabled: "Enable Audit Logging",
     auditEnabledHelp: "Track all user actions in audit log.",
     auditRetentionDays: "Audit Retention (Days)",

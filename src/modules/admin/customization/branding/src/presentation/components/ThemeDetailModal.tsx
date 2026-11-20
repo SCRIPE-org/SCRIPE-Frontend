@@ -16,9 +16,6 @@
  * @module customization/presentation
  */
 "use client";
-// UI-EXCEPTION: compact studio layout — native <button> used for pixel-precise
-// compact controls (theme cards, filter toggles, etc.) where @core/ui/button's
-// padding/sizing would break the layout.
 
 import { useState, useMemo } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -231,16 +228,21 @@ export function ThemeDetailModal({
                       { key: "tablet" as const, icon: Tablet },
                       { key: "mobile" as const, icon: Smartphone },
                     ].map(({ key, icon: Icon }) => (
-                      <button
+                      <Button
                         type="button"
+                        variant="ghost"
                         key={key}
                         onClick={() => setDeviceSize(key)}
                         aria-label={t(`${D}.preview.${key}`)}
                         aria-pressed={deviceSize === key}
-                        className={segmentButton(deviceSize === key)}
+                        className={cn(
+                          segmentButton(deviceSize === key),
+                          "p-0",
+                          deviceSize === key && "hover:bg-nx-surface"
+                        )}
                       >
                         <Icon className="h-3.5 w-3.5" aria-hidden="true" />
-                      </button>
+                      </Button>
                     ))}
                   </div>
                   {/* Light/Dark toggle — each button carries its own accessible name */}
@@ -248,24 +250,34 @@ export function ThemeDetailModal({
                     role="group"
                     className="flex items-center rounded-nx-control border border-nx-line bg-nx-raised p-0.5"
                   >
-                    <button
+                    <Button
                       type="button"
+                      variant="ghost"
                       onClick={() => setColorMode("light")}
                       aria-label={t(`${D}.preview.lightMode`)}
                       aria-pressed={colorMode === "light"}
-                      className={segmentButton(colorMode === "light")}
+                      className={cn(
+                        segmentButton(colorMode === "light"),
+                        "p-0",
+                        colorMode === "light" && "hover:bg-nx-surface"
+                      )}
                     >
                       <Sun className="h-3.5 w-3.5" aria-hidden="true" />
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       type="button"
+                      variant="ghost"
                       onClick={() => setColorMode("dark")}
                       aria-label={t(`${D}.preview.darkMode`)}
                       aria-pressed={colorMode === "dark"}
-                      className={segmentButton(colorMode === "dark")}
+                      className={cn(
+                        segmentButton(colorMode === "dark"),
+                        "p-0",
+                        colorMode === "dark" && "hover:bg-nx-surface"
+                      )}
                     >
                       <Moon className="h-3.5 w-3.5" aria-hidden="true" />
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -305,8 +317,8 @@ export function ThemeDetailModal({
                       className={cn(
                         "w-full space-y-4 rounded-nx-lg border p-6 shadow-nx-modal transition-colors duration-nx-panel motion-reduce:transition-none",
                         colorMode === "dark"
-                          ? "border-nx-line bg-[color:color-mix(in_srgb,black_80%,transparent)]"
-                          : "border-nx-line bg-[color:color-mix(in_srgb,white_90%,transparent)]"
+                          ? "border-nx-line bg-[color:color-mix(in_srgb,var(--scripe-void)_80%,transparent)]"
+                          : "border-nx-line bg-[color:color-mix(in_srgb,var(--scripe-white)_90%,transparent)]"
                       )}
                       style={{
                         maxWidth: deviceSize === "mobile" ? "280px" : "340px",
@@ -324,13 +336,13 @@ export function ThemeDetailModal({
                         <div
                           className={cn(
                             "mx-auto h-4 w-32 rounded-nx-sm",
-                            colorMode === "dark" ? "bg-white/20" : "bg-nx-raised-2"
+                            colorMode === "dark" ? "bg-[color:color-mix(in_srgb,var(--scripe-white)_20%,transparent)]" : "bg-nx-raised-2"
                           )}
                         />
                         <div
                           className={cn(
                             "mx-auto h-2.5 w-48 rounded-nx-sm",
-                            colorMode === "dark" ? "bg-white/10" : "bg-nx-raised"
+                            colorMode === "dark" ? "bg-[color:color-mix(in_srgb,var(--scripe-white)_10%,transparent)]" : "bg-nx-raised"
                           )}
                         />
                       </div>
@@ -341,7 +353,7 @@ export function ThemeDetailModal({
                           className={cn(
                             "h-9 w-full rounded-nx-control border",
                             colorMode === "dark"
-                              ? "border-white/10 bg-white/5"
+                              ? "border-[color:color-mix(in_srgb,var(--scripe-white)_10%,transparent)] bg-[color:color-mix(in_srgb,var(--scripe-white)_5%,transparent)]"
                               : "border-nx-line bg-nx-raised"
                           )}
                         />
@@ -356,7 +368,7 @@ export function ThemeDetailModal({
                         <div
                           className={cn(
                             "h-2 w-24 rounded-nx-sm",
-                            colorMode === "dark" ? "bg-white/10" : "bg-nx-raised"
+                            colorMode === "dark" ? "bg-[color:color-mix(in_srgb,var(--scripe-white)_10%,transparent)]" : "bg-nx-raised"
                           )}
                         />
                       </div>
