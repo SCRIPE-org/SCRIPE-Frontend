@@ -40,7 +40,8 @@ export const createWorkspaceSlice: StateCreator<NavigationStoreState, [], [], Wo
       activeWorkspaceKey:
         state.activeWorkspaceKey !== null
           ? state.activeWorkspaceKey // Already chosen — preserve it
-          : typeof window !== "undefined" && window.location.pathname === "/hub"
+          : typeof window !== "undefined" &&
+              window.location.pathname.toLowerCase().replace(/\/+$/, "") === "/hub"
             ? null // Explicitly on /hub — keep null (hub manages its own state)
             : defaultKey, // First load on dashboard or any module page — auto-activate
       isInitialLoading: false,
@@ -66,15 +67,14 @@ export const createWorkspaceSlice: StateCreator<NavigationStoreState, [], [], Wo
 
   getActiveWorkspaceGroup: () => {
     const { workspaceGroups, activeWorkspaceKey } = get();
-    if (!activeWorkspaceKey) return workspaceGroups[0] ?? null;
+    if (!activeWorkspaceKey) return null;
     return workspaceGroups.find((g) => g.workspaceKey === activeWorkspaceKey) ?? null;
   },
 
   getActiveRootMenuItems: () => {
-    const { workspaces, activeWorkspaceKey, defaultWorkspace } = get();
-    const key = activeWorkspaceKey ?? "__default__";
-    const data = workspaces.get(key) ?? defaultWorkspace;
-    return data?.menuItems ?? [];
+    const { workspaces, activeWorkspaceKey } = get();
+    if (!activeWorkspaceKey) return [];
+    return workspaces.get(activeWorkspaceKey)?.menuItems ?? [];
   },
 
   getPageActions: (pathname) => {

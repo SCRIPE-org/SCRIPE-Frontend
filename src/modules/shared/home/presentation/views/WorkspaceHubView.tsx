@@ -7,14 +7,13 @@
  * This is the landing page after login — shows all accessible workspaces.
  *
  * Sections:
- * - HubTopBar (rendered by NexusLayout in hub mode — not here)
+ * - Unified NexusLayout topbar + rails (no orphan HubTopBar / HubFooter)
  * - HubHero: greeting + status pill
  * - HubSearch: the shared Input primitive with a / shortcut
  * - Pinned strip: smaller tiles of pinned workspaces
  * - Modules grid: 5-column grid of all module workspaces
  * - Administration grid: muted admin workspaces
  * - Side panel: Today activity + Recent items
- * - Footer: version + links
  *
  * Smart landing:
  * - 1 workspace only → auto-redirect (skip Hub)
@@ -42,7 +41,6 @@ import { HubSearch } from "../components/HubSearch";
 import { HubModuleTile } from "../components/HubModuleTile";
 import { HubSectionHeader } from "../components/HubSectionHeader";
 import { HubSidePanel } from "../components/HubSidePanel";
-import { HubFooter } from "../components/HubFooter";
 import { useHubActivity } from "../hooks/useHubActivity";
 
 export function WorkspaceHubView() {
@@ -142,7 +140,7 @@ export function WorkspaceHubView() {
     if (allUnlocked.length === 1 && lockedWorkspaces.length === 0) {
       queueMicrotask(() => {
         setHasAutoRedirected(true);
-        switchWorkspace(allUnlocked[0].workspaceKey);
+        switchWorkspace(allUnlocked[0].workspaceKey, { preserveHistory: false });
       });
     }
   }, [isLoading, allUnlocked, lockedWorkspaces, switchWorkspace, hasAutoRedirected]);
@@ -171,7 +169,7 @@ export function WorkspaceHubView() {
         setUpgradeTarget(ws.workspaceKey);
         return;
       }
-      switchWorkspace(ws.workspaceKey);
+      switchWorkspace(ws.workspaceKey, { preserveHistory: true });
     },
     [switchWorkspace]
   );
@@ -218,11 +216,7 @@ export function WorkspaceHubView() {
     filteredLocked.length > 0;
 
   return (
-    <main
-      id="nexus-content"
-      tabIndex={-1}
-      className="relative mx-auto max-w-7xl px-4 pb-14 text-nx-ink outline-none sm:px-6 lg:px-10"
-    >
+    <div className="relative mx-auto max-w-7xl px-4 pb-14 text-nx-ink sm:px-6 lg:px-10">
       <HubHero />
 
       <div className="h-2" />
@@ -424,8 +418,6 @@ export function WorkspaceHubView() {
         )}
       </div>
 
-      <HubFooter />
-
       {upgradeTarget && (
         <UpgradeDialog
           workspaceName={
@@ -447,6 +439,6 @@ export function WorkspaceHubView() {
       {switcherOpen && (
         <TenantContextSwitcherDialog open={switcherOpen} onOpenChange={setSwitcherOpen} />
       )}
-    </main>
+    </div>
   );
 }

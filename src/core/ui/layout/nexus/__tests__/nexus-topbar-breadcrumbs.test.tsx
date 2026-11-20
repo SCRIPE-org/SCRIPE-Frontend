@@ -46,6 +46,7 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({
     push: vi.fn(),
   }),
+  usePathname: () => "/overview",
 }));
 
 vi.mock("@core/store", () => ({

@@ -5,7 +5,7 @@ import type React from "react";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import type { WorkspaceGroup, MenuItem } from "@core/navigation";
 import { useActiveRootSync } from "./hooks/useActiveRootSync";
-import { useWorkspaceActions } from "./hooks/useWorkspaceActions";
+import { useWorkspaceActions, type SetActiveWorkspaceOptions } from "./hooks/useWorkspaceActions";
 import { getAccentColor } from "./utils/navigation-helpers";
 import { getCoreContainer } from "@core/di";
 
@@ -13,7 +13,11 @@ import { getCoreContainer } from "@core/di";
 interface WorkspaceContextType {
   workspaceGroups: WorkspaceGroup[];
   activeWorkspace: WorkspaceGroup | null;
-  setActiveWorkspace: (workspaceKey: string, navigateTo?: boolean) => void;
+  setActiveWorkspace: (
+    workspaceKey: string,
+    navigateTo?: boolean,
+    options?: SetActiveWorkspaceOptions
+  ) => void;
   rootMenuItems: MenuItem[];
   activeRootItem: MenuItem | null;
   setActiveRootItemId: (id: string | null) => void;
@@ -24,7 +28,7 @@ interface WorkspaceContextType {
   previousWorkspaceKey: string | null;
   goBack: () => void;
   switchToModuleWorkspace: () => void;
-  switchToModuleWorkspaceByKey: (key: string) => void;
+  switchToModuleWorkspaceByKey: (key: string, options?: SetActiveWorkspaceOptions) => void;
   /** Toggle pin state for a workspace. Returns the new isPinned boolean. */
   togglePin: (workspaceKey: string) => Promise<boolean>;
   /** @deprecated use workspaceGroups.filter(ws => ws.isAdminWorkspace) */
@@ -45,7 +49,6 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
   const isInitialLoading = useNavigationStore((s) => s.isInitialLoading);
   const isWorkspaceSwitching = useNavigationStore((s) => s.isWorkspaceSwitching);
   const workspacesMap = useNavigationStore((s) => s.workspaces);
-  const defaultWorkspace = useNavigationStore((s) => s.defaultWorkspace);
 
   // ── Sorted workspace list ──
   const sortedGroups = useMemo(
@@ -57,7 +60,7 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
   );
 
   // ── Active workspace entity ──
-  // Returns null when no workspace is selected (e.g. on the Hub page at "/").
+  // Returns null when no workspace is selected (e.g. on the Hub page at "/hub").
   // Previously defaulted to sortedGroups[0], which caused the sidebar to show
   // the first workspace's items even when the admin hadn't selected one yet.
   const activeWorkspace = useMemo<WorkspaceGroup | null>(() => {
@@ -66,11 +69,11 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
   }, [activeWorkspaceKey, sortedGroups]);
 
   // ── Root menu items for active workspace ──
+  // Returns [] when activeWorkspaceKey is null (e.g. on /hub) — never leak __default__ items.
   const rootMenuItems = useMemo<MenuItem[]>(() => {
-    const key = activeWorkspaceKey ?? "__default__";
-    const data = workspacesMap.get(key) ?? defaultWorkspace;
-    return data?.menuItems ?? [];
-  }, [activeWorkspaceKey, workspacesMap, defaultWorkspace]);
+    if (!activeWorkspaceKey) return [];
+    return workspacesMap.get(activeWorkspaceKey)?.menuItems ?? [];
+  }, [activeWorkspaceKey, workspacesMap]);
 
   // ── Active root item entity ──
   const activeRootItem = useMemo<MenuItem | null>(() => {
@@ -179,8 +182,8 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const switchToModuleWorkspaceByKey = useCallback(
-    (key: string) => {
-      setActiveWorkspace(key, true);
+    (key: string, options?: SetActiveWorkspaceOptions) => {
+      setActiveWorkspace(key, true, options);
     },
     [setActiveWorkspace]
   );

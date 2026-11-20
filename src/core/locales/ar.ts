@@ -2140,6 +2140,7 @@ export const ar = {
     },
     backToAdmin: "العودة للإدارة",
     goToHome: "الصفحة الرئيسية",
+    logo: "شعار",
     workspaceLockedToast: {
       title: "{name} مقفول",
       description: "افتح تطبيق المشغّل لمعرفة كيفية إلغاء القفل.",

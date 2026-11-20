@@ -42,10 +42,11 @@ import { NotificationBell } from "@core/ui/notification";
 import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
 import { cn, resolveBilingualLabel } from "@core/common/utils";
 import { LayoutGrid, Lock } from "lucide-react";
+import { Button } from "@core/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
 import { DynamicIcon, NX_FOCUS_RING } from "./_parts/primary-rail-parts";
 import { useTenantBranding } from "@core/providers/tenant-branding-provider";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { useWorkspaceTransitionContext } from "./nexus-layout";
 import { toast } from "@core/hooks/use-enhanced-toast";
@@ -109,6 +110,7 @@ export function NexusPrimaryRail({
   onOpenAppLauncher,
 }: NexusPrimaryRailProps) {
   const router = useRouter();
+  const pathname = usePathname() ?? "";
   const { canAccessPage } = usePermissions();
   const { logoUrl: tenantLogoUrl } = useTenantBranding();
   const {
@@ -276,7 +278,7 @@ export function NexusPrimaryRail({
       {/* ONE tooltip provider for the whole rail — shared ~150ms delay grouping
           instead of the previous provider-per-button setup */}
       <TooltipProvider delayDuration={150}>
-        {/* ── Logo mark — click navigates home or /venue if in Venue workspace ── */}
+        {/* ── Logo mark — click navigates to /hub ── */}
         <PrimaryRailLogo
           tenantLogoUrl={tenantLogoUrl}
           isModuleMode={isModuleMode}
@@ -285,8 +287,11 @@ export function NexusPrimaryRail({
             // Clear workspace key so Hub page shows clean state
             // (secondary rail collapses, back button hides, admin items clear)
             useNavigationStore.getState().setActiveWorkspace(null);
-            startRoutingProgress();
-            router.push("/");
+            const normalizedPath = pathname.toLowerCase().replace(/\/+$/, "") || "/";
+            if (normalizedPath !== "/hub") {
+              startRoutingProgress();
+              router.push("/hub");
+            }
           }}
         />
 
@@ -380,19 +385,21 @@ export function NexusPrimaryRail({
           {onOpenAppLauncher && (
             <Tooltip>
               <TooltipTrigger asChild>
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="icon"
                   data-testid="nexus-launcher-trigger"
                   aria-label={t("shell.launcher.title")}
                   onClick={onOpenAppLauncher}
                   className={cn(
-                    "flex items-center justify-center rounded-nx-md border border-transparent text-nx-ink-2 transition-[color,background-color,border-color,box-shadow] duration-nx-standard ease-nx-enter hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink motion-reduce:transition-none",
+                    "flex items-center justify-center rounded-nx-md border border-transparent p-0 text-nx-ink-2 transition-[color,background-color,border-color,box-shadow] duration-nx-standard ease-nx-enter hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink motion-reduce:transition-none",
                     NX_FOCUS_RING
                   )}
                   style={{ width: 44, height: 44 }}
                 >
                   <LayoutGrid size={20} aria-hidden="true" />
-                </button>
+                </Button>
               </TooltipTrigger>
               <TooltipContent side={isRTL ? "left" : "right"} sideOffset={16}>
                 {t("shell.launcher.title")}
@@ -447,7 +454,7 @@ export function NexusPrimaryRail({
 
 // ── Module Workspace Button (colored pill icon) ────────────────────────────────
 
-interface ModuleWorkspaceButtonProps {
+export interface ModuleWorkspaceButtonProps {
   label: string;
   abbreviation: string;
   icon: string;
@@ -459,7 +466,7 @@ interface ModuleWorkspaceButtonProps {
   onClick: () => void;
 }
 
-function ModuleWorkspaceButton({
+export function ModuleWorkspaceButton({
   label,
   abbreviation: _abbreviation,
   icon,
@@ -496,8 +503,10 @@ function ModuleWorkspaceButton({
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon"
           aria-label={isLocked ? lockedLabel : label}
           aria-pressed={isActive}
           aria-disabled={isLocked}
@@ -505,7 +514,8 @@ function ModuleWorkspaceButton({
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
           className={cn(
-            "group relative flex items-center justify-center transition-[color,background-color,border-color,box-shadow] duration-nx-standard ease-nx-enter motion-reduce:transition-none",
+            "group relative flex items-center justify-center p-0 transition-[color,background-color,border-color,box-shadow] duration-nx-standard ease-nx-enter motion-reduce:transition-none",
+            isLocked && "aria-disabled:pointer-events-auto",
             NX_FOCUS_RING
           )}
           style={{
@@ -546,7 +556,7 @@ function ModuleWorkspaceButton({
             </div>
           )}
           <DynamicIcon name={icon} size={20} />
-        </button>
+        </Button>
       </TooltipTrigger>
       <TooltipContent side={isRTL ? "left" : "right"} sideOffset={16}>
         {isLocked ? lockedLabel : label}

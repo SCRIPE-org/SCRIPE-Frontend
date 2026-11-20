@@ -17,7 +17,10 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { useWorkspace } from "@core/providers/workspace-provider";
-import { useWorkspaceActions } from "@core/providers/hooks/useWorkspaceActions";
+import {
+  useWorkspaceActions,
+  type SetActiveWorkspaceOptions,
+} from "@core/providers/hooks/useWorkspaceActions";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { appLogger } from "@core/common/logger";
 
@@ -164,7 +167,7 @@ export function useWorkspaceTransition() {
    * Loader auto-dismisses when isWorkspaceLoading resolves.
    */
   const switchWorkspace = useCallback(
-    (workspaceKey: string) => {
+    (workspaceKey: string, options?: SetActiveWorkspaceOptions) => {
       const target = workspaceGroups.find((ws) => ws.workspaceKey === workspaceKey);
       const name = target?.workspaceNameEn || workspaceKey;
       const abbr = target?.abbreviation ?? workspaceKey.slice(0, 2).toUpperCase();
@@ -174,7 +177,7 @@ export function useWorkspaceTransition() {
       showLoader(name, abbr, accent, workspaceKey);
 
       // WorkspaceProvider handles JIT fetch + navigation
-      switchToModuleWorkspaceByKey(workspaceKey);
+      switchToModuleWorkspaceByKey(workspaceKey, options);
     },
     [workspaceGroups, switchToModuleWorkspaceByKey, showLoader]
   );

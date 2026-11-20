@@ -2156,6 +2156,7 @@ export const en = {
     },
     backToAdmin: "Back to Admin",
     goToHome: "Go to Home",
+    logo: "Logo",
     workspaceLockedToast: {
       title: "{name} is locked",
       description: "Open the App Launcher to learn how to unlock this workspace.",

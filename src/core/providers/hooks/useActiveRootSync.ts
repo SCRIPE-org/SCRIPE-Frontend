@@ -39,6 +39,16 @@ export function useActiveRootSync(rootMenuItems: MenuItem[]) {
 
     const normalizedPath = pathname.toLowerCase().replace(/\/+$/, "");
 
+    // ── /hub invariant: explicit no-workspace route (never activate fallback or highlight stale root) ──
+    if (normalizedPath === "/hub") {
+      if (activeWorkspaceKey !== null) {
+        setActiveWorkspace(null);
+      } else if (state.activeRootItemId !== null) {
+        state.setActiveRootItem(null);
+      }
+      return;
+    }
+
     // ── System pages: treat same as root for workspace activation ────────────
     // Pages like /overview, /settings, /profile are "system-wide" — they don't
     // belong to a specific workspace URL prefix, so workspaceRouteMap won't match them.
@@ -146,6 +156,14 @@ export function useActiveRootSync(rootMenuItems: MenuItem[]) {
 
   // ── Standard activeRootItem sync from URL ───────────────────────────────────
   useEffect(() => {
+    const normalizedPath = pathname.toLowerCase().replace(/\/+$/, "");
+    if (normalizedPath === "/hub") {
+      if (useNavigationStore.getState().activeRootItemId !== null) {
+        useNavigationStore.getState().setActiveRootItem(null);
+      }
+      return;
+    }
+
     if (!rootMenuItems.length) return;
 
     const activeRootItemId = useNavigationStore.getState().activeRootItemId;

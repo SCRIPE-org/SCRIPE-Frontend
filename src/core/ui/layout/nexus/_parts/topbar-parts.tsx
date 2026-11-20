@@ -12,7 +12,7 @@ import {
   PanelCollapseIconRTL,
 } from "@core/ui/layout/shared/nav-icons";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useWorkspace } from "@core/providers/workspace-provider";
 import { useWorkspaceTransitionContext } from "../nexus-layout";
@@ -120,6 +120,8 @@ export function TopbarBreadcrumbs({
   const { language, t } = useI18n();
   const { canAccessPage } = usePermissions();
   const router = useRouter();
+  const pathname = usePathname() ?? "";
+  const normalizedPath = pathname.toLowerCase().replace(/\/+$/, "") || "/";
   const { isPlatform: isPlatformContext } = useAdminContext();
 
   const sortedWorkspaces = React.useMemo(() => {
@@ -165,43 +167,49 @@ export function TopbarBreadcrumbs({
 
   return (
     <nav aria-label={t("nav.breadcrumb")} className="min-w-0 flex-1 overflow-hidden">
-      <ol className="flex min-w-0 items-center gap-1.5 text-[13px]">
+      <ol className="flex min-w-0 items-center gap-1 text-[13px] sm:gap-1.5">
         {/* ── Level 1: Workspace ── */}
-        <li className="flex shrink-0 items-center gap-0.5">
-          <button
+        <li className="flex min-w-0 shrink items-center gap-0.5">
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             aria-current={isWorkspaceCurrent ? "page" : undefined}
             onClick={() => {
               const homeRoute = activeWorkspace
                 ? isPlatformContext
                   ? (activeWorkspace.platformHomeRoute ?? activeWorkspace.homeRoute ?? "/")
                   : (activeWorkspace.homeRoute ?? "/")
-                : "/";
+                : "/hub";
+              const normalizedHomeRoute = homeRoute.toLowerCase().replace(/\/+$/, "") || "/";
+              if (normalizedPath === normalizedHomeRoute) return;
               startRoutingProgress();
               router.push(homeRoute);
             }}
             className={cn(
-              "cursor-pointer whitespace-nowrap rounded-nx-sm px-1.5 py-0.5 duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
+              "h-auto min-w-0 max-w-[116px] cursor-pointer whitespace-nowrap rounded-nx-sm px-1.5 py-0.5 duration-nx-micro hover:bg-nx-raised hover:text-nx-ink sm:max-w-none",
               isWorkspaceCurrent ? "font-semibold text-nx-ink" : "font-medium text-nx-ink-3",
               CONTROL_MOTION,
               FOCUS_RING
             )}
           >
-            {workspaceName}
-          </button>
+            <span className="truncate">{workspaceName}</span>
+          </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon"
                 aria-label={t("navigation.topbar.workspacesMenu")}
                 className={cn(
-                  "flex h-6 w-6 cursor-pointer items-center justify-center rounded-nx-sm text-nx-ink-3 duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
+                  "flex h-6 w-6 cursor-pointer items-center justify-center rounded-nx-sm p-0 text-nx-ink-3 duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
                   CONTROL_MOTION,
                   FOCUS_RING
                 )}
               >
                 <ChevronDown size={12} aria-hidden="true" />
-              </button>
+              </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-56 border-nx-line bg-nx-surface">
               <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-wider text-nx-ink-3">
@@ -267,8 +275,10 @@ export function TopbarBreadcrumbs({
               <BreadcrumbSep isRTL={isRTL} />
             </li>
             <li className="flex shrink-0 items-center gap-0.5">
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="sm"
                 aria-current={isActiveRootCurrent ? "page" : undefined}
                 onClick={() => {
                   const route = findFirstLeafRoute(activeRootItem, canAccessPage);
@@ -278,27 +288,29 @@ export function TopbarBreadcrumbs({
                   }
                 }}
                 className={cn(
-                  "cursor-pointer whitespace-nowrap rounded-nx-sm px-1.5 py-0.5 duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
+                  "h-auto cursor-pointer whitespace-nowrap rounded-nx-sm px-1.5 py-0.5 duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
                   isActiveRootCurrent ? "font-semibold text-nx-ink" : "font-medium text-nx-ink-2",
                   CONTROL_MOTION,
                   FOCUS_RING
                 )}
               >
                 {activeRootName}
-              </button>
+              </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button
+                  <Button
                     type="button"
+                    variant="ghost"
+                    size="icon"
                     aria-label={t("navigation.topbar.sectionsMenu")}
                     className={cn(
-                      "flex h-6 w-6 cursor-pointer items-center justify-center rounded-nx-sm text-nx-ink-2 duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
+                      "flex h-6 w-6 cursor-pointer items-center justify-center rounded-nx-sm p-0 text-nx-ink-2 duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
                       CONTROL_MOTION,
                       FOCUS_RING
                     )}
                   >
                     <ChevronDown size={12} aria-hidden="true" />
-                  </button>
+                  </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start" className="w-52 border-nx-line bg-nx-surface">
                   <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-wider text-nx-ink-3">
@@ -446,14 +458,16 @@ export function TopbarPanelToggle({
     <TooltipProvider delayDuration={50}>
       <Tooltip>
         <TooltipTrigger asChild>
-          <button
+          <Button
             ref={toggleRef}
             type="button"
+            variant="ghost"
+            size="icon"
             onClick={onToggle}
             aria-label={ariaLabel}
             aria-expanded={isExpanded}
             className={cn(
-              "h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-nx-control",
+              "h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-nx-control p-0",
               "border border-nx-line bg-transparent text-nx-ink-2",
               CONTROL_MOTION,
               "duration-nx-micro hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink",
@@ -462,7 +476,7 @@ export function TopbarPanelToggle({
             )}
           >
             {renderPanelIcon()}
-          </button>
+          </Button>
         </TooltipTrigger>
         <TooltipContent side="bottom" sideOffset={8}>
           {ariaLabel}
@@ -488,12 +502,14 @@ export function TopbarContextPill({
   switchAriaLabel,
   onOpenSwitcher,
 }: TopbarContextPillProps) {
+  const toneClasses = isModuleMode
+    ? "border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] bg-nx-accent-wash text-nx-accent"
+    : "border-nx-line bg-transparent text-nx-ink-2";
+
   const pillClasses = cn(
     "hidden items-center gap-1.5 rounded-full border px-3 py-1 text-[11px] font-semibold tracking-wide whitespace-nowrap shrink-0 sm:inline-flex",
     CONTROL_MOTION,
-    isModuleMode
-      ? "border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] bg-nx-accent-wash text-nx-accent"
-      : "border-nx-line bg-transparent text-nx-ink-2"
+    toneClasses
   );
 
   const dot = (
@@ -513,13 +529,14 @@ export function TopbarContextPill({
         aria-label={switchAriaLabel ?? tenantName}
         data-testid="topbar-tenant-switcher-trigger"
         className={cn(
-          pillClasses,
-          "h-7 cursor-pointer hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink"
+          "inline-flex h-8 max-w-[92px] shrink-0 cursor-pointer items-center gap-1 whitespace-nowrap !rounded-full border px-2 py-1 text-[11px] font-semibold tracking-wide hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink sm:h-7 sm:max-w-[160px] sm:gap-1.5 sm:px-2.5",
+          CONTROL_MOTION,
+          toneClasses
         )}
       >
         {dot}
-        <span>{tenantName}</span>
-        <ChevronDown className="h-3 w-3 opacity-75" aria-hidden="true" />
+        <span className="truncate">{tenantName}</span>
+        <ChevronDown className="h-3 w-3 shrink-0 opacity-75" aria-hidden="true" />
       </Button>
     );
   }
@@ -529,7 +546,7 @@ export function TopbarContextPill({
       {/* Live-context dot — the logo's cyan ("now"), no glow: the primary
           rail's active root item owns the one glow on this screen */}
       {dot}
-      <span>{tenantName}</span>
+      <span className="truncate">{tenantName}</span>
     </div>
   );
 }
@@ -544,28 +561,32 @@ export function TopbarSearchButton({ onOpenSearch, placeholder }: TopbarSearchBu
   return (
     <>
       {/* Mobile compact icon trigger (<768px) */}
-      <button
+      <Button
         onClick={onOpenSearch}
         type="button"
+        variant="ghost"
+        size="icon"
         aria-label={placeholder}
         className={cn(
-          "flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-nx-control border border-nx-line bg-nx-surface text-nx-ink-2 md:hidden",
+          "flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-nx-control border border-nx-line bg-nx-surface p-0 text-nx-ink-2 md:hidden",
           CONTROL_MOTION,
           "duration-nx-micro hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink",
           FOCUS_RING
         )}
       >
         <Search size={15} aria-hidden="true" />
-      </button>
+      </Button>
 
       {/* Desktop search trigger (>=768px) */}
-      <button
+      <Button
         onClick={onOpenSearch}
         type="button"
+        variant="ghost"
+        size="sm"
         className={cn(
           // Border and surface live in classes, not inline: an inline `border`
           // shorthand silently beat the hover rule, so the field never lit up.
-          "group hidden h-9 items-center rounded-nx-control border border-nx-line bg-nx-surface duration-nx-micro md:flex",
+          "group hidden h-9 items-center rounded-nx-control border border-nx-line bg-nx-surface duration-nx-micro hover:bg-nx-surface md:flex",
           CONTROL_MOTION,
           "text-nx-ink-3 hover:border-nx-line-hi",
           FOCUS_RING
@@ -602,7 +623,7 @@ export function TopbarSearchButton({ onOpenSearch, placeholder }: TopbarSearchBu
         >
           ⌘K
         </span>
-      </button>
+      </Button>
     </>
   );
 }
@@ -618,12 +639,14 @@ export function TopbarHomeButton({ ariaLabel, onClick }: TopbarHomeButtonProps) 
     <TooltipProvider delayDuration={50}>
       <Tooltip>
         <TooltipTrigger asChild>
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="icon"
             onClick={onClick}
             aria-label={ariaLabel}
             className={cn(
-              "flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-nx-control",
+              "flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-nx-control p-0",
               "border border-nx-line bg-transparent text-nx-ink-2",
               CONTROL_MOTION,
               "duration-nx-micro hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink",
@@ -631,7 +654,7 @@ export function TopbarHomeButton({ ariaLabel, onClick }: TopbarHomeButtonProps) 
             )}
           >
             <Home size={15} strokeWidth={2} aria-hidden="true" />
-          </button>
+          </Button>
         </TooltipTrigger>
         <TooltipContent side="bottom" sideOffset={8}>
           {ariaLabel}

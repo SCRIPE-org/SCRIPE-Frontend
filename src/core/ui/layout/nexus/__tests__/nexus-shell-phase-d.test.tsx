@@ -12,6 +12,7 @@ import { NexusTopbar } from "../nexus-topbar";
 
 let mockPathname = "/venue/resources";
 let mockIsHubMode = false;
+let mockCanSwitchContext = false;
 let mockDirection: "ltr" | "rtl" = "ltr";
 let mockLanguage: "en" | "ar" = "en";
 let mockLogoType: "sparkles" | "shield" | "image" = "sparkles";
@@ -22,6 +23,7 @@ const mockSwitchWorkspace = vi.fn();
 const mockTogglePin = vi.fn().mockResolvedValue(undefined);
 const mockSetLanguage = vi.fn();
 const mockPush = vi.fn();
+const mockStartRoutingProgress = vi.fn();
 
 const mockActiveWorkspace = {
   workspaceKey: "venue",
@@ -179,10 +181,10 @@ vi.mock("@core/providers/tenant-context-provider", () => ({
 
 vi.mock("@core/providers/workspace-provider", () => ({
   useWorkspace: () => ({
-    activeWorkspace: mockActiveWorkspace,
-    activeRootItem: mockRootMenu[0],
-    rootMenuItems: mockRootMenu,
-    isModuleMode: true,
+    activeWorkspace: mockIsHubMode ? null : mockActiveWorkspace,
+    activeRootItem: mockIsHubMode ? null : mockRootMenu[0],
+    rootMenuItems: mockIsHubMode ? [] : mockRootMenu,
+    isModuleMode: !mockIsHubMode,
     workspaceGroups: [mockActiveWorkspace, mockOtherWorkspace, mockLockedWorkspace],
     togglePin: mockTogglePin,
   }),
@@ -191,7 +193,21 @@ vi.mock("@core/providers/workspace-provider", () => ({
 vi.mock("@core/providers/permission-provider", () => ({
   usePermissions: () => ({
     canAccessPage: () => true,
+    hasPermission: () => mockCanSwitchContext,
   }),
+}));
+
+vi.mock("@core/hooks/useAdminContext", () => ({
+  useAdminContext: () => ({
+    activeTenantId: "tenant-1",
+    activeTenantName: "Al Ahly SC",
+    isPlatform: false,
+  }),
+}));
+
+vi.mock("@core/components/tenant-context", () => ({
+  TenantContextSwitcherDialog: ({ open }: { open: boolean }) =>
+    open ? <div data-testid="tenant-switcher-dialog" /> : null,
 }));
 
 vi.mock("@core/store/useAppStore", () => ({
@@ -210,20 +226,18 @@ vi.mock("@core/navigation/store/useNavigationStore", () => ({
     const state = {
       isHubMode: mockIsHubMode,
       activeWorkspaceKey: mockIsHubMode ? null : "venue",
-      workspaceGroups: mockIsHubMode
-        ? []
-        : [mockActiveWorkspace, mockOtherWorkspace, mockLockedWorkspace],
+      workspaceGroups: [mockActiveWorkspace, mockOtherWorkspace, mockLockedWorkspace],
     };
     return selector ? selector(state) : state;
   },
 }));
 
-vi.mock("@modules/home", () => ({
-  HubTopBar: () => <div data-testid="hub-topbar" />,
-}));
-
 vi.mock("@core/ui/user-profile-dropdown", () => ({
   UserProfileDropdown: () => <div data-testid="user-profile-dropdown" />,
+}));
+
+vi.mock("@core/ui/routing-progress-bar", () => ({
+  startRoutingProgress: (...args: unknown[]) => mockStartRoutingProgress(...args),
 }));
 
 vi.mock("../_parts/nexus-footer", () => ({
@@ -239,8 +253,18 @@ vi.mock("../nexus-primary-rail", () => ({
 }));
 
 vi.mock("../nexus-secondary-rail", () => ({
-  NexusSecondaryRail: ({ mobileOpen }: { mobileOpen?: boolean }) => (
-    <aside data-testid="nexus-secondary-rail" data-mobile-open={String(Boolean(mobileOpen))} />
+  NexusSecondaryRail: ({
+    mobileOpen,
+    isCollapsed,
+  }: {
+    mobileOpen?: boolean;
+    isCollapsed?: boolean;
+  }) => (
+    <aside
+      data-testid="nexus-secondary-rail"
+      data-mobile-open={String(Boolean(mobileOpen))}
+      data-collapsed={String(Boolean(isCollapsed))}
+    />
   ),
 }));
 
@@ -283,6 +307,7 @@ describe("Nexus Shell Phase D — A11y, Hierarchy, Branding & Deduplication", ()
     vi.clearAllMocks();
     mockPathname = "/venue/resources";
     mockIsHubMode = false;
+    mockCanSwitchContext = false;
     mockDirection = "ltr";
     mockLanguage = "en";
     mockLogoType = "sparkles";
@@ -311,10 +336,10 @@ describe("Nexus Shell Phase D — A11y, Hierarchy, Branding & Deduplication", ()
       expect(main).toHaveAttribute("tabindex", "-1");
     });
 
-    it("also renders accessible skip link and <main id='nexus-content' tabIndex={-1}> in Hub Mode", () => {
+    it("renders /hub inside unified NexusLayout with single <main id='nexus-content'>, collapsed secondary rail, and zero HubTopBar/HubFooter", () => {
       mockIsHubMode = true;
       mockPathname = "/hub";
-      render(
+      const { container } = render(
         <TooltipProvider>
           <NexusLayout>
             <div>Hub Body</div>
@@ -325,10 +350,17 @@ describe("Nexus Shell Phase D — A11y, Hierarchy, Branding & Deduplication", ()
       const skipLink = screen.getByRole("link", { name: "nav.skipToContent" });
       expect(skipLink).toHaveAttribute("href", "#nexus-content");
 
-      const main = screen.getByRole("main");
-      expect(main).toHaveAttribute("id", "nexus-content");
-      expect(main).toHaveAttribute("tabindex", "-1");
-      expect(screen.getByTestId("hub-topbar")).toBeInTheDocument();
+      const mains = screen.getAllByRole("main");
+      expect(mains).toHaveLength(1);
+      expect(mains[0]).toHaveAttribute("id", "nexus-content");
+      expect(mains[0]).toHaveAttribute("tabindex", "-1");
+
+      // Unified Nexus shell chrome renders instead of orphan HubTopBar/HubFooter
+      expect(screen.getByTestId("nexus-primary-rail")).toBeInTheDocument();
+      expect(container.querySelector("[data-nexus-topbar]")).toBeInTheDocument();
+      expect(screen.getByTestId("nexus-secondary-rail")).toHaveAttribute("data-collapsed", "true");
+      expect(screen.queryByTestId("hub-topbar")).toBeNull();
+      expect(screen.queryByTestId("hub-footer")).toBeNull();
     });
   });
 
@@ -373,6 +405,105 @@ describe("Nexus Shell Phase D — A11y, Hierarchy, Branding & Deduplication", ()
       const trigger = screen.getByRole("button", { name: "chrome.language.change" });
       expect(trigger.className).toContain("min-w-[36px]");
       expect(trigger.className).not.toContain("w-[46px]");
+    });
+
+    it("renders interactive TopbarContextPill on mobile (<640px) when canSwitchContext is true and opens switcher dialog", () => {
+      mockCanSwitchContext = true;
+      render(
+        <TooltipProvider>
+          <NexusTopbar
+            onMobileMenuOpen={vi.fn()}
+            onTogglePanel={vi.fn()}
+            isPanelCollapsed={false}
+            isMobileMenuOpen={false}
+            onOpenSearch={vi.fn()}
+          />
+        </TooltipProvider>
+      );
+
+      const switcherTrigger = screen.getByTestId("topbar-tenant-switcher-trigger");
+      expect(switcherTrigger.className).toContain("inline-flex");
+      expect(switcherTrigger.className).not.toContain("hidden");
+
+      fireEvent.click(switcherTrigger);
+      expect(screen.getByTestId("tenant-switcher-dialog")).toBeInTheDocument();
+    });
+
+    it("uses !rounded-full and compact mobile width cap on TopbarContextPill and min-w-0 shrink on TopbarBreadcrumbs Level-1 <li>", () => {
+      mockCanSwitchContext = true;
+      mockPathname = "/venue/resources";
+      render(
+        <TooltipProvider>
+          <NexusTopbar
+            onMobileMenuOpen={vi.fn()}
+            onTogglePanel={vi.fn()}
+            isPanelCollapsed={false}
+            isMobileMenuOpen={false}
+            onOpenSearch={vi.fn()}
+          />
+        </TooltipProvider>
+      );
+
+      const switcherTrigger = screen.getByTestId("topbar-tenant-switcher-trigger");
+      expect(switcherTrigger.className).toContain("!rounded-full");
+      expect(switcherTrigger.className).toContain("max-w-[92px]");
+
+      const breadcrumbNav = screen.getByRole("navigation", { name: "nav.breadcrumb" });
+      const firstCrumbItem = breadcrumbNav.querySelector("ol > li");
+      expect(firstCrumbItem).not.toBeNull();
+      expect(firstCrumbItem!.getAttribute("class")).toContain("min-w-0");
+      expect(firstCrumbItem!.getAttribute("class")).toContain("shrink");
+      expect(firstCrumbItem!.getAttribute("class")).not.toContain("shrink-0");
+    });
+
+    it("hides TopbarHomeButton on /hub when activeWorkspace is null and skips startRoutingProgress/router.push on already-/hub Level-1 click", () => {
+      mockIsHubMode = true;
+      mockPathname = "/hub";
+      const { rerender } = render(
+        <TooltipProvider>
+          <NexusTopbar
+            onMobileMenuOpen={vi.fn()}
+            onTogglePanel={vi.fn()}
+            isPanelCollapsed={false}
+            isMobileMenuOpen={false}
+            onOpenSearch={vi.fn()}
+          />
+        </TooltipProvider>
+      );
+
+      expect(screen.queryByRole("button", { name: "chrome.goToHome" })).toBeNull();
+
+      const hubCrumbBtn = screen
+        .getByRole("navigation", { name: "nav.breadcrumb" })
+        .querySelector("ol > li button");
+      expect(hubCrumbBtn).not.toBeNull();
+      fireEvent.click(hubCrumbBtn!);
+
+      expect(mockStartRoutingProgress).not.toHaveBeenCalled();
+      expect(mockPush).not.toHaveBeenCalled();
+
+      // From a non-/hub null-workspace route, clicking the Level-1 crumb navigates to /hub
+      mockPathname = "/profile";
+      rerender(
+        <TooltipProvider>
+          <NexusTopbar
+            onMobileMenuOpen={vi.fn()}
+            onTogglePanel={vi.fn()}
+            isPanelCollapsed={false}
+            isMobileMenuOpen={false}
+            onOpenSearch={vi.fn()}
+          />
+        </TooltipProvider>
+      );
+
+      const nonHubCrumbBtn = screen
+        .getByRole("navigation", { name: "nav.breadcrumb" })
+        .querySelector("ol > li button");
+      expect(nonHubCrumbBtn).not.toBeNull();
+      fireEvent.click(nonHubCrumbBtn!);
+
+      expect(mockStartRoutingProgress).toHaveBeenCalledTimes(1);
+      expect(mockPush).toHaveBeenCalledWith("/hub");
     });
   });
 

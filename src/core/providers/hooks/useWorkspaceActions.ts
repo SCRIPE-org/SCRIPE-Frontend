@@ -8,6 +8,10 @@ import { firstPageOf } from "../utils/navigation-helpers";
 import { appLogger } from "@core/common/logger";
 import { usePermissions } from "@core/providers/permission-provider";
 
+export interface SetActiveWorkspaceOptions {
+  preserveHistory?: boolean;
+}
+
 export function useWorkspaceActions() {
   const router = useRouter();
   const { fetchWorkspaceMenu } = useNavigation();
@@ -15,7 +19,7 @@ export function useWorkspaceActions() {
   const { isPlatform: isPlatformContext } = useAdminContext();
 
   const setActiveWorkspace = useCallback(
-    async (workspaceKey: string, navigateTo = false) => {
+    async (workspaceKey: string, navigateTo = false, options?: SetActiveWorkspaceOptions) => {
       appLogger.debug(`[WorkspaceActions] Switching to workspace: ${workspaceKey}`);
 
       // Start the workspace menu fetch in the background if not cached.
@@ -70,7 +74,11 @@ export function useWorkspaceActions() {
         if (targetRoute) {
           appLogger.debug(`[WorkspaceActions] Navigating to targetRoute: ${targetRoute}`);
           useNavigationStore.getState().setTransitionTargetRoute(targetRoute);
-          router.replace(targetRoute);
+          if (options?.preserveHistory === false) {
+            router.replace(targetRoute);
+          } else {
+            router.push(targetRoute);
+          }
         }
       }
     },

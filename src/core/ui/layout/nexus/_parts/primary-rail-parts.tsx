@@ -31,7 +31,9 @@ export function DynamicIcon({ name, size = 18 }: { name: string; size?: number }
   return <LayoutDashboard width={size} height={size} strokeWidth={1.8} aria-hidden="true" />;
 }
 
+import { Button } from "@core/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@core/ui/tooltip";
+import { useI18n } from "@core/providers/i18n-provider";
 import Image from "next/image";
 
 // NOTE: no TooltipProvider here — the rail mounts ONE provider at its nav
@@ -73,9 +75,11 @@ export function RootItemButton({ item, isActive, isRTL, language, onClick }: Roo
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <button
+        <Button
           ref={btnRef}
           type="button"
+          variant="ghost"
+          size="icon"
           aria-label={label}
           aria-pressed={isActive}
           onClick={() => onClick(item)}
@@ -84,7 +88,7 @@ export function RootItemButton({ item, isActive, isRTL, language, onClick }: Roo
           className={cn(
             // Scoped property list. Transitioning every property also animated
             // width/height/margin, so each rail reflow became a 200ms slide.
-            "group relative flex items-center justify-center transition-[color,background-color,border-color,box-shadow] duration-nx-standard ease-nx-enter motion-reduce:transition-none",
+            "group relative flex items-center justify-center p-0 transition-[color,background-color,border-color,box-shadow] duration-nx-standard ease-nx-enter motion-reduce:transition-none",
             NX_FOCUS_RING
           )}
           style={{
@@ -102,7 +106,7 @@ export function RootItemButton({ item, isActive, isRTL, language, onClick }: Roo
           }}
         >
           <DynamicIcon name={item.icon} size={20} />
-        </button>
+        </Button>
       </TooltipTrigger>
       <TooltipContent side={isRTL ? "left" : "right"} sideOffset={16}>
         {label}
@@ -125,15 +129,17 @@ export function BackButton({ isRTL, label, onClick }: BackButtonProps) {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <button
+        <Button
           ref={btnRef}
           type="button"
+          variant="ghost"
+          size="icon"
           aria-label={label}
           onClick={onClick}
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
           className={cn(
-            "group relative flex items-center justify-center transition-[color,background-color,border-color,box-shadow] duration-nx-standard ease-nx-enter motion-reduce:transition-none",
+            "group relative flex items-center justify-center p-0 transition-[color,background-color,border-color,box-shadow] duration-nx-standard ease-nx-enter motion-reduce:transition-none",
             NX_FOCUS_RING
           )}
           style={{
@@ -155,7 +161,7 @@ export function BackButton({ isRTL, label, onClick }: BackButtonProps) {
           ) : (
             <ArrowLeft width={20} height={20} strokeWidth={2} />
           )}
-        </button>
+        </Button>
       </TooltipTrigger>
       <TooltipContent side={isRTL ? "left" : "right"} sideOffset={16}>
         {label}
@@ -187,16 +193,18 @@ export function TogglePanelButton({ isRTL, label, isCollapsed, onClick }: Toggle
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <button
+        <Button
           ref={btnRef}
           type="button"
+          variant="ghost"
+          size="icon"
           aria-label={label}
           aria-expanded={!isCollapsed}
           onClick={onClick}
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
           className={cn(
-            "group relative flex items-center justify-center transition-[color,background-color,border-color,box-shadow] duration-nx-standard ease-nx-enter motion-reduce:transition-none",
+            "group relative flex items-center justify-center p-0 transition-[color,background-color,border-color,box-shadow] duration-nx-standard ease-nx-enter motion-reduce:transition-none",
             NX_FOCUS_RING
           )}
           style={{
@@ -212,7 +220,7 @@ export function TogglePanelButton({ isRTL, label, isCollapsed, onClick }: Toggle
           }}
         >
           <Icon width={20} height={20} strokeWidth={2} />
-        </button>
+        </Button>
       </TooltipTrigger>
       <TooltipContent side={isRTL ? "left" : "right"} sideOffset={16}>
         {label}
@@ -240,24 +248,26 @@ export function Divider() {
 export interface PrimaryRailLogoProps {
   tenantLogoUrl?: string | null;
   isModuleMode: boolean;
-  language: string;
+  language?: string;
   onClick: () => void;
 }
 
 export function PrimaryRailLogo({
   tenantLogoUrl,
   isModuleMode,
-  language,
   onClick,
 }: PrimaryRailLogoProps) {
+  const { t } = useI18n();
   const [failedLogoUrl, setFailedLogoUrl] = useState<string | null>(null);
   const showTenantLogo = Boolean(tenantLogoUrl && failedLogoUrl !== tenantLogoUrl);
 
   return (
-    <button
+    <Button
       type="button"
+      variant="ghost"
+      size="icon"
       className={cn(
-        "flex shrink-0 cursor-pointer items-center justify-center border border-transparent bg-transparent transition-[color,background-color,border-color,box-shadow] duration-nx-panel ease-nx-enter hover:border-nx-line-hi hover:bg-nx-raised motion-reduce:transition-none",
+        "flex shrink-0 cursor-pointer items-center justify-center border border-transparent bg-transparent p-0 transition-[color,background-color,border-color,box-shadow] duration-nx-panel ease-nx-enter hover:border-nx-line-hi hover:bg-nx-raised motion-reduce:transition-none",
         NX_FOCUS_RING
       )}
       style={{
@@ -269,12 +279,12 @@ export function PrimaryRailLogo({
         flexShrink: 0,
       }}
       onClick={onClick}
-      aria-label={resolveBilingualLabel("Go to Home", "الصفحة الرئيسية", language)}
+      aria-label={t("chrome.goToHome")}
     >
       {showTenantLogo && tenantLogoUrl ? (
         <Image
           src={tenantLogoUrl}
-          alt={resolveBilingualLabel("Logo", "شعار", language)}
+          alt={t("chrome.logo")}
           width={48}
           height={48}
           priority
@@ -298,7 +308,7 @@ export function PrimaryRailLogo({
           aria-hidden="true"
         />
       )}
-    </button>
+    </Button>
   );
 }
 

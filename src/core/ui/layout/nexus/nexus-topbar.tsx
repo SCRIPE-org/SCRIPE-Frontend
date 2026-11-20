@@ -217,13 +217,20 @@ export function NexusTopbar({
   })();
 
   // ── Home route — context-aware, backend-authoritative per workspace ───────────
+  // When no workspace is active (e.g. /hub), home resolves to "/hub".
   // Platform context (no tenant): use platformHomeRoute > homeRoute > "/"
   // Tenant context: use homeRoute > "/"
-  const workspaceHomeRoute = isPlatformContext
-    ? (activeWorkspace?.platformHomeRoute ?? activeWorkspace?.homeRoute ?? "/")
-    : (activeWorkspace?.homeRoute ?? "/");
+  const workspaceHomeRoute = activeWorkspace
+    ? isPlatformContext
+      ? (activeWorkspace.platformHomeRoute ?? activeWorkspace.homeRoute ?? "/")
+      : (activeWorkspace.homeRoute ?? "/")
+    : "/hub";
+  const normalizedPathname = pathname.toLowerCase().replace(/\/+$/, "") || "/";
+  const normalizedHomeRoute = workspaceHomeRoute.toLowerCase().replace(/\/+$/, "") || "/";
   const isOnHome =
-    pathname === workspaceHomeRoute || (workspaceHomeRoute === "/" && pathname === "/");
+    normalizedPathname === normalizedHomeRoute ||
+    (workspaceHomeRoute === "/" && normalizedPathname === "/") ||
+    (normalizedPathname === "/hub" && !activeWorkspace);
 
   return (
     <header
@@ -233,7 +240,7 @@ export function NexusTopbar({
       // flows — it scrolls away with the page.
       className={cn(
         stickyHeader ? "sticky top-0 z-sticky" : "relative z-raised",
-        "flex h-14 min-h-[56px] shrink-0 items-center gap-2 border-b border-nx-line px-3 sm:gap-3 lg:pe-3 lg:ps-5"
+        "flex h-14 min-h-[56px] shrink-0 items-center gap-1.5 border-b border-nx-line px-2.5 sm:gap-3 sm:px-3 lg:pe-3 lg:ps-5"
       )}
       style={{
         direction: isRTL ? "rtl" : "ltr",
@@ -273,7 +280,7 @@ export function NexusTopbar({
       )}
 
       {/* Right-side controls */}
-      <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+      <div className="flex shrink-0 items-center gap-1 sm:gap-2">
         <TopbarContextPill
           isModuleMode={isModuleMode}
           tenantName={tenantName}
@@ -299,7 +306,7 @@ export function NexusTopbar({
 
         {extraActions}
 
-        <div className="flex items-center gap-1.5 sm:gap-2">
+        <div className="flex items-center gap-1 sm:gap-2">
           <NxThemeSwitcher buttonClassName="h-9 w-9 text-nx-ink-2 hover:text-nx-ink hover:bg-nx-raised rounded-nx-control transition-[color,background-color,border-color,box-shadow] duration-nx-micro motion-reduce:transition-none" />
           <LanguageSwitcher buttonClassName="h-9 min-w-[36px] px-2 text-nx-ink-2 hover:text-nx-ink hover:bg-nx-raised rounded-nx-control transition-[color,background-color,border-color,box-shadow] duration-nx-micro motion-reduce:transition-none" />
         </div>
