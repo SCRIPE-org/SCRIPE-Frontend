@@ -98,6 +98,7 @@ export function SubTenantsTab({ parentId, parentName, parentCode }: SubTenantsTa
         setForm={vm.setEditForm}
         onSubmit={vm.handleEditSubmit}
         isLoading={vm.isSaving}
+        isInternal={vm.editingNode?.tenantKind === "Internal"}
       />
 
       <TenantDeleteDialog

@@ -110,6 +110,7 @@ export function TenantsView() {
         setForm={vm.setEditForm}
         onSubmit={vm.handleEditSubmit}
         isLoading={vm.isSaving}
+        isInternal={vm.editingNode?.tenantKind === "Internal"}
       />
 
       {/* Delete Dialog */}

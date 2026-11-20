@@ -421,6 +421,7 @@ interface EditTenantDialogProps {
   setForm: React.Dispatch<React.SetStateAction<EditFormState>>;
   onSubmit: () => Promise<void> | void;
   isLoading: boolean;
+  isInternal?: boolean;
 }
 
 /**
@@ -435,6 +436,7 @@ export function EditTenantDialog({
   setForm,
   onSubmit,
   isLoading,
+  isInternal = false,
 }: EditTenantDialogProps) {
   const { t } = useI18n();
 
@@ -457,20 +459,24 @@ export function EditTenantDialog({
         type: "textarea",
         placeholder: t("tenant.descriptionPlaceholder"),
       },
-      {
-        name: "isActive",
-        label: t("tenant.activeStatus"),
-        type: "switch",
-      },
+      ...(!isInternal
+        ? [
+            {
+              name: "isActive",
+              label: t("tenant.activeStatus"),
+              type: "switch" as const,
+            },
+          ]
+        : []),
     ],
-    [t]
+    [t, isInternal]
   );
 
   const handleSubmit = async (data: Record<string, any>) => {
     setForm({
       name: data.name,
       description: data.description || "",
-      isActive: data.isActive,
+      isActive: isInternal ? true : data.isActive,
     });
     await onSubmit();
   };

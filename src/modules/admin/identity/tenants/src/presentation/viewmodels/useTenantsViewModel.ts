@@ -112,7 +112,7 @@ export function useTenantsViewModel() {
     setEditForm({
       name: node.name,
       description: node.description || "",
-      isActive: node.isActive,
+      isActive: node.tenantKind === "Internal" ? true : node.isActive,
     });
     setEditingNode(node);
     setEditDialogOpen(true);
@@ -125,7 +125,7 @@ export function useTenantsViewModel() {
       await tenantRepository.update(editingNode.id, {
         name: editForm.name,
         description: editForm.description || undefined,
-        isActive: editForm.isActive,
+        isActive: editingNode.tenantKind === "Internal" ? true : editForm.isActive,
       });
       queryClient.invalidateQueries({ queryKey: ["tenants"] });
       toastSuccess({

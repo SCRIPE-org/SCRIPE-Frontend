@@ -1,6 +1,6 @@
 import React from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { TenantMapper } from "../../data/mappers/TenantMapper";
 import { TenantModel, TenantTreeNodeModel } from "../../data/models/TenantModel";
@@ -8,6 +8,7 @@ import { Tenant } from "../../domain/entities/Tenant";
 import { TenantNodeCardActions } from "../components/TenantNodeCard/TenantNodeCardActions";
 import { TenantNodeCardHeader } from "../components/TenantNodeCard/TenantNodeCardHeader";
 import { TenantHeader } from "../components/TenantHeader";
+import { EditTenantDialog } from "../components/TenantDialogs";
 import { TenantSubscriptionCard } from "../components/cards/TenantSubscriptionCard";
 import { Building2 } from "lucide-react";
 
@@ -356,5 +357,50 @@ describe("Internal tenant mapping and UI guards", () => {
     rerender(<TenantSubscriptionCard tenantId="2" isInternal={false} />);
     expect(screen.getByRole("button", { name: "tenant.suspend" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "tenant.cancel" })).toBeInTheDocument();
+  });
+
+  it("EditTenantDialog hides isActive switch when isInternal is true and submits isActive: true", async () => {
+    const setForm = vi.fn();
+    const onSubmit = vi.fn().mockResolvedValue(undefined);
+
+    const { rerender } = render(
+      <EditTenantDialog
+        open={true}
+        onOpenChange={vi.fn()}
+        tenantName="SCRIPE"
+        form={{ name: "SCRIPE", description: "Platform", isActive: false }}
+        setForm={setForm}
+        onSubmit={onSubmit}
+        isLoading={false}
+        isInternal={true}
+      />
+    );
+
+    expect(screen.queryByText("tenant.activeStatus")).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "common.save" }));
+
+    await waitFor(() => {
+      expect(setForm).toHaveBeenCalledWith({
+        name: "SCRIPE",
+        description: "Platform",
+        isActive: true,
+      });
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+    });
+
+    rerender(
+      <EditTenantDialog
+        open={true}
+        onOpenChange={vi.fn()}
+        tenantName="Ahly"
+        form={{ name: "Ahly", description: "Club", isActive: true }}
+        setForm={setForm}
+        onSubmit={onSubmit}
+        isLoading={false}
+        isInternal={false}
+      />
+    );
+    expect(screen.getByText("tenant.activeStatus")).toBeInTheDocument();
   });
 });

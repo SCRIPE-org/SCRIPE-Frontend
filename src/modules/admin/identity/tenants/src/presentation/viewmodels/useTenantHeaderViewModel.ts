@@ -79,7 +79,7 @@ export function useTenantHeaderViewModel({ tenant, onUpdate }: UseTenantHeaderVi
   const [editForm, setEditForm] = useState({
     name: tenant.name,
     description: tenant.description || "",
-    isActive: tenant.isActive,
+    isActive: tenant.isInternal ? true : tenant.isActive,
   });
 
   const handleEditSubmit = async () => {
@@ -88,7 +88,7 @@ export function useTenantHeaderViewModel({ tenant, onUpdate }: UseTenantHeaderVi
       await identityContainer.tenantRepository.update(tenant.id, {
         name: editForm.name,
         description: editForm.description || undefined,
-        isActive: editForm.isActive,
+        isActive: tenant.isInternal ? true : editForm.isActive,
       });
       setEditOpen(false);
       onUpdate?.();
@@ -128,7 +128,7 @@ export function useTenantHeaderViewModel({ tenant, onUpdate }: UseTenantHeaderVi
       setEditForm({
         name: tenant.name,
         description: tenant.description || "",
-        isActive: tenant.isActive,
+        isActive: tenant.isInternal ? true : tenant.isActive,
       });
     }
   };
