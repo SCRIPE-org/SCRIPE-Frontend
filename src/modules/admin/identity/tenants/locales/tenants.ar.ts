@@ -68,6 +68,7 @@ export const ar = {
     level: "المستوى",
     active: "نشط",
     inactive: "غير نشط",
+    internalBadge: "داخلي",
     edit: "تعديل",
     addChild: "إضافة فرعي",
     delete: "حذف",

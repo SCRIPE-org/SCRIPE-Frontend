@@ -33,6 +33,7 @@ export interface TenantProps {
   adminEmail?: string;
   countryCode?: string;
   timeZone?: string;
+  tenantKind?: string;
   children?: TenantProps[];
 }
 
@@ -54,6 +55,7 @@ export interface TenantTreeNodeProps {
   editionName?: string;
   editionEndDate?: string;
   subscriptionStatus?: string;
+  tenantKind?: string;
   children: TenantTreeNodeProps[];
 }
 
@@ -145,7 +147,15 @@ export class Tenant {
     return this.props.timeZone;
   }
 
+  get tenantKind(): string | undefined {
+    return this.props.tenantKind;
+  }
+
   // ===== Business Logic =====
+
+  get isInternal(): boolean {
+    return this.props.tenantKind === "Internal";
+  }
 
   get hasChildren(): boolean {
     return (this.props.children?.length ?? 0) > 0;

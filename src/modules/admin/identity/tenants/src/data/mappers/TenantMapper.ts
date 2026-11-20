@@ -58,6 +58,7 @@ const TenantModelSchema = z.object({
   adminEmail: optionalString(),
   countryCode: optionalString(),
   timeZone: optionalString(),
+  tenantKind: z.string().optional().nullable(),
   children: z.array(z.unknown()).optional(),
 });
 
@@ -76,6 +77,7 @@ const TenantTreeNodeModelSchema = z.object({
   editionName: z.string().optional().nullable(),
   editionEndDate: z.string().optional().nullable(),
   subscriptionStatus: z.union([z.number(), z.string()]).optional().nullable(),
+  tenantKind: z.string().optional().nullable(),
   children: z.array(z.unknown()).optional().default([]),
 });
 
@@ -109,6 +111,7 @@ export class TenantMapper {
       adminEmail: validated.adminEmail ?? undefined,
       countryCode: validated.countryCode ?? model.countryCode ?? undefined,
       timeZone: validated.timeZone ?? model.timeZone ?? undefined,
+      tenantKind: validated.tenantKind ?? model.tenantKind ?? undefined,
       children: model.children?.map((c) => TenantMapper.toEntity(c as TenantModel).toProps()),
     };
     return new Tenant(props);
@@ -136,6 +139,7 @@ export class TenantMapper {
       editionEndDate: validated.editionEndDate ?? undefined,
       subscriptionStatus:
         validated.subscriptionStatus != null ? String(validated.subscriptionStatus) : undefined,
+      tenantKind: validated.tenantKind ?? model.tenantKind ?? undefined,
       children: (model.children ?? []).map((c) =>
         TenantMapper.toTreeNode(c as TenantTreeNodeModel)
       ),

@@ -42,6 +42,7 @@ export const en = {
     level: "Level",
     active: "Active",
     inactive: "Inactive",
+    internalBadge: "Internal",
     edit: "Edit",
     addChild: "Add Child",
     delete: "Delete",

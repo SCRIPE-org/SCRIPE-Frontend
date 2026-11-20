@@ -88,6 +88,13 @@ export function TenantNodeCardHeader({
 
       {/* Badges row */}
       <div className="flex shrink-0 flex-wrap items-center gap-2">
+        {/* Internal tenant badge */}
+        {node.tenantKind === "Internal" && (
+          <Badge variant="info" className="text-xs">
+            {t("tenant.internalBadge")}
+          </Badge>
+        )}
+
         {/* Edition badge */}
         {node.editionName && (
           <Badge variant="outline" className="text-xs">

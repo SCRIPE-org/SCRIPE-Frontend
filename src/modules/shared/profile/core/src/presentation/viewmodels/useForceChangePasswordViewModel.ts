@@ -168,11 +168,12 @@ export function useForceChangePasswordViewModel() {
     ]
   );
 
-  const handleLogout = useCallback(() => {
+  const handleLogout = useCallback(async () => {
+    await authRepository.logout().catch(() => undefined);
     logout();
     queryClient.clear();
     router.replace("/login");
-  }, [logout, queryClient, router]);
+  }, [authRepository, logout, queryClient, router]);
 
   return {
     t,

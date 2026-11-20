@@ -34,13 +34,17 @@ import { TenantSubscriptionCard } from "../cards/TenantSubscriptionCard";
 
 interface TenantEntitlementsTabProps {
   tenantId: string;
+  isInternal?: boolean;
 }
 
 /**
  * Presentation UI component rendering the tenant entitlements tab.
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
-export function TenantEntitlementsTab({ tenantId }: TenantEntitlementsTabProps) {
+export function TenantEntitlementsTab({
+  tenantId,
+  isInternal = false,
+}: TenantEntitlementsTabProps) {
   const { t, direction } = useI18n();
   const router = useRouter();
   const isRtl = direction === "rtl";
@@ -84,7 +88,7 @@ export function TenantEntitlementsTab({ tenantId }: TenantEntitlementsTabProps) 
                 {t("entSubscriptions.manage")}
               </Button>
             </div>
-            <TenantSubscriptionCard tenantId={tenantId} />
+            <TenantSubscriptionCard tenantId={tenantId} isInternal={isInternal} />
           </div>
         </TabsContent>
 

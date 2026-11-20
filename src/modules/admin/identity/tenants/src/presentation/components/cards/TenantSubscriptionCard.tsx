@@ -57,6 +57,7 @@ import type {
 
 interface TenantSubscriptionCardProps {
   tenantId: string;
+  isInternal?: boolean;
 }
 
 // ── Status & Type Helpers ──
@@ -169,7 +170,10 @@ function getConvertOptions(
  * Presentation UI component rendering the tenant subscription card.
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
-export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps) {
+export function TenantSubscriptionCard({
+  tenantId,
+  isInternal = false,
+}: TenantSubscriptionCardProps) {
   const { t } = useI18n();
   const [selectedEditionId, setSelectedEditionId] = useState("");
   const [changePlanOpen, setChangePlanOpen] = useState(false);
@@ -763,7 +767,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
             )}
 
             {/* Suspend */}
-            {vm.canSuspend && (
+            {vm.canSuspend && !isInternal && (
               <Button
                 variant="outline"
                 size="sm"
@@ -805,7 +809,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
             )}
 
             {/* Cancel */}
-            {vm.canCancel && (
+            {vm.canCancel && !isInternal && (
               <Button
                 variant="outline"
                 size="sm"

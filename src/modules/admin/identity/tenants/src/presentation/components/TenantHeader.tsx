@@ -116,7 +116,18 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
       <PageHeader
         icon={Building2}
         title={tenant.name}
-        badges={statusBadge}
+        badges={
+          tenant.isInternal ? (
+            <>
+              {statusBadge}
+              <Badge variant="info" className="text-xs">
+                {t("tenant.internalBadge")}
+              </Badge>
+            </>
+          ) : (
+            statusBadge
+          )
+        }
         description={tenant.description}
         meta={meta}
         className={cn("mb-0", (status === "canceled" || status === "inactive") && "opacity-80")}
@@ -139,7 +150,7 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
                 {t("common.edit")}
               </Button>
             )}
-            {canUpdate && (
+            {canUpdate && !tenant.isInternal && (
               <Button
                 variant="outline"
                 size="sm"
@@ -150,7 +161,7 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
                 {tenant.isActive ? t("common.deactivate") : t("common.activate")}
               </Button>
             )}
-            {canDelete && (
+            {canDelete && !tenant.isInternal && (
               <Button variant="destructive" size="sm" onClick={() => setDeleteOpen(true)}>
                 <Trash2 className="me-1.5 h-4 w-4" aria-hidden="true" />
                 {t("common.delete")}
@@ -180,6 +191,7 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
         onSetActive={handleSetFormActive}
         onSubmit={handleEditSubmit}
         isUpdating={isUpdating}
+        isInternal={tenant.isInternal}
       />
 
       {/* Delete Dialog */}

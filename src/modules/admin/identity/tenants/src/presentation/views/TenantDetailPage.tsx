@@ -122,6 +122,7 @@ export function TenantDetailPage({ tenantId }: TenantDetailPageProps) {
         tenantName={tenant.name}
         tenantCode={tenant.code}
         parentTenantId={tenant.parentId}
+        isInternal={tenant.isInternal}
       />
     </main>
   );

@@ -44,6 +44,7 @@ export function TenantNodeCardActions({
   onEnterWorld,
 }: TenantNodeCardActionsProps) {
   const { t } = useI18n();
+  const isInternal = node.tenantKind === "Internal";
 
   return (
     <div className="mt-4 flex flex-wrap items-center gap-2">
@@ -98,7 +99,7 @@ export function TenantNodeCardActions({
       )}
 
       {/* Delete */}
-      {canDeleteTenant && onDelete && (
+      {canDeleteTenant && !isInternal && onDelete && (
         <Button
           size="sm"
           variant="ghost"
