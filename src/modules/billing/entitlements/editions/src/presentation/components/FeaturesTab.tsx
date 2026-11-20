@@ -43,6 +43,8 @@ type TFn = (key: string) => string;
 
 interface FeaturesTabProps {
   edition: Edition;
+  /** When true, locks all feature mutations, removal actions, and overflow policy edits. */
+  readOnly?: boolean;
   /** Backend-pre-grouped: Module → Category → Feature[]. Zero client-side groupBy. */
   moduleGroups: FeatureModuleGroup[];
   getEffectiveValue: (feature: Feature) => string;
@@ -72,6 +74,7 @@ interface FeaturesTabProps {
  */
 export function FeaturesTab({
   edition,
+  readOnly = false,
   moduleGroups,
   getEffectiveValue,
   getEffectiveLabel,
@@ -125,8 +128,8 @@ export function FeaturesTab({
           </div>
         </CardHeader>
         <CardContent className="pb-4 pt-0">
-          <Select value={overflowPolicy} onValueChange={setOverflowPolicy}>
-            <SelectTrigger className="w-full max-w-xs">
+          <Select value={overflowPolicy} onValueChange={setOverflowPolicy} disabled={readOnly}>
+            <SelectTrigger className="w-full max-w-xs" disabled={readOnly}>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -263,8 +266,8 @@ export function FeaturesTab({
                               </div>
 
                               <div className="flex items-center gap-2">
-                                {/* Label toggle button — only shown when feature is enabled */}
-                                {isEnabled && (
+                                {/* Label toggle button — only shown when feature is enabled and editable */}
+                                {!readOnly && isEnabled && (
                                   <Button
                                     variant="ghost"
                                     size="sm"
@@ -280,8 +283,8 @@ export function FeaturesTab({
                                     <Languages className="h-3 w-3" />
                                   </Button>
                                 )}
-                                {/* Remove Feature button — only shown for features explicitly set on this edition */}
-                                {serverFeature && (
+                                {/* Remove Feature button — hidden in read-only mode */}
+                                {!readOnly && serverFeature && (
                                   <Button
                                     variant="ghost"
                                     size="sm"
@@ -297,15 +300,19 @@ export function FeaturesTab({
                                   <FeatureControl
                                     valueType={feature.valueType}
                                     value={value}
-                                    onChange={(v) => setLocalValue(feature.name, v)}
+                                    onChange={(v) => {
+                                      if (!readOnly) setLocalValue(feature.name, v);
+                                    }}
                                     featureName={feature.name}
+                                    disabled={readOnly}
                                   />
                                 </div>
                               </div>
                             </div>
 
                             {/* Expandable label + highlight editor */}
-                            {isLabelExpanded &&
+                            {!readOnly &&
+                              isLabelExpanded &&
                               isEnabled &&
                               (() => {
                                 const highlight = getEffectiveHighlight(feature.name);
@@ -507,20 +514,23 @@ function FeatureControl({
   value,
   onChange,
   featureName,
+  disabled = false,
 }: {
   valueType: string;
   value: string;
   onChange: (value: string) => void;
   featureName?: string;
+  disabled?: boolean;
 }) {
   const { t } = useI18n();
   const enumOptions = featureName ? getEnumFeatureOptions(t)[featureName] : undefined;
   if (enumOptions) {
     return (
-      <Select value={value} onValueChange={onChange}>
+      <Select value={value} onValueChange={onChange} disabled={disabled}>
         <SelectTrigger
           className="h-8 w-44"
           aria-label={featureName ?? t("entitlements.features.valueType")}
+          disabled={disabled}
         >
           <SelectValue placeholder={t("components.select.placeholder")} />
         </SelectTrigger>
@@ -541,6 +551,7 @@ function FeatureControl({
         aria-label={featureName ?? t("entitlements.features.valueType")}
         checked={value === "true"}
         onCheckedChange={(checked) => onChange(checked ? "true" : "false")}
+        disabled={disabled}
       />
     );
   }
@@ -554,6 +565,7 @@ function FeatureControl({
         onChange={(e) => onChange(e.target.value)}
         className="h-8 w-24 text-end"
         min={-1}
+        disabled={disabled}
       />
     );
   }
@@ -565,6 +577,7 @@ function FeatureControl({
       value={value}
       onChange={(e) => onChange(e.target.value)}
       className="h-8 w-40"
+      disabled={disabled}
     />
   );
 }

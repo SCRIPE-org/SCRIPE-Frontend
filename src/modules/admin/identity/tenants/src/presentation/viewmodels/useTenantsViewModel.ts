@@ -19,7 +19,7 @@ import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { identityContainer } from "@modules/identity/di";
 import { appLogger } from "@core/common/logger";
-import { isInternalTenantNode, type TenantTreeNode, type Tenant } from "../../domain/entities/Tenant";
+import { isInternalTenantNode, type TenantTreeNode } from "../../domain/entities/Tenant";
 import { type EditFormState, initialEditForm } from "../components/TenantDialogs";
 
 // ─────────────────────────────────────────
@@ -77,7 +77,7 @@ export function useTenantsViewModel() {
   const [editForm, setEditForm] = useState<EditFormState>(initialEditForm);
   const [editingNode, setEditingNode] = useState<TenantTreeNode | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [tenantToDelete, setTenantToDelete] = useState<Tenant | null>(null);
+  const [tenantToDelete, setTenantToDelete] = useState<{ id: string; name: string } | null>(null);
 
   // ── Mutation loading states ──
   const [isSaving, setIsSaving] = useState(false);
@@ -149,7 +149,7 @@ export function useTenantsViewModel() {
   );
 
   const handleOpenDelete = useCallback((node: TenantTreeNode) => {
-    setTenantToDelete({ id: node.id, name: node.name } as Tenant);
+    setTenantToDelete({ id: node.id, name: node.name });
     setDeleteDialogOpen(true);
   }, []);
 

@@ -30,6 +30,7 @@ import { LoadingSpinner } from "@core/ui/loading-spinner";
 
 interface VersionsTabProps {
   editionId: string;
+  readOnly?: boolean;
 }
 
 // Status badge color mapping
@@ -55,7 +56,7 @@ const STATUS_ICONS: Record<string, React.ReactNode> = {
  * Presentation UI component rendering the versions tab.
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
-export function VersionsTab({ editionId }: VersionsTabProps) {
+export function VersionsTab({ editionId, readOnly = false }: VersionsTabProps) {
   useModuleLocales(() => import("../../../locales"), "editions");
   const { t } = useI18n();
   const vm = useVersionsViewModel(editionId);
@@ -113,7 +114,7 @@ export function VersionsTab({ editionId }: VersionsTabProps) {
                     <span className="text-xs text-nx-ink-2">{formatDateUtc(v.createdAt)}</span>
 
                     {/* Publish button (Draft only) */}
-                    {v.status === "Draft" && vm.publishVersionId !== v.id && (
+                    {!readOnly && v.status === "Draft" && vm.publishVersionId !== v.id && (
                       <Button
                         size="sm"
                         variant="outline"
@@ -126,7 +127,7 @@ export function VersionsTab({ editionId }: VersionsTabProps) {
                     )}
 
                     {/* Cancel button (Pending/Rolling only) */}
-                    {(v.status === "Pending" || v.status === "Rolling") && (
+                    {!readOnly && (v.status === "Pending" || v.status === "Rolling") && (
                       <Button
                         size="sm"
                         variant="destructive"
@@ -142,7 +143,7 @@ export function VersionsTab({ editionId }: VersionsTabProps) {
                 </div>
 
                 {/* ── Publish Form (expanded for Draft versions) ── */}
-                {v.status === "Draft" && vm.publishVersionId === v.id && (
+                {!readOnly && v.status === "Draft" && vm.publishVersionId === v.id && (
                   <div className="mt-1 space-y-3 border-t border-nx-line pt-3">
                     {/* Strategy Selector */}
                     <div className="flex items-center gap-3">

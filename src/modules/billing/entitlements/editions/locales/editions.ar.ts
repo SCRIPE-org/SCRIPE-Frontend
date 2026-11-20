@@ -139,6 +139,9 @@ export const ar = {
         categoryPlaceholder: "اختر الفئة",
         categoryDesc: "اختر فئة لهذه النسخة.",
         uncategorized: "غير مصنف",
+        internalLockedTitle: "الإصدار الداخلي السيادي محمي ولا يمكن تعديله",
+        internalLockedDesc:
+          "لا يمكن تعديل الإصدارات الداخلية للمنصة عبر معالج التعديل أو الإعدادات التجارية.",
       },
       created: "تم إنشاء الإصدار",
       notFound: "الإصدار غير موجود",

@@ -147,6 +147,7 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
       {activeTab === "features" && (
         <FeaturesTab
           edition={edition}
+          readOnly={edition.isInternal}
           moduleGroups={vm.moduleGroups}
           getEffectiveValue={vm.getEffectiveValue}
           getEffectiveLabel={vm.getEffectiveLabel}
@@ -184,7 +185,9 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
         />
       )}
 
-      {activeTab === "versions" && <VersionsTab editionId={editionId} />}
+      {activeTab === "versions" && (
+        <VersionsTab editionId={editionId} readOnly={edition.isInternal} />
+      )}
 
       {/* ─────── STICKY ACTION BAR (only when changes pending for modifiable editions) ─────── */}
       {vm.hasUnsavedChanges && !edition.isInternal && (

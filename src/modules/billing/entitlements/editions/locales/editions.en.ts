@@ -147,6 +147,9 @@ export const en = {
         categoryPlaceholder: "Select category",
         categoryDesc: "Select a category for this edition.",
         uncategorized: "Uncategorized",
+        internalLockedTitle: "Internal Sovereign Edition Is Immutable",
+        internalLockedDesc:
+          "Platform-internal editions cannot be modified through the edition wizard or commercial settings.",
       },
       created: "Edition Created",
       status: "Status",
