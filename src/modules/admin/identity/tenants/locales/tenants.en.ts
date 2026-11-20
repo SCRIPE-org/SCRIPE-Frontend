@@ -227,6 +227,10 @@ export const en = {
     domainsLoadFailed: "Failed to load domains",
     freePlanTitle: "Free Plan",
     freePlanDesc: "This is the free plan",
+    internalSovereignBadge: "Internal Sovereign",
+    internalSovereignTitle: "Internal Sovereign Platform Plan",
+    internalSovereignDesc:
+      "This workspace operates on the sovereign internal edition with full unrestricted capabilities and no commercial billing.",
     domainsRetry: "Retry",
     domainsDnsStep1: "Step 1: Add a CNAME record to route traffic",
     domainsDnsStep2: "Step 2: Add a TXT record to verify ownership",

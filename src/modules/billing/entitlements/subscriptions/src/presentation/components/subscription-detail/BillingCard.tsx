@@ -14,13 +14,14 @@ import type { SubscriptionListItem } from "../../../domain/entities/Subscription
 interface BillingCardProps {
   sub: SubscriptionListItem;
   t: (key: string) => string;
+  isInternal?: boolean;
 }
 
 /**
  * Presentation UI component rendering the billing card.
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
-export function BillingCard({ sub, t }: BillingCardProps) {
+export function BillingCard({ sub, t, isInternal = false }: BillingCardProps) {
   const formattedTotal =
     sub.totalAmount != null && sub.currency
       ? new Intl.NumberFormat("en-US", {
@@ -56,7 +57,11 @@ export function BillingCard({ sub, t }: BillingCardProps) {
           icon={DollarSign}
           label={t("entSubscriptions.amount")}
           value={
-            formattedTotal ? (
+            isInternal && (sub.totalAmount ?? 0) === 0 ? (
+              <Badge variant="info" className="text-[11px]">
+                {t("entSubscriptions.internalSovereignBadge")}
+              </Badge>
+            ) : formattedTotal ? (
               <span className="font-semibold">{formattedTotal}</span>
             ) : (
               <Badge variant="outline" className="text-[11px] text-success">

@@ -75,8 +75,16 @@ const STATUS_CONFIG: Record<
   pastdue: { variant: "destructive", icon: AlertTriangle },
 };
 
-function getTypeLabel(type: string, t: (key: string) => string, isFreePlan?: boolean): string {
-  if (isFreePlan || type === "Free") {
+function getTypeLabel(
+  type: string,
+  t: (key: string) => string,
+  isFreePlan?: boolean,
+  isInternal?: boolean
+): string {
+  if (isInternal && type === "Free") {
+    return t("tenant.internalSovereignBadge");
+  }
+  if (!isInternal && (isFreePlan || type === "Free")) {
     return t("tenant.typeLabel.free");
   }
   const map: Record<string, string> = {
@@ -315,20 +323,22 @@ export function TenantSubscriptionCard({
           size="sm"
           title={t("tenant.noSubscription")}
           action={
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                setSelectedEditionId("");
-                setSelectedType("Monthly");
-                setChangePlanOpen(true);
-              }}
-            >
-              {t("tenant.assignPlan")}
-            </Button>
+            !isInternal ? (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setSelectedEditionId("");
+                  setSelectedType("Monthly");
+                  setChangePlanOpen(true);
+                }}
+              >
+                {t("tenant.assignPlan")}
+              </Button>
+            ) : undefined
           }
         />
-        {renderChangePlanDialog()}
+        {!isInternal && renderChangePlanDialog()}
       </>
     );
   }
@@ -346,6 +356,11 @@ export function TenantSubscriptionCard({
             </CardTitle>
             <CardDescription>{t("tenant.subscriptionPlanDesc")}</CardDescription>
           </div>
+          {isInternal && (
+            <Badge variant="info" className="text-xs">
+              {t("tenant.internalSovereignBadge")}
+            </Badge>
+          )}
         </CardHeader>
 
         <CardContent className="space-y-4 pt-2">
@@ -363,7 +378,12 @@ export function TenantSubscriptionCard({
             <div className="space-y-1">
               <p className="text-xs font-medium text-nx-ink-2">{t("tenant.billingCycle")}</p>
               <Badge variant="outline" className="text-xs">
-                {getTypeLabel(subscription.type, t, subscription.totalAmount === 0)}
+                {getTypeLabel(
+                  subscription.type,
+                  t,
+                  !isInternal && subscription.totalAmount === 0,
+                  isInternal
+                )}
               </Badge>
             </div>
 
@@ -407,9 +427,19 @@ export function TenantSubscriptionCard({
             </div>
           </div>
 
-          {/* ── Pricing Info / Free Plan Banner ── */}
-          {subscription.type === "Free" ||
-          (subscription.type === "Lifetime" && subscription.totalAmount === 0) ? (
+          {/* ── Pricing Info / Internal Sovereign / Free Plan Banner ── */}
+          {isInternal &&
+          (subscription.type === "Free" ||
+            (subscription.type === "Lifetime" && (subscription.totalAmount ?? 0) === 0)) ? (
+            <div className="flex items-center gap-3 rounded-nx-md border border-info/25 bg-info/10 p-4 text-info">
+              <Shield className="h-5 w-5 shrink-0 text-info" />
+              <div>
+                <p className="text-sm font-semibold">{t("tenant.internalSovereignTitle")}</p>
+                <p className="mt-0.5 text-xs text-nx-ink-2">{t("tenant.internalSovereignDesc")}</p>
+              </div>
+            </div>
+          ) : subscription.type === "Free" ||
+            (subscription.type === "Lifetime" && subscription.totalAmount === 0) ? (
             <div className="flex items-center gap-3 rounded-nx-md border border-success/20 bg-success/5 p-4 text-success">
               <Gift className="h-5 w-5 shrink-0 text-success" />
               <div>
@@ -540,17 +570,19 @@ export function TenantSubscriptionCard({
                   {vm.downgradedAt && <> — {formatDateUtc(vm.downgradedAt)}</>}
                 </span>
               </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  setRestoreType((vm.downgradedFromType as SubscriptionType) || "Monthly");
-                  setResumeOpen(true);
-                }}
-              >
-                <RotateCcw className="me-1.5 h-3.5 w-3.5" />
-                {t("tenant.restoreOriginalPlan")}
-              </Button>
+              {!isInternal && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setRestoreType((vm.downgradedFromType as SubscriptionType) || "Monthly");
+                    setResumeOpen(true);
+                  }}
+                >
+                  <RotateCcw className="me-1.5 h-3.5 w-3.5" />
+                  {t("tenant.restoreOriginalPlan")}
+                </Button>
+              )}
             </div>
           )}
 
@@ -648,7 +680,7 @@ export function TenantSubscriptionCard({
                 <XCircle className="h-4 w-4 shrink-0" />
                 <span>{t("tenant.canceledBanner")}</span>
               </div>
-              {vm.canReassign && (
+              {vm.canReassign && !isInternal && (
                 <Button
                   variant="outline"
                   size="sm"
@@ -672,7 +704,7 @@ export function TenantSubscriptionCard({
                 <AlertTriangle className="h-4 w-4 shrink-0" />
                 <span>{t("tenant.expiredBanner")}</span>
               </div>
-              {vm.canReassign && (
+              {vm.canReassign && !isInternal && (
                 <Button
                   variant="outline"
                   size="sm"
@@ -720,8 +752,8 @@ export function TenantSubscriptionCard({
 
           {/* ── Actions Row ── */}
           <div className="flex flex-wrap gap-2 border-t border-nx-line pt-3">
-            {/* Change Plan — hidden for PendingPayment, Canceled, Expired */}
-            {!vm.isPendingPayment && !vm.isCanceled && !vm.isExpired && (
+            {/* Change Plan — hidden for PendingPayment, Canceled, Expired, and Internal tenants */}
+            {!vm.isPendingPayment && !vm.isCanceled && !vm.isExpired && !isInternal && (
               <Button
                 variant="outline"
                 size="sm"
@@ -737,7 +769,7 @@ export function TenantSubscriptionCard({
             )}
 
             {/* Renew — hidden for Lifetime */}
-            {vm.canRenew && (
+            {vm.canRenew && !isInternal && (
               <Button
                 variant="outline"
                 size="sm"
@@ -752,7 +784,7 @@ export function TenantSubscriptionCard({
             )}
 
             {/* Convert Trial */}
-            {vm.canConvertTrial && (
+            {vm.canConvertTrial && !isInternal && (
               <Button
                 variant="default"
                 size="sm"
@@ -783,7 +815,7 @@ export function TenantSubscriptionCard({
             )}
 
             {/* Resume / Restore — dynamic label */}
-            {vm.canResume && (
+            {vm.canResume && !isInternal && (
               <Button
                 variant="default"
                 size="sm"
@@ -839,7 +871,7 @@ export function TenantSubscriptionCard({
             )}
 
             {/* Change Currency */}
-            {vm.isActive && (
+            {vm.isActive && !isInternal && (
               <Button
                 variant="outline"
                 size="sm"
@@ -868,13 +900,17 @@ export function TenantSubscriptionCard({
       </Card>
 
       {/* ── Dialogs ── */}
-      {renderChangePlanDialog()}
-      {renderRenewDialog()}
-      {renderConvertDialog()}
-      {renderSuspendDialog()}
-      {renderCancelDialog()}
-      {renderResumeDialog()}
-      {renderChangeCurrencyDialog()}
+      {!isInternal && (
+        <>
+          {renderChangePlanDialog()}
+          {renderRenewDialog()}
+          {renderConvertDialog()}
+          {renderSuspendDialog()}
+          {renderCancelDialog()}
+          {renderResumeDialog()}
+          {renderChangeCurrencyDialog()}
+        </>
+      )}
     </>
   );
 

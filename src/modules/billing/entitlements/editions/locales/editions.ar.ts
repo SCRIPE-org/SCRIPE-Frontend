@@ -143,6 +143,7 @@ export const ar = {
       created: "تم إنشاء الإصدار",
       notFound: "الإصدار غير موجود",
       retired: "متقاعد",
+      internalBadge: "داخلي",
       createdDesc: "تم إنشاء الإصدار الجديد بنجاح.",
       updated: "تم تحديث الإصدار",
       updatedDesc: "تم تحديث تفاصيل الإصدار.",

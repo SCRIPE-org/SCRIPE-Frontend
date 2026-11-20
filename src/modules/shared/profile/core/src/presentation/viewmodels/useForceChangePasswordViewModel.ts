@@ -27,7 +27,7 @@ export interface PasswordRulesEvaluation {
 
 /** Evaluates a candidate password against complexity requirements. */
 export function evaluatePasswordRules(password: string): PasswordRulesEvaluation {
-  const minLength = password.length >= 8;
+  const minLength = password.length >= 12;
   const uppercase = /[A-Z]/.test(password);
   const lowercase = /[a-z]/.test(password);
   const number = /[0-9]/.test(password);

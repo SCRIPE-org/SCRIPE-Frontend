@@ -107,8 +107,7 @@ export function useTenantRolesViewModel({
     () =>
       async (query: string): Promise<FieldOption[]> => {
         try {
-          // Use tenantService to get tenant's available permissions
-          const permissions = await identityContainer.tenantService.getTenantPermissions(tenantId);
+          const permissions = await identityContainer.tenantRepository.getTenantPermissions(tenantId);
 
           // Client-side filter if there's a search query
           let filtered = permissions;
@@ -122,7 +121,7 @@ export function useTenantRolesViewModel({
               );
               return (
                 name?.toLowerCase().includes(lowerQuery) ||
-                p.permissionCode?.toLowerCase().includes(lowerQuery)
+                p.code?.toLowerCase().includes(lowerQuery)
               );
             });
           }
@@ -133,7 +132,7 @@ export function useTenantRolesViewModel({
               p.nameAr || p.nameEn || "",
               language
             );
-            const code = p.permissionCode || `${p.resource}.${p.action}`;
+            const code = p.code || `${p.resource}.${p.action}`;
             return {
               value: p.id,
               label: `${name} (${code})`,
@@ -329,7 +328,7 @@ export function useTenantRolesViewModel({
   const queryClient = useQueryClient();
   const { success: toastSuccess, error: toastError } = useEnhancedToast();
   const resyncMutation = useMutation({
-    mutationFn: () => identityContainer.tenantService.resyncPermissions(tenantId),
+    mutationFn: () => identityContainer.tenantRepository.resyncPermissions(tenantId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tenant-permissions-raw", tenantId] });
       queryClient.invalidateQueries({ queryKey: ["tenant-current-permissions-service", tenantId] });

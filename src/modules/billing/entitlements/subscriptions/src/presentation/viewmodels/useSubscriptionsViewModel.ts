@@ -84,6 +84,7 @@ export function useSubscriptionsViewModel(tenantId: string) {
     enabled: !!tenantId,
   });
   const tenantAdminEmail = tenantQuery.data?.adminEmail;
+  const isInternalTenant = Boolean(tenantQuery.data?.isInternal);
 
   const items = subscriptionsQuery.data ?? [];
   const activeSubscription = items.find((s) => s.status === "Active" || s.status === "Trialing");
@@ -92,8 +93,9 @@ export function useSubscriptionsViewModel(tenantId: string) {
   const isTrialing = activeSubscription?.status === "Trialing";
   const isDowngraded = activeSubscription?.isDowngraded ?? false;
 
-  // GAP-I: Detect if this is a free edition (totalAmount = 0 or no amount)
-  const isFreeEdition = activeSubscription ? (activeSubscription.totalAmount ?? 0) === 0 : false;
+  // GAP-I: Detect if this is a free edition (totalAmount = 0 or no amount), never classify Internal as Free
+  const isFreeEdition =
+    !isInternalTenant && activeSubscription ? (activeSubscription.totalAmount ?? 0) === 0 : false;
 
   // ─── Invalidation helper ────────────────────────────
   const invalidate = useCallback(() => {
@@ -482,6 +484,7 @@ export function useSubscriptionsViewModel(tenantId: string) {
     hasSuspendedSubscription: !!suspendedSubscription,
     hasPendingPaymentSubscription: !!pendingPaymentSubscription,
     isFreeEdition,
+    isInternalTenant,
     isTrialing,
     isDowngraded,
     activeSubscription,

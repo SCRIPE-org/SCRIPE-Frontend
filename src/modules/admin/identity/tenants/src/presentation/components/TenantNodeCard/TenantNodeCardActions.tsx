@@ -3,7 +3,7 @@
 import { Eye, LogIn, Pencil, Building2, ArrowUpCircle, Trash2 } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { useI18n } from "@core/providers/i18n-provider";
-import type { TenantTreeNode } from "../../../domain/entities/Tenant";
+import { isInternalTenantNode, type TenantTreeNode } from "../../../domain/entities/Tenant";
 import type { TenantStatus } from "./TenantNodeCardHeader";
 
 interface TenantNodeCardActionsProps {
@@ -44,7 +44,7 @@ export function TenantNodeCardActions({
   onEnterWorld,
 }: TenantNodeCardActionsProps) {
   const { t } = useI18n();
-  const isInternal = node.tenantKind === "Internal";
+  const isInternal = isInternalTenantNode(node);
 
   return (
     <div className="mt-4 flex flex-wrap items-center gap-2">
@@ -86,7 +86,10 @@ export function TenantNodeCardActions({
       )}
 
       {/* Reassign Plan - for canceled/expired */}
-      {(status === "canceled" || status === "expired") && canViewDetails && !compact && (
+      {(status === "canceled" || status === "expired") &&
+        canViewDetails &&
+        !compact &&
+        !isInternal && (
         <Button
           size="sm"
           variant="outline"

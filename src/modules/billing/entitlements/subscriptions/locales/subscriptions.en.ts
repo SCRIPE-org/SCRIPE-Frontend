@@ -147,6 +147,10 @@ export const en = {
     loadError: "Failed to load subscription details.",
     downgradedFrom: "From {{edition}}",
     downgradedFromType: "From {{edition}} ({{type}})",
+    internalSovereignBadge: "Internal Sovereign",
+    internalSovereignTitle: "Internal Sovereign Edition",
+    internalSovereignGatewayDesc:
+      "Sovereign internal workspaces do not use commercial payment gateways.",
   },
   entitlements: {
     promotions: {

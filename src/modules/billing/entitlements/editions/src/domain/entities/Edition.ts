@@ -3,6 +3,11 @@
  */
 import type { BaseEntity } from "@core/interfaces/common.interface";
 
+/**
+ * Scope differentiating commercial customer-facing editions from immutable internal platform editions.
+ */
+export type EditionScope = "Commercial" | "Internal";
+
 export interface EditionFeatureDto {
   featureId: string;
   featureName: string;
@@ -53,6 +58,7 @@ export interface EditionData extends BaseEntity {
   isSystem: boolean;
   isRetired: boolean;
   tierLevel: number;
+  scope?: EditionScope;
   /** Edition category for tab grouping (e.g. "General", "ERP"). Null/undefined = uncategorized. */
   category?: string;
   createdByTenantId?: string;
@@ -197,6 +203,24 @@ export class Edition {
   get isContactSalesOnly(): boolean {
     return this.data.isContactSalesOnly ?? false;
   }
+  /**
+   * Edition scope ("Commercial" | "Internal"). Falls back to "Internal" when the canonical
+   * `scripe-internal` platform edition name is present without explicit scope metadata.
+   */
+  get scope(): EditionScope {
+    if (this.data.scope === "Internal" || this.data.scope === "Commercial") {
+      return this.data.scope;
+    }
+    return this.data.name === "scripe-internal" ? "Internal" : "Commercial";
+  }
+
+  /**
+   * True when this edition is an internal sovereign platform edition (`scope === "Internal"`).
+   */
+  get isInternal(): boolean {
+    return this.scope === "Internal";
+  }
+
   /**
    * True when this edition is permanently free (no billing cycles).
    * Authoritative value from backend. Use this instead of price-absence heuristics.

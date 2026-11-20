@@ -419,7 +419,7 @@ interface EditTenantDialogProps {
   tenantName: string;
   form: EditFormState;
   setForm: React.Dispatch<React.SetStateAction<EditFormState>>;
-  onSubmit: () => Promise<void> | void;
+  onSubmit: (submitted?: EditFormState) => Promise<void> | void;
   isLoading: boolean;
   isInternal?: boolean;
 }
@@ -473,12 +473,13 @@ export function EditTenantDialog({
   );
 
   const handleSubmit = async (data: Record<string, any>) => {
-    setForm({
+    const nextForm: EditFormState = {
       name: data.name,
       description: data.description || "",
       isActive: isInternal ? true : data.isActive,
-    });
-    await onSubmit();
+    };
+    setForm(nextForm);
+    await onSubmit(nextForm);
   };
 
   return (
@@ -494,6 +495,7 @@ export function EditTenantDialog({
         key={`edit-tenant-${open}`}
         fields={fields}
         initialValues={form}
+        isLoading={isLoading}
         onSubmit={handleSubmit}
         onCancel={() => onOpenChange(false)}
       />

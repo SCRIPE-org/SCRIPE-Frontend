@@ -25,6 +25,7 @@ export interface EditionModel {
   isSystem: boolean;
   isRetired: boolean;
   tierLevel: number;
+  scope?: "Commercial" | "Internal" | string;
   createdByTenantId?: string;
   category?: string;
   featureCount?: number;

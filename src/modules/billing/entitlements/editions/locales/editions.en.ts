@@ -152,6 +152,7 @@ export const en = {
       status: "Status",
       notFound: "Edition not found",
       retired: "Retired",
+      internalBadge: "Internal",
       createdDesc: "New edition created successfully.",
       updated: "Edition Updated",
       updatedDesc: "Edition details updated.",

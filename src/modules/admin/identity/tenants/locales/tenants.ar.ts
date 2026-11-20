@@ -42,6 +42,10 @@ export const ar = {
     detailTitle: "تفاصيل المستأجر",
     freePlanTitle: "خطة مجانية",
     freePlanDesc: "هذه الخطة هي الخطة المجانية",
+    internalSovereignBadge: "داخلي سيادي",
+    internalSovereignTitle: "خطة المنصة الداخلية السيادية",
+    internalSovereignDesc:
+      "تعمل مساحة العمل هذه على الإصدار الداخلي السيادي بصلاحيات كاملة غير مقيدة وبدون فوترة تجارية.",
     description: "الوصف",
     hierarchy: "هرمية المستأجرين",
     allTenants: "جميع المستأجرين",

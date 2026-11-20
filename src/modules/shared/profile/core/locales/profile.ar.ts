@@ -55,7 +55,7 @@ export const ar = {
       title: "خزنة الأمان والهوية",
       description: "إدارة مفاتيح المرور المشفرة، المصادقة الثنائية، وتدوير كلمة المرور.",
       changePassword: "تغيير كلمة المرور",
-      passwordRequirements: "تأكد من أن كلمة المرور لا تقل عن 8 أحرف وتتضمن أرقاماً ورموزاً.",
+      passwordRequirements: "تأكد من أن كلمة المرور لا تقل عن 12 حرفاً وتتضمن أرقاماً ورموزاً.",
       currentPassword: "كلمة المرور الحالية",
       newPassword: "كلمة المرور الجديدة",
       confirmPassword: "تأكيد كلمة المرور",
@@ -79,7 +79,7 @@ export const ar = {
       hidePassword: "إخفاء كلمة المرور",
       twoFaStep: "المصادقة الثنائية",
       strength: {
-        minLength: "+8 أحرف",
+        minLength: "+12 حرفاً",
         uppercase: "حرف كبير",
         lowercase: "حرف صغير",
         number: "رقم",

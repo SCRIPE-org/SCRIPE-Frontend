@@ -20,13 +20,15 @@ interface HeroCardProps {
   sub: SubscriptionListItem;
   vm: ReturnType<typeof useSubscriptionsViewModel>;
   t: (key: string, params?: Record<string, string | number>) => string;
+  isInternal?: boolean;
 }
 
 /**
  * Presentation UI component rendering the hero card.
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
-export function HeroCard({ sub, vm, t }: HeroCardProps) {
+export function HeroCard({ sub, vm, t, isInternal }: HeroCardProps) {
+  const resolvedInternal = isInternal ?? Boolean(vm.isInternalTenant);
   const style = STATUS_STYLES[sub.status] ?? DEFAULT_STATUS_STYLE;
 
   const totalAmount = sub.totalAmount;
@@ -74,6 +76,11 @@ export function HeroCard({ sub, vm, t }: HeroCardProps) {
               >
                 {billingCycle}
               </Badge>
+              {resolvedInternal && (
+                <Badge variant="info" className="text-xs">
+                  {t("entSubscriptions.internalSovereignBadge")}
+                </Badge>
+              )}
             </div>
 
             <div className="flex items-center gap-2.5">
@@ -84,7 +91,7 @@ export function HeroCard({ sub, vm, t }: HeroCardProps) {
 
           {/* Actions */}
           <div className="flex shrink-0 items-center gap-2">
-            <HeroActions sub={sub} vm={vm} t={t} />
+            <HeroActions sub={sub} vm={vm} t={t} isInternal={resolvedInternal} />
           </div>
         </div>
       </CardHeader>

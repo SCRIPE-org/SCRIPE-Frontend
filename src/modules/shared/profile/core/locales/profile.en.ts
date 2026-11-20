@@ -55,7 +55,7 @@ export const en = {
       title: "Security & Identity Vault",
       description: "Manage your cryptographic passkeys, two-factor authentication, and password rotation.",
       changePassword: "Change Password",
-      passwordRequirements: "Ensure your password is at least 8 characters and includes numbers and symbols.",
+      passwordRequirements: "Ensure your password is at least 12 characters and includes numbers and symbols.",
       currentPassword: "Current Password",
       newPassword: "New Password",
       confirmPassword: "Confirm New Password",
@@ -79,7 +79,7 @@ export const en = {
       hidePassword: "Hide password",
       twoFaStep: "Two-Factor Auth",
       strength: {
-        minLength: "8+ characters",
+        minLength: "12+ characters",
         uppercase: "Uppercase letter",
         lowercase: "Lowercase letter",
         number: "Number",

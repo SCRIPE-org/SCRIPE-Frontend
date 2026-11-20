@@ -149,6 +149,10 @@ export const ar = {
     loadError: "فشل تحميل تفاصيل الاشتراك.",
     downgradedFrom: "من {{edition}}",
     downgradedFromType: "من {{edition}} ({{type}})",
+    internalSovereignBadge: "داخلي سيادي",
+    internalSovereignTitle: "الإصدار الداخلي السيادي",
+    internalSovereignGatewayDesc:
+      "لا تستخدم مساحات العمل الداخلية السيادية بوابات الدفع التجارية.",
   },
   entitlements: {
     promotions: {

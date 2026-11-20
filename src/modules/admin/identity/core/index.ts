@@ -18,7 +18,7 @@ export type {
 export type { IPermissionService } from "../permissions/src/domain/interfaces/IPermissionService";
 
 // Tenants
-export { SYSTEM_TENANT_ID, Tenant } from "../tenants/src/domain/entities/Tenant";
+export { SYSTEM_TENANT_ID, Tenant, isInternalTenantNode } from "../tenants/src/domain/entities/Tenant";
 export type { TenantProps, TenantTreeNode } from "../tenants/src/domain/entities/Tenant";
 
 // Roles

@@ -193,6 +193,14 @@ export class Tenant {
  */
 export type TenantTreeNode = TenantTreeNodeProps;
 
+/**
+ * Canonical helper to determine whether a tenant entity or tree node
+ * belongs to the immutable Internal platform tier.
+ */
+export function isInternalTenantNode(node?: { tenantKind?: string } | null): boolean {
+  return node?.tenantKind === "Internal";
+}
+
 // Keep backward compatibility alias
 /**
  * Domain model representing a Tenant Data structure.

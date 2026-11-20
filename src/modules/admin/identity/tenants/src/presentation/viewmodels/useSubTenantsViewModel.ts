@@ -20,7 +20,7 @@ import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { identityContainer } from "@modules/identity/di";
 import { appLogger } from "@core/common/logger";
-import type { TenantTreeNode, Tenant } from "../../domain/entities/Tenant";
+import { isInternalTenantNode, type TenantTreeNode, type Tenant } from "../../domain/entities/Tenant";
 import { type EditFormState, initialEditForm } from "../components/TenantDialogs";
 
 interface UseSubTenantsViewModelParams {
@@ -84,37 +84,41 @@ export function useSubTenantsViewModel({
     setEditForm({
       name: node.name,
       description: node.description || "",
-      isActive: node.tenantKind === "Internal" ? true : node.isActive,
+      isActive: isInternalTenantNode(node) ? true : node.isActive,
     });
     setEditingNode(node);
     setEditDialogOpen(true);
   }, []);
 
-  const handleEditSubmit = useCallback(async () => {
-    if (!editingNode || !editForm.name) return;
-    setIsSaving(true);
-    try {
-      await tenantRepository.update(editingNode.id, {
-        name: editForm.name,
-        description: editForm.description || undefined,
-        isActive: editingNode.tenantKind === "Internal" ? true : editForm.isActive,
-      });
-      queryClient.invalidateQueries({ queryKey: ["tenants"] });
-      toastSuccess({
-        title: t("tenant.updated"),
-        description: t("tenant.updatedDescription"),
-      });
-      setEditDialogOpen(false);
-    } catch (err) {
-      appLogger.error("Failed to update tenant:", err);
-      toastError({
-        title: t("common.error"),
-        description: err instanceof Error ? err.message : "Failed to update tenant.",
-      });
-    } finally {
-      setIsSaving(false);
-    }
-  }, [editingNode, editForm, tenantRepository, queryClient, t, toastSuccess, toastError]);
+  const handleEditSubmit = useCallback(
+    async (submitted?: EditFormState) => {
+      const payload = submitted ?? editForm;
+      if (!editingNode || !payload.name) return;
+      setIsSaving(true);
+      try {
+        await tenantRepository.update(editingNode.id, {
+          name: payload.name,
+          description: payload.description || undefined,
+          isActive: isInternalTenantNode(editingNode) ? true : payload.isActive,
+        });
+        queryClient.invalidateQueries({ queryKey: ["tenants"] });
+        toastSuccess({
+          title: t("tenant.updated"),
+          description: t("tenant.updatedDescription"),
+        });
+        setEditDialogOpen(false);
+      } catch (err) {
+        appLogger.error("Failed to update tenant:", err);
+        toastError({
+          title: t("common.error"),
+          description: err instanceof Error ? err.message : "Failed to update tenant.",
+        });
+      } finally {
+        setIsSaving(false);
+      }
+    },
+    [editingNode, editForm, tenantRepository, queryClient, t, toastSuccess, toastError]
+  );
 
   const handleOpenDelete = useCallback((node: TenantTreeNode) => {
     setTenantToDelete({ id: node.id, name: node.name } as Tenant);

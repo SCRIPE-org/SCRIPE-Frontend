@@ -146,6 +146,11 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
                   SYSTEM
                 </Badge>
               )}
+              {edition.isInternal && (
+                <Badge variant="info" className="text-xs">
+                  {t("entitlements.editions.internalBadge")}
+                </Badge>
+              )}
               {edition.isRetired && (
                 <Badge variant="destructive" className="text-xs">
                   RETIRED
@@ -160,15 +165,17 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
           </div>
         </div>
         <div className="flex shrink-0 items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            className="gap-1.5"
-            onClick={() => router.push(`/entitlements/editions/${editionId}/edit`)}
-          >
-            <Settings2 className="h-4 w-4" />
-            {t("entitlements.editions.wizard.editSettings")}
-          </Button>
+          {!edition.isInternal && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5"
+              onClick={() => router.push(`/entitlements/editions/${editionId}/edit`)}
+            >
+              <Settings2 className="h-4 w-4" />
+              {t("entitlements.editions.wizard.editSettings")}
+            </Button>
+          )}
           <Button
             size="sm"
             className="gap-1.5"

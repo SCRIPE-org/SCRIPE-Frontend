@@ -28,6 +28,7 @@ import { TenantListHeader } from "../components/TenantListHeader";
 import { TenantDeleteDialog } from "../components/TenantDeleteDialog";
 import { EditTenantDialog } from "../components/TenantDialogs";
 import { useTenantsViewModel } from "../viewmodels/useTenantsViewModel";
+import { isInternalTenantNode } from "../../domain/entities/Tenant";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 // ============================================
@@ -110,7 +111,7 @@ export function TenantsView() {
         setForm={vm.setEditForm}
         onSubmit={vm.handleEditSubmit}
         isLoading={vm.isSaving}
-        isInternal={vm.editingNode?.tenantKind === "Internal"}
+        isInternal={isInternalTenantNode(vm.editingNode)}
       />
 
       {/* Delete Dialog */}

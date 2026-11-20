@@ -8,6 +8,10 @@
  * @module tenants/data
  */
 import type {
+  TenantSettingsModel,
+  UpdateTenantSettingsRequest,
+} from "@modules/customization/tenant-settings/src/domain/types/SettingsTypes";
+import type {
   ITenantRepository,
   TenantListParams,
   TenantStats,
@@ -405,5 +409,21 @@ export class TenantRepository implements ITenantRepository {
   ): Promise<TenantIdpTestConnectionResult> {
     const raw = await this.service.testIdentityProviderConnection(tenantId, id);
     return TenantIdentityProviderMapper.toTestResult(raw);
+  }
+
+  async toggleStatus(id: string, isActive: boolean): Promise<void> {
+    await this.service.toggleStatus(id, isActive);
+  }
+
+  async getSettings(tenantId: string): Promise<TenantSettingsModel> {
+    return this.service.getSettings(tenantId);
+  }
+
+  async updateSettings(tenantId: string, request: UpdateTenantSettingsRequest): Promise<void> {
+    await this.service.updateSettings(tenantId, request);
+  }
+
+  async uploadLogo(tenantId: string, file: File): Promise<{ url: string }> {
+    return this.service.uploadLogo(tenantId, file);
   }
 }

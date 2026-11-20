@@ -60,7 +60,7 @@ export function useTenantSettingsViewModel(tenantId: string): UseTenantSettingsV
   } = useQuery({
     queryKey: ["tenant-settings", tenantId],
     queryFn: async () => {
-      return identityContainer.tenantService.getSettings(tenantId);
+      return identityContainer.tenantRepository.getSettings(tenantId);
     },
     enabled: !!tenantId,
   });
@@ -68,7 +68,7 @@ export function useTenantSettingsViewModel(tenantId: string): UseTenantSettingsV
   // Update Settings
   const updateMutation = useMutation({
     mutationFn: async (data: UpdateTenantSettingsRequest) => {
-      await identityContainer.tenantService.updateSettings(tenantId, data);
+      await identityContainer.tenantRepository.updateSettings(tenantId, data);
     },
     onSuccess: () => {
       toast({
@@ -103,7 +103,7 @@ export function useTenantSettingsViewModel(tenantId: string): UseTenantSettingsV
     // Logo Upload
     uploadLogo: async (file: File) => {
       try {
-        const result = await identityContainer.tenantService.uploadLogo(tenantId, file);
+        const result = await identityContainer.tenantRepository.uploadLogo(tenantId, file);
         toast({
           title: t("common.success"),
           description: t("tenant.settingsSaved"),

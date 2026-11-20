@@ -122,12 +122,12 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
         <ErrorMessage message={t("entSubscriptions.loadError")} onRetry={retryFetch} />
       ) : currentSub ? (
         <>
-          <HeroCard sub={currentSub} vm={vm} t={t} />
+          <HeroCard sub={currentSub} vm={vm} t={t} isInternal={vm.isInternalTenant} />
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             <PlanDetailsCard sub={currentSub} t={t} />
-            <BillingCard sub={currentSub} t={t} />
-            <StripeCard sub={currentSub} vm={vm} t={t} />
+            <BillingCard sub={currentSub} t={t} isInternal={vm.isInternalTenant} />
+            <StripeCard sub={currentSub} vm={vm} t={t} isInternal={vm.isInternalTenant} />
           </div>
 
           <DowngradeNotice sub={currentSub} t={t} />
@@ -142,28 +142,34 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
           title={t("entSubscriptions.noSubscriptions")}
           description={t("entSubscriptions.assignDesc")}
           action={
-            <Button size="lg" className="gap-2" onClick={() => vm.setShowAssignDialog(true)}>
-              <Zap className="h-5 w-5" aria-hidden="true" />
-              {t("entSubscriptions.assign")}
-            </Button>
+            !vm.isInternalTenant ? (
+              <Button size="lg" className="gap-2" onClick={() => vm.setShowAssignDialog(true)}>
+                <Zap className="h-5 w-5" aria-hidden="true" />
+                {t("entSubscriptions.assign")}
+              </Button>
+            ) : undefined
           }
         />
       )}
 
       {/* ── Dialogs ── */}
-      <AssignDialog vm={vm} editionsVm={editionsVm} />
-      <ChangeDialog vm={vm} editionsVm={editionsVm} />
-      <SuspendDialog vm={vm} />
-      <CancelDialog vm={vm} />
-      <ConvertDialog vm={vm} editionsVm={editionsVm} />
-      <CheckoutDialog vm={vm} />
-      <CancelGatewayDialog vm={vm} />
-      <ChangeCurrencyDialog vm={vm} />
-      <GatewaySelectionDialog
-        open={vm.showGatewayDialog}
-        onOpenChange={vm.setShowGatewayDialog}
-        onSelect={vm.handleGatewaySelected}
-      />
+      {!vm.isInternalTenant && (
+        <>
+          <AssignDialog vm={vm} editionsVm={editionsVm} />
+          <ChangeDialog vm={vm} editionsVm={editionsVm} />
+          <SuspendDialog vm={vm} />
+          <CancelDialog vm={vm} />
+          <ConvertDialog vm={vm} editionsVm={editionsVm} />
+          <CheckoutDialog vm={vm} />
+          <CancelGatewayDialog vm={vm} />
+          <ChangeCurrencyDialog vm={vm} />
+          <GatewaySelectionDialog
+            open={vm.showGatewayDialog}
+            onOpenChange={vm.setShowGatewayDialog}
+            onSelect={vm.handleGatewaySelected}
+          />
+        </>
+      )}
     </div>
   );
 }

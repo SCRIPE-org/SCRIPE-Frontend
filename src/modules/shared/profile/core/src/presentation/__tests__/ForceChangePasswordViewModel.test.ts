@@ -119,7 +119,7 @@ describe("ForceChangePasswordViewModel (MMC First-Login Parity)", () => {
     mocks.authLogout.mockResolvedValue(undefined);
   });
 
-  it("evaluates all 5 password complexity rules accurately", () => {
+  it("evaluates all 5 password complexity rules accurately with a 12-character minimum", () => {
     expect(evaluatePasswordRules("abc")).toEqual({
       minLength: false,
       uppercase: false,
@@ -127,6 +127,36 @@ describe("ForceChangePasswordViewModel (MMC First-Login Parity)", () => {
       number: false,
       special: false,
       allMet: false,
+    });
+
+    // 9 characters: meets complexity classes, but fails 12-character minimum
+    expect(evaluatePasswordRules("Pass#2026")).toEqual({
+      minLength: false,
+      uppercase: true,
+      lowercase: true,
+      number: true,
+      special: true,
+      allMet: false,
+    });
+
+    // 11 characters: boundary just below 12 characters
+    expect(evaluatePasswordRules("StrongP@ss1")).toEqual({
+      minLength: false,
+      uppercase: true,
+      lowercase: true,
+      number: true,
+      special: true,
+      allMet: false,
+    });
+
+    // 12 characters: exact threshold meets all rules
+    expect(evaluatePasswordRules("StrongP@ss12")).toEqual({
+      minLength: true,
+      uppercase: true,
+      lowercase: true,
+      number: true,
+      special: true,
+      allMet: true,
     });
 
     expect(evaluatePasswordRules("StrongPass#2026")).toEqual({

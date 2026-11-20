@@ -340,6 +340,7 @@ interface GenericFormProps {
   onSubmit: (data: Record<string, any>) => Promise<void>;
   onCancel: () => void;
   readOnly?: boolean; // New prop for read-only mode
+  isLoading?: boolean;
   showErrorSummary?: boolean; // Optional prop to render top error summary banner (default: false)
 }
 
@@ -785,6 +786,7 @@ export function GenericForm({
   onSubmit,
   onCancel,
   readOnly = false,
+  isLoading = false,
   showErrorSummary = false,
 }: GenericFormProps) {
   const settings = useSettings();
@@ -954,7 +956,7 @@ export function GenericForm({
     e.preventDefault();
     // Re-entrancy guard: the fields stay editable while a submit is in flight,
     // and Enter in any of them re-fires this handler.
-    if (loading) return;
+    if (loading || isLoading) return;
     setServerError(null);
 
     // Validate required fields for custom components (select, searchable-select, etc.)
@@ -1988,14 +1990,14 @@ export function GenericForm({
               variant="outline"
               onClick={onCancel}
               className={getInputHeight()}
-              disabled={loading}
+              disabled={loading || isLoading}
               size={getButtonSize()}
             >
               {t("common.cancel")}
             </Button>
             <Button
               type="submit"
-              loading={loading}
+              loading={loading || isLoading}
               className={getInputHeight()}
               size={getButtonSize()}
             >
