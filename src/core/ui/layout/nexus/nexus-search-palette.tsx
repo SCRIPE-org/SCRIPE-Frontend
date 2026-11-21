@@ -1,7 +1,13 @@
 "use client";
 
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import * as LucideIcons from "lucide-react";
+import { normalizeRoutePath } from "@core/config/app-route-manifest";
+import type { MenuItem } from "@core/navigation";
+import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
+import { useI18n } from "@core/providers/i18n-provider";
+import { useWorkspace } from "@core/providers/workspace-provider";
 import {
   CommandDialog,
   CommandEmpty,
@@ -10,10 +16,6 @@ import {
   CommandItem,
   CommandList,
 } from "@core/ui/command";
-import { useI18n } from "@core/providers/i18n-provider";
-import { useWorkspace } from "@core/providers/workspace-provider";
-import * as LucideIcons from "lucide-react";
-import { MenuItem } from "@core/navigation";
 import { startRoutingProgress } from "@core/ui/routing-progress-bar";
 
 interface NexusSearchPaletteProps {
@@ -23,84 +25,181 @@ interface NexusSearchPaletteProps {
 
 interface SearchableItem {
   id: string;
-  title: string;
+  titleSegments: string[];
   href: string;
+  searchValue: string;
   iconName: string;
   workspaceKey: string;
-  rootItemId: string;
+  rootItemId: string | null;
   groupName: string;
 }
 
+function humanizeRouteLabel(route: string): string {
+  const segments = normalizeRoutePath(route)
+    .split("/")
+    .filter((seg) => seg.length > 0 && !seg.startsWith("["));
+  if (segments.length === 0) return route;
+  const tail = segments[segments.length - 1];
+  return tail
+    .split("-")
+    .map((part) => (part.length > 0 ? part[0].toUpperCase() + part.slice(1) : part))
+    .join(" ");
+}
+
+function collectFirstMenuHref(items: MenuItem[]): string | null {
+  for (const item of items) {
+    if (item.href && item.href !== "#") {
+      return item.href;
+    }
+    if (item.children.length > 0) {
+      const nested = collectFirstMenuHref(item.children);
+      if (nested) return nested;
+    }
+  }
+  return null;
+}
+
+/**
+ * Global Command Palette (`Cmd/Ctrl + K`) indexing unlocked workspaces, hydrated & cached
+ * JIT menu trees, and unhydrated authorized route descriptors with `<bdi>` RTL/LTR isolation.
+ */
 export function NexusSearchPalette({ open, onOpenChange }: NexusSearchPaletteProps) {
   const { t, language, direction } = useI18n();
   const router = useRouter();
   const { workspaceGroups, setActiveWorkspace, setActiveRootItemId } = useWorkspace();
+  const cachedWorkspaces = useNavigationStore((s) => s.workspaces);
+  const routeDescriptors = useNavigationStore((s) => s.routeDescriptors);
+  const navContextKey = useNavigationStore((s) => s.contextKey);
+  const recordRecentWorkspace = useNavigationStore((s) => s.recordRecentWorkspace);
 
-  // Build a flat list of all searchable items across all workspaces
-  const searchableItems = useMemo(() => {
-    const items: SearchableItem[] = [];
+  const searchableItems: SearchableItem[] = [];
+  const descriptorEntries = Array.from(routeDescriptors.values());
 
-    workspaceGroups.forEach((workspace) => {
-      const workspaceName = workspace.getLocalizedName(language);
+  for (const workspace of workspaceGroups) {
+    if (workspace.isLocked) continue;
 
-      workspace.menuItems.forEach((rootItem) => {
-        const rootName = rootItem.getLocalizedName(language);
+    const workspaceName = workspace.getLocalizedName(language);
+    const cachedNav = cachedWorkspaces.get(workspace.workspaceKey);
+    const menuTree =
+      workspace.menuItems.length > 0 ? workspace.menuItems : (cachedNav?.menuItems ?? []);
 
-        // Add root item if it has an href
-        if (rootItem.href && rootItem.href !== "#") {
-          items.push({
-            id: rootItem.id,
-            title: rootName,
-            href: rootItem.href,
-            iconName: rootItem.icon || "Folder",
+    const workspaceDescriptors = descriptorEntries.filter(
+      (d) => d.accessState === "authorized" && d.workspaceKey === workspace.workspaceKey
+    );
+
+    const workspaceHref =
+      workspace.effectiveHomeRoute ||
+      collectFirstMenuHref(menuTree) ||
+      workspaceDescriptors[0]?.route ||
+      "/overview";
+
+    // Always index each unlocked workspace directly so unhydrated workspaces remain jumpable.
+    searchableItems.push({
+      id: `ws:${workspace.workspaceKey}`,
+      titleSegments: [workspaceName],
+      href: workspaceHref,
+      searchValue: [
+        workspace.workspaceNameEn,
+        workspace.workspaceNameAr,
+        workspace.workspaceKey,
+        workspaceHref,
+      ]
+        .filter(Boolean)
+        .join(" "),
+      iconName: workspace.workspaceIcon || "Layers",
+      workspaceKey: workspace.workspaceKey,
+      rootItemId: menuTree[0]?.id ?? null,
+      groupName: workspaceName,
+    });
+
+    const seenHrefs = new Set<string>();
+
+    const traverseMenu = (
+      nodes: MenuItem[],
+      rootId: string,
+      localizedParents: string[],
+      enParents: string[],
+      arParents: string[]
+    ) => {
+      for (const node of nodes) {
+        const nodeLabel = node.getLocalizedName(language);
+        const nextLocalized = [...localizedParents, nodeLabel];
+        const nextEn = [...enParents, node.nameEn || nodeLabel];
+        const nextAr = [...arParents, node.nameAr || nodeLabel];
+
+        if (node.href && node.href !== "#") {
+          const normalized = normalizeRoutePath(node.href);
+          seenHrefs.add(normalized);
+          searchableItems.push({
+            id: `${workspace.workspaceKey}:${node.id}`,
+            titleSegments: nextLocalized,
+            href: node.href,
+            searchValue: [
+              ...nextEn,
+              ...nextAr,
+              workspace.workspaceNameEn,
+              workspace.workspaceNameAr,
+              workspace.workspaceKey,
+              node.href,
+            ]
+              .filter(Boolean)
+              .join(" "),
+            iconName: node.icon || "FileText",
             workspaceKey: workspace.workspaceKey,
-            rootItemId: rootItem.id,
+            rootItemId: rootId,
             groupName: workspaceName,
           });
         }
 
-        // Recursively add children
-        const traverse = (children: MenuItem[], parentNames: string[]) => {
-          children.forEach((child) => {
-            const childName = child.getLocalizedName(language);
-            const fullPathNames = [...parentNames, childName];
-
-            if (child.href && child.href !== "#") {
-              items.push({
-                id: child.id,
-                title: fullPathNames.join(" / "),
-                href: child.href,
-                iconName: child.icon || "FileText",
-                workspaceKey: workspace.workspaceKey,
-                rootItemId: rootItem.id,
-                groupName: workspaceName,
-              });
-            }
-
-            traverse(child.children, fullPathNames);
-          });
-        };
-
-        traverse(rootItem.children, [rootName]);
-      });
-    });
-
-    return items;
-  }, [workspaceGroups, language]);
-
-  // Group items by workspace name for organized display
-  const groupedItems = useMemo(() => {
-    const groups: Record<string, SearchableItem[]> = {};
-    searchableItems.forEach((item) => {
-      if (!groups[item.groupName]) {
-        groups[item.groupName] = [];
+        if (node.children.length > 0) {
+          traverseMenu(node.children, rootId, nextLocalized, nextEn, nextAr);
+        }
       }
-      groups[item.groupName].push(item);
-    });
-    return groups;
-  }, [searchableItems]);
+    };
 
-  // Handle keyboard shortcut
+    for (const rootItem of menuTree) {
+      traverseMenu([rootItem], rootItem.id, [], [], []);
+    }
+
+    // Index authorized routes from unhydrated workspaces that do not duplicate loaded menu items.
+    for (const descriptor of workspaceDescriptors) {
+      const normalizedRoute = normalizeRoutePath(descriptor.route);
+      if (normalizedRoute.includes("[") || seenHrefs.has(normalizedRoute)) {
+        continue;
+      }
+      seenHrefs.add(normalizedRoute);
+      const humanized = humanizeRouteLabel(normalizedRoute);
+      searchableItems.push({
+        id: `route:${workspace.workspaceKey}:${normalizedRoute}`,
+        titleSegments: [humanized],
+        href: normalizedRoute,
+        searchValue: [
+          humanized,
+          workspace.workspaceNameEn,
+          workspace.workspaceNameAr,
+          workspace.workspaceKey,
+          normalizedRoute,
+        ]
+          .filter(Boolean)
+          .join(" "),
+        iconName: workspace.workspaceIcon || "FileText",
+        workspaceKey: workspace.workspaceKey,
+        rootItemId: menuTree[0]?.id ?? null,
+        groupName: workspaceName,
+      });
+    }
+  }
+
+  const groupedItems = new Map<string, SearchableItem[]>();
+  for (const item of searchableItems) {
+    const existing = groupedItems.get(item.groupName);
+    if (existing) {
+      existing.push(item);
+    } else {
+      groupedItems.set(item.groupName, [item]);
+    }
+  }
+
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
@@ -113,14 +212,15 @@ export function NexusSearchPalette({ open, onOpenChange }: NexusSearchPalettePro
   }, [open, onOpenChange]);
 
   const handleSelect = (item: SearchableItem) => {
-    // 1. Switch to the correct workspace
     setActiveWorkspace(item.workspaceKey);
-    // 2. Switch to the correct root item so the panel shows its children
-    setActiveRootItemId(item.rootItemId);
-    // 3. Navigate
+    if (item.rootItemId) {
+      setActiveRootItemId(item.rootItemId);
+    }
+    if (navContextKey) {
+      recordRecentWorkspace(navContextKey, item.workspaceKey);
+    }
     startRoutingProgress();
     router.push(item.href);
-    // 4. Close palette
     onOpenChange(false);
   };
 
@@ -135,20 +235,34 @@ export function NexusSearchPalette({ open, onOpenChange }: NexusSearchPalettePro
       <CommandList dir={direction}>
         <CommandEmpty>{t("common.noResultsFound")}</CommandEmpty>
 
-        {Object.entries(groupedItems).map(([groupName, items]) => (
-          <CommandGroup key={groupName} heading={groupName}>
+        {Array.from(groupedItems.entries()).map(([groupName, items]) => (
+          <CommandGroup key={groupName} heading={<bdi>{groupName}</bdi>}>
             {items.map((item) => {
               const IconComponent = iconRegistry[item.iconName] || LucideIcons.FileText;
 
               return (
                 <CommandItem
                   key={item.id}
-                  value={item.title + " " + item.href} // Index by title and href for better matching
+                  value={item.searchValue}
                   onSelect={() => handleSelect(item)}
                   className="flex cursor-pointer items-center gap-2.5"
                 >
                   <IconComponent className="h-4 w-4 shrink-0 text-nx-ink-2" aria-hidden />
-                  <span className="min-w-0 flex-1 truncate text-start">{item.title}</span>
+                  <span className="min-w-0 flex-1 truncate text-start">
+                    {item.titleSegments.map((segment, index) => (
+                      <React.Fragment key={`${item.id}-seg-${index}`}>
+                        {index > 0 && (
+                          <span className="mx-1 text-nx-ink-3" aria-hidden="true">
+                            /
+                          </span>
+                        )}
+                        <bdi>{segment}</bdi>
+                      </React.Fragment>
+                    ))}
+                  </span>
+                  <span className="hidden max-w-[160px] shrink-0 truncate font-mono text-[11px] text-nx-ink-3 sm:inline">
+                    <bdi dir="ltr">{item.href}</bdi>
+                  </span>
                   <LucideIcons.ChevronRight
                     className="ms-auto h-3.5 w-3.5 shrink-0 text-nx-ink-3 rtl:rotate-180"
                     aria-hidden="true"

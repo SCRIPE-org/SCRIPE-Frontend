@@ -25,6 +25,10 @@ export type { TenantProps, TenantTreeNode } from "../tenants/src/domain/entities
 export { Role } from "../roles/src/domain/entities/Role";
 export { useRolesViewModel } from "../roles/src/presentation/viewmodels/useRolesViewModel";
 export { RolePermissionsDialog } from "../roles/src/presentation/components/RolePermissionsDialog";
+export {
+  getRoleLandingFields,
+  getRoleEditInitialValues,
+} from "../roles/src/presentation/views/rolesFormFields";
 
 // User Groups
 export { UserGroup } from "../user-groups/src/domain/entities/UserGroup";

@@ -68,6 +68,10 @@ export function buildPreferencesUpdatePayload(data: Partial<SovereignPreferences
     calendarSystem: data.calendarSystem,
     firstDayOfWeek: data.firstDayOfWeek,
     toastPosition: data.toastPosition,
+    ...(data.startupTarget !== undefined ? { startupTarget: data.startupTarget } : {}),
+    ...(data.clearStartupTarget !== undefined
+      ? { clearStartupTarget: data.clearStartupTarget }
+      : {}),
     ...(data.rowVersion !== undefined ? { rowVersion: data.rowVersion } : {}),
   };
 }

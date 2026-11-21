@@ -22,6 +22,15 @@ export type { WorkspaceGroupData } from "./domain/entities/WorkspaceGroup";
 
 export { NavigationData } from "./domain/entities/NavigationData";
 export type { NavigationDataInput } from "./domain/entities/NavigationData";
+export {
+  buildStructuredLandingTargetOptions,
+  canEnforceLandingTarget,
+} from "./domain/utils/landing-target-options";
+export type {
+  BuildLandingTargetOptionsInput,
+  LandingTargetOptionLabels,
+  StructuredLandingOption,
+} from "./domain/utils/landing-target-options";
 
 // ── Domain interface ─────────────────────────────────────────────────────────
 export type {

@@ -1,15 +1,11 @@
 "use client";
 
 /**
- * HubHero — Hero greeting section for the Hub page.
- *
- * Layout:
- * ● All systems operational · Sunday, May 24
- * Good evening, Seif.
- * Your apps & workspaces — pick up where you left off.
+ * HubHero — Hero greeting section for the Workspace Hub page.
  */
 
 import React from "react";
+import { Calendar } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useAppStore } from "@core/store/useAppStore";
 
@@ -22,18 +18,25 @@ export function HubHero() {
 
   return (
     <div className="relative pb-5 pt-6 sm:pt-9">
-      {/* Status pill */}
-      <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-nx-line bg-nx-hover px-2.5 py-1 text-xs font-medium text-nx-ink-2">
-        <span className="h-1.5 w-1.5 rounded-full bg-success" aria-hidden="true" />
+      {/* Neutral operational date pill (no fabricated telemetry) */}
+      <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-nx-line bg-nx-raised px-3 py-1 text-xs font-medium text-nx-ink-2">
+        <Calendar className="h-3.5 w-3.5 text-nx-ink-3" aria-hidden="true" />
         <span>
-          {t("workspaceHub.status.operational")} · {dateStr}
+          <bdi>{dateStr}</bdi>
         </span>
       </div>
 
       {/* Greeting */}
       <h1 className="text-balance text-2xl font-bold leading-tight tracking-tight text-nx-ink sm:text-3xl lg:text-4xl">
         {greeting}
-        {adminFirstName ? `, ${adminFirstName}.` : "."}
+        {adminFirstName ? (
+          <>
+            {", "}
+            <bdi>{adminFirstName}</bdi>.
+          </>
+        ) : (
+          "."
+        )}
       </h1>
 
       {/* Subtitle */}
@@ -41,8 +44,6 @@ export function HubHero() {
     </div>
   );
 }
-
-// ── Helpers ──────────────────────────────────────────────────────────────────
 
 function getGreeting(t: (key: string) => string): string {
   const hour = new Date().getHours();

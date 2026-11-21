@@ -61,6 +61,7 @@ export interface HubModuleTileProps {
   isLocked: boolean;
   isPinned: boolean;
   isPinLoading?: boolean;
+  isPinDisabled?: boolean;
   accessibleItemCount: number;
   itemLabel: string;
   size?: "lg" | "md";
@@ -91,6 +92,7 @@ export function HubModuleTile({
   isLocked,
   isPinned,
   isPinLoading = false,
+  isPinDisabled = false,
   accessibleItemCount,
   itemLabel,
   size = "lg",
@@ -144,26 +146,26 @@ export function HubModuleTile({
       />
 
       {/* Pin star (top corner, pinned state) */}
-      {isPinned && !isLocked && onTogglePin && (
+      {isPinned && !isLocked && (onTogglePin || isPinDisabled) && (
         <Button
           type="button"
           variant="ghost"
           size="icon"
           onClick={(e) => {
             e.stopPropagation();
-            onTogglePin(e);
+            if (!isPinDisabled) onTogglePin?.(e);
           }}
-          disabled={isPinLoading}
-          aria-label={t("workspaceHub.pin.unpin")}
-          className={pinOverlayClass}
-          style={{ cursor: isPinLoading ? "wait" : "pointer" }}
+          disabled={isPinLoading || isPinDisabled}
+          aria-label={t("workspaceHub.pin.unpinWorkspace", { name })}
+          className={cn(pinOverlayClass, isPinDisabled && "cursor-not-allowed opacity-60")}
+          style={{ cursor: isPinLoading ? "wait" : isPinDisabled ? "not-allowed" : "pointer" }}
         >
           <Star size={13} fill="currentColor" strokeWidth={0} aria-hidden="true" />
         </Button>
       )}
 
-      {/* Unpin star on hover (when not pinned) — keyboard focus reveals it too */}
-      {!isPinned && !isLocked && onTogglePin && (
+      {/* Unpin star on hover/touch/focus-within (when not pinned and not read-only) */}
+      {!isPinned && !isLocked && onTogglePin && !isPinDisabled && (
         <Button
           type="button"
           variant="ghost"
@@ -173,10 +175,10 @@ export function HubModuleTile({
             onTogglePin(e);
           }}
           disabled={isPinLoading}
-          aria-label={t("workspaceHub.pin.pin")}
+          aria-label={t("workspaceHub.pin.pinWorkspace", { name })}
           className={cn(
             pinOverlayClass,
-            "opacity-0 transition-opacity duration-nx-micro ease-nx-enter focus-visible:opacity-100 group-hover:opacity-100 motion-reduce:transition-none"
+            "opacity-100 sm:opacity-0 sm:transition-opacity sm:duration-nx-micro sm:ease-nx-enter sm:focus-visible:opacity-100 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100 [@media(pointer:coarse)]:opacity-100 motion-reduce:transition-none"
           )}
           style={{ cursor: isPinLoading ? "wait" : "pointer" }}
         >
@@ -213,7 +215,7 @@ export function HubModuleTile({
           className="line-clamp-2 font-semibold leading-tight tracking-tight text-nx-ink"
           style={{ fontSize: dims.nameSize }}
         >
-          {name}
+          <bdi>{name}</bdi>
         </span>
         {accessibleItemCount > 0 && !isLocked && (
           <span

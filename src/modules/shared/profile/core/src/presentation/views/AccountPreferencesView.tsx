@@ -1,6 +1,9 @@
 "use client";
 
+import { useCoreImpersonation } from "@core/hooks/use-auth-bridge";
+import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useWorkspace } from "@core/providers/workspace-provider";
 import { Alert, AlertDescription } from "@core/ui/alert";
 import { toast, resolveRtlPosition, type SileoPosition } from "@core/ui/sileo-toast";
 import { useWorkstationPreferencesViewModel } from "../viewmodels/useWorkstationPreferencesViewModel";
@@ -15,6 +18,7 @@ import {
   type LogicalToastPosition,
 } from "../sections/preferences/ToastViewportPreferencesSection";
 import { RegionalPreferencesSection } from "../sections/preferences/RegionalPreferencesSection";
+import { StartupPreferencesSection } from "../sections/preferences/StartupPreferencesSection";
 
 function resolveBrowserTimezone(): string {
   try {
@@ -44,8 +48,12 @@ function resolveLogicalToastPosition(rawPosition: string | undefined): LogicalTo
  * (/account/preferences) using continuous serialized auto-save without a manual save button.
  */
 export function AccountPreferencesView() {
-  const { t, direction } = useI18n();
+  const { t, language, direction } = useI18n();
   const isRtl = direction === "rtl";
+  const { isImpersonating } = useCoreImpersonation();
+  const { workspaceGroups } = useWorkspace();
+  const cachedWorkspaces = useNavigationStore((s) => s.workspaces);
+  const storeContextKey = useNavigationStore((s) => s.contextKey);
   const {
     theme,
     setTheme,
@@ -54,7 +62,7 @@ export function AccountPreferencesView() {
     availableAccents,
     density,
     setDensity,
-    language,
+    language: prefLanguage,
     setLanguage,
     privacyBlur,
     setPrivacyBlur,
@@ -66,6 +74,14 @@ export function AccountPreferencesView() {
     setReducedMotion,
     toastPosition,
     setToastPosition,
+    startupTarget,
+    setStartupTarget,
+    clearStartupTarget,
+    activeContextKey,
+    isStartupTargetEnforcedByRole,
+    enforcingRoleName,
+    startupTargetFallbackActive,
+    startupTargetFallbackReason,
     syncStatus,
     pendingCount,
     persistError,
@@ -192,7 +208,7 @@ export function AccountPreferencesView() {
 
       <RegionalPreferencesSection
         t={t}
-        language={language}
+        language={prefLanguage}
         numeralSystem={numeralSystem}
         timezone={timezone}
         quickTimezones={quickTimezones}
@@ -201,6 +217,22 @@ export function AccountPreferencesView() {
         onNumeralSystemChange={setNumeralSystem}
         onTimezoneChange={setTimezone}
         onReducedMotionChange={setReducedMotion}
+      />
+
+      <StartupPreferencesSection
+        t={t}
+        language={language}
+        startupTarget={startupTarget}
+        activeContextKey={activeContextKey || storeContextKey}
+        isImpersonating={isImpersonating}
+        isEnforcedByRole={isStartupTargetEnforcedByRole}
+        enforcingRoleName={enforcingRoleName}
+        fallbackActive={startupTargetFallbackActive}
+        fallbackReason={startupTargetFallbackReason}
+        workspaceGroups={workspaceGroups}
+        cachedWorkspaces={cachedWorkspaces}
+        onStartupTargetChange={setStartupTarget}
+        onResetStartupTarget={clearStartupTarget}
       />
     </div>
   );

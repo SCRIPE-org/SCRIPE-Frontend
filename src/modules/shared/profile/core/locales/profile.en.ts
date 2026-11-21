@@ -1253,6 +1253,26 @@ export const en = {
       numeralSampleLabel: "Sample output:",
       timezoneSearchLabel: "All IANA Timezones",
       reducedMotionDesc: "Minimize UI animations and motion transitions across screens.",
+      startupTitle: "Startup & Post-Login Destination",
+      startupDesc:
+        "Choose which authorized destination opens immediately after sign-in for this context.",
+      startupContextLabel: "Active Context",
+      startupContextPlatform: "Platform Control Plane",
+      startupTargetLabel: "Preferred Startup Destination",
+      startupTargetPlaceholder: "Select startup destination...",
+      startupResetButton: "Reset to automatic",
+      startupImpersonationNotice:
+        "Startup preferences are read-only while impersonating another administrator.",
+      startupEnforcedByRoleNotice:
+        "Your startup destination is enforced by role policy: {{role}}.",
+      startupFallbackNotice:
+        "Your saved startup destination was unavailable ({{reason}}), so SCRIPE opened the safe fallback destination.",
+      startupDefaultOption: "Default (Role / System Automatic)",
+      startupOverviewOption: "Overview (/overview)",
+      startupHubOption: "Workspace Hub (/hub)",
+      startupWorkspacePrefix: "Workspace:",
+      startupMenuPrefix: "Page:",
+      startupUnknownFallbackReason: "target unavailable in current context",
     },
     infoPopover: {
       triggerAria: "About {{section}}",

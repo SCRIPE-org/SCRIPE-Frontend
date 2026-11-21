@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getModuleApiService } from "@core/services/api-factory";
-import { HubActivityService } from "./hub/src/data/services/HubActivityService";
-import { HubActivityRepository } from "./hub/src/data/repositories/HubActivityRepository";
-import type { IHubActivityRepository } from "./hub/src/domain/interfaces/IHubActivityRepository";
+import { HubPersonalFeedService } from "./hub/src/data/services/HubPersonalFeedService";
+import { HubPersonalFeedRepository } from "./hub/src/data/repositories/HubPersonalFeedRepository";
+import type { IHubPersonalFeedRepository } from "./hub/src/domain/interfaces/IHubPersonalFeedRepository";
 
 export interface HomeContainer {
-  hubActivityRepository: IHubActivityRepository;
+  hubPersonalFeedRepository: IHubPersonalFeedRepository;
 }
 
 let _container: HomeContainer | null = null;
@@ -20,22 +20,22 @@ function getHomeContainer(): HomeContainer {
       },
     });
     return {
-      hubActivityRepository: dummyProxy,
+      hubPersonalFeedRepository: dummyProxy,
     };
   }
 
   const apiService = getModuleApiService("IDENTITY");
-  const activityService = new HubActivityService(apiService);
+  const personalFeedService = new HubPersonalFeedService(apiService);
 
   _container = {
-    hubActivityRepository: new HubActivityRepository(activityService),
+    hubPersonalFeedRepository: new HubPersonalFeedRepository(personalFeedService),
   };
 
   return _container;
 }
 
 export const homeContainer = {
-  get hubActivityRepository() {
-    return getHomeContainer().hubActivityRepository;
+  get hubPersonalFeedRepository() {
+    return getHomeContainer().hubPersonalFeedRepository;
   },
 };

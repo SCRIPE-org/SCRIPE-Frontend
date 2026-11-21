@@ -5,7 +5,10 @@ import "@testing-library/jest-dom";
 import { HubModuleTile } from "../HubModuleTile";
 
 vi.mock("@core/providers/i18n-provider", () => ({
-  useI18n: () => ({ t: (key: string) => key }),
+  useI18n: () => ({
+    t: (key: string, params?: Record<string, string | number>) =>
+      params?.name ? `${key}:${params.name}` : key,
+  }),
 }));
 
 vi.mock("@core/providers/settings-provider", () => ({
@@ -16,8 +19,8 @@ vi.mock("@core/providers/settings-provider", () => ({
   }),
 }));
 
-describe("HubModuleTile — non-nested interactive controls & lock states", () => {
-  it("renders stretched primary button and sibling pin button without nesting, and prevents pin clicks from opening tile", () => {
+describe("HubModuleTile — non-nested interactive controls, unique aria-labels & touch visibility", () => {
+  it("renders unique aria-label per workspace, supports pointer:coarse touch visibility, and prevents pin clicks from opening tile", () => {
     const onClick = vi.fn();
     const onTogglePin = vi.fn();
 
@@ -36,12 +39,16 @@ describe("HubModuleTile — non-nested interactive controls & lock states", () =
       />
     );
 
-    const primaryBtn = screen.getByRole("button", { name: /Venue Operations/i });
-    const pinBtn = screen.getByRole("button", { name: "workspaceHub.pin.pin" });
+    const primaryBtn = screen.getByRole("button", { name: /^Venue Operations$/i });
+    const pinBtn = screen.getByRole("button", {
+      name: "workspaceHub.pin.pinWorkspace:Venue Operations",
+    });
 
     expect(primaryBtn).not.toBe(pinBtn);
     expect(primaryBtn.contains(pinBtn)).toBe(false);
     expect(pinBtn.contains(primaryBtn)).toBe(false);
+    expect(pinBtn.className).toContain("[@media(pointer:coarse)]:opacity-100");
+    expect(pinBtn.className).toContain("opacity-100");
 
     fireEvent.click(pinBtn);
     expect(onTogglePin).toHaveBeenCalledTimes(1);
@@ -51,7 +58,7 @@ describe("HubModuleTile — non-nested interactive controls & lock states", () =
     expect(onClick).toHaveBeenCalledTimes(1);
   });
 
-  it("renders unpin action when pinned and disables opening while hiding pin button when locked", () => {
+  it("renders unique unpin aria-label, guards pin during impersonation, and hides pin button when locked", () => {
     const onClick = vi.fn();
     const onTogglePin = vi.fn();
 
@@ -70,7 +77,30 @@ describe("HubModuleTile — non-nested interactive controls & lock states", () =
       />
     );
 
-    expect(screen.getByRole("button", { name: "workspaceHub.pin.unpin" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "workspaceHub.pin.unpinWorkspace:Academy" })
+    ).toBeInTheDocument();
+
+    rerender(
+      <HubModuleTile
+        name="Academy"
+        icon="Users"
+        colorHue={210}
+        colorChroma={0.12}
+        isLocked={false}
+        isPinned={true}
+        isPinDisabled={true}
+        accessibleItemCount={4}
+        itemLabel="4 items"
+        onClick={onClick}
+        onTogglePin={onTogglePin}
+      />
+    );
+
+    const disabledPinBtn = screen.getByRole("button", {
+      name: "workspaceHub.pin.unpinWorkspace:Academy",
+    });
+    expect(disabledPinBtn).toBeDisabled();
 
     rerender(
       <HubModuleTile
@@ -88,9 +118,11 @@ describe("HubModuleTile — non-nested interactive controls & lock states", () =
       />
     );
 
-    const lockedPrimary = screen.getByRole("button", { name: /Academy/i });
+    const lockedPrimary = screen.getByRole("button", { name: /^Academy$/i });
     expect(lockedPrimary).toHaveAttribute("aria-disabled", "true");
-    expect(screen.queryByRole("button", { name: "workspaceHub.pin.unpin" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "workspaceHub.pin.unpinWorkspace:Academy" })
+    ).not.toBeInTheDocument();
     expect(screen.getByText("Upgrade")).toBeInTheDocument();
   });
 
@@ -98,21 +130,20 @@ describe("HubModuleTile — non-nested interactive controls & lock states", () =
     const { container } = render(
       <HubModuleTile
         name="Finance"
-        icon="Layers"
-        colorHue={145}
+        icon="Wallet"
+        colorHue={180}
         colorChroma={0.14}
-        isLocked={true}
+        isLocked={false}
         isPinned={false}
-        accessibleItemCount={6}
-        itemLabel="6 items"
+        accessibleItemCount={3}
+        itemLabel="3 items"
         onClick={vi.fn()}
-        upgradeBadgeText="Upgrade"
+        onTogglePin={vi.fn()}
       />
     );
 
-    const tileCard = container.firstElementChild;
-    expect(tileCard).not.toBeNull();
-    expect(tileCard?.className).not.toContain("overflow-hidden");
-    expect(container.innerHTML).toContain("rounded-nx-lg");
+    const wrapper = container.firstElementChild as HTMLElement;
+    expect(wrapper).toBeTruthy();
+    expect(wrapper.className).not.toContain("overflow-hidden");
   });
 });

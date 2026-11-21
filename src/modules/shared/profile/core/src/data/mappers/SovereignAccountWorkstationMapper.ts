@@ -53,6 +53,13 @@ export function mapPreferencesSlice(raw: any): SovereignPreferencesSlice {
         ? JSON.stringify(raw.savedPresets)
         : "[]"),
     rowVersion: raw.rowVersion ?? undefined,
+    startupTarget: raw.activeStartupTarget ?? raw.startupTarget ?? null,
+    activeStartupTarget: raw.activeStartupTarget ?? null,
+    activeContextKey: raw.activeContextKey ?? null,
+    isStartupTargetEnforcedByRole: Boolean(raw.isStartupTargetEnforcedByRole),
+    enforcingRoleName: raw.enforcingRoleName ?? null,
+    startupTargetFallbackActive: Boolean(raw.startupTargetFallbackActive),
+    startupTargetFallbackReason: raw.startupTargetFallbackReason ?? null,
   };
 }
 

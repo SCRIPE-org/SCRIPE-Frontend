@@ -297,7 +297,7 @@ export interface FieldConfig {
   isVisible?: (formData: Record<string, any>) => boolean; // Function to determine visibility
   onChange?: (value: any, formData: Record<string, any>) => void | Record<string, any>; // Callback when field value changes, can return object to update multiple fields
   loading?: boolean; // Show loading state
-  disabled?: boolean; // Disable field
+  disabled?: boolean | ((formData: Record<string, any>) => boolean); // Disable field statically or based on formData
   // Validation
   pattern?: string; // For text inputs
   patternError?: string; // Custom error message when pattern fails
@@ -764,6 +764,16 @@ export function isFieldRequired(field: FieldConfig, formData?: Record<string, an
     return Boolean(field.required(formData ?? {}));
   }
   return Boolean(field.required);
+}
+
+/**
+ * Determines whether a field is disabled, evaluating dynamic predicates against formData if provided.
+ */
+export function isFieldDisabled(field: FieldConfig, formData?: Record<string, any>): boolean {
+  if (typeof field.disabled === "function") {
+    return Boolean(field.disabled(formData ?? {}));
+  }
+  return Boolean(field.disabled);
 }
 
 function isRequiredFieldEmpty(field: FieldConfig, val: unknown): boolean {
@@ -1367,7 +1377,8 @@ export function GenericForm({
             // Read-only is NOT disabled: text fields stay focusable and
             // selectable so a value can be copied out of a view dialog, while
             // pickers and toggles (which have nothing to copy) go inert.
-            const inert = field.disabled || readOnly;
+            const fieldDisabled = isFieldDisabled(field, formData);
+            const inert = fieldDisabled || readOnly;
             // Boolean, not the number itself — a bare `maxLength &&` would
             // render a literal 0 into the form when a caller passes 0.
             const counted = Boolean(
@@ -1412,7 +1423,7 @@ export function GenericForm({
                           getLabelClasses(),
                           "text-start",
                           invalid && "text-nx-danger",
-                          field.disabled && "text-nx-ink-3"
+                          fieldDisabled && "text-nx-ink-3"
                         )}
                       >
                         {field.label}
@@ -1599,7 +1610,7 @@ export function GenericForm({
                         field.pairedName ? { [field.pairedName]: next.ar } : undefined
                       )
                     }
-                    disabled={field.disabled || inert}
+                    disabled={fieldDisabled || inert}
                     readOnly={readOnly}
                     labelEn={field.placeholder ?? tr("language.english", "English")}
                     labelAr={field.searchPlaceholder ?? tr("language.arabic", "Arabic")}
@@ -1636,7 +1647,7 @@ export function GenericForm({
                     )}
                     placeholder={field.placeholder}
                     rows={field.rows || 4}
-                    disabled={field.disabled}
+                    disabled={fieldDisabled}
                     readOnly={readOnly}
                     minLength={field.minLength}
                     maxLength={field.maxLength}
@@ -1656,7 +1667,7 @@ export function GenericForm({
                     placeholder={field.placeholder}
                     // TipTap editor exposes readOnly (not disabled); honour both the
                     // per-field flag and the form-level read-only mode
-                    readOnly={field.disabled || readOnly}
+                    readOnly={fieldDisabled || readOnly}
                     // px string — the editor feeds this into a CSS custom property
                     minHeight={field.rows ? `${field.rows * 20}px` : "200px"}
                     className="text-start"
@@ -1670,7 +1681,7 @@ export function GenericForm({
                       className={cn(
                         "text-start",
                         invalid && "text-nx-danger",
-                        field.disabled && "text-nx-ink-3"
+                        fieldDisabled && "text-nx-ink-3"
                       )}
                     >
                       {field.label}
@@ -1684,7 +1695,7 @@ export function GenericForm({
                       id={field.name}
                       checked={formData[field.name] || false}
                       onCheckedChange={(checked) => handleChange(field.name, checked)}
-                      disabled={field.disabled}
+                      disabled={fieldDisabled}
                       readOnly={readOnly}
                       aria-required={isFieldRequired(field, formData) || undefined}
                       aria-invalid={invalid || undefined}
@@ -1853,7 +1864,7 @@ export function GenericForm({
                         invalid && "border-nx-danger"
                       )}
                       placeholder={field.placeholder}
-                      disabled={field.disabled}
+                      disabled={fieldDisabled}
                       readOnly={readOnly}
                       autoComplete={field.autoComplete ?? "new-password"}
                       data-1p-ignore="true"
@@ -1886,7 +1897,7 @@ export function GenericForm({
                       pattern={field.pattern}
                       minLength={field.minLength}
                       maxLength={field.maxLength}
-                      disabled={field.disabled}
+                      disabled={fieldDisabled}
                       readOnly={readOnly}
                       autoComplete={field.autoComplete ?? "off"}
                       data-1p-ignore="true"

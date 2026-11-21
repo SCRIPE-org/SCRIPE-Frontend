@@ -78,6 +78,22 @@ export function RoleInfoCard({
                 </Badge>
               </div>
 
+              <div>
+                <p className="text-xs font-medium uppercase tracking-wide text-nx-ink-3">
+                  {t("roles.defaultLandingTarget")}
+                </p>
+                <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+                  <Badge variant="outline" className="font-mono text-xs">
+                    <bdi dir="ltr">{role?.defaultLandingTarget || "default"}</bdi>
+                  </Badge>
+                  {role?.isLandingEnforced && (
+                    <Badge variant="accent" className="text-xs">
+                      {t("roles.landingEnforcedBadge")}
+                    </Badge>
+                  )}
+                </div>
+              </div>
+
               {adminCount !== undefined && adminCount > 0 && (
                 <div>
                   <p className="text-xs font-medium uppercase tracking-wide text-nx-ink-3">

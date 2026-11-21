@@ -10,6 +10,11 @@ export { useRolesViewModel } from "./src/presentation/viewmodels/useRolesViewMod
 
 // Entities
 export { Role } from "./src/domain/entities/Role";
+export {
+  getRoleLandingFields,
+  getRoleEditInitialValues,
+  type RoleLandingFieldsContext,
+} from "./src/presentation/views/rolesFormFields";
 export type {
   RoleProps,
   RolePermission,

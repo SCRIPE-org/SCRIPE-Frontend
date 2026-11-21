@@ -23,6 +23,14 @@ export interface SovereignPreferencesSlice {
   customHotkeysJson: string;
   savedFilterPresetsJson: string;
   rowVersion?: string;
+  startupTarget?: string | null;
+  clearStartupTarget?: boolean;
+  activeStartupTarget?: string | null;
+  activeContextKey?: string | null;
+  isStartupTargetEnforcedByRole?: boolean;
+  enforcingRoleName?: string | null;
+  startupTargetFallbackActive?: boolean;
+  startupTargetFallbackReason?: string | null;
 }
 
 /** Per-category notification channel delivery preference rule. */

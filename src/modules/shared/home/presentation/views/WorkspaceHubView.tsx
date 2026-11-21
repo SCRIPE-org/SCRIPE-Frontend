@@ -1,47 +1,50 @@
 "use client";
 
 /**
- * WorkspaceHubView — Premium App Launcher Hub page.
+ * WorkspaceHubView — Personal Operational Home (`/hub`).
  *
- * Odoo/M365-style full-screen workspace picker with vibrant gradient tiles.
- * This is the landing page after login — shows all accessible workspaces.
- *
- * Sections:
- * - Unified NexusLayout topbar + rails (no orphan HubTopBar / HubFooter)
- * - HubHero: greeting + status pill
- * - HubSearch: the shared Input primitive with a / shortcut
- * - Pinned strip: smaller tiles of pinned workspaces
- * - Modules grid: 5-column grid of all module workspaces
- * - Administration grid: muted admin workspaces
- * - Side panel: Today activity + Recent items
- *
- * Smart landing:
- * - 1 workspace only → auto-redirect (skip Hub)
- * - Search filters tiles by name (debounced)
+ * Strictly adheres to SCRIPE frontend architecture invariants:
+ * - Zero mount-time auto-redirect (users explicitly landing on `/hub` stay on `/hub`)
+ * - Strictly authorized unlocked workspaces + permission-gated billing/upgrade visibility
+ * - Context-isolated Recent Workspaces strip + AdminWorkspacePin persistence
+ * - Deferred, impersonation-safe Personal Notifications + Account & Sign-In Activity panels
+ * - Zero audit/hub-summary telemetry calls and zero fabricated placeholder content
  */
 
-import React, { useEffect, useMemo, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { useWorkspace } from "@core/providers/workspace-provider";
-import { useAdminContext } from "@core/hooks/useAdminContext";
+import { History, LayoutGrid, SearchX, Star } from "lucide-react";
+import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { TenantContextSwitcherDialog } from "@core/components/tenant-context";
-import { useI18n } from "@core/providers/i18n-provider";
+import { useAdminContext } from "@core/hooks/useAdminContext";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
-import { useWorkspaceTransition } from "@core/ui/layout/nexus/use-workspace-transition";
-import { UpgradeDialog } from "@core/ui/layout/nexus/nexus-app-launcher";
-
-import { Star, SearchX, LayoutGrid } from "lucide-react";
-import { Button } from "@core/ui/button";
-import { EmptyState } from "@core/ui/empty-state";
-import { LoadingSpinner } from "@core/ui/loading-spinner";
 import type { WorkspaceGroup } from "@core/navigation/domain/entities/WorkspaceGroup";
-
+import { useI18n } from "@core/providers/i18n-provider";
+import { usePermissions } from "@core/providers/permission-provider";
+import { useWorkspace } from "@core/providers/workspace-provider";
+import { EmptyState } from "@core/ui/empty-state";
+import { UpgradeDialog } from "@core/ui/layout/nexus/nexus-app-launcher";
+import { useWorkspaceTransition } from "@core/ui/layout/nexus/use-workspace-transition";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { toast } from "@core/ui/sileo-toast";
 import { HubHero } from "../components/HubHero";
-import { HubSearch } from "../components/HubSearch";
 import { HubModuleTile } from "../components/HubModuleTile";
+import { HubRecentWorkspacesStrip } from "../components/HubRecentWorkspacesStrip";
+import { HubSearch } from "../components/HubSearch";
 import { HubSectionHeader } from "../components/HubSectionHeader";
 import { HubSidePanel } from "../components/HubSidePanel";
-import { useHubActivity } from "../hooks/useHubActivity";
+import { formatHubItemCount, formatPinnedWorkspaceCount } from "../utils/hub-plurals";
+import { useHubPersonalFeeds } from "../viewmodels/useHubPersonalFeeds";
+
+function matchesWorkspaceQuery(ws: WorkspaceGroup, rawQuery: string): boolean {
+  const q = rawQuery.trim().toLowerCase();
+  if (!q) return true;
+  return (
+    ws.workspaceNameEn.toLowerCase().includes(q) ||
+    ws.workspaceNameAr.toLowerCase().includes(q) ||
+    ws.workspaceKey.toLowerCase().includes(q)
+  );
+}
 
 export function WorkspaceHubView() {
   const router = useRouter();
@@ -49,14 +52,23 @@ export function WorkspaceHubView() {
   const hasTenantContext = Boolean(activeTenantId);
   const { workspaceGroups, isLoading, togglePin } = useWorkspace();
   const { switchWorkspace } = useWorkspaceTransition();
+  const { hasAnyPermission } = usePermissions();
   const { language, t } = useI18n();
+
+  const recentWorkspaceKeysByContext = useNavigationStore((s) => s.recentWorkspaceKeysByContext);
+  const routesContextKey = useNavigationStore((s) => s.routesContextKey);
+  const storeContextKey = useNavigationStore((s) => s.contextKey);
+  const navContextKey = routesContextKey || storeContextKey || "default";
+
   const [searchQuery, setSearchQuery] = useState("");
   const [pinLoadingKeys, setPinLoadingKeys] = useState<Set<string>>(new Set());
   const [upgradeTarget, setUpgradeTarget] = useState<string | null>(null);
   const [switcherOpen, setSwitcherOpen] = useState(false);
-  const hubActivity = useHubActivity();
 
-  // ── Hub identity: no workspace is active on the Hub page ──────────────────
+  const feeds = useHubPersonalFeeds();
+  const isImpersonating = feeds.isImpersonating;
+
+  // Hub owns no active workspace highlight on the rail while browsing `/hub`.
   useEffect(() => {
     const state = useNavigationStore.getState();
     if (state.activeWorkspaceKey !== null) {
@@ -64,93 +76,46 @@ export function WorkspaceHubView() {
     }
   }, []);
 
-  // Track whether auto-redirect has already fired this session.
-  const [hasAutoRedirected, setHasAutoRedirected] = useState(false);
+  const canManageBilling = hasAnyPermission([
+    SYSTEM_PERMISSIONS.BILLING_DASHBOARD_VIEW,
+    SYSTEM_PERMISSIONS.BILLING_MANAGE,
+    SYSTEM_PERMISSIONS.SUBSCRIPTIONS_VIEW,
+    SYSTEM_PERMISSIONS.EDITIONS_VIEW,
+  ]);
 
-  // ── Workspace splits ──────────────────────────────────────────────────────
-
-  const { pinnedWorkspaces, moduleWorkspaces, adminWorkspaces, lockedWorkspaces } = useMemo(() => {
-    const pinned: WorkspaceGroup[] = [];
-    const modules: WorkspaceGroup[] = [];
-    const admin: WorkspaceGroup[] = [];
-    const locked: WorkspaceGroup[] = [];
-
-    for (const ws of workspaceGroups) {
-      if (ws.isLocked) {
-        locked.push(ws);
-        continue;
-      }
-      if (ws.isPinned) pinned.push(ws);
-      if (ws.isModuleWorkspace) modules.push(ws);
-      else admin.push(ws);
-    }
-
-    // Sort pinned by pinSortOrder
-    pinned.sort((a, b) => (a.pinSortOrder ?? 999) - (b.pinSortOrder ?? 999));
-
-    return {
-      pinnedWorkspaces: pinned,
-      moduleWorkspaces: modules,
-      adminWorkspaces: admin,
-      lockedWorkspaces: locked,
-    };
-  }, [workspaceGroups]);
-
-  // ── Search filtering ────────────────────────────────────────────────────────
-
-  const filterBySearch = useCallback(
-    (ws: WorkspaceGroup) => {
-      if (!searchQuery.trim()) return true;
-      const q = searchQuery.toLowerCase().trim();
-      return (
-        ws.workspaceNameEn.toLowerCase().includes(q) ||
-        ws.workspaceNameAr.toLowerCase().includes(q) ||
-        ws.workspaceKey.toLowerCase().includes(q)
-      );
-    },
-    [searchQuery]
+  const unlockedWorkspaces = workspaceGroups.filter((ws) => !ws.isLocked);
+  const unlockedByKey = new Map<string, WorkspaceGroup>(
+    unlockedWorkspaces.map((ws) => [ws.workspaceKey, ws])
   );
 
-  const filteredModules = useMemo(
-    () => moduleWorkspaces.filter(filterBySearch),
-    [moduleWorkspaces, filterBySearch]
-  );
-  const filteredAdmin = useMemo(
-    () => adminWorkspaces.filter(filterBySearch),
-    [adminWorkspaces, filterBySearch]
-  );
-  const filteredPinned = useMemo(
-    () => pinnedWorkspaces.filter(filterBySearch),
-    [pinnedWorkspaces, filterBySearch]
-  );
-  const filteredLocked = useMemo(
-    () => lockedWorkspaces.filter(filterBySearch),
-    [lockedWorkspaces, filterBySearch]
-  );
+  const pinnedWorkspaces = unlockedWorkspaces
+    .filter((ws) => ws.isPinned)
+    .sort((a, b) => (a.pinSortOrder ?? 999) - (b.pinSortOrder ?? 999));
 
-  const allUnlocked = useMemo(
-    () => workspaceGroups.filter((ws) => !ws.isLocked),
-    [workspaceGroups]
-  );
+  const moduleWorkspaces = unlockedWorkspaces.filter((ws) => ws.isModuleWorkspace);
+  const adminWorkspaces = unlockedWorkspaces.filter((ws) => !ws.isModuleWorkspace);
+  const lockedWorkspaces = canManageBilling ? workspaceGroups.filter((ws) => ws.isLocked) : [];
 
-  // ── Auto-redirect: 1 unlocked workspace → skip hub ────────────────────────
-  useEffect(() => {
-    if (isLoading) return;
-    if (hasAutoRedirected) return;
-    if (allUnlocked.length === 1 && lockedWorkspaces.length === 0) {
-      queueMicrotask(() => {
-        setHasAutoRedirected(true);
-        switchWorkspace(allUnlocked[0].workspaceKey, { preserveHistory: false });
-      });
-    }
-  }, [isLoading, allUnlocked, lockedWorkspaces, switchWorkspace, hasAutoRedirected]);
+  const recentKeys = recentWorkspaceKeysByContext[navContextKey] ?? [];
+  const recentWorkspaces = recentKeys
+    .map((key) => unlockedByKey.get(key))
+    .filter((ws): ws is WorkspaceGroup => Boolean(ws))
+    .slice(0, 4);
 
-  // ── Pin toggle handler ────────────────────────────────────────────────────
+  const filteredPinned = pinnedWorkspaces.filter((ws) => matchesWorkspaceQuery(ws, searchQuery));
+  const filteredRecent = recentWorkspaces.filter((ws) => matchesWorkspaceQuery(ws, searchQuery));
+  const filteredModules = moduleWorkspaces.filter((ws) => matchesWorkspaceQuery(ws, searchQuery));
+  const filteredAdmin = adminWorkspaces.filter((ws) => matchesWorkspaceQuery(ws, searchQuery));
+  const filteredLocked = lockedWorkspaces.filter((ws) => matchesWorkspaceQuery(ws, searchQuery));
+
   const handleTogglePin = useCallback(
     async (key: string) => {
+      if (isImpersonating) return;
       setPinLoadingKeys((prev) => new Set(prev).add(key));
       try {
         await togglePin(key);
+      } catch {
+        toast.error(t("workspaceHub.pin.toggleFailed"));
       } finally {
         setPinLoadingKeys((prev) => {
           const next = new Set(prev);
@@ -159,286 +124,266 @@ export function WorkspaceHubView() {
         });
       }
     },
-    [togglePin]
+    [isImpersonating, t, togglePin]
   );
 
-  // ── Tile click handler ────────────────────────────────────────────────────
   const handleTileClick = useCallback(
     (ws: WorkspaceGroup) => {
       if (ws.isLocked) {
-        setUpgradeTarget(ws.workspaceKey);
+        if (canManageBilling) {
+          setUpgradeTarget(ws.workspaceKey);
+        }
         return;
       }
       switchWorkspace(ws.workspaceKey, { preserveHistory: true });
     },
-    [switchWorkspace]
+    [canManageBilling, switchWorkspace]
   );
 
-  const upgradeWs = useMemo(
-    () => (upgradeTarget ? workspaceGroups.find((w) => w.workspaceKey === upgradeTarget) : null),
-    [upgradeTarget, workspaceGroups]
-  );
+  const upgradeWs = upgradeTarget
+    ? workspaceGroups.find((w) => w.workspaceKey === upgradeTarget) ?? null
+    : null;
 
-  // ── Helper: get localized name ─────────────────────────────────────────────
-  const getName = useCallback((ws: WorkspaceGroup) => ws.getLocalizedName(language), [language]);
-
-  // ── Helper: item label ─────────────────────────────────────────────────────
-  const getItemLabel = useCallback(
-    (ws: WorkspaceGroup) => {
-      const count = ws.accessibleItemCount;
-      if (count === 0) return "";
-      if (count === 1) return t("workspaceHub.items.one");
-      return t("workspaceHub.items.other", { count });
-    },
-    [t]
-  );
-
-  // ── Loading state ─────────────────────────────────────────────────────────
+  const hasAnyMatches =
+    filteredPinned.length > 0 ||
+    filteredRecent.length > 0 ||
+    filteredModules.length > 0 ||
+    filteredAdmin.length > 0 ||
+    filteredLocked.length > 0;
 
   if (isLoading) {
     return <LoadingSpinner fullHeight />;
   }
 
-  // Auto-redirect in progress
-  if (allUnlocked.length === 1 && lockedWorkspaces.length === 0 && !hasAutoRedirected) {
-    return <LoadingSpinner fullHeight />;
-  }
-
-  // ── Total module count for "X of Y licensed" label ─────────────────────────
-  const totalModules =
-    moduleWorkspaces.length + lockedWorkspaces.filter((ws) => ws.workspaceType === "Module").length;
-  const licensedCount = moduleWorkspaces.length;
-
-  const hasAnyResults =
-    filteredModules.length > 0 ||
-    filteredAdmin.length > 0 ||
-    filteredPinned.length > 0 ||
-    filteredLocked.length > 0;
-
   return (
-    <div className="relative mx-auto max-w-7xl px-4 pb-14 text-nx-ink sm:px-6 lg:px-10">
-      <HubHero />
+    <div className="min-h-full bg-nx-ground">
+      <div className="mx-auto max-w-[1360px] px-4 pb-16 sm:px-6 lg:px-8">
+        <HubHero />
+        <HubSearch value={searchQuery} onChange={setSearchQuery} />
 
-      <div className="h-2" />
-      <HubSearch value={searchQuery} onChange={setSearchQuery} />
-      <div className="h-6 sm:h-8" />
-
-      {/* Main content + side panel */}
-      <div className="flex flex-col items-stretch gap-8 lg:flex-row lg:items-start lg:gap-10">
-        {/* Left column — grids */}
-        <div className="min-w-0 flex-1">
-          {/* Pinned strip */}
-          {filteredPinned.length > 0 && !searchQuery && (
-            <section className="mb-8">
-              <HubSectionHeader
-                icon={
-                  <span className="inline-flex text-nx-warning-strong" aria-hidden="true">
-                    <Star size={13} fill="currentColor" strokeWidth={0} />
-                  </span>
-                }
-                title={t("workspaceHub.sections.pinned")}
-                subtitle={
-                  filteredPinned.length === 1
-                    ? t("workspaceHub.pinned.apps_one")
-                    : t("workspaceHub.pinned.apps_other", { count: filteredPinned.length })
-                }
-                action={
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={() =>
-                      document
-                        .getElementById("hub-modules-section")
-                        ?.scrollIntoView({ behavior: "smooth" })
-                    }
-                    className="h-auto cursor-pointer rounded-nx-sm border-0 bg-transparent p-0 text-xs font-medium text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:bg-transparent hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
-                  >
-                    {t("workspaceHub.pinned.manage")}
-                  </Button>
-                }
-              />
-              <div className="flex flex-wrap gap-3.5">
-                {filteredPinned.map((ws) => (
-                  <HubModuleTile
-                    key={ws.workspaceKey}
-                    name={getName(ws)}
-                    icon={ws.workspaceIcon}
-                    colorHue={ws.colorHue}
-                    colorChroma={ws.colorChroma}
-                    isLocked={false}
-                    isPinned={true}
-                    isPinLoading={pinLoadingKeys.has(ws.workspaceKey)}
-                    accessibleItemCount={ws.accessibleItemCount}
-                    itemLabel={getItemLabel(ws)}
-                    size="md"
-                    onClick={() => handleTileClick(ws)}
-                    onTogglePin={() => handleTogglePin(ws.workspaceKey)}
+        {unlockedWorkspaces.length === 0 ? (
+          <div className="mt-8 grid grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
+            <EmptyState
+              size="lg"
+              icon={LayoutGrid}
+              title={t("workspaceHub.emptyState")}
+              description={t("workspaceHub.emptyStateHint")}
+            />
+            <HubSidePanel
+              isImpersonating={feeds.isImpersonating}
+              notifications={feeds.notifications}
+              isLoadingNotifications={feeds.isLoadingNotifications}
+              isNotificationsError={feeds.isNotificationsError}
+              onRetryNotifications={() => void feeds.refetchNotifications()}
+              onMarkNotificationAsRead={feeds.markNotificationAsRead}
+              onMarkAllNotificationsAsRead={feeds.markAllNotificationsAsRead}
+              isMarkingNotification={feeds.isMarkingNotification}
+              activity={feeds.activity}
+              isLoadingActivity={feeds.isLoadingActivity}
+              isActivityError={feeds.isActivityError}
+              onRetryActivity={() => void feeds.refetchActivity()}
+            />
+          </div>
+        ) : (
+          <div className="mt-8 grid grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
+            {/* Left column: Workspaces & Launcher */}
+            <div className="min-w-0 space-y-10">
+              {/* 1. Pinned Workspaces */}
+              {filteredPinned.length > 0 && (
+                <section aria-label={t("workspaceHub.sections.pinned")}>
+                  <HubSectionHeader
+                    icon={<Star size={14} className="text-nx-accent" aria-hidden="true" />}
+                    title={t("workspaceHub.sections.pinned")}
+                    subtitle={formatPinnedWorkspaceCount(filteredPinned.length, language, t)}
                   />
-                ))}
-              </div>
-            </section>
-          )}
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5">
+                    {filteredPinned.map((ws) => (
+                      <HubModuleTile
+                        key={ws.workspaceKey}
+                        name={ws.getLocalizedName(language)}
+                        icon={ws.workspaceIcon}
+                        colorHue={ws.colorHue}
+                        colorChroma={ws.colorChroma}
+                        isLocked={false}
+                        isPinned={true}
+                        isPinDisabled={isImpersonating}
+                        isPinLoading={pinLoadingKeys.has(ws.workspaceKey)}
+                        accessibleItemCount={ws.accessibleItemCount}
+                        itemLabel={
+                          ws.accessibleItemCount > 0
+                            ? formatHubItemCount(ws.accessibleItemCount, language, t)
+                            : ""
+                        }
+                        size="lg"
+                        onClick={() => handleTileClick(ws)}
+                        onTogglePin={() => void handleTogglePin(ws.workspaceKey)}
+                      />
+                    ))}
+                  </div>
+                </section>
+              )}
 
-          {/* Modules grid */}
-          {(filteredModules.length > 0 ||
-            filteredLocked.some((ws) => ws.workspaceType === "Module")) && (
-            <section id="hub-modules-section" className="mb-9">
-              <HubSectionHeader
-                title={t("workspaceHub.sections.modules")}
-                subtitle={
-                  searchQuery
-                    ? filteredModules.length === 1
-                      ? t("workspaceHub.items.one")
-                      : t("workspaceHub.items.other", { count: filteredModules.length })
-                    : t("workspaceHub.modules.licensed", {
-                        count: licensedCount,
-                        total: totalModules,
-                      })
-                }
-                action={
-                  !searchQuery ? (
-                    <span className="rounded-full border border-nx-line bg-nx-hover px-2.5 py-1 text-[11px] font-medium tracking-wide text-nx-ink-3">
-                      {t("workspaceHub.modules.sortLabel")}
-                    </span>
-                  ) : undefined
-                }
-              />
-              <div className="grid max-w-[870px] grid-cols-2 gap-3 sm:grid-cols-[repeat(auto-fill,minmax(148px,158px))] sm:gap-4">
-                {filteredModules.map((ws) => (
-                  <HubModuleTile
-                    key={ws.workspaceKey}
-                    name={getName(ws)}
-                    icon={ws.workspaceIcon}
-                    colorHue={ws.colorHue}
-                    colorChroma={ws.colorChroma}
-                    isLocked={false}
-                    isPinned={ws.isPinned}
-                    isPinLoading={pinLoadingKeys.has(ws.workspaceKey)}
-                    accessibleItemCount={ws.accessibleItemCount}
-                    itemLabel={getItemLabel(ws)}
-                    size="lg"
-                    onClick={() => handleTileClick(ws)}
-                    onTogglePin={() => handleTogglePin(ws.workspaceKey)}
+              {/* 2. Recent Workspaces (context-isolated from useNavigationStore) */}
+              {filteredRecent.length > 0 && (
+                <section aria-label={t("workspaceHub.sections.recent")}>
+                  <HubSectionHeader
+                    icon={<History size={14} className="text-nx-ink-3" aria-hidden="true" />}
+                    title={t("workspaceHub.sections.recent")}
+                    subtitle={formatPinnedWorkspaceCount(filteredRecent.length, language, t)}
                   />
-                ))}
-
-                {/* Locked modules in same grid */}
-                {filteredLocked
-                  .filter((ws) => ws.workspaceType === "Module")
-                  .map((ws) => (
-                    <HubModuleTile
-                      key={ws.workspaceKey}
-                      name={getName(ws)}
-                      icon={ws.workspaceIcon}
-                      colorHue={ws.colorHue}
-                      colorChroma={ws.colorChroma}
-                      isLocked={true}
-                      isPinned={false}
-                      accessibleItemCount={0}
-                      itemLabel=""
-                      size="lg"
-                      onClick={() => handleTileClick(ws)}
-                      upgradeBadgeText={t("workspaceHub.upgradeBadge")}
-                    />
-                  ))}
-              </div>
-            </section>
-          )}
-
-          {/* Administration grid */}
-          {(filteredAdmin.length > 0 ||
-            filteredLocked.some((ws) => ws.workspaceType !== "Module")) && (
-            <section className="mb-8">
-              <HubSectionHeader
-                title={t("workspaceHub.sections.administration")}
-                subtitle={t("workspaceHub.admin.subtitle")}
-              />
-              <div className="grid max-w-[870px] grid-cols-2 gap-3 sm:grid-cols-[repeat(auto-fill,minmax(148px,158px))] sm:gap-4">
-                {filteredAdmin.map((ws) => (
-                  <HubModuleTile
-                    key={ws.workspaceKey}
-                    name={getName(ws)}
-                    icon={ws.workspaceIcon}
-                    colorHue={ws.colorHue}
-                    colorChroma={ws.colorChroma}
-                    isLocked={false}
-                    isPinned={ws.isPinned}
-                    isPinLoading={pinLoadingKeys.has(ws.workspaceKey)}
-                    accessibleItemCount={ws.accessibleItemCount}
-                    itemLabel={getItemLabel(ws)}
-                    size="lg"
-                    onClick={() => handleTileClick(ws)}
-                    onTogglePin={() => handleTogglePin(ws.workspaceKey)}
+                  <HubRecentWorkspacesStrip
+                    workspaces={filteredRecent}
+                    language={language}
+                    onOpenWorkspace={handleTileClick}
                   />
-                ))}
+                </section>
+              )}
 
-                {/* Locked admin workspaces in same grid */}
-                {filteredLocked
-                  .filter((ws) => ws.workspaceType !== "Module")
-                  .map((ws) => (
-                    <HubModuleTile
-                      key={ws.workspaceKey}
-                      name={getName(ws)}
-                      icon={ws.workspaceIcon}
-                      colorHue={ws.colorHue}
-                      colorChroma={ws.colorChroma}
-                      isLocked={true}
-                      isPinned={false}
-                      accessibleItemCount={0}
-                      itemLabel=""
-                      size="lg"
-                      onClick={() => handleTileClick(ws)}
-                      upgradeBadgeText={t("workspaceHub.upgradeBadge")}
-                    />
-                  ))}
-              </div>
-            </section>
-          )}
+              {/* 3. Operational Module Workspaces */}
+              {filteredModules.length > 0 && (
+                <section aria-label={t("workspaceHub.sections.modules")}>
+                  <HubSectionHeader
+                    title={t("workspaceHub.sections.modules")}
+                    subtitle={formatPinnedWorkspaceCount(filteredModules.length, language, t)}
+                  />
+                  <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5">
+                    {filteredModules.map((ws) => (
+                      <HubModuleTile
+                        key={ws.workspaceKey}
+                        name={ws.getLocalizedName(language)}
+                        icon={ws.workspaceIcon}
+                        colorHue={ws.colorHue}
+                        colorChroma={ws.colorChroma}
+                        isLocked={false}
+                        isPinned={ws.isPinned}
+                        isPinDisabled={isImpersonating}
+                        isPinLoading={pinLoadingKeys.has(ws.workspaceKey)}
+                        accessibleItemCount={ws.accessibleItemCount}
+                        itemLabel={
+                          ws.accessibleItemCount > 0
+                            ? formatHubItemCount(ws.accessibleItemCount, language, t)
+                            : ""
+                        }
+                        size="lg"
+                        onClick={() => handleTileClick(ws)}
+                        onTogglePin={() => void handleTogglePin(ws.workspaceKey)}
+                      />
+                    ))}
+                  </div>
+                </section>
+              )}
 
-          {/* No results — the shared empty anatomy */}
-          {searchQuery && !hasAnyResults && (
-            <EmptyState icon={SearchX} title={t("workspaceHub.noResults")} />
-          )}
+              {/* 4. Administration Workspaces */}
+              {filteredAdmin.length > 0 && (
+                <section aria-label={t("workspaceHub.sections.administration")}>
+                  <HubSectionHeader
+                    title={t("workspaceHub.sections.administration")}
+                    subtitle={formatPinnedWorkspaceCount(filteredAdmin.length, language, t)}
+                  />
+                  <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5">
+                    {filteredAdmin.map((ws) => (
+                      <HubModuleTile
+                        key={ws.workspaceKey}
+                        name={ws.getLocalizedName(language)}
+                        icon={ws.workspaceIcon}
+                        colorHue={ws.colorHue}
+                        colorChroma={ws.colorChroma}
+                        isLocked={false}
+                        isPinned={ws.isPinned}
+                        isPinDisabled={isImpersonating}
+                        isPinLoading={pinLoadingKeys.has(ws.workspaceKey)}
+                        accessibleItemCount={ws.accessibleItemCount}
+                        itemLabel={
+                          ws.accessibleItemCount > 0
+                            ? formatHubItemCount(ws.accessibleItemCount, language, t)
+                            : ""
+                        }
+                        size="lg"
+                        onClick={() => handleTileClick(ws)}
+                        onTogglePin={() => void handleTogglePin(ws.workspaceKey)}
+                      />
+                    ))}
+                  </div>
+                </section>
+              )}
 
-          {/* Nothing licensed at all — same anatomy, page size */}
-          {!searchQuery && workspaceGroups.length === 0 && (
-            <EmptyState size="lg" icon={LayoutGrid} title={t("workspaceHub.emptyState")} />
-          )}
-        </div>
+              {/* 5. Upgrade-Gated Locked Workspaces (billing/subscription administrators only) */}
+              {canManageBilling && filteredLocked.length > 0 && (
+                <section aria-label={t("workspaceHub.sections.upgrade")}>
+                  <HubSectionHeader
+                    title={t("workspaceHub.sections.upgrade")}
+                    subtitle={formatPinnedWorkspaceCount(filteredLocked.length, language, t)}
+                  />
+                  <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5">
+                    {filteredLocked.map((ws) => (
+                      <HubModuleTile
+                        key={ws.workspaceKey}
+                        name={ws.getLocalizedName(language)}
+                        icon={ws.workspaceIcon}
+                        colorHue={ws.colorHue}
+                        colorChroma={ws.colorChroma}
+                        isLocked={true}
+                        isPinned={false}
+                        accessibleItemCount={0}
+                        itemLabel=""
+                        size="lg"
+                        onClick={() => handleTileClick(ws)}
+                        upgradeBadgeText={
+                          ws.lockReason === "TenantContextRequired"
+                            ? t("workspaceHub.needsTenant")
+                            : t("workspaceHub.upgradeBadge")
+                        }
+                      />
+                    ))}
+                  </div>
+                </section>
+              )}
 
-        {/* Side panel — hide when searching to maximize grid area */}
-        {!searchQuery && (
-          <HubSidePanel
-            todayCount={hubActivity.todayCount}
-            moduleCount={hubActivity.moduleCount}
-            trendPercent={hubActivity.trendPercent}
-            recentItems={hubActivity.recentItems}
-            isLoading={hubActivity.isLoading}
-          />
+              {/* Search empty state */}
+              {searchQuery.trim() && !hasAnyMatches && (
+                <EmptyState icon={SearchX} title={t("workspaceHub.noResults")} />
+              )}
+            </div>
+
+            {/* Right column: Deferred, Impersonation-Safe Personal Operational Feeds */}
+            <HubSidePanel
+              isImpersonating={feeds.isImpersonating}
+              notifications={feeds.notifications}
+              isLoadingNotifications={feeds.isLoadingNotifications}
+              isNotificationsError={feeds.isNotificationsError}
+              onRetryNotifications={() => void feeds.refetchNotifications()}
+              onMarkNotificationAsRead={feeds.markNotificationAsRead}
+              onMarkAllNotificationsAsRead={feeds.markAllNotificationsAsRead}
+              isMarkingNotification={feeds.isMarkingNotification}
+              activity={feeds.activity}
+              isLoadingActivity={feeds.isLoadingActivity}
+              isActivityError={feeds.isActivityError}
+              onRetryActivity={() => void feeds.refetchActivity()}
+            />
+          </div>
         )}
       </div>
 
-      {upgradeTarget && (
+      {canManageBilling && upgradeWs && (
         <UpgradeDialog
-          workspaceName={
-            upgradeWs?.getLocalizedName(language) ?? upgradeWs?.workspaceNameEn ?? upgradeTarget
-          }
-          isNeedsTenant={!hasTenantContext && (upgradeWs?.isModuleWorkspace ?? false)}
+          workspaceName={upgradeWs.getLocalizedName(language)}
+          isNeedsTenant={!hasTenantContext && upgradeWs.lockReason === "TenantContextRequired"}
           onClose={() => setUpgradeTarget(null)}
           onUpgrade={() => {
             setUpgradeTarget(null);
-            if (!hasTenantContext && upgradeWs?.isModuleWorkspace) {
+            if (!hasTenantContext && upgradeWs.lockReason === "TenantContextRequired") {
               setSwitcherOpen(true);
             } else {
-              router.push("/entitlements/editions/compare");
+              router.push("/my-subscription");
             }
           }}
         />
       )}
 
-      {switcherOpen && (
-        <TenantContextSwitcherDialog open={switcherOpen} onOpenChange={setSwitcherOpen} />
-      )}
+      <TenantContextSwitcherDialog
+        open={switcherOpen}
+        onOpenChange={setSwitcherOpen}
+      />
     </div>
   );
 }

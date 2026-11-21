@@ -13,13 +13,20 @@ import { useRolesViewModel } from "../viewmodels/useRolesViewModel";
 import { GenericCrudView, type CrudConfig } from "@core/crud/components/generic-crud-view";
 import { Shield, Pencil, Trash, Copy, Users } from "lucide-react";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
+import { useAdminContext } from "@core/hooks/useAdminContext";
+import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { usePermissions } from "@core/providers/permission-provider";
+import { useWorkspace } from "@core/providers/workspace-provider";
 import type { Role } from "../../domain/entities/Role";
 import { AssignToGroupDialog } from "@modules/identity/core";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { RoleDeleteDialog } from "../components/RoleDeleteDialog";
 import { getRolesCrudColumns } from "./rolesCrudColumns";
-import { getRoleCreateFields, getRoleEditFields } from "./rolesFormFields";
+import {
+  getRoleCreateFields,
+  getRoleEditFields,
+  getRoleEditInitialValues,
+} from "./rolesFormFields";
 
 /**
  * Presentation UI component rendering the roles view.
@@ -31,6 +38,10 @@ export function RolesView() {
   const router = useRouter();
   const { t, language } = useI18n();
   const { isPlatformSuperAdmin } = usePermissions();
+  const { activeTenantId, isTenant } = useAdminContext();
+  const { workspaceGroups } = useWorkspace();
+  const cachedWorkspaces = useNavigationStore((s) => s.workspaces);
+  const isTenantContext = Boolean(activeTenantId || isTenant || !isPlatformSuperAdmin);
 
   // Logic: Platform Super Admins outside drill-down see System roles; Tenant Admins see My Tenant roles
   const viewModel = useRolesViewModel({ useMyTenant: !isPlatformSuperAdmin });
@@ -67,8 +78,22 @@ export function RolesView() {
     subtitleKey: "roles.description",
     resource: "roles", // Checks permissions (roles.view, roles.create, etc.)
     columns,
-    createFields: getRoleCreateFields(t),
-    editFields: getRoleEditFields(t),
+    createFields: getRoleCreateFields(t, {
+      language,
+      workspaceGroups,
+      cachedWorkspaces,
+      isTenantRole: isTenantContext,
+    }),
+    editFields: (role) =>
+      getRoleEditFields(t, {
+        language,
+        workspaceGroups,
+        cachedWorkspaces,
+        isTenantRole: Boolean(role.tenantId),
+        isSystemRole: role.isSystem,
+        currentTarget: role.defaultLandingTarget,
+      }),
+    editInitialValues: getRoleEditInitialValues,
 
     getActions: (vm, t, _handleDelete) => [
       // Manage Permissions (Custom Action)
