@@ -39,7 +39,11 @@ export const ar = {
     limitedByParent: "محدود بواسطة المستأجر الرئيسي",
     managePermissionsFor: "إدارة الصلاحيات لـ",
     title: "المستأجرون",
+    listDescription:
+      "إدارة مساحات عمل المستأجرين والكيانات الفرعية وتعيينات الإصدارات النشطة.",
     detailTitle: "تفاصيل المستأجر",
+    noExpiryBadge: "∞ بدون انتهاء",
+    internalReadOnlyBadge: "داخلي • محمي",
     freePlanTitle: "خطة مجانية",
     freePlanDesc: "هذه الخطة هي الخطة المجانية",
     internalSovereignBadge: "داخلي سيادي",

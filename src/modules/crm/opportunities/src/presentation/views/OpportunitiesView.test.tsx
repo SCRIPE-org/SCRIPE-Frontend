@@ -367,4 +367,29 @@ describe("OpportunitiesView Component", () => {
 
     useCrmWorkflowsStore.getState().resetDefaults();
   });
+
+  it("widens Deal Title column, pipeline selector, and uses concise search placeholder", async () => {
+    const { en } = await import("../../../locales/crm-opportunities.en");
+    const { ar } = await import("../../../locales/crm-opportunities.ar");
+
+    render(<OpportunitiesView />);
+
+    await waitFor(() => {
+      expect(screen.getAllByText("Al-Nassr Pitch Licensing Contract")[0]).toBeDefined();
+    });
+
+    const titleBtn = screen.getAllByTestId("deal-row-link-opp-001")[0];
+    const titleCellWrapper = titleBtn.parentElement!;
+    expect(titleCellWrapper.className).toContain("min-w-[260px]");
+    expect(titleCellWrapper.className).toContain("max-w-[380px]");
+
+    const searchInput = screen.getByPlaceholderText("crmOpportunities.actions.searchPlaceholder");
+    expect(searchInput.parentElement!.className).toContain("max-w-md");
+
+    const pipelineWrapper = screen.getByTestId("deal-pipeline-selector").closest(".w-56");
+    expect(pipelineWrapper).not.toBeNull();
+
+    expect(en.crmOpportunities.actions.searchPlaceholder).toBe("Search deals by title or currency...");
+    expect(ar.crmOpportunities.actions.searchPlaceholder.length).toBeLessThanOrEqual(45);
+  });
 });

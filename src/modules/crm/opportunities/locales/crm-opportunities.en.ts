@@ -8,7 +8,7 @@ export const en = {
     },
     actions: {
       newDeal: "New Opportunity",
-      searchPlaceholder: "Search deals by title, currency, or stage...",
+      searchPlaceholder: "Search deals by title or currency...",
       filterByStage: "Filter by Stage",
       filterByStatus: "Filter by Status",
       allStages: "All Stages",

@@ -60,8 +60,9 @@ export function EditionEditWizardView({ editionId }: EditionEditWizardViewProps)
 
   if (vm.edition?.isInternal) {
     return (
-      <div className="mx-auto max-w-2xl space-y-6 py-8">
+      <div className="mx-auto flex min-h-[60vh] max-w-2xl items-center justify-center py-8">
         <EmptyState
+          className="w-full"
           icon={Shield}
           title={t("entitlements.editions.wizard.internalLockedTitle")}
           description={t("entitlements.editions.wizard.internalLockedDesc")}

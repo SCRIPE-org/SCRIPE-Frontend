@@ -41,6 +41,7 @@ export const ar = {
     convertDesc: "تحويل هذه التجربة إلى اشتراك مدفوع.",
     resume: "استئناف الاشتراك",
     expiryBehavior: "عند الانتهاء",
+    noneLifetime: "لا ينطبق (مدى الحياة)",
     reason: "السبب",
     reasonPlaceholder: "مثال: تأخر الدفع، انتهاك الشروط...",
     useFallback: "تخفيض للإصدار الاحتياطي",

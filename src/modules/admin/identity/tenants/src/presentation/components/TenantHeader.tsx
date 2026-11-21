@@ -23,6 +23,7 @@ import { TenantDeleteDialog } from "./TenantDeleteDialog";
 import { TenantEditDialog } from "./TenantEditDialog";
 import { TenantHeaderStatusBanners } from "./TenantHeaderStatusBanners";
 import { cn, formatDateUtc } from "@core/common/utils";
+import { useI18n } from "@core/providers/i18n-provider";
 import { useTenantHeaderViewModel, TenantStatus } from "../viewmodels/useTenantHeaderViewModel";
 
 interface TenantHeaderProps {
@@ -36,6 +37,7 @@ interface TenantHeaderProps {
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
+  const { language } = useI18n();
   const {
     t,
     status,
@@ -107,7 +109,7 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
       ? [{ label: t("tenant.daysLeft"), value: daysLeft }]
       : []),
     ...(tenant.editionEndDate
-      ? [{ label: t("tenant.endDate"), value: formatDateUtc(tenant.editionEndDate) }]
+      ? [{ label: t("tenant.endDate"), value: formatDateUtc(tenant.editionEndDate, language) }]
       : []),
   ];
 

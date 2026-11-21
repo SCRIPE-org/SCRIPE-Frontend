@@ -41,6 +41,7 @@ export const en = {
     convertDesc: "Convert this trial into a paid subscription.",
     resume: "Resume Subscription",
     expiryBehavior: "On Expiry",
+    noneLifetime: "None (Lifetime)",
     reason: "Reason",
     reasonPlaceholder: "e.g., Payment overdue, Terms violation...",
     useFallback: "Downgrade to fallback edition",

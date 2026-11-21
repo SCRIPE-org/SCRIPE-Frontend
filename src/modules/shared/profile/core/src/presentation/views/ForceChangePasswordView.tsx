@@ -1,5 +1,9 @@
 "use client";
 
+import { BRAND } from "@core/config/branding";
+import { Logo } from "@core/ui/logo";
+import { NxThemeSwitcher } from "@core/ui/layout/common/theme-switcher";
+import { LanguageSwitcher } from "@core/ui/layout/common/language-switcher";
 import { useForceChangePasswordViewModel } from "../viewmodels/useForceChangePasswordViewModel";
 import { ForceChangePasswordCardSection } from "../sections/force-change/ForceChangePasswordCardSection";
 
@@ -10,31 +14,42 @@ export function ForceChangePasswordView() {
   const vm = useForceChangePasswordViewModel();
 
   return (
-    <div
-      dir={vm.direction}
-      className="min-h-[100dvh] w-full flex items-center justify-center bg-nx-ground px-4 py-10"
-    >
-      <div className="w-full max-w-md space-y-5">
-        <ForceChangePasswordCardSection
-          t={vm.t}
-          username={vm.username}
-          newPassword={vm.newPassword}
-          onNewPasswordChange={vm.setNewPassword}
-          confirmPassword={vm.confirmPassword}
-          onConfirmPasswordChange={vm.setConfirmPassword}
-          showNew={vm.showNew}
-          onToggleShowNew={() => vm.setShowNew(!vm.showNew)}
-          showConfirm={vm.showConfirm}
-          onToggleShowConfirm={() => vm.setShowConfirm(!vm.showConfirm)}
-          isSubmitting={vm.isSubmitting}
-          submitError={vm.submitError}
-          rules={vm.rules}
-          showMismatch={vm.showMismatch}
-          canSubmit={vm.canSubmit}
-          onSubmit={vm.handleSubmit}
-          onLogout={vm.handleLogout}
-        />
-      </div>
+    <div dir={vm.direction} className="flex min-h-[100dvh] w-full flex-col bg-nx-ground">
+      <header className="flex w-full items-center justify-between border-b border-nx-line bg-nx-surface px-4 py-3 sm:px-6">
+        <div className="flex items-center gap-2.5">
+          <Logo size="md" showText={false} disableLink />
+          <span className="text-sm font-semibold tracking-tight text-nx-ink">
+            {BRAND.name}
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          <NxThemeSwitcher variant="solid" />
+          <LanguageSwitcher buttonClassName="h-9 min-w-[36px] px-2" />
+        </div>
+      </header>
+      <main className="flex flex-1 items-center justify-center px-4 py-8">
+        <div className="w-full max-w-md space-y-5">
+          <ForceChangePasswordCardSection
+            t={vm.t}
+            username={vm.username}
+            newPassword={vm.newPassword}
+            onNewPasswordChange={vm.setNewPassword}
+            confirmPassword={vm.confirmPassword}
+            onConfirmPasswordChange={vm.setConfirmPassword}
+            showNew={vm.showNew}
+            onToggleShowNew={() => vm.setShowNew(!vm.showNew)}
+            showConfirm={vm.showConfirm}
+            onToggleShowConfirm={() => vm.setShowConfirm(!vm.showConfirm)}
+            isSubmitting={vm.isSubmitting}
+            submitError={vm.submitError}
+            rules={vm.rules}
+            showMismatch={vm.showMismatch}
+            canSubmit={vm.canSubmit}
+            onSubmit={vm.handleSubmit}
+            onLogout={vm.handleLogout}
+          />
+        </div>
+      </main>
     </div>
   );
 }

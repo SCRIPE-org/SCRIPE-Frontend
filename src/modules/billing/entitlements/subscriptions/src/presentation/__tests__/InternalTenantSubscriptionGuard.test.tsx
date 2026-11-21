@@ -188,6 +188,7 @@ import { HeroActions } from "../components/subscription-detail/HeroActions";
 import { HeroCard } from "../components/subscription-detail/HeroCard";
 import { BillingCard } from "../components/subscription-detail/BillingCard";
 import { StripeCard } from "../components/subscription-detail/StripeCard";
+import { PlanDetailsCard } from "../components/subscription-detail/PlanDetailsCard";
 import { SubscriptionsView } from "../views/SubscriptionsView";
 import { useSubscriptionsViewModel } from "../viewmodels/useSubscriptionsViewModel";
 
@@ -329,5 +330,19 @@ describe("Entitlements Subscriptions — Internal Tenant Guards", () => {
     });
     expect(result.current.isFreeEdition).toBe(false);
     expect(useSubscriptionsViewModel).toBeDefined();
+  });
+
+  it("PlanDetailsCard displays None (Lifetime) instead of On Expiry: Fallback for Lifetime plans", () => {
+    const lifetimeSub = {
+      ...baseInternalSub,
+      type: "Lifetime",
+      expiryBehavior: "Fallback",
+      fallbackEditionName: "free",
+    };
+    render(<PlanDetailsCard sub={lifetimeSub} t={t} />);
+
+    expect(screen.getByText("entSubscriptions.noneLifetime")).toBeInTheDocument();
+    expect(screen.queryByText("entSubscriptions.onExpiryFallback")).not.toBeInTheDocument();
+    expect(screen.queryByText("entSubscriptions.fallbackEdition")).not.toBeInTheDocument();
   });
 });

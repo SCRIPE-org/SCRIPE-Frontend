@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+import { formatDateUtc } from "../utils";
 
 /**
  * Utility function tests
@@ -94,6 +95,16 @@ describe("Utility Functions", () => {
 
     it("should reject empty string", () => {
       expect(isValidEmail("")).toBe(false);
+    });
+  });
+
+  describe("formatDateUtc", () => {
+    it("formats UTC dates in English by default and localized Arabic when locale is 'ar'", () => {
+      expect(formatDateUtc("2026-11-21T00:00:00Z")).toBe("Nov 21");
+      expect(formatDateUtc("2026-11-21T00:00:00Z", "en")).toBe("Nov 21");
+      const arFormatted = formatDateUtc("2026-11-21T00:00:00Z", "ar");
+      expect(arFormatted).not.toBe("Nov 21");
+      expect(arFormatted).toMatch(/[\u0600-\u06FF]/);
     });
   });
 });

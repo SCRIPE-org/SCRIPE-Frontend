@@ -284,4 +284,39 @@ describe("CrmSettingsView & Multi-Currency FX Engine", () => {
     });
     void rerender;
   });
+
+  it("formats pipeline role thresholds with active baseCurrency, strips pipe_role: prefix, avoids dir=rtl on empty AR placeholders, and removes duplicate 1. card numbering", async () => {
+    const { en } = await import("../../../locales/crm-settings.en");
+    const { ar } = await import("../../../locales/crm-settings.ar");
+
+    renderWithQuery(<CrmSettingsView />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId("crm-settings-roles-principals-card")).toBeDefined();
+    });
+
+    const roleCard = screen.getByTestId("crm-settings-pipeline-role-pipe_role:deal_desk");
+    expect(roleCard.textContent).toContain("EGP");
+    expect(roleCard.textContent).not.toContain("$");
+    expect(roleCard.textContent).not.toContain("pipe_role:");
+    expect(roleCard.textContent).toContain("deal_desk");
+
+    const queueNameArInput = screen.getByTestId("crm-settings-role-name-ar");
+    expect(queueNameArInput).toHaveAttribute("dir", "auto");
+    fireEvent.change(queueNameArInput, { target: { value: "مكتب الصفقات" } });
+    expect(queueNameArInput).toHaveAttribute("dir", "rtl");
+
+    const committeeArInput = screen.getByTestId("crm-settings-committee-ar");
+    expect(committeeArInput).toHaveAttribute("dir", "auto");
+
+    expect(en.crm.settings.rolesCard.maxLimitPlaceholder).toContain("{currency}");
+    expect(ar.crm.settings.rolesCard.maxLimitPlaceholder).toContain("{currency}");
+    expect(en.crm.settings.rolesCard.maxLimitPlaceholder).not.toContain("($)");
+    expect(ar.crm.settings.rolesCard.maxLimitPlaceholder).not.toContain("($)");
+
+    expect(en.crm.settings.domains.currency).not.toMatch(/^1\./);
+    expect(ar.crm.settings.domains.currency).not.toMatch(/^1\./);
+    expect(en.crm.settings.rolesCard.section1Title).not.toMatch(/^1\./);
+    expect(ar.crm.settings.rolesCard.section1Title).not.toMatch(/^1\./);
+  });
 });

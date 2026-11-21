@@ -274,7 +274,7 @@ export function TopbarBreadcrumbs({
             <li role="presentation" aria-hidden="true" className="inline-flex shrink-0 items-center">
               <BreadcrumbSep isRTL={isRTL} />
             </li>
-            <li className="flex shrink-0 items-center gap-0.5">
+            <li className="flex min-w-0 shrink items-center gap-0.5">
               <Button
                 type="button"
                 variant="ghost"
@@ -288,13 +288,13 @@ export function TopbarBreadcrumbs({
                   }
                 }}
                 className={cn(
-                  "h-auto cursor-pointer whitespace-nowrap rounded-nx-sm px-1.5 py-0.5 duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
+                  "h-auto min-w-0 max-w-full cursor-pointer whitespace-nowrap rounded-nx-sm px-1.5 py-0.5 duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
                   isActiveRootCurrent ? "font-semibold text-nx-ink" : "font-medium text-nx-ink-2",
                   CONTROL_MOTION,
                   FOCUS_RING
                 )}
               >
-                {activeRootName}
+                <span className="truncate">{activeRootName}</span>
               </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -359,7 +359,7 @@ export function TopbarBreadcrumbs({
               <li role="presentation" aria-hidden="true" className="inline-flex shrink-0 items-center">
                 <BreadcrumbSep isRTL={isRTL} />
               </li>
-              <li className="min-w-0 shrink">
+              <li className={cn("min-w-0", isLastIntermediate ? "shrink-0 max-w-[160px] sm:max-w-[240px]" : "shrink")}>
                 <span
                   aria-current={isLastIntermediate ? "page" : undefined}
                   className={cn(
@@ -380,7 +380,7 @@ export function TopbarBreadcrumbs({
             <li role="presentation" aria-hidden="true" className="inline-flex shrink-0 items-center">
               <BreadcrumbSep isRTL={isRTL} />
             </li>
-            <li className="min-w-0">
+            <li className="min-w-0 shrink-0 max-w-[160px] sm:max-w-[240px]">
               <span
                 aria-current="page"
                 className="block truncate px-1.5 py-0.5 font-semibold tracking-[-0.2px] text-nx-ink duration-nx-standard animate-in fade-in motion-reduce:animate-none"
@@ -471,7 +471,7 @@ export function TopbarPanelToggle({
               "border border-nx-line bg-transparent text-nx-ink-2",
               CONTROL_MOTION,
               "duration-nx-micro hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink",
-              !hasSubmenu ? "hidden" : collapsible ? "flex" : "flex lg:hidden",
+              !hasSubmenu ? "flex md:hidden" : collapsible ? "flex" : "flex lg:hidden",
               FOCUS_RING
             )}
           >

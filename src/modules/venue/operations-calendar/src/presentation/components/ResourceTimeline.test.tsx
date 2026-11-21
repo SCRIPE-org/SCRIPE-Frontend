@@ -228,4 +228,40 @@ describe("ResourceTimeline", () => {
     fireEvent.click(freeSubSlot);
     expect(onEmptySlot).toHaveBeenCalledWith(resource, "2026-09-08T21:30:00.000Z");
   });
+
+  it("sets dir='ltr' on the outer scroll container and dir='auto' with line-clamp-2 and w-56 sticky column in Arabic RTL", () => {
+    const longEnglishResource = {
+      ...resource,
+      name: "Showcase Panoramic Padel Court",
+      profileName: "Showcase 7-a-side Smart Pitch",
+    };
+
+    render(
+      <ResourceTimeline
+        day={day}
+        resources={[longEnglishResource]}
+        locale="ar"
+        direction="rtl"
+        canCreate
+        t={t}
+        onOpen={vi.fn()}
+        onEmptySlot={vi.fn()}
+      />
+    );
+
+    const scrollContainer = screen.getByTestId("resource-timeline");
+    expect(scrollContainer).toHaveAttribute("dir", "ltr");
+
+    const lane = document.querySelector<HTMLElement>('[data-resource-id="resource-1"]')!;
+    const stickyCell = lane.firstElementChild as HTMLElement;
+    expect(stickyCell.className).toContain("w-56");
+
+    const nameEl = within(lane).getByText("Showcase Panoramic Padel Court");
+    const profileEl = within(lane).getByText("Showcase 7-a-side Smart Pitch");
+    expect(nameEl).toHaveAttribute("dir", "auto");
+    expect(profileEl).toHaveAttribute("dir", "auto");
+    expect(nameEl.className).toContain("line-clamp-2");
+    expect(profileEl.className).toContain("line-clamp-2");
+    expect(nameEl.className).not.toContain("truncate");
+  });
 });

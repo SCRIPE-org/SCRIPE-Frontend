@@ -8,6 +8,8 @@ import { Tenant, isInternalTenantNode } from "../../domain/entities/Tenant";
 import { TenantNodeCardActions } from "../components/TenantNodeCard/TenantNodeCardActions";
 import { TenantNodeCardHeader } from "../components/TenantNodeCard/TenantNodeCardHeader";
 import { TenantHeader } from "../components/TenantHeader";
+import { TenantHeaderStatusBanners } from "../components/TenantHeaderStatusBanners";
+import { TenantListHeader } from "../components/TenantListHeader";
 import { EditTenantDialog } from "../components/TenantDialogs";
 import { TenantEditDialog } from "../components/TenantEditDialog";
 import { TenantSubscriptionCard } from "../components/cards/TenantSubscriptionCard";
@@ -671,5 +673,55 @@ describe("Internal tenant mapping and UI guards", () => {
 
     rerender(<TenantEntitlementsTab tenantId="2" isInternal={false} />);
     expect(screen.getByRole("button", { name: "entSubscriptions.manage" })).toBeInTheDocument();
+  });
+
+  it("TenantListHeader renders tenant.listDescription instead of literal tenant.description", () => {
+    render(
+      <TenantListHeader
+        tree={[]}
+        search=""
+        onSearchChange={vi.fn()}
+        onAdd={vi.fn()}
+        canCreate={true}
+      />
+    );
+
+    expect(screen.getByText("tenant.listDescription")).toBeInTheDocument();
+    expect(screen.queryByText("tenant.description")).not.toBeInTheDocument();
+  });
+
+  it("TenantHeaderStatusBanners renders noExpiryBadge instead of 100% progress bar when daysLeft is null", () => {
+    const { container } = render(
+      <TenantHeaderStatusBanners
+        status="active"
+        editionName="scripe-internal"
+        daysLeft={null}
+        progress={100}
+        progressColor="bg-primary"
+      />
+    );
+
+    expect(screen.getByText("tenant.noExpiryBadge")).toBeInTheDocument();
+    expect(container.querySelector('[style*="width: 100%"]')).toBeNull();
+  });
+
+  it("EditTenantDialog displays read-only tenantCode / internalReadOnlyBadge and description maxLength counter", () => {
+    render(
+      <EditTenantDialog
+        open={true}
+        onOpenChange={vi.fn()}
+        tenantName="SCRIPE"
+        tenantCode="SCRIPE"
+        form={{ name: "SCRIPE", description: "HQ", isActive: true }}
+        setForm={vi.fn()}
+        onSubmit={vi.fn()}
+        isLoading={false}
+        isInternal={true}
+      />
+    );
+
+    expect(screen.getByText("SCRIPE")).toBeInTheDocument();
+    expect(screen.getByText("tenant.internalReadOnlyBadge")).toBeInTheDocument();
+    expect(screen.getByText("2/500")).toBeInTheDocument();
   });
 });

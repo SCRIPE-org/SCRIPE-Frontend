@@ -239,4 +239,29 @@ describe("NexusSecondaryRail — Generic Multi-Group Workspace Secondary Rail", 
     expect(groupBtn).toHaveAttribute("aria-expanded", "true");
     expect(screen.getByRole("link", { name: /booking rules/i })).toBeInTheDocument();
   });
+
+  it("7. Opens mobile drawer even without submenu when mobileOpen is true and exposes App Launcher, Hub navigation, and mobileFooter", () => {
+    mockActiveRootItem = makeMockItem("leaf-only", "Overview", "/overview", []);
+    const onOpenAppLauncher = vi.fn();
+    const onMobileClose = vi.fn();
+
+    render(
+      <NexusSecondaryRail
+        mobileOpen={true}
+        onMobileClose={onMobileClose}
+        onOpenAppLauncher={onOpenAppLauncher}
+        mobileFooter={<div data-testid="mobile-drawer-footer">Account</div>}
+      />
+    );
+
+    const dialog = screen.getByRole("dialog");
+    expect(dialog).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "shell.launcher.title" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "chrome.goToHome" })).toBeInTheDocument();
+    expect(screen.getByTestId("mobile-drawer-footer")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "shell.launcher.title" }));
+    expect(onMobileClose).toHaveBeenCalledTimes(1);
+    expect(onOpenAppLauncher).toHaveBeenCalledTimes(1);
+  });
 });

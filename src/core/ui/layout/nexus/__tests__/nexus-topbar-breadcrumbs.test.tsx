@@ -148,4 +148,24 @@ describe("TopbarBreadcrumbs Deduplication", () => {
       expect(sep.getAttribute("class")).toContain("rtl:rotate-180");
     }
   });
+
+  it("prioritizes active leaf crumb with shrink-0 and max-w-[240px] while allowing Level 2 root group to shrink", () => {
+    render(
+      <TopbarBreadcrumbs
+        isRTL={false}
+        workspaceName="Administration"
+        activeRootName="Management"
+        intermediateSegments={["Tenants"]}
+        displayPageName="SCRIPE"
+      />
+    );
+
+    const rootItemLi = screen.getByText("Management").closest("li")!;
+    expect(rootItemLi.className).toContain("shrink");
+    expect(rootItemLi.className).not.toContain("shrink-0");
+
+    const leafLi = screen.getByText("SCRIPE").closest("li")!;
+    expect(leafLi.className).toContain("shrink-0");
+    expect(leafLi.className).toContain("max-w-[240px]");
+  });
 });

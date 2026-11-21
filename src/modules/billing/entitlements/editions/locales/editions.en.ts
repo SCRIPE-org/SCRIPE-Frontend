@@ -22,6 +22,9 @@ export const en = {
       createDesc: "Define a new subscription plan with feature configurations.",
       edit: "Edit Edition",
       editDesc: "Update edition metadata.",
+      readOnlyNoticeTitle: "Read-Only System Configuration",
+      readOnlyNoticeDesc:
+        "This internal edition's feature entitlements and overflow policy are protected by the platform and cannot be modified.",
       deleteConfirmTitle: "Delete Edition",
       deleteConfirmDesc:
         "This will soft-delete the edition. Active subscriptions will not be affected.",

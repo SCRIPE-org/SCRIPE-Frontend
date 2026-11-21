@@ -505,6 +505,28 @@ describe("Nexus Shell Phase D — A11y, Hierarchy, Branding & Deduplication", ()
       expect(mockStartRoutingProgress).toHaveBeenCalledTimes(1);
       expect(mockPush).toHaveBeenCalledWith("/hub");
     });
+
+    it("keeps TopbarPanelToggle visible on mobile (<768px) via md:hidden even when !hasSubmenu", () => {
+      mockIsHubMode = true;
+      mockPathname = "/hub";
+      render(
+        <TooltipProvider>
+          <NexusTopbar
+            onMobileMenuOpen={vi.fn()}
+            onTogglePanel={vi.fn()}
+            isPanelCollapsed={false}
+            isMobileMenuOpen={false}
+            onOpenSearch={vi.fn()}
+          />
+        </TooltipProvider>
+      );
+
+      const toggleBtn = screen.getByRole("button", { name: "navigation.togglePanel" });
+      expect(toggleBtn.className).toContain("md:hidden");
+      expect(toggleBtn.className).not.toBe(
+        toggleBtn.className.replace("flex md:hidden", "")
+      );
+    });
   });
 
   describe("3. NexusAppLauncher Semantic Card Buttons & Keyboard Focus", () => {

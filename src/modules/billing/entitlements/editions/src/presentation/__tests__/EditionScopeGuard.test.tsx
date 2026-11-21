@@ -447,10 +447,66 @@ describe("Editions scope guards & localized detail view", () => {
     expect(screen.getByRole("switch", { name: "Identity.Sso" })).toBeDisabled();
     expect(screen.getByRole("spinbutton", { name: "Venue.MaxCourts" })).toBeDisabled();
     expect(screen.getByRole("combobox")).toBeDisabled();
+    expect(screen.getByTestId("edition-features-readonly-alert")).toBeInTheDocument();
+    expect(screen.getByText("entitlements.editions.readOnlyNoticeTitle")).toBeInTheDocument();
 
     rerender(<RealFeaturesTab {...(baseProps as any)} readOnly={false} />);
+    expect(screen.queryByTestId("edition-features-readonly-alert")).not.toBeInTheDocument();
     expect(screen.getAllByTitle("entitlements.editions.removeFeature")).toHaveLength(2);
     expect(screen.getByRole("switch", { name: "Identity.Sso" })).toBeEnabled();
+  });
+
+  it("FeaturesTab formats compound PascalCase module names like CatalogPricing -> Catalog & Pricing", async () => {
+    const actualMod = await vi.importActual<typeof import("../components/FeaturesTab")>(
+      "../components/FeaturesTab"
+    );
+    const RealFeaturesTab = actualMod.FeaturesTab;
+    const edition = EditionMapper.toEntity(makeEditionModel({ scope: "Internal", features: [] }));
+
+    render(
+      <RealFeaturesTab
+        edition={edition}
+        readOnly={true}
+        moduleGroups={[{ module: "CatalogPricing", categories: [{ category: "Core", features: [] }] }] as any}
+        getEffectiveValue={() => "false"}
+        getEffectiveLabel={() => ({ en: "", ar: "" })}
+        getEffectiveHighlight={() => ({ isHighlight: false, highlightOrder: 0 })}
+        setLocalValue={vi.fn()}
+        setLocalLabel={vi.fn()}
+        setLocalHighlight={vi.fn()}
+        removeFeature={vi.fn()}
+        isRemovingFeature={() => false}
+        overflowPolicy="Block"
+        setOverflowPolicy={vi.fn()}
+        overflowPolicyChanged={false}
+        collapsedModules={{ CatalogPricing: true }}
+        toggleModule={vi.fn()}
+        expandAll={vi.fn()}
+        collapseAll={vi.fn()}
+      />
+    );
+
+    expect(screen.getByText("Catalog & Pricing")).toBeInTheDocument();
+    expect(screen.queryByText("CatalogPricing")).not.toBeInTheDocument();
+  });
+
+  it("EditionEditWizardView vertically centers the locked EmptyState card", () => {
+    const internal = EditionMapper.toEntity(
+      makeEditionModel({
+        id: "22222222-2222-4222-8222-222222222222",
+        name: "scripe-internal",
+        scope: "Internal",
+      })
+    );
+    mockEditWizardVm.edition = internal;
+
+    render(<EditionEditWizardView editionId={internal.id} />);
+    const lockTitle = screen.getByText("entitlements.editions.wizard.internalLockedTitle");
+    const wrapper = lockTitle.closest("div.min-h-\\[60vh\\]");
+    expect(wrapper).not.toBeNull();
+    expect(wrapper!.className).toContain("flex");
+    expect(wrapper!.className).toContain("items-center");
+    expect(wrapper!.className).toContain("justify-center");
   });
 
   it("VersionsTab in readOnly mode hides Draft Publish and Pending Cancel actions", async () => {

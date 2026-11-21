@@ -24,6 +24,9 @@ export const ar = {
       createDesc: "تعريف خطة اشتراك جديدة مع تهيئة الميزات.",
       edit: "تعديل إصدار",
       editDesc: "تحديث بيانات الإصدار.",
+      readOnlyNoticeTitle: "إعدادات نظام للقراءة فقط",
+      readOnlyNoticeDesc:
+        "ميزات هذا الإصدار الداخلي وسياسة التجاوز محمية من قِبل المنصة ولا يمكن تعديلها.",
       deleteConfirmTitle: "حذف إصدار",
       deleteConfirmDesc: "سيتم حذف الإصدار مؤقتاً. لن تتأثر الاشتراكات النشطة.",
       wizard: {

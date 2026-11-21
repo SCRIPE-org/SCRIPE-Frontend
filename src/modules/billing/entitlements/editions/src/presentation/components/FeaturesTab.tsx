@@ -13,6 +13,7 @@
 "use client";
 
 import { useState } from "react";
+import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
@@ -25,6 +26,7 @@ import {
   ChevronRight,
   Zap,
   ChevronsUpDown,
+  Lock,
   Shield,
   Tag,
   Languages,
@@ -37,6 +39,17 @@ import type {
   FeatureModuleGroup,
 } from "@modules/entitlements/features/src/domain/entities/Feature";
 import type { Edition } from "../../domain/entities/Edition";
+
+/** Formats PascalCase backend module group identifiers into readable labels. */
+function formatModuleDisplayName(moduleName: string): string {
+  const knownLabels: Record<string, string> = {
+    CatalogPricing: "Catalog & Pricing",
+    WorkManagement: "Work Management",
+    FootballIntelligence: "Football Intelligence",
+  };
+  if (knownLabels[moduleName]) return knownLabels[moduleName];
+  return moduleName.replace(/([a-z])([A-Z])/g, "$1 $2");
+}
 
 // ── Types ──
 type TFn = (key: string) => string;
@@ -107,6 +120,13 @@ export function FeaturesTab({
 
   return (
     <>
+      {readOnly && (
+        <Alert variant="info" className="mb-4" data-testid="edition-features-readonly-alert">
+          <Lock className="h-4 w-4" aria-hidden="true" />
+          <AlertTitle>{t("entitlements.editions.readOnlyNoticeTitle")}</AlertTitle>
+          <AlertDescription>{t("entitlements.editions.readOnlyNoticeDesc")}</AlertDescription>
+        </Alert>
+      )}
       {/* ─────── OVERFLOW POLICY ─────── */}
       <Card>
         <CardHeader className="py-3">
@@ -196,7 +216,7 @@ export function FeaturesTab({
                   ) : (
                     <ChevronDown className="h-4 w-4 text-nx-ink-3" />
                   )}
-                  <CardTitle className="text-base">{moduleName}</CardTitle>
+                  <CardTitle className="text-base">{formatModuleDisplayName(moduleName)}</CardTitle>
                 </div>
                 <Badge variant="outline">
                   {enabledCount}/{moduleFeatures.length}

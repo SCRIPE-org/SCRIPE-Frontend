@@ -13,6 +13,7 @@
 import { useMemo, useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { SUPPORTED_CURRENCIES } from "@core/constants/currencies";
+import { Badge } from "@core/ui/badge";
 import { GenericModal } from "@core/crud/components/generic-modal";
 import { GenericForm, type FieldConfig } from "@core/ui/forms/generic-form";
 import type { TenantTreeNode } from "../../domain/entities/Tenant";
@@ -417,6 +418,7 @@ interface EditTenantDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   tenantName: string;
+  tenantCode?: string;
   form: EditFormState;
   setForm: React.Dispatch<React.SetStateAction<EditFormState>>;
   onSubmit: (submitted?: EditFormState) => Promise<void> | void;
@@ -432,6 +434,7 @@ export function EditTenantDialog({
   open,
   onOpenChange,
   tenantName,
+  tenantCode,
   form,
   setForm,
   onSubmit,
@@ -457,6 +460,7 @@ export function EditTenantDialog({
         name: "description",
         label: t("tenant.descriptionLabel"),
         type: "textarea",
+        maxLength: 500,
         placeholder: t("tenant.descriptionPlaceholder"),
       },
       ...(!isInternal
@@ -491,6 +495,23 @@ export function EditTenantDialog({
       size="md"
       formKey={`edit-tenant-form-${tenantName}`}
     >
+      {(tenantCode || isInternal) && (
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-nx-md border border-nx-line bg-nx-raised px-3 py-2 text-xs">
+          {tenantCode && (
+            <span className="flex items-center gap-1.5 text-nx-ink-2">
+              <span className="font-medium">{t("tenant.code")}:</span>
+              <code className="rounded bg-nx-surface px-1.5 py-0.5 font-mono text-[11px] font-semibold text-nx-ink">
+                {tenantCode}
+              </code>
+            </span>
+          )}
+          {isInternal && (
+            <Badge variant="info" className="text-[11px]">
+              {t("tenant.internalReadOnlyBadge")}
+            </Badge>
+          )}
+        </div>
+      )}
       <GenericForm
         key={`edit-tenant-${open}`}
         fields={fields}

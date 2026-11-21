@@ -2,6 +2,8 @@
 
 import { useAppStore } from "@core/store/useAppStore";
 import * as TenantContextModule from "@core/providers/tenant-context-provider";
+import { useTenantBranding } from "@core/providers/tenant-branding-provider";
+import { useI18n } from "@core/providers/i18n-provider";
 
 // Safe wrapper: avoids throwing when isolated unit tests omit <TenantContextProvider>,
 // while staying compatible with legacy mocks that stub only `useTenantContext`.
@@ -63,6 +65,8 @@ export function useAdminContext(): AdminContextState {
   const tenantCode = useAppStore((s) => s.tenantCode);
   const isHydrated = useAppStore((s) => s._hasHydrated);
   const tenantCtx = useSafeTenantContext();
+  const branding = useTenantBranding();
+  const { t } = useI18n();
   const currentTenant = tenantCtx?.currentTenant ?? null;
   const isInTenantWorld = tenantCtx?.isInTenantWorld ?? false;
 
@@ -70,12 +74,20 @@ export function useAdminContext(): AdminContextState {
   // never treat `tenantCode` as an active tenant when `user` is resolved in real app sessions.
   const legacyTestTenantFallback = user === undefined ? (tenantCode ?? null) : null;
   const activeTenantId = currentTenant?.id ?? user?.tenantId ?? legacyTestTenantFallback;
-  const userTenantName = (user as { tenantName?: string | null } | null)?.tenantName ?? null;
-  const activeTenantName =
-    currentTenant?.name ??
-    userTenantName ??
-    (user?.tenantId || legacyTestTenantFallback ? "Organization" : null);
   const isTenant = Boolean(activeTenantId);
+  const userTenantName = (user as { tenantName?: string | null } | null)?.tenantName ?? null;
+  const userTenantCode = (user as { tenantCode?: string | null } | null)?.tenantCode ?? null;
+  const brandingTenantName = branding?.isTenantContext
+    ? branding.companyName || branding.appName || null
+    : null;
+  const resolvedTenantCode = userTenantCode ?? (tenantCode?.trim() || null);
+  const activeTenantName = isTenant
+    ? (currentTenant?.name ??
+      userTenantName ??
+      brandingTenantName ??
+      resolvedTenantCode ??
+      t("chrome.section.organization", { defaultValue: "Organization" }))
+    : null;
   const isPlatform = !isTenant;
   const isImpersonating = Boolean(
     isInTenantWorld && currentTenant && (!user?.tenantId || currentTenant.id !== user.tenantId)

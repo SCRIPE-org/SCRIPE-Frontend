@@ -27,14 +27,14 @@ export function buildOpportunityColumns(
       label: t("crmOpportunities.table.title"),
       sortable: true,
       render: (_val, opp: CrmOpportunity) => (
-        <div className="max-w-[230px] overflow-hidden">
+        <div className="min-w-[260px] max-w-[380px] overflow-hidden">
           <Button
             type="button"
             variant="link"
             data-testid={`deal-row-link-${opp.id}`}
             onClick={() => onSelectOpportunity(opp)}
             title={opp.title}
-            className="p-0 h-auto max-w-full font-semibold text-nx-ink hover:text-nx-accent transition-colors truncate block text-start"
+            className="p-0 h-auto max-w-full whitespace-normal line-clamp-2 font-semibold text-nx-ink hover:text-nx-accent transition-colors text-start leading-snug"
           >
             {opp.title}
           </Button>

@@ -238,4 +238,12 @@ describe("NexusPrimaryRail — /hub navigation & null-workspace shell behavior",
     fireEvent.click(lockedBtn);
     expect(onLockedClick).not.toHaveBeenCalled();
   });
+
+  it("hides fixed primary rail on mobile (<768px) via hidden md:flex so mobile pages reclaim horizontal space", () => {
+    render(<NexusPrimaryRail onOpenAppLauncher={vi.fn()} />);
+
+    const nav = screen.getByRole("navigation", { name: "navigation.primaryNav" });
+    expect(nav.className).toContain("hidden");
+    expect(nav.className).toContain("md:flex");
+  });
 });

@@ -23,9 +23,11 @@ export const ar = {
         churn: "المتوقفون",
         revenue: "إجمالي الإيرادات",
         newCount: "+{{count}} جديد",
+        newIncludingTrials: "+{{count}} جديد (يشمل التجريبية)",
         churnRate: "معدل التوقف",
         trials: "الاشتراكات التجريبية",
       },
+      internalExclusionNotice: "تستثني المؤشرات التجارية مساحات عمل المنصة الداخلية.",
       periods: {
         months3: "3 أشهر",
         months6: "6 أشهر",

@@ -107,6 +107,7 @@ export function TenantsView() {
         open={vm.editDialogOpen}
         onOpenChange={vm.setEditDialogOpen}
         tenantName={vm.editingNode?.name || ""}
+        tenantCode={vm.editingNode?.code}
         form={vm.editForm}
         setForm={vm.setEditForm}
         onSubmit={vm.handleEditSubmit}

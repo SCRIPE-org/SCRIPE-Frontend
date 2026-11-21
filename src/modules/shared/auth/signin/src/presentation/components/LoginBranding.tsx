@@ -159,8 +159,8 @@ export function LoginBranding({
       {/* ── Main Content: Headline + Slot Content or Features ── */}
       <div className="relative z-10 my-auto max-w-xl py-12">
         <h1
-          className="login-heading leading-[1.12] tracking-tight text-[var(--login-text,var(--nx-ink))]"
-          style={{ fontSize: "var(--login-size-headline, 3rem)" }}
+          className="login-heading text-balance leading-[1.12] tracking-tight text-[var(--login-text,var(--nx-ink))]"
+          style={{ fontSize: "var(--login-size-headline, clamp(2rem, 2.75vw, 2.75rem))" }}
         >
           {headline}
         </h1>

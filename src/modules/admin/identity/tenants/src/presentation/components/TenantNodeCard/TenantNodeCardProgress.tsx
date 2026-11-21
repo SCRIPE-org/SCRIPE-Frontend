@@ -25,7 +25,7 @@ export function TenantNodeCardProgress({
   progress,
   progressColor,
 }: TenantNodeCardProgressProps) {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
 
   return (
     <>
@@ -40,7 +40,7 @@ export function TenantNodeCardProgress({
             </span>
             {node.editionEndDate && (
               <span>
-                {t("tenant.endDate")}: {formatDateUtc(node.editionEndDate)}
+                {t("tenant.endDate")}: {formatDateUtc(node.editionEndDate, language)}
               </span>
             )}
           </div>

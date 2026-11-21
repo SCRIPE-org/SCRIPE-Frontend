@@ -15,8 +15,12 @@ export const en = {
     deactivateConfirmation: "Are you sure you want to deactivate this tenant?",
     activateConfirmation: "Are you sure you want to activate this tenant?",
     title: "Tenants",
+    listDescription:
+      "Manage tenant workspaces, hierarchical sub-tenants, and active edition assignments.",
     detailTitle: "Tenant Details",
     description: "Description",
+    noExpiryBadge: "∞ No Expiry",
+    internalReadOnlyBadge: "Internal • Protected",
     hierarchy: "Tenant Hierarchy",
     allTenants: "All Tenants",
     totalTenants: "Total Tenants",

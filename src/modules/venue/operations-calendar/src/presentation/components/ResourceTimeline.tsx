@@ -82,11 +82,12 @@ export function ResourceTimeline(props: ResourceTimelineProps) {
       <div
         className="overflow-auto rounded-nx-lg border border-nx-line bg-nx-surface"
         data-testid="resource-timeline"
+        dir="ltr"
       >
         <div className="min-w-max" dir="ltr">
           <div className="flex border-b border-nx-line bg-nx-raised">
             <div
-              className="sticky left-0 z-30 flex w-48 shrink-0 items-center border-r border-nx-line bg-nx-raised px-4 text-sm font-semibold"
+              className="sticky left-0 z-30 flex w-56 shrink-0 items-center border-r border-nx-line bg-nx-raised px-4 text-sm font-semibold"
               dir={props.direction}
             >
               {props.t("operationsCalendar.timeline.courtOrSpace")}
@@ -118,11 +119,11 @@ export function ResourceTimeline(props: ResourceTimelineProps) {
                 data-resource-id={resource.id}
               >
                 <div
-                  className="sticky left-0 z-30 w-48 shrink-0 border-r border-nx-line bg-nx-surface px-4 py-3"
+                  className="sticky left-0 z-30 w-56 shrink-0 border-r border-nx-line bg-nx-surface px-4 py-3"
                   dir={props.direction}
                 >
-                  <p className="truncate text-sm font-semibold text-nx-ink">{resource.name}</p>
-                  <p className="truncate text-xs text-nx-ink-3">{resource.profileName}</p>
+                  <p dir="auto" className="line-clamp-2 text-sm font-semibold text-nx-ink">{resource.name}</p>
+                  <p dir="auto" className="line-clamp-2 text-xs text-nx-ink-3">{resource.profileName}</p>
                 </div>
 
                 <div className="relative flex" style={{ width: timelineWidth, height: laneHeight }}>

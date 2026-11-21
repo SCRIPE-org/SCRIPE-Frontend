@@ -111,9 +111,9 @@ function getStatusLabel(status: string, t: (key: string) => string): string {
   return map[status] || status;
 }
 
-function formatDate(dateStr?: string) {
+function formatDate(dateStr?: string, locale = "en") {
   if (!dateStr) return "—";
-  return formatDateUtc(dateStr);
+  return formatDateUtc(dateStr, locale);
 }
 
 // ── Billing Cycle Options (dynamically filtered by edition capabilities) ──
@@ -182,7 +182,7 @@ export function TenantSubscriptionCard({
   tenantId,
   isInternal = false,
 }: TenantSubscriptionCardProps) {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const [selectedEditionId, setSelectedEditionId] = useState("");
   const [changePlanOpen, setChangePlanOpen] = useState(false);
   const vm = useTenantSubscriptionViewModel(tenantId, selectedEditionId, changePlanOpen);
@@ -401,7 +401,7 @@ export function TenantSubscriptionCard({
               <p className="text-xs font-medium text-nx-ink-2">{t("tenant.startDate")}</p>
               <p className="flex items-center gap-1 text-sm font-medium">
                 <Calendar className="h-3 w-3 text-nx-ink-2" />
-                {formatDate(subscription.startDate)}
+                {formatDate(subscription.startDate, language)}
               </p>
             </div>
 
@@ -410,7 +410,7 @@ export function TenantSubscriptionCard({
               <p className="text-xs font-medium text-nx-ink-2">{t("tenant.endDate")}</p>
               {subscription.endDate ? (
                 <div>
-                  <p className="text-sm font-medium">{formatDate(subscription.endDate)}</p>
+                  <p className="text-sm font-medium">{formatDate(subscription.endDate, language)}</p>
                   {vm.daysRemaining !== null && (
                     <p
                       className={`text-xs ${vm.daysRemaining <= 7 ? "font-semibold text-destructive" : "text-nx-ink-2"}`}
@@ -567,7 +567,7 @@ export function TenantSubscriptionCard({
                   {" ("}
                   {vm.downgradedFromType}
                   {")"}
-                  {vm.downgradedAt && <> — {formatDateUtc(vm.downgradedAt)}</>}
+                  {vm.downgradedAt && <> — {formatDateUtc(vm.downgradedAt, language)}</>}
                 </span>
               </div>
               {!isInternal && (
@@ -608,7 +608,7 @@ export function TenantSubscriptionCard({
                     )}
                     {previousRefundedSub.refundedAt && (
                       <span className="ms-1 text-xs text-nx-ink-2">
-                        — {formatDateUtc(previousRefundedSub.refundedAt)}
+                        — {formatDateUtc(previousRefundedSub.refundedAt, language)}
                       </span>
                     )}
                   </span>
@@ -652,7 +652,7 @@ export function TenantSubscriptionCard({
                     )}
                     {subscription.refundedAt && (
                       <span className="ms-1 text-xs text-nx-ink-2">
-                        — {formatDateUtc(subscription.refundedAt)}
+                        — {formatDateUtc(subscription.refundedAt, language)}
                       </span>
                     )}
                   </span>
@@ -1178,7 +1178,7 @@ export function TenantSubscriptionCard({
               <div className="space-y-1 rounded-nx-md bg-nx-raised p-3">
                 <p className="text-xs text-nx-ink-2">{t("tenant.currentEndDate")}</p>
                 <p className="text-sm font-medium">
-                  {subscription.endDate ? formatDate(subscription.endDate) : t("tenant.never")}
+                  {subscription.endDate ? formatDate(subscription.endDate, language) : t("tenant.never")}
                 </p>
               </div>
             )}
@@ -1659,7 +1659,7 @@ export function TenantSubscriptionCard({
                   </p>
                   {vm.downgradedAt && (
                     <p className="text-xs text-nx-ink-2">
-                      {t("tenant.downgradedOn")}: {formatDateUtc(vm.downgradedAt)}
+                      {t("tenant.downgradedOn")}: {formatDateUtc(vm.downgradedAt, language)}
                     </p>
                   )}
                 </div>

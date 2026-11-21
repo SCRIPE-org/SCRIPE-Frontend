@@ -40,6 +40,8 @@ import {
 } from "./_parts/nexus-layout-constants";
 import { NexusFooter } from "./_parts/nexus-footer";
 import { useWorkspace } from "@core/providers/workspace-provider";
+import { NotificationBell } from "@core/ui/notification";
+import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
 
 const AI_COPILOT_DEMO_ENABLED = process.env.NEXT_PUBLIC_SCRIPE_AI_DEMO === "true";
 const AiCopilotDemoHost = AI_COPILOT_DEMO_ENABLED
@@ -73,7 +75,7 @@ export function NexusLayout({ children }: NexusLayoutProps) {
   const [appLauncherOpen, setAppLauncherOpen] = useState(false);
   const mobileToggleRef = useRef<HTMLButtonElement>(null);
   const { direction, t } = useI18n();
-  const { showFooter, collapsibleSidebar } = useSettings();
+  const { showFooter, collapsibleSidebar, showNotifications = true } = useSettings();
 
   const openMobile = useCallback(() => setMobileMenuOpen(true), []);
   const closeMobile = useCallback(() => setMobileMenuOpen(false), []);
@@ -173,6 +175,23 @@ export function NexusLayout({ children }: NexusLayoutProps) {
             onMobileClose={closeMobile}
             isCollapsed={effectivePanelCollapsed}
             returnFocusRef={mobileToggleRef}
+            onOpenAppLauncher={() => setAppLauncherOpen(true)}
+            mobileFooter={
+              <div className="flex items-center justify-between gap-2">
+                <UserProfileDropdown
+                  variant="compact"
+                  showName={true}
+                  side="top"
+                  align="start"
+                />
+                {showNotifications && (
+                  <NotificationBell
+                    iconClassName="h-4 w-4"
+                    className="h-9 w-9 shrink-0 rounded-nx-control border border-nx-line text-nx-ink-2 hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink"
+                  />
+                )}
+              </div>
+            }
           />
           <div
             style={{

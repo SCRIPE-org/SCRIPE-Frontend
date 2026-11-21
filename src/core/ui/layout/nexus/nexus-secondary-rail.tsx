@@ -16,10 +16,13 @@
  */
 
 import React, { useCallback, useEffect, useRef } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { Home, LayoutGrid } from "lucide-react";
 import { useWorkspace } from "@core/providers/workspace-provider";
 import { useI18n } from "@core/providers/i18n-provider";
 import { MenuItem } from "@core/navigation";
+import { Button } from "@core/ui/button";
+import { cn } from "@core/common/utils";
 import { RailHeader, RailContent } from "./_parts/secondary-rail-parts";
 import { useNexusReducedMotion } from "./nexus-transition";
 import { NEXUS_PANEL_W, getSecondaryMenuItems } from "./_parts/nexus-layout-constants";
@@ -29,6 +32,8 @@ interface NexusSecondaryRailProps {
   onMobileClose?: () => void;
   isCollapsed?: boolean;
   returnFocusRef?: React.RefObject<HTMLButtonElement | null>;
+  onOpenAppLauncher?: () => void;
+  mobileFooter?: React.ReactNode;
 }
 
 const FOCUSABLE_SELECTOR =
@@ -40,10 +45,14 @@ export function NexusSecondaryRail({
   onMobileClose,
   isCollapsed,
   returnFocusRef,
+  onOpenAppLauncher,
+  mobileFooter,
 }: NexusSecondaryRailProps) {
-  const { activeWorkspace, activeRootItem, rootMenuItems, isModuleMode } = useWorkspace();
+  const { activeWorkspace, activeRootItem, rootMenuItems, isModuleMode, setActiveRootItemId } =
+    useWorkspace();
   const { language, t } = useI18n();
   const pathname = usePathname();
+  const router = useRouter();
   const reducedMotion = useNexusReducedMotion();
   const mobileDrawerRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
@@ -75,7 +84,7 @@ export function NexusSecondaryRail({
 
   // Desktop collapse state ONLY — never gates the mobile drawer overlay.
   const effectiveCollapsed = !hasSubmenu || !!isCollapsed;
-  const isMobileDrawerOpen = Boolean(mobileOpen && hasSubmenu);
+  const isMobileDrawerOpen = Boolean(mobileOpen);
 
   // Move focus into the mobile drawer when opened, and restore focus to the
   // toggle trigger (or previously focused element) when closed.
@@ -222,12 +231,86 @@ export function NexusSecondaryRail({
                 onClose={onMobileClose}
                 closeLabel={t("common.close")}
               />
-              <RailContent
-                menuItems={menuItems}
-                pathname={pathname}
-                language={language}
-                onNavigate={handleNavigate}
-              />
+              <div className="space-y-2 border-b border-nx-line px-3 py-2.5 md:hidden">
+                <div className="flex items-center gap-2">
+                  {onOpenAppLauncher && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        onMobileClose?.();
+                        onOpenAppLauncher();
+                      }}
+                      className="h-8 flex-1 justify-start gap-1.5 text-xs"
+                    >
+                      <LayoutGrid className="size-3.5 shrink-0" aria-hidden="true" />
+                      <span className="truncate">{t("shell.launcher.title")}</span>
+                    </Button>
+                  )}
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      onMobileClose?.();
+                      router.push("/hub");
+                    }}
+                    className="h-8 shrink-0 gap-1.5 px-2.5 text-xs"
+                    aria-label={t("chrome.goToHome")}
+                  >
+                    <Home className="size-3.5 shrink-0" aria-hidden="true" />
+                    <span className="truncate">{t("chrome.goToHome")}</span>
+                  </Button>
+                </div>
+                {rootMenuItems.length > 1 && (
+                  <div className="flex flex-wrap gap-1.5">
+                    {rootMenuItems.map((root) => {
+                      const isActiveRoot = root.id === activeRootItem?.id;
+                      const rootLabel =
+                        language === "ar"
+                          ? root.nameAr || root.nameEn
+                          : root.nameEn || root.nameAr;
+                      return (
+                        <Button
+                          key={root.id}
+                          type="button"
+                          variant={isActiveRoot ? "secondary" : "ghost"}
+                          size="sm"
+                          onClick={() => {
+                            setActiveRootItemId?.(root.id);
+                            if (root.href && (!root.children || root.children.length === 0)) {
+                              onMobileClose?.();
+                              router.push(root.href);
+                            }
+                          }}
+                          className={cn(
+                            "h-7 max-w-full px-2 text-[11px]",
+                            isActiveRoot
+                              ? "border border-nx-line font-semibold text-nx-ink"
+                              : "text-nx-ink-2"
+                          )}
+                        >
+                          <span className="truncate">{rootLabel}</span>
+                        </Button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+              {hasSubmenu ? (
+                <RailContent
+                  menuItems={menuItems}
+                  pathname={pathname}
+                  language={language}
+                  onNavigate={handleNavigate}
+                />
+              ) : (
+                <div className="flex-1" />
+              )}
+              {mobileFooter && (
+                <div className="mt-auto border-t border-nx-line p-2 md:hidden">{mobileFooter}</div>
+              )}
             </div>
           </div>
         </>

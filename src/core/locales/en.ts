@@ -2143,6 +2143,7 @@ export const en = {
       locked: "Locked",
       itemCount: "{count} items",
       module: "Module",
+      organization: "Organization",
       platform: "Platform",
       workspace: "Workspace",
     },

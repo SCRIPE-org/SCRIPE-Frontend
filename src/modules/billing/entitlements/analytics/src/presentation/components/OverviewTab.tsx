@@ -3,6 +3,7 @@
  * OverviewTab — Premium KPI cards with key revenue metrics and visual indicators.
  */
 import { useI18n } from "@core/providers/i18n-provider";
+import { Alert, AlertDescription } from "@core/ui/alert";
 import { StatCard, type StatTone } from "@core/ui/stat-card";
 import {
   TrendingUp,
@@ -13,6 +14,7 @@ import {
   Percent,
   Activity,
   BarChart3,
+  Info,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { AnalyticsOverview } from "../../domain/entities/AnalyticsEntities";
@@ -76,7 +78,9 @@ export function OverviewTab({ overview }: OverviewTabProps) {
       value: overview.activeSubscriptions.toLocaleString(),
       subtitle:
         overview.newSubscriptions > 0
-          ? t("entitlements.analytics.kpi.newCount", { count: String(overview.newSubscriptions) })
+          ? t("entitlements.analytics.kpi.newIncludingTrials", {
+              count: String(overview.newSubscriptions),
+            })
           : undefined,
       icon: Users,
       tone: "neutral",
@@ -104,29 +108,39 @@ export function OverviewTab({ overview }: OverviewTabProps) {
       value: overview.churnedSubscriptions.toLocaleString(),
       icon: TrendingDown,
       tone: "danger",
+      large: true,
     },
     {
       title: t("entitlements.analytics.kpi.revenue"),
       value: formatCurrency(overview.totalRevenue, overview.currency),
       icon: Activity,
       tone: "neutral",
+      large: true,
     },
   ];
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      {kpis.map((kpi) => (
-        <StatCard
-          key={kpi.title}
-          label={kpi.title}
-          value={kpi.value}
-          icon={kpi.icon}
-          tone={kpi.tone}
-          subtitle={kpi.subtitle}
-          trend={kpi.change !== undefined ? { value: kpi.change } : undefined}
-          className={kpi.large ? "sm:col-span-2" : undefined}
-        />
-      ))}
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {kpis.map((kpi) => (
+          <StatCard
+            key={kpi.title}
+            label={kpi.title}
+            value={kpi.value}
+            icon={kpi.icon}
+            tone={kpi.tone}
+            subtitle={kpi.subtitle}
+            trend={kpi.change !== undefined ? { value: kpi.change } : undefined}
+            className={kpi.large ? "sm:col-span-2" : undefined}
+          />
+        ))}
+      </div>
+      <Alert variant="info" data-testid="analytics-internal-exclusion-notice">
+        <Info className="h-4 w-4" aria-hidden="true" />
+        <AlertDescription>
+          {t("entitlements.analytics.internalExclusionNotice")}
+        </AlertDescription>
+      </Alert>
     </div>
   );
 }

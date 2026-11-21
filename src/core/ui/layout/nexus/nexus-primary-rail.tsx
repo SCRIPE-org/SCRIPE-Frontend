@@ -257,7 +257,7 @@ export function NexusPrimaryRail({
   return (
     <nav
       aria-label={t("navigation.primaryNav")}
-      className="relative z-raised flex flex-shrink-0 flex-col items-center"
+      className="relative z-raised hidden flex-shrink-0 flex-col items-center md:flex"
       style={{
         width: "var(--nexus-primary-w)",
         minWidth: "var(--nexus-primary-w)",

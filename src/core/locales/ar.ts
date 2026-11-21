@@ -2127,6 +2127,7 @@ export const ar = {
       locked: "مقفل",
       itemCount: "{count} عنصر",
       module: "وحدة",
+      organization: "المؤسسة",
       platform: "المنصة",
       workspace: "مساحة العمل",
     },
