@@ -25,6 +25,7 @@ export type { NavigationDataInput } from "./domain/entities/NavigationData";
 export {
   buildStructuredLandingTargetOptions,
   canEnforceLandingTarget,
+  formatLandingTargetLabel,
 } from "./domain/utils/landing-target-options";
 export type {
   BuildLandingTargetOptionsInput,

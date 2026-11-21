@@ -1813,7 +1813,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
       <GenericModal
         open={viewModel.isCreateModalOpen}
         onOpenChange={viewModel.setIsCreateModalOpen}
-        title={t("crud.modal.createTitle", { entity: title })}
+        title={t("crud.modal.createTitle", { entity })}
         description={t("crud.modal.createDescription", { entity })}
         surface={config?.formSurface}
         // Screen's own fields only — see the editFormKey note above: keying on
@@ -1914,7 +1914,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
             viewModel.closeEditModal();
           }
         }}
-        title={t("crud.modal.editTitle", { entity: title })}
+        title={t("crud.modal.editTitle", { entity })}
         description={t("crud.modal.editDescription", { entity })}
         surface={config?.formSurface}
         // Frozen while the modal is closing. `closeEditModal` nulls

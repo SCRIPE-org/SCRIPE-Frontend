@@ -144,7 +144,7 @@ export function RolesView() {
       },
     ],
     getItemDisplayName: (role) => role.getLocalizedName(language),
-    itemTypeKey: "roles.roleDetails", // Used for delete confirmation ("Delete Role Details" -> "Delete Role")
+    itemTypeKey: "roles.singular",
     enableBulkActions: true,
     bulkActions: [
       {

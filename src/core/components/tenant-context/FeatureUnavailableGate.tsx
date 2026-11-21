@@ -52,12 +52,11 @@ export function FeatureUnavailableGate({
     <div
       dir={direction}
       data-testid="feature-unavailable-gate"
-      className="flex min-h-screen items-center justify-center bg-nx-ground px-4 py-10 text-nx-ink"
+      className="flex min-h-[calc(100vh-4rem)] items-center justify-center bg-nx-ground px-4 py-10 text-nx-ink"
     >
-      <Card className="w-full max-w-lg border border-nx-line bg-nx-surface hover:border-nx-line-hi">
+      <Card className="w-full max-w-xl border border-nx-line bg-nx-surface hover:border-nx-line-hi">
         <CardHeader className="space-y-3">
           <Badge variant="warning" className="w-fit">
-            <Lock className="h-3.5 w-3.5" aria-hidden="true" />
             <span>{t("contextGates.featureUnavailable.badge")}</span>
           </Badge>
           <div className="flex items-start gap-3">

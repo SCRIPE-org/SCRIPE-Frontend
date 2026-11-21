@@ -91,6 +91,40 @@ if (typeof window !== "undefined") {
 }
 
 /**
+ * Builds runtime security and context headers shared by Axios interceptors
+ * and keepalive fetch calls (e.g., beforeunload admin-settings flush).
+ */
+export function buildRequestSecurityHeaders(options?: {
+  tenantContextId?: string | null;
+  isMutating?: boolean;
+}): Record<string, string> {
+  const headers: Record<string, string> = {
+    "Accept-Language": cachedLanguage,
+  };
+
+  if (options?.tenantContextId) {
+    headers["X-Tenant-Context"] = options.tenantContextId;
+  }
+
+  if (options?.isMutating) {
+    headers["X-Request-Timestamp"] = Date.now().toString();
+    headers["X-Request-Nonce"] = generateUUID();
+
+    const csrfToken = getCsrfToken();
+    if (csrfToken) {
+      headers["X-CSRF-Token"] = csrfToken;
+    }
+  }
+
+  const sudoToken = useSudoStore.getState().getValidSudoToken();
+  if (sudoToken) {
+    headers["X-Sudo-Token"] = sudoToken;
+  }
+
+  return headers;
+}
+
+/**
  * API Service Implementation using Axios
  *
  * Enterprise-grade HTTP client with:
@@ -185,39 +219,18 @@ export class ApiService implements IApiService {
           appLogger.auth("Token added to request");
         }
 
-        // Add tenant context header if set
-        if (this.tenantContextId) {
-          config.headers["X-Tenant-Context"] = this.tenantContextId;
-          appLogger.api(`Tenant context: ${this.tenantContextId}`);
-        }
-
-        // P1.5: Use cached language instead of reading localStorage per request
-        config.headers["Accept-Language"] = cachedLanguage;
-
-        // P6.3: Request replay protection (timestamp + nonce)
         const isMutating = ["post", "put", "patch", "delete"].includes(
           (config.method ?? "").toLowerCase()
         );
-        if (isMutating) {
-          // Replay protection: unique timestamp + nonce per request
-          config.headers["X-Request-Timestamp"] = Date.now().toString();
-          const nonce = generateUUID();
-          config.headers["X-Request-Nonce"] = nonce;
-
-          // S0.15: CSRF protection — OWASP Signed Double-Submit Cookie pattern.
-          // Token was captured from X-CSRF-Token response header on last response.
-          // The token is HMAC-SHA256 signed server-side (secret + JWT jti),
-          // so it cannot be forged by an attacker on another origin.
-          const csrfToken = getCsrfToken();
-          if (csrfToken) {
-            config.headers["X-CSRF-Token"] = csrfToken;
-          }
+        const securityHeaders = buildRequestSecurityHeaders({
+          tenantContextId: this.tenantContextId,
+          isMutating,
+        });
+        for (const [headerName, headerValue] of Object.entries(securityHeaders)) {
+          config.headers[headerName] = headerValue;
         }
-
-        // Attach active X-Sudo-Token when present and unexpired
-        const sudoToken = useSudoStore.getState().getValidSudoToken();
-        if (sudoToken && config.headers) {
-          config.headers["X-Sudo-Token"] = sudoToken;
+        if (this.tenantContextId) {
+          appLogger.api(`Tenant context: ${this.tenantContextId}`);
         }
 
         // Fix for 415 Unsupported Media Type with FormData

@@ -55,7 +55,11 @@ export function HubSearch({ value, onChange }: HubSearchProps) {
         onChange={(e) => onChange(e.target.value)}
         placeholder={t("workspaceHub.search.placeholder")}
         aria-label={t("workspaceHub.search.placeholder")}
-        className="h-14 rounded-nx-lg pe-28 ps-11 text-base"
+        className={
+          hasValue
+            ? "h-14 rounded-nx-lg pe-12 ps-11 text-base"
+            : "h-14 rounded-nx-lg pe-4 ps-11 text-base sm:pe-28"
+        }
       />
       {hasValue ? (
         <Button
@@ -72,7 +76,7 @@ export function HubSearch({ value, onChange }: HubSearchProps) {
           <X size={16} aria-hidden="true" />
         </Button>
       ) : (
-        <div className="pointer-events-none absolute end-4 top-1/2 inline-flex -translate-y-1/2 items-center gap-1.5 text-nx-ink-3">
+        <div className="pointer-events-none absolute end-4 top-1/2 hidden -translate-y-1/2 items-center gap-1.5 text-nx-ink-3 sm:inline-flex">
           <kbd className="rounded-nx-sm border border-nx-line bg-nx-raised px-2 py-0.5 text-[11px] font-semibold text-nx-ink-2">
             /
           </kbd>

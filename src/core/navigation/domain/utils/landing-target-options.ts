@@ -158,3 +158,76 @@ export function buildStructuredLandingTargetOptions({
 
   return options;
 }
+
+function humanizeTargetSlug(raw: string): string {
+  return raw
+    .split(/[-_]/)
+    .filter(Boolean)
+    .map((part) => (part.length > 0 ? part[0].toUpperCase() + part.slice(1) : part))
+    .join(" ");
+}
+
+function findMenuPathBySlug(
+  nodes: MenuItem[],
+  slugLower: string,
+  language: string,
+  parents: string[]
+): string[] | null {
+  for (const node of nodes) {
+    const label = node.getLocalizedName(language);
+    const nextPath = [...parents, label];
+    if ((node.slug?.trim().toLowerCase() ?? "") === slugLower) {
+      return nextPath;
+    }
+    if (node.children.length > 0) {
+      const match = findMenuPathBySlug(node.children, slugLower, language, nextPath);
+      if (match) return match;
+    }
+  }
+  return null;
+}
+
+/**
+ * Formats a persisted structured landing target token (`default`, `overview`, `hub`,
+ * `workspace:<key>`, `menu:<slug>`) into a human-readable localized display label.
+ */
+export function formatLandingTargetLabel({
+  target,
+  language,
+  workspaceGroups,
+  cachedWorkspaces,
+  labels,
+}: {
+  target?: string | null;
+  language: string;
+  workspaceGroups: WorkspaceGroup[];
+  cachedWorkspaces?: Map<string, NavigationData>;
+  labels: LandingTargetOptionLabels;
+}): string {
+  const normalized = typeof target === "string" ? target.trim().toLowerCase() : "";
+  if (!normalized || normalized === "default") return labels.defaultLabel;
+  if (normalized === "overview") return labels.overviewLabel;
+  if (normalized === "hub") return labels.hubLabel;
+
+  if (normalized.startsWith("workspace:")) {
+    const wsKey = normalized.slice("workspace:".length);
+    const ws = workspaceGroups.find((g) => g.workspaceKey.trim().toLowerCase() === wsKey);
+    const wsLabel = ws ? ws.getLocalizedName(language) : humanizeTargetSlug(wsKey);
+    return `${labels.workspacePrefix} ${wsLabel}`;
+  }
+
+  if (normalized.startsWith("menu:")) {
+    const slugLower = normalized.slice("menu:".length);
+    for (const ws of workspaceGroups) {
+      const cached = cachedWorkspaces?.get(ws.workspaceKey);
+      const menuItems = ws.menuItems.length > 0 ? ws.menuItems : (cached?.menuItems ?? []);
+      const pathNames = findMenuPathBySlug(menuItems, slugLower, language, []);
+      if (pathNames) {
+        return `${labels.menuPrefix} ${ws.getLocalizedName(language)} / ${pathNames.join(" / ")}`;
+      }
+    }
+    return `${labels.menuPrefix} ${humanizeTargetSlug(slugLower)}`;
+  }
+
+  return target!.trim();
+}

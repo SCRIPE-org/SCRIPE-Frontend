@@ -48,6 +48,8 @@ describe("HubModuleTile — non-nested interactive controls, unique aria-labels 
     expect(primaryBtn.contains(pinBtn)).toBe(false);
     expect(pinBtn.contains(primaryBtn)).toBe(false);
     expect(pinBtn.className).toContain("[@media(pointer:coarse)]:opacity-100");
+    expect(pinBtn.className).toContain("[@media(pointer:coarse)]:h-9");
+    expect(pinBtn.className).toContain("[@media(pointer:coarse)]:w-9");
     expect(pinBtn.className).toContain("opacity-100");
 
     fireEvent.click(pinBtn);

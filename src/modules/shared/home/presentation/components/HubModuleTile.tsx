@@ -119,7 +119,7 @@ export function HubModuleTile({
   }, [onClick]);
 
   const pinOverlayClass = cn(
-    "absolute end-2.5 top-2.5 z-20 h-7 w-7 rounded-nx-sm p-0 transition-colors focus-visible:shadow-nx-focus focus-visible:outline-none hover:bg-nx-hover",
+    "absolute end-2.5 top-2.5 z-20 h-7 w-7 [@media(pointer:coarse)]:h-9 [@media(pointer:coarse)]:w-9 rounded-nx-sm p-0 transition-colors focus-visible:shadow-nx-focus focus-visible:outline-none hover:bg-nx-hover",
     isPinned ? "text-nx-accent" : "text-nx-ink-3 hover:text-nx-ink"
   );
 

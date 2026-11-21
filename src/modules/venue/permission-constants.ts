@@ -15,6 +15,9 @@
  * exact mirrors of the two owning backend modules' permission providers.
  */
 export const VENUE_PERMISSIONS = {
+  // ── Dashboard ────────────────────────────────────────────
+  VENUE_DASHBOARD_VIEW: "venue-dashboard.view",
+
   // ── Facilities ───────────────────────────────────────────
   FACILITY_VIEW: "facilities.view",
   FACILITY_CREATE: "facilities.create",

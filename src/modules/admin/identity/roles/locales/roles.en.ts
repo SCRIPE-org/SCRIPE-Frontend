@@ -2,6 +2,7 @@ export const en = {
   roles: {
     search: "Search",
     title: "Roles",
+    singular: "Role",
     description: "Manage roles and their permissions.",
     name: "Name",
     selectPlaceholder: "Select a role...",

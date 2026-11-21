@@ -1255,6 +1255,7 @@ export const ar = {
       startupDesc: "اختر الوجهة المصرح بها التي تفتح تلقائياً بعد تسجيل الدخول في هذا السياق.",
       startupContextLabel: "السياق النشط",
       startupContextPlatform: "لوحة تحكم المنصة",
+      startupContextTenant: "بيئة المؤسسة",
       startupTargetLabel: "وجهة البدء المفضلة",
       startupTargetPlaceholder: "اختر وجهة البدء...",
       startupResetButton: "إعادة التعيين إلى التلقائي",

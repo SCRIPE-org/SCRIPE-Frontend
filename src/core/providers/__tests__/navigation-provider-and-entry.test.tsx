@@ -15,6 +15,8 @@ import { STORAGE_KEYS } from "@core/config/storage-keys";
 let mockSearch = "";
 let mockActiveTenantId: string | null = "tenant-1";
 let mockCanAccessPageImpl = (_path: string) => true;
+let mockHasToken = true;
+let mockAccessToken: string | null = "live-jwt-token";
 
 const mockRouterReplace = vi.fn();
 const mockFetchNavigationBootstrap = vi.fn();
@@ -33,7 +35,12 @@ vi.mock("next/navigation", () => ({
 
 vi.mock("@core/common/secure-token-service", () => ({
   secureTokenService: {
-    hasToken: () => true,
+    hasToken: () => mockHasToken,
+    getAccessToken: () => mockAccessToken,
+    clearTokens: () => {
+      mockHasToken = false;
+      mockAccessToken = null;
+    },
     subscribe: () => () => {},
   },
 }));
@@ -240,6 +247,8 @@ describe("NavigationProvider single-pass bootstrap, app/(modules)/page.tsx & Das
     mockSearch = "";
     mockActiveTenantId = "tenant-1";
     mockCanAccessPageImpl = () => true;
+    mockHasToken = true;
+    mockAccessToken = "live-jwt-token";
     window.history.replaceState({}, "", "/");
 
     useNavigationStore.getState().reset();
@@ -583,5 +592,72 @@ describe("NavigationProvider single-pass bootstrap, app/(modules)/page.tsx & Das
       expect(mockRouterReplace).toHaveBeenCalledWith("/crm/leads");
     });
     expect(mockFetchNavigationBootstrap).toHaveBeenCalledTimes(1);
+  });
+
+  it("never fires 401 boot workspace fetch when access token is missing or cleared by a child effect during session transition", () => {
+    const adminStub = new WorkspaceGroup({
+      workspaceId: "ws-admin",
+      workspaceKey: "admin",
+      workspaceNameEn: "Admin",
+      workspaceNameAr: "الإدارة",
+      workspaceIcon: "Shield",
+      workspaceSortOrder: 1,
+      colorHue: null,
+      colorChroma: null,
+      workspaceType: "Admin",
+      menuItems: [],
+      isLocked: false,
+      homeRoute: "/overview",
+      platformHomeRoute: "/overview",
+      isPinned: false,
+      pinSortOrder: null,
+      contextScope: "Both",
+      accessibleItemCount: 2,
+    });
+
+    // Unhydrated workspace present while token has been cleared before parent effect fires
+    mockHasToken = false;
+    mockAccessToken = null;
+    useNavigationStore.setState({
+      workspaceGroups: [adminStub],
+      workspaces: new Map(),
+      activeWorkspaceKey: "admin",
+      isInitialLoading: false,
+    });
+
+    const ClearOnMountChild = () => {
+      React.useEffect(() => {
+        mockHasToken = false;
+        mockAccessToken = null;
+        useAppStore.getState().logout();
+      }, []);
+      return <div data-testid="login-mount-child" />;
+    };
+
+    render(
+      <QueryClientProvider client={new QueryClient()}>
+        <NavigationProvider>
+          <ClearOnMountChild />
+        </NavigationProvider>
+      </QueryClientProvider>
+    );
+
+    expect(mockFetchWorkspaceMenu).not.toHaveBeenCalled();
+    expect(mockFetchNavigationBootstrap).not.toHaveBeenCalled();
+
+    // Even if store still looks authenticated momentarily while token is absent (or transitioning)
+    mockHasToken = true;
+    mockAccessToken = null;
+    useAppStore.setState({ isAuthenticated: true, isAuthTransitioning: true, _hasHydrated: true });
+
+    render(
+      <QueryClientProvider client={new QueryClient()}>
+        <NavigationProvider>
+          <div data-testid="transition-child" />
+        </NavigationProvider>
+      </QueryClientProvider>
+    );
+
+    expect(mockFetchWorkspaceMenu).not.toHaveBeenCalled();
   });
 });

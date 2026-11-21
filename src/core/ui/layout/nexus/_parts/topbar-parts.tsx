@@ -169,7 +169,7 @@ export function TopbarBreadcrumbs({
     <nav aria-label={t("nav.breadcrumb")} className="min-w-0 flex-1 overflow-hidden">
       <ol className="flex min-w-0 items-center gap-1 text-[13px] sm:gap-1.5">
         {/* ── Level 1: Workspace ── */}
-        <li className="flex min-w-0 shrink items-center gap-0.5">
+        <li className="flex min-w-0 shrink-0 items-center gap-0.5">
           <Button
             type="button"
             variant="ghost"
@@ -187,7 +187,7 @@ export function TopbarBreadcrumbs({
               router.push(homeRoute);
             }}
             className={cn(
-              "h-auto min-w-0 max-w-[116px] cursor-pointer whitespace-nowrap rounded-nx-sm px-1.5 py-0.5 duration-nx-micro hover:bg-nx-raised hover:text-nx-ink sm:max-w-none",
+              "h-auto min-w-0 cursor-pointer whitespace-nowrap rounded-nx-sm px-1.5 py-0.5 duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
               isWorkspaceCurrent ? "font-semibold text-nx-ink" : "font-medium text-nx-ink-3",
               CONTROL_MOTION,
               FOCUS_RING
@@ -203,7 +203,7 @@ export function TopbarBreadcrumbs({
                 size="icon"
                 aria-label={t("navigation.topbar.workspacesMenu")}
                 className={cn(
-                  "flex h-6 w-6 cursor-pointer items-center justify-center rounded-nx-sm p-0 text-nx-ink-3 duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
+                  "flex h-8 w-8 cursor-pointer items-center justify-center rounded-nx-sm p-0 text-nx-ink-3 duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
                   CONTROL_MOTION,
                   FOCUS_RING
                 )}
@@ -304,7 +304,7 @@ export function TopbarBreadcrumbs({
                     size="icon"
                     aria-label={t("navigation.topbar.sectionsMenu")}
                     className={cn(
-                      "flex h-6 w-6 cursor-pointer items-center justify-center rounded-nx-sm p-0 text-nx-ink-2 duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
+                      "flex h-8 w-8 cursor-pointer items-center justify-center rounded-nx-sm p-0 text-nx-ink-2 duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
                       CONTROL_MOTION,
                       FOCUS_RING
                     )}
@@ -359,7 +359,7 @@ export function TopbarBreadcrumbs({
               <li role="presentation" aria-hidden="true" className="inline-flex shrink-0 items-center">
                 <BreadcrumbSep isRTL={isRTL} />
               </li>
-              <li className={cn("min-w-0", isLastIntermediate ? "shrink-0 max-w-[160px] sm:max-w-[240px]" : "shrink")}>
+              <li className={cn("min-w-0 shrink", isLastIntermediate && "max-w-[120px] sm:shrink-0 sm:max-w-[240px]")}>
                 <span
                   aria-current={isLastIntermediate ? "page" : undefined}
                   className={cn(
@@ -380,7 +380,7 @@ export function TopbarBreadcrumbs({
             <li role="presentation" aria-hidden="true" className="inline-flex shrink-0 items-center">
               <BreadcrumbSep isRTL={isRTL} />
             </li>
-            <li className="min-w-0 shrink-0 max-w-[160px] sm:max-w-[240px]">
+            <li className="min-w-0 shrink max-w-[120px] sm:shrink-0 sm:max-w-[240px]">
               <span
                 aria-current="page"
                 className="block truncate px-1.5 py-0.5 font-semibold tracking-[-0.2px] text-nx-ink duration-nx-standard animate-in fade-in motion-reduce:animate-none"
@@ -507,7 +507,7 @@ export function TopbarContextPill({
     : "border-nx-line bg-transparent text-nx-ink-2";
 
   const pillClasses = cn(
-    "hidden items-center gap-1.5 rounded-full border px-3 py-1 text-[11px] font-semibold tracking-wide whitespace-nowrap shrink-0 sm:inline-flex",
+    "inline-flex max-w-[100px] items-center gap-1.5 rounded-full border px-2 py-1 text-[11px] font-semibold tracking-wide whitespace-nowrap shrink-0 sm:max-w-[160px] sm:px-3",
     CONTROL_MOTION,
     toneClasses
   );
@@ -529,7 +529,7 @@ export function TopbarContextPill({
         aria-label={switchAriaLabel ?? tenantName}
         data-testid="topbar-tenant-switcher-trigger"
         className={cn(
-          "inline-flex h-8 max-w-[92px] shrink-0 cursor-pointer items-center gap-1 whitespace-nowrap !rounded-full border px-2 py-1 text-[11px] font-semibold tracking-wide hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink sm:h-7 sm:max-w-[160px] sm:gap-1.5 sm:px-2.5",
+          "inline-flex h-8 max-w-[100px] shrink-0 cursor-pointer items-center gap-1 whitespace-nowrap !rounded-full border px-2 py-1 text-[11px] font-semibold tracking-wide hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink sm:h-7 sm:max-w-[160px] sm:gap-1.5 sm:px-2.5",
           CONTROL_MOTION,
           toneClasses
         )}

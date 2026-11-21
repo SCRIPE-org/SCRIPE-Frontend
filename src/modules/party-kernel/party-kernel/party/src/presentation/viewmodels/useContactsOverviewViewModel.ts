@@ -35,17 +35,19 @@ export function useContactsOverviewViewModel() {
   const canPartiesCreate = usePermission(PARTY_KERNEL_PERMISSIONS.PARTY_CREATE);
   const canPersonCreate = usePermission(PARTY_KERNEL_PERMISSIONS.PARTY_PERSON_CREATE);
   const canOrgCreate = usePermission(PARTY_KERNEL_PERMISSIONS.PARTY_ORGANIZATION_CREATE);
+  const canViewMergeCandidates = usePermission(PARTY_KERNEL_PERMISSIONS.MERGE_CANDIDATE_VIEW);
 
   const permissions = {
     canCreatePerson: canPartiesCreate && canPersonCreate,
     canCreateOrganization: canPartiesCreate && canOrgCreate,
+    canViewMergeCandidates,
   };
 
   const [isCreatePersonOpen, setIsCreatePersonOpen] = useState(false);
   const [isCreateOrgOpen, setIsCreateOrgOpen] = useState(false);
 
   const overviewQuery = useQuery<ContactsOverviewStats>({
-    queryKey: ["party-overview-stats"],
+    queryKey: ["party-overview-stats", canViewMergeCandidates],
     queryFn: async () => {
       const [recentRes, peopleRes, orgsRes, duplicatesRes] = await Promise.all([
         partyRepository.getAll({
@@ -63,9 +65,11 @@ export function useContactsOverviewViewModel() {
           pageSize: 1,
           type: "Organization",
         }),
-        mergeCandidateRepository
-          .getAll({ page: 1, pageSize: 5 })
-          .catch(() => ({ items: [], totalCount: 0 })),
+        canViewMergeCandidates
+          ? mergeCandidateRepository
+              .getAll({ page: 1, pageSize: 5 })
+              .catch(() => ({ items: [], totalCount: 0 }))
+          : Promise.resolve({ items: [] as MergeCandidate[], totalCount: 0 }),
       ]);
 
       return {

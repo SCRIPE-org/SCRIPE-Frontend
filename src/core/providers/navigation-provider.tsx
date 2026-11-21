@@ -97,6 +97,22 @@ export function isTransientHttpError(err: unknown): boolean {
   return true;
 }
 
+function hasLiveAccessToken(): boolean {
+  if (typeof secureTokenService.getAccessToken === "function") {
+    return Boolean(secureTokenService.getAccessToken());
+  }
+  return secureTokenService.hasToken();
+}
+
+function isSessionActiveForNavFetch(): boolean {
+  const appState = useAppStore.getState();
+  return Boolean(
+    appState.isAuthenticated &&
+      !appState.isAuthTransitioning &&
+      hasLiveAccessToken()
+  );
+}
+
 // ── Context (minimal surface) ───────────────────────────────────────────────
 interface NavigationContextType {
   /**
@@ -152,16 +168,19 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   const contextKey = `${tenantId ?? "platform"}:${userId}`;
 
   // Track token availability to coordinate with silent refresh
-  const [hasToken, setHasToken] = useState(() => secureTokenService.hasToken());
+  const isAuthTransitioning = useAppStore((s) => s.isAuthTransitioning ?? false);
+  const [hasToken, setHasToken] = useState(() => hasLiveAccessToken());
 
   useEffect(() => {
-    const unsubscribe = secureTokenService.subscribe(() => {
-      setHasToken(secureTokenService.hasToken());
-    });
+    const syncToken = () => {
+      setHasToken(hasLiveAccessToken());
+    };
+    syncToken();
+    const unsubscribe = secureTokenService.subscribe(syncToken);
     return unsubscribe;
   }, []);
 
-  const isReady = hasHydrated && isAuthenticated && hasToken;
+  const isReady = hasHydrated && isAuthenticated && !isAuthTransitioning && hasToken;
 
   // ── Cross-context cache invalidation guard ────────────────────────────────
   // If the rehydrated store was for a different user/tenant, reset it first.
@@ -169,7 +188,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   const autoFetchDone = useRef(false);
 
   useEffect(() => {
-    if (!isReady || guardedOnce.current) return;
+    if (!isReady || !isSessionActiveForNavFetch() || guardedOnce.current) return;
     guardedOnce.current = true;
 
     if (persistedContextKey && persistedContextKey !== contextKey) {
@@ -188,6 +207,9 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   useQuery({
     queryKey: NAV_QUERY_KEYS.bootstrap(contextKey),
     queryFn: async () => {
+      if (!isSessionActiveForNavFetch()) {
+        throw new Error("Navigation fetch skipped: session inactive");
+      }
       try {
         const pathname =
           typeof window !== "undefined"
@@ -203,6 +225,9 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
         useNavigationStore.getState().initializeBootstrap(result, contextKey);
         return result;
       } catch (err) {
+        if (!isSessionActiveForNavFetch()) {
+          throw err;
+        }
         const message =
           err instanceof Error ? err.message : "Failed to load navigation";
         useNavigationStore.getState().setRoutesError(message, contextKey);
@@ -212,7 +237,8 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
     enabled: isReady,
     staleTime: CACHE_EXPIRY.NAVIGATION,
     gcTime: CACHE_EXPIRY.NAVIGATION * 2,
-    retry: (failureCount, err) => failureCount < 2 && isTransientHttpError(err),
+    retry: (failureCount, err) =>
+      isSessionActiveForNavFetch() && failureCount < 2 && isTransientHttpError(err),
   });
 
   // ── Mutation: JIT workspace fetch ─────────────────────────────────────────
@@ -240,6 +266,9 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
 
   const fetchWorkspaceMenu = useCallback(
     async (workspaceKey: string): Promise<NavigationData | null> => {
+      if (!isSessionActiveForNavFetch()) {
+        return null;
+      }
       try {
         return await workspaceMutation.mutateAsync(workspaceKey);
       } catch (err) {
@@ -287,7 +316,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
 
   // When tenant context OR authenticated user changes, clear and refetch cleanly
   useEffect(() => {
-    if (!isReady) return;
+    if (!isReady || !isSessionActiveForNavFetch()) return;
     if (prevContextRef.current === "__initial__") {
       prevContextRef.current = contextKey;
       return;
@@ -313,7 +342,14 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   const activeWorkspaceKey = useNavigationStore((s) => s.activeWorkspaceKey);
 
   useEffect(() => {
-    if (!isReady || isInitialLoading || autoFetchDone.current) return;
+    if (
+      !isReady ||
+      !isSessionActiveForNavFetch() ||
+      isInitialLoading ||
+      autoFetchDone.current
+    ) {
+      return;
+    }
 
     const state = useNavigationStore.getState();
     const { workspaceGroups } = state;

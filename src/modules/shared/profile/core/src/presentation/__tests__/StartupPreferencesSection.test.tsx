@@ -119,4 +119,68 @@ describe("StartupPreferencesSection — startup selector, role lock, fallback no
     expect(screen.getByTestId("startup-target-select")).toBeDisabled();
     expect(screen.getByTestId("startup-reset-btn")).toBeDisabled();
   });
+
+  it("renders human-readable activeContextLabel and never leaks raw tenant GUIDs", () => {
+    const { rerender } = render(
+      <StartupPreferencesSection
+        t={t}
+        language="ar"
+        startupTarget="workspace:venue"
+        activeContextKey="tenant:944caec0-1111-2222-3333-444455556666"
+        activeContextLabel="Al-Ahly Sporting Club"
+        isImpersonating={false}
+        isEnforcedByRole={false}
+        fallbackActive={false}
+        workspaceGroups={sampleWorkspaces}
+        onStartupTargetChange={vi.fn()}
+        onResetStartupTarget={vi.fn()}
+      />
+    );
+
+    const badge = screen.getByTestId("startup-active-context-badge");
+    expect(badge).toHaveTextContent("Al-Ahly Sporting Club");
+    expect(badge).not.toHaveTextContent("944caec0");
+    expect(badge.querySelector("bdi")?.getAttribute("dir")).toBeNull();
+
+    // Even when activeContextLabel is omitted for a tenant:<guid> key, fall back safely without exposing GUID
+    rerender(
+      <StartupPreferencesSection
+        t={t}
+        language="en"
+        startupTarget="workspace:venue"
+        activeContextKey="tenant:944caec0-1111-2222-3333-444455556666"
+        isImpersonating={false}
+        isEnforcedByRole={false}
+        fallbackActive={false}
+        workspaceGroups={sampleWorkspaces}
+        onStartupTargetChange={vi.fn()}
+        onResetStartupTarget={vi.fn()}
+      />
+    );
+
+    expect(screen.getByTestId("startup-active-context-badge")).toHaveTextContent(
+      "profile.preferences.startupContextTenant"
+    );
+    expect(screen.getByTestId("startup-active-context-badge")).not.toHaveTextContent("944caec0");
+
+    // Platform context renders localized platform label
+    rerender(
+      <StartupPreferencesSection
+        t={t}
+        language="en"
+        startupTarget="overview"
+        activeContextKey="platform"
+        isImpersonating={false}
+        isEnforcedByRole={false}
+        fallbackActive={false}
+        workspaceGroups={sampleWorkspaces}
+        onStartupTargetChange={vi.fn()}
+        onResetStartupTarget={vi.fn()}
+      />
+    );
+
+    expect(screen.getByTestId("startup-active-context-badge")).toHaveTextContent(
+      "profile.preferences.startupContextPlatform"
+    );
+  });
 });

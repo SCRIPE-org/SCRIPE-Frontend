@@ -186,5 +186,27 @@ describe("PermissionProvider - Superadmin and PBAC security tests", () => {
     expect(matchesManifestPattern("/docs", "/docs/[...slug]")).toBe(false);
     expect(matchesManifestPattern("/docs", "/docs/[[...slug]]")).toBe(true);
   });
+
+  it("authorizes /venue with either venue-dashboard.view or venue-profiles.view and fails closed without both", () => {
+    useAppStore.setState({
+      permissions: [SYSTEM_PERMISSIONS.FACILITY_VIEW] as any,
+      isAuthenticated: true,
+    });
+
+    const { result, rerender } = renderHook(() => usePermissions(), { wrapper });
+    expect(result.current.canAccessPage("/venue")).toBe(false);
+
+    useAppStore.setState({
+      permissions: [SYSTEM_PERMISSIONS.VENUE_DASHBOARD_VIEW] as any,
+    });
+    rerender();
+    expect(result.current.canAccessPage("/venue")).toBe(true);
+
+    useAppStore.setState({
+      permissions: [SYSTEM_PERMISSIONS.VENUE_PROFILE_VIEW] as any,
+    });
+    rerender();
+    expect(result.current.canAccessPage("/venue")).toBe(true);
+  });
 });
 

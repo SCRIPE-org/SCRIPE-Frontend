@@ -34,16 +34,79 @@ interface SearchableItem {
   groupName: string;
 }
 
-function humanizeRouteLabel(route: string): string {
-  const segments = normalizeRoutePath(route)
-    .split("/")
-    .filter((seg) => seg.length > 0 && !seg.startsWith("["));
-  if (segments.length === 0) return route;
-  const tail = segments[segments.length - 1];
-  return tail
+const GENERIC_LEAF_SEGMENTS = new Set([
+  "new",
+  "create",
+  "edit",
+  "compare",
+  "overview",
+  "settings",
+  "reports",
+  "logs",
+  "analytics",
+  "events",
+  "customize",
+]);
+
+function humanizeSegmentEn(segment: string): string {
+  return segment
     .split("-")
     .map((part) => (part.length > 0 ? part[0].toUpperCase() + part.slice(1) : part))
     .join(" ");
+}
+
+function resolveSegmentTitle(
+  segment: string,
+  t: (key: string) => string
+): { localized: string; humanizedEn: string } {
+  const humanizedEn = humanizeSegmentEn(segment);
+  const routeSegKey = `nav.routeSegments.${segment}`;
+  const translatedSeg = t(routeSegKey);
+  if (translatedSeg && translatedSeg !== routeSegKey) {
+    return { localized: translatedSeg, humanizedEn };
+  }
+
+  const navFallbackKey = `nav.${segment.replace(/-/g, "_")}`;
+  const translatedNav = t(navFallbackKey);
+  if (translatedNav && translatedNav !== navFallbackKey) {
+    return { localized: translatedNav, humanizedEn };
+  }
+
+  return { localized: humanizedEn, humanizedEn };
+}
+
+function buildRouteDisplayInfo(
+  route: string,
+  t: (key: string) => string
+): { titleSegments: string[]; searchKeywords: string[] } {
+  const segments = normalizeRoutePath(route)
+    .split("/")
+    .filter((seg) => seg.length > 0 && !seg.startsWith("["));
+  if (segments.length === 0) {
+    return { titleSegments: [route], searchKeywords: [route] };
+  }
+
+  const tail = segments[segments.length - 1];
+  const resolvedTail = resolveSegmentTitle(tail, t);
+
+  if (segments.length >= 2 && GENERIC_LEAF_SEGMENTS.has(tail.toLowerCase())) {
+    const parent = segments[segments.length - 2];
+    const resolvedParent = resolveSegmentTitle(parent, t);
+    return {
+      titleSegments: [resolvedParent.localized, resolvedTail.localized],
+      searchKeywords: [
+        resolvedParent.localized,
+        resolvedParent.humanizedEn,
+        resolvedTail.localized,
+        resolvedTail.humanizedEn,
+      ],
+    };
+  }
+
+  return {
+    titleSegments: [resolvedTail.localized],
+    searchKeywords: [resolvedTail.localized, resolvedTail.humanizedEn],
+  };
 }
 
 function collectFirstMenuHref(items: MenuItem[]): string | null {
@@ -112,7 +175,7 @@ export function NexusSearchPalette({ open, onOpenChange }: NexusSearchPalettePro
       groupName: workspaceName,
     });
 
-    const seenHrefs = new Set<string>();
+    const seenHrefs = new Set<string>([normalizeRoutePath(workspaceHref)]);
 
     const traverseMenu = (
       nodes: MenuItem[],
@@ -161,20 +224,20 @@ export function NexusSearchPalette({ open, onOpenChange }: NexusSearchPalettePro
       traverseMenu([rootItem], rootItem.id, [], [], []);
     }
 
-    // Index authorized routes from unhydrated workspaces that do not duplicate loaded menu items.
+    // Index authorized routes from unhydrated workspaces that do not duplicate the workspace tile or loaded menu items.
     for (const descriptor of workspaceDescriptors) {
       const normalizedRoute = normalizeRoutePath(descriptor.route);
       if (normalizedRoute.includes("[") || seenHrefs.has(normalizedRoute)) {
         continue;
       }
       seenHrefs.add(normalizedRoute);
-      const humanized = humanizeRouteLabel(normalizedRoute);
+      const routeDisplay = buildRouteDisplayInfo(normalizedRoute, t);
       searchableItems.push({
         id: `route:${workspace.workspaceKey}:${normalizedRoute}`,
-        titleSegments: [humanized],
+        titleSegments: routeDisplay.titleSegments,
         href: normalizedRoute,
         searchValue: [
-          humanized,
+          ...routeDisplay.searchKeywords,
           workspace.workspaceNameEn,
           workspace.workspaceNameAr,
           workspace.workspaceKey,

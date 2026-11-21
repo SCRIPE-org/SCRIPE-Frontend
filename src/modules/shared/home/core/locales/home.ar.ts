@@ -2,6 +2,7 @@ export const ar = {
   workspaceHub: {
     title: "نظرة عامة",
     hubTitle: "مركز مساحات العمل",
+    greetingSeparator: "، ",
     greeting: {
       morning: "صباح الخير",
       afternoon: "مساء الخير",

@@ -4,6 +4,7 @@ export const ar = {
     selectPlaceholder: "اختر دوراً...",
     descriptionCol: "الوصف",
     title: "الأدوار",
+    singular: "دور",
     description: "إدارة الأدوار وصلاحياتها.",
     name: "الاسم",
     code: "الرمز",

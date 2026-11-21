@@ -5,6 +5,7 @@ export const en = {
     // resolved via t(), distinct from `title` above (the in-app Overview
     // heading), so the workspace-picker crash screen names itself correctly.
     hubTitle: "Workspace Hub",
+    greetingSeparator: ", ",
     greeting: {
       morning: "Good morning",
       afternoon: "Good afternoon",

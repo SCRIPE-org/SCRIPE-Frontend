@@ -31,11 +31,13 @@ vi.mock("next/navigation", () => ({
 
 vi.mock("@core/providers/i18n-provider", () => ({
   useI18n: () => ({
-    t: (key: string) => key,
+    t: (key: string) => mockTranslate(key),
     language: mockLanguage,
     direction: mockLanguage === "ar" ? "rtl" : "ltr",
   }),
 }));
+
+let mockTranslate = (key: string) => key;
 
 vi.mock("@core/providers/workspace-provider", () => ({
   useWorkspace: () => ({
@@ -63,6 +65,7 @@ describe("NexusSearchPalette — unlocked workspaces, unhydrated routes & <bdi> 
   beforeEach(() => {
     vi.clearAllMocks();
     mockLanguage = "ar";
+    mockTranslate = (key: string) => key;
     mockCachedWorkspaces = new Map();
     mockRouteDescriptors = new Map([
       [
@@ -170,5 +173,80 @@ describe("NexusSearchPalette — unlocked workspaces, unhydrated routes & <bdi> 
     expect(mockRecordRecentWorkspace).toHaveBeenCalledWith("tenant:demo", "academy");
     expect(mockPush).toHaveBeenCalledWith("/academy/athletes");
     expect(onOpenChange).toHaveBeenCalledWith(false);
+  });
+
+  it("deduplicates workspaceHref for unhydrated workspaces, localizes segments, and keeps parent context for generic leaves", () => {
+    mockLanguage = "ar";
+    mockTranslate = (key: string) => {
+      const arMap: Record<string, string> = {
+        "nav.routeSegments.venue": "المنشآت",
+        "nav.routeSegments.bookings": "الحجوزات",
+        "nav.routeSegments.new": "جديد",
+        "nav.routeSegments.athletes": "الرياضيون",
+      };
+      return arMap[key] ?? key;
+    };
+    mockRouteDescriptors = new Map([
+      [
+        "/venue",
+        {
+          route: "/venue",
+          accessState: "authorized",
+          workspaceKey: "venue",
+          requiresTenantContext: true,
+        },
+      ],
+      [
+        "/venue/bookings/new",
+        {
+          route: "/venue/bookings/new",
+          accessState: "authorized",
+          workspaceKey: "venue",
+          requiresTenantContext: true,
+        },
+      ],
+      [
+        "/academy/athletes",
+        {
+          route: "/academy/athletes",
+          accessState: "authorized",
+          workspaceKey: "academy",
+          requiresTenantContext: true,
+        },
+      ],
+    ]);
+
+    mockWorkspaceGroups = [
+      new WorkspaceGroup({
+        workspaceId: "ws-venue-unhydrated",
+        workspaceKey: "venue",
+        workspaceNameEn: "Venue",
+        workspaceNameAr: "المنشآت",
+        workspaceIcon: "Building2",
+        workspaceSortOrder: 1,
+        colorHue: 145,
+        colorChroma: 0.14,
+        workspaceType: "Module",
+        menuItems: [],
+        isLocked: false,
+        homeRoute: "/venue",
+        platformHomeRoute: null,
+        effectiveHomeRoute: "/venue",
+        isPinned: false,
+        pinSortOrder: null,
+        accessibleItemCount: 2,
+      }),
+      mockWorkspaceGroups[1],
+    ];
+
+    render(<NexusSearchPalette open={true} onOpenChange={vi.fn()} />);
+
+    // Unhydrated workspace homeRoute (/venue) must appear only once, never duplicated by descriptor entry
+    expect(screen.getAllByText("/venue")).toHaveLength(1);
+    // Generic leaf /venue/bookings/new renders localized parent context ("الحجوزات / جديد") instead of bare "New"
+    expect(screen.getByText("الحجوزات")).toBeInTheDocument();
+    expect(screen.getByText("جديد")).toBeInTheDocument();
+    // Localized route leaf replaces English raw segment in Arabic
+    expect(screen.getByText("الرياضيون")).toBeInTheDocument();
   });
 });

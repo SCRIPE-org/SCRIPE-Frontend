@@ -94,6 +94,8 @@ interface ResolveRouteAccessParams {
   contextKey: string;
   activeTenantId: string | null;
   isAuthenticated: boolean;
+  isAuthTransitioning?: boolean;
+  hasUser?: boolean;
   hasToken: boolean;
   subscriptionStatus: string | null;
   mustChangePassword: boolean;
@@ -205,6 +207,8 @@ function resolveRouteAccessSync({
   contextKey,
   activeTenantId,
   isAuthenticated,
+  isAuthTransitioning = false,
+  hasUser = true,
   hasToken,
   subscriptionStatus,
   mustChangePassword,
@@ -220,6 +224,11 @@ function resolveRouteAccessSync({
   // 0. Production gate for development-only routes (e.g., /sileo-playground)
   if (isDevBlockedInProd) {
     return { kind: "redirect", reason: "dev_blocked" };
+  }
+
+  // 0b. Identity swap / impersonation transition in progress -> hold loading until reload completes
+  if (isAuthTransitioning) {
+    return { kind: "settled", outcome: { kind: "loading" } };
   }
 
   // 1. Authenticated user landing on standard auth pages -> safe redirect or dashboard
@@ -253,8 +262,8 @@ function resolveRouteAccessSync({
     return { kind: "redirect", reason: "login" };
   }
 
-  // 6. Case 4: Token exists, store NOT authenticated -> restore principal cleanly
-  if (hasToken && !isAuthenticated) {
+  // 6. Case 4: Token exists, store NOT authenticated (or principal cleared during identity transition) -> restore principal cleanly
+  if (hasToken && (!isAuthenticated || !hasUser)) {
     return { kind: "async_restore_principal" };
   }
 
@@ -360,6 +369,7 @@ function renderLoadingScreen() {
 
 export function RouteGuard({ children }: RouteGuardProps) {
   const isAuthenticated = useAppStore((state) => state.isAuthenticated);
+  const isAuthTransitioning = useAppStore((state) => state.isAuthTransitioning ?? false);
   const hasHydrated = useAppStore((state) => state._hasHydrated);
   const setAuth = useAppStore((state) => state.setAuth);
   const setSubscriptionInfo = useAppStore((state) => state.setSubscriptionInfo);
@@ -490,6 +500,8 @@ export function RouteGuard({ children }: RouteGuardProps) {
           contextKey,
           activeTenantId,
           isAuthenticated,
+          isAuthTransitioning,
+          hasUser: Boolean(username),
           hasToken,
           subscriptionStatus,
           mustChangePassword,

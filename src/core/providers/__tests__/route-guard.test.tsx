@@ -41,6 +41,7 @@ const {
 
   const mockAppState = {
     isAuthenticated: true,
+    isAuthTransitioning: false,
     _hasHydrated: true,
     subscriptionStatus: null as string | null,
     mustChangePassword: false,
@@ -233,6 +234,7 @@ describe("RouteGuard - Hardened Phase 2 Option C Security & Context Gates", () =
 
     const appState = mockUseAppStore.getState();
     appState.isAuthenticated = true;
+    appState.isAuthTransitioning = false;
     appState._hasHydrated = true;
     appState.subscriptionStatus = null;
     appState.mustChangePassword = false;
@@ -922,5 +924,57 @@ describe("RouteGuard - Hardened Phase 2 Option C Security & Context Gates", () =
     });
     expect(screen.getByTestId("account-topbar")).toBeInTheDocument();
     expect(screen.getByTestId("account-rail")).toBeInTheDocument();
+  });
+
+  it("holds loading without redirecting to /login while isAuthTransitioning is true during impersonation handoff", () => {
+    currentPathname = "/admins";
+    mockHasToken.mockReturnValue(false);
+    mockUseAppStore.getState().isAuthenticated = true;
+    mockUseAppStore.getState().isAuthTransitioning = true;
+    mockUseAppStore.getState().user = null;
+    mockUseNavigationStore.getState().routesLoaded = false;
+
+    render(
+      <RouteGuard>
+        <div data-testid="admins-content">Admins</div>
+      </RouteGuard>
+    );
+
+    expect(screen.getByTestId("loading-spinner")).toBeInTheDocument();
+    expect(screen.queryByTestId("admins-content")).not.toBeInTheDocument();
+    expect(mockRouterPush).not.toHaveBeenCalled();
+    expect(mockRouterReplace).not.toHaveBeenCalled();
+    expect(mockRefreshToken).not.toHaveBeenCalled();
+    expect(mockGetCurrentPrincipal).not.toHaveBeenCalled();
+  });
+
+  it("restores principal via Case 4 when hasToken and isAuthenticated are true but user was scrubbed during identity transition", async () => {
+    currentPathname = "/hub";
+    mockHasToken.mockReturnValue(true);
+    mockUseAppStore.getState().isAuthenticated = true;
+    mockUseAppStore.getState().isAuthTransitioning = false;
+    mockUseAppStore.getState().user = null;
+    mockGetCurrentPrincipal.mockResolvedValueOnce({
+      id: "impersonated-1",
+      username: "ahly.front_desk",
+      permissions: ["venue-dashboard.view"],
+      roles: [],
+    });
+
+    render(
+      <RouteGuard>
+        <div data-testid="hub-content">Hub</div>
+      </RouteGuard>
+    );
+
+    await waitFor(() => {
+      expect(mockGetCurrentPrincipal).toHaveBeenCalledTimes(1);
+    });
+    expect(mockUseAppStore.getState().setAuth).toHaveBeenCalledWith(
+      expect.objectContaining({ username: "ahly.front_desk" }),
+      ["venue-dashboard.view"],
+      []
+    );
+    expect(mockRouterPush).not.toHaveBeenCalledWith(expect.stringContaining("/login"));
   });
 });

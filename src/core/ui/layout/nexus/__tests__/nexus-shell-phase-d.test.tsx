@@ -429,7 +429,7 @@ describe("Nexus Shell Phase D — A11y, Hierarchy, Branding & Deduplication", ()
       expect(screen.getByTestId("tenant-switcher-dialog")).toBeInTheDocument();
     });
 
-    it("uses !rounded-full and compact mobile width cap on TopbarContextPill and min-w-0 shrink on TopbarBreadcrumbs Level-1 <li>", () => {
+    it("uses !rounded-full and compact mobile width cap on TopbarContextPill, preserves Level-1 <li> with shrink-0, and allows deeper crumbs to shrink", () => {
       mockCanSwitchContext = true;
       mockPathname = "/venue/resources";
       render(
@@ -446,14 +446,19 @@ describe("Nexus Shell Phase D — A11y, Hierarchy, Branding & Deduplication", ()
 
       const switcherTrigger = screen.getByTestId("topbar-tenant-switcher-trigger");
       expect(switcherTrigger.className).toContain("!rounded-full");
-      expect(switcherTrigger.className).toContain("max-w-[92px]");
+      expect(switcherTrigger.className).toContain("max-w-[100px]");
 
       const breadcrumbNav = screen.getByRole("navigation", { name: "nav.breadcrumb" });
       const firstCrumbItem = breadcrumbNav.querySelector("ol > li");
       expect(firstCrumbItem).not.toBeNull();
       expect(firstCrumbItem!.getAttribute("class")).toContain("min-w-0");
-      expect(firstCrumbItem!.getAttribute("class")).toContain("shrink");
-      expect(firstCrumbItem!.getAttribute("class")).not.toContain("shrink-0");
+      expect(firstCrumbItem!.getAttribute("class")).toContain("shrink-0");
+
+      const lastCrumbItem = breadcrumbNav.querySelector("ol > li:last-child");
+      expect(lastCrumbItem).not.toBeNull();
+      expect(lastCrumbItem!.getAttribute("class")).toContain("min-w-0");
+      expect(lastCrumbItem!.getAttribute("class")).toContain("shrink");
+      expect(lastCrumbItem!.getAttribute("class")).toContain("max-w-[120px]");
     });
 
     it("hides TopbarHomeButton on /hub when activeWorkspace is null and skips startRoutingProgress/router.push on already-/hub Level-1 click", () => {

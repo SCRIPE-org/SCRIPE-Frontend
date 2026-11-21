@@ -20,6 +20,7 @@ interface AppState {
   // Auth State
   user: User | null;
   isAuthenticated: boolean;
+  isAuthTransitioning: boolean;
   permissions: PermissionCode[];
   roles: AdminRole[];
   restrictedFields: Record<string, string[]>;
@@ -30,6 +31,7 @@ interface AppState {
     roles: AdminRole[],
     isFreshLogin?: boolean
   ) => void;
+  beginSessionTransition: () => void;
   logout: () => void;
 
   // Subscription State (populated from login response)
@@ -72,10 +74,11 @@ export const useAppStore = create<AppState>()(
       // Auth State
       user: null,
       isAuthenticated: false,
+      isAuthTransitioning: false,
       permissions: [],
       roles: [],
       restrictedFields: {},
-      setUser: (user) => set({ user, isAuthenticated: !!user }),
+      setUser: (user) => set({ user, isAuthenticated: !!user, isAuthTransitioning: false }),
       // ... existing code in setAuth ...
       setAuth: (user, permissions, roles, isFreshLogin = false) => {
         if (typeof document !== "undefined") {
@@ -111,10 +114,32 @@ export const useAppStore = create<AppState>()(
           return {
             user,
             isAuthenticated: true,
+            isAuthTransitioning: false,
             permissions: resolvedPermissions,
             roles: resolvedRoles,
             restrictedFields: resolvedRestrictedFields,
           };
+        });
+      },
+      beginSessionTransition: () => {
+        if (typeof document !== "undefined") {
+          document.cookie = `${STORAGE_KEYS.scr_auth_state}=true; path=/; max-age=2592000; samesite=Lax`;
+        }
+        useSudoStore.getState().reset();
+        usePatOneTimeSecretStore.getState().clearPendingReceipt();
+        set({
+          user: null,
+          isAuthenticated: true,
+          isAuthTransitioning: true,
+          permissions: [],
+          roles: [],
+          restrictedFields: {},
+          tenantCode: null,
+          subscriptionStatus: null,
+          gracePhase: null,
+          editionName: null,
+          mustChangePassword: false,
+          defaultRedirectPath: "/",
         });
       },
       logout: () => {
@@ -128,6 +153,7 @@ export const useAppStore = create<AppState>()(
         set({
           user: null,
           isAuthenticated: false,
+          isAuthTransitioning: false,
           permissions: [],
           roles: [],
           restrictedFields: {},
@@ -183,10 +209,12 @@ export const useAppStore = create<AppState>()(
       merge: (persistedState, currentState) => {
         const persisted = { ...((persistedState as Partial<AppState> | null) ?? {}) };
         delete persisted.defaultRedirectPath;
+        delete persisted.isAuthTransitioning;
         return {
           ...currentState,
           ...persisted,
           defaultRedirectPath: "/",
+          isAuthTransitioning: false,
         };
       },
       onRehydrateStorage: () => (state) => {

@@ -42,6 +42,7 @@ export function FacilityQuickCreateDialog({
 }: FacilityQuickCreateDialogProps) {
   const { t } = useI18n();
   const { success, error: toastError } = useEnhancedToast();
+  const canViewVenueProfiles = usePermission(VENUE_PERMISSIONS.VENUE_PROFILE_VIEW);
   const canCreateVenueProfile = usePermission(VENUE_PERMISSIONS.VENUE_PROFILE_CREATE);
 
   const [venueProfiles, setVenueProfiles] = useState<VenueProfile[]>([]);
@@ -58,6 +59,9 @@ export function FacilityQuickCreateDialog({
   );
 
   const loadVenueProfiles = useCallback(async () => {
+    if (!canViewVenueProfiles) {
+      return;
+    }
     try {
       setLoadingVenueProfiles(true);
       const res = await useVenueServiceLocatorStatic.venueProfileRepository.getAll({
@@ -73,7 +77,7 @@ export function FacilityQuickCreateDialog({
     } finally {
       setLoadingVenueProfiles(false);
     }
-  }, []);
+  }, [canViewVenueProfiles]);
 
   useEffect(() => {
     if (open) {

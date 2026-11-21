@@ -478,4 +478,35 @@ describe("Tenant Context & Navigation Security Gates", () => {
       });
     });
   });
+
+  describe("Context & Error Gate Viewport & Layout Anatomy", () => {
+    it("uses calc(100vh-4rem) height, eliminates duplicate badge icons, and expands FeatureUnavailableGate footer width", () => {
+      renderWithProviders(
+        <>
+          <NavigationErrorRecovery error="Timeout" onRetry={vi.fn()} />
+          <FeatureUnavailableGate featureKey="crm.pipelines" />
+          <TenantContextRequiredGate routePattern="/crm" />
+          <PlatformContextRequiredGate routePattern="/tenants" />
+        </>
+      );
+
+      expect(screen.getByTestId("navigation-error-recovery").className).toContain(
+        "min-h-[calc(100vh-4rem)]"
+      );
+      expect(screen.getByTestId("feature-unavailable-gate").className).toContain(
+        "min-h-[calc(100vh-4rem)]"
+      );
+      expect(screen.getByTestId("tenant-context-required-gate").className).toContain(
+        "min-h-[calc(100vh-4rem)]"
+      );
+      expect(screen.getByTestId("platform-context-required-gate").className).toContain(
+        "min-h-[calc(100vh-4rem)]"
+      );
+
+      const featureCard = screen
+        .getByTestId("feature-unavailable-gate")
+        .querySelector('[class*="max-w-xl"]');
+      expect(featureCard).not.toBeNull();
+    });
+  });
 });

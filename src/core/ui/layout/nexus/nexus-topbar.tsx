@@ -82,11 +82,20 @@ export function NexusTopbar({
   const isRTL = direction === "rtl";
 
   // ── Breadcrumb segments ───────────────────────────────────────────────────
+  const normalizedPathname = pathname.toLowerCase().replace(/\/+$/, "") || "/";
   const breadcrumbOverride = useNavigationStore((s) => s.breadcrumbOverride);
   const segments = pathname.split("/").filter(Boolean);
   const pageName = segments[segments.length - 1] ?? "";
   const parentName = segments[segments.length - 2] ?? "";
-  const formattedPage = pageName.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  const resolvedHubTitle = t("workspaceHub.hubTitle");
+  const hubBreadcrumbLabel =
+    resolvedHubTitle && resolvedHubTitle !== "workspaceHub.hubTitle"
+      ? resolvedHubTitle
+      : t("chrome.hub");
+  const formattedPage =
+    normalizedPathname === "/hub"
+      ? hubBreadcrumbLabel
+      : pageName.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 
   const workspaceName =
     activeWorkspace?.getLocalizedName(language) ?? BRAND?.name ?? t("chrome.section.platform");
@@ -225,7 +234,6 @@ export function NexusTopbar({
       ? (activeWorkspace.platformHomeRoute ?? activeWorkspace.homeRoute ?? "/")
       : (activeWorkspace.homeRoute ?? "/")
     : "/hub";
-  const normalizedPathname = pathname.toLowerCase().replace(/\/+$/, "") || "/";
   const normalizedHomeRoute = workspaceHomeRoute.toLowerCase().replace(/\/+$/, "") || "/";
   const isOnHome =
     normalizedPathname === normalizedHomeRoute ||

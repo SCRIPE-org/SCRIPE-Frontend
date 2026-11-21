@@ -1258,6 +1258,7 @@ export const en = {
         "Choose which authorized destination opens immediately after sign-in for this context.",
       startupContextLabel: "Active Context",
       startupContextPlatform: "Platform Control Plane",
+      startupContextTenant: "Tenant Workspace",
       startupTargetLabel: "Preferred Startup Destination",
       startupTargetPlaceholder: "Select startup destination...",
       startupResetButton: "Reset to automatic",

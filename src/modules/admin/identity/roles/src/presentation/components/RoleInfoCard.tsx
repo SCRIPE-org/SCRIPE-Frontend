@@ -14,6 +14,8 @@ import { Badge } from "@core/ui/badge";
 import { Progress } from "@core/ui/progress";
 import { Skeleton } from "@core/ui/skeleton";
 import { useI18n } from "@core/providers/i18n-provider";
+import { formatLandingTargetLabel } from "@core/navigation";
+import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import type { Role } from "../../domain/entities/Role";
 
 /**
@@ -39,7 +41,22 @@ export function RoleInfoCard({
   adminCount,
 }: RoleInfoCardProps) {
   const { t, language } = useI18n();
+  const workspaceGroups = useNavigationStore((s) => s.workspaceGroups);
+  const cachedWorkspaces = useNavigationStore((s) => s.workspaces);
   const pct = totalCount > 0 ? (selectedCount / totalCount) * 100 : 0;
+  const landingTargetLabel = formatLandingTargetLabel({
+    target: role?.defaultLandingTarget,
+    language,
+    workspaceGroups,
+    cachedWorkspaces,
+    labels: {
+      defaultLabel: t("roles.landingTargetDefault"),
+      overviewLabel: t("roles.landingTargetOverview"),
+      hubLabel: t("roles.landingTargetHub"),
+      workspacePrefix: t("roles.landingTargetWorkspacePrefix"),
+      menuPrefix: t("roles.landingTargetMenuPrefix"),
+    },
+  });
 
   return (
     <Card className="lg:sticky lg:top-4 lg:self-start">
@@ -83,8 +100,8 @@ export function RoleInfoCard({
                   {t("roles.defaultLandingTarget")}
                 </p>
                 <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-                  <Badge variant="outline" className="font-mono text-xs">
-                    <bdi dir="ltr">{role?.defaultLandingTarget || "default"}</bdi>
+                  <Badge variant="outline" className="text-xs font-medium">
+                    <bdi>{landingTargetLabel}</bdi>
                   </Badge>
                   {role?.isLandingEnforced && (
                     <Badge variant="accent" className="text-xs">

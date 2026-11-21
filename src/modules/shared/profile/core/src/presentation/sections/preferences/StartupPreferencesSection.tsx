@@ -24,6 +24,7 @@ export interface StartupPreferencesSectionProps {
   language: string;
   startupTarget: string;
   activeContextKey: string;
+  activeContextLabel?: string | null;
   isImpersonating: boolean;
   isEnforcedByRole: boolean;
   enforcingRoleName?: string | null;
@@ -45,6 +46,7 @@ export function StartupPreferencesSection({
   language,
   startupTarget,
   activeContextKey,
+  activeContextLabel,
   isImpersonating,
   isEnforcedByRole,
   enforcingRoleName,
@@ -74,8 +76,17 @@ export function StartupPreferencesSection({
     },
   });
 
+  const isRawTenantGuidKey =
+    /^(?:tenant:)?[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+      activeContextKey
+    );
   const displayContext =
-    activeContextKey || t("profile.preferences.startupContextPlatform");
+    activeContextLabel?.trim() ||
+    (!activeContextKey || activeContextKey === "platform"
+      ? t("profile.preferences.startupContextPlatform")
+      : isRawTenantGuidKey
+        ? t("profile.preferences.startupContextTenant")
+        : activeContextKey);
 
   return (
     <Card
@@ -96,10 +107,10 @@ export function StartupPreferencesSection({
             </span>
             <Badge
               variant="secondary"
-              className="font-mono text-[11px]"
+              className="text-[11px] font-medium"
               data-testid="startup-active-context-badge"
             >
-              <bdi dir="ltr">{displayContext}</bdi>
+              <bdi>{displayContext}</bdi>
             </Badge>
           </div>
         </div>

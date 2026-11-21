@@ -12,6 +12,7 @@ let mockPathname = "/hub";
 const mockPush = vi.fn();
 const mockReplace = vi.fn();
 const mockFetchWorkspaceMenu = vi.fn().mockResolvedValue(null);
+const mockCanAccessPage = vi.fn((_path: string) => true);
 
 vi.mock("next/navigation", () => ({
   usePathname: () => mockPathname,
@@ -29,7 +30,7 @@ vi.mock("@core/providers/navigation-provider", () => ({
 
 vi.mock("@core/providers/permission-provider", () => ({
   usePermissions: () => ({
-    canAccessPage: () => true,
+    canAccessPage: (path: string) => mockCanAccessPage(path),
   }),
 }));
 
@@ -135,6 +136,7 @@ describe("WorkspaceProvider, workspaceSlice & useActiveRootSync — /hub null-wo
   beforeEach(() => {
     vi.clearAllMocks();
     mockPathname = "/hub";
+    mockCanAccessPage.mockImplementation(() => true);
     useNavigationStore.getState().reset();
     window.history.replaceState({}, "", "/hub");
   });
@@ -278,5 +280,62 @@ describe("WorkspaceProvider, workspaceSlice & useActiveRootSync — /hub null-wo
     window.history.replaceState({}, "", "/overview");
     useNavigationStore.getState().initializeDefaultWorkspace(defaultNavData, [adminGroup, crmGroup]);
     expect(useNavigationStore.getState().activeWorkspaceKey).toBe("admin");
+  });
+
+  it("navigates directly to venue effectiveHomeRoute (/venue) when canAccessPage permits it", async () => {
+    const venueGroup = new WorkspaceGroup({
+      workspaceId: "ws-venue",
+      workspaceKey: "venue",
+      workspaceNameEn: "Venue",
+      workspaceNameAr: "المرافق",
+      workspaceIcon: "Building2",
+      workspaceSortOrder: 3,
+      colorHue: 140,
+      colorChroma: 0.14,
+      workspaceType: "Module",
+      menuItems: [],
+      isLocked: false,
+      homeRoute: "/venue",
+      platformHomeRoute: null,
+      isPinned: false,
+      pinSortOrder: null,
+      contextScope: "TenantOnly",
+      accessibleItemCount: 3,
+    });
+    const venueNavData = new NavigationData({
+      routes: ["/venue", "/venue/calendar"],
+      menuItems: [
+        {
+          id: "venue-dashboard",
+          slug: "venue-dashboard",
+          name: "Dashboard",
+          nameEn: "Dashboard",
+          nameAr: "لوحة المرافق",
+          href: "/venue",
+          icon: "LayoutDashboard",
+          order: 1,
+          resource: "venue-dashboard",
+          actions: null,
+          children: [],
+        },
+      ],
+      workspaceGroups: [adminGroup.toData(), venueGroup.toData()],
+    });
+
+    mockCanAccessPage.mockImplementation((path) => path === "/venue");
+    useNavigationStore.setState({
+      workspaceGroups: [adminGroup, venueGroup],
+      workspaces: new Map<string, NavigationData>([["venue", venueNavData]]),
+      activeWorkspaceKey: null,
+      isInitialLoading: false,
+    });
+
+    const { result } = renderHook(() => useWorkspaceActions());
+    await act(async () => {
+      await result.current.setActiveWorkspace("venue", true);
+    });
+
+    expect(mockPush).toHaveBeenCalledWith("/venue");
+    expect(mockReplace).not.toHaveBeenCalled();
   });
 });

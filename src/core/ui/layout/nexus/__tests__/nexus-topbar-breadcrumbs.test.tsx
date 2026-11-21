@@ -2,7 +2,7 @@ import React from "react";
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
-import { TopbarBreadcrumbs } from "../_parts/topbar-parts";
+import { TopbarBreadcrumbs, TopbarContextPill } from "../_parts/topbar-parts";
 
 const mockActiveRootItem = {
   id: "root-1",
@@ -167,5 +167,38 @@ describe("TopbarBreadcrumbs Deduplication", () => {
     const leafLi = screen.getByText("SCRIPE").closest("li")!;
     expect(leafLi.className).toContain("shrink-0");
     expect(leafLi.className).toContain("max-w-[240px]");
+  });
+
+  it("preserves Level-1 brand label without max-w-[116px], bumps chevrons to 32px, and keeps static tenant pill visible on mobile", () => {
+    render(
+      <>
+        <TopbarBreadcrumbs
+          isRTL={false}
+          workspaceName="SCRIPE"
+          activeRootName="Bookings"
+          intermediateSegments={[]}
+          displayPageName="New Reservation"
+        />
+        <TopbarContextPill isModuleMode={false} tenantName="Al-Ahly Sporting Club" canSwitchContext={false} />
+      </>
+    );
+
+    const workspaceBtn = screen.getByText("SCRIPE").closest("button")!;
+    const workspaceLi = workspaceBtn.closest("li")!;
+    expect(workspaceLi.className).toContain("shrink-0");
+    expect(workspaceBtn.className).not.toContain("max-w-[116px]");
+
+    const workspacesChevron = screen.getByRole("button", { name: "navigation.topbar.workspacesMenu" });
+    const sectionsChevron = screen.getByRole("button", { name: "navigation.topbar.sectionsMenu" });
+    expect(workspacesChevron.className).toContain("h-8");
+    expect(workspacesChevron.className).toContain("w-8");
+    expect(sectionsChevron.className).toContain("h-8");
+    expect(sectionsChevron.className).toContain("w-8");
+
+    const contextPill = screen.getByTestId("topbar-context-pill");
+    expect(contextPill.className).toContain("inline-flex");
+    expect(contextPill.className).not.toContain("hidden");
+    expect(contextPill.className).toContain("max-w-[100px]");
+    expect(contextPill.className).toContain("sm:max-w-[160px]");
   });
 });

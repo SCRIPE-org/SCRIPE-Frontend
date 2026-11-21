@@ -1,6 +1,7 @@
 "use client";
 
 import { useCoreImpersonation } from "@core/hooks/use-auth-bridge";
+import { useAdminContext } from "@core/hooks/useAdminContext";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useWorkspace } from "@core/providers/workspace-provider";
@@ -51,9 +52,13 @@ export function AccountPreferencesView() {
   const { t, language, direction } = useI18n();
   const isRtl = direction === "rtl";
   const { isImpersonating } = useCoreImpersonation();
+  const { isPlatform, activeTenantName } = useAdminContext();
   const { workspaceGroups } = useWorkspace();
   const cachedWorkspaces = useNavigationStore((s) => s.workspaces);
   const storeContextKey = useNavigationStore((s) => s.contextKey);
+  const activeContextLabel = isPlatform
+    ? t("profile.preferences.startupContextPlatform")
+    : activeTenantName || t("profile.preferences.startupContextTenant");
   const {
     theme,
     setTheme,
@@ -224,6 +229,7 @@ export function AccountPreferencesView() {
         language={language}
         startupTarget={startupTarget}
         activeContextKey={activeContextKey || storeContextKey}
+        activeContextLabel={activeContextLabel}
         isImpersonating={isImpersonating}
         isEnforcedByRole={isStartupTargetEnforcedByRole}
         enforcingRoleName={enforcingRoleName}

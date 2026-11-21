@@ -31,7 +31,7 @@ export function HubHero() {
         {greeting}
         {adminFirstName ? (
           <>
-            {", "}
+            {t("workspaceHub.greetingSeparator")}
             <bdi>{adminFirstName}</bdi>.
           </>
         ) : (
