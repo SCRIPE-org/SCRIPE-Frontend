@@ -331,43 +331,53 @@ async function resolveScripeTenantAndEdition(request: APIRequestContext, superad
   };
 }
 
-async function readLatestSignupOtpFromLogs(email: string, timeoutMs = 15_000): Promise<string> {
+async function waitForToastCleared(page: Page, timeoutMs = 8_000): Promise<void> {
+  const toast = page.locator("[data-sileo-toast]");
+  if ((await toast.count()) > 0) {
+    await toast
+      .first()
+      .waitFor({ state: "hidden", timeout: timeoutMs })
+      .catch(() => {});
+    await page.waitForTimeout(250);
+  }
+}
+
+async function readLatestSignupOtpFromLogs(email: string, timeoutMs = 20_000): Promise<string> {
   const normalizedEmail = email.trim().toLowerCase();
   const escaped = normalizedEmail.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const pattern = new RegExp(
-    `\\[DEV EMAIL\\] To: ${escaped} \\| Template: SignupVerification[^\\r\\n]*Verification Code: (\\d{6})`,
-    "i"
-  );
-  const resendFallbackPattern = new RegExp(
-    `\\[DEV EMAIL FALLBACK\\][^\\r\\n]*-> To: ${escaped}\\b`,
+  const codePattern = new RegExp(
+    `(?:\\[DEV EMAIL(?: FALLBACK)?\\])[^\\r\\n]*?To:\\s*${escaped}\\b[^\\r\\n]*?Verification Code:\\s*(\\d{6})`,
     "i"
   );
 
   const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {
+    const candidateFiles: string[] = [];
+    const envLogPath = process.env.SCRIPE_API_LOG_PATH?.trim();
+    if (envLogPath && fs.existsSync(envLogPath)) {
+      candidateFiles.push(envLogPath);
+    }
     if (fs.existsSync(BACKEND_LOGS_DIR)) {
-      const files = fs
+      const logFiles = fs
         .readdirSync(BACKEND_LOGS_DIR)
         .filter((f) => f.startsWith("log-") && f.endsWith(".txt"))
         .map((f) => ({
           fullPath: path.join(BACKEND_LOGS_DIR, f),
           mtimeMs: fs.statSync(path.join(BACKEND_LOGS_DIR, f)).mtimeMs,
         }))
-        .sort((a, b) => b.mtimeMs - a.mtimeMs);
+        .sort((a, b) => b.mtimeMs - a.mtimeMs)
+        .slice(0, 2)
+        .map((x) => x.fullPath);
+      candidateFiles.push(...logFiles);
+    }
 
-      for (const file of files.slice(0, 2)) {
-        const content = fs.readFileSync(file.fullPath, "utf8");
-        const lines = content.split(/\r?\n/);
-        for (let i = lines.length - 1; i >= 0; i--) {
-          const match = lines[i].match(pattern);
-          if (match?.[1]) {
-            return match[1];
-          }
-          if (resendFallbackPattern.test(lines[i])) {
-            throw new Error(
-              `Signup OTP email hit ResendEmailSender [DEV EMAIL FALLBACK] without logging Verification Code for ${normalizedEmail}`
-            );
-          }
+    for (const fullPath of candidateFiles) {
+      const content = fs.readFileSync(fullPath, "utf8").replace(/\x1b\[[0-9;]*m/g, "");
+      const lines = content.split(/\r?\n/);
+      for (let i = lines.length - 1; i >= 0; i--) {
+        const match = lines[i].match(codePattern);
+        if (match?.[1]) {
+          return match[1];
         }
       }
     }
@@ -388,7 +398,8 @@ test.describe("SCRIPE Internal Sovereign Tenant — Live Unmocked QA Suite", () 
   const runTag = Date.now().toString().slice(-6);
   const createdAhlyAdminIds: string[] = [];
 
-  test.beforeAll(async ({ request }) => {
+  test.beforeAll(async ({ request }, testInfo) => {
+    testInfo.setTimeout(180_000);
     password = getDevAdminPassword();
     const sa = await loginViaApi(request, PLATFORM_SUPERADMIN_EMAIL, password, {
       isPlatformAdmin: true,
@@ -436,7 +447,13 @@ test.describe("SCRIPE Internal Sovereign Tenant — Live Unmocked QA Suite", () 
       await waitForAppSettled(page);
       await setTheme(page, "dark");
 
-      // Confirm SCRIPE card displays Internal badge
+      // Confirm real subtitle copy (no raw i18n keys) & SCRIPE card displays Internal badge
+      await expect(page.locator("body")).toContainText(
+        /Manage tenant workspaces, hierarchical sub-tenants, and active edition assignments\./i,
+        { timeout: 20_000 }
+      );
+      await expect(page.locator("body")).not.toContainText(/tenant\.listDescription/);
+
       const scripeHeaderBtn = page
         .locator("button[aria-expanded]")
         .filter({ hasText: /\(SCRIPE\)/ })
@@ -464,12 +481,16 @@ test.describe("SCRIPE Internal Sovereign Tenant — Live Unmocked QA Suite", () 
       await expect(editBtn).toBeVisible({ timeout: 10_000 });
       await expect(scripeCard.getByRole("button", { name: /Delete/i })).toHaveCount(0);
 
-      // Open EditTenantDialog and verify NO isActive toggle exists
+      // Open EditTenantDialog and verify code chip, read-only badge, char counter & NO isActive toggle
       await editBtn.click();
       const dialog = page.getByRole("dialog");
       await expect(dialog).toBeVisible({ timeout: 10_000 });
       await expect(dialog.locator("[role='switch']")).toHaveCount(0);
       await expect(dialog).not.toContainText(/Active Status/i);
+      await expect(dialog.locator("code", { hasText: "SCRIPE" })).toBeVisible();
+      await expect(dialog).toContainText(/Internal.*Protected/i);
+      await expect(dialog).toContainText(/\d+\/100/);
+      await expect(dialog).toContainText(/\d+\/500/);
 
       await safeScreenshot(page, "04-platform-tenant-scripe-edit-dialog-en.png", false);
 
@@ -556,6 +577,18 @@ test.describe("SCRIPE Internal Sovereign Tenant — Live Unmocked QA Suite", () 
         page.getByRole("button", { name: /Re-?sync Permissions/i }).first()
       ).toBeVisible();
 
+      // Verify ∞ No Expiry badge (no full-width 100% progress bar) & zero header overlap
+      await expect(page.getByText(/∞\s*No Expiry/i).first()).toBeVisible();
+      await expect(page.locator("#nexus-content div.bg-nx-raised > div.rounded-full[style*='width']")).toHaveCount(0);
+      await waitForToastCleared(page);
+
+      const editHeaderBtn = page.getByRole("button", { name: /^Edit$/i }).first();
+      const enterTenantBtn = page.getByRole("button", { name: /Enter Tenant/i }).first();
+      const editBox = await editHeaderBtn.boundingBox();
+      const enterBox = await enterTenantBtn.boundingBox();
+      expect(editBox && enterBox).toBeTruthy();
+      expect(editBox!.x).toBeGreaterThanOrEqual(enterBox!.x + enterBox!.width - 1);
+
       await safeScreenshot(page, "02-platform-tenant-scripe-detail-en.png", true);
 
       // Switch to Arabic RTL and capture 03-platform-tenant-scripe-detail-ar-rtl.png
@@ -563,6 +596,14 @@ test.describe("SCRIPE Internal Sovereign Tenant — Live Unmocked QA Suite", () 
       await setTheme(page, "dark");
       await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
       await expect(page.locator("body")).toContainText(/[\u0600-\u06FF]/);
+      await expect(page.locator("body")).toContainText(/بدون انتهاء|لا ينتهي/);
+      const arDetailText = await page.locator("#nexus-content").innerText();
+      expect(
+        arDetailText,
+        "Arabic tenant detail dates must be localized cleanly without raw English month abbreviations"
+      ).not.toMatch(/\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\b/);
+      await expect(page.locator("#nexus-content div.bg-nx-raised > div.rounded-full[style*='width']")).toHaveCount(0);
+      await waitForToastCleared(page);
       await safeScreenshot(page, "03-platform-tenant-scripe-detail-ar-rtl.png", true);
       await setLanguageAndReload(page, "en");
 
@@ -640,6 +681,8 @@ test.describe("SCRIPE Internal Sovereign Tenant — Live Unmocked QA Suite", () 
       await expect(page.locator("body")).toContainText(/Internal Sovereign/i, { timeout: 20_000 });
       await expect(page.locator("body")).toContainText(/scripe-internal/i);
       const subText = await page.locator("body").innerText();
+      expect(subText).toContain("None (Lifetime)");
+      expect(subText).not.toContain("Fallback");
       expect(subText).not.toContain("Free Plan");
       expect(subText).not.toContain("Free Edition");
       for (const forbiddenAction of [
@@ -648,6 +691,7 @@ test.describe("SCRIPE Internal Sovereign Tenant — Live Unmocked QA Suite", () 
         /^Suspend$/i,
         /^Cancel$/i,
         /Change Currency/i,
+        /^Manage$/i,
       ]) {
         await expect(page.getByRole("button", { name: forbiddenAction })).toHaveCount(0);
       }
@@ -689,6 +733,12 @@ test.describe("SCRIPE Internal Sovereign Tenant — Live Unmocked QA Suite", () 
       await setTheme(page, "dark");
 
       await expect(page.locator("body")).toContainText(/SCRIPE Internal/i, { timeout: 20_000 });
+      await expect(page.getByTestId("edition-features-readonly-alert")).toBeVisible();
+      await expect(page.getByTestId("edition-features-readonly-alert")).toContainText(
+        /Read-Only System Configuration/i
+      );
+      await expect(page.locator("#nexus-content")).toContainText(/Catalog & Pricing/);
+      await expect(page.locator("#nexus-content")).not.toContainText(/CatalogPricing/);
       await expect(page.getByRole("button", { name: /Edit Settings/i })).toHaveCount(0);
       await expect(page.getByRole("button", { name: /^Pricing$/i })).toHaveCount(0);
       await expect(page.getByRole("button", { name: /^Promotions$/i })).toHaveCount(0);
@@ -838,22 +888,46 @@ test.describe("SCRIPE Internal Sovereign Tenant — Live Unmocked QA Suite", () 
       expect(page.url()).not.toContain("/login");
       expect(page.url()).not.toMatch(/\/tenants$/);
 
-      // CRM Settings (EGP)
+      // CRM Settings (EGP dynamic approval thresholds, stripped pipe_role: prefix, full-width card, zero duplicate 1. numbering)
       await page.goto("http://localhost:3000/crm/settings");
       await waitForAppSettled(page);
       await setTheme(page, "dark");
       await expect(page.locator("body")).toContainText(/\bEGP\b/, { timeout: 20_000 });
+      const firstRoleCard = page.locator("[data-testid^='crm-settings-pipeline-role-']").first();
+      await expect(firstRoleCard).toBeVisible({ timeout: 15_000 });
+      const roleCardsText = await page.locator("[data-testid^='crm-settings-pipeline-role-']").allInnerTexts();
+      expect(roleCardsText.join(" ")).toMatch(/EGP/i);
+      expect(roleCardsText.join(" ")).not.toContain("$");
+      expect(roleCardsText.join(" ")).not.toContain("pipe_role:");
+      await expect(page.locator("#nexus-content")).not.toContainText(/1\. CRM Pipeline Roles/i);
+      await expect(page.locator("#nexus-content")).not.toContainText(/1\. Multi-Currency/i);
+      await expect(
+        page.locator("div.lg\\:col-span-12").filter({ hasText: /CRM Pipeline Roles & Approval Queues/i }).first()
+      ).toBeVisible();
       await safeScreenshot(page, "09-scripe-workspace-crm-settings-egp-en.png", true);
 
-      // CRM Opportunities (EGP seeded B2B deals)
+      // CRM Opportunities (EGP seeded B2B deals across multiple DISTINCT seeded Egyptian club accounts)
       await page.goto("http://localhost:3000/crm/opportunities");
       await waitForAppSettled(page);
       await setTheme(page, "dark");
       await expect(page.locator("body")).toContainText(
-        /Nile Sporting Ventures|Egyptian Padel Federation|Pyramids Sports Academy/i,
+        /Nile Sporting Ventures|Egyptian Federation of Padel|Pyramids Sports Academy|Red Sea Resorts|Gezira Heritage/i,
         { timeout: 20_000 }
       );
       await expect(page.locator("body")).toContainText(/\bEGP\b/);
+      const dealRows = page.locator("tbody tr");
+      const rowCount = await dealRows.count();
+      expect(rowCount).toBeGreaterThanOrEqual(2);
+      const accountNamesInRows = new Set<string>();
+      for (let i = 0; i < rowCount; i++) {
+        const accountText = await dealRows.nth(i).locator("td").nth(4).innerText().catch(() => "");
+        if (accountText.trim()) accountNamesInRows.add(accountText.trim());
+      }
+      expect(
+        accountNamesInRows.size,
+        `CRM Opportunities must display multiple DISTINCT club accounts (saw: ${Array.from(accountNamesInRows).join(", ")})`
+      ).toBeGreaterThanOrEqual(2);
+      await assertNoHorizontalOverflow(page, "SCRIPE CRM Opportunities (1440x900)");
       await safeScreenshot(page, "10-scripe-workspace-crm-opportunities-egp-en.png", true);
 
       // CRM Leads
@@ -871,13 +945,17 @@ test.describe("SCRIPE Internal Sovereign Tenant — Live Unmocked QA Suite", () 
       await expect(page.locator("body")).toContainText(/SCRIPE Demo Arena/i, { timeout: 20_000 });
       await safeScreenshot(page, "11-scripe-workspace-venue-demo-arena-en.png", true);
 
-      // Venue Calendar in Arabic RTL
+      // Venue Calendar in Arabic RTL (verify end-of-day 16:00+ slots & zero main horizontal overflow)
       await page.goto("http://localhost:3000/venue/calendar");
       await waitForAppSettled(page);
       await setLanguageAndReload(page, "ar");
       await setTheme(page, "dark");
       await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
       await expect(page.locator("body")).toContainText(/[\u0600-\u06FF]/);
+      const timeline = page.getByTestId("resource-timeline");
+      await expect(timeline).toBeVisible({ timeout: 20_000 });
+      await expect(timeline).toContainText(/16:00/);
+      await assertNoHorizontalOverflow(page, "SCRIPE Venue Calendar Arabic RTL (1440x900)");
       await safeScreenshot(page, "12-scripe-workspace-venue-ar-rtl.png", true);
       await setLanguageAndReload(page, "en");
 
@@ -989,12 +1067,19 @@ test.describe("SCRIPE Internal Sovereign Tenant — Live Unmocked QA Suite", () 
       await expect(minLenRule).toHaveAttribute("data-met", "true");
       await expect(submitBtn).toBeEnabled();
 
+      // Verify ForceChangePasswordView header with brand + theme/language switchers
+      const fcpHeader = page.locator("header").first();
+      await expect(fcpHeader).toBeVisible();
+      await expect(fcpHeader).toContainText(/SCRIPE/);
+      expect(await fcpHeader.locator("button").count()).toBeGreaterThanOrEqual(2);
+
       await safeScreenshot(page, "15-force-change-password-en.png", true);
 
       // Capture Arabic RTL view on /change-password
       await setLanguageAndReload(page, "ar");
       await setTheme(page, "dark");
       await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
+      await expect(page.locator("header").first()).toContainText(/SCRIPE/);
       await page.getByTestId("force-new-password").fill(longPassword);
       await page.getByTestId("force-confirm-password").fill(longPassword);
       await expect(page.getByTestId("pwd-rule-minLength")).toHaveAttribute("data-met", "true");
@@ -1198,6 +1283,9 @@ test.describe("SCRIPE Internal Sovereign Tenant — Live Unmocked QA Suite", () 
           .filter({ hasText: /Get started free|Start Free|Start for free|Create free/i })
           .first()
       ).toBeVisible({ timeout: 20_000 });
+      await setTheme(signupPage, "dark");
+      await signupPage.waitForTimeout(500);
+      await safeScreenshot(signupPage, "14b-public-signup-plan-picker-en.png", true);
 
       signupMonitor.assertClean("QA-05A Public Signup Plans & Edition Exclusion");
     } finally {
@@ -1274,11 +1362,17 @@ test.describe("SCRIPE Internal Sovereign Tenant — Live Unmocked QA Suite", () 
       await waitForAppSettled(platformPage);
       await expect(platformPage.locator("body")).not.toContainText(SCRIPE_EDITION_NAME);
 
-      // Navigate /entitlements/analytics and capture 17-platform-analytics-kpi-exclusion-en.png
+      // Navigate /entitlements/analytics and verify exclusion notice + KPI exclusion
       await platformPage.goto("http://localhost:3000/entitlements/analytics");
       await waitForAppSettled(platformPage);
       await setTheme(platformPage, "dark");
       await expect(platformPage.locator("body")).not.toContainText(SCRIPE_EDITION_NAME);
+      await expect(platformPage.getByTestId("analytics-internal-exclusion-notice")).toBeVisible({
+        timeout: 15_000,
+      });
+      await expect(platformPage.getByTestId("analytics-internal-exclusion-notice")).toContainText(
+        /Commercial metrics exclude internal platform workspaces/i
+      );
       await safeScreenshot(platformPage, "17-platform-analytics-kpi-exclusion-en.png", true);
 
       platformMonitor.assertClean("QA-05B Billing Hub & Analytics KPI Exclusion");
@@ -1320,7 +1414,24 @@ test.describe("SCRIPE Internal Sovereign Tenant — Live Unmocked QA Suite", () 
         timeout: 20_000,
       });
       await assertNoHorizontalOverflow(mobilePage, "SCRIPE Venue Facilities (390x844)");
+
+      // Verify scrollable TabsList stays bounded within 390px and responsive mobile nav drawer works
+      const tabList = mobilePage.locator("[role='tablist']").first();
+      await expect(tabList).toBeVisible();
+      const tabBox = await tabList.boundingBox();
+      expect(tabBox).toBeTruthy();
+      expect(tabBox!.width).toBeLessThanOrEqual(390);
+      const tabOverflowX = await tabList.evaluate((el) => getComputedStyle(el).overflowX);
+      expect(["auto", "scroll"]).toContain(tabOverflowX);
+
       await safeScreenshot(mobilePage, "13-scripe-mobile-390x844-en.png", true);
+
+      const mobileMenuToggle = mobilePage.locator("[data-nexus-topbar] button[aria-expanded]").first();
+      await expect(mobileMenuToggle).toBeVisible();
+      await mobileMenuToggle.click();
+      await expect(mobileMenuToggle).toHaveAttribute("aria-expanded", "true");
+      await mobilePage.keyboard.press("Escape");
+      await expect(mobileMenuToggle).toHaveAttribute("aria-expanded", "false");
 
       await mobilePage.goto("http://localhost:3000/account/plan");
       await waitForAppSettled(mobilePage);
@@ -1333,14 +1444,9 @@ test.describe("SCRIPE Internal Sovereign Tenant — Live Unmocked QA Suite", () 
     }
   });
 
-  test("QA-05-Signup-Workspace-OTP — Public signup OTP advance to WorkspaceStep for reserved ASCII/Unicode subdomain UI & screenshot (known Resend dev-fallback OTP omission)", async ({
+  test("QA-05-Signup-Workspace-OTP — Public signup OTP advance to WorkspaceStep for reserved ASCII/Unicode subdomain UI & screenshot", async ({
     browser,
   }) => {
-    test.fail(
-      true,
-      "Known dev-environment runtime defect: ResendEmailSender gets 401 Unauthorized on :5035 and logs [DEV EMAIL FALLBACK] without emitting the 6-digit OTP code, blocking unmocked VerificationStep -> WorkspaceStep UI transition."
-    );
-
     const signupContext = await browser.newContext({ viewport: { width: 1440, height: 900 } });
     const signupPage = await signupContext.newPage();
     const signupMonitor = attachZeroErrorMonitor(signupPage);
@@ -1348,6 +1454,7 @@ test.describe("SCRIPE Internal Sovereign Tenant — Live Unmocked QA Suite", () 
     try {
       await signupPage.goto("http://localhost:3000/signup");
       await waitForAppSettled(signupPage);
+      await setTheme(signupPage, "dark");
 
       await signupPage
         .getByRole("button", { name: /Get started|Start|ابدأ/i })
@@ -1377,29 +1484,58 @@ test.describe("SCRIPE Internal Sovereign Tenant — Live Unmocked QA Suite", () 
       await signupPage.locator("#signup-password").fill(`${password}Aa1!99`);
       await signupPage.locator("#signup-terms").click();
 
-      const sendOtpPromise = signupPage.waitForResponse(
-        (res) =>
-          res.url().toLowerCase().includes("/api/v1/auth/signup/send-otp") &&
-          res.request().method() === "POST",
-        { timeout: 25_000 }
-      );
-      await signupPage.locator("form button[type='submit']").first().click();
-      const sendOtpRes = await sendOtpPromise;
-      expect(sendOtpRes.ok()).toBeTruthy();
+      for (let attempt = 0; attempt < 3; attempt++) {
+        const sendOtpPromise = signupPage.waitForResponse(
+          (res) =>
+            res.url().toLowerCase().includes("/api/v1/auth/signup/send-otp") &&
+            res.request().method() === "POST",
+          { timeout: 25_000 }
+        );
+        await signupPage.locator("form button[type='submit']").first().click();
+        const sendOtpRes = await sendOtpPromise;
+        if (sendOtpRes.status() === 429 && attempt < 2) {
+          const retryAfter = Number(sendOtpRes.headers()["retry-after"] || "35");
+          await signupPage.waitForTimeout(Math.min(Math.max(retryAfter, 5), 70) * 1000);
+          continue;
+        }
+        expect(sendOtpRes.ok(), `send-otp failed with status ${sendOtpRes.status()}`).toBeTruthy();
+        break;
+      }
       await waitForAppSettled(signupPage);
 
       const otpCode = await readLatestSignupOtpFromLogs(signupEmail);
+      const verifyOtpPromise = signupPage.waitForResponse(
+        (res) =>
+          res.url().toLowerCase().includes("/api/v1/auth/signup/verify-otp") &&
+          res.request().method() === "POST",
+        { timeout: 25_000 }
+      );
       await signupPage.locator("#signup-otp").fill(otpCode);
+      const verifyOtpRes = await verifyOtpPromise;
+      expect(verifyOtpRes.ok()).toBeTruthy();
 
       await expect(signupPage.locator("#signup-subdomain")).toBeVisible({ timeout: 20_000 });
+      const autoSubCheckPromise = signupPage
+        .waitForResponse(
+          (res) =>
+            res.url().toLowerCase().includes("/api/v1/auth/signup/check-subdomain") &&
+            res.url().toLowerCase().includes("scripe-test-org"),
+          { timeout: 10_000 }
+        )
+        .catch(() => null);
       await signupPage.locator("#signup-workspace").fill("SCRIPE Test Org");
+      await autoSubCheckPromise;
+      await signupPage.waitForTimeout(200);
 
+      // Test NFKC full-width Unicode variant "ｓｃｒｉｐｅ"
       await signupPage.locator("#signup-subdomain").fill("ｓｃｒｉｐｅ");
       const statusRegion = signupPage.locator("#signup-subdomain-status");
+      await expect(statusRegion.locator("[role='alert']")).toBeVisible({ timeout: 10_000 });
       await expect(statusRegion).toContainText(/invalid|unavailable|reserved|letter|digit/i, {
         timeout: 10_000,
       });
 
+      // Test reserved ASCII subdomain "scripe" via live API check & capture screenshot
       const subCheckPromise = signupPage.waitForResponse(
         (res) =>
           res.url().toLowerCase().includes("/api/v1/auth/signup/check-subdomain") &&
@@ -1414,7 +1550,7 @@ test.describe("SCRIPE Internal Sovereign Tenant — Live Unmocked QA Suite", () 
       await expect(statusRegion.locator("[role='alert']")).toBeVisible({ timeout: 10_000 });
       await expect(signupPage.locator("form button[type='submit']").first()).toBeDisabled();
 
-      await safeScreenshot(signupPage, "14-public-signup-reserved-scripe-error-en.png", true);
+      await safeScreenshot(signupPage, "14-public-signup-reserved-subdomain-blocked-en.png", true);
       signupMonitor.assertClean("QA-05-Signup-Workspace-OTP");
     } finally {
       signupMonitor.detach();
@@ -1422,15 +1558,13 @@ test.describe("SCRIPE Internal Sovereign Tenant — Live Unmocked QA Suite", () 
     }
   });
 
-  test("QA-03-Subdomain-Reload — Subdomain scripe.localhost session persistence after reload (known cross-site SameSite=Lax cookie defect)", async ({
+  test("QA-03-Subdomain-Reload — Subdomain scripe.localhost session persistence after reload", async ({
     browser,
   }) => {
-    test.fail(
-      true,
-      "Known defect: CookieAuthMiddleware sets scripe_refresh_token SameSite=Lax on localhost:5035, dropped by Chromium on cross-site scripe.localhost:3000 fetch"
-    );
     const subContext = await browser.newContext({ viewport: { width: 1440, height: 900 } });
     const subPage = await subContext.newPage();
+    const monitor = attachZeroErrorMonitor(subPage);
+
     try {
       await loginViaUi(
         subPage,
@@ -1439,10 +1573,25 @@ test.describe("SCRIPE Internal Sovereign Tenant — Live Unmocked QA Suite", () 
         "http://scripe.localhost:3000/login"
       );
       expect(subPage.url()).not.toContain("/login");
+
+      const cookiesBeforeReload = await subContext.cookies();
+      const subRefreshCookie = cookiesBeforeReload.find(
+        (c) =>
+          (c.name === "scripe_refresh_token" || c.name.endsWith("_refresh_token")) &&
+          c.value.length > 0
+      );
+      expect(
+        subRefreshCookie,
+        `Subdomain login must persist refresh cookie across *.localhost (found: ${cookiesBeforeReload.map((c) => `${c.name}@${c.domain}`).join(", ")})`
+      ).toBeTruthy();
+
       await subPage.reload();
       await waitForAppSettled(subPage);
       expect(subPage.url()).not.toContain("/login");
+
+      monitor.assertClean("QA-03-Subdomain-Reload");
     } finally {
+      monitor.detach();
       await subContext.close();
     }
   });
