@@ -48,3 +48,11 @@ export { NavigationRepository } from "./data/repositories/NavigationRepository";
 export { NavigationDataMapper } from "./data/mappers/NavigationDataMapper";
 export { MenuItemMapper } from "./data/mappers/MenuItemMapper";
 export { WorkspaceGroupMapper } from "./data/mappers/WorkspaceGroupMapper";
+
+// ── Pure search indexing ────────────────────────────────────────────────────
+export {
+  buildSearchIndex,
+  filterQuickJumpItems,
+  type BuildSearchIndexInput,
+  type SearchableItem,
+} from "./search";

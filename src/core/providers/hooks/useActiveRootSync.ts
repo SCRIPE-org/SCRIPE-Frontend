@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
+import { matchAppRoute, normalizeRoutePath } from "@core/config/app-route-manifest";
 import type { MenuItem } from "@core/navigation/domain/entities/MenuItem";
 import { containsPath, findBestRootMatch } from "@core/navigation/utils/path-matcher";
 import { useNavigation } from "@core/providers/navigation-provider";
@@ -49,18 +50,25 @@ export function useActiveRootSync(rootMenuItems: MenuItem[]) {
       return;
     }
 
+    // ── Public / auth routes: never activate fallback workspace in background ──
+    if (normalizedPath && matchAppRoute(normalizedPath)?.binding === "public") {
+      return;
+    }
+
     // ── System pages: treat same as root for workspace activation ────────────
     // Pages like /overview, /settings, /profile are "system-wide" — they don't
     // belong to a specific workspace URL prefix, so workspaceRouteMap won't match them.
     // If the user lands on one with no active workspace, activate the primary admin
-    // workspace so the nav rails remain populated.
-    //
-    // We detect this case AFTER the route-map strategies run (below), but we handle
-    // the root "/" case here first for clarity.
+    // workspace so the nav rails remain populated — EXCEPT when resolving fresh "/" login to /hub.
     const isRootOrSystemPage = !normalizedPath || normalizedPath === "/";
+    const normalizedLandingRoute = state.landingResolution?.route
+      ? normalizeRoutePath(state.landingResolution.route).toLowerCase()
+      : "";
+    const isHubLanding =
+      normalizedLandingRoute === "/hub" && !state.landingResolution?.workspaceKey;
 
     if (isRootOrSystemPage) {
-      if (!activeWorkspaceKey && workspaceGroups.length > 0) {
+      if (!isHubLanding && !activeWorkspaceKey && workspaceGroups.length > 0) {
         // Pick primary admin workspace (first admin workspace by sort order)
         const adminWs = workspaceGroups
           .filter((ws) => ws.isAdminWorkspace)

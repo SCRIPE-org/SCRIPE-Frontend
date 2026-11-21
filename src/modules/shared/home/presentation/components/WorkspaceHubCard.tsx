@@ -4,7 +4,7 @@
  * WorkspaceHubCard — A single workspace card in the Workspace Hub.
  *
  * Accent colour derives from the workspace's own OKLCH hue/chroma, the same
- * data-owned pattern HubModuleTile uses. The card itself stays a plain nx
+ * data-owned pattern HubAppSquircle uses. The card itself stays a plain nx
  * surface with that colour only on the border and the bottom accent line —
  * one glow-carrying element per screen means a card grid cannot each cast
  * its own coloured shadow, so there is no glow and no hover lift here.
@@ -13,7 +13,7 @@
 import { cn, resolveBilingualLabel } from "@core/common/utils";
 import { Button } from "@core/ui/button";
 import { Lock, ChevronRight } from "lucide-react";
-import { DynamicIcon } from "@core/ui/layout/nexus/_parts/primary-rail-parts";
+import { DynamicIcon } from "@core/ui/layout/shared";
 import { useI18n } from "@core/providers/i18n-provider";
 import { formatHubItemCount } from "../utils/hub-plurals";
 

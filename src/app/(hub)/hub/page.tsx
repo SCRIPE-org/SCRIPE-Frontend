@@ -12,8 +12,7 @@ export const metadata: Metadata = {
 };
 
 /**
- * Hub page — Operational Personal Home & workspace picker inside unified NexusLayout.
- * Inherits DashboardLayout + NexusLayout from the (modules) route group.
+ * Standalone `/hub` Launchpad route inside `(hub)` without NexusLayout rails.
  */
 export default function HubPage() {
   return (

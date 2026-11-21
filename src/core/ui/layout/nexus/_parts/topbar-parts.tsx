@@ -11,6 +11,7 @@ import {
   PanelCollapseIcon,
   PanelCollapseIconRTL,
 } from "@core/ui/layout/shared/nav-icons";
+import { TopbarContextPill, type TopbarContextPillProps } from "@core/ui/layout/shared/topbar-context-pill";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
 import { usePathname, useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -486,70 +487,8 @@ export function TopbarPanelToggle({
   );
 }
 
-// ── Context Pill ──────────────────────────────────────────────────────────────
-export interface TopbarContextPillProps {
-  isModuleMode: boolean;
-  tenantName: string;
-  canSwitchContext?: boolean;
-  switchAriaLabel?: string;
-  onOpenSwitcher?: () => void;
-}
-
-export function TopbarContextPill({
-  isModuleMode,
-  tenantName,
-  canSwitchContext = false,
-  switchAriaLabel,
-  onOpenSwitcher,
-}: TopbarContextPillProps) {
-  const toneClasses = isModuleMode
-    ? "border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] bg-nx-accent-wash text-nx-accent"
-    : "border-nx-line bg-transparent text-nx-ink-2";
-
-  const pillClasses = cn(
-    "inline-flex max-w-[100px] items-center gap-1.5 rounded-full border px-2 py-1 text-[11px] font-semibold tracking-wide whitespace-nowrap shrink-0 sm:max-w-[160px] sm:px-3",
-    CONTROL_MOTION,
-    toneClasses
-  );
-
-  const dot = (
-    <span
-      aria-hidden="true"
-      className="h-1.5 w-1.5 shrink-0 rounded-full bg-info"
-    />
-  );
-
-  if (canSwitchContext && onOpenSwitcher) {
-    return (
-      <Button
-        type="button"
-        variant="ghost"
-        size="sm"
-        onClick={onOpenSwitcher}
-        aria-label={switchAriaLabel ?? tenantName}
-        data-testid="topbar-tenant-switcher-trigger"
-        className={cn(
-          "inline-flex h-8 max-w-[100px] shrink-0 cursor-pointer items-center gap-1 whitespace-nowrap !rounded-full border px-2 py-1 text-[11px] font-semibold tracking-wide hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink sm:h-7 sm:max-w-[160px] sm:gap-1.5 sm:px-2.5",
-          CONTROL_MOTION,
-          toneClasses
-        )}
-      >
-        {dot}
-        <span className="truncate">{tenantName}</span>
-        <ChevronDown className="h-3 w-3 shrink-0 opacity-75" aria-hidden="true" />
-      </Button>
-    );
-  }
-
-  return (
-    <div className={pillClasses} data-testid="topbar-context-pill">
-      {/* Live-context dot — the logo's cyan ("now"), no glow: the primary
-          rail's active root item owns the one glow on this screen */}
-      {dot}
-      <span className="truncate">{tenantName}</span>
-    </div>
-  );
-}
+// ── Context Pill (re-exported from shared) ────────────────────────────────────
+export { TopbarContextPill, type TopbarContextPillProps };
 
 // ── Search Button ─────────────────────────────────────────────────────────────
 export interface TopbarSearchButtonProps {

@@ -12,7 +12,7 @@ export class HubPersonalFeedService implements IHubPersonalFeedService {
 
   getNotifications(): Promise<HubAccountNotificationsModel> {
     return this.api.get<HubAccountNotificationsModel>(HOME_FEED_ENDPOINTS.NOTIFICATIONS, {
-      params: { unreadOnly: true, pageSize: 5 },
+      params: { pageSize: 5 },
     });
   }
 

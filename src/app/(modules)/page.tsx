@@ -69,7 +69,9 @@ function HomePageResolver() {
         hasRedirectedRef.current = true;
         lastRedirectKeyRef.current = resolveKey;
         if (normalizedTarget.toLowerCase() === "/hub") {
-          useNavigationStore.getState().setActiveWorkspace(null);
+          const navStore = useNavigationStore.getState();
+          navStore.setActiveWorkspace(null);
+          navStore.setPreviousWorkspace(null);
         }
         router.replace(eligible);
         return;
@@ -87,7 +89,9 @@ function HomePageResolver() {
     hasRedirectedRef.current = true;
     lastRedirectKeyRef.current = resolveKey;
     if (normalizeRoutePath(finalTarget).toLowerCase() === "/hub") {
-      useNavigationStore.getState().setActiveWorkspace(null);
+      const navStore = useNavigationStore.getState();
+      navStore.setActiveWorkspace(null);
+      navStore.setPreviousWorkspace(null);
     }
     router.replace(finalTarget);
   }, [

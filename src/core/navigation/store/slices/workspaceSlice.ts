@@ -1,5 +1,5 @@
 import { StateCreator } from "zustand";
-import { normalizeRoutePath } from "@core/config/app-route-manifest";
+import { matchAppRoute, normalizeRoutePath } from "@core/config/app-route-manifest";
 import type { AuthorizedRouteDescriptor, NavigationStoreState, WorkspaceSlice } from "../types";
 import { NavigationData } from "@core/navigation/domain/entities/NavigationData";
 import { WorkspaceGroup } from "@core/navigation/domain/entities/WorkspaceGroup";
@@ -92,20 +92,23 @@ export const createWorkspaceSlice: StateCreator<NavigationStoreState, [], [], Wo
 
       const currentPath =
         typeof window !== "undefined" ? normalizeRoutePath(window.location.pathname) : "/";
+      const isPublicRoute = matchAppRoute(currentPath)?.binding === "public";
+      const normalizedLandingRoute = result.landingResolution?.route
+        ? normalizeRoutePath(result.landingResolution.route).toLowerCase()
+        : "";
+      const isHubLanding =
+        normalizedLandingRoute === "/hub" && !result.landingResolution?.workspaceKey;
       const existingUnlocked = state.activeWorkspaceKey
         ? groups.find((g) => !g.isLocked && g.workspaceKey === state.activeWorkspaceKey)
         : undefined;
 
       let nextActiveWorkspaceKey: string | null = null;
-      if (currentPath.toLowerCase() === "/hub") {
+      if (currentPath.toLowerCase() === "/hub" || isPublicRoute) {
         nextActiveWorkspaceKey = null;
       } else if (existingUnlocked) {
         nextActiveWorkspaceKey = existingUnlocked.workspaceKey;
       } else if (currentPath === "/") {
-        nextActiveWorkspaceKey =
-          result.landingResolution?.route === "/hub" && !result.landingResolution?.workspaceKey
-            ? null
-            : hydratedWsKey;
+        nextActiveWorkspaceKey = isHubLanding ? null : hydratedWsKey;
       } else {
         const ownerEntry = Object.entries(workspaceRouteMap).find(([wsKey, wsRoutes]) => {
           const isUnlocked = groups.some(

@@ -45,14 +45,20 @@ export const en = {
     needsTenant: "Select a Tenant",
     notifications: {
       title: "Actionable Notifications",
+      triggerUnread: "Actionable Notifications ({{count}} unread)",
       markAllRead: "Mark all read",
       markRead: "Mark read",
       unreadBadge: "{{count}} unread",
       viewAll: "View all notifications",
       empty: "You are all caught up — no unread notifications.",
+      emptyUnread: "No unread notifications.",
       error: "Unable to load notifications.",
       retry: "Retry",
       markReadFailed: "Failed to update notification status.",
+      tabs: {
+        all: "All",
+        unread: "Unread",
+      },
     },
     signInActivity: {
       title: "Account & Sign-In Activity",
@@ -61,6 +67,17 @@ export const en = {
       error: "Unable to load account activity.",
       retry: "Retry",
       unknownIp: "Unknown IP",
+    },
+    launchpad: {
+      returnToWorkspace: "Return to {{name}}",
+      searchShort: "Search",
+      searchTriggerAria: "Search workspaces and pages",
+      typeAnywhereHint: "Type anywhere to search",
+      typeaheadPlaceholder: "Filter workspaces or jump to a page…",
+      quickJumpTitle: "Quick Jump Pages",
+      availableToUnlock: "Available to unlock",
+      appsGridAria: "Authorized workspaces",
+      brandMarkAria: "SCRIPE Workspace Launchpad",
     },
     impersonationHidden:
       "Personal notifications, sign-in activity, and pin updates are hidden while impersonating another administrator.",

@@ -3,9 +3,7 @@
 
 import React, { useState } from "react";
 import type { MenuItem } from "@core/navigation";
-import * as LucideIcons from "lucide-react";
 import {
-  LayoutDashboard,
   ArrowLeft,
   ArrowRight,
   PanelLeftClose,
@@ -13,6 +11,7 @@ import {
   PanelLeftOpen,
   PanelRightOpen,
 } from "lucide-react";
+import { DynamicIcon } from "@core/ui/layout/shared/dynamic-icon";
 import { cn, resolveBilingualLabel } from "@core/common/utils";
 
 // ── Focus law ─────────────────────────────────────────────────────────────────
@@ -23,13 +22,8 @@ import { cn, resolveBilingualLabel } from "@core/common/utils";
 // the way a hand-picked outline width/offset pair already had.
 export const NX_FOCUS_RING = "focus-visible:outline-none focus-visible:shadow-nx-focus";
 
-// ── Icon resolver ─────────────────────────────────────────────────────────────
-export function DynamicIcon({ name, size = 18 }: { name: string; size?: number }) {
-  const PascalName = name?.replace(/(^|[-_])(\w)/g, (_, __, c: string) => c.toUpperCase());
-  const Icon = (LucideIcons as Record<string, any>)[PascalName ?? ""];
-  if (Icon) return <Icon width={size} height={size} strokeWidth={1.8} aria-hidden="true" />;
-  return <LayoutDashboard width={size} height={size} strokeWidth={1.8} aria-hidden="true" />;
-}
+// ── Icon resolver (re-exported from shared) ───────────────────────────────────
+export { DynamicIcon };
 
 import { Button } from "@core/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@core/ui/tooltip";

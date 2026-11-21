@@ -42,14 +42,20 @@ export const ar = {
     needsTenant: "اختر مستأجراً",
     notifications: {
       title: "الإشعارات المطلوب اتخاذ إجراء بشأنها",
+      triggerUnread: "الإشعارات المطلوب اتخاذ إجراء بشأنها ({{count}} غير مقروءة)",
       markAllRead: "تحديد الكل كمقروء",
       markRead: "تحديد كمقروء",
       unreadBadge: "{{count}} غير مقروءة",
       viewAll: "عرض كل الإشعارات",
       empty: "لا توجد إشعارات غير مقروءة حالياً.",
+      emptyUnread: "لا توجد إشعارات غير مقروءة.",
       error: "تعذر تحميل الإشعارات.",
       retry: "إعادة المحاولة",
       markReadFailed: "تعذر تحديث حالة الإشعار.",
+      tabs: {
+        all: "الكل",
+        unread: "غير المقروءة",
+      },
     },
     signInActivity: {
       title: "نشاط الحساب وتسجيل الدخول",
@@ -58,6 +64,17 @@ export const ar = {
       error: "تعذر تحميل نشاط الحساب.",
       retry: "إعادة المحاولة",
       unknownIp: "عنوان IP غير معروف",
+    },
+    launchpad: {
+      returnToWorkspace: "العودة إلى {{name}}",
+      searchShort: "بحث",
+      searchTriggerAria: "البحث في مساحات العمل والصفحات",
+      typeAnywhereHint: "اكتب في أي مكان للبحث",
+      typeaheadPlaceholder: "تصفية مساحات العمل أو الانتقال إلى صفحة…",
+      quickJumpTitle: "انتقال سريع للصفحات",
+      availableToUnlock: "متاح للتفعيل",
+      appsGridAria: "مساحات العمل المصرّح بها",
+      brandMarkAria: "مشغّل مساحات عمل SCRIPE",
     },
     impersonationHidden:
       "يتم إخفاء الإشعارات الشخصية وسجل تسجيل الدخول وتعديل التثبيت أثناء انتحال جلسة مسؤول آخر.",

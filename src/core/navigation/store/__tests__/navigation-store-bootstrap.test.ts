@@ -184,6 +184,40 @@ describe("useNavigationStore v4 — single-pass bootstrap, migration & recent wo
     expect(useNavigationStore.getState().getActiveRootMenuItems()).toEqual([]);
   });
 
+  it("fresh login on /login or / with /hub landingResolution keeps activeWorkspaceKey and previousWorkspaceKey null", () => {
+    const navData = new NavigationData({
+      menuItems: crmGroupWithMenus.menuItems.map((m) => m.toData()),
+      routes: ["/crm", "/crm/leads"],
+      workspaceGroups: [adminGroup.toData(), crmGroupWithMenus.toData()],
+    });
+    const hubBootstrap = {
+      navigationData: navData,
+      routes: ["/crm", "/crm/leads", "/hub"],
+      workspaceRouteMap: { crm: ["/crm", "/crm/leads"] },
+      routeDescriptors: [],
+      landingResolution: {
+        targetKind: "hub" as const,
+        route: "/hub",
+        workspaceKey: null,
+        sourceReason: "MultiWorkspaceHub",
+        isEnforced: false,
+        enforcingRoleName: null,
+        wasFallbackApplied: false,
+        fallbackReason: null,
+      },
+    };
+
+    window.history.replaceState({}, "", "/login");
+    useNavigationStore.getState().initializeBootstrap(hubBootstrap, "tenant-1:admin");
+    expect(useNavigationStore.getState().activeWorkspaceKey).toBeNull();
+    expect(useNavigationStore.getState().previousWorkspaceKey).toBeNull();
+
+    window.history.replaceState({}, "", "/");
+    useNavigationStore.getState().initializeBootstrap(hubBootstrap, "tenant-1:admin");
+    expect(useNavigationStore.getState().activeWorkspaceKey).toBeNull();
+    expect(useNavigationStore.getState().previousWorkspaceKey).toBeNull();
+  });
+
   it("recordRecentWorkspace deduplicates, keeps newest first, caps at 4 per contextKey, and clears cleanly", () => {
     const store = useNavigationStore.getState();
 

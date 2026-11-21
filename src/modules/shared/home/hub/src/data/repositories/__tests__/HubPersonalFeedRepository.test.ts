@@ -53,7 +53,7 @@ describe("HubPersonalFeedRepository — /account/notifications & /account/activi
     const feed = await repo.getNotifications();
 
     expect(api.get).toHaveBeenCalledWith(HOME_FEED_ENDPOINTS.NOTIFICATIONS, {
-      params: { unreadOnly: true, pageSize: 5 },
+      params: { pageSize: 5 },
     });
     expect(feed.unreadCount).toBe(2);
     expect(feed.items.map((i) => i.id)).toEqual(["unread-unsafe", "unread-safe", "read-1"]);

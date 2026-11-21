@@ -1,9 +1,13 @@
 import React from "react";
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
-import { TopbarBreadcrumbs, TopbarContextPill } from "../_parts/topbar-parts";
+import { TooltipProvider } from "@core/ui/tooltip";
+import { TopbarContextPill } from "@core/ui/layout/shared";
+import { TopbarBreadcrumbs } from "../_parts/topbar-parts";
+import { NexusTopbar } from "../nexus-topbar";
 
+let mockPathname = "/overview";
 const mockActiveRootItem = {
   id: "root-1",
   slug: "directory",
@@ -28,6 +32,18 @@ vi.mock("@core/providers/workspace-transition-provider", () => ({
   }),
 }));
 
+vi.mock("@core/providers/settings-provider", () => ({
+  useSettings: () => ({
+    cardStyle: "default",
+    showBreadcrumbs: true,
+    stickyHeader: true,
+    collapsibleSidebar: true,
+    buttonStyle: "default",
+    borderRadius: "default",
+    animationLevel: "default",
+  }),
+}));
+
 vi.mock("@core/providers/i18n-provider", () => ({
   useI18n: () => ({
     language: "en",
@@ -39,14 +55,31 @@ vi.mock("@core/providers/i18n-provider", () => ({
 vi.mock("@core/providers/permission-provider", () => ({
   usePermissions: () => ({
     canAccessPage: () => true,
+    hasPermission: () => false,
   }),
+}));
+
+vi.mock("@core/hooks/useAdminContext", () => ({
+  useAdminContext: () => ({
+    activeTenantName: "Al-Ahly Sporting Club",
+    isPlatform: false,
+  }),
+}));
+
+vi.mock("@core/components/tenant-context", () => ({
+  TenantContextSwitcherDialog: () => null,
+}));
+
+vi.mock("@core/ui/layout/common", () => ({
+  LanguageSwitcher: () => <div data-testid="language-switcher" />,
+  NxThemeSwitcher: () => <div data-testid="theme-switcher" />,
 }));
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({
     push: vi.fn(),
   }),
-  usePathname: () => "/overview",
+  usePathname: () => mockPathname,
 }));
 
 vi.mock("@core/store", () => ({
@@ -54,6 +87,9 @@ vi.mock("@core/store", () => ({
 }));
 
 describe("TopbarBreadcrumbs Deduplication", () => {
+  beforeEach(() => {
+    mockPathname = "/overview";
+  });
   it("deduplicates consecutive identical segments when workspace, root, and page names are identical", () => {
     render(
       <TopbarBreadcrumbs
@@ -200,5 +236,18 @@ describe("TopbarBreadcrumbs Deduplication", () => {
     expect(contextPill.className).not.toContain("hidden");
     expect(contextPill.className).toContain("max-w-[100px]");
     expect(contextPill.className).toContain("sm:max-w-[160px]");
+  });
+
+  it("renders standard segment formatting in NexusTopbar without obsolete /hub breadcrumb special-casing", () => {
+    mockPathname = "/hub";
+    render(
+      <TooltipProvider>
+        <NexusTopbar onMobileMenuOpen={vi.fn()} onTogglePanel={vi.fn()} onOpenSearch={vi.fn()} />
+      </TooltipProvider>
+    );
+
+    expect(screen.queryByText("workspaceHub.hubTitle")).not.toBeInTheDocument();
+    expect(screen.queryByText("chrome.hub")).not.toBeInTheDocument();
+    expect(screen.getByText("Hub")).toBeInTheDocument();
   });
 });

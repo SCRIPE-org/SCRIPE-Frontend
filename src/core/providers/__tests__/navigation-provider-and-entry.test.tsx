@@ -4,6 +4,7 @@ import "@testing-library/jest-dom/vitest";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { NavigationProvider, isTransientHttpError } from "../navigation-provider";
+import { useActiveRootSync } from "../hooks/useActiveRootSync";
 import HomePage from "@/app/(modules)/page";
 import { DashboardLayout } from "@core/ui/layout/dashboard-layout";
 import { useAppStore } from "@core/store/useAppStore";
@@ -255,6 +256,7 @@ describe("NavigationProvider single-pass bootstrap, app/(modules)/page.tsx & Das
     useAppStore.setState({
       user: { id: "u-1", username: "admin" } as never,
       isAuthenticated: true,
+      isAuthTransitioning: false,
       _hasHydrated: true,
     });
   });
@@ -425,6 +427,8 @@ describe("NavigationProvider single-pass bootstrap, app/(modules)/page.tsx & Das
     await waitFor(() => {
       expect(mockRouterReplace).toHaveBeenCalledWith("/hub");
     });
+    expect(useNavigationStore.getState().activeWorkspaceKey).toBeNull();
+    expect(useNavigationStore.getState().previousWorkspaceKey).toBeNull();
   });
 
   it("DashboardLayout releases fresh-login blocking curtain immediately when routesError is set", () => {
@@ -658,6 +662,34 @@ describe("NavigationProvider single-pass bootstrap, app/(modules)/page.tsx & Das
       </QueryClientProvider>
     );
 
+    expect(mockFetchWorkspaceMenu).not.toHaveBeenCalled();
+  });
+
+  it("does not activate fallback workspace on '/' when landingResolution resolves to /hub (no previousWorkspaceKey leak)", async () => {
+    mockFetchNavigationBootstrap.mockResolvedValue(
+      buildBootstrapFixture({ landingRoute: "/hub", landingWsKey: null })
+    );
+
+    const SyncProbe = () => {
+      useActiveRootSync([]);
+      return <div data-testid="sync-probe" />;
+    };
+
+    render(
+      <QueryClientProvider client={new QueryClient()}>
+        <NavigationProvider>
+          <SyncProbe />
+          <HomePage />
+        </NavigationProvider>
+      </QueryClientProvider>
+    );
+
+    await waitFor(() => {
+      expect(mockRouterReplace).toHaveBeenCalledWith("/hub");
+    });
+
+    expect(useNavigationStore.getState().activeWorkspaceKey).toBeNull();
+    expect(useNavigationStore.getState().previousWorkspaceKey).toBeNull();
     expect(mockFetchWorkspaceMenu).not.toHaveBeenCalled();
   });
 });
