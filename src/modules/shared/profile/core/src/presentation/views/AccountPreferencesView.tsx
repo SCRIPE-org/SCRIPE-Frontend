@@ -4,9 +4,11 @@ import { useCoreImpersonation } from "@core/hooks/use-auth-bridge";
 import { useAdminContext } from "@core/hooks/useAdminContext";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { useI18n } from "@core/providers/i18n-provider";
+import * as TenantContextModule from "@core/providers/tenant-context-provider";
 import { useWorkspace } from "@core/providers/workspace-provider";
 import { Alert, AlertDescription } from "@core/ui/alert";
 import { toast, resolveRtlPosition, type SileoPosition } from "@core/ui/sileo-toast";
+import { useAccountContextSliceViewModel } from "../viewmodels/useSovereignAccountSlicesViewModel";
 import { useWorkstationPreferencesViewModel } from "../viewmodels/useWorkstationPreferencesViewModel";
 import { ErgonomicsLiveStage } from "../components/ErgonomicsLiveStage";
 import { PreferencesPageSkeleton } from "../components/AccountSkeletons";
@@ -45,6 +47,27 @@ function resolveLogicalToastPosition(rawPosition: string | undefined): LogicalTo
 }
 
 /**
+ * Safely resolves `useOptionalTenantContext` when exported by `@core/providers/tenant-context-provider`,
+ * returning a no-op null hook if a unit test provides a partial module mock.
+ */
+function resolveOptionalTenantContextHook(): () => TenantContextModule.TenantContextType | null {
+  try {
+    const mod = TenantContextModule as Record<string, unknown>;
+    if (Object.prototype.hasOwnProperty.call(mod, "useOptionalTenantContext")) {
+      const candidate = mod["useOptionalTenantContext"];
+      if (typeof candidate === "function") {
+        return candidate as () => TenantContextModule.TenantContextType | null;
+      }
+    }
+  } catch {
+    /* ignore mocked module inspection errors */
+  }
+  return () => null;
+}
+
+const useSafeOptionalTenantContext = resolveOptionalTenantContextHook();
+
+/**
  * Ergonomics, theme, privacy blur, toast placement, and regional localization view
  * (/account/preferences) using continuous serialized auto-save without a manual save button.
  */
@@ -53,12 +76,26 @@ export function AccountPreferencesView() {
   const isRtl = direction === "rtl";
   const { isImpersonating } = useCoreImpersonation();
   const { isPlatform, activeTenantName } = useAdminContext();
+  const tenantContext = useSafeOptionalTenantContext();
+  const { accountContext } = useAccountContextSliceViewModel();
   const { workspaceGroups } = useWorkspace();
   const cachedWorkspaces = useNavigationStore((s) => s.workspaces);
   const storeContextKey = useNavigationStore((s) => s.contextKey);
+  const organizationFallback = t("chrome.section.organization", { defaultValue: "Organization" });
+  const explicitActiveTenantName = activeTenantName?.trim();
+  const nonFallbackAdminTenantName =
+    explicitActiveTenantName &&
+    explicitActiveTenantName !== organizationFallback &&
+    explicitActiveTenantName !== "Organization"
+      ? explicitActiveTenantName
+      : "";
   const activeContextLabel = isPlatform
     ? t("profile.preferences.startupContextPlatform")
-    : activeTenantName || t("profile.preferences.startupContextTenant");
+    : tenantContext?.currentTenant?.name?.trim() ||
+      accountContext?.principalContext?.activeTenantName?.trim() ||
+      accountContext?.clubAffiliation?.trim() ||
+      nonFallbackAdminTenantName ||
+      t("profile.preferences.startupContextTenant");
   const {
     theme,
     setTheme,
