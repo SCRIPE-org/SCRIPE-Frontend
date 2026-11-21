@@ -11,6 +11,7 @@ import { TenantHeader } from "../components/TenantHeader";
 import { EditTenantDialog } from "../components/TenantDialogs";
 import { TenantEditDialog } from "../components/TenantEditDialog";
 import { TenantSubscriptionCard } from "../components/cards/TenantSubscriptionCard";
+import { TenantEntitlementsTab } from "../components/tabs/TenantEntitlementsTab";
 import { useTenantHeaderViewModel } from "../viewmodels/useTenantHeaderViewModel";
 import { useTenantSettingsViewModel } from "../viewmodels/useTenantSettingsViewModel";
 import { identityContainer } from "@modules/identity/di";
@@ -662,5 +663,13 @@ describe("Internal tenant mapping and UI guards", () => {
       logoFile
     );
     expect((identityContainer.tenantService as any).uploadLogo).not.toHaveBeenCalled();
+  });
+
+  it("TenantEntitlementsTab hides entSubscriptions.manage when isInternal is true and renders it when isInternal is false", () => {
+    const { rerender } = render(<TenantEntitlementsTab tenantId="1" isInternal={true} />);
+    expect(screen.queryByRole("button", { name: "entSubscriptions.manage" })).not.toBeInTheDocument();
+
+    rerender(<TenantEntitlementsTab tenantId="2" isInternal={false} />);
+    expect(screen.getByRole("button", { name: "entSubscriptions.manage" })).toBeInTheDocument();
   });
 });
