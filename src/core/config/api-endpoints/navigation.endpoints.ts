@@ -2,8 +2,10 @@ import { V1 } from "./_shared";
 
 export const NAVIGATION_ENDPOINTS = {
   MENUS: {
-    /** GET /menus/navigation — returns default workspace menu + WorkspaceGroups for all workspaces */
+    /** GET /menus/navigation — single-pass navigation bootstrap (optionally passing Tier 1 ?redirect=) */
     NAVIGATION: `${V1}/menus/navigation`,
+    NAVIGATION_BOOTSTRAP: (redirect?: string | null) =>
+      redirect ? `${V1}/menus/navigation?redirect=${encodeURIComponent(redirect)}` : `${V1}/menus/navigation`,
     /** GET /menus/navigation?workspace={key} — JIT load full menu tree for a specific workspace */
     WORKSPACE_NAVIGATION: (workspaceKey: string) =>
       `${V1}/menus/navigation?workspace=${encodeURIComponent(workspaceKey)}`,

@@ -120,12 +120,13 @@ export const APP_ROUTE_MANIFEST: readonly AppRouteManifestEntry[] = [
   { pattern: "/bookings/guest", binding: "public" },
   { pattern: "/authorize", binding: "public" },
 
-  // ── Shell Authenticated Routes (17 — NO module prefixes!) ─────────────────
+  // ── Shell Authenticated Routes (NO module prefixes!) ─────────────────────
   { pattern: "/", binding: "shell_authenticated" },
   { pattern: "/hub", binding: "shell_authenticated" },
-  { pattern: "/overview", binding: "shell_authenticated" },
   { pattern: "/activate-workspace", binding: "shell_authenticated" },
   { pattern: "/change-password", binding: "shell_authenticated" },
+  { pattern: "/my-plan", binding: "shell_authenticated", requiresTenantContext: true },
+  { pattern: "/my-subscription", binding: "shell_authenticated", requiresTenantContext: true },
   { pattern: "/settings", binding: "shell_authenticated" },
   { pattern: "/sileo-playground", binding: "shell_authenticated", devOnly: true },
   { pattern: "/account", binding: "shell_authenticated" },
@@ -141,7 +142,7 @@ export const APP_ROUTE_MANIFEST: readonly AppRouteManifestEntry[] = [
   { pattern: "/account/security", binding: "shell_authenticated" },
   { pattern: "/account/sessions", binding: "shell_authenticated" },
 
-  // ── Menu-Bound Module Routes (159) ────────────────────────────────────────
+  // ── Menu-Bound Module Routes ──────────────────────────────────────────────
   // Identity & Admin Workspace
   { pattern: "/admins", binding: "menu_bound", menuRouteKey: "/admins" },
   { pattern: "/analytics", binding: "menu_bound", menuRouteKey: "/analytics" },
@@ -150,6 +151,7 @@ export const APP_ROUTE_MANIFEST: readonly AppRouteManifestEntry[] = [
   { pattern: "/dashboard", binding: "menu_bound", menuRouteKey: "/overview" },
   { pattern: "/domains", binding: "menu_bound", menuRouteKey: "/domains", requiresTenantContext: true },
   { pattern: "/media", binding: "menu_bound", menuRouteKey: "/media" },
+  { pattern: "/overview", binding: "menu_bound", menuRouteKey: "/overview" },
   { pattern: "/platform-health", binding: "menu_bound", menuRouteKey: "/platform-health" },
   { pattern: "/recycle-bin", binding: "menu_bound", menuRouteKey: "/recycle-bin" },
   { pattern: "/roles", binding: "menu_bound", menuRouteKey: "/roles" },
@@ -258,9 +260,7 @@ export const APP_ROUTE_MANIFEST: readonly AppRouteManifestEntry[] = [
   { pattern: "/entitlements/tenant-plans/[id]/edit", binding: "menu_bound", menuRouteKey: "/entitlements/tenant-plans", requiresTenantContext: true },
   { pattern: "/entitlements/user-subscriptions", binding: "menu_bound", menuRouteKey: "/entitlements/user-subscriptions", requiresTenantContext: true },
   { pattern: "/my-payment-methods", binding: "menu_bound", menuRouteKey: "/my-payment-methods", requiresTenantContext: true },
-  { pattern: "/my-plan", binding: "menu_bound", menuRouteKey: "/my-plan", requiresTenantContext: true },
   { pattern: "/my-stripe-account", binding: "menu_bound", menuRouteKey: "/my-stripe-account", requiresTenantContext: true },
-  { pattern: "/my-subscription", binding: "menu_bound", menuRouteKey: "/my-subscription", requiresTenantContext: true },
   { pattern: "/payment-gateways", binding: "menu_bound", menuRouteKey: "/payment-gateways" },
 
   // HRMS & Work Management

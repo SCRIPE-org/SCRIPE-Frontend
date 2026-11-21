@@ -3,6 +3,7 @@ import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { useAppStore } from "@core/store/useAppStore";
 import { useSudoStore } from "@core/store/useSudoStore";
 import { usePatOneTimeSecretStore } from "@core/store/usePatOneTimeSecretStore";
+import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { secureTokenService } from "@core/common/secure-token-service";
 import {
   clearAllLocalStorage,
@@ -96,6 +97,21 @@ describe("ImpersonationRepository session & store cleanup", () => {
       isRotated: false,
       ownerUserId: "admin-prev",
     });
+    useNavigationStore.setState({
+      routesLoaded: true,
+      routesContextKey: "tenant-prev:admin",
+      landingResolution: {
+        targetKind: "workspace",
+        route: "/crm",
+        workspaceKey: "crm",
+        sourceReason: "AdminPreference",
+        isEnforced: false,
+        enforcingRoleName: null,
+        wasFallbackApplied: false,
+        fallbackReason: null,
+      },
+      recentWorkspaceKeysByContext: { "tenant-prev:admin": ["crm"] },
+    });
     useAppStore.getState().setAuth(
       { id: "admin-prev", username: "prev", permissions: ["all"] } as never,
       ["all"],
@@ -118,15 +134,33 @@ describe("ImpersonationRepository session & store cleanup", () => {
     expect(useSudoStore.getState().isActive).toBe(false);
     expect(usePatOneTimeSecretStore.getState().pendingReceipt).toBeNull();
     expect(useAppStore.getState().user).toBeNull();
+    expect(useNavigationStore.getState().routesLoaded).toBe(false);
+    expect(useNavigationStore.getState().landingResolution).toBeNull();
+    expect(useNavigationStore.getState().recentWorkspaceKeysByContext).toEqual({});
     expect(localStorage.getItem(STORAGE_KEYS.APP_STORE) ?? null).toBeNull();
     expect(sessionStorage.getItem(STORAGE_KEYS.tenant_context) ?? null).toBeNull();
     expect(sessionStorage.getItem("scr_tenant_breadcrumbs") ?? null).toBeNull();
     expect(sessionStorage.getItem(STORAGE_KEYS.IMPERSONATING)).toBe("true");
     expect(secureTokenService.getAccessToken()).toBe("impersonated-jwt");
 
+    useNavigationStore.setState({
+      routesLoaded: true,
+      landingResolution: {
+        targetKind: "hub",
+        route: "/hub",
+        workspaceKey: null,
+        sourceReason: "MultiWorkspaceHub",
+        isEnforced: false,
+        enforcingRoleName: null,
+        wasFallbackApplied: false,
+        fallbackReason: null,
+      },
+    });
     await repo.stopImpersonation();
     expect(sessionStorage.getItem(STORAGE_KEYS.IMPERSONATING) ?? null).toBeNull();
     expect(secureTokenService.getAccessToken()).toBe("restored-admin-jwt");
+    expect(useNavigationStore.getState().routesLoaded).toBe(false);
+    expect(useNavigationStore.getState().landingResolution).toBeNull();
   });
 });
 

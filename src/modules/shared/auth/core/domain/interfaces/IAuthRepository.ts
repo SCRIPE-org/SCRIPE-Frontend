@@ -95,6 +95,10 @@ export interface IAuthRepository {
     expiresAt?: string;
     approverName?: string | null;
     defaultRedirectPath?: string | null;
+    subscriptionStatus?: string | null;
+    gracePhase?: string | null;
+    editionName?: string | null;
+    mustChangePassword?: boolean;
   }>;
   /** Approve QR sign-in from mobile */
   approveQrSignIn(sessionToken: string, deviceInfo?: string): Promise<void>;

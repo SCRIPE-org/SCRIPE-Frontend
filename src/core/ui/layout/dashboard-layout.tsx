@@ -144,6 +144,7 @@ function DashboardLayoutContent({
 
   const isInitialLoading = useNavigationStore((s) => s.isInitialLoading);
   const routesLoadedAt = useNavigationStore((s) => s.routesLoadedAt);
+  const routesError = useNavigationStore((s) => s.routesError);
 
   // ── Gate 2 + 3: Wait for branding AND one extra frame for settings re-merge ──
   //
@@ -184,12 +185,14 @@ function DashboardLayoutContent({
   const isNavReady = !isInitialLoading && routesLoadedAt !== null;
   const isSettingsCompleted = isSettingsReady && !isTransitioning;
 
-  // Unify all loading gates under a single layout wrapper
-  // On page refresh (isFreshLogin = false), we do NOT block rendering the layout or children.
-  // This allows the layout and its skeletonized components to show immediately.
-  const shouldBlockContent = isFreshLogin
-    ? !isSettingsCompleted || isBrandingLoading || !isSettingsMergeSettled || !isNavReady
-    : false;
+  // Release the fresh-login blocking curtain immediately if navigation bootstrap errors
+  // so <NavigationErrorRecovery> can mount without waiting for routesLoadedAt or 3.0s timeout.
+  const shouldBlockContent =
+    routesError !== null
+      ? false
+      : isFreshLogin
+        ? !isSettingsCompleted || isBrandingLoading || !isSettingsMergeSettled || !isNavReady
+        : false;
 
   const isFetching = useIsFetching();
   const [showWelcomeOverlay, setShowWelcomeOverlay] = useState(isFreshLogin);
@@ -253,7 +256,7 @@ function DashboardLayoutContent({
   // banners flow above it inside a non-scrolling page.
   return (
     <>
-      {showWelcomeOverlay && <LoginWelcomeLoader />}
+      {showWelcomeOverlay && !routesError && <LoginWelcomeLoader />}
       <PaymentWallDialog />
       <div
         style={{

@@ -10,6 +10,12 @@
 
 import { MenuItem, type MenuItemData, type MenuItemActions } from "./MenuItem";
 import { WorkspaceGroup, type WorkspaceGroupData } from "./WorkspaceGroup";
+export type {
+  AuthorizedRouteDescriptor,
+  BootstrapNavigationResult,
+  LandingResolution,
+  RouteAccessState,
+} from "../interfaces/INavigationRepository";
 
 // ── Plain data shape (used by mapper → aggregate constructor) ─────────────────
 

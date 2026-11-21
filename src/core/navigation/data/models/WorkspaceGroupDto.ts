@@ -32,6 +32,8 @@ export interface WorkspaceGroupDto {
   pinSortOrder?: number | null;
   /** Number of menu items accessible to this admin in this workspace. */
   accessibleItemCount?: number;
+  /** Server-resolved home route for the active context (`platformHomeRoute ?? homeRoute ?? firstLeaf`). */
+  effectiveHomeRoute?: string | null;
   /** Reason why the workspace is locked. */
   lockReason?: string;
 }
@@ -64,6 +66,8 @@ export interface WorkspaceStubDto {
   pinSortOrder?: number | null;
   /** Number of menu items accessible to this admin in this workspace. */
   accessibleItemCount?: number;
+  /** Server-resolved home route for the active context. */
+  effectiveHomeRoute?: string | null;
   /** Reason why the workspace is locked. */
   lockReason?: string;
 }

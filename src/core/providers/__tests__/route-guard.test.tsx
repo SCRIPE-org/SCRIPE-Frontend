@@ -413,9 +413,9 @@ describe("RouteGuard - Hardened Phase 2 Option C Security & Context Gates", () =
     expect(mockRouterPush).toHaveBeenCalledWith("/not-authorized");
   });
 
-  it("allows /overview and exact /settings as explicit shell_authenticated routes when PBAC allows", () => {
+  it("allows /hub and exact /settings as explicit shell_authenticated routes while enforcing PBAC and menu_bound access on /overview", () => {
     mockUseNavigationStore.getState().hasRouteAccess.mockReturnValue(false);
-    for (const shellPath of ["/overview", "/settings"]) {
+    for (const shellPath of ["/hub", "/settings"]) {
       currentPathname = shellPath;
       const { unmount } = render(
         <RouteGuard>
@@ -426,6 +426,87 @@ describe("RouteGuard - Hardened Phase 2 Option C Security & Context Gates", () =
       expect(mockRouterPush).not.toHaveBeenCalled();
       unmount();
     }
+
+    // /overview is now menu_bound with menuRouteKey "/overview" (requires dashboard.view + authorized menu)
+    vi.clearAllMocks();
+    currentPathname = "/overview";
+    mockCanAccessPage.mockImplementation((p?: string) => p !== "/overview");
+    const { unmount: unmountPbac } = render(
+      <RouteGuard>
+        <div data-testid="overview-content">/overview</div>
+      </RouteGuard>
+    );
+    expect(screen.queryByTestId("overview-content")).not.toBeInTheDocument();
+    expect(mockRouterPush).toHaveBeenCalledWith("/not-authorized");
+    unmountPbac();
+
+    vi.clearAllMocks();
+    mockCanAccessPage.mockReturnValue(true);
+    mockUseNavigationStore.getState().hasRouteAccess.mockImplementation((p: string) => p === "/crm");
+    mockUseNavigationStore.getState().workspaceRouteMap = { crm: ["/crm"] };
+    render(
+      <RouteGuard>
+        <div data-testid="overview-content">/overview</div>
+      </RouteGuard>
+    );
+    expect(screen.queryByTestId("overview-content")).not.toBeInTheDocument();
+    expect(mockRouterReplace).toHaveBeenCalledWith("/crm");
+  });
+
+  it("enforces requiresTenantContext on shell_authenticated routes /my-plan and /my-subscription", () => {
+    mockAdminContext.activeTenantId = null;
+    mockAdminContext.isPlatform = true;
+    mockAdminContext.isTenant = false;
+    mockUseNavigationStore.getState().routesContextKey = "platform:admin";
+
+    for (const tenantShellRoute of ["/my-plan", "/my-subscription"]) {
+      currentPathname = tenantShellRoute;
+      const { unmount } = render(
+        <RouteGuard>
+          <div data-testid="tenant-shell-content">{tenantShellRoute}</div>
+        </RouteGuard>
+      );
+      expect(screen.queryByTestId("tenant-shell-content")).not.toBeInTheDocument();
+      expect(screen.getByTestId("tenant-context-gate")).toHaveAttribute(
+        "data-route",
+        tenantShellRoute
+      );
+      unmount();
+    }
+  });
+
+  it("routes authenticated users visiting /login through auth_to_workspace using Tier 0 and ?redirect= via '/'", () => {
+    currentPathname = "/login";
+    window.history.replaceState({}, "", "/login?redirect=%2Fcrm%2Fleads");
+    mockUseAppStore.getState().defaultRedirectPath = "/stale-overview-leak";
+    const { unmount } = render(
+      <RouteGuard>
+        <div data-testid="login-screen">Login</div>
+      </RouteGuard>
+    );
+    expect(mockRouterReplace).toHaveBeenCalledWith(
+      `/?redirect=${encodeURIComponent("/crm/leads")}`
+    );
+    unmount();
+
+    vi.clearAllMocks();
+    mockUseAppStore.getState().subscriptionStatus = "PendingPayment";
+    const { unmount: unmountPending } = render(
+      <RouteGuard>
+        <div data-testid="login-screen">Login</div>
+      </RouteGuard>
+    );
+    expect(mockRouterReplace).toHaveBeenCalledWith("/activate-workspace");
+    unmountPending();
+
+    vi.clearAllMocks();
+    mockUseAppStore.getState().mustChangePassword = true;
+    render(
+      <RouteGuard>
+        <div data-testid="login-screen">Login</div>
+      </RouteGuard>
+    );
+    expect(mockRouterReplace).toHaveBeenCalledWith("/change-password");
   });
 
   it("blocks protected children during SSR pre-mount (!isMounted) while allowing public pages", () => {

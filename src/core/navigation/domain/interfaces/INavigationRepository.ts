@@ -30,12 +30,37 @@ export interface AuthorizedRoutesResult {
   routeDescriptors: AuthorizedRouteDescriptor[];
 }
 
+export interface LandingResolution {
+  targetKind: string;
+  route: string;
+  workspaceKey: string | null;
+  sourceReason: string;
+  isEnforced: boolean;
+  enforcingRoleName: string | null;
+  wasFallbackApplied: boolean;
+  fallbackReason: string | null;
+}
+
+export interface BootstrapNavigationResult {
+  navigationData: NavigationData;
+  routes: string[];
+  workspaceRouteMap: Record<string, string[]>;
+  routeDescriptors: AuthorizedRouteDescriptor[];
+  landingResolution: LandingResolution | null;
+}
+
 export interface INavigationRepository {
   /**
-   * Phase 0 — Eager routes load (called ONCE on login/context switch, before any menu trees).
+   * Single-pass bootstrap call (called ONCE on login/context switch/hard reload).
+   * Coalesces authorized routes, descriptors, workspace groups, hydrated target workspace
+   * menu tree, and resolved landing metadata into one HTTP request.
    *
-   * Fetches ALL accessible routes and unified context/feature route descriptors across ALL workspaces
-   * in a single lightweight call.
+   * Backend: GET /menus/navigation[?redirect=<encoded>]
+   */
+  fetchNavigationBootstrap(redirect?: string | null): Promise<BootstrapNavigationResult>;
+
+  /**
+   * Legacy / rolling-compat routes load.
    *
    * Backend: GET /menus/navigation/routes
    */

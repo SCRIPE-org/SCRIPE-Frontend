@@ -3,10 +3,12 @@ import type { WorkspaceGroup } from "@core/navigation/domain/entities/WorkspaceG
 import type { MenuItem, MenuItemActions } from "@core/navigation/domain/entities/MenuItem";
 import type {
   AuthorizedRouteDescriptor,
+  BootstrapNavigationResult,
+  LandingResolution,
   RouteAccessState,
 } from "@core/navigation/domain/interfaces/INavigationRepository";
 
-export type { AuthorizedRouteDescriptor, RouteAccessState };
+export type { AuthorizedRouteDescriptor, BootstrapNavigationResult, LandingResolution, RouteAccessState };
 export type WorkspaceRouteMap = Record<string, string[]>;
 
 export interface SetRouteDataInput {
@@ -26,6 +28,7 @@ export interface RouteSlice {
   routesError: string | null;
   routesLoadedAt: number | null;
   contextKey: string;
+  landingResolution: LandingResolution | null;
 
   setRouteData: (input: SetRouteDataInput) => void;
   setRoutesError: (message: string, contextKey?: string | null) => void;
@@ -39,10 +42,14 @@ export interface WorkspaceSlice {
   workspaceGroups: WorkspaceGroup[];
   workspaces: Map<string, NavigationData>;
   defaultWorkspace: NavigationData | null;
+  recentWorkspaceKeysByContext: Record<string, string[]>;
 
+  initializeBootstrap: (result: BootstrapNavigationResult, contextKey: string) => void;
   initializeDefaultWorkspace: (data: NavigationData, groups: WorkspaceGroup[]) => void;
   setWorkspaceData: (key: string, data: NavigationData) => void;
   hasWorkspaceData: (key: string) => boolean;
+  recordRecentWorkspace: (contextKey: string, workspaceKey: string) => void;
+  clearRecentWorkspaces: () => void;
 
   getActiveWorkspaceGroup: () => WorkspaceGroup | null;
   getActiveRootMenuItems: () => MenuItem[];

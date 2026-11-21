@@ -16,7 +16,7 @@ import { authContainer } from "@modules/auth/di";
 import type { User } from "@modules/auth/core/domain/entities/User";
 import type { WorkspaceChoice } from "@modules/auth/core/domain/errors/AuthErrors";
 import type { AdminRole, PermissionCode } from "@core/common/types/permissions";
-import { getSafeRedirectPath } from "../utils/redirect-safety";
+import { buildPostAuthEntryUrl } from "../utils/redirect-safety";
 
 /** States of the magic-link callback verification screen. */
 export type MagicLinkVerifyState =
@@ -53,10 +53,6 @@ interface SessionPayload {
   defaultRedirectPath?: string | null;
 }
 
-function normalizeRedirectTarget(rawPath: string | null | undefined): string {
-  return rawPath && rawPath !== "/" ? getSafeRedirectPath(rawPath, "/overview") : "/overview";
-}
-
 /**
  * ViewModel hook for `/magic-link` token redemption, multi-workspace picking,
  * and passwordless 2FA pending-token verification.
@@ -73,6 +69,7 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
 
   const token = searchParams?.get("token") ?? "";
   const tenantId = searchParams?.get("tenantId") ?? undefined;
+  const queryRedirect = searchParams?.get("redirect") ?? null;
 
   const [state, setState] = useState<MagicLinkVerifyState>(token ? "verifying" : "error");
   const [availableWorkspaces, setAvailableWorkspaces] = useState<WorkspaceChoice[]>([]);
@@ -103,7 +100,11 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
   const hydrateAndRedirect = useCallback(
     (payload: SessionPayload, delayMs: number, isCancelled?: () => boolean) => {
       const mustChange = Boolean(payload.mustChangePassword);
-      const targetPath = normalizeRedirectTarget(payload.defaultRedirectPath);
+      const targetPath = buildPostAuthEntryUrl({
+        mustChangePassword: mustChange,
+        subscriptionStatus: payload.subscriptionStatus,
+        redirect: queryRedirect,
+      });
       setState("success");
 
       const apply = () => {
@@ -120,14 +121,28 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
           payload.editionName ?? null
         );
         setMustChangePassword(mustChange);
-        setDefaultRedirectPath(targetPath);
-        if (!mustChange) queryClient.invalidateQueries();
-        router.replace(mustChange ? "/change-password" : targetPath);
+        setDefaultRedirectPath("/");
+        if (!mustChange && payload.subscriptionStatus !== "PendingPayment") {
+          queryClient.invalidateQueries();
+        }
+        if (targetPath.startsWith("http://") || targetPath.startsWith("https://")) {
+          window.location.href = targetPath;
+        } else {
+          router.replace(targetPath);
+        }
       };
 
       setTimeout(apply, delayMs);
     },
-    [setAuth, setSubscriptionInfo, setMustChangePassword, setDefaultRedirectPath, queryClient, router]
+    [
+      queryRedirect,
+      setAuth,
+      setSubscriptionInfo,
+      setMustChangePassword,
+      setDefaultRedirectPath,
+      queryClient,
+      router,
+    ]
   );
 
   useEffect(() => {

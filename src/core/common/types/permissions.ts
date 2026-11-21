@@ -276,7 +276,7 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/settings/oauth-apps/[id]": [SYSTEM_PERMISSIONS.OAUTH_APPS_VIEW],
 
   // Monitoring & Analytics pages
-  "/overview": [], // Shared authenticated overview
+  "/overview": [SYSTEM_PERMISSIONS.DASHBOARD_VIEW],
   "/dashboard": [SYSTEM_PERMISSIONS.DASHBOARD_VIEW],
   "/audit": [SYSTEM_PERMISSIONS.AUDIT_VIEW],
   "/security": [SYSTEM_PERMISSIONS.SECURITY_VIEW],

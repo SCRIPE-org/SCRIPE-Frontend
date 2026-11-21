@@ -13,6 +13,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useServices } from "@core/providers/service-provider";
 import { useAppStore } from "@core/store/useAppStore";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { buildPostAuthEntryUrl } from "@core/common/redirect-safety";
 import { container } from "@modules/profile/di";
 
 /** Evaluation breakdown of mandatory password complexity rules. */
@@ -51,7 +52,7 @@ export function useForceChangePasswordViewModel() {
   const { operationSuccess, operationError } = useEnhancedToast();
 
   const user = useAppStore((state) => state.user);
-  const defaultRedirectPath = useAppStore((state) => state.defaultRedirectPath);
+  const currentSubscriptionStatus = useAppStore((state) => state.subscriptionStatus);
   const setAuth = useAppStore((state) => state.setAuth);
   const setSubscriptionInfo = useAppStore((state) => state.setSubscriptionInfo);
   const setMustChangePassword = useAppStore((state) => state.setMustChangePassword);
@@ -94,14 +95,13 @@ export function useForceChangePasswordViewModel() {
 
         // Refresh active session tokens/cookies cleanly without forcing logout
         let resolvedUser = user;
-        let resolvedRedirect = result?.defaultRedirectPath || defaultRedirectPath || "/";
+        let resolvedSubStatus: string | null =
+          result?.subscriptionStatus ?? currentSubscriptionStatus ?? null;
 
         try {
           const refreshRes = await authRepository.refreshToken();
           if (refreshRes.kind === "ok") {
-            if (refreshRes.value.defaultRedirectPath) {
-              resolvedRedirect = refreshRes.value.defaultRedirectPath;
-            }
+            resolvedSubStatus = refreshRes.value.subscriptionStatus ?? resolvedSubStatus;
             setSubscriptionInfo(
               refreshRes.value.subscriptionStatus ?? null,
               refreshRes.value.gracePhase ?? null,
@@ -136,12 +136,25 @@ export function useForceChangePasswordViewModel() {
             false
           );
         }
-        setDefaultRedirectPath(resolvedRedirect);
+        const queryRedirect =
+          typeof window !== "undefined"
+            ? new URLSearchParams(window.location.search).get("redirect")
+            : null;
+        const targetUrl = buildPostAuthEntryUrl({
+          mustChangePassword: false,
+          subscriptionStatus: resolvedSubStatus,
+          redirect: queryRedirect,
+        });
+        setDefaultRedirectPath("/");
         setMustChangePassword(false);
 
         await queryClient.invalidateQueries();
         operationSuccess(t("profile.security.passwordChanged"));
-        router.replace(resolvedRedirect || "/");
+        if (targetUrl.startsWith("http://") || targetUrl.startsWith("https://")) {
+          window.location.href = targetUrl;
+        } else {
+          router.replace(targetUrl);
+        }
       } catch (err: unknown) {
         const msg = err instanceof Error ? err.message : t("profile.common.error");
         setSubmitError(msg);
@@ -154,7 +167,7 @@ export function useForceChangePasswordViewModel() {
       newPassword,
       confirmPassword,
       user,
-      defaultRedirectPath,
+      currentSubscriptionStatus,
       authRepository,
       setAuth,
       setSubscriptionInfo,

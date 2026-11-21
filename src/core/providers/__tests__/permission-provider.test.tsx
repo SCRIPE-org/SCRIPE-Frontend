@@ -116,18 +116,19 @@ describe("PermissionProvider - Superadmin and PBAC security tests", () => {
     // Can access own tenant details (/tenants/[id] accepts tenants.view|tenants.view_self|tenants.view_details)
     expect(result.current.canAccessPage("/tenants/tenant-abc")).toBe(true);
 
-    // Can access shared overview (/overview requires no specific permission)
-    expect(result.current.canAccessPage("/overview")).toBe(true);
+    // /overview requires dashboard.view (aligned with IdentityMenuProvider.AdminGroups.cs)
+    expect(result.current.canAccessPage("/overview")).toBe(false);
 
-    // Now grant tenants.view (e.g. platform operator)
+    // Now grant tenants.view and dashboard.view (e.g. platform operator)
     useAppStore.setState({
-      permissions: ["tenants.view" as any],
+      permissions: ["tenants.view" as any, SYSTEM_PERMISSIONS.DASHBOARD_VIEW as any],
     });
     rerender();
 
-    // Now can access global tenants list
+    // Now can access global tenants list and /overview
     expect(result.current.canAccessPage("/tenants")).toBe(true);
     expect(result.current.canAccessPage("/tenants/tenant-abc")).toBe(true);
+    expect(result.current.canAccessPage("/overview")).toBe(true);
   });
 
   it("fails closed for unmapped routes, unknown subpaths, and prototype property keys", () => {

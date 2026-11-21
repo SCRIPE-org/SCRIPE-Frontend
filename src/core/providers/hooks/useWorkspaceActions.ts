@@ -7,6 +7,7 @@ import { useAdminContext } from "@core/hooks/useAdminContext";
 import { firstPageOf } from "../utils/navigation-helpers";
 import { appLogger } from "@core/common/logger";
 import { usePermissions } from "@core/providers/permission-provider";
+import { useAppStore } from "@core/store/useAppStore";
 
 export interface SetActiveWorkspaceOptions {
   preserveHistory?: boolean;
@@ -16,7 +17,7 @@ export function useWorkspaceActions() {
   const router = useRouter();
   const { fetchWorkspaceMenu } = useNavigation();
   const { canAccessPage } = usePermissions();
-  const { isPlatform: isPlatformContext } = useAdminContext();
+  const { isPlatform: isPlatformContext, activeTenantId } = useAdminContext();
 
   const setActiveWorkspace = useCallback(
     async (workspaceKey: string, navigateTo = false, options?: SetActiveWorkspaceOptions) => {
@@ -34,19 +35,26 @@ export function useWorkspaceActions() {
       }
 
       // Update store key immediately. This switches activeWorkspaceKey so layout/accent etc. can transition.
-      useNavigationStore.getState().setActiveWorkspace(workspaceKey);
-      useNavigationStore.getState().setActiveRootItem(null);
+      const navStore = useNavigationStore.getState();
+      navStore.setActiveWorkspace(workspaceKey);
+      navStore.setActiveRootItem(null);
+
+      const username = useAppStore.getState().user?.username ?? "";
+      const activeContextKey =
+        navStore.routesContextKey ||
+        navStore.contextKey ||
+        (username ? `${activeTenantId ?? "platform"}:${username}` : "");
+      if (navigateTo && activeContextKey) {
+        navStore.recordRecentWorkspace(activeContextKey, workspaceKey);
+      }
 
       if (navigateTo) {
         const freshState = useNavigationStore.getState();
 
         // ── Navigation priority ───────────────────────────────────────────────
-        // 1. Context-aware homeRoute declared by the backend:
+        // 1. Server-resolved effectiveHomeRoute or context-aware homeRoute declared by backend:
         //    - platformHomeRoute when no tenant is selected (platform admin context)
         //    - homeRoute when a tenant is selected (tenant admin context)
-        //    These cover workspaces like Billing (platform→revenue, tenant→invoices)
-        //    and Plugins (platform→definitions, tenant→catalog)
-        //    We verify the user has permission to access it; if not, we fall back.
         // 2. First leaf page from the JIT-loaded menu tree (pre-filtered by backend)
         // 3. First leaf page from the workspace group menu items (last resort)
         // ─────────────────────────────────────────────────────────────────────
@@ -54,9 +62,11 @@ export function useWorkspaceActions() {
           freshState.workspaceGroups.find((g) => g.workspaceKey === workspaceKey) ?? null;
 
         // Pick the best home route for the current context
-        let contextRoute = isPlatformContext
-          ? (wsGroup?.platformHomeRoute ?? wsGroup?.homeRoute)
-          : wsGroup?.homeRoute;
+        let contextRoute =
+          wsGroup?.effectiveHomeRoute ??
+          (isPlatformContext
+            ? (wsGroup?.platformHomeRoute ?? wsGroup?.homeRoute)
+            : wsGroup?.homeRoute);
 
         if (contextRoute && !canAccessPage(contextRoute)) {
           appLogger.debug(
@@ -82,7 +92,7 @@ export function useWorkspaceActions() {
         }
       }
     },
-    [fetchWorkspaceMenu, router, isPlatformContext, canAccessPage]
+    [fetchWorkspaceMenu, router, isPlatformContext, activeTenantId, canAccessPage]
   );
 
   return { setActiveWorkspace };

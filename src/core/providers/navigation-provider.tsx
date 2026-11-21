@@ -44,20 +44,58 @@ import { useServices } from "@core/providers/service-provider";
 import { useAdminContext } from "@core/hooks/useAdminContext";
 import { appLogger } from "@core/common/logger";
 import { secureTokenService } from "@core/common/secure-token-service";
+import { extractEligibleDeepLink } from "@core/common/redirect-safety";
+import { normalizeRoutePath } from "@core/config/app-route-manifest";
 
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import type { NavigationData } from "@core/navigation/domain/entities/NavigationData";
 import type { MenuItemActions } from "@core/navigation/domain/entities/MenuItem";
-import { WorkspaceGroup } from "@core/navigation/domain/entities/WorkspaceGroup";
 import { CACHE_EXPIRY } from "@core/config/storage-keys";
 
 // ── Query Keys ──────────────────────────────────────────────────────────────
 export const NAV_QUERY_KEYS = {
-  routes: (contextKey: string) => ["navigation", "routes", contextKey] as const,
-  defaultWorkspace: (contextKey: string) => ["navigation", "default", contextKey] as const,
+  bootstrap: (contextKey: string) => ["navigation", "bootstrap", contextKey] as const,
   workspace: (key: string, contextKey: string) =>
     ["navigation", "workspace", key, contextKey] as const,
 };
+
+const BOOTSTRAP_REDIRECT_PATHNAMES = new Set([
+  "/",
+  "/login",
+  "/magic-link",
+  "/qr-approve",
+  "/sso/callback",
+  "/sso/saml/callback",
+  "/change-password",
+]);
+
+/**
+ * True when an error represents a transient network or 5xx/408 server error
+ * that is safe to retry. Never retries 401/403 authorization or 429 rate-limit failures.
+ */
+export function isTransientHttpError(err: unknown): boolean {
+  if (!err || typeof err !== "object") return true;
+  const record = err as Record<string, unknown>;
+  const details =
+    record.details && typeof record.details === "object"
+      ? (record.details as Record<string, unknown>)
+      : null;
+  const response =
+    record.response && typeof record.response === "object"
+      ? (record.response as Record<string, unknown>)
+      : null;
+
+  const status =
+    (typeof record.statusCode === "number" ? record.statusCode : undefined) ??
+    (typeof record.status === "number" ? record.status : undefined) ??
+    (typeof details?.statusCode === "number" ? details.statusCode : undefined) ??
+    (typeof response?.status === "number" ? response.status : undefined);
+
+  if (typeof status !== "number") return true;
+  if (status === 401 || status === 403 || status === 429) return false;
+  if (status >= 400 && status < 500 && status !== 408) return false;
+  return true;
+}
 
 // ── Context (minimal surface) ───────────────────────────────────────────────
 interface NavigationContextType {
@@ -146,23 +184,27 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isReady, contextKey]);
 
-  // ── Query 1: Eager routes load ────────────────────────────────────────────
+  // ── Single-Pass Bootstrap Query (routes + descriptors + groups + target tree + landing) ──
   useQuery({
-    queryKey: NAV_QUERY_KEYS.routes(contextKey),
+    queryKey: NAV_QUERY_KEYS.bootstrap(contextKey),
     queryFn: async () => {
       try {
-        const { routes, workspaceRouteMap, routeDescriptors } =
-          await navigationRepository.fetchRoutes();
-        useNavigationStore.getState().setRouteData({
-          routes,
-          workspaceRouteMap,
-          routeDescriptors,
-          contextKey,
-        });
-        return { routes, workspaceRouteMap, routeDescriptors };
+        const pathname =
+          typeof window !== "undefined"
+            ? normalizeRoutePath(window.location.pathname).toLowerCase()
+            : "";
+        const redirectParam =
+          typeof window !== "undefined" && BOOTSTRAP_REDIRECT_PATHNAMES.has(pathname)
+            ? extractEligibleDeepLink(
+                new URLSearchParams(window.location.search).get("redirect")
+              )
+            : null;
+        const result = await navigationRepository.fetchNavigationBootstrap(redirectParam);
+        useNavigationStore.getState().initializeBootstrap(result, contextKey);
+        return result;
       } catch (err) {
         const message =
-          err instanceof Error ? err.message : "Failed to load navigation routes";
+          err instanceof Error ? err.message : "Failed to load navigation";
         useNavigationStore.getState().setRoutesError(message, contextKey);
         throw err;
       }
@@ -170,22 +212,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
     enabled: isReady,
     staleTime: CACHE_EXPIRY.NAVIGATION,
     gcTime: CACHE_EXPIRY.NAVIGATION * 2,
-    retry: 2,
-  });
-
-  // ── Query 2: Default workspace menu + groups ──────────────────────────────
-  useQuery({
-    queryKey: NAV_QUERY_KEYS.defaultWorkspace(contextKey),
-    queryFn: async () => {
-      const data = await navigationRepository.fetchDefaultWorkspace();
-      const groups = (data.workspaceGroups ?? []).map((g) => new WorkspaceGroup(g));
-      useNavigationStore.getState().initializeDefaultWorkspace(data, groups);
-      return data;
-    },
-    enabled: isReady,
-    staleTime: CACHE_EXPIRY.NAVIGATION,
-    gcTime: CACHE_EXPIRY.NAVIGATION * 2,
-    retry: 2,
+    retry: (failureCount, err) => failureCount < 2 && isTransientHttpError(err),
   });
 
   // ── Mutation: JIT workspace fetch ─────────────────────────────────────────
@@ -279,11 +306,10 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   }, [isReady, contextKey, queryClient]);
 
   // ── Auto-fetch active workspace on boot (Gap 1 + Gap 5 fix) ───────────────
-  // After page refresh, activeWorkspaceKey is restored from localStorage but
-  // the workspaces Map is empty (not persisted). This effect detects that the
-  // persisted activeWorkspaceKey differs from the default workspace key and
-  // triggers a JIT fetch so the sidebar renders the correct menu items instead
-  // of falling back to admin items.
+  // After page refresh, activeWorkspaceKey is restored from localStorage while
+  // the workspaces Map only contains whichever workspace bootstrap pre-hydrated
+  // (e.g. "crm" for a CRM-enforced user). Fetch whenever activeWorkspaceKey lacks
+  // hydrated menu data so any active workspace renders its sidebar cleanly.
   const activeWorkspaceKey = useNavigationStore((s) => s.activeWorkspaceKey);
 
   useEffect(() => {
@@ -292,23 +318,18 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
     const state = useNavigationStore.getState();
     const { workspaceGroups } = state;
 
-    // workspaceGroups are loaded by Query 2 — if empty, Query 2 hasn't resolved yet
+    // workspaceGroups are loaded by bootstrap — if empty, bootstrap hasn't resolved yet
     if (workspaceGroups.length === 0) return;
-
-    const defaultGroup =
-      workspaceGroups.find((g) => g.workspaceType === "Admin") ?? workspaceGroups[0];
-    const defaultKey = defaultGroup?.workspaceKey ?? null;
 
     // Guard: skip the "__default__" sentinel key — it's an internal Map key, not a real workspace
     if (
       activeWorkspaceKey &&
       activeWorkspaceKey !== "__default__" &&
-      activeWorkspaceKey !== defaultKey &&
       !state.hasWorkspaceData(activeWorkspaceKey)
     ) {
       autoFetchDone.current = true;
       appLogger.debug(
-        `[NavigationProvider] Boot: active workspace "${activeWorkspaceKey}" differs from default "${defaultKey}" — auto-fetching menu data`
+        `[NavigationProvider] Boot: active workspace "${activeWorkspaceKey}" lacks hydrated menu data — auto-fetching`
       );
       fetchWorkspaceMenu(activeWorkspaceKey);
     }

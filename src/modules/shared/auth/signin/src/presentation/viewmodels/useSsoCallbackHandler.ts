@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
@@ -16,7 +16,7 @@ import {
 } from "./useSsoCallbackHandlers";
 import type { WorkspaceChoice } from "@modules/auth/core/domain/errors/AuthErrors";
 import type { AdminRole, PermissionCode } from "@core/common/types/permissions";
-import { getSafeRedirectPath } from "../utils/redirect-safety";
+import { buildPostAuthEntryUrl } from "../utils/redirect-safety";
 
 /** Supported SSO callback protocol types. */
 export type SsoCallbackKind = "oidc" | "saml";
@@ -71,6 +71,17 @@ export function useSsoCallbackHandler(kind: SsoCallbackKind) {
   const [isVerifying2FA, setIsVerifying2FA] = useState(false);
   const [twoFactorError, setTwoFactorError] = useState("");
 
+  const navigateToTarget = useCallback(
+    (targetUrl: string) => {
+      if (targetUrl.startsWith("http://") || targetUrl.startsWith("https://")) {
+        window.location.href = targetUrl;
+      } else {
+        router.replace(targetUrl);
+      }
+    },
+    [router]
+  );
+
   const handleSelectWorkspace = async (workspace: WorkspaceChoice) => {
     if (!workspaceData) return;
     setIsSelectingWorkspace(true);
@@ -111,7 +122,7 @@ export function useSsoCallbackHandler(kind: SsoCallbackKind) {
         const setters = {
           setState,
           setErrorInfo,
-          redirectTo: (path: string) => router.replace(path),
+          redirectTo: navigateToTarget,
         };
         await completeAdminLogin(
           result.accessToken,
@@ -168,20 +179,22 @@ export function useSsoCallbackHandler(kind: SsoCallbackKind) {
       setSubscriptionInfo(result.subscriptionStatus, result.gracePhase, result.editionName);
       const mustChange = Boolean(result.mustChangePassword);
       setMustChangePassword(mustChange);
+      setDefaultRedirectPath("/");
 
-      const rawPath = result.defaultRedirectPath;
-      const normalizedPath =
-        rawPath && rawPath !== "/" ? getSafeRedirectPath(rawPath, "/overview") : "/overview";
-      setDefaultRedirectPath(normalizedPath);
-
-      if (!mustChange) {
+      if (!mustChange && result.subscriptionStatus !== "PendingPayment") {
         queryClient.invalidateQueries();
       }
+
+      const targetPath = buildPostAuthEntryUrl({
+        mustChangePassword: mustChange,
+        subscriptionStatus: result.subscriptionStatus,
+        redirect: searchParams?.get("redirect"),
+      });
 
       operationSuccess(t("auth.welcomeBack"));
       setState("success");
       setTimeout(() => {
-        router.replace(mustChange ? "/change-password" : normalizedPath);
+        navigateToTarget(targetPath);
       }, 200);
     } catch (err: unknown) {
       setTwoFactorError(err instanceof Error ? err.message : t("auth.twoFactor.invalidCode"));
@@ -221,7 +234,7 @@ export function useSsoCallbackHandler(kind: SsoCallbackKind) {
     const setters = {
       setState,
       setErrorInfo,
-      redirectTo: (path: string) => router.replace(path),
+      redirectTo: navigateToTarget,
       setWorkspaceSelectionData: (data: {
         workspaces: WorkspaceChoice[];
         token: string;
@@ -246,10 +259,10 @@ export function useSsoCallbackHandler(kind: SsoCallbackKind) {
     }, 0);
   }, [
     kind,
+    navigateToTarget,
     operationSuccess,
     queryClient,
     refreshNavigation,
-    router,
     searchParams,
     setAuth,
     setMustChangePassword,

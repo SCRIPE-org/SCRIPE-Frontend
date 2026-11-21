@@ -55,7 +55,7 @@ import {
 import { secureTokenService } from "@core/common/secure-token-service";
 import { appLogger } from "@core/common/logger";
 import { authBroadcast } from "@core/common/broadcast-auth";
-import { isSafeRedirectTarget } from "@modules/shared/auth/signin/src/presentation/utils/redirect-safety";
+import { isSafeRedirectTarget, buildPostAuthEntryUrl } from "@core/common/redirect-safety";
 
 interface RouteGuardProps {
   children: React.ReactNode;
@@ -276,6 +276,15 @@ function resolveRouteAccessSync({
   if (manifestEntry?.binding === "shell_authenticated") {
     if (!canAccessPage(normalizedPath)) {
       return { kind: "redirect", reason: "shell_pbac_denied" };
+    }
+    if (manifestEntry.requiresTenantContext && !activeTenantId) {
+      return {
+        kind: "settled",
+        outcome: {
+          kind: "tenant_context_required",
+          routePattern: manifestEntry.pattern,
+        },
+      };
     }
     return { kind: "settled", outcome: { kind: "allow" } };
   }
@@ -530,29 +539,22 @@ export function RouteGuard({ children }: RouteGuardProps) {
             return;
           case "auth_to_workspace": {
             appLogger.debug("[RouteGuard] Authenticated user on auth page → workspace");
-            const mcp = useAppStore.getState().mustChangePassword;
+            const appState = useAppStore.getState();
             const redirectParam =
               typeof window !== "undefined"
                 ? new URLSearchParams(window.location.search).get("redirect")
                 : null;
-            const safeRedirect = isSafeRedirectTarget(redirectParam) ? redirectParam : null;
-            const rawDefault = useAppStore.getState().defaultRedirectPath;
+            const targetPath = buildPostAuthEntryUrl({
+              mustChangePassword: appState.mustChangePassword,
+              subscriptionStatus: appState.subscriptionStatus,
+              redirect: redirectParam,
+            });
 
-            let targetPath =
-              safeRedirect || (!rawDefault || rawDefault === "/" ? "/overview" : rawDefault);
-
-            if (targetPath === "/overview" && !checkPagePermission("/overview")) {
-              targetPath =
-                findAlternativeWorkspaceRoute(
-                  "/overview",
-                  undefined,
-                  checkPagePermission,
-                  checkNavRoute,
-                  true
-                ) || "/hub";
+            if (targetPath.startsWith("http://") || targetPath.startsWith("https://")) {
+              window.location.href = targetPath;
+            } else {
+              navRouter.replace(targetPath);
             }
-
-            navRouter.replace(mcp ? "/change-password" : targetPath);
             return;
           }
           case "login":

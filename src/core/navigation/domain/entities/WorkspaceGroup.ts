@@ -73,6 +73,8 @@ export interface WorkspaceGroupData {
    * Used by the Workspace Hub to show item counts on workspace cards.
    */
   accessibleItemCount: number;
+  /** Server-resolved effective home route for the active context (`platformHomeRoute ?? homeRoute ?? firstLeaf`). */
+  effectiveHomeRoute?: string | null;
   /** Reason why this workspace is locked. */
   lockReason?: string;
 }
@@ -104,6 +106,8 @@ export class WorkspaceGroup {
   public readonly contextScope: "Both" | "PlatformOnly" | "TenantOnly";
   /** Number of accessible menu items for this workspace (for Hub card stats). */
   public readonly accessibleItemCount: number;
+  /** Server-resolved effective home route for the active context. */
+  public readonly effectiveHomeRoute: string | null;
   /** Reason why this workspace is locked (e.g. "None", "SubscriptionRequired", "TenantContextRequired"). */
   public readonly lockReason: string;
 
@@ -125,6 +129,7 @@ export class WorkspaceGroup {
     this.pinSortOrder = data.pinSortOrder ?? null;
     this.contextScope = data.contextScope ?? "Both";
     this.accessibleItemCount = data.accessibleItemCount ?? 0;
+    this.effectiveHomeRoute = data.effectiveHomeRoute ?? null;
     this.lockReason = data.lockReason ?? "None";
   }
 
@@ -210,6 +215,7 @@ export class WorkspaceGroup {
       pinSortOrder: this.pinSortOrder,
       contextScope: this.contextScope,
       accessibleItemCount: this.accessibleItemCount,
+      effectiveHomeRoute: this.effectiveHomeRoute,
       lockReason: this.lockReason,
     };
   }

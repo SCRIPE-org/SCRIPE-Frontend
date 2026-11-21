@@ -136,7 +136,7 @@ export const useAppStore = create<AppState>()(
           gracePhase: null,
           editionName: null,
           mustChangePassword: false,
-          defaultRedirectPath: "/overview",
+          defaultRedirectPath: "/",
         });
       },
 
@@ -151,8 +151,8 @@ export const useAppStore = create<AppState>()(
       mustChangePassword: false,
       setMustChangePassword: (must) => set({ mustChangePassword: must }),
 
-      // Post-login redirect path
-      defaultRedirectPath: "/overview",
+      // Ephemeral in-memory redirect fallback (never persisted to localStorage)
+      defaultRedirectPath: "/",
       setDefaultRedirectPath: (path) => set({ defaultRedirectPath: path }),
 
       // Tenant context
@@ -166,7 +166,7 @@ export const useAppStore = create<AppState>()(
     {
       name: "app-storage",
       partialize: (state) => ({
-        // Persist these fields
+        // Persist these fields (never persist defaultRedirectPath so stale routes never leak)
         sidebarOpen: state.sidebarOpen,
         density: state.density,
         user: state.user,
@@ -179,8 +179,16 @@ export const useAppStore = create<AppState>()(
         gracePhase: state.gracePhase,
         editionName: state.editionName,
         mustChangePassword: state.mustChangePassword,
-        defaultRedirectPath: state.defaultRedirectPath,
       }),
+      merge: (persistedState, currentState) => {
+        const persisted = { ...((persistedState as Partial<AppState> | null) ?? {}) };
+        delete persisted.defaultRedirectPath;
+        return {
+          ...currentState,
+          ...persisted,
+          defaultRedirectPath: "/",
+        };
+      },
       onRehydrateStorage: () => (state) => {
         // With in-memory tokens, the access token is ALWAYS null after page reload.
         // The persisted isAuthenticated is just a HINT — the route-guard will

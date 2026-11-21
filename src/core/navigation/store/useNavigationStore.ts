@@ -8,6 +8,7 @@
 
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+import { normalizeRoutePath } from "@core/config/app-route-manifest";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 import type {
   AuthorizedRouteDescriptor,
@@ -18,7 +19,7 @@ import { createRouteSlice } from "./slices/routeSlice";
 import { createWorkspaceSlice } from "./slices/workspaceSlice";
 import { createUiSlice } from "./slices/uiSlice";
 
-const NAV_STORE_VERSION = 3;
+export const NAV_STORE_VERSION = 4;
 
 interface PersistedNavState {
   version: number;
@@ -31,6 +32,7 @@ interface PersistedNavState {
   activeWorkspaceKey: string | null;
   previousWorkspaceKey: string | null;
   routesLoadedAt: number | null;
+  recentWorkspaceKeysByContext?: Record<string, string[]>;
 }
 
 export const useNavigationStore = create<NavigationStoreState>()(
@@ -62,6 +64,7 @@ export const useNavigationStore = create<NavigationStoreState>()(
         activeWorkspaceKey: state.activeWorkspaceKey,
         previousWorkspaceKey: state.previousWorkspaceKey,
         routesLoadedAt: state.routesLoadedAt,
+        recentWorkspaceKeysByContext: state.recentWorkspaceKeysByContext,
       }),
       merge: (persistedRaw, currentState) => {
         const persisted = persistedRaw as PersistedNavState | null;
@@ -74,6 +77,9 @@ export const useNavigationStore = create<NavigationStoreState>()(
         const descriptorEntries = Array.isArray(persisted.routeDescriptorsArray)
           ? persisted.routeDescriptorsArray
           : [];
+        const isOnHubRoute =
+          typeof window !== "undefined" &&
+          normalizeRoutePath(window.location.pathname).toLowerCase() === "/hub";
         return {
           ...currentState,
           allRoutes: new Set(arr),
@@ -84,7 +90,13 @@ export const useNavigationStore = create<NavigationStoreState>()(
           routesContextKey: persisted.routesContextKey ?? (persisted.contextKey || null),
           routesError: null,
           routesLoadedAt: persisted.routesLoadedAt ?? null,
-          activeWorkspaceKey: persisted.activeWorkspaceKey ?? null,
+          landingResolution: null,
+          recentWorkspaceKeysByContext:
+            persisted.recentWorkspaceKeysByContext &&
+            typeof persisted.recentWorkspaceKeysByContext === "object"
+              ? persisted.recentWorkspaceKeysByContext
+              : {},
+          activeWorkspaceKey: isOnHubRoute ? null : (persisted.activeWorkspaceKey ?? null),
           previousWorkspaceKey: persisted.previousWorkspaceKey ?? null,
           contextKey: persisted.contextKey ?? "",
         };

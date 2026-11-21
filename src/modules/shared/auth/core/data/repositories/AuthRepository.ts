@@ -393,6 +393,10 @@ export class AuthRepository implements IAuthRepository {
     expiresAt?: string;
     approverName?: string | null;
     defaultRedirectPath?: string | null;
+    subscriptionStatus?: string | null;
+    gracePhase?: string | null;
+    editionName?: string | null;
+    mustChangePassword?: boolean;
   }> {
     return this.service.checkQrSignIn(sessionId);
   }

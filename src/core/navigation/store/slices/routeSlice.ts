@@ -15,6 +15,7 @@ export const createRouteSlice: StateCreator<NavigationStoreState, [], [], RouteS
   routesError: null,
   routesLoadedAt: null,
   contextKey: "",
+  landingResolution: null,
 
   setRouteData: ({ routes, workspaceRouteMap, routeDescriptors, contextKey }) => {
     const routeSet = new Set(
@@ -56,6 +57,7 @@ export const createRouteSlice: StateCreator<NavigationStoreState, [], [], RouteS
       routesContextKey: contextKey !== undefined ? contextKey : get().routesContextKey,
       routesError: message,
       routesLoadedAt: null,
+      landingResolution: null,
     });
   },
 
@@ -70,6 +72,7 @@ export const createRouteSlice: StateCreator<NavigationStoreState, [], [], RouteS
       routesError: null,
       routesLoadedAt: null,
       contextKey: "",
+      landingResolution: null,
     });
   },
 

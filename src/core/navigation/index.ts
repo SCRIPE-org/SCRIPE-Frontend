@@ -24,7 +24,14 @@ export { NavigationData } from "./domain/entities/NavigationData";
 export type { NavigationDataInput } from "./domain/entities/NavigationData";
 
 // ── Domain interface ─────────────────────────────────────────────────────────
-export type { INavigationRepository } from "./domain/interfaces/INavigationRepository";
+export type {
+  AuthorizedRouteDescriptor,
+  AuthorizedRoutesResult,
+  BootstrapNavigationResult,
+  INavigationRepository,
+  LandingResolution,
+  RouteAccessState,
+} from "./domain/interfaces/INavigationRepository";
 
 // ── Data layer (DI wiring + provider) ───────────────────────────────────────
 export { NavigationRepository } from "./data/repositories/NavigationRepository";

@@ -1,6 +1,7 @@
 import { renderHook, act } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import {
+  completeAdminLogin,
   handleOidcCallback,
   handleSamlCallback,
   type SsoCallbackDeps,
@@ -249,8 +250,8 @@ describe("useSsoCallbackHandlers, useTokenLogin & useQrSignInViewModel (BAM-01, 
     expect(ctx.redirectTo).toHaveBeenCalledWith("/account/security?error=access_denied");
   });
 
-  it("useTokenLogin hydrates explicit roles, subscription info, mustChangePassword and redirects to /overview (never /dashboard)", async () => {
-    mockGetCurrentPrincipal.mockResolvedValueOnce({
+  it("useTokenLogin enforces Tier 0 gates and routes through / (preserving ?redirect=) instead of legacy /overview", async () => {
+    mockGetCurrentPrincipal.mockResolvedValue({
       id: "u-1",
       email: "admin@ahly.club",
       permissions: ["tenants.view"],
@@ -266,7 +267,7 @@ describe("useSsoCallbackHandlers, useTokenLogin & useQrSignInViewModel (BAM-01, 
         subscriptionStatus: "Active",
         gracePhase: null,
         editionName: "Enterprise",
-        defaultRedirectPath: "/",
+        defaultRedirectPath: "/legacy-should-be-ignored",
       });
     });
 
@@ -279,11 +280,31 @@ describe("useSsoCallbackHandlers, useTokenLogin & useQrSignInViewModel (BAM-01, 
     );
     expect(mockSetSubscriptionInfo).toHaveBeenCalledWith("Active", null, "Enterprise");
     expect(mockSetMustChangePassword).toHaveBeenCalledWith(false);
-    expect(mockSetDefaultRedirectPath).toHaveBeenCalledWith("/overview");
-    expect(mockRouterReplace).toHaveBeenCalledWith("/overview");
+    expect(mockSetDefaultRedirectPath).toHaveBeenCalledWith("/");
+    expect(mockRouterReplace).toHaveBeenCalledWith("/");
+
+    mockRouterReplace.mockClear();
+    await act(async () => {
+      await result.current.completeTokenLogin({
+        accessToken: "jwt-pending",
+        mustChangePassword: false,
+        subscriptionStatus: "PendingPayment",
+      });
+    });
+    expect(mockRouterReplace).toHaveBeenCalledWith("/activate-workspace");
+
+    mockRouterReplace.mockClear();
+    await act(async () => {
+      await result.current.completeTokenLogin({
+        accessToken: "jwt-mcp",
+        mustChangePassword: true,
+        subscriptionStatus: "PendingPayment",
+      });
+    });
+    expect(mockRouterReplace).toHaveBeenCalledWith("/change-password");
   });
 
-  it("useQrSignInViewModel passes tenantId to beginQrSignIn and completes login when approved poll returns accessToken without refreshToken", async () => {
+  it("useQrSignInViewModel forwards Tier 0 fields from QrSessionStatusResponse to onSuccess", async () => {
     vi.useFakeTimers();
     const onSuccess = vi.fn();
     mockBeginQrSignIn.mockResolvedValueOnce({
@@ -294,7 +315,11 @@ describe("useSsoCallbackHandlers, useTokenLogin & useQrSignInViewModel (BAM-01, 
     mockCheckQrSignIn.mockResolvedValueOnce({
       status: "approved",
       accessToken: "qr-jwt-token",
-      defaultRedirectPath: "/overview",
+      defaultRedirectPath: "/",
+      subscriptionStatus: "PendingPayment",
+      gracePhase: null,
+      editionName: "Pro",
+      mustChangePassword: true,
     });
 
     renderHook(() => useQrSignInViewModel(onSuccess, "enc_ahly"));
@@ -316,8 +341,52 @@ describe("useSsoCallbackHandlers, useTokenLogin & useQrSignInViewModel (BAM-01, 
     expect(onSuccess).toHaveBeenCalledWith({
       accessToken: "qr-jwt-token",
       refreshToken: undefined,
-      defaultRedirectPath: "/overview",
+      defaultRedirectPath: "/",
+      subscriptionStatus: "PendingPayment",
+      gracePhase: null,
+      editionName: "Pro",
+      mustChangePassword: true,
     });
+    vi.useRealTimers();
+  });
+
+  it("completeAdminLogin enforces Tier 0 gates and routes through '/' cleanly", async () => {
+    vi.useFakeTimers();
+    const ctx = buildDeps();
+    ctx.getCurrentPrincipal.mockResolvedValue({
+      id: "adm-sso",
+      permissions: ["dashboard.view"],
+      roles: ["TenantAdmin"],
+    } as unknown as User);
+
+    await completeAdminLogin(
+      "sso-jwt-1",
+      { status: "Active", mustChangePassword: false },
+      ctx.deps,
+      ctx.setters
+    );
+    await vi.advanceTimersByTimeAsync(350);
+    expect(ctx.redirectTo).toHaveBeenCalledWith("/");
+
+    ctx.redirectTo.mockClear();
+    await completeAdminLogin(
+      "sso-jwt-2",
+      { status: "PendingPayment", mustChangePassword: false },
+      ctx.deps,
+      ctx.setters
+    );
+    await vi.advanceTimersByTimeAsync(350);
+    expect(ctx.redirectTo).toHaveBeenCalledWith("/activate-workspace");
+
+    ctx.redirectTo.mockClear();
+    await completeAdminLogin(
+      "sso-jwt-3",
+      { status: "PendingPayment", mustChangePassword: true },
+      ctx.deps,
+      ctx.setters
+    );
+    await vi.advanceTimersByTimeAsync(350);
+    expect(ctx.redirectTo).toHaveBeenCalledWith("/change-password");
     vi.useRealTimers();
   });
 

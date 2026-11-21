@@ -13,7 +13,26 @@
  *    `/api/v1/auth/saml/sso`) on the configured backend API origin ONLY.
  */
 
+import { normalizeRoutePath } from "@core/config/app-route-manifest";
+
 const ENCODED_BACKSLASH_PATTERN = /%5c/i;
+
+const EXCLUDED_DEEP_LINK_ROUTES = new Set([
+  "/",
+  "/login",
+  "/logout",
+  "/not-authorized",
+  "/change-password",
+  "/activate-workspace",
+  "/magic-link",
+  "/qr-approve",
+  "/forgot-password",
+  "/reset-password",
+  "/setup-account",
+  "/api",
+]);
+
+const EXCLUDED_DEEP_LINK_PREFIXES = ["/api/", "/signup", "/sso/"];
 
 const ALLOWED_BACKEND_RESUME_PATHS = new Set([
   "/connect/authorize",
@@ -131,4 +150,60 @@ export function getSafeRedirectPath(
   } catch {
     return fallback;
   }
+}
+
+/**
+ * Validates and unwraps an optional post-login deep-link target.
+ * Rejects root "/", auth/gate routes, and "/api/*" paths while preserving
+ * relative query strings and allow-listed OIDC/SAML API resume URLs.
+ */
+export function extractEligibleDeepLink(path: string | null | undefined): string | null {
+  if (!isSafeRedirectTarget(path)) return null;
+
+  const safeTarget = getSafeRedirectPath(path, "");
+  if (!safeTarget) return null;
+
+  if (safeTarget.startsWith("http://") || safeTarget.startsWith("https://")) {
+    return safeTarget;
+  }
+
+  const normalized = normalizeRoutePath(safeTarget).toLowerCase();
+  if (EXCLUDED_DEEP_LINK_ROUTES.has(normalized)) {
+    return null;
+  }
+  if (EXCLUDED_DEEP_LINK_PREFIXES.some((prefix) => normalized.startsWith(prefix))) {
+    return null;
+  }
+
+  return safeTarget;
+}
+
+/**
+ * Resolves the post-authentication destination across all admin sign-in channels.
+ * Enforces Tier 0 gates (`mustChangePassword`, `PendingPayment`) first,
+ * preserves allow-listed OIDC/SAML external resume targets directly, and routes
+ * relative destinations through `"/"` (`/?redirect=...` or `"/"`) so the entry
+ * resolver runs single-pass navigation bootstrap and Tier 1–5 resolution cleanly.
+ */
+export function buildPostAuthEntryUrl(params: {
+  mustChangePassword?: boolean | null;
+  subscriptionStatus?: string | null;
+  redirect?: string | null;
+}): string {
+  if (params.mustChangePassword) {
+    return "/change-password";
+  }
+  if (params.subscriptionStatus === "PendingPayment") {
+    return "/activate-workspace";
+  }
+
+  const eligible = extractEligibleDeepLink(params.redirect);
+  if (!eligible) {
+    return "/";
+  }
+  if (eligible.startsWith("http://") || eligible.startsWith("https://")) {
+    return eligible;
+  }
+
+  return `/?redirect=${encodeURIComponent(eligible)}`;
 }

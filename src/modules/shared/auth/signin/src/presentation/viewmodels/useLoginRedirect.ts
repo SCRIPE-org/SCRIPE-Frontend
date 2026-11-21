@@ -11,8 +11,7 @@ import { useCallback, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAppStore } from "@core/store/useAppStore";
 import { secureTokenService } from "@core/common/secure-token-service";
-import { getSafeRedirectPath } from "../utils/redirect-safety";
-import { resolvePostLoginRedirectTarget } from "../utils/login-error.utils";
+import { buildPostAuthEntryUrl, getSafeRedirectPath } from "../utils/redirect-safety";
 
 /**
  * Manages safe internal/external redirects and auth session hydration checks for login.
@@ -23,16 +22,15 @@ export function useLoginRedirect() {
 
   const isAuthenticated = useAppStore((state) => state.isAuthenticated);
   const hasHydrated = useAppStore((state) => state._hasHydrated);
-  const backendRedirectPath = useAppStore((state) => state.defaultRedirectPath);
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const rawRedirect = searchParams.get("redirect") || backendRedirectPath;
-  const redirectPath = !rawRedirect || rawRedirect === "/" ? "/overview" : rawRedirect;
+  const rawQueryRedirect = searchParams.get("redirect");
+  const redirectPath = rawQueryRedirect || "";
 
   const handleRedirect = useCallback(
     (path: string) => {
-      const safePath = getSafeRedirectPath(path);
+      const safePath = getSafeRedirectPath(path, "/");
       if (safePath.startsWith("http://") || safePath.startsWith("https://")) {
         window.location.href = safePath;
       } else {
@@ -57,24 +55,31 @@ export function useLoginRedirect() {
     if (isAuthenticated && hasToken) {
       hasTriggeredRedirect.current = true;
       setIsRedirecting(true);
-      const mustChange = useAppStore.getState().mustChangePassword;
-      handleRedirect(mustChange ? "/change-password" : redirectPath);
+      const { mustChangePassword, subscriptionStatus } = useAppStore.getState();
+      handleRedirect(
+        buildPostAuthEntryUrl({
+          mustChangePassword,
+          subscriptionStatus,
+          redirect: rawQueryRedirect,
+        })
+      );
       return true;
     }
     return false;
-  }, [hasHydrated, isAuthenticated, isRedirecting, redirectPath, handleRedirect]);
+  }, [hasHydrated, isAuthenticated, isRedirecting, rawQueryRedirect, handleRedirect]);
 
   const schedulePostLoginRedirect = useCallback(() => {
     setIsRedirecting(true);
     if (hasTriggeredRedirect.current) return;
     hasTriggeredRedirect.current = true;
     const state = useAppStore.getState();
-    const target = resolvePostLoginRedirectTarget(
-      searchParams.get("redirect"),
-      state.defaultRedirectPath
-    );
+    const target = buildPostAuthEntryUrl({
+      mustChangePassword: state.mustChangePassword,
+      subscriptionStatus: state.subscriptionStatus,
+      redirect: searchParams.get("redirect"),
+    });
     requestAnimationFrame(() => {
-      handleRedirect(state.mustChangePassword ? "/change-password" : target);
+      handleRedirect(target);
     });
   }, [handleRedirect, searchParams]);
 

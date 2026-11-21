@@ -15,6 +15,7 @@ import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
 import { Button } from "@core/ui/button";
 import { appLogger } from "@core/common/logger";
 import { useAppStore } from "@/core/store/useAppStore";
+import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { useServices } from "@core/providers/service-provider";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -74,11 +75,9 @@ export default function NotAuthorizedView() {
               <Button
                 onClick={() => {
                   appLogger.ui("Home button clicked");
-                  const defaultPath = useAppStore.getState().defaultRedirectPath;
+                  const landingRoute = useNavigationStore.getState().landingResolution?.route;
                   const safeTarget =
-                    defaultPath && defaultPath !== "/" && defaultPath !== "/overview"
-                      ? defaultPath
-                      : "/hub";
+                    landingRoute && landingRoute !== "/" ? landingRoute : "/hub";
                   router.push(safeTarget);
                 }}
                 variant="outline"

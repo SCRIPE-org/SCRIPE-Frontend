@@ -42,6 +42,10 @@ export class WorkspaceGroupMapper {
     const contextScope =
       (raw.contextScope as "Both" | "PlatformOnly" | "TenantOnly" | undefined) ?? "Both";
     const accessibleItemCount = Number(raw.accessibleItemCount ?? 0);
+    const effectiveHomeRoute =
+      typeof raw.effectiveHomeRoute === "string" && raw.effectiveHomeRoute.trim()
+        ? raw.effectiveHomeRoute.trim()
+        : null;
     const lockReason = String(raw.lockReason ?? "None");
 
     const rawItems = Array.isArray(raw.menuItems) ? raw.menuItems : [];
@@ -67,6 +71,7 @@ export class WorkspaceGroupMapper {
       pinSortOrder,
       contextScope,
       accessibleItemCount,
+      effectiveHomeRoute,
       lockReason,
     };
   }

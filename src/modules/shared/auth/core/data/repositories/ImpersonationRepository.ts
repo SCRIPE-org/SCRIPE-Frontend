@@ -12,6 +12,7 @@ import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { useAppStore } from "@core/store/useAppStore";
 import { useSudoStore } from "@core/store/useSudoStore";
 import { usePatOneTimeSecretStore } from "@core/store/usePatOneTimeSecretStore";
+import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { clearNavigationCaches } from "../utils/auth-storage-cleanup";
 import type { IAuthService } from "../../domain/interfaces/IAuthService";
 
@@ -29,6 +30,7 @@ export class ImpersonationRepository {
       useSudoStore.getState().reset();
       usePatOneTimeSecretStore.getState().clearPendingReceipt();
       useAppStore.getState().logout();
+      useNavigationStore.getState().reset();
 
       if (typeof window !== "undefined") {
         try {
@@ -61,6 +63,7 @@ export class ImpersonationRepository {
       useSudoStore.getState().reset();
       usePatOneTimeSecretStore.getState().clearPendingReceipt();
       useAppStore.getState().logout();
+      useNavigationStore.getState().reset();
 
       if (typeof window !== "undefined") {
         try {
