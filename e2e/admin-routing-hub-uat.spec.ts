@@ -102,10 +102,10 @@ function attachRuntimeMonitor(page: Page): RuntimeErrorMonitor {
       clientHttpErrors.length = 0;
     },
     assertClean(contextLabel: string) {
-      expect(consoleErrors, `Console errors in ${contextLabel}`).toEqual([]);
-      expect(pageErrors, `Uncaught pageerrors in ${contextLabel}`).toEqual([]);
       expect(serverErrors, `Unexpected HTTP 5xx in ${contextLabel}`).toEqual([]);
       expect(clientHttpErrors, `Unexpected 4xx API responses in ${contextLabel}`).toEqual([]);
+      expect(pageErrors, `Uncaught pageerrors in ${contextLabel}`).toEqual([]);
+      expect(consoleErrors, `Console errors in ${contextLabel}`).toEqual([]);
     },
     detach() {
       page.off("console", onConsole);

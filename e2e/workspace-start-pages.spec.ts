@@ -809,9 +809,19 @@ test.describe("Per-Workspace Start Pages, Sparse Role Policies, Lazy Picker & Im
       await page.waitForURL((url) => url.pathname === "/crm/leads", { timeout: 15_000 });
       await waitForAppSettled(page);
 
-      const setStartBtn = page.getByRole("button", { name: /^Set as CRM start page$/i }).first();
-      await expect(setStartBtn).toBeVisible({ timeout: 10_000 });
+      // Verify quiet RailHeader: zero inline start-page badges/buttons at rest, App Launcher intact
+      await expect(page.getByRole("button", { name: /^Set as CRM start page$/i })).toHaveCount(0);
+      await expect(page.getByText(/^Current start page$/i)).toHaveCount(0);
+      await expect(page.getByTestId("nexus-launcher-trigger")).toBeVisible({ timeout: 10_000 });
+
+      const optionsTrigger = page.getByTestId("rail-workspace-options-trigger").first();
+      await expect(optionsTrigger).toBeVisible({ timeout: 10_000 });
       await setTheme(page, "dark");
+      await optionsTrigger.click();
+
+      const setStartItem = page.getByRole("menuitem", { name: /^Set as CRM start page$/i }).first();
+      await expect(setStartItem).toBeVisible({ timeout: 10_000 });
+      await page.waitForTimeout(300);
       await page.screenshot({
         path: path.join(SCREENSHOT_DIR, "03-rail-header-set-start-page-dark.png"),
         fullPage: false,
@@ -824,17 +834,24 @@ test.describe("Per-Workspace Start Pages, Sparse Role Policies, Lazy Picker & Im
           res.request().method() === "PUT",
         { timeout: 15_000 }
       );
-      await setStartBtn.click();
+      await setStartItem.click();
       const putRes = await putPromise;
       expect(putRes.status()).toBe(200);
 
-      await expect(page.getByText(/^Current start page$/i).first()).toBeVisible({ timeout: 10_000 });
-      const resetBtn = page.getByRole("button", { name: /^Reset to default$/i }).first();
-      await expect(resetBtn).toBeVisible({ timeout: 10_000 });
+      // Subtle trailing icon marks Custom start page without inline pill clutter
+      await expect(page.getByLabel(/^Custom start page$/i).first()).toBeVisible({ timeout: 10_000 });
+      await optionsTrigger.click();
+      await expect(page.getByTestId("rail-start-page-status").first()).toContainText(
+        /^Current start page$/i
+      );
+      const resetMenuItem = page.getByRole("menuitem", { name: /^Reset to default$/i }).first();
+      await expect(resetMenuItem).toBeVisible({ timeout: 10_000 });
+      await page.waitForTimeout(300);
       await page.screenshot({
         path: path.join(SCREENSHOT_DIR, "04-rail-header-current-start-page-dark.png"),
         fullPage: false,
       });
+      await page.keyboard.press("Escape");
 
       // Refresh & return to /hub -> CRM opens /crm/leads
       await page.reload({ waitUntil: "domcontentloaded" });
@@ -853,7 +870,7 @@ test.describe("Per-Workspace Start Pages, Sparse Role Policies, Lazy Picker & Im
       await topbarHome.click();
       await page.waitForURL((url) => url.pathname === "/crm/leads", { timeout: 15_000 });
 
-      // Reset to default -> CRM restores /crm Overview
+      // Light mode calm rail screenshot + Reset to default via overflow menu -> CRM restores /crm Overview
       await setTheme(page, "light");
       await page.waitForTimeout(450);
       await page.screenshot({
@@ -862,19 +879,22 @@ test.describe("Per-Workspace Start Pages, Sparse Role Policies, Lazy Picker & Im
       });
       await setTheme(page, "dark");
 
+      await optionsTrigger.click();
       const delPromise = page.waitForResponse(
         (res) =>
           res.url().includes("/api/v1/account/preferences/workspace-entries/crm") &&
           res.request().method() === "DELETE",
         { timeout: 15_000 }
       );
-      await page.getByRole("button", { name: /^Reset to default$/i }).first().click();
+      await page.getByRole("menuitem", { name: /^Reset to default$/i }).first().click();
       const delRes = await delPromise;
       expect([200, 204]).toContain(delRes.status());
 
-      await expect(page.getByRole("button", { name: /^Set as CRM start page$/i }).first()).toBeVisible({
+      await optionsTrigger.click();
+      await expect(page.getByRole("menuitem", { name: /^Set as CRM start page$/i }).first()).toBeVisible({
         timeout: 10_000,
       });
+      await page.keyboard.press("Escape");
       await page.getByRole("button", { name: /^Go to Home$/i }).first().click();
       await page.waitForURL((url) => url.pathname === "/hub", { timeout: 15_000 });
       await page.getByRole("button", { name: /^CRM/i }).first().click();
@@ -1032,25 +1052,32 @@ test.describe("Per-Workspace Start Pages, Sparse Role Policies, Lazy Picker & Im
         await userPage.getByRole("button", { name: /^CRM/i }).first().click();
         await userPage.waitForURL((url) => url.pathname === "/crm/leads", { timeout: 15_000 });
 
-        const lockedRailBadge = userPage.getByLabel(/Start page locked — Enforced by/i).first();
-        await expect(lockedRailBadge).toBeVisible({
-          timeout: 10_000,
-        });
-        await expect(userPage.getByRole("button", { name: /^Set as CRM start page$/i })).toHaveCount(0);
+        // Zero permanent lock badge clutter at rest; lock details live cleanly inside overflow menu
+        await expect(userPage.getByLabel(/Start page locked — Enforced by/i)).toHaveCount(0);
+        const userOptionsTrigger = userPage.getByTestId("rail-workspace-options-trigger").first();
+        await expect(userOptionsTrigger).toBeVisible({ timeout: 10_000 });
+
         await setTheme(userPage, "dark");
-        await lockedRailBadge.hover();
-        await userPage.waitForTimeout(450);
+        await userOptionsTrigger.click();
+        const lockedRailEntry = userPage.getByLabel(/Start page locked — Enforced by/i).first();
+        await expect(lockedRailEntry).toBeVisible({ timeout: 10_000 });
+        await expect(userPage.getByRole("menuitem", { name: /^Set as CRM start page$/i })).toHaveCount(0);
+        await userPage.waitForTimeout(350);
         await userPage.screenshot({
           path: path.join(SCREENSHOT_DIR, "15-rail-header-locked-enforced-dark.png"),
           fullPage: false,
         });
+
+        await userPage.keyboard.press("Escape");
         await setTheme(userPage, "light");
-        await lockedRailBadge.hover();
-        await userPage.waitForTimeout(450);
+        await userOptionsTrigger.click();
+        await expect(lockedRailEntry).toBeVisible({ timeout: 10_000 });
+        await userPage.waitForTimeout(350);
         await userPage.screenshot({
           path: path.join(SCREENSHOT_DIR, "16-rail-header-locked-enforced-light.png"),
           fullPage: false,
         });
+        await userPage.keyboard.press("Escape");
 
         // Check /account/preferences lock for non-SA
         await userPage.goto("/account/preferences", { waitUntil: "domcontentloaded" });
@@ -1091,15 +1118,18 @@ test.describe("Per-Workspace Start Pages, Sparse Role Policies, Lazy Picker & Im
         await waitForAppSettled(saPage);
 
         // Not locked for SuperAdmin despite holding T_AHLY_HEAD_LIFEGUARD
+        const saOptionsTrigger = saPage.getByTestId("rail-workspace-options-trigger").first();
+        await expect(saOptionsTrigger).toBeVisible({ timeout: 10_000 });
+        await saOptionsTrigger.click();
         await expect(saPage.getByLabel(/Start page locked/i)).toHaveCount(0);
-        const saSetBtn = saPage.getByRole("button", { name: /^Set as CRM start page$/i }).first();
-        await expect(saSetBtn).toBeVisible({ timeout: 10_000 });
+        const saSetItem = saPage.getByRole("menuitem", { name: /^Set as CRM start page$/i }).first();
+        await expect(saSetItem).toBeVisible({ timeout: 10_000 });
         const saPutPromise = saPage.waitForResponse(
           (res) =>
             res.url().includes("/api/v1/account/preferences/workspace-entries/crm") &&
             res.request().method() === "PUT"
         );
-        await saSetBtn.click();
+        await saSetItem.click();
         expect((await saPutPromise).status()).toBe(200);
       } finally {
         await saCtx.close();
@@ -1333,9 +1363,10 @@ test.describe("Per-Workspace Start Pages, Sparse Role Policies, Lazy Picker & Im
       });
       await waitForAppSettled(page);
 
-      // RailHeader start page toggle MUST be hidden while impersonating
+      // RailHeader overflow options MUST be hidden while impersonating
       await page.goto("/crm/leads", { waitUntil: "domcontentloaded" });
       await waitForAppSettled(page);
+      await expect(page.getByTestId("rail-workspace-options-trigger")).toHaveCount(0);
       await expect(page.getByRole("button", { name: /^Set as CRM start page$/i })).toHaveCount(0);
       await expect(page.getByRole("button", { name: /^Reset to default$/i })).toHaveCount(0);
 
@@ -1457,6 +1488,13 @@ test.describe("Per-Workspace Start Pages, Sparse Role Policies, Lazy Picker & Im
       });
       expect(sidebarWidth).toBeGreaterThanOrEqual(235);
       await assertNoHorizontalOverflow(page, "AR RTL /crm/leads 1440px");
+      await expect(page.getByTestId("nexus-launcher-trigger")).toBeVisible({ timeout: 10_000 });
+      await page.getByTestId("rail-workspace-options-trigger").first().click();
+      await expect(
+        page.getByRole("menuitem", { name: /تعيين كصفحة بداية إدارة علاقات العملاء/i }).first()
+      ).toBeVisible({ timeout: 10_000 });
+      await page.keyboard.press("Escape");
+      await page.waitForTimeout(200);
       await page.screenshot({
         path: path.join(SCREENSHOT_DIR, "10-ar-rtl-sidebar-240px-railheader-dark.png"),
         fullPage: false,
