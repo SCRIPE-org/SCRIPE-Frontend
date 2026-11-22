@@ -1,5 +1,5 @@
-// Wave 3.4's locale blocks -- en/ar parity, real Arabic, and the key names the
-// backend actually points at.
+// Media, rich-text, and value-type locale blocks -- en/ar parity, real Arabic,
+// and the key names the backend Descriptors and validators point at.
 //
 // WHY A NEW FILE RATHER THAN AN ADDITION TO valueTypeCatalog.locale.test.ts.
 // That file guards exactly one block (`valueTypeCatalog.descriptions`) and it can
@@ -38,10 +38,10 @@ import { ar } from "./custom-field.ar";
 const ARABIC_CHAR = /[؀-ۿ]/;
 
 /** The three value-type labels the backend Descriptors name, spelled as the backend spells them. */
-const WAVE_34_VALUE_TYPE_LEAVES = ["file", "image", "richText"] as const;
+const MEDIA_AND_RICH_TEXT_VALUE_TYPE_LEAVES = ["file", "image", "richText"] as const;
 
 /**
- * The five refusal messages this wave's backend handlers raise, by LEAF name.
+ * The five media and rich-text refusal messages backend handlers raise, by LEAF name.
  *
  * Three of the five (`mediaReference*NotFound` / `*OwnerMismatch` / `*NotAnImage`)
  * have NO client-side caller and cannot have one: each depends on the `MediaFile`
@@ -55,7 +55,7 @@ const WAVE_34_VALUE_TYPE_LEAVES = ["file", "image", "richText"] as const;
  * rather than aspirational: it is the only thing standing between "a documented
  * mirror" and "three dead strings nobody notices going stale".
  */
-const WAVE_34_MESSAGE_LEAVES = [
+const MEDIA_AND_RICH_TEXT_MESSAGE_LEAVES = [
   "mediaReferenceNotFound",
   "mediaReferenceOwnerMismatch",
   "mediaReferenceNotAnImage",
@@ -70,8 +70,8 @@ function keysOf(value: object): string[] {
   return Object.keys(value).sort();
 }
 
-describe("customField.valueTypes -- Wave 3.4's three new labels", () => {
-  it.each(WAVE_34_VALUE_TYPE_LEAVES)(
+describe("customField.valueTypes -- media and rich-text labels", () => {
+  it.each(MEDIA_AND_RICH_TEXT_VALUE_TYPE_LEAVES)(
     "declares `%s` in both locales, under the exact key the backend Descriptor names",
     (leaf) => {
       expect(en.customField.valueTypes).toHaveProperty(leaf);
@@ -83,7 +83,7 @@ describe("customField.valueTypes -- Wave 3.4's three new labels", () => {
     expect(keysOf(ar.customField.valueTypes)).toEqual(keysOf(en.customField.valueTypes));
   });
 
-  it.each(WAVE_34_VALUE_TYPE_LEAVES)(
+  it.each(MEDIA_AND_RICH_TEXT_VALUE_TYPE_LEAVES)(
     "gives `%s` real Arabic copy, not an English carry-over",
     (leaf) => {
       const value = (ar.customField.valueTypes as Record<string, string>)[leaf];
@@ -94,8 +94,8 @@ describe("customField.valueTypes -- Wave 3.4's three new labels", () => {
   );
 });
 
-describe("customField.values -- Wave 3.4's message mirrors", () => {
-  it.each([...WAVE_34_MESSAGE_LEAVES, ...CLIENT_ONLY_MESSAGE_LEAVES])(
+describe("customField.values -- media and rich-text message mirrors", () => {
+  it.each([...MEDIA_AND_RICH_TEXT_MESSAGE_LEAVES, ...CLIENT_ONLY_MESSAGE_LEAVES])(
     "declares `%s` in both locales, under the same leaf name the backend uses",
     (leaf) => {
       expect(en.customField.values).toHaveProperty(leaf);
@@ -107,7 +107,7 @@ describe("customField.values -- Wave 3.4's message mirrors", () => {
     expect(keysOf(ar.customField.values)).toEqual(keysOf(en.customField.values));
   });
 
-  it.each([...WAVE_34_MESSAGE_LEAVES, ...CLIENT_ONLY_MESSAGE_LEAVES])(
+  it.each([...MEDIA_AND_RICH_TEXT_MESSAGE_LEAVES, ...CLIENT_ONLY_MESSAGE_LEAVES])(
     "gives `%s` real Arabic prose",
     (leaf) => {
       const value = (ar.customField.values as Record<string, string>)[leaf];
@@ -117,13 +117,13 @@ describe("customField.values -- Wave 3.4's message mirrors", () => {
     }
   );
 
-  it("interpolates the field name in every Wave 3.4 message, in both locales", () => {
+  it("interpolates the field name in every media and rich-text message, in both locales", () => {
     // Every one of these names a specific field, and a form can hold several
     // custom fields at once -- a message that does not say which one leaves the
     // operator scanning the whole form. `{field}` is this module's own convention
     // (single braces, never `{{x}}`), and a missing placeholder is silent: the
     // sentence still renders, just uselessly.
-    for (const leaf of [...WAVE_34_MESSAGE_LEAVES, ...CLIENT_ONLY_MESSAGE_LEAVES]) {
+    for (const leaf of [...MEDIA_AND_RICH_TEXT_MESSAGE_LEAVES, ...CLIENT_ONLY_MESSAGE_LEAVES]) {
       expect((en.customField.values as Record<string, string>)[leaf]).toContain("{field}");
       expect((ar.customField.values as Record<string, string>)[leaf]).toContain("{field}");
     }

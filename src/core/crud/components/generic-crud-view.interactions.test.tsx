@@ -60,7 +60,7 @@ function makeViewModel(overrides: Record<string, unknown> = {}) {
   };
 }
 
-describe("GenericCrudView & CrudSplitPaneSection Phase C", () => {
+describe("GenericCrudView & CrudSplitPaneSection error recovery, view modes & CSV import", () => {
   it("keeps rows visible and shows retry banner when error occurs with existing items", () => {
     const refresh = vi.fn();
     render(

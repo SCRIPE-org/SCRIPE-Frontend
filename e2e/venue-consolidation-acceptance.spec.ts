@@ -4,7 +4,7 @@ import * as path from "path";
 import * as fs from "fs";
 
 /**
- * SCRIPE VENUE — PHASE 2 FINAL CONSOLIDATION & CLEANUP ACCEPTANCE TEST SUITE
+ * SCRIPE VENUE — FINAL CONSOLIDATION & CLEANUP ACCEPTANCE TEST SUITE
  *
  * Targeted real browser verification against live dev servers:
  * - Frontend: http://localhost:3000
@@ -25,7 +25,7 @@ import * as fs from "fs";
  * 9. Arabic RTL layout and English LTR parity (dir attribute, chevron flip, zero English leakage).
  */
 
-test.describe("SCRIPE Venue: Phase 2 Final Consolidation Acceptance Suite", () => {
+test.describe("SCRIPE Venue: Final Consolidation Acceptance Suite", () => {
   test.describe.configure({ mode: "serial", timeout: 240_000 });
 
   function requireEnv(name: string, fallback?: string): string {
@@ -42,7 +42,7 @@ test.describe("SCRIPE Venue: Phase 2 Final Consolidation Acceptance Suite", () =
   const bookingPassword = requireEnv("E2E_BOOKING_PASSWORD", process.env.ADMIN_PASSWORD);
   const tenantId = "944caec0-f3fd-454c-878a-da833a3c7c6c";
 
-  const evidenceDir = path.resolve(process.cwd(), "e2e-evidence", "phase2-consolidation");
+  const evidenceDir = path.resolve(process.cwd(), "e2e-evidence", "venue-consolidation");
   if (!fs.existsSync(evidenceDir)) {
     fs.mkdirSync(evidenceDir, { recursive: true });
   }

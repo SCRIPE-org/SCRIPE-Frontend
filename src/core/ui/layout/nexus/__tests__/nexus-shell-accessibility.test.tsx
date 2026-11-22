@@ -302,7 +302,7 @@ vi.mock("@core/ui/layout/common", async () => {
   };
 });
 
-describe("Nexus Shell Phase D — A11y, Hierarchy, Branding & Deduplication", () => {
+describe("Nexus Shell — Accessibility, Hierarchy, Branding & Deduplication", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockPathname = "/venue/resources";
