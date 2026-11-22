@@ -187,7 +187,7 @@ describe("PermissionProvider - Superadmin and PBAC security tests", () => {
     expect(matchesManifestPattern("/docs", "/docs/[[...slug]]")).toBe(true);
   });
 
-  it("authorizes /venue with either venue-dashboard.view or venue-profiles.view and fails closed without both", () => {
+  it("authorizes /venue strictly with venue-dashboard.view and fails closed for other Venue permissions", () => {
     useAppStore.setState({
       permissions: [SYSTEM_PERMISSIONS.FACILITY_VIEW] as any,
       isAuthenticated: true,
@@ -197,13 +197,13 @@ describe("PermissionProvider - Superadmin and PBAC security tests", () => {
     expect(result.current.canAccessPage("/venue")).toBe(false);
 
     useAppStore.setState({
-      permissions: [SYSTEM_PERMISSIONS.VENUE_DASHBOARD_VIEW] as any,
+      permissions: [SYSTEM_PERMISSIONS.VENUE_PROFILE_VIEW] as any,
     });
     rerender();
-    expect(result.current.canAccessPage("/venue")).toBe(true);
+    expect(result.current.canAccessPage("/venue")).toBe(false);
 
     useAppStore.setState({
-      permissions: [SYSTEM_PERMISSIONS.VENUE_PROFILE_VIEW] as any,
+      permissions: [SYSTEM_PERMISSIONS.VENUE_DASHBOARD_VIEW] as any,
     });
     rerender();
     expect(result.current.canAccessPage("/venue")).toBe(true);
