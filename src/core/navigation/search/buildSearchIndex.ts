@@ -158,7 +158,11 @@ export function buildSearchIndex({
       workspace.effectiveHomeRoute ||
       collectFirstMenuHref(menuTree) ||
       workspaceDescriptors[0]?.route ||
-      "/overview";
+      null;
+
+    if (!workspaceHref) {
+      continue;
+    }
 
     // Always index each unlocked workspace directly so unhydrated workspaces remain jumpable.
     searchableItems.push({

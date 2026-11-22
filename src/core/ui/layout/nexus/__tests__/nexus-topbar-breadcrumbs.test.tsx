@@ -1,27 +1,41 @@
 import React from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
 import { TooltipProvider } from "@core/ui/tooltip";
 import { TopbarContextPill } from "@core/ui/layout/shared";
+import { WorkspaceGroup } from "@core/navigation/domain/entities/WorkspaceGroup";
+import { MenuItem } from "@core/navigation/domain/entities/MenuItem";
 import { TopbarBreadcrumbs } from "../_parts/topbar-parts";
 import { NexusTopbar } from "../nexus-topbar";
 
 let mockPathname = "/overview";
-const mockActiveRootItem = {
+let mockLanguage = "en";
+let mockDirection: "ltr" | "rtl" = "ltr";
+let mockActiveWorkspace: WorkspaceGroup | null = null;
+const mockRouterPush = vi.fn();
+const mockTranslate = vi.fn((k: string, params?: Record<string, string | number>) => {
+  if (k === "chrome.workspaceStartPageTooltip" && params) {
+    return `${params.workspace} start page: ${params.page}`;
+  }
+  return k;
+});
+const DEFAULT_ACTIVE_ROOT = {
   id: "root-1",
   slug: "directory",
   order: 1,
   nameEn: "Directory",
   nameAr: "دليل",
 };
+let mockActiveRootItem: typeof DEFAULT_ACTIVE_ROOT | MenuItem = DEFAULT_ACTIVE_ROOT;
+let mockRootMenuItems: MenuItem[] = [mockActiveRootItem as unknown as MenuItem];
 
 vi.mock("@core/providers/workspace-provider", () => ({
   useWorkspace: () => ({
-    workspaceGroups: [],
-    rootMenuItems: [mockActiveRootItem],
+    workspaceGroups: mockActiveWorkspace ? [mockActiveWorkspace] : [],
+    rootMenuItems: mockRootMenuItems,
     setActiveRootItemId: vi.fn(),
-    activeWorkspace: null,
+    activeWorkspace: mockActiveWorkspace,
     activeRootItem: mockActiveRootItem,
   }),
 }));
@@ -46,9 +60,9 @@ vi.mock("@core/providers/settings-provider", () => ({
 
 vi.mock("@core/providers/i18n-provider", () => ({
   useI18n: () => ({
-    language: "en",
-    direction: "ltr",
-    t: (k: string) => k,
+    language: mockLanguage,
+    direction: mockDirection,
+    t: (k: string, params?: Record<string, string | number>) => mockTranslate(k, params),
   }),
 }));
 
@@ -77,7 +91,7 @@ vi.mock("@core/ui/layout/common", () => ({
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({
-    push: vi.fn(),
+    push: mockRouterPush,
   }),
   usePathname: () => mockPathname,
 }));
@@ -88,7 +102,19 @@ vi.mock("@core/store", () => ({
 
 describe("TopbarBreadcrumbs Deduplication", () => {
   beforeEach(() => {
+    vi.clearAllMocks();
     mockPathname = "/overview";
+    mockLanguage = "en";
+    mockDirection = "ltr";
+    mockActiveWorkspace = null;
+    mockActiveRootItem = DEFAULT_ACTIVE_ROOT;
+    mockRootMenuItems = [DEFAULT_ACTIVE_ROOT as unknown as MenuItem];
+    mockTranslate.mockImplementation((k: string, params?: Record<string, string | number>) => {
+      if (k === "chrome.workspaceStartPageTooltip" && params) {
+        return `${params.workspace} start page: ${params.page}`;
+      }
+      return k;
+    });
   });
   it("deduplicates consecutive identical segments when workspace, root, and page names are identical", () => {
     render(
@@ -250,5 +276,198 @@ describe("TopbarBreadcrumbs Deduplication", () => {
     expect(screen.queryByText("workspaceHub.hubTitle")).not.toBeInTheDocument();
     expect(screen.queryByText("chrome.hub")).not.toBeInTheDocument();
     expect(screen.getByText("Hub")).toBeInTheDocument();
+  });
+
+  it("unifies TopbarHomeButton and Breadcrumb Level 1 onto effectiveHomeRoute with dynamic localized start-page tooltips", () => {
+    const leadsMenu = new MenuItem({
+      id: "crm-leads",
+      slug: "crm-leads",
+      name: "Leads",
+      nameEn: "Leads",
+      nameAr: "العملاء المحتملون",
+      href: "/crm/leads",
+      icon: "Users",
+      order: 1,
+      resource: "crm.leads",
+      actions: null,
+      children: [],
+    });
+
+    mockActiveWorkspace = new WorkspaceGroup({
+      workspaceId: "ws-crm",
+      workspaceKey: "crm",
+      workspaceNameEn: "CRM",
+      workspaceNameAr: "إدارة العملاء",
+      workspaceIcon: "Briefcase",
+      workspaceSortOrder: 2,
+      colorHue: 200,
+      colorChroma: 0.14,
+      workspaceType: "Module",
+      menuItems: [leadsMenu],
+      isLocked: false,
+      homeRoute: "/crm",
+      platformHomeRoute: "/overview",
+      effectiveHomeRoute: "/crm/leads",
+      isPinned: false,
+      pinSortOrder: null,
+      accessibleItemCount: 2,
+    });
+    mockRootMenuItems = [leadsMenu];
+    mockPathname = "/crm/accounts";
+
+    const { rerender } = render(
+      <TooltipProvider>
+        <NexusTopbar onMobileMenuOpen={vi.fn()} onTogglePanel={vi.fn()} onOpenSearch={vi.fn()} />
+      </TooltipProvider>
+    );
+
+    const homeButton = screen.getByRole("button", { name: "CRM start page: Leads" });
+    fireEvent.click(homeButton);
+    expect(mockRouterPush).toHaveBeenCalledWith("/crm/leads");
+
+    mockRouterPush.mockClear();
+    const level1Button = screen.getByRole("button", { name: "CRM" });
+    fireEvent.click(level1Button);
+    expect(mockRouterPush).toHaveBeenCalledWith("/crm/leads");
+
+    // Hovering/focusing Level 1 displays the localized tooltip with <bdi> isolation
+    fireEvent.focus(level1Button);
+    const tooltipNodes = screen.getAllByText(
+      (_, el) => el?.tagName === "SPAN" && el.textContent === "CRM start page: Leads"
+    );
+    expect(tooltipNodes.length).toBeGreaterThanOrEqual(1);
+    expect(within(tooltipNodes[0]).getByText("CRM").closest("bdi")).not.toBeNull();
+    expect(within(tooltipNodes[0]).getByText("Leads").closest("bdi")).not.toBeNull();
+
+    // When already on effectiveHomeRoute (/crm/leads), TopbarHomeButton hides and Level 1 does not re-push
+    mockRouterPush.mockClear();
+    mockPathname = "/crm/leads";
+    rerender(
+      <TooltipProvider>
+        <NexusTopbar onMobileMenuOpen={vi.fn()} onTogglePanel={vi.fn()} onOpenSearch={vi.fn()} />
+      </TooltipProvider>
+    );
+
+    expect(screen.queryByRole("button", { name: "CRM start page: Leads" })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "CRM" }));
+    expect(mockRouterPush).not.toHaveBeenCalled();
+
+    // Arabic localization renders Arabic interpolation cleanly
+    mockLanguage = "ar";
+    mockDirection = "rtl";
+    mockPathname = "/crm/accounts";
+    mockTranslate.mockImplementation((k: string, params?: Record<string, string | number>) => {
+      if (k === "chrome.workspaceStartPageTooltip" && params) {
+        return `صفحة بداية ${params.workspace}: ${params.page}`;
+      }
+      return k;
+    });
+    rerender(
+      <TooltipProvider>
+        <NexusTopbar onMobileMenuOpen={vi.fn()} onTogglePanel={vi.fn()} onOpenSearch={vi.fn()} />
+      </TooltipProvider>
+    );
+
+    expect(
+      screen.getByRole("button", { name: "صفحة بداية إدارة العملاء: العملاء المحتملون" })
+    ).toBeInTheDocument();
+  });
+
+  it("uses server effectiveHomeLabelEn/Ar for TopbarHomeButton and Breadcrumb Level 1 tooltips even when menuItems are unhydrated", () => {
+    mockActiveWorkspace = new WorkspaceGroup({
+      workspaceId: "ws-crm",
+      workspaceKey: "crm",
+      workspaceNameEn: "CRM",
+      workspaceNameAr: "إدارة العملاء",
+      workspaceIcon: "Briefcase",
+      workspaceSortOrder: 2,
+      colorHue: 200,
+      colorChroma: 0.14,
+      workspaceType: "Module",
+      menuItems: [],
+      isLocked: false,
+      homeRoute: "/crm",
+      platformHomeRoute: null,
+      effectiveHomeRoute: "/crm/deals",
+      effectiveHomeSource: "PersonalOverride",
+      effectiveHomeMenuSlug: "crm-deals",
+      effectiveHomeLabelEn: "Open Deals",
+      effectiveHomeLabelAr: "الصفقات المفتوحة",
+      isPinned: false,
+      pinSortOrder: null,
+      accessibleItemCount: 2,
+    });
+    mockRootMenuItems = [];
+    mockPathname = "/crm/accounts";
+
+    const { rerender } = render(
+      <TooltipProvider>
+        <NexusTopbar onMobileMenuOpen={vi.fn()} onTogglePanel={vi.fn()} onOpenSearch={vi.fn()} />
+      </TooltipProvider>
+    );
+
+    const enHome = screen.getByRole("button", { name: "CRM start page: Open Deals" });
+    expect(enHome).toBeInTheDocument();
+    fireEvent.focus(screen.getByRole("button", { name: "CRM" }));
+    const enTooltip = screen.getAllByText(
+      (_, el) => el?.tagName === "SPAN" && el.textContent === "CRM start page: Open Deals"
+    );
+    expect(within(enTooltip[0]).getByText("Open Deals").closest("bdi")).not.toBeNull();
+
+    mockLanguage = "ar";
+    mockDirection = "rtl";
+    mockTranslate.mockImplementation((k: string, params?: Record<string, string | number>) => {
+      if (k === "chrome.workspaceStartPageTooltip" && params) {
+        return `صفحة بداية ${params.workspace}: ${params.page}`;
+      }
+      return k;
+    });
+    rerender(
+      <TooltipProvider>
+        <NexusTopbar onMobileMenuOpen={vi.fn()} onTogglePanel={vi.fn()} onOpenSearch={vi.fn()} />
+      </TooltipProvider>
+    );
+
+    expect(
+      screen.getByRole("button", { name: "صفحة بداية إدارة العملاء: الصفقات المفتوحة" })
+    ).toBeInTheDocument();
+  });
+
+  it("localizes /roles/[id] entity detail breadcrumb via navigation.entitySingulars instead of mixed English 'تفاصيل Role'", () => {
+    mockPathname = "/roles/8b326564-b61e-4b3b-bd7c-622f4b80196e";
+    const rolesRoot = new MenuItem({
+      id: "root-admin",
+      slug: "roles",
+      name: "الأدوار",
+      nameEn: "Roles",
+      nameAr: "الأدوار",
+      href: "/roles",
+      icon: "Shield",
+      order: 1,
+      resource: null,
+      actions: null,
+      children: [],
+    });
+    mockActiveRootItem = rolesRoot;
+    mockRootMenuItems = [rolesRoot];
+    mockLanguage = "ar";
+    mockDirection = "rtl";
+    mockTranslate.mockImplementation((k: string, params?: Record<string, string | number>) => {
+      if (k === "navigation.entitySingulars.roles") return "الدور";
+      if (k === "navigation.entityDetailsTitle" && params) {
+        return `تفاصيل ${params.entity}`;
+      }
+      return k;
+    });
+
+    render(
+      <TooltipProvider>
+        <NexusTopbar onMobileMenuOpen={vi.fn()} onTogglePanel={vi.fn()} onOpenSearch={vi.fn()} />
+      </TooltipProvider>
+    );
+
+    const nav = screen.getByRole("navigation", { name: "nav.breadcrumb" });
+    expect(nav).toHaveTextContent("تفاصيل الدور");
+    expect(nav.textContent).not.toContain("تفاصيل Role");
   });
 });

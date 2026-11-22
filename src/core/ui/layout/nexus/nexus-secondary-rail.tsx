@@ -24,6 +24,7 @@ import { MenuItem } from "@core/navigation";
 import { Button } from "@core/ui/button";
 import { cn } from "@core/common/utils";
 import { RailHeader, RailContent } from "./_parts/secondary-rail-parts";
+import { useRailStartPageToggle } from "./use-rail-start-page-toggle";
 import { useNexusReducedMotion } from "./nexus-transition";
 import { NEXUS_PANEL_W, getSecondaryMenuItems } from "./_parts/nexus-layout-constants";
 
@@ -81,6 +82,14 @@ export function NexusSecondaryRail({
   const hasSubmenu = menuItems.length > 0;
 
   const handleNavigate = useCallback(() => onMobileClose?.(), [onMobileClose]);
+  const startPageAction = useRailStartPageToggle({
+    activeWorkspace,
+    activeRootItem,
+    rootMenuItems,
+    pathname: pathname ?? "",
+    language,
+    t,
+  });
 
   // Desktop collapse state ONLY — never gates the mobile drawer overlay.
   const effectiveCollapsed = !hasSubmenu || !!isCollapsed;
@@ -186,7 +195,12 @@ export function NexusSecondaryRail({
 
   const railContent = (
     <div style={innerContainerStyle}>
-      <RailHeader contextLabel={contextLabel} title={title} />
+      <RailHeader
+        contextLabel={contextLabel}
+        title={title}
+        startPageAction={startPageAction}
+        t={t}
+      />
       <RailContent
         menuItems={menuItems}
         pathname={pathname}
@@ -220,8 +234,9 @@ export function NexusSecondaryRail({
             role="dialog"
             aria-modal="true"
             aria-label={title || t("nav.secondary")}
+            data-nexus-mobile-drawer="true"
             tabIndex={-1}
-            className="fixed inset-y-0 start-0 z-modal flex flex-col border-e border-nx-line bg-nx-popover shadow-nx-modal outline-none lg:hidden"
+            className="fixed inset-y-0 start-0 z-modal flex flex-col overflow-hidden border-e border-nx-line bg-nx-surface shadow-nx-modal outline-none lg:hidden"
             style={{ width: NEXUS_PANEL_W }}
           >
             <div style={innerContainerStyle}>
@@ -230,9 +245,11 @@ export function NexusSecondaryRail({
                 title={title}
                 onClose={onMobileClose}
                 closeLabel={t("common.close")}
+                startPageAction={startPageAction}
+                t={t}
               />
               <div className="space-y-2 border-b border-nx-line px-3 py-2.5 md:hidden">
-                <div className="flex items-center gap-2">
+                <div className="flex flex-col gap-1.5">
                   {onOpenAppLauncher && (
                     <Button
                       type="button"
@@ -242,25 +259,29 @@ export function NexusSecondaryRail({
                         onMobileClose?.();
                         onOpenAppLauncher();
                       }}
-                      className="h-8 flex-1 justify-start gap-1.5 text-xs"
+                      className="min-h-8 h-auto w-full justify-start gap-2 px-2.5 py-1.5 text-xs !whitespace-normal text-start"
                     >
                       <LayoutGrid className="size-3.5 shrink-0" aria-hidden="true" />
-                      <span className="truncate">{t("shell.launcher.title")}</span>
+                      <span className="whitespace-normal text-start leading-snug">
+                        {t("shell.launcher.title")}
+                      </span>
                     </Button>
                   )}
                   <Button
                     type="button"
-                    variant="ghost"
+                    variant="outline"
                     size="sm"
                     onClick={() => {
                       onMobileClose?.();
                       router.push("/hub");
                     }}
-                    className="h-8 shrink-0 gap-1.5 px-2.5 text-xs"
-                    aria-label={t("chrome.goToHome")}
+                    className="min-h-8 h-auto w-full justify-start gap-2 px-2.5 py-1.5 text-xs !whitespace-normal text-start"
+                    aria-label={t("chrome.allWorkspaces")}
                   >
                     <Home className="size-3.5 shrink-0" aria-hidden="true" />
-                    <span className="truncate">{t("chrome.goToHome")}</span>
+                    <span className="whitespace-normal text-start leading-snug">
+                      {t("chrome.allWorkspaces")}
+                    </span>
                   </Button>
                 </div>
                 {rootMenuItems.length > 1 && (

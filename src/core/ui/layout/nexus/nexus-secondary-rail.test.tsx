@@ -257,7 +257,8 @@ describe("NexusSecondaryRail — Generic Multi-Group Workspace Secondary Rail", 
     const dialog = screen.getByRole("dialog");
     expect(dialog).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "shell.launcher.title" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "chrome.goToHome" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "chrome.allWorkspaces" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "chrome.goToHome" })).not.toBeInTheDocument();
     expect(screen.getByTestId("mobile-drawer-footer")).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "shell.launcher.title" }));

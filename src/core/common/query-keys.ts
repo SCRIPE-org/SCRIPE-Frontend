@@ -63,6 +63,7 @@ const admins = {
 const roles = {
   ...domain("roles"),
   permissions: (roleId: string) => ["roles", "permissions", roleId] as const,
+  workspaceEntries: (roleId: string) => ["roles", "workspace-entries", roleId] as const,
   forSelect: (tenantId?: string) => ["roles", "select", tenantId ?? ""] as const,
   active: (tenantId: string) => ["roles", "active", tenantId] as const,
 };
@@ -366,6 +367,10 @@ const navigation = {
   all: ["navigation"] as const,
   menu: () => ["navigation", "menu"] as const,
   permissions: () => ["navigation", "permissions"] as const,
+  landingTargets: (contextKey: string, scopeMode: string) =>
+    ["navigation", "landing-targets", contextKey || "default", scopeMode] as const,
+  workspaceEntries: (contextKey?: string) =>
+    ["navigation", "workspace-entries", contextKey || "default"] as const,
 };
 
 /** Ecosystem — Recycle Bin */

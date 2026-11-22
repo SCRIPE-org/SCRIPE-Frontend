@@ -114,7 +114,7 @@ function isSessionActiveForNavFetch(): boolean {
 }
 
 // ── Context (minimal surface) ───────────────────────────────────────────────
-interface NavigationContextType {
+export interface NavigationContextType {
   /**
    * Fetch (or return cached) JIT workspace menu.
    * Returns null on failure — caller should handle gracefully.
@@ -281,8 +281,13 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   );
 
   const refreshNavigation = useCallback(async () => {
-    useNavigationStore.getState().clearRouteData();
-    useNavigationStore.getState().reset();
+    const state = useNavigationStore.getState();
+    // Preserve live shell UI state when already hydrated so in-context preference saves
+    // sync Hub/Rail/Topbar without unmounting the active page into a loading screen.
+    if (state.routesError || !state.routesLoaded) {
+      state.clearRouteData();
+      state.reset();
+    }
     autoFetchDone.current = false; // Allow auto-fetch to fire after full refresh
     await queryClient.invalidateQueries({ queryKey: ["navigation"] });
   }, [queryClient]);
@@ -399,4 +404,12 @@ export function useNavigation(): NavigationContextType {
     throw new Error("useNavigation must be used within NavigationProvider");
   }
   return ctx;
+}
+
+/**
+ * Optional variant returning null when mounted outside `<NavigationProvider>`
+ * (e.g. isolated shell component unit tests).
+ */
+export function useOptionalNavigation(): NavigationContextType | null {
+  return useContext(NavigationContext) ?? null;
 }

@@ -71,9 +71,8 @@ function findFirstLeafRoute(
   item: MenuItem,
   canAccessPage: (path: string) => boolean
 ): string | null {
-  // First try to find a route the user has permission to access
   const findAccessible = (curr: MenuItem): string | null => {
-    if (curr.href && canAccessPage(curr.href)) return curr.href;
+    if (curr.href && curr.href !== "#" && canAccessPage(curr.href)) return curr.href;
     if (curr.children && curr.children.length > 0) {
       const sorted = [...curr.children].sort((a, b) => a.order - b.order);
       for (const child of sorted) {
@@ -84,23 +83,7 @@ function findFirstLeafRoute(
     return null;
   };
 
-  const accessibleRoute = findAccessible(item);
-  if (accessibleRoute) return accessibleRoute;
-
-  // Fallback to absolute first leaf route if none are accessible
-  const findAny = (curr: MenuItem): string | null => {
-    if (curr.href) return curr.href;
-    if (curr.children && curr.children.length > 0) {
-      const sorted = [...curr.children].sort((a, b) => a.order - b.order);
-      for (const child of sorted) {
-        const route = findAny(child);
-        if (route) return route;
-      }
-    }
-    return null;
-  };
-
-  return findAny(item);
+  return findAccessible(item);
 }
 
 // ── Primary Rail ──────────────────────────────────────────────────────────────

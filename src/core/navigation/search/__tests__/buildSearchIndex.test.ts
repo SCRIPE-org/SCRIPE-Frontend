@@ -219,4 +219,58 @@ describe("buildSearchIndex & filterQuickJumpItems", () => {
     expect(quickJumps.every((item) => item.kind === "page" && !item.id.startsWith("ws:"))).toBe(true);
     expect(quickJumps.some((item) => item.href === "/venue")).toBe(false);
   });
+
+  it("never falls back to /overview when effectiveHomeRoute, menuTree, and authorized descriptors are all absent", () => {
+    const emptyVenueWs = new WorkspaceGroup({
+      workspaceId: "ws-venue-empty",
+      workspaceKey: "venue",
+      workspaceNameEn: "Venue",
+      workspaceNameAr: "المنشآت",
+      workspaceIcon: "Building2",
+      workspaceSortOrder: 1,
+      colorHue: 145,
+      colorChroma: 0.14,
+      workspaceType: "Module",
+      menuItems: [],
+      isLocked: false,
+      homeRoute: "/venue",
+      platformHomeRoute: null,
+      effectiveHomeRoute: null,
+      isPinned: false,
+      pinSortOrder: null,
+      accessibleItemCount: 0,
+    });
+
+    const crmOnlyWithEffective = new WorkspaceGroup({
+      workspaceId: "ws-crm-effective",
+      workspaceKey: "crm",
+      workspaceNameEn: "CRM",
+      workspaceNameAr: "المبيعات",
+      workspaceIcon: "Briefcase",
+      workspaceSortOrder: 2,
+      colorHue: 200,
+      colorChroma: 0.14,
+      workspaceType: "Module",
+      menuItems: [],
+      isLocked: false,
+      homeRoute: "/crm",
+      platformHomeRoute: null,
+      effectiveHomeRoute: "/crm/leads",
+      isPinned: false,
+      pinSortOrder: null,
+      accessibleItemCount: 1,
+    });
+
+    const items = buildSearchIndex({
+      workspaceGroups: [emptyVenueWs, crmOnlyWithEffective],
+      cachedWorkspaces: new Map(),
+      routeDescriptors: new Map(),
+      language: "en",
+      t: (k) => k,
+    });
+
+    expect(items.some((item) => item.href === "/overview")).toBe(false);
+    expect(items.find((item) => item.id === "ws:venue")).toBeUndefined();
+    expect(items.find((item) => item.id === "ws:crm")?.href).toBe("/crm/leads");
+  });
 });

@@ -6,9 +6,18 @@
  * Handles legacy field-name aliasing (key → workspaceKey, etc.).
  */
 
-import type { WorkspaceGroupData } from "../../domain/entities/WorkspaceGroup";
+import type {
+  WorkspaceEffectiveHomeSource,
+  WorkspaceGroupData,
+} from "../../domain/entities/WorkspaceGroup";
 import type { WorkspaceGroupDto } from "../models/WorkspaceGroupDto";
 import { MenuItemMapper } from "./MenuItemMapper";
+
+function readOptionalTrimmedString(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : null;
+}
 
 export class WorkspaceGroupMapper {
   /**
@@ -42,10 +51,15 @@ export class WorkspaceGroupMapper {
     const contextScope =
       (raw.contextScope as "Both" | "PlatformOnly" | "TenantOnly" | undefined) ?? "Both";
     const accessibleItemCount = Number(raw.accessibleItemCount ?? 0);
-    const effectiveHomeRoute =
-      typeof raw.effectiveHomeRoute === "string" && raw.effectiveHomeRoute.trim()
-        ? raw.effectiveHomeRoute.trim()
-        : null;
+    const effectiveHomeRoute = readOptionalTrimmedString(raw.effectiveHomeRoute);
+    const effectiveHomeSource = readOptionalTrimmedString(
+      raw.effectiveHomeSource
+    ) as WorkspaceEffectiveHomeSource | null;
+    const effectiveHomeMenuSlug = readOptionalTrimmedString(raw.effectiveHomeMenuSlug);
+    const effectiveHomeLabelEn = readOptionalTrimmedString(raw.effectiveHomeLabelEn);
+    const effectiveHomeLabelAr = readOptionalTrimmedString(raw.effectiveHomeLabelAr);
+    const isEffectiveHomeEnforced = Boolean(raw.isEffectiveHomeEnforced ?? false);
+    const enforcingRoleName = readOptionalTrimmedString(raw.enforcingRoleName);
     const lockReason = String(raw.lockReason ?? "None");
 
     const rawItems = Array.isArray(raw.menuItems) ? raw.menuItems : [];
@@ -72,6 +86,12 @@ export class WorkspaceGroupMapper {
       contextScope,
       accessibleItemCount,
       effectiveHomeRoute,
+      effectiveHomeSource,
+      effectiveHomeMenuSlug,
+      effectiveHomeLabelEn,
+      effectiveHomeLabelAr,
+      isEffectiveHomeEnforced,
+      enforcingRoleName,
       lockReason,
     };
   }

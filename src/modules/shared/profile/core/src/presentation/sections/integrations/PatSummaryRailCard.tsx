@@ -57,7 +57,7 @@ export function PatSummaryRailCard({
   return (
     <Card
       data-testid="pat-summary-rail-card"
-      className="border border-nx-line bg-nx-surface lg:sticky lg:top-18"
+      className="border border-nx-line bg-nx-surface lg:sticky lg:top-[calc(4.5rem+var(--tenant-banner-height,0px))]"
     >
       <CardHeader className="pb-3">
         <CardTitle className="text-base font-bold text-nx-ink">

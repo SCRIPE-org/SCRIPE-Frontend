@@ -34,6 +34,18 @@ export interface WorkspaceGroupDto {
   accessibleItemCount?: number;
   /** Server-resolved home route for the active context (`platformHomeRoute ?? homeRoute ?? firstLeaf`). */
   effectiveHomeRoute?: string | null;
+  /** Resolution source tier for `effectiveHomeRoute`. */
+  effectiveHomeSource?: string | null;
+  /** Slug of the menu item backing `effectiveHomeRoute`, when mapped to a menu item. */
+  effectiveHomeMenuSlug?: string | null;
+  /** Server-resolved English label for the workspace's effective home page. */
+  effectiveHomeLabelEn?: string | null;
+  /** Server-resolved Arabic label for the workspace's effective home page. */
+  effectiveHomeLabelAr?: string | null;
+  /** True when the effective home route is currently enforced by a role policy for this caller. */
+  isEffectiveHomeEnforced?: boolean;
+  /** Display name of the enforcing role (redacted/null for non-platform callers when appropriate). */
+  enforcingRoleName?: string | null;
   /** Reason why the workspace is locked. */
   lockReason?: string;
 }
@@ -68,6 +80,18 @@ export interface WorkspaceStubDto {
   accessibleItemCount?: number;
   /** Server-resolved home route for the active context. */
   effectiveHomeRoute?: string | null;
+  /** Resolution source tier for `effectiveHomeRoute`. */
+  effectiveHomeSource?: string | null;
+  /** Slug of the menu item backing `effectiveHomeRoute`, when mapped to a menu item. */
+  effectiveHomeMenuSlug?: string | null;
+  /** Server-resolved English label for the workspace's effective home page. */
+  effectiveHomeLabelEn?: string | null;
+  /** Server-resolved Arabic label for the workspace's effective home page. */
+  effectiveHomeLabelAr?: string | null;
+  /** True when the effective home route is currently enforced by a role policy for this caller. */
+  isEffectiveHomeEnforced?: boolean;
+  /** Display name of the enforcing role. */
+  enforcingRoleName?: string | null;
   /** Reason why the workspace is locked. */
   lockReason?: string;
 }

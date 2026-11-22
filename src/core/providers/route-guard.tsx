@@ -43,6 +43,7 @@ import {
   type AppRouteManifestEntry,
 } from "@core/config/app-route-manifest";
 import type { AuthorizedRouteDescriptor } from "@core/navigation/domain/interfaces/INavigationRepository";
+import type { WorkspaceGroup } from "@core/navigation/domain/entities/WorkspaceGroup";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { DashboardLayout } from "@core/ui/layout/dashboard-layout";
@@ -161,6 +162,102 @@ const emptySubscribe = () => () => {};
 const getClientMountedSnapshot = () => true;
 const getServerMountedSnapshot = () => false;
 
+function findRoutesForWorkspace(
+  workspaceRouteMap: Record<string, string[]>,
+  workspaceKey: string
+): string[] {
+  if (Object.prototype.hasOwnProperty.call(workspaceRouteMap, workspaceKey)) {
+    return workspaceRouteMap[workspaceKey] ?? [];
+  }
+  const lowerKey = workspaceKey.toLowerCase();
+  for (const [key, routes] of Object.entries(workspaceRouteMap)) {
+    if (key.toLowerCase() === lowerKey) {
+      return routes ?? [];
+    }
+  }
+  return [];
+}
+
+function resolveOwningWorkspaceKey(
+  currentPath: string,
+  currentMenuKey: string | undefined,
+  routeDescriptors: Map<string, AuthorizedRouteDescriptor>,
+  workspaceRouteMap: Record<string, string[]>,
+  workspaceGroups: WorkspaceGroup[]
+): string | null {
+  // 1. Authoritative routeDescriptor ownership (exact path or manifest menuRouteKey)
+  const exactDescriptor = routeDescriptors.get(currentPath);
+  if (exactDescriptor?.workspaceKey) {
+    return exactDescriptor.workspaceKey;
+  }
+  const normalizedMenuKey = currentMenuKey ? normalizeRoutePath(currentMenuKey) : null;
+  if (normalizedMenuKey) {
+    const menuDescriptor = routeDescriptors.get(normalizedMenuKey);
+    if (menuDescriptor?.workspaceKey) {
+      return menuDescriptor.workspaceKey;
+    }
+  }
+
+  // 2. Exact membership in workspaceRouteMap
+  for (const [wsKey, routes] of Object.entries(workspaceRouteMap)) {
+    if (
+      routes.some((r) => {
+        const normR = normalizeRoutePath(r);
+        return normR === currentPath || (normalizedMenuKey && normR === normalizedMenuKey);
+      })
+    ) {
+      return wsKey;
+    }
+  }
+
+  // 3. WorkspaceGroup homeRoute / platformHomeRoute / effectiveHomeRoute match
+  //    (handles denied HomeRoutes such as /crm that are omitted from workspaceRouteMap)
+  for (const ws of workspaceGroups) {
+    const candidateHomes = [ws.effectiveHomeRoute, ws.platformHomeRoute, ws.homeRoute]
+      .filter((r): r is string => Boolean(r && r.trim()))
+      .map((r) => normalizeRoutePath(r));
+    if (
+      candidateHomes.includes(currentPath) ||
+      (normalizedMenuKey && candidateHomes.includes(normalizedMenuKey))
+    ) {
+      return ws.workspaceKey;
+    }
+  }
+
+  // 4. Segment/prefix ownership against known workspaces, routeMap, or descriptors
+  const firstSeg = (normalizedMenuKey ?? currentPath).split("/").filter(Boolean)[0]?.toLowerCase();
+  if (firstSeg) {
+    const matchingGroup = workspaceGroups.find(
+      (ws) => ws.workspaceKey.toLowerCase() === firstSeg
+    );
+    if (matchingGroup) {
+      return matchingGroup.workspaceKey;
+    }
+
+    const prefix = `/${firstSeg}/`;
+    for (const [wsKey, routes] of Object.entries(workspaceRouteMap)) {
+      if (wsKey.toLowerCase() === firstSeg) {
+        return wsKey;
+      }
+      if (routes.some((r) => normalizeRoutePath(r).toLowerCase().startsWith(prefix))) {
+        return wsKey;
+      }
+    }
+
+    for (const descriptor of routeDescriptors.values()) {
+      if (
+        descriptor.workspaceKey &&
+        (descriptor.workspaceKey.toLowerCase() === firstSeg ||
+          normalizeRoutePath(descriptor.route).toLowerCase().startsWith(prefix))
+      ) {
+        return descriptor.workspaceKey;
+      }
+    }
+  }
+
+  return null;
+}
+
 function findAlternativeWorkspaceRoute(
   currentPath: string,
   currentMenuKey: string | undefined,
@@ -168,7 +265,12 @@ function findAlternativeWorkspaceRoute(
   hasRouteAccess: (path: string) => boolean,
   requireNavAccess = true
 ): string | null {
-  const workspaceRouteMap = useNavigationStore.getState().workspaceRouteMap || {};
+  const navState = useNavigationStore.getState();
+  const workspaceRouteMap = navState.workspaceRouteMap || {};
+  const routeDescriptors =
+    navState.routeDescriptors instanceof Map ? navState.routeDescriptors : new Map();
+  const workspaceGroups = Array.isArray(navState.workspaceGroups) ? navState.workspaceGroups : [];
+
   const isValidFallback = (candidate: string): boolean => {
     const normalizedCandidate = normalizeRoutePath(candidate);
     if (normalizedCandidate === currentPath) return false;
@@ -179,19 +281,39 @@ function findAlternativeWorkspaceRoute(
     return true;
   };
 
-  for (const routes of Object.values(workspaceRouteMap)) {
-    const belongsToWorkspace = routes.some((r) => {
-      const normR = normalizeRoutePath(r);
-      return normR === currentPath || (currentMenuKey && normR === currentMenuKey);
-    });
-    if (belongsToWorkspace) {
-      const sibling = routes.find(isValidFallback);
-      if (sibling) return sibling;
+  const owningWorkspaceKey = resolveOwningWorkspaceKey(
+    currentPath,
+    currentMenuKey,
+    routeDescriptors,
+    workspaceRouteMap,
+    workspaceGroups
+  );
+
+  if (owningWorkspaceKey) {
+    const owningGroup = workspaceGroups.find(
+      (ws) => ws.workspaceKey.toLowerCase() === owningWorkspaceKey.toLowerCase()
+    );
+    if (owningGroup?.effectiveHomeRoute && isValidFallback(owningGroup.effectiveHomeRoute)) {
+      return normalizeRoutePath(owningGroup.effectiveHomeRoute);
+    }
+
+    const sameWorkspaceRoutes = findRoutesForWorkspace(workspaceRouteMap, owningWorkspaceKey);
+    const sameWorkspaceFallback = sameWorkspaceRoutes.find(isValidFallback);
+    if (sameWorkspaceFallback) {
+      return sameWorkspaceFallback;
     }
   }
 
-  const allWorkspaceRoutes = Object.values(workspaceRouteMap).flat();
-  return allWorkspaceRoutes.find(isValidFallback) ?? null;
+  // Never bounce into an unrelated workspace. When other authorized destinations exist
+  // (e.g. another workspace or unlocked Hub access), route cleanly to /hub; otherwise fail closed.
+  const hasAnyAuthorizedRoute =
+    Object.values(workspaceRouteMap).flat().some(isValidFallback) ||
+    workspaceGroups.some((ws) => !ws.isLocked && ws.accessibleItemCount > 0);
+  if (hasAnyAuthorizedRoute && currentPath !== "/hub" && canAccessPage("/hub")) {
+    return "/hub";
+  }
+
+  return null;
 }
 
 /**

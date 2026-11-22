@@ -200,10 +200,17 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
         {t("nav.skipToContent")}
       </a>
 
-      <TenantContextBanner />
+      <div
+        data-account-sticky-chrome="true"
+        className="sticky top-0 z-header w-full bg-nx-surface"
+      >
+        <TenantContextBanner />
 
-      {/* ── Top Standalone Sovereign Header ───────────────────────────────── */}
-      <header className="sticky top-0 z-header w-full border-b border-nx-line bg-nx-surface">
+        {/* ── Top Standalone Sovereign Header ───────────────────────────────── */}
+        <header
+          data-account-topbar="true"
+          className="w-full border-b border-nx-line bg-nx-surface"
+        >
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-1.5 sm:gap-3 min-w-0">
           {/* Leading: Return to Dashboard Action + Brand Identity */}
           <div className="flex items-center gap-2 sm:gap-3 min-w-0">
@@ -355,6 +362,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
           </div>
         </div>
       </header>
+      </div>
 
       {/* Broadcast Privacy Blur Active Banner */}
       {privacyBlur && (

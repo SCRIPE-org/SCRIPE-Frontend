@@ -452,7 +452,7 @@ describe("RouteGuard - Hardened Phase 2 Option C Security & Context Gates", () =
       </RouteGuard>
     );
     expect(screen.queryByTestId("overview-content")).not.toBeInTheDocument();
-    expect(mockRouterReplace).toHaveBeenCalledWith("/crm");
+    expect(mockRouterReplace).toHaveBeenCalledWith("/hub");
   });
 
   it("enforces requiresTenantContext on shell_authenticated routes /my-plan and /my-subscription", () => {
@@ -659,7 +659,7 @@ describe("RouteGuard - Hardened Phase 2 Option C Security & Context Gates", () =
     expect(screen.getByTestId("feature-unavailable-gate")).toHaveAttribute("data-feature", "CRM.Core");
   });
 
-  it("redirects to accessible sibling/global fallback when menu_bound route is excluded without special gate", () => {
+  it("redirects cleanly to /hub instead of bouncing to an unrelated workspace when the denied route has no same-workspace fallback", () => {
     const navState = mockUseNavigationStore.getState();
     navState.hasRouteAccess.mockImplementation((p: string) => p === "/overview");
     navState.workspaceRouteMap = { admin: ["/overview"] };
@@ -673,7 +673,82 @@ describe("RouteGuard - Hardened Phase 2 Option C Security & Context Gates", () =
     );
 
     expect(screen.queryByTestId("crm-content")).not.toBeInTheDocument();
-    expect(mockRouterReplace).toHaveBeenCalledWith("/overview");
+    expect(mockRouterReplace).toHaveBeenCalledWith("/hub");
+    expect(mockRouterReplace).not.toHaveBeenCalledWith("/overview");
+  });
+
+  it("stays strictly inside the owning workspace via routeDescriptors.workspaceKey when /crm is unauthorized", () => {
+    const navState = mockUseNavigationStore.getState();
+    currentPathname = "/crm";
+    mockCanAccessPage.mockImplementation((p?: string) => p !== "/crm");
+    mockRouteDescriptors.set("/crm", {
+      route: "/crm",
+      accessState: "authorized",
+      workspaceKey: "crm",
+      requiresTenantContext: true,
+    });
+    navState.hasRouteAccess.mockImplementation(
+      (p: string) => p === "/overview" || p === "/crm/leads"
+    );
+    navState.workspaceRouteMap = {
+      admin: ["/overview"],
+      crm: ["/crm/leads"],
+    };
+
+    render(
+      <RouteGuard>
+        <div data-testid="crm-content">CRM</div>
+      </RouteGuard>
+    );
+
+    expect(screen.queryByTestId("crm-content")).not.toBeInTheDocument();
+    expect(mockRouterReplace).toHaveBeenCalledWith("/crm/leads");
+    expect(mockRouterReplace).not.toHaveBeenCalledWith("/overview");
+  });
+
+  it("redirects un-itemed /hrms cleanly to authorized hrms sibling/effectiveHomeRoute when user lacks staff-members.view", () => {
+    const navState = mockUseNavigationStore.getState();
+    currentPathname = "/hrms";
+    mockCanAccessPage.mockImplementation(
+      (p?: string) => p === "/hrms" || p === "/hrms/employment-records"
+    );
+    navState.hasRouteAccess.mockImplementation(
+      (p: string) => p === "/overview" || p === "/hrms/employment-records"
+    );
+    navState.workspaceRouteMap = {
+      admin: ["/overview"],
+      hrms: ["/hrms/employment-records"],
+    };
+
+    render(
+      <RouteGuard>
+        <div data-testid="hrms-content">HRMS</div>
+      </RouteGuard>
+    );
+
+    expect(screen.queryByTestId("hrms-content")).not.toBeInTheDocument();
+    expect(mockRouterReplace).toHaveBeenCalledWith("/hrms/employment-records");
+    expect(mockRouterReplace).not.toHaveBeenCalledWith("/overview");
+  });
+
+  it("keeps /hrms fail-closed for zero-HRMS callers without bouncing into an unrelated workspace", () => {
+    const navState = mockUseNavigationStore.getState();
+    currentPathname = "/hrms";
+    mockCanAccessPage.mockImplementation((p?: string) => p === "/hub" || p === "/venue");
+    navState.hasRouteAccess.mockImplementation((p: string) => p === "/venue");
+    navState.workspaceRouteMap = {
+      venue: ["/venue"],
+    };
+
+    render(
+      <RouteGuard>
+        <div data-testid="hrms-content">HRMS</div>
+      </RouteGuard>
+    );
+
+    expect(screen.queryByTestId("hrms-content")).not.toBeInTheDocument();
+    expect(mockRouterReplace).toHaveBeenCalledWith("/hub");
+    expect(mockRouterReplace).not.toHaveBeenCalledWith("/venue");
   });
 
   it("performs complete forceLogout cleanup (including app-storage) and redirects cleanly when Case 4 returns null principal", async () => {

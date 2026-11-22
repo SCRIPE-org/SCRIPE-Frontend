@@ -192,4 +192,27 @@ describe("AccountLayout Sign Out", () => {
     fireEvent.click(screen.getByRole("button", { name: "profile.accountPortal.backToDashboard" }));
     expect(mockRouterPush).toHaveBeenCalledWith("/hub");
   });
+
+  it("pins TenantContextBanner and data-account-topbar inside one opaque sticky chrome wrapper without double-offsetting header", () => {
+    mockBannerState.isImpersonating = true;
+
+    const { container } = render(
+      <AccountLayout>
+        <div>Console body</div>
+      </AccountLayout>
+    );
+
+    const stickyChrome = container.querySelector('[data-account-sticky-chrome="true"]');
+    const banner = screen.getByText("chrome.tenantBanner.impersonating");
+    const header = container.querySelector('header[data-account-topbar="true"]');
+
+    expect(stickyChrome).not.toBeNull();
+    expect(stickyChrome?.className).toContain("sticky");
+    expect(stickyChrome?.className).toContain("top-0");
+    expect(stickyChrome?.className).toContain("z-header");
+    expect(stickyChrome?.className).toContain("bg-nx-surface");
+    expect(stickyChrome?.contains(banner)).toBe(true);
+    expect(stickyChrome?.contains(header)).toBe(true);
+    expect(header?.className).not.toContain("sticky");
+  });
 });

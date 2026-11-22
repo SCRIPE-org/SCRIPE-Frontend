@@ -250,4 +250,38 @@ export const createWorkspaceSlice: StateCreator<NavigationStoreState, [], [], Wo
       return { workspaceGroups: updatedGroups };
     });
   },
+
+  updateWorkspaceStartPageLocal: (workspaceKey, patch) => {
+    set((state) => {
+      const normalizedTargetKey = workspaceKey.toLowerCase();
+      const updatedGroups = state.workspaceGroups.map((g) => {
+        if (g.workspaceKey.toLowerCase() !== normalizedTargetKey) return g;
+        return new WorkspaceGroup({
+          ...g.toData(),
+          ...(patch.effectiveHomeRoute !== undefined
+            ? { effectiveHomeRoute: patch.effectiveHomeRoute }
+            : {}),
+          ...(patch.effectiveHomeSource !== undefined
+            ? { effectiveHomeSource: patch.effectiveHomeSource }
+            : {}),
+          ...(patch.effectiveHomeMenuSlug !== undefined
+            ? { effectiveHomeMenuSlug: patch.effectiveHomeMenuSlug }
+            : {}),
+          ...(patch.effectiveHomeLabelEn !== undefined
+            ? { effectiveHomeLabelEn: patch.effectiveHomeLabelEn }
+            : {}),
+          ...(patch.effectiveHomeLabelAr !== undefined
+            ? { effectiveHomeLabelAr: patch.effectiveHomeLabelAr }
+            : {}),
+          ...(patch.isEffectiveHomeEnforced !== undefined
+            ? { isEffectiveHomeEnforced: patch.isEffectiveHomeEnforced }
+            : {}),
+          ...(patch.enforcingRoleName !== undefined
+            ? { enforcingRoleName: patch.enforcingRoleName }
+            : {}),
+        });
+      });
+      return { workspaceGroups: updatedGroups };
+    });
+  },
 });

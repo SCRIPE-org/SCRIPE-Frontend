@@ -177,12 +177,13 @@ export function NexusLayout({ children }: NexusLayoutProps) {
             returnFocusRef={mobileToggleRef}
             onOpenAppLauncher={() => setAppLauncherOpen(true)}
             mobileFooter={
-              <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center justify-between gap-2.5">
                 <UserProfileDropdown
                   variant="compact"
                   showName={true}
                   side="top"
                   align="start"
+                  className="min-w-0 flex-1 justify-start"
                 />
                 {showNotifications && (
                   <NotificationBell

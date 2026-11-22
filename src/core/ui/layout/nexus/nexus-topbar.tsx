@@ -40,6 +40,8 @@ import {
   TopbarHomeButton,
   TopbarPanelToggle,
   TopbarSearchButton,
+  renderBidiWorkspaceStartTooltip,
+  resolveWorkspaceStartTarget,
 } from "./_parts/topbar-parts";
 import { hasSecondarySubmenu } from "./_parts/nexus-layout-constants";
 import { useNavigationStore } from "@/core/navigation/store/useNavigationStore";
@@ -54,6 +56,37 @@ interface NexusTopbarProps {
   toggleButtonRef?: React.Ref<HTMLButtonElement>;
   extraActions?: React.ReactNode;
 }
+
+const KNOWN_ENTITY_SINGULAR_SEGMENTS = new Set([
+  "roles",
+  "users",
+  "admins",
+  "tenants",
+  "editions",
+  "user-groups",
+  "leads",
+  "opportunities",
+  "accounts",
+  "contacts",
+  "activities",
+  "pipelines",
+  "bookings",
+  "facilities",
+  "resources",
+  "athletes",
+  "staff-members",
+  "employment-records",
+  "webhooks",
+  "oauth-apps",
+  "apikeys",
+  "domains",
+  "customers",
+  "invoices",
+  "payments",
+  "permissions",
+  "features",
+  "plugins",
+]);
 
 export function NexusTopbar({
   onMobileMenuOpen,
@@ -71,8 +104,11 @@ export function NexusTopbar({
   const router = useRouter();
   const user = useAppStore((s) => s.user);
   const { activeTenantName, isPlatform: isPlatformContext } = useAdminContext();
-  const { hasPermission } = usePermissions();
+  const { hasPermission, canAccessPage } = usePermissions();
   const [switcherOpen, setSwitcherOpen] = useState(false);
+  const workspaceRouteMap = useNavigationStore((s) => s?.workspaceRouteMap);
+  const routesLoaded = useNavigationStore((s) => s?.routesLoaded);
+  const hasRouteAccess = useNavigationStore((s) => s?.hasRouteAccess);
 
   const canSwitchContext =
     typeof hasPermission === "function" &&
@@ -110,6 +146,16 @@ export function NexusTopbar({
 
   const formatParentSegmentAsTitle = (parentSegment: string): string => {
     if (!parentSegment) return t("common.details");
+    const normalizedSegment = parentSegment.trim().toLowerCase();
+    if (KNOWN_ENTITY_SINGULAR_SEGMENTS.has(normalizedSegment)) {
+      const singularEntity = t(`navigation.entitySingulars.${normalizedSegment}`);
+      return t("navigation.entityDetailsTitle", { entity: singularEntity });
+    }
+    const routeSegmentKey = `nav.routeSegments.${normalizedSegment}`;
+    const localizedRouteSegment = t(routeSegmentKey);
+    if (localizedRouteSegment && localizedRouteSegment !== routeSegmentKey) {
+      return t("navigation.entityDetailsTitle", { entity: localizedRouteSegment });
+    }
     let word = parentSegment.replace(/[-_]/g, " ");
     if (word.toLowerCase().endsWith("ies") && word.length > 3) {
       word = `${word.slice(0, -3)}y`;
@@ -217,19 +263,36 @@ export function NexusTopbar({
     };
   })();
 
-  // ── Home route — context-aware, backend-authoritative per workspace ───────────
-  // When no workspace is active (e.g. /hub), home resolves to "/hub".
-  // Platform context (no tenant): use platformHomeRoute > homeRoute > "/"
-  // Tenant context: use homeRoute > "/"
-  const workspaceHomeRoute = activeWorkspace
-    ? isPlatformContext
-      ? (activeWorkspace.platformHomeRoute ?? activeWorkspace.homeRoute ?? "/")
-      : (activeWorkspace.homeRoute ?? "/")
-    : "/hub";
-  const normalizedHomeRoute = workspaceHomeRoute.toLowerCase().replace(/\/+$/, "") || "/";
+  // ── Home route — unified server-authoritative workspace start target ──────────
+  const startTarget = resolveWorkspaceStartTarget({
+    activeWorkspace,
+    rootMenuItems,
+    workspaceRouteMap,
+    isPlatformContext,
+    canAccessPage,
+    routesLoaded,
+    hasRouteAccess,
+    language,
+    t,
+  });
+  const workspaceHomeRoute = startTarget.route;
+  const normalizedHomeRoute = startTarget.normalizedRoute;
   const isOnHome =
     normalizedPathname === normalizedHomeRoute ||
     (workspaceHomeRoute === "/" && normalizedPathname === "/");
+  const homeTooltip = activeWorkspace
+    ? startTarget.pageLabel
+      ? t("chrome.workspaceStartPageTooltip", {
+          workspace: workspaceName,
+          page: startTarget.pageLabel,
+        })
+      : t("chrome.goToHome")
+    : t("chrome.allWorkspaces");
+  const homeTooltipNode: React.ReactNode = activeWorkspace
+    ? startTarget.pageLabel
+      ? renderBidiWorkspaceStartTooltip(t, workspaceName, startTarget.pageLabel)
+      : t("chrome.goToHome")
+    : t("chrome.allWorkspaces");
 
   return (
     <header
@@ -295,7 +358,8 @@ export function NexusTopbar({
 
         {!isOnHome && (
           <TopbarHomeButton
-            ariaLabel={t("chrome.goToHome")}
+            ariaLabel={homeTooltip}
+            tooltip={homeTooltipNode}
             onClick={() => {
               startRoutingProgress();
               router.push(workspaceHomeRoute);
