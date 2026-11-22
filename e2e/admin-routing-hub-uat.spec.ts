@@ -22,7 +22,7 @@ import { getDevAdminPassword } from "./helpers/auth-credentials";
 
 const API_URL = process.env.E2E_API_URL || process.env.NEXT_PUBLIC_API_URL?.replace(/\/api\/?$/, "") || "http://localhost:5035";
 const SCREENSHOT_DIR = path.resolve(
-  "d:/01_PROJECTS/SCRIPE/SCRIPE-CRM/EXECUTION_REPORTS/ADMIN-ROUTING-HUB/screenshots"
+  "d:/01_PROJECTS/SCRIPE/SCRIPE-CRM/EXECUTION_REPORTS/ADMIN-ROUTING-HUB-LAUNCHPAD/screenshots"
 );
 
 if (!fs.existsSync(SCREENSHOT_DIR)) {
@@ -102,12 +102,10 @@ function attachRuntimeMonitor(page: Page): RuntimeErrorMonitor {
       clientHttpErrors.length = 0;
     },
     assertClean(contextLabel: string) {
-      if (clientHttpErrors.length > 0) {
-        console.warn(`[RuntimeMonitor:${contextLabel}] 4xx API responses:`, JSON.stringify(clientHttpErrors));
-      }
       expect(consoleErrors, `Console errors in ${contextLabel}`).toEqual([]);
       expect(pageErrors, `Uncaught pageerrors in ${contextLabel}`).toEqual([]);
       expect(serverErrors, `Unexpected HTTP 5xx in ${contextLabel}`).toEqual([]);
+      expect(clientHttpErrors, `Unexpected 4xx API responses in ${contextLabel}`).toEqual([]);
     },
     detach() {
       page.off("console", onConsole);
@@ -314,6 +312,28 @@ async function assertSingleMainLandmark(page: Page, label: string) {
     "id",
     "nexus-content"
   );
+}
+
+async function assertSingleHubLaunchpadLandmark(page: Page, label: string) {
+  const mains = page.locator("main");
+  await expect(mains, `Expected single <main> landmark on ${label}`).toHaveCount(1);
+  await expect(mains.first(), `Expected <main id="hub-content"> on ${label}`).toHaveAttribute(
+    "id",
+    "hub-content"
+  );
+  await expect(
+    page.locator("main#nexus-content"),
+    `Zero <main id="nexus-content"> allowed on ${label}`
+  ).toHaveCount(0);
+  await expect(
+    page.locator("[data-nexus-topbar]"),
+    `Zero [data-nexus-topbar] allowed on ${label}`
+  ).toHaveCount(0);
+  await expect(
+    page.locator('nav[aria-label="Primary navigation"], nav[aria-label="التنقل الرئيسي"]'),
+    `Zero Nexus primary navigation rail allowed on ${label}`
+  ).toHaveCount(0);
+  await expect(page.getByTestId("hub-topbar"), `Expected HubTopbar on ${label}`).toHaveCount(1);
 }
 
 async function assertNoHorizontalOverflow(page: Page, contextLabel: string) {
@@ -640,7 +660,7 @@ test.describe("Task 12 — Admin Routing, Personal Hub (/hub), Landing Policy & 
   }
 
   // ── Scenario 1 & 2: Platform Super Admin & Tenant Super Admin ──────────────────────
-  test("01 & 02: Platform Super Admin and Tenant Super Admin land on /overview, logo navigates to /hub, single <main id='nexus-content'>", async ({
+  test("01 & 02: Platform Super Admin and Tenant Super Admin land on /overview, logo navigates to /hub, standalone Launchpad landmarks", async ({
     page,
   }) => {
     const monitor = attachRuntimeMonitor(page);
@@ -653,15 +673,36 @@ test.describe("Task 12 — Admin Routing, Personal Hub (/hub), Landing Policy & 
       await assertSingleMainLandmark(page, "Platform SA /overview");
       await setTheme(page, "dark");
       await assertNoHorizontalOverflow(page, "Platform SA /overview");
-      await safeScreenshot(page, "01-platform-super-admin-overview.png");
 
-      // Logo click navigates to /hub
+      // Logo click navigates to standalone /hub Launchpad
       const logoBtn = page.getByRole("button", { name: "Go to Home" }).first();
       await expect(logoBtn).toBeVisible({ timeout: 10_000 });
       await logoBtn.click();
       await page.waitForURL(/\/hub(?:\?.*)?$/, { timeout: 15_000 });
       await waitForAppSettled(page);
-      await assertSingleMainLandmark(page, "Platform SA /hub");
+      await assertSingleHubLaunchpadLandmark(page, "Platform SA /hub");
+      await expect(page.getByTestId("hub-return-workspace-btn")).toBeVisible({ timeout: 10_000 });
+
+      // Billing-only "Available to unlock" section renders for Platform SA without tenant context
+      const unlockRegion = page.getByRole("region", { name: /Available to unlock/i });
+      await expect(unlockRegion).toBeVisible({ timeout: 10_000 });
+      const firstLockedBtn = unlockRegion
+        .getByTestId("hub-app-squircle")
+        .first()
+        .locator("button[aria-disabled='true']")
+        .first();
+      await expect(firstLockedBtn).toBeVisible({ timeout: 5_000 });
+      const lockedBox = await firstLockedBtn.boundingBox();
+      expect(lockedBox).toBeTruthy();
+      await page.mouse.click(
+        lockedBox!.x + lockedBox!.width / 2,
+        lockedBox!.y + lockedBox!.height / 2
+      );
+      const upgradeAlert = page.getByRole("alertdialog");
+      await expect(upgradeAlert).toBeVisible({ timeout: 5_000 });
+      await upgradeAlert.getByRole("button", { name: /Cancel/i }).click();
+      await expect(upgradeAlert).toBeHidden({ timeout: 5_000 });
+
       monitor.assertClean("Scenario 1 Platform Super Admin");
 
       // 2. Tenant Super Admin
@@ -672,13 +713,20 @@ test.describe("Task 12 — Admin Routing, Personal Hub (/hub), Landing Policy & 
       await expect(page).toHaveURL(/\/overview(?:\?.*)?$/);
       await assertSingleMainLandmark(page, "Tenant SA /overview");
 
-      // Navigate to /hub via logo click and verify single <main id="nexus-content">
+      // Navigate to /hub via logo click, verify standalone Launchpad + Return-to-Workspace round-trip
       const tenantLogoBtn = page.getByRole("button", { name: "Go to Home" }).first();
       await expect(tenantLogoBtn).toBeVisible({ timeout: 10_000 });
       await tenantLogoBtn.click();
       await page.waitForURL(/\/hub(?:\?.*)?$/, { timeout: 15_000 });
       await waitForAppSettled(page);
-      await assertSingleMainLandmark(page, "Tenant SA /hub");
+      await assertSingleHubLaunchpadLandmark(page, "Tenant SA /hub");
+
+      const returnToAdminBtn = page.getByTestId("hub-return-workspace-btn");
+      await expect(returnToAdminBtn).toBeVisible({ timeout: 10_000 });
+      await returnToAdminBtn.click();
+      await page.waitForURL(/\/overview(?:\?.*)?$/, { timeout: 15_000 });
+      await waitForAppSettled(page);
+      await assertSingleMainLandmark(page, "Tenant SA return to /overview");
       monitor.assertClean("Scenario 2 Tenant Super Admin");
     } finally {
       monitor.detach();
@@ -725,8 +773,8 @@ test.describe("Task 12 — Admin Routing, Personal Hub (/hub), Landing Policy & 
     }
   });
 
-  // ── Scenario 4 & 12: Multi-workspace Admin Hub, Single-Pass Bootstrap, Pins, Recents, Feeds, Search <bdi>, Themes, RTL & Mobile ──
-  test("04 & 12: Multi-workspace Admin lands on /hub, single bootstrap call, 0 audit/hub-summary, pin persistence, recents, feeds, Search <bdi>, Light/Dark/AR-RTL/Mobile-390", async ({
+  // ── Scenario 4 & 12: Standalone Launchpad (/hub), Single-Pass Bootstrap, Pins, Recents, Popovers, Type-Anywhere <bdi>, Themes, RTL & Mobile ──
+  test("04 & 12: Multi-workspace Admin lands on standalone /hub Launchpad, single bootstrap, unified squircles, pins, recents, popovers, Type-Anywhere <bdi>, Return pill, Dark/Light/AR-RTL/Mobile-390", async ({
     page,
     request,
   }) => {
@@ -734,6 +782,7 @@ test.describe("Task 12 — Admin Routing, Personal Hub (/hub), Landing Policy & 
     const navBootstrapCalls: string[] = [];
     const routesEndpointCalls: string[] = [];
     const hubSummaryCalls: string[] = [];
+    const ephemeralNotificationIds: string[] = [];
 
     page.on("request", (req) => {
       const url = req.url().toLowerCase();
@@ -742,150 +791,423 @@ test.describe("Task 12 — Admin Routing, Personal Hub (/hub), Landing Policy & 
       }
       if (url.includes("/api/v1/menus/navigation/routes")) {
         routesEndpointCalls.push(url);
-      } else if (url.includes("/api/v1/menus/navigation") && !url.includes("workspace=") && !url.includes("/workspaces")) {
+      } else if (
+        url.includes("/api/v1/menus/navigation") &&
+        !url.includes("workspace=") &&
+        !url.includes("/workspaces")
+      ) {
         navBootstrapCalls.push(url);
       }
     });
 
     try {
+      // ── Part A: Front-desk multi-workspace direct login to /hub ───────────────
       await resetBrowserSession(page);
       await loginViaUi(page, AHLY_MULTI_WORKSPACE_EMAIL, adminPwd);
 
-      // Should land on /hub (2+ unlocked workspaces: venue + party-kernel, non-SA)
+      // Should land directly on standalone /hub without Nexus dual-rail chrome or Return pill
       await expect(page).toHaveURL(/\/hub(?:\?.*)?$/);
-      await assertSingleMainLandmark(page, "Multi-workspace /hub");
+      await assertSingleHubLaunchpadLandmark(page, "Multi-workspace /hub");
+      await expect(page.getByTestId("hub-return-workspace-btn")).toHaveCount(0);
 
       // Single bootstrap call & ZERO /audit/hub-summary & ZERO /menus/navigation/routes on startup
       expect(hubSummaryCalls, "Zero /api/v1/audit/hub-summary calls must be fired").toEqual([]);
-      expect(routesEndpointCalls, "Zero duplicate /menus/navigation/routes calls on startup").toEqual([]);
+      expect(routesEndpointCalls, "Zero duplicate /menus/navigation/routes calls on startup").toEqual(
+        []
+      );
       expect(navBootstrapCalls.length).toBe(1);
 
-      // Only authorized unlocked workspaces shown (no Upgrade section since front-desk lacks billing perms)
-      await expect(page.getByText("Available to Upgrade")).toHaveCount(0);
-      const venueTileBtn = page.getByRole("button", { name: /Venue/i }).first();
-      await expect(venueTileBtn).toBeVisible({ timeout: 10_000 });
+      // Billing-only "Available to unlock" hidden for front-desk (lacks billing perms)
+      await expect(page.getByRole("heading", { name: /^Available to unlock$/i })).toHaveCount(0);
+      await expect(page.getByText(/Available to unlock/i)).toHaveCount(0);
 
-      // Side panel: Notifications empty state for front-desk + Sign-In Activity populated (from real login)
-      const sidePanel = page.getByTestId("hub-side-panel");
-      await expect(sidePanel).toBeVisible({ timeout: 10_000 });
-      await expect(sidePanel.getByText(/Actionable Notifications/i)).toBeVisible();
-      await expect(sidePanel.getByText(/Account & Sign-In Activity/i)).toBeVisible();
-      await expect(sidePanel.getByText(/no unread notifications/i)).toBeVisible({ timeout: 10_000 });
+      // Unified zero-duplicate squircle grid (Venue + Contacts = 2 squircles total)
+      const appsRegion = page.getByRole("region", { name: /Authorized workspaces/i });
+      const squircles = appsRegion.getByTestId("hub-app-squircle");
+      await expect(squircles).toHaveCount(2);
 
-      // Desktop Light Theme capture
-      await setTheme(page, "light");
-      await assertNoHorizontalOverflow(page, "Hub Desktop Light EN");
-      await safeScreenshot(page, "02-hub-desktop-light-en.png");
-
-      // Desktop Dark Theme capture
-      await setTheme(page, "dark");
-      await assertNoHorizontalOverflow(page, "Hub Desktop Dark EN");
-      await safeScreenshot(page, "03-hub-desktop-dark-en.png");
-
-      // Pin a workspace ("Venue"), reload, assert persisted in DB, then unpin to restore
-      const pinVenueBtn = page.getByRole("button", { name: /^Pin\s+Venue/i }).first();
-      const unpinAlreadyBtn = page.getByRole("button", { name: /^Unpin\s+Venue/i }).first();
-      const wasInitiallyPinned = (await unpinAlreadyBtn.count()) > 0;
-
-      if (!wasInitiallyPinned) {
-        await expect(pinVenueBtn).toBeVisible({ timeout: 5_000 });
-        const pinReq = page.waitForResponse(
-          (r) => r.url().includes("/api/v1/menus/navigation/workspaces/") && r.url().includes("/pin"),
+      // Normalize initial state, then verify full Pin -> Reload -> Unpin -> Reload -> Re-Pin -> Reload -> Unpin cycle
+      const waitPinToggle = () =>
+        page.waitForResponse(
+          (r) =>
+            r.url().includes("/api/v1/menus/navigation/workspaces/") && r.url().includes("/pin"),
           { timeout: 15_000 }
         );
-        await pinVenueBtn.click();
-        const pinRes = await pinReq;
-        expect(pinRes.ok()).toBeTruthy();
 
-        await expect(page.getByRole("button", { name: /^Unpin\s+Venue/i }).first()).toBeVisible({
-          timeout: 10_000,
-        });
+      const unpinAlreadyBtn = appsRegion.getByRole("button", { name: /^Unpin\s+Venue/i }).first();
+      if ((await unpinAlreadyBtn.count()) > 0) {
+        const preUnpinReq = waitPinToggle();
+        await unpinAlreadyBtn.click();
+        expect((await preUnpinReq).ok()).toBeTruthy();
+        await expect(appsRegion.getByRole("button", { name: /^Pin\s+Venue/i }).first()).toBeVisible(
+          { timeout: 10_000 }
+        );
         await page.reload();
         await waitForAppSettled(page);
-        await expect(page.getByRole("button", { name: /^Unpin\s+Venue/i }).first()).toBeVisible({
-          timeout: 10_000,
-        });
-
-        // Unpin to restore clean state
-        const unpinReq = page.waitForResponse(
-          (r) => r.url().includes("/api/v1/menus/navigation/workspaces/") && r.url().includes("/pin"),
-          { timeout: 15_000 }
-        );
-        await page.getByRole("button", { name: /^Unpin\s+Venue/i }).first().click();
-        expect((await unpinReq).ok()).toBeTruthy();
+        await assertSingleHubLaunchpadLandmark(page, "Reloaded /hub after initial unpin normalization");
       }
 
-      // Open Contacts workspace (/party-kernel) -> return to /hub -> verify Recent Workspaces strip updates
-      await page.getByRole("button", { name: /^Contacts/i }).first().click();
-      await page.waitForURL(/\/party-kernel(?:\/.*)?$/, { timeout: 20_000 });
+      // 1) Pin Venue -> persists across reload cleanly without duplicating squircles
+      const pinVenueBtn = appsRegion.getByRole("button", { name: /^Pin\s+Venue/i }).first();
+      await expect(pinVenueBtn).toBeVisible({ timeout: 5_000 });
+      const pinReq1 = waitPinToggle();
+      await pinVenueBtn.click();
+      expect((await pinReq1).ok()).toBeTruthy();
+
+      await expect(appsRegion.getByRole("button", { name: /^Unpin\s+Venue/i }).first()).toBeVisible(
+        { timeout: 10_000 }
+      );
+      await expect(squircles).toHaveCount(2);
+      await expect(squircles.first()).toContainText(/Venue/i);
+
+      await page.reload();
       await waitForAppSettled(page);
+      await assertSingleHubLaunchpadLandmark(page, "Reloaded /hub after pin");
+      await expect(appsRegion.getByRole("button", { name: /^Unpin\s+Venue/i }).first()).toBeVisible(
+        { timeout: 10_000 }
+      );
+      await expect(squircles).toHaveCount(2);
+      await expect(squircles.first()).toContainText(/Venue/i);
+
+      // 2) Unpin Venue -> persists unpinned across reload (zero zombie pins)
+      const unpinReq1 = waitPinToggle();
+      await appsRegion.getByRole("button", { name: /^Unpin\s+Venue/i }).first().click();
+      expect((await unpinReq1).ok()).toBeTruthy();
+      await expect(appsRegion.getByRole("button", { name: /^Pin\s+Venue/i }).first()).toBeVisible(
+        { timeout: 10_000 }
+      );
+
+      await page.reload();
+      await waitForAppSettled(page);
+      await assertSingleHubLaunchpadLandmark(page, "Reloaded /hub after unpin");
+      await expect(appsRegion.getByRole("button", { name: /^Pin\s+Venue/i }).first()).toBeVisible(
+        { timeout: 10_000 }
+      );
+      await expect(squircles).toHaveCount(2);
+
+      // 3) Re-Pin Venue (soft-deleted reactivation) -> persists across reload -> final unpin cleanup
+      const pinReq2 = waitPinToggle();
+      await appsRegion.getByRole("button", { name: /^Pin\s+Venue/i }).first().click();
+      expect((await pinReq2).ok()).toBeTruthy();
+      await expect(appsRegion.getByRole("button", { name: /^Unpin\s+Venue/i }).first()).toBeVisible(
+        { timeout: 10_000 }
+      );
+      await expect(squircles).toHaveCount(2);
+      await expect(squircles.first()).toContainText(/Venue/i);
+
+      await page.reload();
+      await waitForAppSettled(page);
+      await assertSingleHubLaunchpadLandmark(page, "Reloaded /hub after re-pin");
+      await expect(appsRegion.getByRole("button", { name: /^Unpin\s+Venue/i }).first()).toBeVisible(
+        { timeout: 10_000 }
+      );
+      await expect(squircles).toHaveCount(2);
+      await expect(squircles.first()).toContainText(/Venue/i);
+
+      const unpinCleanupReq = waitPinToggle();
+      await appsRegion.getByRole("button", { name: /^Unpin\s+Venue/i }).first().click();
+      expect((await unpinCleanupReq).ok()).toBeTruthy();
+      await expect(appsRegion.getByRole("button", { name: /^Pin\s+Venue/i }).first()).toBeVisible(
+        { timeout: 10_000 }
+      );
+
+      // Front-desk Notifications Bell popover: All | Unread tabs + empty state
+      await page.getByTestId("hub-notifications-trigger").click();
+      const fdNotifPopover = page.getByTestId("hub-notifications-popover");
+      await expect(fdNotifPopover).toBeVisible({ timeout: 5_000 });
+      await expect(fdNotifPopover.getByRole("tab", { name: /^All$/i })).toHaveAttribute(
+        "aria-selected",
+        "true"
+      );
+      await expect(fdNotifPopover.getByRole("tab", { name: /^Unread$/i })).toBeVisible();
+      await expect(fdNotifPopover.getByText(/no unread notifications/i)).toBeVisible({
+        timeout: 10_000,
+      });
+      await page.keyboard.press("Escape");
+      await expect(fdNotifPopover).toBeHidden({ timeout: 5_000 });
+
+      // Front-desk Activity Clock popover: opens cleanly (empty or populated depending on audit stream)
+      await page.getByTestId("hub-activity-trigger").click();
+      const fdActPopover = page.getByTestId("hub-activity-popover");
+      await expect(fdActPopover).toBeVisible({ timeout: 5_000 });
+      await expect(fdActPopover.getByRole("heading", { name: /Account & Sign-In Activity/i })).toBeVisible();
+      await expect(fdActPopover.getByRole("link", { name: /View full activity log/i })).toHaveAttribute(
+        "href",
+        "/account/activity"
+      );
+      await page.keyboard.press("Escape");
+      await expect(fdActPopover).toBeHidden({ timeout: 5_000 });
+
+      // Visit Venue AND Contacts so >=2 recents exist -> HubRecentStrip + Return-to-Workspace pill (click + Esc)
+      await appsRegion.getByRole("button", { name: /^Venue/i }).first().click();
+      await page.waitForURL(/\/venue(?:\/.*)?$/, { timeout: 20_000 });
+      await waitForAppSettled(page);
+      await assertSingleMainLandmark(page, "Front-desk /venue");
 
       await page.getByRole("button", { name: "Go to Home" }).first().click();
       await page.waitForURL(/\/hub(?:\?.*)?$/, { timeout: 15_000 });
       await waitForAppSettled(page);
+      await assertSingleHubLaunchpadLandmark(page, "Returned to /hub from Venue");
+
+      await appsRegion.getByRole("button", { name: /^Contacts/i }).first().click();
+      await page.waitForURL(/\/party-kernel(?:\/.*)?$/, { timeout: 20_000 });
+      await waitForAppSettled(page);
+      await assertSingleMainLandmark(page, "Front-desk /party-kernel");
+
+      await page.getByRole("button", { name: "Go to Home" }).first().click();
+      await page.waitForURL(/\/hub(?:\?.*)?$/, { timeout: 15_000 });
+      await waitForAppSettled(page);
+      await assertSingleHubLaunchpadLandmark(page, "Returned to /hub from Contacts");
+
+      // HubRecentStrip visible when >=2 recents exist
       const recentStrip = page.getByTestId("hub-recent-workspaces-strip");
       await expect(recentStrip).toBeVisible({ timeout: 10_000 });
+      await expect(recentStrip).toContainText(/Venue/i);
       await expect(recentStrip).toContainText(/Contacts/i);
 
-      // NexusSearchPalette EN filter + <bdi>
-      await page.keyboard.press("Control+k");
-      const searchDialog = page.getByRole("dialog");
-      await expect(searchDialog).toBeVisible({ timeout: 5_000 });
-      const searchInput = searchDialog.locator("input").first();
-      await searchInput.fill("Facilities");
-      await expect(searchDialog.locator("bdi:visible").first()).toBeVisible({ timeout: 5_000 });
-      await expect(searchDialog.getByRole("option", { name: /Facilities/i }).first()).toBeVisible({ timeout: 5_000 });
-      await page.keyboard.press("Escape");
-      await expect(searchDialog).toBeHidden({ timeout: 5_000 });
+      // Capture 06-hub-return-workspace-pill.png @ 1280px showing "Return to Contacts (Esc)"
+      await page.setViewportSize({ width: 1280, height: 800 });
+      await setTheme(page, "dark");
+      const returnBtn = page.getByTestId("hub-return-workspace-btn");
+      await expect(returnBtn).toBeVisible({ timeout: 10_000 });
+      await expect(returnBtn).toContainText(/Return to\s+Contacts/i);
+      await safeScreenshot(page, "06-hub-return-workspace-pill.png");
 
-      // Arabic RTL + SearchPalette <bdi> capture
+      // Clicking Return pill navigates back to Contacts
+      await returnBtn.click();
+      await page.waitForURL(/\/party-kernel(?:\/.*)?$/, { timeout: 20_000 });
+      await waitForAppSettled(page);
+      await assertSingleMainLandmark(page, "Returned to /party-kernel via pill click");
+
+      // Return via PrimaryRailLogo -> pressing Escape returns cleanly to Contacts
+      await page.getByRole("button", { name: "Go to Home" }).first().click();
+      await page.waitForURL(/\/hub(?:\?.*)?$/, { timeout: 15_000 });
+      await waitForAppSettled(page);
+      await expect(page.getByTestId("hub-return-workspace-btn")).toBeVisible({ timeout: 10_000 });
+      await page.keyboard.press("Escape");
+      await page.waitForURL(/\/party-kernel(?:\/.*)?$/, { timeout: 20_000 });
+      await waitForAppSettled(page);
+      await assertSingleMainLandmark(page, "Returned to /party-kernel via Escape");
+
+      // ── Part B: Tenant SA (/hub) 1280px Dark/Light, Popovers (Mark Read/All), Type-Anywhere <bdi>, RTL & Mobile 390px ──
+      const initialNotifRes = await request.get(`${API_URL}/api/v1/account/notifications`, {
+        headers: { Authorization: `Bearer ${ahlyToken}` },
+      });
+      expect(initialNotifRes.ok()).toBeTruthy();
+      const initialNotifData = unwrapApiData<{
+        unreadNotificationsCount?: number;
+        recentNotifications?: Array<{ id: string }>;
+      }>(await initialNotifRes.json());
+      const knownNotifIds = new Set(
+        (initialNotifData.recentNotifications ?? []).map((item) => item.id)
+      );
+      let currentUnread = Number(initialNotifData.unreadNotificationsCount ?? 0);
+      while (currentUnread < 2) {
+        const testNotifRes = await sendWithRateLimitRetry(() =>
+          request.post(`${API_URL}/api/v1/account/notifications/test`, {
+            headers: mutationHeaders(ahlyToken),
+            data: { category: "Security" },
+          })
+        );
+        expect(
+          testNotifRes.ok(),
+          `POST /account/notifications/test failed: ${testNotifRes.status()}`
+        ).toBeTruthy();
+        const updatedDto = unwrapApiData<{
+          unreadNotificationsCount?: number;
+          recentNotifications?: Array<{ id: string }>;
+        }>(await testNotifRes.json());
+        for (const item of updatedDto.recentNotifications ?? []) {
+          if (!knownNotifIds.has(item.id)) {
+            knownNotifIds.add(item.id);
+            ephemeralNotificationIds.push(item.id);
+          }
+        }
+        currentUnread = Number(updatedDto.unreadNotificationsCount ?? currentUnread + 1);
+      }
+
+      await resetBrowserSession(page);
+      await loginViaUi(page, AHLY_SUPER_ADMIN_EMAIL, adminPwd);
+      await page.goto("/hub");
+      await waitForAppSettled(page);
+      await assertSingleHubLaunchpadLandmark(page, "Tenant SA Launchpad /hub");
+
+      // 1 & 2: Desktop 1280px Dark & Light captures
+      await page.setViewportSize({ width: 1280, height: 800 });
+      await setTheme(page, "dark");
+      await assertNoHorizontalOverflow(page, "Hub Launchpad Desktop 1280px Dark EN");
+      await safeScreenshot(page, "01-hub-launchpad-dark-en.png");
+
+      await setTheme(page, "light");
+      await assertNoHorizontalOverflow(page, "Hub Launchpad Desktop 1280px Light EN");
+      await safeScreenshot(page, "02-hub-launchpad-light-en.png");
+
+      await setTheme(page, "dark");
+
+      // 3: Notifications Bell popover (populated badge, All | Unread tabs, single mark-read, mark-all-read)
+      const saNotifTrigger = page.getByTestId("hub-notifications-trigger");
+      const badgeSpan = saNotifTrigger.locator("span").first();
+      await expect(badgeSpan).toBeVisible({ timeout: 10_000 });
+      const initialBadgeText = (await badgeSpan.innerText()).trim();
+      const initialBadgeCount = Number(initialBadgeText.replace(/\D/g, "") || "0");
+      expect(initialBadgeCount).toBeGreaterThanOrEqual(2);
+
+      await saNotifTrigger.click();
+      const saNotifPopover = page.getByTestId("hub-notifications-popover");
+      await expect(saNotifPopover).toBeVisible({ timeout: 5_000 });
+      const allTab = saNotifPopover.getByRole("tab", { name: /^All$/i });
+      const unreadTab = saNotifPopover.getByRole("tab", { name: /^Unread$/i });
+      await expect(allTab).toHaveAttribute("aria-selected", "true");
+      await expect(unreadTab).toBeVisible();
+      await expect(saNotifPopover.getByRole("button", { name: /^Mark all read$/i })).toBeVisible();
+
+      await unreadTab.click();
+      await expect(unreadTab).toHaveAttribute("aria-selected", "true");
+      await expect(saNotifPopover.locator("ul li button").first()).toBeVisible({ timeout: 5_000 });
+      await allTab.click();
+      await expect(allTab).toHaveAttribute("aria-selected", "true");
+      await page.waitForTimeout(200);
+
+      await safeScreenshot(page, "03-hub-notifications-popover.png");
+
+      // Single mark-read click on an unread notification
+      await unreadTab.click();
+      const markOnePromise = page.waitForResponse(
+        (r) =>
+          r.url().includes("/api/v1/account/notifications/") &&
+          r.url().includes("/read") &&
+          !r.url().includes("/read-all") &&
+          r.request().method() === "PATCH",
+        { timeout: 15_000 }
+      );
+      await saNotifPopover.locator("ul li button").first().click();
+      const markOneRes = await markOnePromise;
+      expect(markOneRes.ok(), `Single mark-read failed: ${markOneRes.status()}`).toBeTruthy();
+
+      // Return to /hub and verify unread badge decremented, then test Mark all read
+      await page.goto("/hub");
+      await waitForAppSettled(page);
+      await assertSingleHubLaunchpadLandmark(page, "Tenant SA /hub post single mark-read");
+      const updatedBadgeCount = Number(
+        (await page.getByTestId("hub-notifications-trigger").locator("span").first().innerText())
+          .trim()
+          .replace(/\D/g, "") || "0"
+      );
+      expect(updatedBadgeCount).toBeLessThan(initialBadgeCount);
+
+      await page.getByTestId("hub-notifications-trigger").click();
+      await expect(saNotifPopover).toBeVisible({ timeout: 5_000 });
+      const markAllPromise = page.waitForResponse(
+        (r) =>
+          r.url().includes("/api/v1/account/notifications/read-all") &&
+          r.request().method() === "PATCH",
+        { timeout: 15_000 }
+      );
+      await saNotifPopover.getByRole("button", { name: /^Mark all read$/i }).click();
+      expect((await markAllPromise).ok()).toBeTruthy();
+
+      await expect(page.getByTestId("hub-notifications-trigger").locator("span")).toHaveCount(0, {
+        timeout: 10_000,
+      });
+      await saNotifPopover.getByRole("tab", { name: /^Unread$/i }).click();
+      await expect(saNotifPopover.getByText(/No unread notifications\./i)).toBeVisible({
+        timeout: 10_000,
+      });
+      await page.keyboard.press("Escape");
+      await expect(saNotifPopover).toBeHidden({ timeout: 5_000 });
+
+      // 4: Activity Clock popover showing real activity
+      await page.getByTestId("hub-activity-trigger").click();
+      const saActPopover = page.getByTestId("hub-activity-popover");
+      await expect(saActPopover).toBeVisible({ timeout: 5_000 });
+      await expect(saActPopover.locator("ul li").first()).toBeVisible({ timeout: 10_000 });
+      await expect(saActPopover.locator("ul li").first()).toContainText(/Login|Success/i);
+      await page.waitForTimeout(200);
+      await safeScreenshot(page, "04-hub-activity-popover.png");
+      await page.keyboard.press("Escape");
+      await expect(saActPopover).toBeHidden({ timeout: 5_000 });
+
+      // 5: Type-Anywhere Search (/, search trigger, printable chars, Quick Jump <bdi>, Escape clear)
+      await expect(page.getByTestId("hub-typeahead-input")).toHaveCount(0);
+      await page.keyboard.press("/");
+      const typeaheadInput = page.getByTestId("hub-typeahead-input");
+      await expect(typeaheadInput).toBeVisible({ timeout: 5_000 });
+      await expect(typeaheadInput).toBeFocused();
+      await page.keyboard.press("Escape");
+      await expect(typeaheadInput).toHaveCount(0);
+
+      await page.getByTestId("hub-search-trigger").click();
+      await expect(typeaheadInput).toBeVisible({ timeout: 5_000 });
+      await expect(typeaheadInput).toBeFocused();
+      await page.keyboard.press("Escape");
+      await expect(typeaheadInput).toHaveCount(0);
+
+      // Type printable chars directly anywhere on /hub
+      await page.keyboard.press("v");
+      await expect(typeaheadInput).toBeVisible({ timeout: 5_000 });
+      await expect(typeaheadInput).toBeFocused();
+      await expect(typeaheadInput).toHaveValue("v");
+      await page.keyboard.type("enue");
+
+      const saAppsRegion = page.getByRole("region", { name: /Authorized workspaces/i });
+      await expect(saAppsRegion.getByRole("button", { name: /^Venue/i }).first()).toBeVisible({
+        timeout: 5_000,
+      });
+      const quickJumpList = page.getByTestId("hub-quick-jump-list");
+      await expect(quickJumpList).toBeVisible({ timeout: 5_000 });
+      const firstBdiPath = quickJumpList.locator("bdi[dir='ltr']").first();
+      await expect(firstBdiPath).toBeVisible({ timeout: 5_000 });
+      await expect(firstBdiPath).toContainText(/^\/venue/i);
+      await safeScreenshot(page, "05-hub-type-anywhere-search-bdi.png");
+
+      await page.keyboard.press("Escape");
+      await expect(typeaheadInput).toHaveCount(0);
+      await page.keyboard.press("/");
+      await expect(typeaheadInput).toHaveValue("");
+      await page.keyboard.press("Escape");
+      await expect(typeaheadInput).toHaveCount(0);
+
+      // 7: Arabic RTL Launchpad capture (1280px)
       await setLanguageAndReload(page, "ar");
+      await setTheme(page, "dark");
       await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
+      await assertSingleHubLaunchpadLandmark(page, "Hub Desktop Arabic RTL");
       await assertNoHorizontalOverflow(page, "Hub Desktop Arabic RTL");
-      await safeScreenshot(page, "04-hub-arabic-rtl.png");
-
-      await page.keyboard.press("Control+k");
-      const arDialog = page.getByRole("dialog");
-      await expect(arDialog).toBeVisible({ timeout: 5_000 });
-      await arDialog.locator("input").first().fill("venue");
-      await expect(arDialog.locator("bdi:visible").first()).toBeVisible({ timeout: 5_000 });
-      await safeScreenshot(page, "05-hub-search-palette-bdi.png");
+      await page.keyboard.press("/");
+      await expect(typeaheadInput).toBeVisible({ timeout: 5_000 });
+      await typeaheadInput.fill("venue");
+      await expect(
+        page.getByTestId("hub-quick-jump-list").locator("bdi[dir='ltr']").first()
+      ).toBeVisible({ timeout: 5_000 });
       await page.keyboard.press("Escape");
+      await expect(typeaheadInput).toHaveCount(0);
+      await safeScreenshot(page, "07-hub-launchpad-arabic-rtl.png");
 
-      // Switch back to EN & Light for Mobile 390x844 check
+      // 8: Mobile 390x844 Light Launchpad capture
       await setLanguageAndReload(page, "en");
       await setTheme(page, "light");
-
       await page.setViewportSize({ width: 390, height: 844 });
       await page.waitForTimeout(300);
+      await assertSingleHubLaunchpadLandmark(page, "Hub Mobile 390px Light EN");
       await assertNoHorizontalOverflow(page, "Hub Mobile 390px Light EN");
 
-      // Verify pin control visibility on mobile (<640px has opacity-100)
+      const topbarOverflow = await page
+        .getByTestId("hub-topbar")
+        .evaluate((el) => ({ scrollWidth: el.scrollWidth, clientWidth: el.clientWidth }));
+      expect(
+        topbarOverflow.scrollWidth,
+        `HubTopbar horizontal overflow at 390px: ${JSON.stringify(topbarOverflow)}`
+      ).toBeLessThanOrEqual(topbarOverflow.clientWidth + 2);
+
       const mobilePinOpacity = await page
         .getByRole("button", { name: /^(Pin|Unpin)\s+/i })
         .first()
         .evaluate((el) => Number(window.getComputedStyle(el).opacity));
       expect(mobilePinOpacity, "Pin button must be visible on 390px mobile").toBeGreaterThan(0.9);
-      await safeScreenshot(page, "09-hub-mobile-390px-light.png");
-
-      // Reset viewport and verify non-empty notifications on Tenant SA (/hub)
-      await page.setViewportSize({ width: 1440, height: 900 });
-      const saTokenRes = await loginViaApi(request, AHLY_SUPER_ADMIN_EMAIL, adminPwd);
-      const notifRes = await request.get(`${API_URL}/api/v1/account/notifications`, {
-        headers: { Authorization: `Bearer ${saTokenRes.accessToken}` },
-      });
-      expect(notifRes.ok()).toBeTruthy();
-
-      await resetBrowserSession(page);
-      await loginViaUi(page, AHLY_SUPER_ADMIN_EMAIL, adminPwd);
-      await page.getByRole("button", { name: "Go to Home" }).first().click();
-      await page.waitForURL(/\/hub(?:\?.*)?$/, { timeout: 15_000 });
-      await waitForAppSettled(page);
-      await expect(page.getByTestId("hub-side-panel")).toContainText(/Security|Enterprise|Profile/i, {
-        timeout: 10_000,
-      });
+      await safeScreenshot(page, "08-hub-launchpad-mobile-390px.png");
 
       // Verify Topbar pill shape on mobile 390px for switchable admin (Platform SA)
+      await page.setViewportSize({ width: 1440, height: 900 });
       await resetBrowserSession(page);
       await loginViaUi(page, PLATFORM_SUPER_ADMIN_EMAIL, adminPwd);
       await page.setViewportSize({ width: 390, height: 844 });
@@ -904,13 +1226,19 @@ test.describe("Task 12 — Admin Routing, Personal Hub (/hub), Landing Policy & 
           className: el.getAttribute("class"),
         };
       });
-      console.info("[04&12] Topbar pillBox @390px:", JSON.stringify(pillBox), "clientHttpErrors:", JSON.stringify(monitor.clientHttpErrors));
       expect(parseFloat(pillBox.borderRadius)).toBeGreaterThanOrEqual(20);
       expect(pillBox.height).toBeGreaterThanOrEqual(28);
       await page.setViewportSize({ width: 1440, height: 900 });
 
-      monitor.assertClean("Scenario 4 & 12 Hub + Themes + RTL + Mobile");
+      monitor.assertClean("Scenario 4 & 12 Hub Launchpad + Popovers + Search + RTL + Mobile");
     } finally {
+      for (const notifId of ephemeralNotificationIds) {
+        await sendWithRateLimitRetry(() =>
+          request.delete(`${API_URL}/api/v1/account/notifications/${notifId}`, {
+            headers: mutationHeaders(ahlyToken),
+          })
+        ).catch(() => {});
+      }
       monitor.detach();
     }
   });
@@ -989,8 +1317,6 @@ test.describe("Task 12 — Admin Routing, Personal Hub (/hub), Landing Policy & 
       await expect(enforceSwitch).toBeEnabled({ timeout: 5_000 });
       await enforceSwitch.click();
       await expect(enforceSwitch).toBeChecked();
-
-      await safeScreenshot(page, "06-roles-landing-config.png");
 
       const updateRolePromise = page.waitForResponse(
         (r) => r.url().toLowerCase().includes(`/api/v1/roles/${borrowedRoleId.toLowerCase()}`) && r.request().method() === "PUT",
@@ -1152,15 +1478,6 @@ test.describe("Task 12 — Admin Routing, Personal Hub (/hub), Landing Policy & 
       const putPrefRes = await putPrefPromise;
       expect(putPrefRes.ok(), `PUT preferences failed: ${putPrefRes.status()}`).toBeTruthy();
 
-      await page.evaluate(() => {
-        window.scrollTo(0, 0);
-        document.querySelectorAll<HTMLElement>("*").forEach((el) => {
-          if (el.scrollTop > 0) el.scrollTop = 0;
-        });
-      });
-      await page.waitForTimeout(150);
-      await safeScreenshot(page, "07-account-startup-preferences.png");
-
       // Reload & confirm persisted
       await page.reload();
       await waitForAppSettled(page);
@@ -1212,6 +1529,7 @@ test.describe("Task 12 — Admin Routing, Personal Hub (/hub), Landing Policy & 
       // Visit /hub in AHLY context -> open Venue -> verify admin sidebar loads when switching back to admin
       await page.goto("/hub");
       await waitForAppSettled(page);
+      await assertSingleHubLaunchpadLandmark(page, "Platform SA drilled-down /hub");
       await page.getByRole("button", { name: /^Venue/i }).first().click();
       await page.waitForURL(/\/venue(?:\?.*)?$/, { timeout: 20_000 });
       await waitForAppSettled(page);
@@ -1321,24 +1639,49 @@ test.describe("Task 12 — Admin Routing, Personal Hub (/hub), Landing Policy & 
         timeout: 15_000,
       });
 
-      // Clear counter right after entering impersonation and inspect /hub
+      // Clear counter right after entering impersonation and inspect standalone /hub Launchpad
       personalFeedCallsDuringImpersonation.length = 0;
+      await page.setViewportSize({ width: 1280, height: 800 });
       await page.goto("/hub");
       await waitForAppSettled(page);
+      await setTheme(page, "dark");
+      await assertSingleHubLaunchpadLandmark(page, "Impersonation /hub");
 
-      await expect(page.getByTestId("hub-impersonation-alert")).toBeVisible({ timeout: 10_000 });
-      expect(
-        personalFeedCallsDuringImpersonation,
-        "Zero personal notification/activity fetches allowed during impersonation"
-      ).toEqual([]);
-
-      // Verify pin buttons cannot mutate during impersonation
+      // Verify <TenantContextBanner /> + hub-impersonation-notice + disabled pin buttons
+      await expect(page.getByRole("button", { name: /Stop impersonating/i })).toBeVisible({
+        timeout: 10_000,
+      });
+      await expect(page.getByTestId("hub-impersonation-notice")).toBeVisible({ timeout: 10_000 });
       const pinBtns = page.getByRole("button", { name: /^(Pin|Unpin)\s+/i });
       if ((await pinBtns.count()) > 0) {
         await expect(pinBtns.first()).toBeDisabled();
       }
 
+      // Opening Activity popover shows impersonation guard alert
+      await page.getByTestId("hub-activity-trigger").click();
+      await expect(page.getByTestId("hub-activity-popover")).toBeVisible({ timeout: 5_000 });
+      await expect(page.getByTestId("hub-activity-impersonation-alert")).toBeVisible({
+        timeout: 5_000,
+      });
+      await page.keyboard.press("Escape");
+      await expect(page.getByTestId("hub-activity-popover")).toBeHidden({ timeout: 5_000 });
+
+      // Opening Notifications popover shows hub-impersonation-alert -> capture 09-hub-impersonation-readonly.png
+      await page.getByTestId("hub-notifications-trigger").click();
+      await expect(page.getByTestId("hub-notifications-popover")).toBeVisible({ timeout: 5_000 });
+      await expect(page.getByTestId("hub-impersonation-alert")).toBeVisible({ timeout: 10_000 });
+      await page.waitForTimeout(200);
+      await safeScreenshot(page, "09-hub-impersonation-readonly.png");
+      await page.keyboard.press("Escape");
+      await expect(page.getByTestId("hub-notifications-popover")).toBeHidden({ timeout: 5_000 });
+
+      expect(
+        personalFeedCallsDuringImpersonation,
+        "Zero personal notification/activity fetches allowed during impersonation"
+      ).toEqual([]);
+
       // Check /account/preferences read-only guard AND TenantContextBanner ("Stop impersonating") directly on /account/*
+      await page.setViewportSize({ width: 1440, height: 900 });
       await page.goto("/account/preferences");
       await waitForAppSettled(page);
       await expect(page.getByRole("button", { name: /Stop impersonating/i })).toBeVisible({
@@ -1347,7 +1690,6 @@ test.describe("Task 12 — Admin Routing, Personal Hub (/hub), Landing Policy & 
       await expect(page.getByTestId("startup-impersonation-alert")).toBeVisible({ timeout: 10_000 });
       await expect(page.getByTestId("startup-target-select")).toBeDisabled();
       await expect(page.getByTestId("startup-reset-btn")).toBeDisabled();
-      await safeScreenshot(page, "08-impersonation-readonly-guard.png");
 
       // Stop impersonation directly from /account/preferences restores original admin session cleanly
       const stopPromise = page.waitForResponse(
@@ -1489,6 +1831,7 @@ test.describe("Task 12 — Admin Routing, Personal Hub (/hub), Landing Policy & 
       await resetBrowserSession(page);
       await loginViaUi(page, revEmail, adminPwd);
       await expect(page).toHaveURL(/\/hub(?:\?.*)?$/, { timeout: 20_000 });
+      await assertSingleHubLaunchpadLandmark(page, "Revoked fallback /hub");
       await page.goto("/account/preferences");
       await waitForAppSettled(page);
       await expect(page.getByTestId("startup-fallback-alert")).toBeVisible({ timeout: 10_000 });
@@ -1579,7 +1922,6 @@ test.describe("Task 12 — Admin Routing, Personal Hub (/hub), Landing Policy & 
       await waitForAppSettled(page);
       await expect(page.locator("tbody")).toContainText(ownTitle, { timeout: 10_000 });
       await expect(page.locator("tbody")).not.toContainText(otherAdminWorkItem.title);
-      await safeScreenshot(page, "11-work-items-own-scope.png");
 
       // 10c. Feature-disabled tenant gate check (COMMUNITY Free edition lacks WorkManagement.Access)
       await resetBrowserSession(page);
@@ -1587,7 +1929,6 @@ test.describe("Task 12 — Admin Routing, Personal Hub (/hub), Landing Policy & 
       await page.goto("/work-items");
       await waitForAppSettled(page);
       await expect(page.getByTestId("feature-unavailable-gate")).toBeVisible({ timeout: 15_000 });
-      await safeScreenshot(page, "12-feature-unavailable-gate.png");
 
       monitor.assertClean("Scenario 10 Revoked Fallback + WorkManagement + Feature Gate");
     } finally {
@@ -1624,8 +1965,9 @@ test.describe("Task 12 — Admin Routing, Personal Hub (/hub), Landing Policy & 
         });
       });
 
-      // Clear localStorage nav-storage so fresh boot calls /menus/navigation
+      // Clear localStorage nav store so fresh boot calls /menus/navigation
       await page.evaluate(() => {
+        localStorage.removeItem("scr_nav_v2");
         localStorage.removeItem("nav-storage");
         sessionStorage.setItem("scr_just_logged_in", "1");
       });
@@ -1638,7 +1980,6 @@ test.describe("Task 12 — Admin Routing, Personal Hub (/hub), Landing Policy & 
         page.locator("text=/getting everything ready for you|نحن نقوم بتجهيز كل شيء من أجلك/i")
       ).toHaveCount(0);
       expect(new URL(page.url()).pathname).toBe("/");
-      await safeScreenshot(page, "10-nav-error-recovery.png");
 
       // Also verify HTTP 500 behavior briefly, then restore live route and test Retry button
       await page.unroute("**/api/v1/menus/navigation*");
@@ -1678,12 +2019,12 @@ test.describe("Task 12 — Admin Routing, Personal Hub (/hub), Landing Policy & 
       await resetBrowserSession(page);
       await loginViaUi(page, AHLY_MULTI_WORKSPACE_EMAIL, adminPwd);
       await expect(page).toHaveURL(/\/hub(?:\?.*)?$/);
+      await assertSingleHubLaunchpadLandmark(page, "BUG-01 /hub");
 
       await page.getByRole("button", { name: /^Venue/i }).first().click();
       await page.waitForURL(/\/venue(?:\/.*)?$/, { timeout: 10_000 });
       await waitForAppSettled(page);
       await assertSingleMainLandmark(page, "Front-desk /venue navigation");
-      await safeScreenshot(page, "13-front-desk-venue-navigation.png");
       monitor.assertClean("BUG-01 Venue tile navigation");
     } finally {
       monitor.detach();
