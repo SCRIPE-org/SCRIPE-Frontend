@@ -17,6 +17,10 @@ import {
   type UpdateRoleJson,
   type AssignPermissionsJson,
 } from "../models/RoleModel";
+import type {
+  RoleWorkspaceEntryPolicyDto,
+  UpsertRoleWorkspaceEntriesRequestDto,
+} from "../models/RoleWorkspaceEntryPolicyModel";
 import { PermissionModel } from "@modules/identity/core";
 import type { PermissionModuleGroupJson } from "@modules/identity/core";
 import type {
@@ -168,5 +172,26 @@ export class RoleService implements IRoleService {
     );
     if (typeof response === "number") return response;
     return response.affectedRows ?? ids.length;
+  }
+
+  async getRoleWorkspaceEntries(roleId: string): Promise<RoleWorkspaceEntryPolicyDto[]> {
+    const raw = await this.api.get<unknown>(ROLES_ENDPOINTS.WORKSPACE_ENTRIES(roleId));
+    if (Array.isArray(raw)) return raw as RoleWorkspaceEntryPolicyDto[];
+    const wrapped = raw as { data?: unknown } | null | undefined;
+    return Array.isArray(wrapped?.data) ? (wrapped.data as RoleWorkspaceEntryPolicyDto[]) : [];
+  }
+
+  async upsertRoleWorkspaceEntries(
+    roleId: string,
+    body: UpsertRoleWorkspaceEntriesRequestDto
+  ): Promise<RoleWorkspaceEntryPolicyDto[]> {
+    const raw = await this.api.put<unknown>(ROLES_ENDPOINTS.WORKSPACE_ENTRIES(roleId), body);
+    if (Array.isArray(raw)) return raw as RoleWorkspaceEntryPolicyDto[];
+    const wrapped = raw as { data?: unknown } | null | undefined;
+    return Array.isArray(wrapped?.data) ? (wrapped.data as RoleWorkspaceEntryPolicyDto[]) : [];
+  }
+
+  async deleteRoleWorkspaceEntry(roleId: string, workspaceKey: string): Promise<void> {
+    await this.api.delete<void>(ROLES_ENDPOINTS.DELETE_WORKSPACE_ENTRY(roleId, workspaceKey));
   }
 }

@@ -3,6 +3,8 @@
 import { AlertTriangle, Compass, Lock, RotateCcw, ShieldAlert } from "lucide-react";
 import {
   buildStructuredLandingTargetOptions,
+  LandingTargetPicker,
+  type LandingTargetCatalog,
   type NavigationData,
   type WorkspaceGroup,
 } from "@core/navigation";
@@ -11,14 +13,10 @@ import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { Label } from "@core/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@core/ui/select";
 
+/**
+ * Props for rendering the personal startup destination card and searchable picker.
+ */
 export interface StartupPreferencesSectionProps {
   t: (key: string, params?: Record<string, string | number>) => string;
   language: string;
@@ -32,6 +30,8 @@ export interface StartupPreferencesSectionProps {
   fallbackReason?: string | null;
   workspaceGroups: WorkspaceGroup[];
   cachedWorkspaces?: Map<string, NavigationData>;
+  landingTargetCatalog?: LandingTargetCatalog | null;
+  isCatalogLoading?: boolean;
   onStartupTargetChange: (target: string) => void;
   onResetStartupTarget: () => void;
 }
@@ -54,6 +54,8 @@ export function StartupPreferencesSection({
   fallbackReason,
   workspaceGroups,
   cachedWorkspaces,
+  landingTargetCatalog,
+  isCatalogLoading = false,
   onStartupTargetChange,
   onResetStartupTarget,
 }: StartupPreferencesSectionProps) {
@@ -65,6 +67,7 @@ export function StartupPreferencesSection({
     language,
     workspaceGroups,
     cachedWorkspaces,
+    catalog: landingTargetCatalog,
     scopeMode: "current_context",
     currentTarget,
     labels: {
@@ -73,6 +76,8 @@ export function StartupPreferencesSection({
       hubLabel: t("profile.preferences.startupHubOption"),
       workspacePrefix: t("profile.preferences.startupWorkspacePrefix"),
       menuPrefix: t("profile.preferences.startupMenuPrefix"),
+      unavailablePageLabel: t("profile.preferences.startupUnavailablePage"),
+      systemGroupLabel: t("profile.preferences.startupSystemGroupLabel"),
     },
   });
 
@@ -121,18 +126,26 @@ export function StartupPreferencesSection({
 
       <CardContent className="space-y-4 min-w-0">
         {isImpersonating && (
-          <Alert variant="warning" data-testid="startup-impersonation-alert">
+          <Alert
+            variant="warning"
+            data-testid="startup-impersonation-alert"
+            className="border-warning-strong/60 bg-warning/20 !animate-none [&>svg]:text-warning"
+          >
             <ShieldAlert className="h-4 w-4" aria-hidden="true" />
-            <AlertDescription className="text-xs leading-relaxed">
+            <AlertDescription className="text-xs leading-relaxed text-nx-ink">
               {t("profile.preferences.startupImpersonationNotice")}
             </AlertDescription>
           </Alert>
         )}
 
         {!isImpersonating && isEnforcedByRole && (
-          <Alert variant="info" data-testid="startup-enforced-alert">
+          <Alert
+            variant="info"
+            data-testid="startup-enforced-alert"
+            className="!animate-none"
+          >
             <Lock className="h-4 w-4" aria-hidden="true" />
-            <AlertDescription className="text-xs leading-relaxed">
+            <AlertDescription className="text-xs leading-relaxed text-nx-ink">
               {t("profile.preferences.startupEnforcedByRoleNotice", {
                 role: enforcingRoleName || "Role",
               })}
@@ -141,9 +154,13 @@ export function StartupPreferencesSection({
         )}
 
         {fallbackActive && (
-          <Alert variant="warning" data-testid="startup-fallback-alert">
+          <Alert
+            variant="warning"
+            data-testid="startup-fallback-alert"
+            className="border-warning-strong/60 bg-warning/20 !animate-none [&>svg]:text-warning"
+          >
             <AlertTriangle className="h-4 w-4" aria-hidden="true" />
-            <AlertDescription className="text-xs leading-relaxed">
+            <AlertDescription className="text-xs leading-relaxed text-nx-ink">
               {t("profile.preferences.startupFallbackNotice", {
                 reason:
                   fallbackReason || t("profile.preferences.startupUnknownFallbackReason"),
@@ -157,26 +174,19 @@ export function StartupPreferencesSection({
             <Label htmlFor="startup-target-select" className="text-xs font-semibold text-nx-ink">
               {t("profile.preferences.startupTargetLabel")}
             </Label>
-            <Select
+            <LandingTargetPicker
+              id="startup-target-select"
+              data-testid="startup-target-select"
+              aria-label={t("profile.preferences.startupTargetLabel")}
               value={currentTarget}
               onValueChange={onStartupTargetChange}
+              options={options}
+              loading={isCatalogLoading}
               disabled={isReadOnly}
-            >
-              <SelectTrigger
-                id="startup-target-select"
-                aria-label={t("profile.preferences.startupTargetLabel")}
-                data-testid="startup-target-select"
-              >
-                <SelectValue placeholder={t("profile.preferences.startupTargetPlaceholder")} />
-              </SelectTrigger>
-              <SelectContent>
-                {options.map((opt) => (
-                  <SelectItem key={opt.value} value={opt.value}>
-                    <bdi>{opt.label}</bdi>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              placeholder={t("profile.preferences.startupTargetPlaceholder")}
+              searchPlaceholder={t("profile.preferences.startupTargetSearchPlaceholder")}
+              emptyText={t("profile.preferences.startupTargetNoResults")}
+            />
           </div>
 
           <Button

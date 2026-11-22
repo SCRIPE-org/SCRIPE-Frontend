@@ -7,7 +7,12 @@
 "use client";
 
 import { useRoleDetailViewModel } from "../viewmodels/useRoleDetailViewModel";
-import { RoleInfoCard, RoleDetailHeader, PermissionTreeCard } from "../components";
+import {
+  RoleInfoCard,
+  RoleDetailHeader,
+  PermissionTreeCard,
+  RoleWorkspaceStartPagesCard,
+} from "../components";
 
 /**
  * Interface defining property specifications, keys types, and structural contract rules for role detail view props.
@@ -35,8 +40,13 @@ export default function RoleDetailView({ roleId }: RoleDetailViewProps) {
       <RoleDetailHeader {...vm.header} />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
-        {/* Role Info Sidebar */}
-        <RoleInfoCard {...vm.info} />
+        <div className="space-y-6 lg:col-span-1 lg:self-start">
+          {/* Role Info Sidebar */}
+          <RoleInfoCard {...vm.info} className="lg:static" />
+
+          {/* Sparse Per-Workspace Start Pages Policy Editor */}
+          <RoleWorkspaceStartPagesCard {...vm.workspaceEntries} />
+        </div>
 
         {/* Permissions Tree */}
         <PermissionTreeCard {...vm.permissions} />

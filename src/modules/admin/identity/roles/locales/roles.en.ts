@@ -52,6 +52,10 @@ export const en = {
     landingTargetHub: "Workspace Hub (/hub)",
     landingTargetWorkspacePrefix: "Workspace:",
     landingTargetMenuPrefix: "Page:",
+    landingTargetUnavailablePage: "Unavailable page",
+    landingTargetSystemGroup: "General Destinations",
+    landingTargetSearchPlaceholder: "Search workspaces or pages...",
+    landingTargetNoResults: "No matching destination found.",
     landingEnforcedBadge: "Enforced",
     landingTargetSystemLocked: "System role landing policy is managed automatically.",
     totalRoles: "{{count}} roles",
@@ -80,6 +84,30 @@ export const en = {
     additionalCapabilities: "Additional Capabilities",
     toggleColumnTooltip: "Toggle all {{action}} in {{module}}",
     restrictedFieldBadge: "Restricted",
+    workspaceEntriesTitle: "Workspace Start Pages",
+    workspaceEntriesDesc:
+      "Optional per-workspace entry page rules evaluated after login or workspace switching.",
+    workspaceEntriesAddRule: "Add rule",
+    workspaceEntriesEmpty:
+      "No per-workspace start-page rules configured. This role falls back to its default landing policy.",
+    workspaceEntriesWorkspaceLabel: "Workspace",
+    workspaceEntriesWorkspacePlaceholder: "Select workspace...",
+    workspaceEntriesStartPageLabel: "Start Page",
+    workspaceEntriesStartPagePlaceholder: "Select start page...",
+    workspaceEntriesSearchPlaceholder: "Search workspace pages...",
+    workspaceEntriesNoResults: "No matching page in this workspace.",
+    workspaceEntriesEnforceLabel: "Enforce start page",
+    workspaceEntriesEnforceHint: "Overrides members' personal start page for this workspace.",
+    workspaceEntriesRemoveRuleAria: "Remove rule for {{workspace}}",
+    workspaceEntriesSystemLocked:
+      "System role workspace start-page policies are managed automatically.",
+    workspaceEntriesNoEligibleWorkspaces:
+      "Grant at least one permission in an eligible workspace before adding a start-page rule.",
+    workspaceEntriesMissingTargetError:
+      "Please choose a valid start page for every workspace rule before saving.",
+    workspaceEntriesPermissionWarning: "Missing required permission in this role: {{permissions}}.",
+    workspaceEntriesStaleWarning:
+      "This rule points to a page that is currently unavailable or unauthorized for this role.",
   },
   role: {
     deleteConfirm: "Are you sure you want to delete the role “{{name}}”?",

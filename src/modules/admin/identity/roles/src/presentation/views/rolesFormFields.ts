@@ -6,16 +6,22 @@
 import {
   buildStructuredLandingTargetOptions,
   canEnforceLandingTarget,
+  type LandingTargetCatalog,
   type NavigationData,
   type WorkspaceGroup,
 } from "@core/navigation";
 import type { FieldConfig } from "@core/ui/forms/generic-form";
 import type { Role } from "../../domain/entities/Role";
 
+/**
+ * Context passed into `getRoleLandingFields` to render scope-filtered startup landing options.
+ */
 export interface RoleLandingFieldsContext {
   language?: string;
   workspaceGroups?: WorkspaceGroup[];
   cachedWorkspaces?: Map<string, NavigationData>;
+  catalog?: LandingTargetCatalog | null;
+  isCatalogLoading?: boolean;
   isTenantRole?: boolean;
   isSystemRole?: boolean;
   currentTarget?: string | null;
@@ -34,6 +40,8 @@ export function getRoleLandingFields(
     language = "en",
     workspaceGroups = [],
     cachedWorkspaces,
+    catalog = null,
+    isCatalogLoading = false,
     isTenantRole = false,
     isSystemRole = false,
     currentTarget = null,
@@ -43,6 +51,7 @@ export function getRoleLandingFields(
     language,
     workspaceGroups,
     cachedWorkspaces,
+    catalog,
     scopeMode: isTenantRole ? "tenant_role" : "platform_role",
     currentTarget,
     labels: {
@@ -51,6 +60,8 @@ export function getRoleLandingFields(
       hubLabel: t("roles.landingTargetHub"),
       workspacePrefix: t("roles.landingTargetWorkspacePrefix"),
       menuPrefix: t("roles.landingTargetMenuPrefix"),
+      unavailablePageLabel: t("roles.landingTargetUnavailablePage"),
+      systemGroupLabel: t("roles.landingTargetSystemGroup"),
     },
   });
 
@@ -58,10 +69,13 @@ export function getRoleLandingFields(
     {
       name: "defaultLandingTarget",
       label: t("roles.defaultLandingTarget"),
-      type: "select",
+      type: "grouped-select",
       options: targetOptions,
       defaultValue: "default",
       placeholder: t("roles.defaultLandingTargetPlaceholder"),
+      searchPlaceholder: t("roles.landingTargetSearchPlaceholder"),
+      noResultsText: t("roles.landingTargetNoResults"),
+      loading: isCatalogLoading,
       disabled: isSystemRole,
       description: isSystemRole
         ? t("roles.landingTargetSystemLocked")

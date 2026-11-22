@@ -52,6 +52,10 @@ export const ar = {
     landingTargetHub: "مركز مساحات العمل (/hub)",
     landingTargetWorkspacePrefix: "مساحة عمل:",
     landingTargetMenuPrefix: "صفحة:",
+    landingTargetUnavailablePage: "صفحة غير متاحة",
+    landingTargetSystemGroup: "الوجهات العامة",
+    landingTargetSearchPlaceholder: "ابحث عن مساحة عمل أو صفحة...",
+    landingTargetNoResults: "لم يتم العثور على وجهة مطابقة.",
     landingEnforcedBadge: "مفروضة",
     landingTargetSystemLocked: "تُدار سياسة البدء لأدوار النظام تلقائياً.",
     totalRoles: "{{count}} دور",
@@ -79,6 +83,29 @@ export const ar = {
     additionalCapabilities: "صلاحيات إضافية",
     toggleColumnTooltip: "تبديل كافة صلاحيات {{action}} في {{module}}",
     restrictedFieldBadge: "مقيد",
+    workspaceEntriesTitle: "صفحات بدء مساحات العمل",
+    workspaceEntriesDesc:
+      "قواعد اختيارية لصفحة البدء لكل مساحة عمل بعد تسجيل الدخول أو التبديل بين المساحات.",
+    workspaceEntriesAddRule: "إضافة قاعدة",
+    workspaceEntriesEmpty:
+      "لا توجد قواعد مخصصة لصفحات بدء مساحات العمل. يعتمد هذا الدور على سياسة البدء الافتراضية.",
+    workspaceEntriesWorkspaceLabel: "مساحة العمل",
+    workspaceEntriesWorkspacePlaceholder: "اختر مساحة العمل...",
+    workspaceEntriesStartPageLabel: "صفحة البدء",
+    workspaceEntriesStartPagePlaceholder: "اختر صفحة البدء...",
+    workspaceEntriesSearchPlaceholder: "ابحث في صفحات مساحة العمل...",
+    workspaceEntriesNoResults: "لا توجد صفحة مطابقة في مساحة العمل هذه.",
+    workspaceEntriesEnforceLabel: "فرض صفحة البدء",
+    workspaceEntriesEnforceHint: "يتجاوز صفحة البدء الشخصية للأعضاء في مساحة العمل هذه.",
+    workspaceEntriesRemoveRuleAria: "إزالة قاعدة {{workspace}}",
+    workspaceEntriesSystemLocked: "تُدار سياسات بدء مساحات العمل لأدوار النظام تلقائياً.",
+    workspaceEntriesNoEligibleWorkspaces:
+      "امنح صلاحية واحدة على الأقل في مساحة عمل مؤهلة قبل إضافة قاعدة صفحة بدء.",
+    workspaceEntriesMissingTargetError:
+      "يرجى اختيار صفحة بدء صالحة لكل قاعدة مساحة عمل قبل الحفظ.",
+    workspaceEntriesPermissionWarning: "تنقص هذا الدور الصلاحية المطلوبة: {{permissions}}.",
+    workspaceEntriesStaleWarning:
+      "تشير هذه القاعدة إلى صفحة غير متاحة أو غير مصرح بها حالياً لهذا الدور.",
   },
   role: {
     deleteConfirm: "هل أنت متأكد من حذف الدور «{{name}}»؟",

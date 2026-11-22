@@ -18,6 +18,9 @@ export const ROLES_ENDPOINTS = {
   REMOVE_PERMISSION: (roleId: string, permissionId: string) =>
     `${V1}/Roles/${roleId}/permissions/${permissionId}`,
   CLONE: (id: string) => `${V1}/Roles/${id}/clone`,
+  WORKSPACE_ENTRIES: (id: string) => `${V1}/roles/${id}/workspace-entries`,
+  DELETE_WORKSPACE_ENTRY: (id: string, workspaceKey: string) =>
+    `${V1}/roles/${id}/workspace-entries/${encodeURIComponent(workspaceKey)}`,
   BULK: {
     DELETE: `${V1}/Roles/bulk/delete`,
     DELETE_ALL: `${V1}/Roles/bulk/delete-all`,

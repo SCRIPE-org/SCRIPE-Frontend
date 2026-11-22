@@ -5,6 +5,7 @@ import "@testing-library/jest-dom";
 import { WorkspaceGroup } from "@core/navigation/domain/entities/WorkspaceGroup";
 import { MenuItem } from "@core/navigation/domain/entities/MenuItem";
 import {
+  LandingTargetCatalog,
   buildStructuredLandingTargetOptions,
   canEnforceLandingTarget,
 } from "@core/navigation";
@@ -226,5 +227,93 @@ describe("Role landing policy — mappers, context constraints, and form enforce
     expect(enforceSwitch).toBeDisabled();
 
     fireEvent.click(screen.getByRole("button", { name: /common\.save/i }));
+  });
+
+  it("renders grouped searchable landing target combobox with lazy catalog, <bdi> path segments, empty search state, and unavailable fallback", () => {
+    const t = (key: string) => key;
+    const unhydratedCrm = createTestWorkspace("crm", {
+      workspaceNameEn: "CRM",
+      workspaceNameAr: "المبيعات",
+      workspaceType: "Module",
+      contextScope: "TenantOnly",
+      menuItems: [],
+      homeRoute: "/crm",
+      effectiveHomeRoute: "/crm",
+    });
+
+    const catalog = new LandingTargetCatalog({
+      scopeMode: "tenant_role",
+      contextKey: "tenant:ahly",
+      overviewAuthorized: true,
+      workspaces: [
+        {
+          workspaceKey: "crm",
+          workspaceNameEn: "CRM",
+          workspaceNameAr: "المبيعات",
+          workspaceIcon: "LayoutGrid",
+          workspaceSortOrder: 1,
+          workspaceType: "Module",
+          contextScope: "TenantOnly",
+          effectiveHomeRoute: "/crm",
+        },
+      ],
+      items: [
+        {
+          workspaceKey: "crm",
+          workspaceNameEn: "CRM",
+          workspaceNameAr: "المبيعات",
+          contextScope: "TenantOnly",
+          slug: "crm-leads",
+          nameEn: "Leads",
+          nameAr: "العملاء المحتملون",
+          route: "/crm/leads",
+          breadcrumbEn: ["Sales", "Leads"],
+          breadcrumbAr: ["المبيعات", "العملاء المحتملون"],
+        },
+      ],
+    });
+
+    const fields = getRoleEditFields(t, {
+      language: "en",
+      workspaceGroups: [unhydratedCrm],
+      catalog,
+      isTenantRole: true,
+      currentTarget: "menu:legacy-removed-page",
+    });
+
+    render(
+      <GenericForm
+        fields={fields}
+        initialValues={{
+          nameEn: "Sales Lead",
+          nameAr: "قائد المبيعات",
+          priority: 20,
+          defaultLandingTarget: "menu:legacy-removed-page",
+          isLandingEnforced: false,
+          rowVersion: "AQID",
+        }}
+        onSubmit={vi.fn()}
+        onCancel={vi.fn()}
+      />
+    );
+
+    const targetCombobox = screen.getByRole("combobox", {
+      name: "roles.defaultLandingTarget",
+    });
+    expect(targetCombobox).toHaveTextContent("roles.landingTargetUnavailablePage");
+    expect(targetCombobox).not.toHaveTextContent("menu:legacy-removed-page");
+
+    fireEvent.click(targetCombobox);
+    const searchInput = screen.getByPlaceholderText("roles.landingTargetSearchPlaceholder");
+    fireEvent.change(searchInput, { target: { value: "does-not-exist" } });
+    expect(screen.getByText("roles.landingTargetNoResults")).toBeInTheDocument();
+
+    fireEvent.change(searchInput, { target: { value: "Leads" } });
+    const leadsOption = screen.getByRole("option", { name: /Leads/i });
+    expect(leadsOption.querySelectorAll("bdi").length).toBeGreaterThanOrEqual(2);
+    fireEvent.click(leadsOption);
+
+    expect(targetCombobox.querySelectorAll("bdi").length).toBe(3);
+    expect(screen.getByRole("switch", { name: "roles.isLandingEnforced" })).toBeEnabled();
   });
 });

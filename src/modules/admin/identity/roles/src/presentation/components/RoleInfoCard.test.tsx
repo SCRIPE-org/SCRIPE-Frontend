@@ -89,5 +89,28 @@ describe("RoleInfoCard — human-readable landing target formatting", () => {
     expect(
       screen.getByText("roles.landingTargetWorkspacePrefix Venue Operations")
     ).toBeInTheDocument();
+
+    rerender(
+      <RoleInfoCard
+        role={
+          {
+            getLocalizedName: () => "Legacy Sales",
+            code: "LEGACY_SALES",
+            getLocalizedDescription: () => "",
+            priority: 15,
+            defaultLandingTarget: "menu:retired-slug",
+            isLandingEnforced: false,
+            hasGroups: false,
+            getLocalizedGroups: () => [],
+          } as never
+        }
+        isLoading={false}
+        selectedCount={3}
+        totalCount={20}
+      />
+    );
+
+    expect(screen.queryByText("menu:retired-slug")).not.toBeInTheDocument();
+    expect(screen.getByText("roles.landingTargetUnavailablePage")).toBeInTheDocument();
   });
 });

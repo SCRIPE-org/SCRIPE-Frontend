@@ -12,6 +12,8 @@ import type {
   CreateRoleJson,
   UpdateRoleJson,
   AssignPermissionsJson,
+  RoleWorkspaceEntryPolicyDto,
+  UpsertRoleWorkspaceEntriesRequestDto,
 } from "../types/RoleModelTypes";
 import type { PermissionModel, PermissionModuleGroupJson } from "@modules/identity/core";
 import type { CurrentTenantRoleListParams } from "./IRoleRepository";
@@ -78,4 +80,10 @@ export interface IRoleService {
     json: { nameEn: string; nameAr: string; descriptionEn?: string; descriptionAr?: string }
   ): Promise<{ id: string }>;
   bulkDelete(ids: string[]): Promise<number>;
+  getRoleWorkspaceEntries(roleId: string): Promise<RoleWorkspaceEntryPolicyDto[]>;
+  upsertRoleWorkspaceEntries(
+    roleId: string,
+    body: UpsertRoleWorkspaceEntriesRequestDto
+  ): Promise<RoleWorkspaceEntryPolicyDto[]>;
+  deleteRoleWorkspaceEntry(roleId: string, workspaceKey: string): Promise<void>;
 }

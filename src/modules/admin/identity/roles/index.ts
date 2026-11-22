@@ -29,6 +29,11 @@ export type {
   CloneRoleRequest,
   DeleteRoleRequest,
 } from "./src/domain/entities/RoleRequests";
+export { RoleWorkspaceEntryPolicy } from "./src/domain/entities/RoleWorkspaceEntryPolicy";
+export type {
+  RoleWorkspaceEntryPolicyData,
+  UpsertRoleWorkspaceEntryInput,
+} from "./src/domain/entities/RoleWorkspaceEntryPolicy";
 
 // Interfaces
 export type { IRoleRepository, RoleListParams } from "./src/domain/interfaces/IRoleRepository";

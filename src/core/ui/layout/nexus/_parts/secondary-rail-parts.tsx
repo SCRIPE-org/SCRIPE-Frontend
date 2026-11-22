@@ -2,11 +2,14 @@
 
 import React, { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
-import { ChevronRight, ArrowRightLeft, X } from "lucide-react";
+import { ChevronRight, ArrowRightLeft, X, Home, Lock, Check, RotateCcw } from "lucide-react";
 import type { MenuItem } from "@core/navigation";
 import { cn, resolveBilingualLabel } from "@core/common/utils";
+import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
 import { useWorkspaceTransitionContext } from "../nexus-layout";
+import type { RailStartPageActionState } from "../use-rail-start-page-toggle";
 
 // All colour reads the --nx- token layer — theme resolves in CSS, so these
 // parts never see isDark or a JS palette object.
@@ -411,21 +414,166 @@ export function RailContent({
   );
 }
 
+const RAIL_BIDI_TOKEN = "__SCRIPE_RAIL_BDI__";
+
+function renderBidiSingleToken(text: string, value: string): React.ReactNode {
+  if (!text.includes(RAIL_BIDI_TOKEN)) {
+    return text;
+  }
+  const parts = text.split(RAIL_BIDI_TOKEN);
+  return (
+    <>
+      {parts.map((part, idx) => (
+        <React.Fragment key={idx}>
+          {part}
+          {idx < parts.length - 1 ? <bdi>{value}</bdi> : null}
+        </React.Fragment>
+      ))}
+    </>
+  );
+}
+
 export function RailHeader({
   contextLabel,
   title,
   onClose,
   closeLabel,
+  startPageAction,
+  t,
 }: {
   contextLabel: string;
   title: string;
   onClose?: () => void;
   closeLabel?: string;
+  startPageAction?: RailStartPageActionState;
+  t?: (key: string, params?: Record<string, string | number>) => string;
 }) {
+  const showStartPageBar = Boolean(startPageAction && startPageAction.kind !== "hidden" && t);
+
+  const renderStartPageControl = () => {
+    if (!startPageAction || !t || startPageAction.kind === "hidden") return null;
+
+    if (startPageAction.kind === "locked") {
+      const enforcedLabel = t("chrome.startPageLocked");
+      const enforcedText = startPageAction.enforcingRoleName
+        ? t("chrome.startPageEnforcedTooltip", { role: startPageAction.enforcingRoleName })
+        : t("chrome.startPageEnforcedGenericTooltip");
+      const enforcedNode = startPageAction.enforcingRoleName
+        ? renderBidiSingleToken(
+            t("chrome.startPageEnforcedTooltip", { role: RAIL_BIDI_TOKEN }),
+            startPageAction.enforcingRoleName
+          )
+        : enforcedText;
+
+      return (
+        <div className="relative mt-2.5 flex items-center">
+          <TooltipProvider delayDuration={150}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Badge
+                  variant="secondary"
+                  tabIndex={0}
+                  aria-label={`${enforcedLabel} — ${enforcedText}`}
+                  className="max-w-full cursor-default gap-1 text-[11px] font-medium text-nx-ink-3"
+                >
+                  <Lock className="size-3 shrink-0" aria-hidden="true" />
+                  <span className="truncate">{enforcedLabel}</span>
+                </Badge>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" sideOffset={6}>
+                {enforcedNode}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+      );
+    }
+
+    if (startPageAction.kind === "current_custom") {
+      const currentLabel = t("chrome.currentStartPage");
+      const resetLabel = t("chrome.resetStartPage");
+
+      return (
+        <div className="relative mt-2.5 flex flex-wrap items-center gap-1.5">
+          <Badge variant="default" className="max-w-full gap-1 text-[11px] font-medium">
+            <Check className="size-3 shrink-0" aria-hidden="true" />
+            <span className="truncate">{currentLabel}</span>
+          </Badge>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            disabled={startPageAction.isPending}
+            onClick={() => void startPageAction.onResetStartPage()}
+            aria-label={resetLabel}
+            className={cn(
+              "h-7 shrink-0 gap-1 px-2 text-[11px] font-medium text-nx-ink-2 hover:bg-nx-raised hover:text-nx-ink",
+              FOCUS_RING
+            )}
+          >
+            <RotateCcw className="size-3 shrink-0" aria-hidden="true" />
+            <span>{resetLabel}</span>
+          </Button>
+        </div>
+      );
+    }
+
+    if (startPageAction.kind === "current_default") {
+      const currentLabel = t("chrome.currentStartPage");
+      return (
+        <div className="relative mt-2.5 flex items-center">
+          <Badge variant="default" className="max-w-full gap-1 text-[11px] font-medium">
+            <Check className="size-3 shrink-0" aria-hidden="true" />
+            <span className="truncate">{currentLabel}</span>
+          </Badge>
+        </div>
+      );
+    }
+
+    const setActionText = t("chrome.setAsStartPage", {
+      workspace: startPageAction.workspaceName,
+    });
+    const setActionNode = renderBidiSingleToken(
+      t("chrome.setAsStartPage", { workspace: RAIL_BIDI_TOKEN }),
+      startPageAction.workspaceName
+    );
+
+    return (
+      <div className="relative mt-2.5">
+        <TooltipProvider delayDuration={150}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                disabled={startPageAction.isPending}
+                onClick={() => void startPageAction.onSetAsStartPage()}
+                aria-label={setActionText}
+                className={cn(
+                  "min-h-7 h-auto w-full justify-start gap-1.5 rounded-nx-control border border-nx-line bg-nx-raised/50 px-2.5 py-1.5 text-xs font-medium leading-snug !whitespace-normal text-start text-nx-ink-2 hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink",
+                  FOCUS_RING
+                )}
+              >
+                <Home className="size-3.5 shrink-0 text-nx-ink-3" aria-hidden="true" />
+                <span className="min-w-0 flex-1 whitespace-normal text-start leading-snug">
+                  {setActionNode}
+                </span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" sideOffset={6}>
+              {setActionNode}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+    );
+  };
+
   return (
     <div
       style={{
-        padding: "24px 20px 20px",
+        padding: showStartPageBar ? "24px 20px 14px" : "24px 20px 20px",
         borderBottom: "1px solid var(--nx-line, hsl(var(--border)))",
         flexShrink: 0,
         position: "relative",
@@ -447,7 +595,7 @@ export function RailHeader({
         }}
       />
 
-      <div className="relative flex items-start justify-between gap-2">
+      <div className="relative flex items-start justify-between gap-2.5">
         <div className="min-w-0 flex-1">
           <div
             className="truncate transition-colors duration-nx-standard ease-nx-enter motion-reduce:transition-none"
@@ -487,6 +635,8 @@ export function RailHeader({
           </Button>
         )}
       </div>
+
+      {showStartPageBar ? renderStartPageControl() : null}
     </div>
   );
 }

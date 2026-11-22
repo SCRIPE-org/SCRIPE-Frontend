@@ -14,9 +14,10 @@ import { Badge } from "@core/ui/badge";
 import { Progress } from "@core/ui/progress";
 import { Skeleton } from "@core/ui/skeleton";
 import { useI18n } from "@core/providers/i18n-provider";
-import { formatLandingTargetLabel } from "@core/navigation";
+import { formatLandingTargetLabel, type LandingTargetScopeMode } from "@core/navigation";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import type { Role } from "../../domain/entities/Role";
+import { useRoleLandingCatalogViewModel } from "../viewmodels/useRoleLandingCatalogViewModel";
 
 /**
  * Interface defining property specifications, keys types, and structural contract rules for role info card props.
@@ -27,6 +28,7 @@ export interface RoleInfoCardProps {
   selectedCount: number;
   totalCount: number;
   adminCount?: number;
+  className?: string;
 }
 
 /**
@@ -39,27 +41,38 @@ export function RoleInfoCard({
   selectedCount,
   totalCount,
   adminCount,
+  className = "lg:sticky lg:top-4 lg:self-start",
 }: RoleInfoCardProps) {
   const { t, language } = useI18n();
   const workspaceGroups = useNavigationStore((s) => s.workspaceGroups);
   const cachedWorkspaces = useNavigationStore((s) => s.workspaces);
+  const storeContextKey = useNavigationStore((s) => s.contextKey);
+  const scopeMode: LandingTargetScopeMode = role?.tenantId ? "tenant_role" : "platform_role";
+  const resolvedContextKey = storeContextKey || (role?.tenantId ? `tenant:${role.tenantId}` : "platform");
+  const isMenuTarget = Boolean(
+    role?.defaultLandingTarget && role.defaultLandingTarget.trim().toLowerCase().startsWith("menu:")
+  );
+  const { catalog } = useRoleLandingCatalogViewModel(scopeMode, resolvedContextKey, isMenuTarget);
   const pct = totalCount > 0 ? (selectedCount / totalCount) * 100 : 0;
   const landingTargetLabel = formatLandingTargetLabel({
     target: role?.defaultLandingTarget,
     language,
     workspaceGroups,
     cachedWorkspaces,
+    catalog,
     labels: {
       defaultLabel: t("roles.landingTargetDefault"),
       overviewLabel: t("roles.landingTargetOverview"),
       hubLabel: t("roles.landingTargetHub"),
       workspacePrefix: t("roles.landingTargetWorkspacePrefix"),
       menuPrefix: t("roles.landingTargetMenuPrefix"),
+      unavailablePageLabel: t("roles.landingTargetUnavailablePage"),
+      systemGroupLabel: t("roles.landingTargetSystemGroup"),
     },
   });
 
   return (
-    <Card className="lg:sticky lg:top-4 lg:self-start">
+    <Card className={className}>
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-base">
           <Shield className="h-4 w-4 text-nx-ink-3" aria-hidden="true" />

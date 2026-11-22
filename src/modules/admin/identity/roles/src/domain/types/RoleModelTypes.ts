@@ -11,3 +11,8 @@ export type {
   AssignPermissionsJson,
   RoleListResponseJson,
 } from "../../data/models/RoleModel";
+export type {
+  RoleWorkspaceEntryPolicyDto,
+  UpsertRoleWorkspaceEntryItemDto,
+  UpsertRoleWorkspaceEntriesRequestDto,
+} from "../../data/models/RoleWorkspaceEntryPolicyModel";

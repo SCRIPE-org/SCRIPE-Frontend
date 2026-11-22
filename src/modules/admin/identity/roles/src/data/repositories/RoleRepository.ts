@@ -20,9 +20,14 @@ import type {
   DeleteRoleRequest,
   CloneRoleRequest,
 } from "../../domain/entities/RoleRequests";
+import type {
+  RoleWorkspaceEntryPolicy,
+  UpsertRoleWorkspaceEntryInput,
+} from "../../domain/entities/RoleWorkspaceEntryPolicy";
 import type { PagedResult } from "@modules/identity/core/domain/types";
 import type { IRoleService } from "../../domain/interfaces/IRoleService";
 import { RoleMapper } from "../mappers/RoleMapper";
+import { RoleWorkspaceEntryPolicyMapper } from "../mappers/RoleWorkspaceEntryPolicyMapper";
 import { Permission, PermissionModuleGroup, PermissionMapper } from "@modules/identity/core";
 
 /**
@@ -153,5 +158,24 @@ export class RoleRepository implements IRoleRepository {
   async clone(roleId: string, request: CloneRoleRequest): Promise<string> {
     const response = await this.service.clone(roleId, request);
     return response.id;
+  }
+
+  async getRoleWorkspaceEntries(roleId: string): Promise<RoleWorkspaceEntryPolicy[]> {
+    const dtos = await this.service.getRoleWorkspaceEntries(roleId);
+    return RoleWorkspaceEntryPolicyMapper.toEntityList(dtos);
+  }
+
+  async upsertRoleWorkspaceEntries(
+    roleId: string,
+    policies: UpsertRoleWorkspaceEntryInput[],
+    rowVersion?: string | null
+  ): Promise<RoleWorkspaceEntryPolicy[]> {
+    const requestDto = RoleWorkspaceEntryPolicyMapper.toUpsertRequestDto(policies, rowVersion);
+    const updatedDtos = await this.service.upsertRoleWorkspaceEntries(roleId, requestDto);
+    return RoleWorkspaceEntryPolicyMapper.toEntityList(updatedDtos);
+  }
+
+  async deleteRoleWorkspaceEntry(roleId: string, workspaceKey: string): Promise<void> {
+    await this.service.deleteRoleWorkspaceEntry(roleId, workspaceKey.trim().toLowerCase());
   }
 }
