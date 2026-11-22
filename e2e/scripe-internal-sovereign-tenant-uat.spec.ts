@@ -25,7 +25,7 @@ const MIRROR_SCREENSHOT_DIR =
 const BACKEND_LOGS_DIR = "d:/01_PROJECTS/SCRIPE/SCRIPE-Backend/src/Host/API/Logs";
 
 const PLATFORM_SUPERADMIN_EMAIL = "admin-seif@scripe.org";
-const SCRIPE_ADMIN_EMAIL = "seif@scripe.org";
+const SCRIPE_ADMIN_EMAIL = "admin-seif@scripe.org";
 const SCRIPE_ADMIN_USERNAME = "scripeadmin";
 const AHLY_ADMIN_EMAIL = "ahly.admin@scripe-dev.local";
 const SCRIPE_TENANT_CODE = "SCRIPE";
