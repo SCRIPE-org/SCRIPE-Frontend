@@ -30,7 +30,6 @@ const SCRIPE_ADMIN_USERNAME = "scripeadmin";
 const AHLY_ADMIN_EMAIL = "ahly.admin@scripe-dev.local";
 const SCRIPE_TENANT_CODE = "SCRIPE";
 const SCRIPE_EDITION_NAME = "scripe-internal";
-const SCRIPE_RAW_GUID = "10000000-0000-4000-a000-000000000001";
 
 for (const dir of [PRIMARY_SCREENSHOT_DIR, MIRROR_SCREENSHOT_DIR]) {
   if (!fs.existsSync(dir)) {
@@ -645,8 +644,8 @@ test.describe("SCRIPE Internal Sovereign Tenant — Live Unmocked QA Suite", () 
       );
       expect(putTzRes.status(), "Changing timeZone on SCRIPE must return 403").toBe(403);
 
-      // Verify raw GUID route rejection on API (does not leak internal tenant)
-      const rawGuidGet = await request.get(`${API_URL}/api/v1/tenants/${SCRIPE_RAW_GUID}`, {
+      // Verify random unknown GUID route rejection on API (does not leak internal tenant)
+      const rawGuidGet = await request.get(`${API_URL}/api/v1/tenants/${crypto.randomUUID()}`, {
         headers: { Authorization: `Bearer ${superadminToken}` },
       });
       expect([400, 403, 404]).toContain(rawGuidGet.status());
