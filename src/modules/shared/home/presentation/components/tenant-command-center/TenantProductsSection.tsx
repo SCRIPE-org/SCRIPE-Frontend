@@ -83,10 +83,10 @@ export function TenantProductsSection({ products }: TenantProductsSectionProps) 
           return (
             <div
               key={product.id}
-              className="hover:bg-nx-raised/40 group relative flex flex-col justify-between overflow-hidden rounded-nx-md border border-nx-line bg-nx-surface transition-[color,background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter hover:border-nx-line-hi"
+              className="group relative flex flex-col justify-between overflow-hidden rounded-nx-md border border-nx-line bg-nx-surface transition-[color,background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter hover:border-nx-line-hi hover:bg-nx-raised"
             >
               {/* Card Visual Header matching Nexus Workspace & App Launcher Cards */}
-              <div className="bg-nx-raised/30 relative flex items-center justify-between border-b border-nx-line px-4 py-3.5">
+              <div className="relative flex items-center justify-between border-b border-nx-line bg-nx-raised px-4 py-3.5">
                 <div
                   className="flex h-11 w-11 shrink-0 items-center justify-center rounded-nx-md transition-transform duration-nx-micro group-hover:scale-105"
                   style={{

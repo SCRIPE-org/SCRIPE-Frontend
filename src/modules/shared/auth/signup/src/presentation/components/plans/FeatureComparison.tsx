@@ -1,11 +1,11 @@
 // FILE-EXCEPTION: file length
-// UI-EXCEPTION: compact studio layout
 "use client";
 
 import { useMemo, useState, useEffect, useRef } from "react";
 import { Check, Minus, ChevronDown } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSignupTheme } from "@core/providers/signup-theme";
+import { Button } from "@core/ui/button";
 import type { ComparisonCategory, ComparisonCellData } from "../../../domain/entities";
 import type { PlanPickerEdition } from "../../viewmodels/usePlanPicker";
 import { formatCurrency } from "../../helpers/planPickerLogic";
@@ -141,8 +141,9 @@ export function FeatureComparison({
   return (
     <div className="mx-auto w-full max-w-[1400px]">
       <div className="flex justify-center">
-        <button
+        <Button
           type="button"
+          variant="ghost"
           onClick={() => {
             setOpen((v) => {
               const next = !v;
@@ -151,7 +152,7 @@ export function FeatureComparison({
             });
           }}
           aria-expanded={open}
-          className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-[0.875rem] font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2"
+          className="inline-flex h-auto items-center gap-2 rounded-full px-5 py-2.5 text-[0.875rem] font-semibold transition-colors duration-200 hover:bg-transparent focus-visible:outline-none focus-visible:ring-2"
           style={{
             background: tokens.surfaceRaised,
             border: tokens.borderCard,
@@ -167,7 +168,7 @@ export function FeatureComparison({
             className="transition-transform duration-200 motion-reduce:transition-none"
             style={{ transform: open ? "rotate(180deg)" : "none" }}
           />
-        </button>
+        </Button>
       </div>
 
       {open && (
@@ -178,10 +179,10 @@ export function FeatureComparison({
         >
           <div className="overflow-x-auto rounded-2xl lg:overflow-visible lg:rounded-none">
             <table className="w-full border-collapse text-start">
-              <thead className="sticky top-14 z-20">
+              <thead className="sticky top-14 z-10">
                 <tr style={{ background: tokens.surfaceRaised }}>
                   <th
-                    className="sticky start-0 top-14 z-30 py-4 pe-4 ps-4 text-start text-[0.6875rem] font-semibold uppercase tracking-wider transition-colors duration-200 sm:ps-6"
+                    className="sticky start-0 top-14 z-20 py-4 pe-4 ps-4 text-start text-[0.6875rem] font-semibold uppercase tracking-wider transition-colors duration-200 sm:ps-6"
                     style={{
                       color: activeCategory ? tokens.accent : tokens.inkFaint,
                       background: tokens.surfaceRaised,
@@ -193,13 +194,11 @@ export function FeatureComparison({
                   {editions.map((edition) => (
                     <th
                       key={edition.id}
-                      className="sticky top-14 z-20 px-4 py-4 text-center align-bottom"
+                      className="sticky top-14 z-10 px-4 py-4 text-center align-bottom"
                       style={{
                         minWidth: 120,
                         background: edition.isRecommended
-                          ? theme === "dark"
-                            ? "#1a113d"
-                            : "#f3f0ff"
+                          ? `color-mix(in srgb, ${tokens.accent} 10%, ${tokens.surface})`
                           : tokens.surfaceRaised,
                       }}
                     >
@@ -272,6 +271,7 @@ function CategoryBlock({
   highlighted: boolean;
   theme: "light" | "dark";
   tokens: {
+    surface: string;
     ink: string;
     inkMuted: string;
     inkFaint: string;
@@ -303,12 +303,10 @@ function CategoryBlock({
             style={{
               color: highlighted ? tokens.ink : tokens.inkMuted,
               background: highlighted
-                ? theme === "dark"
-                  ? "#1d0e3a"
-                  : "#f7f4ff"
+                ? `color-mix(in srgb, ${tokens.accent} 8%, ${tokens.surface})`
                 : theme === "dark"
-                  ? "#120a2b"
-                  : "#ffffff",
+                  ? tokens.surface
+                  : tokens.surfaceRaised,
               minWidth: 180,
             }}
           >

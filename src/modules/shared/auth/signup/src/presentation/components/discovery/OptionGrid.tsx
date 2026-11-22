@@ -1,7 +1,6 @@
-// UI-EXCEPTION: compact studio layout
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { Check, Star } from "lucide-react";
 import { useSignupTheme } from "@core/providers/signup-theme";
 import type { OnboardingAnswerOption } from "../../../domain/entities/OnboardingEntities";
@@ -17,7 +16,7 @@ import { DynamicIcon } from "./DynamicIcon";
 //   • Selected = accent RING + faint accent TINT (no glow box-shadow).
 //   • A single editorial scale, solid ink. No gradient text.
 //   • Disabled when a multi question hit its max and this tile isn't selected.
-//   • aria-pressed on every tile; full keyboard access (native <button>).
+//   • aria-pressed on every tile; full keyboard access (Button primitive).
 //   • Equal-height tiles via grid auto-rows; 2 cols mobile, 3 cols desktop.
 //   • Staggered entrance; reduced-motion → instant + visible.
 //
@@ -36,37 +35,37 @@ import { DynamicIcon } from "./DynamicIcon";
 // Pure UI — selection state + handlers come from the viewmodel.
 // ═══════════════════════════════════════════════════════════════════════════
 
-const prefersReducedMotion =
-  typeof window !== "undefined"
-    ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    : false;
+function getGridVariants(shouldReduce: boolean) {
+  return {
+    hidden: {},
+    visible: {
+      transition: shouldReduce ? {} : { staggerChildren: 0.05 },
+    },
+  };
+}
 
-const gridVariants = {
-  hidden: {},
-  visible: {
-    transition: prefersReducedMotion ? {} : { staggerChildren: 0.05 },
-  },
-};
-
-const tileVariants = prefersReducedMotion
-  ? {
+function getTileVariants(shouldReduce: boolean) {
+  if (shouldReduce) {
+    return {
       hidden: { opacity: 1, y: 0 },
       visible: { opacity: 1, y: 0 },
       disabled: { opacity: 0.35, y: 0 },
-    }
-  : {
-      hidden: { opacity: 0, y: 10 },
-      visible: {
-        opacity: 1,
-        y: 0,
-        transition: { duration: 0.22, ease: [0.16, 1, 0.3, 1] as const },
-      },
-      disabled: {
-        opacity: 0.35,
-        y: 0,
-        transition: { duration: 0.22, ease: [0.16, 1, 0.3, 1] as const },
-      },
     };
+  }
+  return {
+    hidden: { opacity: 0, y: 10 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.22, ease: [0.16, 1, 0.3, 1] as const },
+    },
+    disabled: {
+      opacity: 0.35,
+      y: 0,
+      transition: { duration: 0.22, ease: [0.16, 1, 0.3, 1] as const },
+    },
+  };
+}
 
 interface OptionGridProps {
   /** Already visible + ranked by the viewmodel — render in the given order. */
@@ -99,6 +98,9 @@ export function OptionGrid({
   onToggle,
 }: OptionGridProps) {
   const { tokens } = useSignupTheme();
+  const prefersReducedMotion = Boolean(useReducedMotion());
+  const gridVariants = getGridVariants(prefersReducedMotion);
+  const tileVariants = getTileVariants(prefersReducedMotion);
 
   return (
     <motion.div
@@ -141,7 +143,7 @@ export function OptionGrid({
               <span
                 aria-hidden
                 className="absolute end-2.5 top-2.5 flex h-5 w-5 items-center justify-center rounded-full"
-                style={{ background: tokens.accent, color: tokens.accentContrast }}
+                style={{ background: tokens.gradientCta, color: tokens.accentContrast }}
               >
                 <Check size={12} strokeWidth={3} />
               </span>

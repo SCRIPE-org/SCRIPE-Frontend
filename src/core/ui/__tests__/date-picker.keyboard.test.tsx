@@ -19,10 +19,12 @@
 // ever focusable.
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import "@testing-library/jest-dom";
 import { DatePicker } from "../date-picker";
 import { CustomCalendar } from "../custom-calendar";
+
+let mockDirection: "ltr" | "rtl" = "ltr";
 
 vi.mock("@core/providers/settings-provider", () => ({
   useSettings: () => ({
@@ -30,16 +32,22 @@ vi.mock("@core/providers/settings-provider", () => ({
     datePickerStyle: "default",
     borderRadius: "default",
     inputStyle: "default",
+    buttonStyle: "default",
+    animationLevel: "default",
   }),
 }));
 
 vi.mock("@core/providers/i18n-provider", () => ({
   useI18n: () => ({
     t: (key: string) => key,
-    language: "en",
-    direction: "ltr",
+    language: mockDirection === "rtl" ? "ar" : "en",
+    direction: mockDirection,
   }),
 }));
+
+beforeEach(() => {
+  mockDirection = "ltr";
+});
 
 if (typeof Element.prototype.scrollIntoView !== "function") {
   Element.prototype.scrollIntoView = () => {};
@@ -191,5 +199,105 @@ describe("CustomCalendar autoFocus contract", () => {
     expect(stops).toHaveLength(1);
     expect(stops[0]).toHaveAttribute("data-day", String(new Date().getDate()));
     expect(currentMonthCells()).toContain(stops[0]);
+  });
+
+  it("flips ArrowLeft and ArrowRight day stepping under RTL", () => {
+    mockDirection = "rtl";
+    render(
+      <DatePicker id="d" type="datetime-local" value="2026-03-15T10:00" onChange={vi.fn()} />
+    );
+    openByKeyboard();
+
+    const startCell = tabStops()[0];
+    const startDay = Number(startCell.getAttribute("data-day"));
+    expect(screen.getByRole("dialog")).toHaveAttribute("dir", "rtl");
+
+    fireEvent.keyDown(startCell, { key: "ArrowLeft" });
+    expect(Number(tabStops()[0].getAttribute("data-day"))).toBe(startDay + 1);
+
+    fireEvent.keyDown(tabStops()[0], { key: "ArrowRight" });
+    expect(Number(tabStops()[0].getAttribute("data-day"))).toBe(startDay);
+  });
+});
+
+describe("DatePicker dialog focus trap and Escape restoration", () => {
+  it("closes on Escape and restores focus to the combobox trigger", () => {
+    render(<DatePicker id="d" value="2026-03-15" onChange={vi.fn()} />);
+    const trigger = openByKeyboard();
+
+    const dialog = screen.getByRole("dialog");
+    expect(dialog).toBeInTheDocument();
+    expect(tabStops()[0]).toHaveFocus();
+
+    fireEvent.keyDown(tabStops()[0], { key: "Escape" });
+
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(trigger).toHaveFocus();
+  });
+
+  it("backs out of month view on first Escape before closing on second Escape", () => {
+    render(<DatePicker id="d" value="2026-03-15" onChange={vi.fn()} />);
+    const trigger = openByKeyboard();
+
+    fireEvent.click(screen.getByRole("button", { name: "common.selectMonth" }));
+    const firstMonthOption = screen.getAllByRole("option")[0];
+    firstMonthOption.focus();
+
+    fireEvent.keyDown(firstMonthOption, { key: "Escape" });
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+    expect(screen.getByRole("grid")).toBeInTheDocument();
+
+    fireEvent.keyDown(tabStops()[0], { key: "Escape" });
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(trigger).toHaveFocus();
+  });
+
+  it("traps Tab and Shift+Tab inside the open portal dialog", () => {
+    render(<DatePicker id="d" value="2026-03-15" onChange={vi.fn()} />);
+    openByKeyboard();
+
+    const dialog = screen.getByRole("dialog");
+    const firstFocusable = screen.getByRole("button", { name: "common.previousMonth" });
+    const lastFocusable = screen.getByRole("button", { name: "common.cancel" });
+
+    expect(dialog.contains(firstFocusable)).toBe(true);
+    expect(dialog.contains(lastFocusable)).toBe(true);
+
+    lastFocusable.focus();
+    fireEvent.keyDown(lastFocusable, { key: "Tab" });
+    expect(firstFocusable).toHaveFocus();
+
+    fireEvent.keyDown(firstFocusable, { key: "Tab", shiftKey: true });
+    expect(lastFocusable).toHaveFocus();
+  });
+
+  it("exposes id, aria-invalid, aria-describedby, and aria-label on the combobox trigger (not hidden input)", () => {
+    const { container } = render(
+      <>
+        <label htmlFor="birth-date">Birth Date</label>
+        <DatePicker
+          id="birth-date"
+          name="birth_date"
+          value=""
+          aria-label="Birth Date"
+          aria-invalid={true}
+          aria-describedby="birth-date-error"
+          onChange={vi.fn()}
+        />
+        <span id="birth-date-error">Required</span>
+      </>
+    );
+
+    const trigger = screen.getByRole("combobox", { name: "Birth Date" });
+    const hiddenInput = container.querySelector('input[type="date"]') as HTMLInputElement;
+
+    expect(trigger).toHaveAttribute("id", "birth-date");
+    expect(trigger).toHaveAttribute("aria-invalid", "true");
+    expect(trigger.getAttribute("aria-describedby")).toContain("birth-date-error");
+    expect(hiddenInput).not.toHaveAttribute("id");
+    expect(hiddenInput).toHaveAttribute("name", "birth_date");
+
+    document.getElementById("birth-date")?.focus();
+    expect(trigger).toHaveFocus();
   });
 });

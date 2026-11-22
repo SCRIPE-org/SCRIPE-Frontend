@@ -21,9 +21,14 @@
  * placeholder needed.
  */
 
+import React, { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useWorkspace } from "@core/providers/workspace-provider";
 import { useSettings } from "@core/providers/settings-provider";
+import { usePermissions } from "@core/providers/permission-provider";
+import { useAdminContext } from "@core/hooks/useAdminContext";
+import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
+import { TenantContextSwitcherDialog } from "@core/components/tenant-context";
 import { LanguageSwitcher, NxThemeSwitcher } from "@core/ui/layout/common";
 import { usePathname, useRouter } from "next/navigation";
 import { useAppStore } from "@core/store/useAppStore";
@@ -33,10 +38,12 @@ import {
   TopbarBreadcrumbs,
   TopbarContextPill,
   TopbarHomeButton,
-  TopbarMobileControls,
   TopbarPanelToggle,
   TopbarSearchButton,
+  renderBidiWorkspaceStartTooltip,
+  resolveWorkspaceStartTarget,
 } from "./_parts/topbar-parts";
+import { hasSecondarySubmenu } from "./_parts/nexus-layout-constants";
 import { useNavigationStore } from "@/core/navigation/store/useNavigationStore";
 import { startRoutingProgress } from "@core/ui/routing-progress-bar";
 
@@ -45,26 +52,73 @@ interface NexusTopbarProps {
   onTogglePanel?: () => void;
   onOpenSearch?: () => void;
   isPanelCollapsed?: boolean;
+  isMobileMenuOpen?: boolean;
+  toggleButtonRef?: React.Ref<HTMLButtonElement>;
+  extraActions?: React.ReactNode;
 }
+
+const KNOWN_ENTITY_SINGULAR_SEGMENTS = new Set([
+  "roles",
+  "users",
+  "admins",
+  "tenants",
+  "editions",
+  "user-groups",
+  "leads",
+  "opportunities",
+  "accounts",
+  "contacts",
+  "activities",
+  "pipelines",
+  "bookings",
+  "facilities",
+  "resources",
+  "athletes",
+  "staff-members",
+  "employment-records",
+  "webhooks",
+  "oauth-apps",
+  "apikeys",
+  "domains",
+  "customers",
+  "invoices",
+  "payments",
+  "permissions",
+  "features",
+  "plugins",
+]);
 
 export function NexusTopbar({
   onMobileMenuOpen,
   onTogglePanel,
   onOpenSearch,
   isPanelCollapsed,
+  isMobileMenuOpen = false,
+  toggleButtonRef,
+  extraActions,
 }: NexusTopbarProps) {
   const { direction, language, t } = useI18n();
-  const { activeWorkspace, activeRootItem, isModuleMode } = useWorkspace();
-  const { cardStyle, showBreadcrumbs, showNotifications, stickyHeader, collapsibleSidebar } =
-    useSettings();
+  const { activeWorkspace, activeRootItem, rootMenuItems, isModuleMode } = useWorkspace();
+  const { cardStyle, showBreadcrumbs, stickyHeader, collapsibleSidebar } = useSettings();
   const pathname = usePathname();
   const router = useRouter();
   const user = useAppStore((s) => s.user);
-  const tenantCode = useAppStore((s) => s.tenantCode);
+  const { activeTenantName, isPlatform: isPlatformContext } = useAdminContext();
+  const { hasPermission, canAccessPage } = usePermissions();
+  const [switcherOpen, setSwitcherOpen] = useState(false);
+  const workspaceRouteMap = useNavigationStore((s) => s?.workspaceRouteMap);
+  const routesLoaded = useNavigationStore((s) => s?.routesLoaded);
+  const hasRouteAccess = useNavigationStore((s) => s?.hasRouteAccess);
+
+  const canSwitchContext =
+    typeof hasPermission === "function" &&
+    (hasPermission(SYSTEM_PERMISSIONS.TENANTS_DRILL_DOWN) ||
+      hasPermission(SYSTEM_PERMISSIONS.IDENTITY_CONTEXT_SWITCH));
 
   const isRTL = direction === "rtl";
 
   // ── Breadcrumb segments ───────────────────────────────────────────────────
+  const normalizedPathname = pathname.toLowerCase().replace(/\/+$/, "") || "/";
   const breadcrumbOverride = useNavigationStore((s) => s.breadcrumbOverride);
   const segments = pathname.split("/").filter(Boolean);
   const pageName = segments[segments.length - 1] ?? "";
@@ -92,8 +146,20 @@ export function NexusTopbar({
 
   const formatParentSegmentAsTitle = (parentSegment: string): string => {
     if (!parentSegment) return t("common.details");
+    const normalizedSegment = parentSegment.trim().toLowerCase();
+    if (KNOWN_ENTITY_SINGULAR_SEGMENTS.has(normalizedSegment)) {
+      const singularEntity = t(`navigation.entitySingulars.${normalizedSegment}`);
+      return t("navigation.entityDetailsTitle", { entity: singularEntity });
+    }
+    const routeSegmentKey = `nav.routeSegments.${normalizedSegment}`;
+    const localizedRouteSegment = t(routeSegmentKey);
+    if (localizedRouteSegment && localizedRouteSegment !== routeSegmentKey) {
+      return t("navigation.entityDetailsTitle", { entity: localizedRouteSegment });
+    }
     let word = parentSegment.replace(/[-_]/g, " ");
-    if (word.toLowerCase().endsWith("s") && word.length > 1) {
+    if (word.toLowerCase().endsWith("ies") && word.length > 3) {
+      word = `${word.slice(0, -3)}y`;
+    } else if (word.toLowerCase().endsWith("s") && word.length > 1) {
       word = word.slice(0, -1);
     }
     const capitalized = word.replace(/\b\w/g, (c) => c.toUpperCase());
@@ -101,36 +167,78 @@ export function NexusTopbar({
   };
 
   let displayPageName = formattedPage;
-  if (breadcrumbOverride) {
-    displayPageName = breadcrumbOverride;
-  } else if (isIdString(pageName)) {
-    displayPageName = formatParentSegmentAsTitle(parentName);
-  } else if (activeRootItem && activeRootItem.children) {
-    let bestMatch: any = null;
+  const intermediateSegments: string[] = [];
+  const searchPool = activeRootItem?.children?.length ? activeRootItem.children : rootMenuItems;
+
+  let bestMatch: any = null;
+  let bestTrail: any[] = [];
+  if (searchPool && searchPool.length > 0) {
     let maxLen = 0;
-    const search = (nodes: any[]) => {
+    const search = (nodes: any[], trail: any[]) => {
       for (const item of nodes) {
         if (item.href && (pathname === item.href || pathname.startsWith(item.href + "/"))) {
           if (item.href.length > maxLen) {
             maxLen = item.href.length;
             bestMatch = item;
+            bestTrail = trail;
           }
         }
-        if (item.children) search(item.children);
+        if (item.children?.length) {
+          search(item.children, [...trail, item]);
+        }
       }
     };
-    search(activeRootItem.children);
-    if (bestMatch) {
-      displayPageName = resolveBilingualLabel(
-        bestMatch.nameEn || bestMatch.nameAr || formattedPage,
-        bestMatch.nameAr || bestMatch.nameEn || formattedPage,
-        language
-      );
+    search(searchPool, []);
+  }
+
+  for (const ancestor of bestTrail) {
+    const ancestorLabel = resolveBilingualLabel(
+      ancestor.nameEn || ancestor.nameAr,
+      ancestor.nameAr || ancestor.nameEn,
+      language
+    );
+    if (ancestorLabel) {
+      intermediateSegments.push(ancestorLabel);
     }
   }
 
+  if (breadcrumbOverride) {
+    if (bestMatch) {
+      const matchLabel = resolveBilingualLabel(
+        bestMatch.nameEn || bestMatch.nameAr,
+        bestMatch.nameAr || bestMatch.nameEn,
+        language
+      );
+      if (matchLabel) intermediateSegments.push(matchLabel);
+    }
+    displayPageName = breadcrumbOverride;
+  } else if (isIdString(pageName)) {
+    if (bestMatch) {
+      const matchLabel = resolveBilingualLabel(
+        bestMatch.nameEn || bestMatch.nameAr,
+        bestMatch.nameAr || bestMatch.nameEn,
+        language
+      );
+      if (matchLabel) intermediateSegments.push(matchLabel);
+    }
+    displayPageName = formatParentSegmentAsTitle(parentName);
+  } else if (bestMatch) {
+    displayPageName = resolveBilingualLabel(
+      bestMatch.nameEn || bestMatch.nameAr || formattedPage,
+      bestMatch.nameAr || bestMatch.nameEn || formattedPage,
+      language
+    );
+  }
+
+  const hasSubmenu = hasSecondarySubmenu(
+    activeWorkspace?.workspaceKey,
+    activeRootItem,
+    rootMenuItems
+  );
+
   // ── Context pill text ────────────────────────────────────────────────────
   const tenantName =
+    activeTenantName ??
     (user as any)?.tenantName ??
     (user?.firstName
       ? `${user.firstName} ${user?.lastName ?? ""}`.trim()
@@ -155,15 +263,36 @@ export function NexusTopbar({
     };
   })();
 
-  // ── Home route — context-aware, backend-authoritative per workspace ───────────
-  // Platform context (no tenant): use platformHomeRoute > homeRoute > "/"
-  // Tenant context: use homeRoute > "/"
-  const isPlatformContext = tenantCode === null;
-  const workspaceHomeRoute = isPlatformContext
-    ? (activeWorkspace?.platformHomeRoute ?? activeWorkspace?.homeRoute ?? "/")
-    : (activeWorkspace?.homeRoute ?? "/");
+  // ── Home route — unified server-authoritative workspace start target ──────────
+  const startTarget = resolveWorkspaceStartTarget({
+    activeWorkspace,
+    rootMenuItems,
+    workspaceRouteMap,
+    isPlatformContext,
+    canAccessPage,
+    routesLoaded,
+    hasRouteAccess,
+    language,
+    t,
+  });
+  const workspaceHomeRoute = startTarget.route;
+  const normalizedHomeRoute = startTarget.normalizedRoute;
   const isOnHome =
-    pathname === workspaceHomeRoute || (workspaceHomeRoute === "/" && pathname === "/");
+    normalizedPathname === normalizedHomeRoute ||
+    (workspaceHomeRoute === "/" && normalizedPathname === "/");
+  const homeTooltip = activeWorkspace
+    ? startTarget.pageLabel
+      ? t("chrome.workspaceStartPageTooltip", {
+          workspace: workspaceName,
+          page: startTarget.pageLabel,
+        })
+      : t("chrome.goToHome")
+    : t("chrome.allWorkspaces");
+  const homeTooltipNode: React.ReactNode = activeWorkspace
+    ? startTarget.pageLabel
+      ? renderBidiWorkspaceStartTooltip(t, workspaceName, startTarget.pageLabel)
+      : t("chrome.goToHome")
+    : t("chrome.allWorkspaces");
 
   return (
     <header
@@ -171,40 +300,32 @@ export function NexusTopbar({
       // Sticky pins the bar to the scroll region's top edge; z-sticky keeps
       // passing content (z-raised and below) under the glass. Non-sticky just
       // flows — it scrolls away with the page.
-      className={cn(stickyHeader ? "sticky top-0 z-sticky" : "relative z-raised")}
+      className={cn(
+        stickyHeader ? "sticky top-0 z-sticky" : "relative z-raised",
+        "flex h-14 min-h-[56px] shrink-0 items-center gap-1.5 border-b border-nx-line px-2.5 sm:gap-3 sm:px-3 lg:pe-3 lg:ps-5"
+      )}
       style={{
-        height: 56,
-        minHeight: 56,
-        flexShrink: 0,
-        borderBottom: "1px solid var(--nx-line, hsl(var(--border)))",
-        display: "flex",
-        alignItems: "center",
-        paddingInlineStart: 20,
-        paddingInlineEnd: 12,
-        gap: 12,
         direction: isRTL ? "rtl" : "ltr",
         ...bgStyle,
       }}
     >
-      {/* Mobile hamburger / Desktop Panel Toggle */}
-      {(() => {
-        const hasSubmenu = Boolean(activeRootItem?.children && activeRootItem.children.length > 0);
-        return (
-          <TopbarPanelToggle
-            isRTL={isRTL}
-            isPanelCollapsed={isPanelCollapsed}
-            collapsible={collapsibleSidebar && hasSubmenu}
-            ariaLabel={t("navigation.togglePanel")}
-            onToggle={() => {
-              if (typeof window !== "undefined" && window.innerWidth < 1024) {
-                onMobileMenuOpen();
-              } else if (onTogglePanel) {
-                onTogglePanel();
-              }
-            }}
-          />
-        );
-      })()}
+      {/* Mobile drawer toggle (<1024px) / Desktop Panel Toggle (>=1024px) */}
+      <TopbarPanelToggle
+        isRTL={isRTL}
+        isPanelCollapsed={isPanelCollapsed}
+        collapsible={collapsibleSidebar && hasSubmenu}
+        hasSubmenu={hasSubmenu}
+        isMobileMenuOpen={isMobileMenuOpen}
+        toggleRef={toggleButtonRef}
+        ariaLabel={t("navigation.togglePanel")}
+        onToggle={() => {
+          if (typeof window !== "undefined" && window.innerWidth < 1024) {
+            onMobileMenuOpen();
+          } else if (onTogglePanel) {
+            onTogglePanel();
+          }
+        }}
+      />
 
       {/* Breadcrumbs — the spacer keeps the right-side controls parked at the
           inline end when the trail is switched off */}
@@ -213,6 +334,7 @@ export function NexusTopbar({
           isRTL={isRTL}
           workspaceName={workspaceName}
           activeRootName={activeRootName}
+          intermediateSegments={intermediateSegments}
           displayPageName={displayPageName}
         />
       ) : (
@@ -220,15 +342,14 @@ export function NexusTopbar({
       )}
 
       {/* Right-side controls */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 8,
-          flexShrink: 0,
-        }}
-      >
-        <TopbarContextPill isModuleMode={isModuleMode} tenantName={tenantName} />
+      <div className="flex shrink-0 items-center gap-1 sm:gap-2">
+        <TopbarContextPill
+          isModuleMode={isModuleMode}
+          tenantName={tenantName}
+          canSwitchContext={canSwitchContext}
+          switchAriaLabel={t("contextGates.switcher.openSwitcher")}
+          onOpenSwitcher={() => setSwitcherOpen(true)}
+        />
 
         <TopbarSearchButton
           onOpenSearch={onOpenSearch}
@@ -237,7 +358,8 @@ export function NexusTopbar({
 
         {!isOnHome && (
           <TopbarHomeButton
-            ariaLabel={t("chrome.goToHome")}
+            ariaLabel={homeTooltip}
+            tooltip={homeTooltipNode}
             onClick={() => {
               startRoutingProgress();
               router.push(workspaceHomeRoute);
@@ -245,13 +367,16 @@ export function NexusTopbar({
           />
         )}
 
-        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <NxThemeSwitcher buttonClassName="h-[33px] w-[33px] text-nx-ink-3 hover:text-nx-ink hover:bg-nx-raised rounded-nx-control transition-[color,background-color,border-color,box-shadow] duration-nx-micro motion-reduce:transition-none" />
-          <LanguageSwitcher buttonClassName="h-[33px] w-[46px] text-nx-ink-3 hover:text-nx-ink hover:bg-nx-raised rounded-nx-control transition-[color,background-color,border-color,box-shadow] duration-nx-micro motion-reduce:transition-none" />
-        </div>
+        {extraActions}
 
-        <TopbarMobileControls showNotifications={showNotifications} />
+        <div className="flex items-center gap-1 sm:gap-2">
+          <NxThemeSwitcher buttonClassName="h-9 w-9 text-nx-ink-2 hover:text-nx-ink hover:bg-nx-raised rounded-nx-control transition-[color,background-color,border-color,box-shadow] duration-nx-micro motion-reduce:transition-none" />
+          <LanguageSwitcher buttonClassName="h-9 min-w-[36px] px-2 text-nx-ink-2 hover:text-nx-ink hover:bg-nx-raised rounded-nx-control transition-[color,background-color,border-color,box-shadow] duration-nx-micro motion-reduce:transition-none" />
+        </div>
       </div>
+      {canSwitchContext && (
+        <TenantContextSwitcherDialog open={switcherOpen} onOpenChange={setSwitcherOpen} />
+      )}
     </header>
   );
 }

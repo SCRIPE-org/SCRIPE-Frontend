@@ -1,11 +1,9 @@
-import type {
-  OperationsCalendarDay,
-  OperationsCalendarQuery,
-} from "../entities/OperationsCalendar";
+import type { OperationsCalendarQuery } from "../entities/OperationsCalendar";
+import type { OperationsCalendarDayDto } from "../../data/models";
 
 /**
- * Documentation for module export
+ * HTTP service contract for retrieving operations calendar day snapshots.
  */
 export interface IOperationsCalendarService {
-  getDay(query: OperationsCalendarQuery): Promise<OperationsCalendarDay>;
+  getDay(query: OperationsCalendarQuery): Promise<OperationsCalendarDayDto>;
 }

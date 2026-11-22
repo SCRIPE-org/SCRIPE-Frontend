@@ -50,7 +50,7 @@ export function SubscriptionStatusCard({ subscription, t }: SubscriptionStatusCa
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
-            <Crown className="h-5 w-5 text-warning" aria-hidden="true" />
+            <Crown className="h-5 w-5 text-nx-warning-strong" aria-hidden="true" />
             {subscription.planName}
           </CardTitle>
           <Badge variant={STATUS_BADGE_VARIANT[subscription.status] ?? "inactive"}>
@@ -102,7 +102,7 @@ export function SubscriptionStatusCard({ subscription, t }: SubscriptionStatusCa
 
         {/* Days remaining warning */}
         {subscription.isExpiringSoon && subscription.daysRemaining != null && (
-          <div className="mt-4 flex items-center gap-2 rounded-nx-md bg-warning/10 px-3 py-2 text-warning">
+          <div className="mt-4 flex items-center gap-2 rounded-nx-md bg-warning/10 px-3 py-2 text-nx-warning-strong">
             <Timer className="h-4 w-4" aria-hidden="true" />
             <span className="text-sm">{t("entitlements.mySubscription.expiringSoon")}</span>
           </div>

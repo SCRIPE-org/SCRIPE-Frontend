@@ -117,6 +117,8 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
   const resourceUpdatePerm = usePermission(resource ? `${resource}.update` : "");
   const resourceDeletePerm = usePermission(resource ? `${resource}.delete` : "");
 
+  const { hasPermission } = usePermissions();
+
   // Helper function to resolve permission values (no hooks inside)
   const resolvePermissionValue = useCallback(
     (value: boolean | PermissionCode | undefined, fallbackPermission: boolean): boolean => {
@@ -126,14 +128,10 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
       if (typeof value === "boolean") {
         return value;
       }
-      // For string permission codes, we can't call hooks here
-      // The caller should use the resource-based permissions instead
-      return fallbackPermission;
+      return hasPermission(value);
     },
-    []
+    [hasPermission]
   );
-
-  const { hasPermission } = usePermissions();
 
   const effectivePermissions = useMemo(() => {
     if (permissions) {
@@ -189,6 +187,7 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
           <span className="text-sm text-nx-ink-3">{t("table.show")}:</span>
           <GenericSelect
             type="single"
+            aria-label={t("table.perPage", { defaultValue: "Rows per page" })}
             options={[5, 10, 25, 50, 100].map((size) => ({
               value: String(size),
               label: String(size),
@@ -197,7 +196,7 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
             onValueChange={(v: string | string[]) =>
               vm.changePageSize(Number(typeof v === "string" ? v : v[0]))
             }
-            className="h-8 w-auto min-w-[70px] max-w-[90px] text-center font-medium"
+            className="h-8 w-auto min-w-[70px] max-w-[90px] text-center font-medium tabular-nums"
             allowClear={false}
           />
           <span className="text-sm text-nx-ink-3">{t("table.perPage")}</span>
@@ -279,7 +278,7 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
                       size="sm"
                       onClick={() => vm.changePage(pageNum)}
                       aria-current={isActive ? "page" : undefined}
-                      className="h-8 w-8 p-0"
+                      className="h-8 w-8 p-0 tabular-nums"
                     >
                       {pageNum}
                     </Button>
@@ -320,7 +319,7 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
   ) : undefined;
 
   return (
-    <main className={cn("space-y-4", className)}>
+    <div className={cn("space-y-4", className)}>
       {/* Same header as every list and record page — the tree is a view of a
           resource, not a different kind of screen. */}
       <PageHeader className="mb-0" title={title} description={subtitle} />
@@ -459,6 +458,6 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
           onCancel={vm.cancelDelete}
         />
       )}
-    </main>
+    </div>
   );
 }

@@ -43,8 +43,8 @@ export class UserSubscriptionRepository implements IUserSubscriptionRepository {
     return UserSubscriptionMapper.toEntity(model);
   }
 
-  async getMySubscription(): Promise<UserSubscription | null> {
-    const model = await this.service.getMySubscription();
+  async getCurrentSubscription(): Promise<UserSubscription | null> {
+    const model = await this.service.getCurrentSubscription();
     return model ? UserSubscriptionMapper.toEntity(model) : null;
   }
 
@@ -57,8 +57,8 @@ export class UserSubscriptionRepository implements IUserSubscriptionRepository {
     await this.service.cancel(id);
   }
 
-  async cancelMine(): Promise<void> {
-    await this.service.cancelMine();
+  async cancelCurrent(): Promise<void> {
+    await this.service.cancelCurrent();
   }
 
   async renew(id: string): Promise<void> {

@@ -1,5 +1,4 @@
 // FILE-EXCEPTION: file length
-// UI-EXCEPTION: compact studio layout
 /**
  * Menu Tree Item Component (Native HTML5 DnD) — Admin Only
  *
@@ -269,21 +268,23 @@ export function MenuTreeItem({
 
         {/* Expand / Collapse */}
         {hasChildren ? (
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="icon"
             onClick={(e) => {
               e.stopPropagation();
               onToggleExpand(node.id);
             }}
             aria-label={isExpanded ? t("common.collapseAll") : t("common.expandAll")}
-            className="shrink-0 rounded-nx-sm p-0.5 transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
+            className="h-auto w-auto shrink-0 rounded-nx-sm p-0.5 transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
           >
             {isExpanded ? (
               <ChevronDown className="h-4 w-4 text-nx-ink-3" aria-hidden="true" />
             ) : (
               <ChevronRight className="h-4 w-4 text-nx-ink-3" aria-hidden="true" />
             )}
-          </button>
+          </Button>
         ) : (
           <div className="w-5 shrink-0" />
         )}

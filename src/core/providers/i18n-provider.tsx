@@ -66,6 +66,20 @@ function reportMissingKey(key: string, language: Language): string {
   return key;
 }
 
+/**
+ * Interpolates `{{param}}` and `{param}` placeholders in a single pass using
+ * own properties on `params` to avoid prototype property leakage.
+ */
+function interpolateParams(template: string, params?: Record<string, any>): string {
+  if (!params) return template;
+  return template.replace(/\{\{(\w+)\}\}|\{(\w+)\}/g, (match, doubleKey, singleKey) => {
+    const paramKey = doubleKey ?? singleKey;
+    return Object.prototype.hasOwnProperty.call(params, paramKey) && params[paramKey] !== undefined
+      ? String(params[paramKey])
+      : match;
+  });
+}
+
 // ─── I18N PROVIDER (v8.0 — Zero-Flash + Deep Merge) ─────
 //
 // Architecture:
@@ -78,7 +92,13 @@ function reportMissingKey(key: string, language: Language): string {
 //    the same top-level namespace (e.g. "entitlements") never clobber
 //    each other's keys — both at build-time and lazy-load runtime.
 //
-export function I18nProvider({ children }: { children: React.ReactNode }) {
+export function I18nProvider({
+  children,
+  initialLanguage = "en",
+}: {
+  children: React.ReactNode;
+  initialLanguage?: Language;
+}) {
   // ─── EAGER REGISTRY — All translations available on first render ────
   const registryRef = useRef<Record<Language, TranslationDict>>({
     en: deepMerge({}, coreEn, allModulesEn),
@@ -86,14 +106,10 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   });
   const loadedModulesRef = useRef<Set<string>>(new Set());
 
-  const [language, setLanguage] = useState<Language>(() => {
-    if (typeof window === "undefined") return "ar";
-    const saved = localStorage.getItem(STORAGE_KEYS.LANGUAGE) as Language;
-    if (saved === "en" || saved === "ar") return saved;
-    const tenantPref = localStorage.getItem(STORAGE_KEYS.PREF_LANG) as Language;
-    if (tenantPref === "en" || tenantPref === "ar") return tenantPref;
-    return "en";
-  });
+  // Initialize synchronously from SSR-matched initialLanguage so the first
+  // client render aligns identically with <html lang dir> and <body> font.
+  // Client localStorage overrides are reconciled safely post-hydration in useEffect.
+  const [language, setLanguage] = useState<Language>(initialLanguage);
   const [, forceUpdate] = useState(0);
 
   const direction: Direction = language === "ar" ? "rtl" : "ltr";
@@ -127,43 +143,31 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
       let value: any = registryRef.current[language];
 
       for (const k of keys) {
-        if (value && typeof value === "object" && k in value) {
+        if (
+          value !== null &&
+          typeof value === "object" &&
+          Object.prototype.hasOwnProperty.call(value, k)
+        ) {
           value = value[k];
         } else {
+          reportMissingKey(key, language);
           if (params && typeof params.defaultValue === "string") {
-            let def = params.defaultValue;
-            def = def.replace(/\{\{(\w+)\}\}/g, (match, paramKey) => {
-              return params[paramKey] !== undefined ? String(params[paramKey]) : match;
-            });
-            def = def.replace(/\{(\w+)\}/g, (match, paramKey) => {
-              return params[paramKey] !== undefined ? String(params[paramKey]) : match;
-            });
-            return def;
+            return interpolateParams(params.defaultValue, params);
           }
-          return reportMissingKey(key, language); // path not found
+          return key;
         }
       }
 
       if (typeof value === "string") {
-        // Simple interpolation: replace {{param}} and {param} with actual values
-        if (params) {
-          let interpolated = value.replace(/\{\{(\w+)\}\}/g, (match, paramKey) => {
-            return params[paramKey] !== undefined ? String(params[paramKey]) : match;
-          });
-          interpolated = interpolated.replace(/\{(\w+)\}/g, (match, paramKey) => {
-            return params[paramKey] !== undefined ? String(params[paramKey]) : match;
-          });
-          return interpolated;
-        }
-        return value;
-      }
-
-      if (params && typeof params.defaultValue === "string") {
-        return params.defaultValue;
+        return interpolateParams(value, params);
       }
 
       // Resolved to a non-string leaf (object/array) — treat as a miss.
-      return reportMissingKey(key, language);
+      reportMissingKey(key, language);
+      if (params && typeof params.defaultValue === "string") {
+        return interpolateParams(params.defaultValue, params);
+      }
+      return key;
     },
     [language]
   );
@@ -195,15 +199,37 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   // produces zero writes instead of an unconditional (and possibly redundant)
   // one.
   useEffect(() => {
-    const targetDir = language === "ar" ? "rtl" : "ltr";
+    let cancelled = false;
+    let targetLang: Language = initialLanguage;
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.LANGUAGE) as Language | null;
+      const tenantPref = localStorage.getItem(STORAGE_KEYS.PREF_LANG) as Language | null;
+      if (saved === "en" || saved === "ar") {
+        targetLang = saved;
+      } else if (tenantPref === "en" || tenantPref === "ar") {
+        targetLang = tenantPref;
+      }
+    } catch {
+      // Ignore storage access failures in restricted contexts
+    }
+
+    if (targetLang !== initialLanguage) {
+      queueMicrotask(() => {
+        if (!cancelled) {
+          setLanguage(targetLang);
+        }
+      });
+    }
+
+    const targetDir = targetLang === "ar" ? "rtl" : "ltr";
     if (document.documentElement.getAttribute("dir") !== targetDir) {
       document.documentElement.setAttribute("dir", targetDir);
     }
-    if (document.documentElement.getAttribute("lang") !== language) {
-      document.documentElement.setAttribute("lang", language);
+    if (document.documentElement.getAttribute("lang") !== targetLang) {
+      document.documentElement.setAttribute("lang", targetLang);
     }
-    const fontClass = language === "ar" ? "font-arabic" : "font-english";
-    const staleFontClass = language === "ar" ? "font-english" : "font-arabic";
+    const fontClass = targetLang === "ar" ? "font-arabic" : "font-english";
+    const staleFontClass = targetLang === "ar" ? "font-english" : "font-arabic";
     if (!document.body.classList.contains(fontClass)) {
       document.body.classList.add(fontClass);
     }
@@ -213,7 +239,11 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
     // Backfills the cookie for sessions that only ever had the localStorage
     // value (e.g. existing users, before this cookie existed), so the very
     // next request already gets the correct SSR <html lang dir>.
-    persistLanguageCookie(language);
+    persistLanguageCookie(targetLang);
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   // ─── STABLE CONTEXT VALUE ─────────────────────────────────
@@ -245,12 +275,17 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
 export function useI18n() {
   const context = useContext(I18nContext);
   if (context === undefined) {
-    // SSR/prerender fallback — returns raw keys (safe, no state leak)
+    // Unmounted/no-provider fallback — returns interpolated defaultValue or raw key with coherent "ar"/"rtl" contract
     return {
       language: "ar" as const,
       direction: "rtl" as const,
       setLanguage: () => {},
-      t: (key: string, _params?: Record<string, string | number>) => key,
+      t: (key: string, params?: Record<string, string | number>) => {
+        if (params && typeof params.defaultValue === "string") {
+          return interpolateParams(params.defaultValue, params);
+        }
+        return key;
+      },
       registerBothLanguages: () => {},
       markModuleLoaded: () => {},
       isModuleLoaded: () => false,

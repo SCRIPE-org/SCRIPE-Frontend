@@ -73,7 +73,7 @@ export function TenantTableSection({
 
           {/* Search bar */}
           <div className="relative w-full sm:w-72">
-            <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-nx-ink-3 rtl:left-auto rtl:right-2.5" />
+            <Search className="absolute start-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-nx-ink-3" />
             <Input
               type="text"
               placeholder={
@@ -84,7 +84,7 @@ export function TenantTableSection({
                 onSearchChange(e.target.value);
                 setPage(1);
               }}
-              className="h-8.5 border-nx-line bg-nx-surface text-xs text-nx-ink rtl:pl-3 rtl:pr-8"
+              className="h-8.5 border-nx-line bg-nx-surface ps-8 pe-3 text-xs text-nx-ink"
             />
           </div>
         </div>
@@ -110,7 +110,7 @@ export function TenantTableSection({
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full border-collapse text-left text-xs rtl:text-right">
+            <table className="w-full border-collapse text-start text-xs">
               <thead>
                 <tr className="border-y border-nx-line bg-nx-raised/40 font-semibold text-nx-ink-3">
                   <th className="px-4 py-3">
@@ -134,7 +134,7 @@ export function TenantTableSection({
                   <th className="px-4 py-3">
                     {t("tenantAnalytics.table.columns.created") || "Created"}
                   </th>
-                  <th className="px-4 py-3 text-right rtl:text-left">
+                  <th className="px-4 py-3 text-end">
                     {t("tenantAnalytics.table.columns.actions") || "Actions"}
                   </th>
                 </tr>
@@ -196,7 +196,7 @@ export function TenantTableSection({
                       {/* Region */}
                       <td className="px-4 py-3">
                         <span className="inline-flex items-center gap-1.5 font-medium text-nx-ink">
-                          <span className="rounded-xs flex h-4.5 w-6 items-center justify-center bg-nx-raised font-mono text-[9px] font-bold text-nx-ink-3">
+                          <span className="rounded-nx-sm flex h-4.5 w-6 items-center justify-center bg-nx-raised font-mono text-[9px] font-bold text-nx-ink-3">
                             {tenant.countryCode || "GL"}
                           </span>
                           <span className="text-[11px] text-nx-ink-3">
@@ -213,7 +213,7 @@ export function TenantTableSection({
                               ? "bg-success/10 text-success"
                               : status === "Trial"
                                 ? "bg-info/10 text-info"
-                                : "bg-warning/10 text-warning"
+                                : "bg-warning/10 text-nx-warning-strong"
                           }`}
                         >
                           <span
@@ -245,15 +245,16 @@ export function TenantTableSection({
                       </td>
 
                       {/* Actions */}
-                      <td className="px-4 py-3 text-right rtl:text-left">
+                      <td className="px-4 py-3 text-end">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button
                               variant="ghost"
                               size="icon"
                               className="h-7 w-7 cursor-pointer text-nx-ink-3 hover:text-nx-ink"
+                              aria-label={t("tenantAnalytics.table.columns.actions") || "Actions"}
                             >
-                              <MoreHorizontal className="h-4 w-4" />
+                              <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="w-40 text-xs">

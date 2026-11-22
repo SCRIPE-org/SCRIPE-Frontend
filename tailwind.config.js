@@ -74,6 +74,8 @@ module.exports = {
         nx: {
           ground: "var(--nx-ground, hsl(var(--background)))",
           surface: "var(--nx-surface, hsl(var(--card)))",
+          surfaceSubtle: "var(--nx-raised, hsl(var(--muted)))",
+          "surface-subtle": "var(--nx-raised, hsl(var(--muted)))",
           raised: "var(--nx-raised, hsl(var(--muted)))",
           "raised-2": "var(--nx-raised-2, hsl(var(--accent)))",
           line: "var(--nx-line, hsl(var(--border)))",
@@ -83,7 +85,8 @@ module.exports = {
           "ink-3": "var(--nx-ink-3, hsl(var(--muted-foreground)))",
           accent: "var(--nx-accent, hsl(var(--primary)))",
           "accent-fill": "var(--nx-accent-fill, hsl(var(--primary)))",
-          "accent-wash": "var(--nx-accent-wash, hsl(var(--primary) / 0.1))",
+          "accent-wash": "var(--nx-accent-wash, hsl(var(--primary) / 0.14))",
+          selected: "var(--nx-selected, var(--nx-accent-wash))",
           "on-fill": "var(--nx-on-fill, hsl(var(--primary-foreground)))",
           secondary: "var(--nx-secondary, hsl(var(--info)))",
           // Wave A extensions — defined globally in globals.css since the
@@ -95,6 +98,7 @@ module.exports = {
           // re-derives status colours.
           danger: "var(--nx-danger, hsl(var(--destructive)))",
           warning: "var(--nx-warning, hsl(var(--warning)))",
+          "warning-strong": "var(--nx-warning-strong, hsl(var(--warning-strong)))",
           info: "var(--nx-info, hsl(var(--info)))",
           success: "var(--nx-success, hsl(var(--success)))",
         },
@@ -148,7 +152,7 @@ module.exports = {
         "nx-popover": "var(--nx-shadow-popover, 0 8px 24px -8px rgb(0 0 0 / 0.4))",
         "nx-modal": "var(--nx-shadow-modal, 0 24px 64px -16px rgb(0 0 0 / 0.5))",
         "nx-bar-top": "var(--nx-shadow-bar-top, 0 -8px 24px -8px rgb(0 0 0 / 0.4))",
-        "nx-focus": "var(--nx-focus, 0 0 0 3px hsl(var(--ring) / 0.25))",
+        "nx-focus": "var(--nx-focus, 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring)))",
       },
       borderRadius: {
         lg: "var(--radius)",

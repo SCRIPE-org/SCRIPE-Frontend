@@ -31,6 +31,7 @@ export interface ISchedulableResourceRepository {
   create(data: Record<string, unknown>): Promise<string>;
   update(id: string, data: Record<string, unknown>): Promise<void>;
   delete(id: string): Promise<void>;
+  deleteResource(id: string): Promise<void>;
   getPublicationChecklist(id: string): Promise<PublicationChecklistReport>;
   publish(id: string): Promise<void>;
 }

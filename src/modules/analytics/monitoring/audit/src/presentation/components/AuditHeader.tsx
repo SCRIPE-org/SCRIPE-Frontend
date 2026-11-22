@@ -29,12 +29,12 @@ const connectionStyles: Record<
   connecting: {
     dot: "bg-warning",
     pulse: "animate-pulse bg-warning/80 opacity-75",
-    text: "text-warning",
+    text: "text-nx-warning-strong",
   },
   reconnecting: {
     dot: "bg-warning",
     pulse: "animate-pulse bg-warning/80 opacity-75",
-    text: "text-warning",
+    text: "text-nx-warning-strong",
   },
   disconnected: {
     dot: "bg-destructive",
@@ -147,7 +147,7 @@ export function AuditHeader({
           type="button"
           size="sm"
           onClick={onExport}
-          className="h-8.5 cursor-pointer gap-1.5 bg-primary px-3.5 text-xs font-bold text-nx-on-fill hover:bg-primary/90"
+          className="h-8.5 cursor-pointer gap-1.5 bg-nx-accent-fill px-3.5 text-xs font-bold text-nx-on-fill hover:bg-nx-accent-fill/90"
         >
           <Download className="h-3.5 w-3.5" />
           <span>{t("audit.export.button") || "Export"}</span>

@@ -72,7 +72,7 @@ export function MonitoringOverview({ vm }: { vm: CommandCenter }) {
       {/* ── 1. Page Header matching Command Center ────────────────────────── */}
       <header className="flex flex-col gap-4 border-b border-nx-line pb-4 lg:flex-row lg:items-end lg:justify-between">
         <div className="min-w-0">
-          <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-primary">
+          <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-nx-accent">
             {t("platformCommandCenter.monitoringOverview.eyebrow") ||
               "MONITORING"}
           </p>
@@ -93,9 +93,9 @@ export function MonitoringOverview({ vm }: { vm: CommandCenter }) {
             <span
               className={`h-2 w-2 rounded-full ${
                 degraded
-                  ? "bg-warning shadow-[0_0_8px_rgba(234,179,8,0.7)]"
+                  ? "bg-warning"
                   : health
-                    ? "bg-success shadow-[0_0_8px_rgba(34,197,94,0.7)]"
+                    ? "bg-success"
                     : "bg-nx-ink-3"
               }`}
               aria-hidden="true"
@@ -125,7 +125,7 @@ export function MonitoringOverview({ vm }: { vm: CommandCenter }) {
                   onClick={() => vm.setTimeRangeKey(r.key)}
                   className={`cursor-pointer text-xs ${
                     vm.timeRangeKey === r.key
-                      ? "bg-primary/10 font-semibold text-primary"
+                      ? "bg-nx-accent-wash font-semibold text-nx-accent"
                       : "text-nx-ink-2 hover:bg-nx-raised hover:text-nx-ink"
                   }`}
                 >
@@ -141,19 +141,19 @@ export function MonitoringOverview({ vm }: { vm: CommandCenter }) {
             variant="outline"
             size="sm"
             onClick={vm.toggleLive}
-            className={`h-8.5 cursor-pointer gap-2 border px-3 text-xs font-semibold transition-colors ${
+            className={`h-8 cursor-pointer gap-2 border px-3 text-xs font-semibold transition-colors ${
               vm.isLive
                 ? "border-success/30 bg-success/10 text-success hover:bg-success/20"
-                : "border-nx-line bg-nx-raised/50 text-nx-ink-3 hover:bg-nx-raised"
+                : "border-nx-line bg-nx-raised text-nx-ink-3 hover:border-nx-line-hi hover:text-nx-ink"
             }`}
           >
             {vm.isLive ? (
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-success shadow-[0_0_8px_rgba(34,197,94,0.75)]" />
+              <span className="relative flex h-2 w-2" aria-hidden="true">
+                <span className="absolute inline-flex h-full w-full animate-ping motion-reduce:animate-none rounded-full bg-success opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-success" />
               </span>
             ) : (
-              <span className="h-2 w-2 rounded-full bg-nx-ink-3" />
+              <span className="h-2 w-2 rounded-full bg-nx-ink-3" aria-hidden="true" />
             )}
             <span>
               {vm.isLive
@@ -173,7 +173,7 @@ export function MonitoringOverview({ vm }: { vm: CommandCenter }) {
             className="h-8.5 cursor-pointer gap-1.5 border-nx-line bg-nx-surface px-3 text-xs font-semibold text-nx-ink hover:bg-nx-raised"
           >
             <RotateCw
-              className={`h-3.5 w-3.5 text-nx-ink-3 ${vm.isRefreshing ? "animate-spin text-primary" : ""}`}
+              className={`h-3.5 w-3.5 text-nx-ink-3 ${vm.isRefreshing ? "animate-spin motion-reduce:animate-none text-nx-accent" : ""}`}
             />
             <span>
               {t("platformCommandCenter.monitoringOverview.refresh") ||
@@ -307,22 +307,24 @@ function ExploreDestination({
   body: string;
   icon: React.ComponentType<{ className?: string }>;
 }) {
+  const { t } = useI18n();
+
   return (
     <Link
       href={href}
       className="group flex flex-col justify-between rounded-xl border border-nx-line bg-nx-surface p-4 transition-all hover:border-nx-line-hi hover:bg-nx-raised"
     >
       <div className="flex items-center justify-between">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary transition-transform group-hover:scale-105">
-          <Icon className="h-4 w-4" />
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-nx-line-hi bg-nx-accent-wash text-nx-accent transition-transform group-hover:scale-105">
+          <Icon className="h-4 w-4" aria-hidden="true" />
         </div>
-        <span className="flex items-center gap-0.5 text-[10px] text-nx-ink-3 transition-colors group-hover:text-primary">
-          <span>Open</span>
-          <ChevronRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+        <span className="flex items-center gap-0.5 text-[10px] text-nx-ink-3 transition-colors group-hover:text-nx-accent">
+          <span>{t("common.open", { defaultValue: "Open" })}</span>
+          <ChevronRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5 rtl:rotate-180 rtl:group-hover:-translate-x-0.5" aria-hidden="true" />
         </span>
       </div>
       <div className="mt-3">
-        <p className="text-sm font-semibold text-nx-ink transition-colors group-hover:text-primary">
+        <p className="text-sm font-semibold text-nx-ink transition-colors group-hover:text-nx-accent">
           {title}
         </p>
         <p className="mt-1 line-clamp-2 text-xs text-nx-ink-3">

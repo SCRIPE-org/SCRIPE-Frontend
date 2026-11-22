@@ -14,29 +14,22 @@ import { QrApprovePageContent } from "../components/QrApprovePageContent";
  */
 export function QrApprovePageView() {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center p-4"
-      style={{
-        background:
-          "radial-gradient(ellipse at 50% 0%, rgba(198,255,0,0.1) 0%, transparent 60%), hsl(var(--background))",
-      }}
-    >
+    <main className="flex min-h-[100dvh] items-center justify-center bg-nx-ground p-4 text-nx-ink">
       <div
-        className="w-full max-w-sm overflow-hidden rounded-2xl"
+        className="w-full max-w-sm overflow-hidden rounded-2xl border"
         style={{
-          background: "var(--sx-card-bg, hsl(var(--card)))",
-          border: "1px solid var(--sx-card-border, hsl(var(--border)))",
-          boxShadow: "0 0 0 1px rgba(255,255,255,0.03), 0 32px 64px rgba(0,0,0,0.4)",
+          background: "var(--sx-card-bg, var(--nx-surface))",
+          borderColor: "var(--sx-card-border, var(--nx-line))",
         }}
       >
         {/* Brand header */}
         <div
           className="border-b px-6 py-4 text-center"
-          style={{ borderColor: "var(--sx-card-border, hsl(var(--border)))" }}
+          style={{ borderColor: "var(--sx-card-border, var(--nx-line))" }}
         >
           <p
             className="text-xs font-medium uppercase tracking-widest"
-            style={{ color: "var(--sx-text-faint, hsl(var(--muted-foreground)/0.5))" }}
+            style={{ color: "var(--sx-text-faint, var(--nx-ink-3))" }}
           >
             SCRIPE
           </p>
@@ -49,7 +42,7 @@ export function QrApprovePageView() {
           </Suspense>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
 
@@ -58,31 +51,13 @@ export function QrApprovePageView() {
 function QrApproveLoadingState() {
   return (
     <div className="space-y-4 text-center">
-      <div
-        className="mx-auto h-14 w-14 animate-pulse rounded-2xl"
-        style={{ background: "rgba(255,255,255,0.06)" }}
-      />
-      <div
-        className="mx-auto h-5 w-2/3 animate-pulse rounded"
-        style={{ background: "rgba(255,255,255,0.06)" }}
-      />
-      <div
-        className="mx-auto h-4 w-1/2 animate-pulse rounded"
-        style={{ background: "rgba(255,255,255,0.04)" }}
-      />
-      <div
-        className="mx-auto h-24 animate-pulse rounded-lg"
-        style={{ background: "rgba(255,255,255,0.04)" }}
-      />
+      <div className="mx-auto h-14 w-14 animate-pulse rounded-2xl bg-nx-raised motion-reduce:animate-none" />
+      <div className="mx-auto h-5 w-2/3 animate-pulse rounded bg-nx-raised motion-reduce:animate-none" />
+      <div className="mx-auto h-4 w-1/2 animate-pulse rounded bg-nx-raised motion-reduce:animate-none" />
+      <div className="mx-auto h-24 animate-pulse rounded-lg bg-nx-raised motion-reduce:animate-none" />
       <div className="flex gap-3">
-        <div
-          className="h-12 flex-1 animate-pulse rounded-xl"
-          style={{ background: "hsl(var(--destructive) / 0.1)" }}
-        />
-        <div
-          className="h-12 flex-1 animate-pulse rounded-xl"
-          style={{ background: "rgba(198,255,0,0.12)" }}
-        />
+        <div className="h-12 flex-1 animate-pulse rounded-xl bg-destructive/10 motion-reduce:animate-none" />
+        <div className="h-12 flex-1 animate-pulse rounded-xl bg-nx-accent-wash motion-reduce:animate-none" />
       </div>
     </div>
   );

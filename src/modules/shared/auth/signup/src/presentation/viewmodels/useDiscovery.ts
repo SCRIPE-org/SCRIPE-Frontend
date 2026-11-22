@@ -129,7 +129,7 @@ export function useDiscovery(): DiscoveryViewModel {
     queryKey: ["signup-onboarding-flow", language],
     queryFn: () => authContainer.signupRepository.getOnboardingFlow(undefined, language),
     staleTime: 10 * 60 * 1000, // graph is stable per session
-    retry: 1,
+    retry: false,
   });
 
   const questions = useMemo(() => data?.questions ?? [], [data]);

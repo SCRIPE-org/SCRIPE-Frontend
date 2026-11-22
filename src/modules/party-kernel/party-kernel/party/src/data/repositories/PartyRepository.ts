@@ -21,7 +21,7 @@ import type { IPartyRoleRepository } from "../../../../party-role/src/domain/int
 import type { IPartyRelationshipRepository } from "../../../../party-relationship/src/domain/interfaces/IPartyRelationshipRepository";
 import type { IMergeCandidateRepository } from "../../../../merge-candidate/src/domain/interfaces/IMergeCandidateRepository";
 
-import { Party, type PartyContactLookup } from "../../domain/entities/Party";
+import { Party } from "../../domain/entities/Party";
 import { PartyProfile } from "../../domain/entities/PartyProfile";
 import { PartyMapper } from "../mappers/PartyMapper";
 

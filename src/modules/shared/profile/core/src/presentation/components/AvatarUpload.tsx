@@ -1,4 +1,3 @@
-// UI-EXCEPTION: compact studio layout
 "use client";
 
 /**
@@ -13,6 +12,7 @@
 import { useRef, useState, useCallback } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@core/ui/avatar";
 import { Button } from "@core/ui/button";
+import { Input } from "@core/ui/input";
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@core/common/utils";
 import { useResolvedFileUrl } from "@core/hooks/use-resolved-file-url";
@@ -21,13 +21,13 @@ import { Upload, Trash2, Camera } from "lucide-react";
 interface AvatarUploadProps {
   currentImageUrl: string | null;
   initials: string;
-  previewUrl: string | null;
-  onFileSelect: (file: File) => File;
+  previewUrl?: string | null;
+  onFileSelect?: (file: File) => File;
   onUpload: (file: File) => Promise<unknown>;
   onRemove: () => Promise<unknown>;
   isUploading: boolean;
   isRemoving: boolean;
-  error: string | null;
+  error?: string | null;
 }
 
 /**
@@ -37,13 +37,13 @@ interface AvatarUploadProps {
 export function AvatarUpload({
   currentImageUrl,
   initials,
-  previewUrl,
+  previewUrl = null,
   onFileSelect,
   onUpload,
   onRemove,
   isUploading,
   isRemoving,
-  error,
+  error = null,
 }: AvatarUploadProps) {
   const { t } = useI18n();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -65,7 +65,7 @@ export function AvatarUpload({
     (file: File) => {
       try {
         setLocalError(null);
-        const validated = onFileSelect(file);
+        const validated = onFileSelect ? onFileSelect(file) : file;
         setSelectedFile(validated);
       } catch (err: unknown) {
         setLocalError(err instanceof Error ? err.message : t("profile.avatar.unknownError"));
@@ -114,20 +114,14 @@ export function AvatarUpload({
             : "border-nx-line hover:border-nx-line-hi"
         )}
       >
-        <div
-          role="button"
-          tabIndex={0}
+        <Button
+          type="button"
+          variant="ghost"
           onClick={openFilePicker}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              openFilePicker();
-            }
-          }}
           aria-label={t("profile.avatar.changePhoto")}
-          className="group relative cursor-pointer rounded-full focus-visible:shadow-nx-focus focus-visible:outline-none"
+          className="group relative h-24 w-24 cursor-pointer rounded-full p-0 hover:bg-transparent focus-visible:shadow-nx-focus focus-visible:outline-none"
         >
-          <Avatar className="h-24 w-24 border border-nx-line shadow-nx-sm">
+          <Avatar className="h-24 w-24 border border-nx-line">
             {displayUrl && !imageError && (
               <AvatarImage
                 src={displayUrl}
@@ -148,7 +142,7 @@ export function AvatarUpload({
           >
             <Camera className="h-6 w-6 text-nx-on-fill" aria-hidden="true" />
           </div>
-        </div>
+        </Button>
 
         <div className="space-y-1.5 text-center sm:text-start">
           <p className="text-sm font-medium text-nx-ink">{t("profile.avatar.clickOrDrag")}</p>
@@ -157,7 +151,7 @@ export function AvatarUpload({
         </div>
       </div>
 
-      <input
+      <Input
         ref={inputRef}
         type="file"
         accept="image/jpeg,image/png,image/webp"
@@ -172,30 +166,43 @@ export function AvatarUpload({
         <p className="flex items-center gap-1.5 text-xs text-destructive">{displayError}</p>
       )}
 
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-3">
         <Button
+          type="button"
           size="sm"
-          onClick={handleUpload}
+          data-testid="upload-avatar-btn"
+          onClick={() => {
+            if (selectedFile) {
+              void handleUpload();
+            } else {
+              inputRef.current?.click();
+            }
+          }}
           loading={isUploading}
-          disabled={!selectedFile}
           className="min-w-[120px]"
         >
           {!isUploading && <Upload className="me-2 h-4 w-4" aria-hidden="true" />}
           {t("profile.avatar.upload")}
         </Button>
 
-        {currentImageUrl && (
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => onRemove()}
-            loading={isRemoving}
-            className="text-destructive hover:text-destructive"
-          >
-            {!isRemoving && <Trash2 className="me-2 h-4 w-4" aria-hidden="true" />}
-            {t("profile.avatar.remove")}
-          </Button>
-        )}
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          data-testid="remove-avatar-btn"
+          disabled={!currentImageUrl && !selectedFile && !previewUrl}
+          onClick={() => {
+            setSelectedFile(null);
+            if (currentImageUrl) {
+              void onRemove();
+            }
+          }}
+          loading={isRemoving}
+          className="text-destructive border-destructive/30 hover:bg-destructive/10 hover:text-destructive"
+        >
+          {!isRemoving && <Trash2 className="me-2 h-4 w-4" aria-hidden="true" />}
+          {t("profile.avatar.remove")}
+        </Button>
       </div>
     </div>
   );

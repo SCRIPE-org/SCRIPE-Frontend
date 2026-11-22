@@ -39,7 +39,7 @@ export function WizardStepIndicator({ steps, currentStep }: WizardStepIndicatorP
                   active
                     ? "scale-110 border-nx-accent bg-nx-ground text-nx-accent ring-2 ring-[color:color-mix(in_srgb,var(--nx-accent)_20%,transparent)]"
                     : done
-                      ? "border-nx-accent-fill bg-nx-accent-fill text-nx-on-fill shadow-nx-sm"
+                      ? "border-nx-accent-fill bg-nx-accent-fill text-nx-on-fill"
                       : "border-nx-line bg-nx-ground text-nx-ink-3"
                 } `}
               >

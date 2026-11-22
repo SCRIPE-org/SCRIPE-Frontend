@@ -6,6 +6,10 @@
 // RoleDetailView components
 export { RoleInfoCard, type RoleInfoCardProps } from "./RoleInfoCard";
 export { RoleDetailHeader, type RoleDetailHeaderProps } from "./RoleDetailHeader";
+export {
+  RoleWorkspaceStartPagesCard,
+  type RoleWorkspaceStartPagesCardProps,
+} from "./RoleWorkspaceStartPagesCard";
 /**
  * Exported member in the identity/roles module.
  */

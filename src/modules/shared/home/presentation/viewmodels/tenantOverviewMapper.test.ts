@@ -18,7 +18,7 @@ describe("tenantOverviewMapper & Command Center Entry Points", () => {
 
     const step2 = data.steps.find((s) => s.id === 2);
     expect(step2).toBeDefined();
-    expect(step2?.href).toBe("/venue/sites");
+    expect(step2?.href).toBe("/venue/facilities?tab=sites");
     expect(step2?.href).not.toBe("/branches");
   });
 
@@ -72,7 +72,7 @@ describe("tenantOverviewMapper & Command Center Entry Points", () => {
   it("5. TENANT_MOCK_DATA quick action qa-2 targets canonical /venue/sites, not /branches", () => {
     const quickAction2 = TENANT_MOCK_DATA.quickActions.find((a) => a.id === "qa-2");
     expect(quickAction2).toBeDefined();
-    expect(quickAction2?.href).toBe("/venue/sites");
+    expect(quickAction2?.href).toBe("/venue/facilities?tab=sites");
     expect(quickAction2?.href).not.toBe("/branches");
   });
 });

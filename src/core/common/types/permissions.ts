@@ -30,6 +30,7 @@ import { WORK_MANAGEMENT_PERMISSIONS } from "@modules/work-management/permission
 import { CUSTOM_FIELDS_PERMISSIONS } from "@modules/custom-fields/permission-constants";
 import { ANALYTICS_EVENTS_PERMISSIONS } from "@modules/analytics/permission-constants";
 import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
+import { CRM_PERMISSIONS } from "@modules/crm/shared/src/constants/permission-constants";
 
 // ── Re-export individual module permissions for direct access ─────────────────
 export {
@@ -50,6 +51,7 @@ export {
   CUSTOM_FIELDS_PERMISSIONS,
   ANALYTICS_EVENTS_PERMISSIONS,
   VENUE_PERMISSIONS,
+  CRM_PERMISSIONS,
 };
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -194,6 +196,19 @@ export function hasAllPermissions(
  * Use this for backward compatibility. For new code, prefer
  * importing directly from the module (e.g., IDENTITY_PERMISSIONS).
  */
+export const DATA_TRANSFER_PERMISSIONS = {
+  DATATRANSFER_JOBS_VIEW: "datatransfer.jobs.view",
+  DATATRANSFER_JOBS_MANAGE: "datatransfer.jobs.manage",
+  DATATRANSFER_PRESETS_VIEW: "datatransfer.presets.view",
+  DATATRANSFER_PRESETS_MANAGE: "datatransfer.presets.manage",
+  DATATRANSFER_MIGRATIONS_EXECUTE: "datatransfer.migrations.execute",
+  JOBS_VIEW: "datatransfer.jobs.view",
+  JOBS_MANAGE: "datatransfer.jobs.manage",
+  PRESETS_VIEW: "datatransfer.presets.view",
+  PRESETS_MANAGE: "datatransfer.presets.manage",
+  MIGRATIONS_EXECUTE: "datatransfer.migrations.execute",
+} as const;
+
 export const SYSTEM_PERMISSIONS = {
   ...IDENTITY_PERMISSIONS,
   ...ENTITLEMENTS_PERMISSIONS,
@@ -212,6 +227,9 @@ export const SYSTEM_PERMISSIONS = {
   ...CUSTOM_FIELDS_PERMISSIONS,
   ...ANALYTICS_EVENTS_PERMISSIONS,
   ...VENUE_PERMISSIONS,
+  VENUE_REPORTS_VIEW: "venue-reports.view",
+  ...CRM_PERMISSIONS,
+  ...DATA_TRANSFER_PERMISSIONS,
 } as const;
 
 // ── Page permission mapping ───────────────────────────────────────────────────
@@ -221,13 +239,21 @@ export const SYSTEM_PERMISSIONS = {
  * Maps routes to required permissions
  */
 export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
-  "/": [], // Public (authenticated)
+  "/": [], // Authenticated entry (redirects / renders hub/workspace shell)
   "/login": [], // Public
   "/settings": [],
-  "/profile": [],
-  "/profile/security": [],
-  "/profile/activity": [],
-  "/profile/sessions": [],
+  "/account": [],
+  "/account/dossier": [],
+  "/account/security": [],
+  "/account/sessions": [],
+  "/account/governance": [],
+  "/account/activity": [],
+  "/account/preferences": [],
+  "/account/notifications": [],
+  "/account/plan": [],
+  "/account/integrations": [],
+  "/account/integrations/new": [],
+  "/account/integrations/[id]": [],
 
   // Identity & Access
   "/admins": [SYSTEM_PERMISSIONS.ADMINS_VIEW],
@@ -251,7 +277,7 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/settings/oauth-apps/[id]": [SYSTEM_PERMISSIONS.OAUTH_APPS_VIEW],
 
   // Monitoring & Analytics pages
-  "/overview": [], // Shared authenticated overview
+  "/overview": [SYSTEM_PERMISSIONS.DASHBOARD_VIEW],
   "/dashboard": [SYSTEM_PERMISSIONS.DASHBOARD_VIEW],
   "/audit": [SYSTEM_PERMISSIONS.AUDIT_VIEW],
   "/security": [SYSTEM_PERMISSIONS.SECURITY_VIEW],
@@ -261,12 +287,10 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   // Customization
   "/customization/branding": [SYSTEM_PERMISSIONS.TENANT_SETTINGS_VIEW],
   "/customizer": [SYSTEM_PERMISSIONS.TENANT_SETTINGS_VIEW],
-  /*
   "/customization/themes": [SYSTEM_PERMISSIONS.THEMES_VIEW],
   "/customization/gallery": [SYSTEM_PERMISSIONS.THEMES_VIEW],
   "/customization/menus": [SYSTEM_PERMISSIONS.MENUS_VIEW],
   "/customization/menus/customize": [SYSTEM_PERMISSIONS.MENUS_CUSTOMIZE],
-  */
 
   // Entitlements
   "/entitlements/editions": [SYSTEM_PERMISSIONS.EDITIONS_VIEW],
@@ -274,9 +298,7 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/entitlements/editions/[id]": [SYSTEM_PERMISSIONS.EDITIONS_VIEW],
   "/entitlements/features": [SYSTEM_PERMISSIONS.FEATURES_VIEW],
 
-  "/entitlements/subscriptions": [SYSTEM_PERMISSIONS.SUBSCRIPTIONS_VIEW],
   "/entitlements/subscriptions/[tenantId]": [SYSTEM_PERMISSIONS.SUBSCRIPTIONS_VIEW],
-  "/entitlements/overrides": [SYSTEM_PERMISSIONS.FEATURES_OVERRIDE],
   "/entitlements/overrides/[tenantId]": [SYSTEM_PERMISSIONS.FEATURES_OVERRIDE],
   "/entitlements/invoices": [SYSTEM_PERMISSIONS.INVOICES_VIEW],
 
@@ -297,9 +319,9 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
     SYSTEM_PERMISSIONS.TENANT_FEATURE_DEFINITIONS_UPDATE,
   ],
   "/entitlements/user-subscriptions": [SYSTEM_PERMISSIONS.USER_SUBSCRIPTIONS_VIEW],
-  "/my-subscription": [], // User self-service — any authenticated user
+  "/my-subscription": [], // User self-service — any authenticated user in tenant context
+  "/my-plan": [], // User self-service — tenant plan & quota details
   "/my-stripe-account": [SYSTEM_PERMISSIONS.TENANT_STRIPE_CONNECT_VIEW],
-  "/entitlements/transactions": [SYSTEM_PERMISSIONS.TRANSACTIONS_VIEW],
 
   // Communication & Integrations
   "/communication/message-composer": [SYSTEM_PERMISSIONS.EMAILS_VIEW],
@@ -316,7 +338,6 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/recycle-bin": [SYSTEM_PERMISSIONS.RECYCLE_BIN_VIEW],
 
   // Stripe Connect
-
   "/entitlements/commissions": [SYSTEM_PERMISSIONS.COMMISSIONS_VIEW],
   "/entitlements/commission-ledger": [SYSTEM_PERMISSIONS.COMMISSIONS_VIEW],
   "/entitlements/commission-invoices": [SYSTEM_PERMISSIONS.COMMISSIONS_VIEW],
@@ -330,8 +351,6 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   // Tenant Payment Gateways (Self-Service)
   "/my-payment-methods": [SYSTEM_PERMISSIONS.TENANT_PAYMENT_GATEWAYS_VIEW],
 
-  // Platform Leads / CRM
-  "/entitlements/leads": [SYSTEM_PERMISSIONS.LEADS_VIEW],
   "/entitlements/onboarding/questions": [SYSTEM_PERMISSIONS.ONBOARDING_QUESTIONS_VIEW],
   "/entitlements/signup-content": [SYSTEM_PERMISSIONS.SIGNUP_CONTENT_VIEW],
 
@@ -347,29 +366,22 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/compliance/reports/[id]": [SYSTEM_PERMISSIONS.COMPLIANCE_REPORTS_VIEW],
 
   // Plugins Module
-  "/plugins": [SYSTEM_PERMISSIONS.PLUGINS_CATALOG_VIEW],
   "/plugins/catalog": [SYSTEM_PERMISSIONS.PLUGINS_CATALOG_VIEW],
   "/plugins/installed": [SYSTEM_PERMISSIONS.PLUGINS_INSTALLED_VIEW],
   "/plugins/[installationId]": [SYSTEM_PERMISSIONS.PLUGINS_INSTALLED_VIEW],
-  "/plugins/installed/[installationId]": [SYSTEM_PERMISSIONS.PLUGINS_INSTALLED_VIEW],
-  "/plugins/installed/[installationId]/logs": [SYSTEM_PERMISSIONS.PLUGINS_EXECUTION_LOGS_VIEW],
-  "/plugins/installed/[installationId]/settings": [SYSTEM_PERMISSIONS.PLUGINS_INSTALLED_CONFIGURE],
+  "/plugins/[installationId]/logs": [SYSTEM_PERMISSIONS.PLUGINS_EXECUTION_LOGS_VIEW],
+  "/plugins/[installationId]/settings": [SYSTEM_PERMISSIONS.PLUGINS_INSTALLED_CONFIGURE],
   "/plugins/definitions": [SYSTEM_PERMISSIONS.PLUGINS_DEFINITION_VIEW],
   "/plugins/logs": [SYSTEM_PERMISSIONS.PLUGINS_EXECUTION_LOGS_VIEW],
 
   // Marketplace Module
   "/marketplace": [SYSTEM_PERMISSIONS.APP_LISTINGS_VIEW],
   "/marketplace/[id]": [SYSTEM_PERMISSIONS.APP_LISTINGS_VIEW],
-  "/marketplace/catalog": [SYSTEM_PERMISSIONS.APP_LISTINGS_VIEW],
-  "/marketplace/catalog/[id]": [SYSTEM_PERMISSIONS.APP_LISTINGS_VIEW],
   "/marketplace/categories": [SYSTEM_PERMISSIONS.APP_LISTINGS_VIEW],
   "/marketplace/submissions": [SYSTEM_PERMISSIONS.APP_SUBMISSIONS_VIEW],
-  "/marketplace/submissions/[id]": [SYSTEM_PERMISSIONS.APP_SUBMISSIONS_VIEW],
   "/marketplace/developers": [SYSTEM_PERMISSIONS.DEVELOPER_PROFILES_VIEW],
-  "/marketplace/developers/[id]": [SYSTEM_PERMISSIONS.DEVELOPER_PROFILES_VIEW],
   "/marketplace/reviews": [SYSTEM_PERMISSIONS.APP_REVIEWS_VIEW],
   "/marketplace/financials": [SYSTEM_PERMISSIONS.APP_PURCHASES_VIEW],
-  "/marketplace/financials/payouts": [SYSTEM_PERMISSIONS.DEVELOPER_PAYOUTS_VIEW],
   // Marketplace Vendor (Tenant) Self-Service
   "/marketplace/my-profile": [SYSTEM_PERMISSIONS.DEVELOPER_PROFILES_VIEW],
   "/marketplace/my-submissions": [SYSTEM_PERMISSIONS.APP_SUBMISSIONS_VIEW],
@@ -400,8 +412,10 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   // MergeCandidate Feature
   "/party-kernel/merge-candidates": [SYSTEM_PERMISSIONS.MERGE_CANDIDATE_VIEW],
 
-  // Hrms Module
-  "/hrms": [SYSTEM_PERMISSIONS.STAFF_MEMBER_VIEW],
+  // Hrms Module (accepts any HRMS or WorkManagement view permission; HrmsPage redirects to effectiveHomeRoute)
+  "/hrms": [
+    `${SYSTEM_PERMISSIONS.STAFF_MEMBER_VIEW}|${SYSTEM_PERMISSIONS.EMPLOYMENT_RECORD_VIEW}|${SYSTEM_PERMISSIONS.STAFF_ASSIGNMENT_VIEW}|${SYSTEM_PERMISSIONS.STAFF_COMPETENCY_VIEW}|${SYSTEM_PERMISSIONS.QUALIFICATION_VIEW}|${SYSTEM_PERMISSIONS.CERTIFICATION_VIEW}|${SYSTEM_PERMISSIONS.STAFF_AVAILABILITY_VIEW}|${SYSTEM_PERMISSIONS.WORK_ITEM_VIEW}`,
+  ],
 
   // StaffMember Feature
   "/hrms/staff-members": [SYSTEM_PERMISSIONS.STAFF_MEMBER_VIEW],
@@ -424,31 +438,26 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   // StaffAvailability Feature
   "/hrms/staff-availabilities": [SYSTEM_PERMISSIONS.STAFF_AVAILABILITY_VIEW],
 
-  // Venue Module Canonical Routes
-  "/venue": [SYSTEM_PERMISSIONS.VENUE_PROFILE_VIEW],
-  "/venue/resources": [SYSTEM_PERMISSIONS.FACILITY_VIEW],
-  "/venue/resources/[id]": [SYSTEM_PERMISSIONS.FACILITY_VIEW],
+  // Venue Module Canonical Routes (aligned 1:1 with VenueMenuProvider Resource definitions)
+  "/venue": [SYSTEM_PERMISSIONS.VENUE_DASHBOARD_VIEW],
+  "/venue/resources": [SYSTEM_PERMISSIONS.SCHEDULABLE_RESOURCE_VIEW],
+  "/venue/resources/[id]": [SYSTEM_PERMISSIONS.SCHEDULABLE_RESOURCE_VIEW],
   "/venue/money": [SYSTEM_PERMISSIONS.FINANCE_RECEIVABLES_VIEW],
-  "/venue/reports": [SYSTEM_PERMISSIONS.VENUE_PROFILE_VIEW],
-  "/venue/settings": [SYSTEM_PERMISSIONS.VENUE_PROFILE_VIEW],
+  "/venue/reports": [SYSTEM_PERMISSIONS.VENUE_REPORTS_VIEW],
+  "/venue/settings": [SYSTEM_PERMISSIONS.FACILITY_VIEW],
 
   // VenueProfile Feature
-  "/venue/venue-setup": [SYSTEM_PERMISSIONS.VENUE_PROFILE_VIEW],
 
   // Site Feature (OrganizationCore cross-module under Venue workspace)
-  "/venue/sites": [SYSTEM_PERMISSIONS.SITE_VIEW],
 
   // Facility Feature
   "/venue/facilities": [SYSTEM_PERMISSIONS.FACILITY_VIEW],
 
   // Facility Resource Profile Feature
-  "/venue/resource-profiles": [SYSTEM_PERMISSIONS.FACILITY_RESOURCE_PROFILE_VIEW],
 
   // SchedulableResource Feature
-  "/venue/resource-builder": [SYSTEM_PERMISSIONS.SCHEDULABLE_RESOURCE_VIEW],
 
   // Availability Feature
-  "/venue/availability": [SYSTEM_PERMISSIONS.AVAILABILITY_CALENDAR_VIEW],
 
   // Attention Center — individual signals are additionally filtered by their source permissions.
   "/venue/attention": [SYSTEM_PERMISSIONS.VENUE_ATTENTION_VIEW],
@@ -464,6 +473,7 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
 
   // Operations Calendar — action permissions are checked independently.
   "/venue/calendar": [SYSTEM_PERMISSIONS.RESERVATION_VIEW],
+  "/venue/customers": [SYSTEM_PERMISSIONS.CUSTOMER_PARTY_VIEW],
 
   // Canonical operational detail — enrichment and action permissions are checked independently.
   "/venue/bookings/[reservationId]": [SYSTEM_PERMISSIONS.RESERVATION_VIEW],
@@ -527,22 +537,42 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   // Studio Customization Preview
   "/studio-preview": [SYSTEM_PERMISSIONS.TENANT_SETTINGS_VIEW],
 
-  // Public / Hub / Auth endpoints (No permission required, but mapped so RouteGuard bypasses successfully)
+  // CRM Module
+  "/crm": [CRM_PERMISSIONS.OVERVIEW_READ],
+  "/crm/leads": [CRM_PERMISSIONS.LEADS_READ],
+  "/crm/leads/[id]": [CRM_PERMISSIONS.LEADS_READ],
+  "/crm/opportunities": [CRM_PERMISSIONS.OPPORTUNITIES_READ],
+  "/crm/opportunities/[id]": [CRM_PERMISSIONS.OPPORTUNITIES_READ],
+  "/crm/pipelines": [CRM_PERMISSIONS.PIPELINES_READ],
+  "/crm/accounts": [CRM_PERMISSIONS.ACCOUNTS_READ],
+  "/crm/accounts/[id]": [CRM_PERMISSIONS.ACCOUNTS_READ],
+  "/crm/contacts": [CRM_PERMISSIONS.CONTACTS_READ],
+  "/crm/contacts/[id]": [CRM_PERMISSIONS.CONTACTS_READ],
+  "/crm/activities": [CRM_PERMISSIONS.ACTIVITIES_READ],
+  "/crm/reports": [CRM_PERMISSIONS.REPORTS_READ],
+  "/crm/settings": [CRM_PERMISSIONS.SETTINGS_MANAGE],
+  "/data-exchange": [DATA_TRANSFER_PERMISSIONS.JOBS_VIEW],
+  "/data-exchange/jobs": [DATA_TRANSFER_PERMISSIONS.JOBS_VIEW],
+  "/data-exchange/presets": [DATA_TRANSFER_PERMISSIONS.PRESETS_VIEW],
+
+  // Public / Hub / Auth endpoints (explicit empty arrays so RouteGuard allows only declared non-privileged routes)
   "/activate-workspace": [],
+  "/authorize": [],
+  "/bookings/guest": [],
+  "/change-password": [],
   "/hub": [],
-  "/docs": [],
-  "/docs/[...slug]": [],
-  "/commercial": [],
-  "/commercial/[...slug]": [],
   "/forgot-password": [],
   "/magic-link": [],
+  "/privacy": [],
   "/reset-password": [],
   "/setup-account": [],
   "/signup": [],
   "/signup/complete": [],
   "/signup/finalize": [],
+  "/sileo-playground": [],
   "/sso/callback": [],
   "/sso/saml/callback": [],
+  "/terms": [],
   "/not-authorized": [],
   "/qr-approve": [],
 };

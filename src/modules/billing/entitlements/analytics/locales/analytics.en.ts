@@ -22,9 +22,11 @@ export const en = {
         churn: "Churned",
         revenue: "Total Revenue",
         newCount: "+{{count}} new",
+        newIncludingTrials: "+{{count}} new (incl. trials)",
         churnRate: "Churn Rate",
         trials: "Trial Subscriptions",
       },
+      internalExclusionNotice: "Commercial metrics exclude internal platform workspaces.",
       periods: {
         months3: "3 months",
         months6: "6 months",

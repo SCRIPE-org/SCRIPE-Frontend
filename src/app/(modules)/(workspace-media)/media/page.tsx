@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
-import { MediaLibraryView } from "@modules/media/src/presentation/views/MediaLibraryView";
+import { MediaLibraryView } from "@modules/media/library/src/presentation/views/MediaLibraryView";
 
 export const metadata: Metadata = {
   title: "Media Library",

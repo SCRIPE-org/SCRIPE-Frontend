@@ -1,26 +1,54 @@
+/**
+ * Profile & Enterprise Account Module Core Exports
+ *
+ * Public barrel export for the 9 Clean B2B Enterprise Account Console (/account/*)
+ * presentation views, viewmodels, components, and hooks.
+ */
+
+// Presentation Views (9 B2B Enterprise Account Views + ForceChangePasswordView)
 export { ForceChangePasswordView } from "./src/presentation/views/ForceChangePasswordView";
-export { ProfileSettingsView } from "./src/presentation/views/ProfileSettingsView";
-export { useActivityLogViewModel } from "./src/presentation/viewmodels/useActivityLogViewModel";
-export { useAvatarViewModel } from "./src/presentation/viewmodels/useAvatarViewModel";
-export { useExternalLoginsViewModel } from "./src/presentation/viewmodels/useExternalLoginsViewModel";
-export { useForceChangePasswordViewModel } from "./src/presentation/viewmodels/useForceChangePasswordViewModel";
+export { AccountDossierView } from "./src/presentation/views/AccountDossierView";
+export { AccountSecurityView } from "./src/presentation/views/AccountSecurityView";
+export { AccountSessionsView } from "./src/presentation/views/AccountSessionsView";
+export { AccountGovernanceView } from "./src/presentation/views/AccountGovernanceView";
+export { AccountActivityView } from "./src/presentation/views/AccountActivityView";
+export { AccountPreferencesView } from "./src/presentation/views/AccountPreferencesView";
+export { AccountNotificationsView } from "./src/presentation/views/AccountNotificationsView";
+export { AccountPlanView } from "./src/presentation/views/AccountPlanView";
+export { AccountIntegrationsView } from "./src/presentation/views/AccountIntegrationsView";
+
+// ViewModels
+export { useProfileDossierViewModel } from "./src/presentation/viewmodels/useProfileDossierViewModel";
+export { useSecurityVaultViewModel } from "./src/presentation/viewmodels/useSecurityVaultViewModel";
+export { useSessionsFleetViewModel } from "./src/presentation/viewmodels/useSessionsFleetViewModel";
+export { useComplianceAuditViewModel } from "./src/presentation/viewmodels/useComplianceAuditViewModel";
+export { useWorkstationPreferencesViewModel } from "./src/presentation/viewmodels/useWorkstationPreferencesViewModel";
+export { useIntegrationsFederationViewModel } from "./src/presentation/viewmodels/useIntegrationsFederationViewModel";
 export { useProfilePageViewModel } from "./src/presentation/viewmodels/useProfilePageViewModel";
-export { useSecurityViewModel } from "./src/presentation/viewmodels/useSecurityViewModel";
-export { useSessionsViewModel } from "./src/presentation/viewmodels/useSessionsViewModel";
-export { ActivityTimeline } from "./src/presentation/components/ActivityTimeline";
-export { AvatarUpload } from "./src/presentation/components/AvatarUpload";
-export { BackupCodesDialog } from "./src/presentation/components/BackupCodesDialog";
-export { ExternalLoginsSection } from "./src/presentation/components/ExternalLoginsSection";
-export { PasswordChangeForm } from "./src/presentation/components/PasswordChangeForm";
-export { PasswordExpiryBanner } from "./src/presentation/components/PasswordExpiryBanner";
-export { ProfileActivityTab } from "./src/presentation/components/ProfileActivityTab";
-export { ProfileGeneralTab } from "./src/presentation/components/ProfileGeneralTab";
-export { ProfileHeader } from "./src/presentation/components/ProfileHeader";
-export { ProfileInfoForm } from "./src/presentation/components/ProfileInfoForm";
-export { ProfileNav } from "./src/presentation/components/ProfileNav";
-export { ProfileSecurityTab } from "./src/presentation/components/ProfileSecurityTab";
-export { ProfileSessionsTab } from "./src/presentation/components/ProfileSessionsTab";
+export { useAvatarViewModel } from "./src/presentation/viewmodels/useAvatarViewModel";
+export { useForceChangePasswordViewModel } from "./src/presentation/viewmodels/useForceChangePasswordViewModel";
+export * from "./src/presentation/viewmodels/useSovereignAccountSlicesViewModel";
+
+// Components
+export { ProfileTelemetryHud } from "./src/presentation/components/ProfileTelemetryHud";
+export { ProfileRailLayout } from "./src/presentation/components/ProfileRailLayout";
+export { SovereignCommandBar } from "./src/presentation/components/SovereignCommandBar";
+export { SudoVerificationModal } from "./src/presentation/components/SudoVerificationModal";
+export { SectionInfoPopover } from "./src/presentation/components/SectionInfoPopover";
+export * from "./src/presentation/components/AccountSkeletons";
+export { SovereignSessionRadar } from "./src/presentation/components/SovereignSessionRadar";
+export { PermissionProvenanceGraph } from "./src/presentation/components/PermissionProvenanceGraph";
+export { ErgonomicsLiveStage } from "./src/presentation/components/ErgonomicsLiveStage";
+export { EnrollPasskeyModal } from "./src/presentation/components/EnrollPasskeyModal";
+export { TwoFactorWizardModal } from "./src/presentation/components/TwoFactorWizardModal";
+export { ForensicPayloadDrawer } from "./src/presentation/components/ForensicPayloadDrawer";
 export { SessionCard } from "./src/presentation/components/SessionCard";
-export { TwoFactorDisableDialog } from "./src/presentation/components/TwoFactorDisableDialog";
-export { TwoFactorSetupDialog } from "./src/presentation/components/TwoFactorSetupDialog";
+export { EmergencyLockdownDialog } from "./src/presentation/components/EmergencyLockdownDialog";
+export { PersonalAccessTokenDialog } from "./src/presentation/components/PersonalAccessTokenDialog";
+export { AvatarUpload } from "./src/presentation/components/AvatarUpload";
+export { ProfileInfoForm } from "./src/presentation/components/ProfileInfoForm";
+export { PasswordChangeForm } from "./src/presentation/components/PasswordChangeForm";
+export { ActivityTimeline } from "./src/presentation/components/ActivityTimeline";
+export { ExternalLoginsSection } from "./src/presentation/components/ExternalLoginsSection";
 export { TwoFactorStatus } from "./src/presentation/components/TwoFactorStatus";
+

@@ -1,4 +1,3 @@
-// UI-EXCEPTION: compact studio layout
 /**
  * DashboardPreviewShell — Isolated dashboard shell preview for Customizer Studio.
  *

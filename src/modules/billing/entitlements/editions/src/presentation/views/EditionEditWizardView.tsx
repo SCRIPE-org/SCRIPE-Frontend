@@ -6,9 +6,19 @@
 
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
+import { EmptyState } from "@core/ui/empty-state";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
-import { ChevronRight, ChevronLeft, Check, ArrowLeft, Tag, CreditCard, Eye } from "lucide-react";
+import {
+  ChevronRight,
+  ChevronLeft,
+  Check,
+  ArrowLeft,
+  Tag,
+  CreditCard,
+  Eye,
+  Shield,
+} from "lucide-react";
 import Link from "next/link";
 
 import { useEditionEditViewModel } from "../viewmodels/useEditionEditViewModel";
@@ -44,6 +54,27 @@ export function EditionEditWizardView({ editionId }: EditionEditWizardViewProps)
     return (
       <div className="flex min-h-[400px] items-center justify-center">
         <LoadingSpinner />
+      </div>
+    );
+  }
+
+  if (vm.edition?.isInternal) {
+    return (
+      <div className="mx-auto flex min-h-[60vh] max-w-2xl items-center justify-center py-8">
+        <EmptyState
+          className="w-full"
+          icon={Shield}
+          title={t("entitlements.editions.wizard.internalLockedTitle")}
+          description={t("entitlements.editions.wizard.internalLockedDesc")}
+          action={
+            <Button asChild variant="outline" className="gap-2">
+              <Link href={`/entitlements/editions/${editionId}`}>
+                <ArrowLeft className="h-4 w-4 rtl:rotate-180" aria-hidden="true" />
+                {t("common.back")}
+              </Link>
+            </Button>
+          }
+        />
       </div>
     );
   }

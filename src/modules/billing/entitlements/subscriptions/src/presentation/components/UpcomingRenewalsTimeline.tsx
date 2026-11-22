@@ -52,11 +52,11 @@ export function UpcomingRenewalsTimeline({
     <Card className="border-warning/30">
       <CardHeader className="border-b border-nx-line pb-3">
         <CardTitle className="flex items-center gap-2 text-sm tracking-tight">
-          <CalendarClock className="h-4 w-4 text-warning" aria-hidden="true" />
+          <CalendarClock className="h-4 w-4 text-nx-warning-strong" aria-hidden="true" />
           {t("entSubscriptions.upcomingRenewals")}
           <Badge
             variant="secondary"
-            className="ms-auto border border-warning/30 bg-warning/10 text-[10px] font-semibold tracking-wide text-warning"
+            className="ms-auto border border-warning/30 bg-warning/10 text-[10px] font-semibold tracking-wide text-nx-warning-strong"
           >
             {renewals.length}
           </Badge>

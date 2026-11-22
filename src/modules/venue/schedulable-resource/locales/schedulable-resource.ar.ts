@@ -16,6 +16,9 @@ export const ar = {
     checklistTitle: "قائمة تحقق النشر",
     checklistAllClear: "تم استيفاء جميع المتطلبات — هذا المورد جاهز للنشر.",
     compositeHint: "مورد مركّب — تأتي سعته من الموارد الفرعية.",
+    saveFailed: "فشل حفظ المورد",
+    checklistFailed: "فشل تحميل قائمة تحقق النشر",
+    publishFailed: "فشل نشر المورد",
     status: {
       draft: "مسودة",
       published: "منشور",

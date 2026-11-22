@@ -8,6 +8,7 @@ export const en = {
       booking: "Booking Defaults",
       team: "Team & Access",
       preferences: "Preferences",
+      profile: "Venue Profile",
       advanced: "Advanced",
     },
     branch: {

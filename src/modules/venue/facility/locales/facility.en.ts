@@ -22,5 +22,14 @@ export const en = {
       name: "e.g. Building A",
       description: "Optional description",
     },
+    tabs: {
+      facilities: "Facilities & Complexes",
+      sites: "Campuses & Branches",
+    },
+    actions: {
+      addFacility: "Add Facility",
+      viewCourts: "Courts & Spaces",
+      viewCalendar: "Calendar",
+    },
   },
 };

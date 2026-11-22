@@ -56,8 +56,8 @@ export function CreateTenantLocationFields({ vm, t }: CreateTenantLocationFields
   const divisionLabel = isAr ? territory.divisionLabelAr : territory.divisionLabel;
   const cityLabel = isAr ? territory.cityLabelAr : territory.cityLabel;
   const districtLabel = isAr
-    ? (territory.districtLabelAr ?? "الحي / المنطقة الفرعية")
-    : (territory.districtLabel ?? "Neighborhood / District");
+    ? (territory.districtLabelAr ?? t("tenant.districtFallback"))
+    : (territory.districtLabel ?? t("tenant.districtFallback"));
 
   // Country options with crisp vector SVG flags (never raw emoji characters)
   const countryOptions: GenericSelectOption[] = useMemo(
@@ -91,12 +91,8 @@ export function CreateTenantLocationFields({ vm, t }: CreateTenantLocationFields
 
   const cityPlaceholder =
     states.length > 0 && !selectedStateValue
-      ? isAr
-        ? `يرجى اختيار ${divisionLabel} أولاً...`
-        : `Select ${divisionLabel} first...`
-      : isAr
-        ? `اختر أو اكتب اسم ${cityLabel}...`
-        : `Select or type ${cityLabel}...`;
+      ? t("tenant.selectDivisionFirst", { division: divisionLabel })
+      : t("tenant.selectOrTypeCity", { city: cityLabel });
 
   return (
     <div className="bg-nx-raised/40 space-y-4 rounded-nx-md border border-nx-line p-4 sm:p-5">
@@ -185,10 +181,8 @@ export function CreateTenantLocationFields({ vm, t }: CreateTenantLocationFields
               onValueChange={(v: string | string[]) =>
                 vm.updateField("state", (Array.isArray(v) ? v[0] : v) || "")
               }
-              placeholder={isAr ? `اختر ${divisionLabel}...` : `Select ${divisionLabel}...`}
-              searchPlaceholder={
-                isAr ? `البحث في ${divisionLabel}...` : `Search ${divisionLabel}...`
-              }
+              placeholder={t("tenant.selectDivision", { division: divisionLabel })}
+              searchPlaceholder={t("tenant.searchDivision", { division: divisionLabel })}
               aria-invalid={stateError || undefined}
             />
             {stateError && (
@@ -203,13 +197,13 @@ export function CreateTenantLocationFields({ vm, t }: CreateTenantLocationFields
             <Label htmlFor="tenant-state" className="flex items-center gap-1.5 text-xs font-medium">
               <Building2 className="h-3.5 w-3.5 text-nx-ink-2" />
               {divisionLabel}{" "}
-              <span className="text-[10px] text-nx-ink-3">({isAr ? "اختياري" : "Optional"})</span>
+              <span className="text-[10px] text-nx-ink-3">({t("tenant.optionalTag")})</span>
             </Label>
             <Input
               id="tenant-state"
               value={vm.form.state}
               onChange={(e) => vm.updateField("state", e.target.value)}
-              placeholder={isAr ? `أدخل ${divisionLabel}...` : `Enter ${divisionLabel}...`}
+              placeholder={t("tenant.enterDivision", { division: divisionLabel })}
               maxLength={100}
             />
           </div>
@@ -227,15 +221,9 @@ export function CreateTenantLocationFields({ vm, t }: CreateTenantLocationFields
             value={vm.form.city}
             onChange={(val) => vm.updateField("city", val)}
             placeholder={cityPlaceholder}
-            searchPlaceholder={
-              isAr ? `ابحث أو اكتب اسم ${cityLabel}...` : `Search or type ${cityLabel}...`
-            }
-            emptyText={
-              isAr
-                ? `لا توجد نتائج مطابقة، يمكنك استخدام ما كتبته أعلاه`
-                : `No preset match. You can use typed entry above.`
-            }
-            createLabel={(q) => (isAr ? `+ استخدام "${q}"` : `+ Use "${q}"`)}
+            searchPlaceholder={t("tenant.searchOrTypeCity", { city: cityLabel })}
+            emptyText={t("tenant.cityEmptyText")}
+            createLabel={(q) => t("tenant.cityCreateLabel", { query: q })}
             allowCreate={true}
             allowClear={true}
             disabled={territory.states.length > 0 && !vm.form.state}
@@ -260,15 +248,13 @@ export function CreateTenantLocationFields({ vm, t }: CreateTenantLocationFields
               className="flex items-center gap-1.5 text-xs font-medium"
             >
               <span>{districtLabel}</span>
-              <span className="text-[10px] text-nx-ink-3">({isAr ? "اختياري" : "Optional"})</span>
+              <span className="text-[10px] text-nx-ink-3">({t("tenant.optionalTag")})</span>
             </Label>
             <Input
               id="tenant-district"
               value={vm.form.district}
               onChange={(e) => vm.updateField("district", e.target.value)}
-              placeholder={
-                isAr ? "مثال: المعادي الجديدة، حي النرجس، العليا" : "e.g. New Maadi, Al Olaya, etc."
-              }
+              placeholder={t("tenant.districtPlaceholder")}
               maxLength={100}
             />
           </div>
@@ -283,7 +269,7 @@ export function CreateTenantLocationFields({ vm, t }: CreateTenantLocationFields
                 <span className="ms-0.5 text-destructive">*</span>
               ) : (
                 <span className="ms-1.5 text-[10px] text-nx-ink-3">
-                  ({isAr ? "اختياري / غير معتمد" : "Optional / Not in use"})
+                  ({t("tenant.postalOptionalUnused")})
                 </span>
               )}
             </Label>
@@ -315,9 +301,9 @@ export function CreateTenantLocationFields({ vm, t }: CreateTenantLocationFields
             <p className="flex items-center gap-1 text-xs text-destructive">
               <AlertCircle className="h-3.5 w-3.5 shrink-0" />
               <span>
-                {isAr
-                  ? `صيغة الرمز البريدي غير متوافقة مع معايير ${territory.nameAr}`
-                  : `Invalid postal code format for ${territory.name}`}
+                {t("tenant.invalidPostalFormat", {
+                  country: isAr ? territory.nameAr : territory.name,
+                })}
               </span>
             </p>
           )}

@@ -138,7 +138,7 @@ export function CoreServicesGrid({
                       isHealthy
                         ? "text-success"
                         : isDegraded
-                          ? "text-warning"
+                          ? "text-nx-warning-strong"
                           : "text-destructive"
                     }`}
                   >

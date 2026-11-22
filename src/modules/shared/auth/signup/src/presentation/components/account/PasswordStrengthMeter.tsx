@@ -42,8 +42,8 @@ export function PasswordStrengthMeter({ score, id }: PasswordStrengthMeterProps)
   const bucket = Math.max(0, Math.min(score, SEGMENTS));
   const colorFor = (b: number): string => {
     if (b <= 1) return tokens.error;
-    if (b === 2) return "#f59e0b"; // amber — semantic "caution" only
-    if (b === 3) return "#eab308";
+    if (b === 2) return "hsl(var(--warning-strong))";
+    if (b === 3) return "hsl(var(--warning))";
     return tokens.success;
   };
   const activeColor = colorFor(bucket);

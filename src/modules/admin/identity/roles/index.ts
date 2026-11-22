@@ -10,6 +10,11 @@ export { useRolesViewModel } from "./src/presentation/viewmodels/useRolesViewMod
 
 // Entities
 export { Role } from "./src/domain/entities/Role";
+export {
+  getRoleLandingFields,
+  getRoleEditInitialValues,
+  type RoleLandingFieldsContext,
+} from "./src/presentation/views/rolesFormFields";
 export type {
   RoleProps,
   RolePermission,
@@ -24,6 +29,11 @@ export type {
   CloneRoleRequest,
   DeleteRoleRequest,
 } from "./src/domain/entities/RoleRequests";
+export { RoleWorkspaceEntryPolicy } from "./src/domain/entities/RoleWorkspaceEntryPolicy";
+export type {
+  RoleWorkspaceEntryPolicyData,
+  UpsertRoleWorkspaceEntryInput,
+} from "./src/domain/entities/RoleWorkspaceEntryPolicy";
 
 // Interfaces
 export type { IRoleRepository, RoleListParams } from "./src/domain/interfaces/IRoleRepository";

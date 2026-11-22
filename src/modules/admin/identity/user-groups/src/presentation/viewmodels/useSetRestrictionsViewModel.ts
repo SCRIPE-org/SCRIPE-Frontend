@@ -23,9 +23,9 @@ export function useSetRestrictionsViewModel({ tenantId, open }: UseSetRestrictio
     queryFn: async () => {
       try {
         if (tenantId) {
-          return await identityContainer.tenantService.getTenantPermissions(tenantId);
+          return await identityContainer.tenantRepository.getTenantPermissions(tenantId);
         } else {
-          return await identityContainer.tenantService.getCreationPermissions();
+          return await identityContainer.tenantRepository.getCreationPermissions();
         }
       } catch (e) {
         return [];

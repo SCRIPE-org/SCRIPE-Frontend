@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React from "react";
 import { Alert, AlertDescription } from "@core/ui/alert";
@@ -79,7 +79,12 @@ export function PaymentRefundCard({ model }: PaymentRefundCardProps) {
             />
           </div>
         </div>
-        <Button type="button" disabled={model.refunding} onClick={() => void model.submitRefund()}>
+        <Button
+          type="button"
+          data-testid="submit-refund-btn"
+          disabled={model.refunding}
+          onClick={() => void model.submitRefund()}
+        >
           {model.refunding ? t("money.payments.refund.saving") : t("money.payments.refund.record")}
         </Button>
       </CardContent>

@@ -142,7 +142,7 @@ export function FieldVisibilityRuleList({
           {rules.map((rule, idx) => (
             <div
               key={rule.id || idx}
-              className="hover:border-nx-line-strong flex items-center justify-between rounded-md border border-nx-line bg-card p-3 shadow-sm transition-colors"
+              className="flex items-center justify-between rounded-md border border-nx-line bg-nx-surface p-3 transition-colors hover:border-nx-line-hi"
             >
               <div className="space-y-1">
                 {renderRuleSummary(rule)}

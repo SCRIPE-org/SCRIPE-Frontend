@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, unused-imports/no-unused-vars */
-// UI-EXCEPTION: compact studio layout
 /**
  * BuilderPanel — Main panel for the DnD page builder
  *
@@ -306,9 +305,11 @@ export function BuilderPanel({
         {showTemplates && (
           <div className="grid max-h-48 grid-cols-2 gap-1.5 overflow-y-auto rounded-nx-lg border border-nx-line bg-nx-raised p-2">
             {getAllLayoutTemplates().map(({ layout, label }) => (
-              <button
+              <Button
                 key={layout}
-                className="truncate rounded-nx-sm border border-nx-line bg-nx-ground px-2 py-1.5 text-start text-[10px] font-medium text-nx-ink transition-colors duration-nx-micro ease-nx-enter hover:border-nx-accent hover:bg-nx-accent-wash focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
+                type="button"
+                variant="ghost"
+                className="h-auto justify-start truncate rounded-nx-sm border border-nx-line bg-nx-ground px-2 py-1.5 text-start text-[10px] font-medium text-nx-ink transition-colors duration-nx-micro ease-nx-enter hover:border-nx-accent hover:bg-nx-accent-wash focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
                 onClick={() => {
                   const tmpl = layoutToTemplate(layout);
                   store.loadTemplate(tmpl.components, tmpl.gridRows, tmpl.background);
@@ -318,7 +319,7 @@ export function BuilderPanel({
                 {t(
                   `studio.layout.${label.replace(/-([a-z])/g, (_, c: string) => c.toUpperCase())}`
                 )}
-              </button>
+              </Button>
             ))}
           </div>
         )}
@@ -365,17 +366,22 @@ export function BuilderPanel({
         <div className="max-h-36 space-y-1 overflow-y-auto rounded-nx-lg border border-nx-line bg-nx-raised p-2">
           {savedTemplates.map((tmpl) => (
             <div key={tmpl.id} className="flex items-center gap-2">
-              <button
-                className="flex-1 truncate rounded-nx-sm border border-nx-line bg-nx-ground px-2 py-1.5 text-start text-[10px] font-medium text-nx-ink transition-colors duration-nx-micro ease-nx-enter hover:border-nx-accent hover:bg-nx-accent-wash focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
+              <Button
+                type="button"
+                variant="ghost"
+                className="h-auto flex-1 justify-start truncate rounded-nx-sm border border-nx-line bg-nx-ground px-2 py-1.5 text-start text-[10px] font-medium text-nx-ink transition-colors duration-nx-micro ease-nx-enter hover:border-nx-accent hover:bg-nx-accent-wash focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
                 onClick={() => {
                   store.loadTemplate(tmpl.components, tmpl.gridRows, tmpl.background);
                   setShowSaved(false);
                 }}
               >
                 {tmpl.name}
-              </button>
-              <button
-                className="rounded-nx-sm p-1 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-danger focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="h-auto w-auto rounded-nx-sm p-1 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:bg-transparent hover:text-nx-danger focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
                 onClick={() => {
                   store.deleteTemplate(tmpl.id);
                 }}
@@ -383,7 +389,7 @@ export function BuilderPanel({
                 aria-label={t("studio.builder.deleteTemplate")}
               >
                 <Trash2 className="h-3 w-3" aria-hidden="true" />
-              </button>
+              </Button>
             </div>
           ))}
         </div>

@@ -18,7 +18,7 @@ export function VenueOverviewEditorialBanner({
 }: Props) {
   return (
     <div
-      className="rounded-nx-xl border-nx-line/60 relative overflow-hidden border bg-gradient-to-br from-nx-surface via-nx-ground to-black p-5 text-white"
+      className="rounded-nx-xl border-nx-line relative overflow-hidden border bg-nx-surface p-5 text-nx-ink"
       data-testid="venue-overview-editorial-banner"
     >
       {/* Background Court Lighting Motif */}
@@ -35,10 +35,10 @@ export function VenueOverviewEditorialBanner({
             <Sparkles className="size-3" aria-hidden="true" />
             <span>Community Pulse</span>
           </div>
-          <h3 className="text-base font-black leading-tight tracking-tight text-white sm:text-lg">
+          <h3 className="text-base font-black leading-tight tracking-tight text-nx-ink sm:text-lg">
             Great games build stronger communities.
           </h3>
-          <p className="line-clamp-2 text-xs leading-relaxed text-white/80">
+          <p className="line-clamp-2 text-xs leading-relaxed text-nx-ink-2">
             Modern facilities, seamless bookings, and happier players at {facilityName}.
           </p>
         </div>

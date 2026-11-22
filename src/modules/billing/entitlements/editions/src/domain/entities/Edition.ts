@@ -2,37 +2,9 @@
  * Edition Entity
  */
 import type { BaseEntity } from "@core/interfaces/common.interface";
+import type { EditionScope, EditionFeatureDto, EditionPriceData } from "./EditionTypes";
 
-export interface EditionFeatureDto {
-  featureId: string;
-  featureName: string;
-  value: string;
-  valueType: string;
-  /** Feature category for grouping in comparison matrix */
-  category?: string;
-  /** Sort order within a category */
-  sortOrder?: number;
-  displayNameEn?: string;
-  displayNameAr?: string;
-  /** Per-edition display label override (English). Shown instead of feature name + value on plan cards. */
-  displayLabelEn?: string;
-  /** Per-edition display label override (Arabic). */
-  displayLabelAr?: string;
-  /** If true, this feature is for marketing display only (not enforced at runtime). */
-  isMarketingOnly?: boolean;
-  /** If true, this feature is highlighted on public plan cards. */
-  isHighlight?: boolean;
-  /** Display order for highlighted features (lower = higher priority). */
-  highlightOrder?: number;
-}
-
-/** Pricing data for a specific currency + billing cycle combination. */
-export interface EditionPriceData {
-  editionId: string;
-  currency: string; // "USD" | "EUR" | "SAR" etc.
-  billingCycle: string; // "Monthly" | "Yearly" | "Lifetime"
-  amount: number;
-}
+export type { EditionScope, EditionFeatureDto, EditionPriceData };
 
 /**
  * Domain model representing a Edition Data structure.
@@ -53,6 +25,7 @@ export interface EditionData extends BaseEntity {
   isSystem: boolean;
   isRetired: boolean;
   tierLevel: number;
+  scope?: EditionScope;
   /** Edition category for tab grouping (e.g. "General", "ERP"). Null/undefined = uncategorized. */
   category?: string;
   createdByTenantId?: string;
@@ -197,6 +170,24 @@ export class Edition {
   get isContactSalesOnly(): boolean {
     return this.data.isContactSalesOnly ?? false;
   }
+  /**
+   * Edition scope ("Commercial" | "Internal"). Falls back to "Internal" when the canonical
+   * `scripe-internal` platform edition name is present without explicit scope metadata.
+   */
+  get scope(): EditionScope {
+    if (this.data.scope === "Internal" || this.data.scope === "Commercial") {
+      return this.data.scope;
+    }
+    return this.data.name === "scripe-internal" ? "Internal" : "Commercial";
+  }
+
+  /**
+   * True when this edition is an internal sovereign platform edition (`scope === "Internal"`).
+   */
+  get isInternal(): boolean {
+    return this.scope === "Internal";
+  }
+
   /**
    * True when this edition is permanently free (no billing cycles).
    * Authoritative value from backend. Use this instead of price-absence heuristics.

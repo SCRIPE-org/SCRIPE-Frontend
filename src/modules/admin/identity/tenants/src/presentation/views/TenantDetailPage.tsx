@@ -104,10 +104,9 @@ export function TenantDetailPage({ tenantId }: TenantDetailPageProps) {
 
   return (
     <main className="min-h-screen space-y-5" dir={direction}>
-      {/* Breadcrumbs + Currency Toggle */}
+      {/* Breadcrumbs */}
       <div className="flex items-center justify-between">
         <PageBreadcrumbs segments={breadcrumbSegments} />
-        <CurrencyDisplayToggle />
       </div>
 
       {/* Hero Header: tenant info, status banners, actions, subscription bar */}
@@ -116,12 +115,18 @@ export function TenantDetailPage({ tenantId }: TenantDetailPageProps) {
       {/* KPI Stat Cards */}
       <TenantStats tenantId={tenantId} />
 
+      {/* Currency toggle docked above tabs (avoids top-right toast collision) */}
+      <div className="flex justify-end">
+        <CurrencyDisplayToggle />
+      </div>
+
       {/* Pill-style Tabbed Content */}
       <TenantTabs
         tenantId={tenantId}
         tenantName={tenant.name}
         tenantCode={tenant.code}
         parentTenantId={tenant.parentId}
+        isInternal={tenant.isInternal}
       />
     </main>
   );

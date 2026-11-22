@@ -1,4 +1,4 @@
-﻿import { act, renderHook, waitFor } from "@testing-library/react";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getVenueContainer } from "@modules/venue/di";
 import type { MoneyPayment } from "../../domain/entities/Money";
@@ -453,5 +453,90 @@ describe("usePaymentsViewModel", () => {
     ]);
     expect(allocationCalls[1][3]).toBe(allocationCalls[0][3]);
     expect(result.current.notice).toBe("allocated");
+  });
+
+  it("auto-triggers beginRefund when initialAction is refund and initialPaymentId is provided", async () => {
+    const value = container();
+    vi.mocked(getVenueContainer).mockReturnValue(value as never);
+    const { result } = renderHook(() =>
+      usePaymentsViewModel({
+        canView: true,
+        canRecord: true,
+        canIssueReceipt: true,
+        canRefund: true,
+        initialPaymentId: "payment-1",
+        initialAction: "refund",
+        messages: {
+          fallbackError: "unavailable",
+          validation: "invalid",
+          allocationPending: (number) => `allocate ${number}`,
+          receiptPending: (number) => `receipt ${number}`,
+        },
+      })
+    );
+
+    await waitFor(() => expect(result.current.payments?.length).toBe(1));
+    expect(result.current.refundPayment).not.toBeNull();
+    expect(result.current.refundPayment?.id).toBe("payment-1");
+    expect(result.current.refundAmount).toBe("100");
+  });
+
+  it("filters payments by paymentDateFilter ('all', 'today', 'days7')", async () => {
+    const now = new Date();
+    const todayPayment: MoneyPayment = {
+      ...payment,
+      id: "payment-today",
+      recordedAtUtc: now.toISOString(),
+    };
+    const oldPayment: MoneyPayment = {
+      ...payment,
+      id: "payment-old",
+      recordedAtUtc: new Date(now.getTime() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+    };
+
+    const value = container({
+      moneyRepository: {
+        ...container().moneyRepository,
+        getPayments: vi.fn().mockResolvedValue({
+          items: [todayPayment, oldPayment],
+          totalCount: 2,
+        }),
+      },
+    });
+    vi.mocked(getVenueContainer).mockReturnValue(value as never);
+
+    const { result } = renderHook(() =>
+      usePaymentsViewModel({
+        canView: true,
+        canRecord: true,
+        canIssueReceipt: true,
+        canRefund: true,
+        messages: {
+          fallbackError: "unavailable",
+          validation: "invalid",
+          allocationPending: (number) => `allocate ${number}`,
+          receiptPending: (number) => `receipt ${number}`,
+        },
+      })
+    );
+
+    await waitFor(() => expect(result.current.payments?.length).toBe(2));
+
+    // Default 'all'
+    expect(result.current.filteredPayments?.length).toBe(2);
+
+    // Filter 'today'
+    act(() => result.current.setPaymentDateFilter("today"));
+    expect(result.current.filteredPayments?.length).toBe(1);
+    expect(result.current.filteredPayments?.[0].id).toBe("payment-today");
+
+    // Filter 'days7'
+    act(() => result.current.setPaymentDateFilter("days7"));
+    expect(result.current.filteredPayments?.length).toBe(1);
+    expect(result.current.filteredPayments?.[0].id).toBe("payment-today");
+
+    // Switch back to 'all'
+    act(() => result.current.setPaymentDateFilter("all"));
+    expect(result.current.filteredPayments?.length).toBe(2);
   });
 });

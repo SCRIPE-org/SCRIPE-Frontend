@@ -4,9 +4,9 @@
  * NavigationProvider — Thin TanStack Query Orchestrator (v2)
  *
  * Responsibilities (v2 — dramatically simplified):
- *  1. On login: fire GET /Menus/my/routes → seeds useNavigationStore.allRoutes (eager)
- *  2. On login: fire GET /Menus/my → seeds useNavigationStore.defaultWorkspace + groups
- *  3. Expose fetchWorkspaceMenu(key) → fires GET /Menus/my?workspace={key} (JIT)
+ *  1. On login: fire GET /menus/navigation/routes → seeds useNavigationStore.allRoutes (eager)
+ *  2. On login: fire GET /menus/navigation → seeds useNavigationStore.defaultWorkspace + groups
+ *  3. Expose fetchWorkspaceMenu(key) → fires GET /menus/navigation?workspace={key} (JIT)
  *  4. Listen for impersonation/tenant changes → store.reset() + queryClient.invalidate
  *
  * What this provider does NOT do (v2):
@@ -41,26 +41,81 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { authBroadcast } from "@core/common/broadcast-auth";
 import { useAppStore } from "@core/store/useAppStore";
 import { useServices } from "@core/providers/service-provider";
-import { useTenantContext } from "@core/providers/tenant-context-provider";
+import { useAdminContext } from "@core/hooks/useAdminContext";
 import { appLogger } from "@core/common/logger";
 import { secureTokenService } from "@core/common/secure-token-service";
+import { extractEligibleDeepLink } from "@core/common/redirect-safety";
+import { normalizeRoutePath } from "@core/config/app-route-manifest";
 
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import type { NavigationData } from "@core/navigation/domain/entities/NavigationData";
 import type { MenuItemActions } from "@core/navigation/domain/entities/MenuItem";
-import { WorkspaceGroup } from "@core/navigation/domain/entities/WorkspaceGroup";
 import { CACHE_EXPIRY } from "@core/config/storage-keys";
 
 // ── Query Keys ──────────────────────────────────────────────────────────────
 export const NAV_QUERY_KEYS = {
-  routes: (contextKey: string) => ["navigation", "routes", contextKey] as const,
-  defaultWorkspace: (contextKey: string) => ["navigation", "default", contextKey] as const,
+  bootstrap: (contextKey: string) => ["navigation", "bootstrap", contextKey] as const,
   workspace: (key: string, contextKey: string) =>
     ["navigation", "workspace", key, contextKey] as const,
 };
 
+const BOOTSTRAP_REDIRECT_PATHNAMES = new Set([
+  "/",
+  "/login",
+  "/magic-link",
+  "/qr-approve",
+  "/sso/callback",
+  "/sso/saml/callback",
+  "/change-password",
+]);
+
+/**
+ * True when an error represents a transient network or 5xx/408 server error
+ * that is safe to retry. Never retries 401/403 authorization or 429 rate-limit failures.
+ */
+export function isTransientHttpError(err: unknown): boolean {
+  if (!err || typeof err !== "object") return true;
+  const record = err as Record<string, unknown>;
+  const details =
+    record.details && typeof record.details === "object"
+      ? (record.details as Record<string, unknown>)
+      : null;
+  const response =
+    record.response && typeof record.response === "object"
+      ? (record.response as Record<string, unknown>)
+      : null;
+
+  const status =
+    (typeof record.statusCode === "number" ? record.statusCode : undefined) ??
+    (typeof record.status === "number" ? record.status : undefined) ??
+    (typeof details?.statusCode === "number" ? details.statusCode : undefined) ??
+    (typeof response?.status === "number" ? response.status : undefined);
+
+  if (typeof status !== "number") return true;
+  if (status === 401 || status === 403 || status === 429) return false;
+  if (status >= 400 && status < 500 && status !== 408) return false;
+  return true;
+}
+
+function hasLiveAccessToken(): boolean {
+  if (typeof secureTokenService.getAccessToken === "function") {
+    return Boolean(secureTokenService.getAccessToken());
+  }
+  return secureTokenService.hasToken();
+}
+
+function isSessionActiveForNavFetch(): boolean {
+  const appState = useAppStore.getState();
+  return Boolean(
+    appState.isAuthenticated &&
+      !appState.isAuthTransitioning &&
+      !appState.mustChangePassword &&
+      hasLiveAccessToken()
+  );
+}
+
 // ── Context (minimal surface) ───────────────────────────────────────────────
-interface NavigationContextType {
+export interface NavigationContextType {
   /**
    * Fetch (or return cached) JIT workspace menu.
    * Returns null on failure — caller should handle gracefully.
@@ -86,9 +141,10 @@ const NavigationContext = createContext<NavigationContextType | undefined>(undef
 export function NavigationProvider({ children }: { children: React.ReactNode }) {
   const { navigationRepository } = useServices();
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
+  const mustChangePassword = useAppStore((s) => s.mustChangePassword);
   const hasHydrated = useAppStore((s) => s._hasHydrated);
-  const { currentTenant } = useTenantContext();
-  const tenantId = currentTenant?.id ?? null;
+  const { activeTenantId } = useAdminContext();
+  const tenantId = activeTenantId;
   const queryClient = useQueryClient();
 
   // ── Granular selectors — only the two slices we need in the render path ───
@@ -97,12 +153,12 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   const isInitialLoading = useNavigationStore((s) => s.isInitialLoading);
   const defaultWorkspace = useNavigationStore((s) => s.defaultWorkspace);
   // Read persisted contextKey exactly once — used in the one-time guard effect.
-  const persistedContextKey = useNavigationStore((s) => s.contextKey);
+  const persistedContextKey = useNavigationStore((s) => s.routesContextKey || s.contextKey);
 
   // ── Context key — identifies this user+tenant combination ─────────────────
   // MUST be username, not user.id: id is IIdEncryptionService.Encrypt(guid),
   // which is randomized-IV AEAD ciphertext — a fresh, different string on
-  // every /Admins/me response for the SAME underlying admin. Keying the nav
+  // every /auth/admin/principal response for the SAME underlying admin. Keying the nav
   // queries (and the store's own persisted contextKey guard above) off a
   // value that never repeats for "the same user" means the eager routes/
   // default-workspace queries restart under a brand new cache key on every
@@ -114,16 +170,20 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   const contextKey = `${tenantId ?? "platform"}:${userId}`;
 
   // Track token availability to coordinate with silent refresh
-  const [hasToken, setHasToken] = useState(() => secureTokenService.hasToken());
+  const isAuthTransitioning = useAppStore((s) => s.isAuthTransitioning ?? false);
+  const [hasToken, setHasToken] = useState(() => hasLiveAccessToken());
 
   useEffect(() => {
-    const unsubscribe = secureTokenService.subscribe(() => {
-      setHasToken(secureTokenService.hasToken());
-    });
+    const syncToken = () => {
+      setHasToken(hasLiveAccessToken());
+    };
+    syncToken();
+    const unsubscribe = secureTokenService.subscribe(syncToken);
     return unsubscribe;
   }, []);
 
-  const isReady = hasHydrated && isAuthenticated && hasToken;
+  const isReady =
+    hasHydrated && isAuthenticated && !isAuthTransitioning && !mustChangePassword && hasToken;
 
   // ── Cross-context cache invalidation guard ────────────────────────────────
   // If the rehydrated store was for a different user/tenant, reset it first.
@@ -131,13 +191,14 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   const autoFetchDone = useRef(false);
 
   useEffect(() => {
-    if (!isReady || guardedOnce.current) return;
+    if (!isReady || !isSessionActiveForNavFetch() || guardedOnce.current) return;
     guardedOnce.current = true;
 
     if (persistedContextKey && persistedContextKey !== contextKey) {
       appLogger.auth(
         `[NavigationProvider] Context mismatch (${persistedContextKey} ≠ ${contextKey}) — resetting store`
       );
+      useNavigationStore.getState().clearRouteData();
       useNavigationStore.getState().reset();
       autoFetchDone.current = false; // Allow auto-fetch to fire for the new context
     }
@@ -145,33 +206,42 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isReady, contextKey]);
 
-  // ── Query 1: Eager routes load ────────────────────────────────────────────
+  // ── Single-Pass Bootstrap Query (routes + descriptors + groups + target tree + landing) ──
   useQuery({
-    queryKey: NAV_QUERY_KEYS.routes(contextKey),
+    queryKey: NAV_QUERY_KEYS.bootstrap(contextKey),
     queryFn: async () => {
-      const { routes, workspaceRouteMap } = await navigationRepository.fetchRoutes();
-      useNavigationStore.getState().initializeRoutes(routes, workspaceRouteMap, contextKey);
-      return { routes, workspaceRouteMap };
+      if (!isSessionActiveForNavFetch()) {
+        throw new Error("Navigation fetch skipped: session inactive");
+      }
+      try {
+        const pathname =
+          typeof window !== "undefined"
+            ? normalizeRoutePath(window.location.pathname).toLowerCase()
+            : "";
+        const redirectParam =
+          typeof window !== "undefined" && BOOTSTRAP_REDIRECT_PATHNAMES.has(pathname)
+            ? extractEligibleDeepLink(
+                new URLSearchParams(window.location.search).get("redirect")
+              )
+            : null;
+        const result = await navigationRepository.fetchNavigationBootstrap(redirectParam);
+        useNavigationStore.getState().initializeBootstrap(result, contextKey);
+        return result;
+      } catch (err) {
+        if (!isSessionActiveForNavFetch()) {
+          throw err;
+        }
+        const message =
+          err instanceof Error ? err.message : "Failed to load navigation";
+        useNavigationStore.getState().setRoutesError(message, contextKey);
+        throw err;
+      }
     },
     enabled: isReady,
     staleTime: CACHE_EXPIRY.NAVIGATION,
     gcTime: CACHE_EXPIRY.NAVIGATION * 2,
-    retry: 2,
-  });
-
-  // ── Query 2: Default workspace menu + groups ──────────────────────────────
-  useQuery({
-    queryKey: NAV_QUERY_KEYS.defaultWorkspace(contextKey),
-    queryFn: async () => {
-      const data = await navigationRepository.fetchDefaultWorkspace();
-      const groups = (data.workspaceGroups ?? []).map((g) => new WorkspaceGroup(g));
-      useNavigationStore.getState().initializeDefaultWorkspace(data, groups);
-      return data;
-    },
-    enabled: isReady,
-    staleTime: CACHE_EXPIRY.NAVIGATION,
-    gcTime: CACHE_EXPIRY.NAVIGATION * 2,
-    retry: 2,
+    retry: (failureCount, err) =>
+      isSessionActiveForNavFetch() && failureCount < 2 && isTransientHttpError(err),
   });
 
   // ── Mutation: JIT workspace fetch ─────────────────────────────────────────
@@ -199,6 +269,9 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
 
   const fetchWorkspaceMenu = useCallback(
     async (workspaceKey: string): Promise<NavigationData | null> => {
+      if (!isSessionActiveForNavFetch()) {
+        return null;
+      }
       try {
         return await workspaceMutation.mutateAsync(workspaceKey);
       } catch (err) {
@@ -211,77 +284,96 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   );
 
   const refreshNavigation = useCallback(async () => {
-    useNavigationStore.getState().reset();
+    const state = useNavigationStore.getState();
+    // Preserve live shell UI state when already hydrated so in-context preference saves
+    // sync Hub/Rail/Topbar without unmounting the active page into a loading screen.
+    if (state.routesError || !state.routesLoaded) {
+      state.clearRouteData();
+      state.reset();
+    }
     autoFetchDone.current = false; // Allow auto-fetch to fire after full refresh
     await queryClient.invalidateQueries({ queryKey: ["navigation"] });
   }, [queryClient]);
 
   // ── Impersonation listener ─────────────────────────────────────────────────
-  // Note: authBroadcast is a singleton with no unsubscribe API — this is intentional.
-  // The handler is registered once and lives for the lifetime of the app.
-  const impersonationListenerRegistered = useRef(false);
   useEffect(() => {
-    if (impersonationListenerRegistered.current) return;
-    impersonationListenerRegistered.current = true;
-
-    authBroadcast.onImpersonation(async () => {
+    return authBroadcast.onImpersonation(() => {
       appLogger.auth("[NavigationProvider] Impersonation event — resetting navigation");
+      useNavigationStore.getState().clearRouteData();
       useNavigationStore.getState().reset();
       autoFetchDone.current = false; // Allow auto-fetch for impersonated user
-      await queryClient.invalidateQueries({ queryKey: ["navigation"] });
+      void queryClient.invalidateQueries({ queryKey: ["navigation"] });
     });
-    // authBroadcast is a singleton — no cleanup needed (matches pattern in useImpersonation.ts)
   }, [queryClient]);
 
-  // When tenant context changes, reset and refetch
-  const prevTenantRef = useRef<string | null | undefined>("__initial__");
+  // When auth ends, purge cached navigation state immediately so the next user starts clean
+  const wasReadyRef = useRef<boolean>(isReady);
+  const prevContextRef = useRef<string | "__initial__">("__initial__");
+
   useEffect(() => {
-    if (prevTenantRef.current === "__initial__") {
-      prevTenantRef.current = tenantId;
+    if (wasReadyRef.current && !isReady) {
+      appLogger.auth("[NavigationProvider] Auth session ended — clearing navigation store");
+      useNavigationStore.getState().clearRouteData();
+      useNavigationStore.getState().reset();
+      autoFetchDone.current = false;
+      queryClient.removeQueries({ queryKey: ["navigation"] });
+      prevContextRef.current = "__initial__";
+    }
+    wasReadyRef.current = isReady;
+  }, [isReady, queryClient]);
+
+  // When tenant context OR authenticated user changes, clear and refetch cleanly
+  useEffect(() => {
+    if (!isReady || !isSessionActiveForNavFetch()) return;
+    if (prevContextRef.current === "__initial__") {
+      prevContextRef.current = contextKey;
       return;
     }
-    if (prevTenantRef.current !== tenantId) {
-      prevTenantRef.current = tenantId;
+    if (prevContextRef.current !== contextKey) {
+      const previousContext = prevContextRef.current;
+      prevContextRef.current = contextKey;
       appLogger.auth(
-        `[NavigationProvider] Tenant changed (${prevTenantRef.current} → ${tenantId}) — resetting navigation`
+        `[NavigationProvider] Context changed (${previousContext} → ${contextKey}) — resetting navigation`
       );
+      useNavigationStore.getState().clearRouteData();
       useNavigationStore.getState().reset();
-      autoFetchDone.current = false; // Allow auto-fetch for the new tenant context
+      autoFetchDone.current = false; // Allow auto-fetch for the new context
       queryClient.invalidateQueries({ queryKey: ["navigation"] });
     }
-  }, [tenantId, queryClient]);
+  }, [isReady, contextKey, queryClient]);
 
   // ── Auto-fetch active workspace on boot (Gap 1 + Gap 5 fix) ───────────────
-  // After page refresh, activeWorkspaceKey is restored from localStorage but
-  // the workspaces Map is empty (not persisted). This effect detects that the
-  // persisted activeWorkspaceKey differs from the default workspace key and
-  // triggers a JIT fetch so the sidebar renders the correct menu items instead
-  // of falling back to admin items.
+  // After page refresh, activeWorkspaceKey is restored from localStorage while
+  // the workspaces Map only contains whichever workspace bootstrap pre-hydrated
+  // (e.g. "crm" for a CRM-enforced user). Fetch whenever activeWorkspaceKey lacks
+  // hydrated menu data so any active workspace renders its sidebar cleanly.
   const activeWorkspaceKey = useNavigationStore((s) => s.activeWorkspaceKey);
 
   useEffect(() => {
-    if (!isReady || isInitialLoading || autoFetchDone.current) return;
+    if (
+      !isReady ||
+      !isSessionActiveForNavFetch() ||
+      isInitialLoading ||
+      autoFetchDone.current
+    ) {
+      return;
+    }
 
     const state = useNavigationStore.getState();
     const { workspaceGroups } = state;
 
-    // workspaceGroups are loaded by Query 2 — if empty, Query 2 hasn't resolved yet
+    // workspaceGroups are loaded by bootstrap — if empty, bootstrap hasn't resolved yet
     if (workspaceGroups.length === 0) return;
-
-    const defaultGroup =
-      workspaceGroups.find((g) => g.workspaceType === "Admin") ?? workspaceGroups[0];
-    const defaultKey = defaultGroup?.workspaceKey ?? null;
 
     // Guard: skip the "__default__" sentinel key — it's an internal Map key, not a real workspace
     if (
       activeWorkspaceKey &&
       activeWorkspaceKey !== "__default__" &&
-      activeWorkspaceKey !== defaultKey &&
       !state.hasWorkspaceData(activeWorkspaceKey)
     ) {
       autoFetchDone.current = true;
       appLogger.debug(
-        `[NavigationProvider] Boot: active workspace "${activeWorkspaceKey}" differs from default "${defaultKey}" — auto-fetching menu data`
+        `[NavigationProvider] Boot: active workspace "${activeWorkspaceKey}" lacks hydrated menu data — auto-fetching`
       );
       fetchWorkspaceMenu(activeWorkspaceKey);
     }
@@ -315,4 +407,12 @@ export function useNavigation(): NavigationContextType {
     throw new Error("useNavigation must be used within NavigationProvider");
   }
   return ctx;
+}
+
+/**
+ * Optional variant returning null when mounted outside `<NavigationProvider>`
+ * (e.g. isolated shell component unit tests).
+ */
+export function useOptionalNavigation(): NavigationContextType | null {
+  return useContext(NavigationContext) ?? null;
 }

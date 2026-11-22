@@ -1,5 +1,4 @@
 // FILE-EXCEPTION: file length
-// UI-EXCEPTION: compact studio layout
 "use client";
 
 import { useMemo, useState, type CSSProperties } from "react";
@@ -7,6 +6,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { Check, Sparkles } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSignupTheme } from "@core/providers/signup-theme";
+import { Button } from "@core/ui/button";
 import type { PublicFeature } from "../../../domain/entities";
 import type { PlanPickerEdition } from "../../viewmodels/usePlanPicker";
 import { ctaKeyForCheckoutMode, formatCurrency } from "../../helpers/planPickerLogic";
@@ -150,10 +150,6 @@ export function PlanCard({
           : hovered
             ? `1px solid ${tokens.accent}40`
             : tokens.borderCard,
-        // No resting-state glow, per the "accent only via ring + faint tint,
-        // never glow" rule above — the recommended card reads from its tinted
-        // background and border alone until it's actually hovered.
-        boxShadow: hovered ? tokens.shadowCard : "none",
       }}
     >
       {/* ── Row 1: reserved badge slot (fixed line; renders ≤ 1 badge) ── */}
@@ -282,17 +278,17 @@ export function PlanCard({
 
       {/* ── Row 5: CTA (bottom-aligned across all cards by the subgrid) ── */}
       <div className="mt-6 flex items-end">
-        <button
+        <Button
           type="button"
+          variant="ghost"
           onClick={() => onSelect(edition, billingCycle)}
-          className="w-full rounded-xl px-4 py-3 text-[0.875rem] font-semibold transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 motion-reduce:transform-none"
+          className="h-auto w-full rounded-xl px-4 py-3 text-[0.875rem] font-semibold transition-transform duration-200 hover:-translate-y-0.5 hover:bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 motion-reduce:transform-none"
           style={
             {
               ...(isAccent
                 ? {
                     background: tokens.gradientCta,
                     color: tokens.accentContrast,
-                    boxShadow: tokens.shadowCard,
                   }
                 : {
                     background: tokens.surfaceRaised,
@@ -306,7 +302,7 @@ export function PlanCard({
           }
         >
           {ctaLabel}
-        </button>
+        </Button>
       </div>
     </motion.div>
   );

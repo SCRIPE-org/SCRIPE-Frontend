@@ -1,7 +1,31 @@
 import { StateCreator } from "zustand";
-import { NavigationStoreState, WorkspaceSlice } from "../types";
-import type { NavigationData } from "@core/navigation/domain/entities/NavigationData";
+import { matchAppRoute, normalizeRoutePath } from "@core/config/app-route-manifest";
+import type { AuthorizedRouteDescriptor, NavigationStoreState, WorkspaceSlice } from "../types";
+import { NavigationData } from "@core/navigation/domain/entities/NavigationData";
 import { WorkspaceGroup } from "@core/navigation/domain/entities/WorkspaceGroup";
+
+const MAX_RECENT_WORKSPACES = 4;
+
+function resolveHydratedWorkspaceKey(
+  groups: WorkspaceGroup[],
+  landingWorkspaceKey: string | null | undefined
+): string | null {
+  const withMenus = groups.find((g) => !g.isLocked && g.hasMenuItems);
+  if (withMenus) return withMenus.workspaceKey;
+
+  if (landingWorkspaceKey) {
+    const landingMatch = groups.find(
+      (g) => !g.isLocked && g.workspaceKey.toLowerCase() === landingWorkspaceKey.toLowerCase()
+    );
+    if (landingMatch) return landingMatch.workspaceKey;
+  }
+
+  const defaultGroup =
+    groups.find((g) => !g.isLocked && g.workspaceType === "Admin") ??
+    groups.find((g) => !g.isLocked) ??
+    groups[0];
+  return defaultGroup?.workspaceKey ?? null;
+}
 
 export const createWorkspaceSlice: StateCreator<NavigationStoreState, [], [], WorkspaceSlice> = (
   set,
@@ -10,6 +34,130 @@ export const createWorkspaceSlice: StateCreator<NavigationStoreState, [], [], Wo
   workspaceGroups: [],
   workspaces: new Map<string, NavigationData>(),
   defaultWorkspace: null,
+  recentWorkspaceKeysByContext: {},
+
+  initializeBootstrap: (result, contextKey) => {
+    const groups = result.navigationData.workspaceGroups;
+    const workspaceRouteMap = result.workspaceRouteMap ?? {};
+
+    const routeSet = new Set<string>();
+    for (const r of result.routes ?? []) {
+      if (typeof r === "string" && r.trim()) routeSet.add(normalizeRoutePath(r));
+    }
+    for (const r of result.navigationData.routes ?? []) {
+      if (typeof r === "string" && r.trim()) routeSet.add(normalizeRoutePath(r));
+    }
+    const sorted = [...routeSet].sort((a, b) => b.length - a.length);
+
+    const descriptorMap = new Map<string, AuthorizedRouteDescriptor>();
+    for (const descriptor of result.routeDescriptors ?? []) {
+      if (!descriptor || typeof descriptor.route !== "string" || !descriptor.route.trim()) {
+        continue;
+      }
+      const normalizedKey = normalizeRoutePath(descriptor.route);
+      descriptorMap.set(normalizedKey, {
+        ...descriptor,
+        route: normalizedKey,
+      });
+    }
+
+    const hydratedWsKey = resolveHydratedWorkspaceKey(
+      groups,
+      result.landingResolution?.workspaceKey
+    );
+
+    set((state) => {
+      const nextWorkspaces = new Map(state.workspaces);
+      const serializedGroups = groups.map((gr) => gr.toData());
+
+      for (const group of groups) {
+        if (!group.hasMenuItems) continue;
+        if (hydratedWsKey && group.workspaceKey.toLowerCase() === hydratedWsKey.toLowerCase()) {
+          nextWorkspaces.set(group.workspaceKey, result.navigationData);
+        } else {
+          nextWorkspaces.set(
+            group.workspaceKey,
+            new NavigationData({
+              menuItems: group.menuItems.map((m) => m.toData()),
+              routes: workspaceRouteMap[group.workspaceKey] ?? [],
+              workspaceGroups: serializedGroups,
+            })
+          );
+        }
+      }
+
+      if (hydratedWsKey && !nextWorkspaces.has(hydratedWsKey)) {
+        nextWorkspaces.set(hydratedWsKey, result.navigationData);
+      }
+
+      const currentPath =
+        typeof window !== "undefined" ? normalizeRoutePath(window.location.pathname) : "/";
+      const isPublicRoute = matchAppRoute(currentPath)?.binding === "public";
+      const normalizedLandingRoute = result.landingResolution?.route
+        ? normalizeRoutePath(result.landingResolution.route).toLowerCase()
+        : "";
+      const isHubLanding =
+        normalizedLandingRoute === "/hub" && !result.landingResolution?.workspaceKey;
+      const existingUnlocked = state.activeWorkspaceKey
+        ? groups.find((g) => !g.isLocked && g.workspaceKey === state.activeWorkspaceKey)
+        : undefined;
+
+      let nextActiveWorkspaceKey: string | null = null;
+      if (currentPath.toLowerCase() === "/hub" || isPublicRoute) {
+        nextActiveWorkspaceKey = null;
+      } else if (existingUnlocked) {
+        nextActiveWorkspaceKey = existingUnlocked.workspaceKey;
+      } else if (currentPath === "/") {
+        nextActiveWorkspaceKey = isHubLanding ? null : hydratedWsKey;
+      } else {
+        const ownerEntry = Object.entries(workspaceRouteMap).find(([wsKey, wsRoutes]) => {
+          const isUnlocked = groups.some(
+            (g) => !g.isLocked && g.workspaceKey.toLowerCase() === wsKey.toLowerCase()
+          );
+          if (!isUnlocked) return false;
+          return wsRoutes.some((r) => normalizeRoutePath(r) === currentPath);
+        });
+        nextActiveWorkspaceKey = ownerEntry?.[0] ?? hydratedWsKey;
+      }
+
+      return {
+        allRoutes: routeSet,
+        allRoutesSorted: sorted,
+        workspaceRouteMap,
+        routeDescriptors: descriptorMap,
+        routesLoaded: true,
+        routesContextKey: contextKey,
+        routesError: null,
+        routesLoadedAt: Date.now(),
+        contextKey,
+        landingResolution: result.landingResolution ?? null,
+        workspaceGroups: groups,
+        defaultWorkspace: result.navigationData,
+        workspaces: nextWorkspaces,
+        activeWorkspaceKey: nextActiveWorkspaceKey,
+        isInitialLoading: false,
+      };
+    });
+  },
+
+  recordRecentWorkspace: (contextKey, workspaceKey) => {
+    if (!contextKey || !workspaceKey || workspaceKey === "__default__") return;
+    set((state) => {
+      const existing = state.recentWorkspaceKeysByContext[contextKey] ?? [];
+      const updated = [workspaceKey, ...existing.filter((k) => k !== workspaceKey)].slice(
+        0,
+        MAX_RECENT_WORKSPACES
+      );
+      return {
+        recentWorkspaceKeysByContext: {
+          ...state.recentWorkspaceKeysByContext,
+          [contextKey]: updated,
+        },
+      };
+    });
+  },
+
+  clearRecentWorkspaces: () => set({ recentWorkspaceKeysByContext: {} }),
 
   initializeDefaultWorkspace: (data, groups) => {
     const current = get().allRoutes;
@@ -40,7 +188,8 @@ export const createWorkspaceSlice: StateCreator<NavigationStoreState, [], [], Wo
       activeWorkspaceKey:
         state.activeWorkspaceKey !== null
           ? state.activeWorkspaceKey // Already chosen — preserve it
-          : typeof window !== "undefined" && window.location.pathname === "/hub"
+          : typeof window !== "undefined" &&
+              window.location.pathname.toLowerCase().replace(/\/+$/, "") === "/hub"
             ? null // Explicitly on /hub — keep null (hub manages its own state)
             : defaultKey, // First load on dashboard or any module page — auto-activate
       isInitialLoading: false,
@@ -66,15 +215,14 @@ export const createWorkspaceSlice: StateCreator<NavigationStoreState, [], [], Wo
 
   getActiveWorkspaceGroup: () => {
     const { workspaceGroups, activeWorkspaceKey } = get();
-    if (!activeWorkspaceKey) return workspaceGroups[0] ?? null;
+    if (!activeWorkspaceKey) return null;
     return workspaceGroups.find((g) => g.workspaceKey === activeWorkspaceKey) ?? null;
   },
 
   getActiveRootMenuItems: () => {
-    const { workspaces, activeWorkspaceKey, defaultWorkspace } = get();
-    const key = activeWorkspaceKey ?? "__default__";
-    const data = workspaces.get(key) ?? defaultWorkspace;
-    return data?.menuItems ?? [];
+    const { workspaces, activeWorkspaceKey } = get();
+    if (!activeWorkspaceKey) return [];
+    return workspaces.get(activeWorkspaceKey)?.menuItems ?? [];
   },
 
   getPageActions: (pathname) => {
@@ -98,6 +246,40 @@ export const createWorkspaceSlice: StateCreator<NavigationStoreState, [], [], Wo
       const updatedGroups = state.workspaceGroups.map((g) => {
         if (g.workspaceKey !== workspaceKey) return g;
         return new WorkspaceGroup({ ...g.toData(), isPinned, pinSortOrder });
+      });
+      return { workspaceGroups: updatedGroups };
+    });
+  },
+
+  updateWorkspaceStartPageLocal: (workspaceKey, patch) => {
+    set((state) => {
+      const normalizedTargetKey = workspaceKey.toLowerCase();
+      const updatedGroups = state.workspaceGroups.map((g) => {
+        if (g.workspaceKey.toLowerCase() !== normalizedTargetKey) return g;
+        return new WorkspaceGroup({
+          ...g.toData(),
+          ...(patch.effectiveHomeRoute !== undefined
+            ? { effectiveHomeRoute: patch.effectiveHomeRoute }
+            : {}),
+          ...(patch.effectiveHomeSource !== undefined
+            ? { effectiveHomeSource: patch.effectiveHomeSource }
+            : {}),
+          ...(patch.effectiveHomeMenuSlug !== undefined
+            ? { effectiveHomeMenuSlug: patch.effectiveHomeMenuSlug }
+            : {}),
+          ...(patch.effectiveHomeLabelEn !== undefined
+            ? { effectiveHomeLabelEn: patch.effectiveHomeLabelEn }
+            : {}),
+          ...(patch.effectiveHomeLabelAr !== undefined
+            ? { effectiveHomeLabelAr: patch.effectiveHomeLabelAr }
+            : {}),
+          ...(patch.isEffectiveHomeEnforced !== undefined
+            ? { isEffectiveHomeEnforced: patch.isEffectiveHomeEnforced }
+            : {}),
+          ...(patch.enforcingRoleName !== undefined
+            ? { enforcingRoleName: patch.enforcingRoleName }
+            : {}),
+        });
       });
       return { workspaceGroups: updatedGroups };
     });

@@ -116,7 +116,7 @@ const Switch = React.forwardRef<React.ElementRef<typeof SwitchPrimitives.Root>, 
       skin.root,
       // colour-only transition at MICRO speed — a toggle has to feel switched,
       // not eased; motion-reduce drops it
-      "transition-[border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+      "transition-[border-color,background-color,box-shadow,filter] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
       // OFF — line-hi, not line: an off switch must be legible on its own, not
       // implied by the absence of colour
       "border-nx-line-hi bg-nx-ground",
@@ -127,16 +127,16 @@ const Switch = React.forwardRef<React.ElementRef<typeof SwitchPrimitives.Root>, 
       // on-fill light along the top inner edge — an edge, never a glow
       "data-[state=checked]:border-nx-accent data-[state=checked]:bg-nx-accent-fill",
       "data-[state=checked]:shadow-[inset_0_1px_0_0_color-mix(in_srgb,var(--nx-on-fill)_35%,transparent)]",
-      // hover ON brightens the FILL rather than adding a shadow: a hover shadow
-      // would out-specify the focus ring below and swallow it.
-      "data-[state=checked]:enabled:hover:bg-nx-accent",
+      // hover ON keeps Signal Lime fill (--nx-accent-fill) so --nx-on-fill thumb
+      // never drops below 3:1 in Light mode, while dimming slightly and crisping edge
+      "data-[state=checked]:enabled:hover:bg-nx-accent-fill data-[state=checked]:enabled:hover:border-nx-on-fill data-[state=checked]:enabled:hover:brightness-95",
       // press — the edge commits before the state does, same language as Checkbox
       "enabled:active:border-nx-accent",
       // focus: one ring for OFF …
       "focus-visible:outline-none focus-visible:shadow-nx-focus",
-      // … and a re-hued stack for ON, because --nx-focus draws its inner ring in
-      // --nx-accent directly on top of an accent border, where it disappears.
-      "data-[state=checked]:focus-visible:shadow-[inset_0_0_0_1px_var(--nx-on-fill),0_0_0_3px_var(--nx-accent-wash)]",
+      // … and a high-contrast --nx-on-fill + --nx-accent outer ring for ON
+      // so focused checked tracks read unmistakably in both Light and Dark themes
+      "data-[state=checked]:focus-visible:border-nx-on-fill data-[state=checked]:focus-visible:shadow-[inset_0_0_0_1px_var(--nx-on-fill),0_0_0_2px_var(--nx-ground),0_0_0_4px_var(--nx-accent)]",
       // invalid — FormControl already injects aria-invalid; this was the only
       // control in the set that rendered nothing for it
       "aria-[invalid=true]:border-nx-danger",

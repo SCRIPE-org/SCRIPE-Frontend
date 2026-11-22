@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
+import { usePermission } from "@core/hooks/use-permission";
+import { VENUE_PERMISSIONS } from "../../../../permission-constants";
 import { getVenueContainer } from "../../../../di";
 import type { Facility } from "../../domain/entities/Facility";
 
@@ -12,6 +14,7 @@ const VENUE_PROFILE_LOOKUP_PAGE_SIZE = 500;
  */
 export function useFacilityViewModel() {
   const { facilityRepository, venueProfileRepository } = getVenueContainer();
+  const canViewVenueProfiles = usePermission(VENUE_PERMISSIONS.VENUE_PROFILE_VIEW);
 
   const vm = useCrudViewModel(
     ["facility"],
@@ -50,6 +53,9 @@ export function useFacilityViewModel() {
   // Powers the Venue `server-select` field on the create form.
   const searchVenueProfiles = useCallback(
     async (query: string) => {
+      if (!canViewVenueProfiles) {
+        return [];
+      }
       const res = await venueProfileRepository.getAll({
         page: 1,
         pageSize: 20,
@@ -60,7 +66,7 @@ export function useFacilityViewModel() {
         label: venueProfile.name,
       }));
     },
-    [venueProfileRepository]
+    [venueProfileRepository, canViewVenueProfiles]
   );
 
   // venueProfileId -> venue name, so the table can show a name instead of a
@@ -69,6 +75,9 @@ export function useFacilityViewModel() {
   // list (small, tenant-scoped set) rather than a per-row fetch.
   const [venueProfileNameById, setVenueProfileNameById] = useState<Record<string, string>>({});
   useEffect(() => {
+    if (!canViewVenueProfiles) {
+      return;
+    }
     let cancelled = false;
     (async () => {
       try {
@@ -88,7 +97,7 @@ export function useFacilityViewModel() {
     return () => {
       cancelled = true;
     };
-  }, [venueProfileRepository]);
+  }, [venueProfileRepository, canViewVenueProfiles]);
 
   return { vm, searchVenueProfiles, venueProfileNameById };
 }

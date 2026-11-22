@@ -26,7 +26,7 @@ interface UseRolesViewModelParams {
   pageSize?: number;
   search?: string;
   tenantId?: string;
-  /** If true, uses myTenantRoles endpoint (tenantId from token) */
+  /** If true, uses /roles/current-tenant endpoint (tenantId from token) */
   useMyTenant?: boolean;
 }
 
@@ -48,7 +48,7 @@ export function useRolesViewModel(params: UseRolesViewModelParams = {}) {
   // Build query key using the factory
   const queryKey: string[] = useMemo(() => {
     if (tenantId) return [...qk.roles.active(tenantId)];
-    if (useMyTenant) return [...qk.roles.all, "myTenant"];
+    if (useMyTenant) return [...qk.roles.all, "currentTenant"];
     return [...qk.roles.all];
   }, [tenantId, useMyTenant]);
 
@@ -57,7 +57,7 @@ export function useRolesViewModel(params: UseRolesViewModelParams = {}) {
     getAll: async (queryParams) => {
       // Choose appropriate endpoint based on options
       const res = useMyTenant
-        ? await roleRepository.getMyTenantRoles({
+        ? await roleRepository.getCurrentTenantRoles({
             page: queryParams.page,
             pageSize: queryParams.pageSize,
             search: queryParams.search,
@@ -85,7 +85,7 @@ export function useRolesViewModel(params: UseRolesViewModelParams = {}) {
       const roleId = tenantId
         ? await roleRepository.create({ ...data, tenantId })
         : useMyTenant
-          ? await roleRepository.createForMyTenant(data)
+          ? await roleRepository.createInCurrentTenant(data)
           : await roleRepository.create(data as CreateRoleRequest);
       success({
         title: "Role Created",

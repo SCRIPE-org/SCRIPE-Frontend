@@ -114,3 +114,93 @@ export interface TenantTreeListResult {
   /** Whether preceding pages exist */
   hasPreviousPage: boolean;
 }
+
+/**
+ * Raw API DTO shapes for Platform-Admin tenant-scoped identity providers.
+ */
+export interface TenantIdentityProviderListItemDto {
+  id: string;
+  name: string;
+  slug: string;
+  protocol: string;
+  enabledForAdmins: boolean;
+  enabledForUsers: boolean;
+  isActive: boolean;
+  trustIdpMfa?: boolean;
+  displayOrder: number;
+  iconUrl?: string | null;
+  buttonColor?: string | null;
+  createdAt: string;
+}
+
+/** Detailed API DTO for a single tenant-scoped identity provider. */
+export interface TenantIdentityProviderDetailDto extends TenantIdentityProviderListItemDto {
+  tenantId?: string | null;
+  authority?: string | null;
+  authorizationEndpoint?: string | null;
+  tokenEndpoint?: string | null;
+  userInformationEndpoint?: string | null;
+  clientId?: string | null;
+  hasClientSecret: boolean;
+  scopes?: string | null;
+  redirectUri?: string | null;
+  samlIdpEntityId?: string | null;
+  samlSsoUrl?: string | null;
+  samlCertificate?: string | null;
+  claimMappingJson?: string | null;
+  buttonLabel?: string | null;
+  modifiedAt?: string | null;
+  rowVersion?: string | null;
+}
+
+/** Paginated API response DTO for tenant-scoped identity providers. */
+export interface TenantIdentityProviderPagedDto {
+  items: TenantIdentityProviderListItemDto[];
+  totalCount: number;
+  pageNumber?: number;
+  page?: number;
+  pageSize: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
+/** Request DTO for creating a tenant-scoped identity provider. */
+export interface CreateTenantIdentityProviderDto {
+  name: string;
+  slug: string;
+  protocol: string;
+  authority?: string | null;
+  authorizationEndpoint?: string | null;
+  tokenEndpoint?: string | null;
+  userInformationEndpoint?: string | null;
+  clientId?: string | null;
+  clientSecret?: string | null;
+  scopes?: string | null;
+  redirectUri?: string | null;
+  samlIdpEntityId?: string | null;
+  samlSsoUrl?: string | null;
+  samlCertificate?: string | null;
+  claimMappingJson?: string | null;
+  enabledForAdmins: boolean;
+  enabledForUsers: boolean;
+  iconUrl?: string | null;
+  buttonColor?: string | null;
+  buttonLabel?: string | null;
+  displayOrder: number;
+  isActive: boolean;
+  trustIdpMfa: boolean;
+}
+
+/** Request DTO for updating a tenant-scoped identity provider with optimistic concurrency token. */
+export interface UpdateTenantIdentityProviderDto extends CreateTenantIdentityProviderDto {
+  rowVersion?: string | null;
+}
+
+/** Response DTO for testing connectivity against a tenant-scoped identity provider. */
+export interface TenantIdpTestConnectionDto {
+  isSuccess: boolean;
+  message: string;
+  discoveredIssuer?: string | null;
+  discoveredEndpoints?: string[] | null;
+}

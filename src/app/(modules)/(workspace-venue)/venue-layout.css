@@ -1,0 +1,8 @@
+/* ============================================================================
+   SCRIPE VENUE — RESPONSIVE LAYOUT
+   ----------------------------------------------------------------------------
+   Mobile/tablet (< 1024px) desktop-rail hiding is handled directly by
+   NexusSecondaryRail (`hidden lg:flex lg:flex-col` without inline `display`),
+   so no global `!important` media override on `aside.relative.z-raised` is
+   required here. Keep this module stylesheet valid for `(workspace-venue)/layout.tsx`.
+   ============================================================================ */

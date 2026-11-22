@@ -13,10 +13,12 @@ import { cn, unresolveFileUrl } from "@core/common/utils";
 import { useResolvedFileUrl } from "@core/hooks/use-resolved-file-url";
 import type { IdentityProviderListItem } from "../../domain/entities/IdentityProvider";
 import { Badge } from "@core/ui/badge";
+import { BrandIcon } from "@core/ui/brand-icons";
 import { Button } from "@core/ui/button";
+import { Card } from "@core/ui/card";
 import { Switch } from "@core/ui/switch";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
-import { Shield, Users, Fingerprint, Zap, Pencil, Trash2, MoreVertical } from "lucide-react";
+import { Shield, ShieldCheck, Users, Zap, Pencil, Trash2, MoreVertical } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,16 +26,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@core/ui/dropdown-menu";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@core/ui/alert-dialog";
+import { IdentityProviderDeleteDialog } from "./IdentityProviderDeleteDialog";
 import Image from "next/image";
 
 interface Props {
@@ -43,6 +36,19 @@ interface Props {
   onToggleActive: (item: IdentityProviderListItem) => void | Promise<any>;
   onTestConnection: (id: string) => void | Promise<any>;
   isTesting: boolean;
+}
+
+const SAFE_HEX_COLOR = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
+
+function sanitizeBrandColor(color: string | null | undefined): string | null {
+  if (!color) return null;
+  const trimmed = color.trim();
+  if (!SAFE_HEX_COLOR.test(trimmed)) return null;
+  if (trimmed.length === 4) {
+    const [, r, g, b] = trimmed;
+    return `#${r}${r}${g}${g}${b}${b}`;
+  }
+  return trimmed;
 }
 
 /**
@@ -67,7 +73,7 @@ export function IdentityProviderCard({
 
   // A provider without its own colour renders on the workspace accent instead
   // of a fixed hex — the accent is workspace-owned, never a fallback brand.
-  const brandColor = item.buttonColor || null;
+  const brandColor = sanitizeBrandColor(item.buttonColor);
 
   // Protocol configuration styling
   const protocolStyles: Record<
@@ -112,10 +118,13 @@ export function IdentityProviderCard({
 
   return (
     <>
-      <div className="group relative flex flex-col justify-between rounded-nx-lg border border-nx-line bg-nx-surface p-5 transition-[border-color] duration-nx-micro hover:border-nx-line-hi motion-reduce:transition-none">
+      <Card
+        data-testid={`identity-provider-card-${item.slug || item.id}`}
+        className="group relative flex flex-col justify-between rounded-nx-lg border border-nx-line bg-nx-surface p-5 transition-[border-color] duration-nx-micro hover:border-nx-line-hi motion-reduce:transition-none"
+      >
         {/* Top Header Row */}
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-3">
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex min-w-0 items-center gap-3">
             {/* Logo container with brand-colored background ring */}
             <div
               className={cn(
@@ -142,18 +151,19 @@ export function IdentityProviderCard({
                   className="h-6 w-6 rounded object-contain"
                 />
               ) : (
-                <Fingerprint
-                  className={cn("h-6 w-6", !brandColor && "text-nx-accent")}
-                  style={brandColor ? { color: brandColor } : undefined}
-                  aria-hidden="true"
+                <BrandIcon
+                  slug={item.slug}
+                  name={item.name}
+                  protocol={item.protocol}
+                  className="h-6 w-6 shrink-0"
                 />
               )}
             </div>
-            <div>
+            <div className="min-w-0">
               <h4 className="line-clamp-1 text-sm font-semibold tracking-tight text-nx-ink">
                 {item.name}
               </h4>
-              <p className="mt-0.5 font-mono text-[11px] text-nx-ink-3">{item.slug}</p>
+              <p className="mt-0.5 truncate font-mono text-[11px] text-nx-ink-3">{item.slug}</p>
             </div>
           </div>
 
@@ -225,6 +235,17 @@ export function IdentityProviderCard({
               {t("identityProviders.badgeUser")}
             </Badge>
           )}
+
+          {/* IdP MFA Trust Badge */}
+          {item.trustIdpMfa && (
+            <Badge
+              variant="outline"
+              className="h-5 gap-1 border-success/30 bg-success/10 text-[10px] font-medium text-success"
+            >
+              <ShieldCheck className="h-3 w-3" aria-hidden="true" />
+              {t("identityProviders.badgeTrustMfa")}
+            </Badge>
+          )}
         </div>
 
         {/* Divider */}
@@ -238,6 +259,7 @@ export function IdentityProviderCard({
             size="sm"
             onClick={() => onTestConnection(item.id)}
             disabled={isTesting}
+            data-testid={`test-connection-btn-${item.slug || item.id}`}
             className="h-8 gap-1.5 px-2.5 text-xs text-nx-ink-3 hover:bg-nx-hover hover:text-nx-ink"
           >
             {isTesting ? (
@@ -254,6 +276,8 @@ export function IdentityProviderCard({
               {item.isActive ? t("common.active") : t("common.inactive")}
             </span>
             <Switch
+              data-testid={`toggle-active-switch-${item.slug || item.id}`}
+              aria-label={`${t("identityProviders.activeStatus")} ${item.name}`}
               checked={item.isActive}
               onCheckedChange={handleToggle}
               busy={isToggling}
@@ -261,31 +285,14 @@ export function IdentityProviderCard({
             />
           </div>
         </div>
-      </div>
+      </Card>
 
       {/* Delete Confirmation Alert Dialog */}
-      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t("identityProviders.deleteConfirmTitle")}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {t("identityProviders.deleteConfirmDesc")}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => {
-                onDelete(item);
-                setShowDeleteDialog(false);
-              }}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              {t("common.delete")}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <IdentityProviderDeleteDialog
+        open={showDeleteDialog}
+        onOpenChange={setShowDeleteDialog}
+        onConfirm={() => onDelete(item)}
+      />
     </>
   );
 }

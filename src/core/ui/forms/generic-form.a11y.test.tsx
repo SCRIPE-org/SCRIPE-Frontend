@@ -13,9 +13,12 @@
 // wiring and passes with it, same technique as
 // renderCustomFieldControl.test.tsx.
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import "@testing-library/jest-dom/vitest";
+import { useForm } from "react-hook-form";
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@core/ui/form";
+import { Input } from "@core/ui/input";
 import { GenericForm, type FieldConfig } from "./generic-form";
 
 vi.mock("@core/providers/permission-provider", () => ({
@@ -122,5 +125,140 @@ describe("GenericForm GenericSelect accessible names", () => {
     fireEvent.click(screen.getByRole("option", { name: "High" }));
 
     expect(screen.getByRole("combobox", { name: "Priority" })).toHaveTextContent("High");
+  });
+});
+
+function HookOrderFormHarness() {
+  const form = useForm({ defaultValues: { title: "" } });
+  return (
+    <Form {...form}>
+      <form>
+        <FormField
+          control={form.control}
+          name="title"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Title</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </form>
+    </Form>
+  );
+}
+
+describe("GenericForm & @core/ui/form Phase C accessibility & invariants", () => {
+  it("renders <form noValidate> and links help + inline error via aria-describedby", async () => {
+    const onSubmit = vi.fn(async () => {});
+    const fields: FieldConfig[] = [
+      {
+        name: "email",
+        label: "Email",
+        type: "email",
+        required: true,
+        description: "Work address only",
+      },
+    ];
+
+    render(<GenericForm fields={fields} onSubmit={onSubmit} onCancel={() => {}} />);
+
+    const form = document.querySelector("form");
+    expect(form).toHaveAttribute("novalidate");
+
+    const initialInput = screen.getByLabelText(/Email/);
+    expect(initialInput.getAttribute("aria-describedby") ?? "").toContain("email-hint");
+    expect(document.getElementById("email-hint")).toHaveTextContent("Work address only");
+
+    fireEvent.submit(form!);
+
+    await waitFor(() => {
+      const input = screen.getByLabelText(/Email/);
+      expect(input).toHaveAttribute("aria-invalid", "true");
+      const describedBy = input.getAttribute("aria-describedby") ?? "";
+      expect(describedBy).toContain("email-error");
+      expect(document.getElementById("email-error")).toBeInTheDocument();
+    });
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it("applies defaultValue to dynamically added fields without overwriting user edits", () => {
+    const baseFields: FieldConfig[] = [{ name: "name", label: "Name", type: "text" }];
+    const { rerender } = render(
+      <GenericForm fields={baseFields} onSubmit={async () => {}} onCancel={() => {}} />
+    );
+
+    const nameInput = screen.getByLabelText("Name") as HTMLInputElement;
+    fireEvent.change(nameInput, { target: { value: "Edited Value" } });
+
+    const expandedFields: FieldConfig[] = [
+      ...baseFields,
+      { name: "code", label: "Code", type: "text", defaultValue: "AUTO-1" },
+    ];
+    rerender(<GenericForm fields={expandedFields} onSubmit={async () => {}} onCancel={() => {}} />);
+
+    expect((screen.getByLabelText("Name") as HTMLInputElement).value).toBe("Edited Value");
+    expect((screen.getByLabelText("Code") as HTMLInputElement).value).toBe("AUTO-1");
+  });
+
+  it("renders react-hook-form Form/FormField cleanly with unconditional hook order", () => {
+    render(<HookOrderFormHarness />);
+    expect(screen.getByLabelText("Title")).toBeInTheDocument();
+  });
+
+  it("wires DatePicker ARIA state and focuses its combobox on validation failure", async () => {
+    const fields: FieldConfig[] = [
+      {
+        name: "kickoffDate",
+        label: "Kickoff Date",
+        type: "date",
+        required: true,
+        description: "Pick target kickoff date",
+      },
+    ];
+
+    render(<GenericForm fields={fields} onSubmit={async () => {}} onCancel={() => {}} />);
+
+    const combobox = screen.getByRole("combobox", { name: /Kickoff Date/i });
+    expect(combobox.getAttribute("aria-describedby") ?? "").toContain("kickoffDate-hint");
+
+    fireEvent.submit(document.querySelector("form")!);
+
+    await waitFor(() => {
+      expect(combobox).toHaveAttribute("aria-invalid", "true");
+      expect(combobox.getAttribute("aria-describedby") ?? "").toContain("kickoffDate-error");
+      expect(document.activeElement).toBe(combobox);
+    });
+  });
+
+  it("wires ImageUploader ARIA attributes and focuses visible dropzone button on validation failure", async () => {
+    const fields: FieldConfig[] = [
+      {
+        name: "avatar",
+        label: "Avatar",
+        type: "image",
+        required: true,
+        description: "PNG or JPG avatar",
+        placeholder: "Upload avatar",
+      },
+    ];
+
+    render(<GenericForm fields={fields} onSubmit={async () => {}} onCancel={() => {}} />);
+
+    const dropzone = screen.getByRole("button", { name: /Avatar/i });
+    expect(dropzone).toHaveAttribute("id", "avatar");
+    expect(dropzone.getAttribute("aria-describedby") ?? "").toContain("avatar-hint");
+
+    fireEvent.submit(document.querySelector("form")!);
+
+    await waitFor(() => {
+      expect(dropzone).toHaveAttribute("aria-invalid", "true");
+      expect(dropzone.getAttribute("aria-describedby") ?? "").toContain("avatar-error");
+      expect(document.getElementById("avatar-error")).toBeInTheDocument();
+      expect(document.activeElement).toBe(dropzone);
+    });
   });
 });

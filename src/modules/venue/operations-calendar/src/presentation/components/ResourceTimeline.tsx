@@ -9,10 +9,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@core/ui/tooltip";
-import type {
-  CalendarResource,
-  OperationsCalendarBlock,
-  OperationsCalendarDay,
+import {
+  isClosureBlock,
+  type CalendarResource,
+  type OperationsCalendarBlock,
+  type OperationsCalendarDay,
 } from "../../domain/entities/OperationsCalendar";
 import {
   blockPosition,
@@ -34,21 +35,18 @@ interface ResourceTimelineProps {
   onEmptySlot: (resource: CalendarResource, instantUtc: string) => void;
 }
 
-function statusClass(status: OperationsCalendarBlock["status"]) {
-  if (status === "Held") return "border-warning/50 bg-warning/15 text-warning-strong";
-  if (status === "CheckedIn") return "border-info/50 bg-info/15 text-info";
-  if (status === "Completed") return "border-nx-border bg-nx-raised/70 text-nx-ink-2";
-  if (status === "NoShow")
-    return "border-destructive/60 bg-destructive/15 text-destructive font-semibold";
-  if (
-    status === ("Maintenance" as any) ||
-    (status as string) === "Blocked" ||
-    (status as string) === "Unavailable"
-  ) {
-    return "border-warning/40 bg-warning/20 text-warning font-semibold";
+function statusClass(block: OperationsCalendarBlock) {
+  if (isClosureBlock(block)) {
+    return "border-warning/40 bg-warning/20 font-semibold text-warning";
   }
-  if (status === "Cancelled") {
-    return "border-nx-line bg-nx-surfaceSubtle text-nx-ink-3 line-through opacity-70";
+  if (block.status === "Held") return "border-warning/50 bg-warning/15 text-warning";
+  if (block.status === "CheckedIn") return "border-info/50 bg-info/15 text-info";
+  if (block.status === "Completed") return "border-nx-line bg-nx-raised/70 text-nx-ink-2";
+  if (block.status === "NoShow") {
+    return "border-destructive/60 bg-destructive/15 font-semibold text-destructive";
+  }
+  if (block.status === "Cancelled") {
+    return "border-nx-line bg-nx-raised text-nx-ink-3 line-through opacity-70";
   }
   return "border-success/50 bg-success/15 text-success";
 }
@@ -63,16 +61,18 @@ function localTime(value: string, locale: string, timeZoneId: string) {
 }
 
 /**
- * Documentation for module export
+ * Multi-lane timeline rendering booking blocks, closures, and bookable sub-slots per resource.
  */
 export function ResourceTimeline(props: ResourceTimelineProps) {
   const slots = buildTimeSlots(props.day, props.locale);
   const timelineWidth = Math.max(SLOT_WIDTH, slots.length * SLOT_WIDTH);
   const [now, setNow] = useState(() => Date.parse(props.day.asOfUtc));
+
   useEffect(() => {
     const timer = window.setInterval(() => setNow(Date.now()), 60_000);
     return () => window.clearInterval(timer);
   }, []);
+
   const from = Date.parse(props.day.fromUtc);
   const to = Date.parse(props.day.toUtc);
   const currentPercent = now >= from && now < to ? ((now - from) / (to - from)) * 100 : null;
@@ -82,14 +82,15 @@ export function ResourceTimeline(props: ResourceTimelineProps) {
       <div
         className="overflow-auto rounded-nx-lg border border-nx-line bg-nx-surface"
         data-testid="resource-timeline"
+        dir="ltr"
       >
         <div className="min-w-max" dir="ltr">
           <div className="flex border-b border-nx-line bg-nx-raised">
             <div
-              className="sticky left-0 z-30 flex w-48 shrink-0 items-center border-r border-nx-line bg-nx-raised px-4 text-sm font-semibold"
+              className="sticky left-0 z-30 flex w-56 shrink-0 items-center border-r border-nx-line bg-nx-raised px-4 text-sm font-semibold"
               dir={props.direction}
             >
-              {props.t("operationsCalendar.timeline.courtOrSpace", { defaultValue: "Court / Space" })}
+              {props.t("operationsCalendar.timeline.courtOrSpace")}
             </div>
             <div className="flex" style={{ width: timelineWidth }}>
               {slots.map((slot) => (
@@ -102,12 +103,14 @@ export function ResourceTimeline(props: ResourceTimelineProps) {
               ))}
             </div>
           </div>
+
           {props.resources.map((resource) => {
             const placed = placeBlocksOnTracks(
-              props.day.blocks.filter((block) => block.resourceId === resource.id)
+              props.day.blocks.filter((block) => block.resourceId === resource.id),
             );
             const trackCount = Math.max(1, ...placed.map((item) => item.track + 1));
             const laneHeight = Math.max(64, trackCount * BLOCK_HEIGHT + 14);
+
             return (
               <div
                 key={resource.id}
@@ -116,70 +119,92 @@ export function ResourceTimeline(props: ResourceTimelineProps) {
                 data-resource-id={resource.id}
               >
                 <div
-                  className="sticky left-0 z-30 w-48 shrink-0 border-r border-nx-line bg-nx-surface px-4 py-3"
+                  className="sticky left-0 z-30 w-56 shrink-0 border-r border-nx-line bg-nx-surface px-4 py-3"
                   dir={props.direction}
                 >
-                  <p className="truncate text-sm font-semibold text-nx-ink">{resource.name}</p>
-                  <p className="truncate text-xs text-nx-ink-3">{resource.profileName}</p>
+                  <p dir="auto" className="line-clamp-2 text-sm font-semibold text-nx-ink">{resource.name}</p>
+                  <p dir="auto" className="line-clamp-2 text-xs text-nx-ink-3">{resource.profileName}</p>
                 </div>
+
                 <div className="relative flex" style={{ width: timelineWidth, height: laneHeight }}>
                   {slots.map((slot) => {
                     const slotStart = Date.parse(slot.instantUtc);
-                    const slotEnd = slotStart + 60 * 60 * 1000;
-                    const occupied = placed.some(
-                      ({ block }) =>
-                        Date.parse(block.startUtc) < slotEnd && slotStart < Date.parse(block.endUtc)
-                    );
+                    const subSlots = [
+                      {
+                        start: slotStart,
+                        end: slotStart + 30 * 60 * 1000,
+                        instantUtc: slot.instantUtc,
+                        label: slot.label,
+                      },
+                      {
+                        start: slotStart + 30 * 60 * 1000,
+                        end: slotStart + 60 * 60 * 1000,
+                        instantUtc: new Date(slotStart + 30 * 60 * 1000).toISOString(),
+                        label: localTime(
+                          new Date(slotStart + 30 * 60 * 1000).toISOString(),
+                          props.locale,
+                          props.day.timeZoneId,
+                        ),
+                      },
+                    ];
+
                     return (
-                      <Button
-                        variant="ghost"
-                        type="button"
+                      <div
                         key={slot.instantUtc}
-                        className="h-full w-[76px] shrink-0 rounded-none border-r border-nx-line p-0 text-transparent outline-none hover:bg-nx-hover focus-visible:z-20 focus-visible:shadow-nx-focus"
-                        aria-label={
-                          occupied
-                            ? undefined
-                            : props.t("operationsCalendar.timeline.emptySlot", {
-                                resource: resource.name,
-                                time: slot.label,
-                              })
-                        }
-                        aria-hidden={occupied || undefined}
-                        tabIndex={occupied ? -1 : undefined}
-                        disabled={!props.canCreate || occupied}
-                        onClick={() => props.onEmptySlot(resource, slot.instantUtc)}
+                        className="flex h-full w-[76px] shrink-0 border-r border-nx-line"
                       >
-                        {slot.label}
-                      </Button>
+                        {subSlots.map((sub) => {
+                          const occupied = placed.some(
+                            ({ block }) =>
+                              Date.parse(block.startUtc) < sub.end &&
+                              sub.start < Date.parse(block.endUtc),
+                          );
+                          return (
+                            <Button
+                              variant="ghost"
+                              type="button"
+                              key={sub.instantUtc}
+                              className="h-full w-[38px] shrink-0 rounded-none border-r border-dashed border-nx-line/40 p-0 text-transparent outline-none last:border-r-0 hover:bg-nx-hover focus-visible:z-20 focus-visible:shadow-nx-focus"
+                              aria-label={
+                                occupied
+                                  ? undefined
+                                  : props.t("operationsCalendar.timeline.emptySlot", {
+                                      resource: resource.name,
+                                      time: sub.label,
+                                    })
+                              }
+                              aria-hidden={occupied || undefined}
+                              tabIndex={occupied ? -1 : undefined}
+                              disabled={!props.canCreate || occupied}
+                              onClick={() => props.onEmptySlot(resource, sub.instantUtc)}
+                            >
+                              {sub.label}
+                            </Button>
+                          );
+                        })}
+                      </div>
                     );
                   })}
+
                   {placed.map(({ block, track }) => {
                     const position = blockPosition(block, props.day);
                     const start = localTime(block.startUtc, props.locale, props.day.timeZoneId);
                     const end = localTime(block.endUtc, props.locale, props.day.timeZoneId);
-                    const isClosure =
-                      block.status === ("Maintenance" as any) ||
-                      (block.status as string) === "Blocked" ||
-                      (block.status as string) === "Unavailable" ||
-                      block.reservationId.startsWith("closure-");
-                    const status = isClosure
-                      ? props.t("operationsCalendar.status.Maintenance", {
-                          defaultValue: "Maintenance",
-                        })
-                      : props.t(`operationsCalendar.status.${block.status}`, {
-                          defaultValue: block.status,
-                        });
+                    const closure = isClosureBlock(block);
+                    const status = props.t(`operationsCalendar.status.${block.status}`);
                     const pixelWidth = (position.widthPercent / 100) * timelineWidth;
                     const isCompact = pixelWidth < 60;
-                    const compactRef = isClosure ? "⊘" : `#${block.reservationNumber.replace(/^RES-?/i, "") || block.reservationNumber}`;
+                    const compactRef = closure
+                      ? "⊘"
+                      : `#${block.reservationNumber.replace(/^RES-?/i, "") || block.reservationNumber}`;
 
                     const blockButton = (
                       <Button
                         variant="ghost"
                         type="button"
                         className={cn(
-                          "absolute z-10 overflow-hidden rounded-nx-sm border p-1 text-left text-[11px] leading-tight outline-none focus-visible:z-20 focus-visible:shadow-nx-focus",
-                          statusClass(block.status)
+                          "absolute z-10 overflow-hidden rounded-nx-sm border p-1 text-start text-[11px] leading-tight outline-none focus-visible:z-20 focus-visible:shadow-nx-focus",
+                          statusClass(block),
                         )}
                         style={
                           {
@@ -198,7 +223,6 @@ export function ResourceTimeline(props: ResourceTimelineProps) {
                           resource: resource.name,
                         })}
                         onClick={() => {
-                          if (isClosure) return;
                           props.onOpen(block);
                         }}
                       >
@@ -209,7 +233,7 @@ export function ResourceTimeline(props: ResourceTimelineProps) {
                         ) : (
                           <div className="flex h-full w-full flex-col justify-center">
                             <span className="block truncate font-semibold">
-                              {isClosure ? `⊘ ${status}` : block.reservationNumber}
+                              {closure ? `⊘ ${status}` : block.reservationNumber}
                             </span>
                             <span className="block truncate text-[10px]">
                               {status} · {start}–{end}
@@ -222,12 +246,10 @@ export function ResourceTimeline(props: ResourceTimelineProps) {
                     if (isCompact) {
                       return (
                         <Tooltip key={block.reservationId}>
-                          <TooltipTrigger asChild>
-                            {blockButton}
-                          </TooltipTrigger>
+                          <TooltipTrigger asChild>{blockButton}</TooltipTrigger>
                           <TooltipContent side="top" className="text-xs">
                             <div className="font-semibold">
-                              {isClosure ? `⊘ ${status}` : block.reservationNumber}
+                              {closure ? `⊘ ${status}` : block.reservationNumber}
                             </div>
                             <div className="text-[10px] text-nx-ink-2">
                               {status} · {start}–{end}
@@ -237,12 +259,9 @@ export function ResourceTimeline(props: ResourceTimelineProps) {
                       );
                     }
 
-                    return (
-                      <div key={block.reservationId}>
-                        {blockButton}
-                      </div>
-                    );
+                    return <div key={block.reservationId}>{blockButton}</div>;
                   })}
+
                   {currentPercent != null && (
                     <div
                       className="pointer-events-none absolute inset-y-0 z-20 w-px bg-destructive"

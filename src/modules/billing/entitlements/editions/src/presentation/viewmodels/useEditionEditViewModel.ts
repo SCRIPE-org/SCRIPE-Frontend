@@ -64,6 +64,7 @@ export function useEditionEditViewModel(editionId: string) {
   };
 
   const handleSubmit = async () => {
+    if (edition?.isInternal) return;
     setIsSubmitting(true);
     setError(null);
     try {

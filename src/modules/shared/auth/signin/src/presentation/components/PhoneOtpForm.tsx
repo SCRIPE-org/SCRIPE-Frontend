@@ -6,37 +6,50 @@ import { Input } from "@core/ui/input";
 import { PhoneInput } from "@core/ui/phone-input";
 import { Label } from "@core/ui/label";
 import { usePhoneOtpViewModel } from "../viewmodels/usePhoneOtpViewModel";
+import type { TokenLoginPayload } from "../viewmodels/useTokenLogin";
+import { PostCredentialWorkspaceSelector } from "./PostCredentialWorkspaceSelector";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface PhoneOtpFormProps {
-  onSuccess: (result: {
-    accessToken: string;
-    refreshToken: string;
-    mustChangePassword?: boolean;
-  }) => void;
+  onSuccess: (result: TokenLoginPayload) => void;
   onBack: () => void;
   isRTL: boolean;
+  tenantId?: string | null;
+  onTwoFactorRequired?: (pendingToken: string, staySignedIn: boolean) => void;
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
 /**
- * PhoneOtpForm — Phone/SMS OTP login (pure render)
+ * PhoneOtpForm — Phone/SMS OTP login (pure render).
  *
- * Per auth-methods.md §3 Phone OTP:
- * 1. User enters phone number (E.164 format)
- * 2. Backend sends SMS OTP via configured provider
- * 3. User enters 6-digit code to complete login
- *
- * All business logic is in usePhoneOtpViewModel.
- * This component is a pure render — no DI imports, no HTTP calls.
- *
- * Design: Vault aesthetic, sxScreenIn transitions, error shake
+ * Supports tenant-scoped phone OTP entry, 6-digit verification, multi-workspace
+ * selection, and hybrid MFA handoff via `onTwoFactorRequired`.
  */
-export function PhoneOtpForm({ onSuccess, onBack, isRTL }: PhoneOtpFormProps) {
+export function PhoneOtpForm({
+  onSuccess,
+  onBack,
+  isRTL,
+  tenantId,
+  onTwoFactorRequired,
+}: PhoneOtpFormProps) {
   const { t } = useI18n();
-  const vm = usePhoneOtpViewModel(onSuccess);
+  const vm = usePhoneOtpViewModel(onSuccess, { tenantId, onTwoFactorRequired });
+
+  if (vm.step === "workspace-selection") {
+    return (
+      <PostCredentialWorkspaceSelector
+        email={vm.phone}
+        workspaces={vm.availableWorkspaces}
+        onSelect={vm.selectWorkspace}
+        onUnlock={async () => {}}
+        onBack={vm.changeNumber}
+        isLoading={vm.isLoading}
+        error={vm.error}
+      />
+    );
+  }
 
   // ── Phone input step ──
   if (vm.step === "phone") {
@@ -100,13 +113,13 @@ export function PhoneOtpForm({ onSuccess, onBack, isRTL }: PhoneOtpFormProps) {
           className="relative w-full overflow-hidden rounded-lg py-3 text-sm font-semibold"
           style={{
             background: "var(--sx-cta-gradient)",
-            color: "#fff",
+            color: "var(--nx-on-fill)",
             boxShadow: "var(--sx-cta-shadow)",
           }}
         >
           {vm.isLoading ? (
             <span className="flex items-center justify-center gap-2">
-              <span className="sx-spin1 inline-block h-4 w-4 rounded-full border-2 border-white/30 border-t-white" />
+              <span className="sx-spin1 inline-block h-4 w-4 rounded-full border-2 border-nx-on-fill border-t-transparent opacity-80" />
               {t("common.loading") || "Sending…"}
             </span>
           ) : (
@@ -192,13 +205,13 @@ export function PhoneOtpForm({ onSuccess, onBack, isRTL }: PhoneOtpFormProps) {
         className="relative w-full overflow-hidden rounded-lg py-3 text-sm font-semibold"
         style={{
           background: "var(--sx-cta-gradient)",
-          color: "#fff",
+          color: "var(--nx-on-fill)",
           boxShadow: "var(--sx-cta-shadow)",
         }}
       >
         {vm.isLoading ? (
           <span className="flex items-center justify-center gap-2">
-            <span className="sx-spin1 inline-block h-4 w-4 rounded-full border-2 border-white/30 border-t-white" />
+            <span className="sx-spin1 inline-block h-4 w-4 rounded-full border-2 border-nx-on-fill border-t-transparent opacity-80" />
             {t("common.loading") || "Verifying…"}
           </span>
         ) : (

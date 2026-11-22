@@ -4,6 +4,8 @@ import { User } from "@modules/auth/core/domain/entities/User";
 import { PermissionCode, AdminRole } from "@core/common/types/permissions";
 import { secureTokenService } from "@core/common/secure-token-service";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
+import { useSudoStore } from "@core/store/useSudoStore";
+import { usePatOneTimeSecretStore } from "@core/store/usePatOneTimeSecretStore";
 
 interface AppState {
   // Sidebar State
@@ -18,6 +20,7 @@ interface AppState {
   // Auth State
   user: User | null;
   isAuthenticated: boolean;
+  isAuthTransitioning: boolean;
   permissions: PermissionCode[];
   roles: AdminRole[];
   restrictedFields: Record<string, string[]>;
@@ -28,6 +31,7 @@ interface AppState {
     roles: AdminRole[],
     isFreshLogin?: boolean
   ) => void;
+  beginSessionTransition: () => void;
   logout: () => void;
 
   // Subscription State (populated from login response)
@@ -70,10 +74,11 @@ export const useAppStore = create<AppState>()(
       // Auth State
       user: null,
       isAuthenticated: false,
+      isAuthTransitioning: false,
       permissions: [],
       roles: [],
       restrictedFields: {},
-      setUser: (user) => set({ user, isAuthenticated: !!user }),
+      setUser: (user) => set({ user, isAuthenticated: !!user, isAuthTransitioning: false }),
       // ... existing code in setAuth ...
       setAuth: (user, permissions, roles, isFreshLogin = false) => {
         if (typeof document !== "undefined") {
@@ -89,23 +94,43 @@ export const useAppStore = create<AppState>()(
             /* ignore */
           }
         }
-        set({
-          user,
-          isAuthenticated: true,
-          permissions,
-          roles,
-          restrictedFields: user.restrictedFields ?? {},
+        set(() => {
+          const resolvedRoles =
+            roles && roles.length > 0
+              ? roles
+              : Array.isArray(user.roles)
+                ? user.roles
+                : [];
+          const resolvedPermissions = Array.isArray(permissions)
+            ? permissions
+            : Array.isArray(user.permissions)
+              ? (user.permissions as PermissionCode[])
+              : [];
+          const resolvedRestrictedFields =
+            user.restrictedFields && !Array.isArray(user.restrictedFields)
+              ? (user.restrictedFields as Record<string, string[]>)
+              : {};
+
+          return {
+            user,
+            isAuthenticated: true,
+            isAuthTransitioning: false,
+            permissions: resolvedPermissions,
+            roles: resolvedRoles,
+            restrictedFields: resolvedRestrictedFields,
+          };
         });
       },
-      logout: () => {
+      beginSessionTransition: () => {
         if (typeof document !== "undefined") {
-          document.cookie = `${STORAGE_KEYS.scr_auth_state}=; path=/; max-age=0; samesite=Lax`;
+          document.cookie = `${STORAGE_KEYS.scr_auth_state}=true; path=/; max-age=2592000; samesite=Lax`;
         }
-        // Also clear tokens when logging out from store
-        secureTokenService.clearTokens();
+        useSudoStore.getState().reset();
+        usePatOneTimeSecretStore.getState().clearPendingReceipt();
         set({
           user: null,
-          isAuthenticated: false,
+          isAuthenticated: true,
+          isAuthTransitioning: true,
           permissions: [],
           roles: [],
           restrictedFields: {},
@@ -114,7 +139,30 @@ export const useAppStore = create<AppState>()(
           gracePhase: null,
           editionName: null,
           mustChangePassword: false,
-          defaultRedirectPath: "/overview",
+          defaultRedirectPath: "/",
+        });
+      },
+      logout: () => {
+        if (typeof document !== "undefined") {
+          document.cookie = `${STORAGE_KEYS.scr_auth_state}=; path=/; max-age=0; samesite=Lax`;
+        }
+        // Also clear tokens, sudo elevation, and ephemeral PAT secrets when logging out from store
+        secureTokenService.clearTokens();
+        useSudoStore.getState().reset();
+        usePatOneTimeSecretStore.getState().clearPendingReceipt();
+        set({
+          user: null,
+          isAuthenticated: false,
+          isAuthTransitioning: false,
+          permissions: [],
+          roles: [],
+          restrictedFields: {},
+          tenantCode: null,
+          subscriptionStatus: null,
+          gracePhase: null,
+          editionName: null,
+          mustChangePassword: false,
+          defaultRedirectPath: "/",
         });
       },
 
@@ -129,8 +177,8 @@ export const useAppStore = create<AppState>()(
       mustChangePassword: false,
       setMustChangePassword: (must) => set({ mustChangePassword: must }),
 
-      // Post-login redirect path
-      defaultRedirectPath: "/overview",
+      // Ephemeral in-memory redirect fallback (never persisted to localStorage)
+      defaultRedirectPath: "/",
       setDefaultRedirectPath: (path) => set({ defaultRedirectPath: path }),
 
       // Tenant context
@@ -144,7 +192,7 @@ export const useAppStore = create<AppState>()(
     {
       name: "app-storage",
       partialize: (state) => ({
-        // Persist these fields
+        // Persist these fields (never persist defaultRedirectPath so stale routes never leak)
         sidebarOpen: state.sidebarOpen,
         density: state.density,
         user: state.user,
@@ -157,8 +205,18 @@ export const useAppStore = create<AppState>()(
         gracePhase: state.gracePhase,
         editionName: state.editionName,
         mustChangePassword: state.mustChangePassword,
-        defaultRedirectPath: state.defaultRedirectPath,
       }),
+      merge: (persistedState, currentState) => {
+        const persisted = { ...((persistedState as Partial<AppState> | null) ?? {}) };
+        delete persisted.defaultRedirectPath;
+        delete persisted.isAuthTransitioning;
+        return {
+          ...currentState,
+          ...persisted,
+          defaultRedirectPath: "/",
+          isAuthTransitioning: false,
+        };
+      },
       onRehydrateStorage: () => (state) => {
         // With in-memory tokens, the access token is ALWAYS null after page reload.
         // The persisted isAuthenticated is just a HINT — the route-guard will

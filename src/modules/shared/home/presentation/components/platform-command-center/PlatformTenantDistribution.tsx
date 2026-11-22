@@ -27,8 +27,8 @@ export function PlatformTenantDistribution({
       name: t("platformCommandCenter.distribution.enterprise") || "Enterprise",
       count: 48,
       percentage: "19.4%",
-      color: "var(--primary)",
-      dotClass: "bg-primary",
+      color: "var(--nx-accent)",
+      dotClass: "bg-nx-accent",
     },
     {
       name: t("platformCommandCenter.distribution.professional") || "Professional",
@@ -83,8 +83,8 @@ export function PlatformTenantDistribution({
       {/* Header */}
       <CardHeader className="border-b border-nx-line pb-3">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary">
-            <BarChart3 className="h-4 w-4" />
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-nx-line-hi bg-nx-accent-wash text-nx-accent">
+            <BarChart3 className="h-4 w-4" aria-hidden="true" />
           </div>
           <div>
             <CardTitle className="text-base font-semibold text-nx-ink">
@@ -153,9 +153,9 @@ export function PlatformTenantDistribution({
                   <span className={`h-2 w-2 shrink-0 rounded-full ${item.dotClass}`} />
                   <span className="truncate font-medium text-nx-ink">{item.name}</span>
                 </div>
-                <div className="flex shrink-0 items-center gap-4 text-right font-mono">
+                <div className="flex shrink-0 items-center gap-4 text-end font-mono">
                   <span className="text-nx-ink-2">{item.count}</span>
-                  <span className="w-12 text-right text-nx-ink-3">{item.percentage}</span>
+                  <span className="w-12 text-end text-nx-ink-3">{item.percentage}</span>
                 </div>
               </div>
             ))}

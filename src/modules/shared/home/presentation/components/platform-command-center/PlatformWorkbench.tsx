@@ -13,6 +13,7 @@ import {
 import Link from "next/link";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@core/ui/card";
+import { Button } from "@core/ui/button";
 
 export function PlatformWorkbench() {
   const { t } = useI18n();
@@ -58,8 +59,8 @@ export function PlatformWorkbench() {
       {/* Header */}
       <CardHeader className="flex flex-row items-center justify-between gap-2 border-b border-nx-line pb-3">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary">
-            <Zap className="h-4 w-4" />
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-nx-line-hi bg-nx-accent-wash text-nx-accent">
+            <Zap className="h-4 w-4" aria-hidden="true" />
           </div>
           <div>
             <CardTitle className="text-base font-semibold text-nx-ink">
@@ -73,17 +74,18 @@ export function PlatformWorkbench() {
 
         {/* Quick Actions Dropdown */}
         <div className="relative">
-          <button
+          <Button
             type="button"
+            variant="outline"
             onClick={() => setDropdownOpen((v) => !v)}
-            className="flex items-center gap-2 rounded-lg border border-nx-line bg-nx-raised px-3 py-1.5 text-xs text-nx-ink transition-colors hover:bg-nx-raised-2"
+            className="flex h-auto items-center gap-2 rounded-lg border-nx-line bg-nx-raised px-3 py-1.5 text-xs text-nx-ink transition-colors hover:bg-nx-raised-2"
           >
             <span>{t("platformCommandCenter.workbench.quickActions") || "Quick actions"}</span>
             <ChevronDown className="h-3.5 w-3.5 text-nx-ink-3" />
-          </button>
+          </Button>
 
           {dropdownOpen && (
-            <div className="absolute right-0 z-30 mt-1.5 w-40 rounded-lg border border-nx-line bg-nx-surface py-1 shadow-nx-popover">
+            <div className="absolute end-0 z-dropdown mt-1.5 w-40 rounded-lg border border-nx-line-hi bg-nx-popover py-1 shadow-nx-popover">
               <Link
                 href="/tenants"
                 onClick={() => setDropdownOpen(false)}
@@ -119,16 +121,16 @@ export function PlatformWorkbench() {
               <Link
                 key={action.title}
                 href={action.href}
-                className="group flex items-center justify-between rounded-xl border border-nx-line bg-nx-raised/40 p-3 transition-all hover:border-nx-line-hi hover:bg-nx-raised"
+                className="group flex items-center justify-between rounded-xl border border-nx-line bg-nx-raised p-3 transition-all hover:border-nx-line-hi hover:bg-nx-hover"
               >
                 <div className="flex min-w-0 items-center gap-3">
                   <div
                     className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border ${action.iconBg} ${action.iconColor}`}
                   >
-                    <Icon className="h-4 w-4" />
+                    <Icon className="h-4 w-4" aria-hidden="true" />
                   </div>
                   <div className="min-w-0">
-                    <span className="block truncate text-xs font-semibold text-nx-ink transition-colors group-hover:text-primary">
+                    <span className="block truncate text-xs font-semibold text-nx-ink transition-colors group-hover:text-nx-accent">
                       {action.title}
                     </span>
                     <span className="block truncate text-[11px] text-nx-ink-3">
@@ -136,7 +138,7 @@ export function PlatformWorkbench() {
                     </span>
                   </div>
                 </div>
-                <ChevronRight className="h-3.5 w-3.5 shrink-0 text-nx-ink-3 transition-colors group-hover:text-nx-ink" />
+                <ChevronRight className="h-3.5 w-3.5 shrink-0 text-nx-ink-3 transition-colors group-hover:text-nx-ink rtl:rotate-180" aria-hidden="true" />
               </Link>
             );
           })}

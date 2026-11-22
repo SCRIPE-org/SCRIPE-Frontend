@@ -61,7 +61,7 @@ export function validateEmail(email: string): boolean {
 export function validatePhone(phone: string): boolean {
   if (!phone || typeof phone !== "string") return false;
   // Accepts: +1234567890, 123-456-7890, (123) 456-7890, etc.
-  const phoneRegex = /^[\+]?[(]?[0-9]{1,4}[)]?[-\s\.]?[0-9]{1,4}[-\s\.]?[0-9]{1,9}$/;
+  const phoneRegex = /^[+]?[(]?[0-9]{1,4}[)]?[-\s.]?[0-9]{1,4}[-\s.]?[0-9]{1,9}$/;
   return phoneRegex.test(phone.trim());
 }
 
@@ -276,4 +276,24 @@ export function sanitizeCss(input: string): string {
       .replace(/-moz-binding\s*:/gi, "")
       .replace(/javascript\s*:/gi, "")
   );
+}
+
+/**
+ * Validates that a navigation URL uses strictly `http:` or `https:` and has a valid host.
+ * Prevents open redirects / script execution via `javascript:`, `data:`, or malformed protocols.
+ */
+export function sanitizeHttpUrl(url: string | null | undefined): string | null {
+  if (!url || typeof url !== "string") return null;
+  const trimmed = url.trim();
+  if (!trimmed) return null;
+
+  try {
+    const parsed = new URL(trimmed);
+    if ((parsed.protocol !== "http:" && parsed.protocol !== "https:") || !parsed.hostname) {
+      return null;
+    }
+    return parsed.toString();
+  } catch {
+    return null;
+  }
 }

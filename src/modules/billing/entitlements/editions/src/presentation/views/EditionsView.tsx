@@ -33,6 +33,7 @@ export function EditionsView() {
       titleKey: "entitlements.editions.title",
       subtitleKey: "entitlements.editions.description",
       resource: "editions",
+      stickyActions: true,
       customActions: [
         {
           label: t("entitlements.editions.comparison.heroTitle"),
@@ -97,9 +98,14 @@ export function EditionsView() {
           key: "isRetired",
           label: t("entitlements.editions.status"),
           render: (_val: unknown, edition: Edition) => (
-            <Badge variant={edition.isRetired ? "destructive" : "success"}>
-              {edition.isRetired ? t("entitlements.editions.retired") : t("common.active")}
-            </Badge>
+            <div className="flex flex-wrap items-center gap-1.5">
+              <Badge variant={edition.isRetired ? "destructive" : "success"}>
+                {edition.isRetired ? t("entitlements.editions.retired") : t("common.active")}
+              </Badge>
+              {edition.isInternal && (
+                <Badge variant="info">{t("entitlements.editions.internalBadge")}</Badge>
+              )}
+            </div>
           ),
         },
         {
@@ -126,6 +132,7 @@ export function EditionsView() {
           onClick: (item: Edition) => router.push(`/entitlements/editions/${item.id}/edit`),
           variant: "ghost" as const,
           icon: <Pencil className="h-4 w-4" />,
+          show: (item: Edition) => !item.isInternal,
         },
         {
           label: tFn("entitlements.editions.manageFeatures"),
@@ -139,7 +146,7 @@ export function EditionsView() {
           variant: "ghost" as const,
           className: "text-destructive hover:text-destructive/80",
           icon: <Trash2 className="h-4 w-4" />,
-          show: (item: Edition) => !item.isSystem,
+          show: (item: Edition) => !item.isSystem && !item.isInternal,
         },
       ],
     }),
@@ -149,7 +156,7 @@ export function EditionsView() {
   return (
     <>
       {vm.allEditionsError && (
-        <div className="mb-4 flex items-center gap-2 rounded-nx-md border border-warning/30 bg-warning/10 px-4 py-3 text-sm text-warning">
+        <div className="mb-4 flex items-center gap-2 rounded-nx-md border border-warning/30 bg-warning/10 px-4 py-3 text-sm text-nx-warning-strong">
           <AlertCircle className="h-4 w-4 shrink-0" />
           <span>{t("entitlements.editions.allEditionsLoadError")}</span>
         </div>

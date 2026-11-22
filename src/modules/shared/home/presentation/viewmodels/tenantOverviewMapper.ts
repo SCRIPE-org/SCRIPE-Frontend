@@ -101,7 +101,7 @@ export function buildTenantOverviewLiveData({
       description: t("tenantCommandCenter.getStarted.steps.branches.desc"),
       status: "current",
       actionLabel: t("tenantCommandCenter.getStarted.setUp"),
-      href: "/venue/sites",
+      href: "/venue/facilities?tab=sites",
     },
     {
       id: 3,

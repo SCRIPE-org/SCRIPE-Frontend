@@ -1,4 +1,17 @@
 export const en = {
+  venue: {
+    availability: {
+      courtTitle: "Availability & Schedule: {{name}}",
+      title: "Court Availability & Operating Hours",
+      consolidatedBadge: "Operations Integrated",
+      description:
+        "Real-time court availability, maintenance blocks, and booking schedules are managed directly in the Operations Calendar.",
+      unifiedCalloutTitle: "Looking to check slots or block time?",
+      unifiedCalloutBody:
+        "Use the interactive 30-minute Operations Calendar to view live lane occupancy, identify conflict-free windows, or apply emergency maintenance closures.",
+      goToCalendar: "Open Operations Calendar",
+    },
+  },
   availability: {
     title: "Resource Availability",
     description:

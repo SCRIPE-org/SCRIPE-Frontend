@@ -131,7 +131,7 @@ export function NotificationSignalRProvider({ children }: { children: React.Reac
             Math.min(Math.pow(2, ctx.previousRetryCount) * 1000, 30_000),
         })
         .configureLogging(
-          process.env.NODE_ENV === "development" ? LogLevel.Information : LogLevel.Warning
+          LogLevel.None
         )
         .build();
 

@@ -85,24 +85,24 @@ export function useMapData(
     enrichedCountries.forEach((p) => {
       if (p.isHost) {
         map.set(p.name, {
-          fill: "rgba(198, 255, 0, 0.18)",
-          stroke: "var(--primary)",
+          fill: "color-mix(in srgb, var(--nx-accent) 18%, transparent)",
+          stroke: "var(--nx-accent)",
           strokeWidth: 1.25,
           isHost: true,
           isTenantRegion: false,
         });
       } else if (p.isTenantRegion) {
         map.set(p.name, {
-          fill: "rgba(14, 165, 233, 0.18)",
-          stroke: "rgb(14, 165, 233)",
+          fill: "color-mix(in srgb, hsl(var(--info)) 18%, transparent)",
+          stroke: "hsl(var(--info))",
           strokeWidth: 1.15,
           isHost: false,
           isTenantRegion: true,
         });
       } else {
         map.set(p.name, {
-          fill: "#112330",
-          stroke: "rgba(100, 140, 165, 0.35)",
+          fill: "var(--nx-raised)",
+          stroke: "var(--nx-line-hi)",
           strokeWidth: 0.62,
           isHost: false,
           isTenantRegion: false,

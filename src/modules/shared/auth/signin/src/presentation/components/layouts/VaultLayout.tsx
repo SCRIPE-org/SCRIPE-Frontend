@@ -7,13 +7,17 @@
 "use client";
 
 import { SlotRenderer } from "../SlotRenderer";
-import { LogoImg, MobileLogo } from "./layout-shared";
+import { LogoImg, MobileLogo, formatBidiCompanyName } from "./layout-shared";
 import { BG_STYLE } from "./layout-types";
 import type { LoginLayoutProps } from "./layout-types";
 import { VaultBackground } from "./VaultBackground";
 import { VaultMonument } from "./VaultMonument";
 
-const PRODUCT_FAMILY = ["Venue", "Academy", "Football Intelligence"];
+const PRODUCT_FAMILY_KEYS = [
+  "auth.branding.pillarVenue",
+  "auth.branding.pillarAcademy",
+  "auth.branding.pillarFootball",
+] as const;
 
 /**
  * Renders the showroom split layout for sign-in and authentication workflows.
@@ -44,13 +48,13 @@ export function VaultLayout({
 
   return (
     <div
-      className={`vault-stage login-page relative min-h-screen w-full overflow-hidden font-sans ${BG_STYLE}`}
+      className={`vault-stage login-page relative min-h-[100dvh] w-full overflow-hidden font-sans ${BG_STYLE}`}
       dir={direction}
       style={{ background: "var(--sx-bg-grad)", color: "var(--sx-text)" }}
     >
       <VaultBackground />
 
-      <div className="relative z-[1] grid min-h-screen grid-cols-1 lg:grid-cols-[minmax(0,1fr)_min(500px,48%)]">
+      <div className="relative z-[1] grid min-h-[100dvh] grid-cols-1 lg:grid-cols-[minmax(0,1fr)_min(500px,48%)]">
         {/* Showroom stage (desktop) */}
         <div className="relative hidden flex-col justify-between px-12 py-10 lg:flex xl:px-16">
           {/* Masthead */}
@@ -66,7 +70,7 @@ export function VaultLayout({
               className="text-lg font-semibold tracking-tight"
               style={{ color: "var(--sx-text)" }}
             >
-              {companyName}
+              {formatBidiCompanyName(companyName)}
             </span>
           </div>
 
@@ -127,10 +131,10 @@ export function VaultLayout({
               className="flex flex-wrap items-center gap-3 text-[11px] font-medium uppercase tracking-[0.16em]"
               style={{ ...monoStyle, color: "var(--sx-text-mute)" }}
             >
-              {PRODUCT_FAMILY.map((name, i) => (
-                <span key={name} className="flex items-center gap-3">
+              {PRODUCT_FAMILY_KEYS.map((key, i) => (
+                <span key={key} className="flex items-center gap-3">
                   {i > 0 && <span style={{ color: "var(--sx-accent-text)" }}>·</span>}
-                  {name}
+                  {t(key)}
                 </span>
               ))}
             </div>
@@ -138,7 +142,7 @@ export function VaultLayout({
         </div>
 
         {/* Form column */}
-        <div
+        <main
           className="relative flex flex-col items-center justify-center px-5 lg:py-14 lg:pe-10 lg:ps-0"
           style={{
             paddingTop: "var(--login-container-py, 48px)",
@@ -153,14 +157,13 @@ export function VaultLayout({
               padding: "var(--login-card-padding, 34px)",
               background: "var(--sx-card-bg)",
               border: "1px solid var(--sx-card-border)",
-              boxShadow: "var(--sx-card-shadow)",
             }}
           >
             {/* Top accent line */}
             <div
-              className="pointer-events-none absolute left-[20%] right-[20%] top-0 h-px"
+              className="pointer-events-none absolute inset-x-[20%] top-0 h-px"
               style={{
-                background: `linear-gradient(90deg, transparent, var(--sx-accent, #C6FF00), transparent)`,
+                background: `linear-gradient(90deg, transparent, var(--sx-accent, var(--nx-accent)), transparent)`,
                 opacity: 0.7,
               }}
               aria-hidden="true"
@@ -172,7 +175,7 @@ export function VaultLayout({
             {footer}
             {footerSlot}
           </div>
-        </div>
+        </main>
       </div>
     </div>
   );

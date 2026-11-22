@@ -9,7 +9,7 @@ import { formatDistanceToNow } from "date-fns";
 import { cn, formatUtc } from "@core/common/utils";
 import { Card, CardContent, CardHeader } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
-import { CalendarDays, Crown, DollarSign, Infinity, Tag, Timer } from "lucide-react";
+import { CalendarDays, Crown, DollarSign, Infinity as InfinityIcon, Tag, Timer } from "lucide-react";
 import { STATUS_VARIANTS, TYPE_VARIANTS, TYPE_KEY_MAP, STATUS_KEY_MAP } from "../../constants";
 import { STATUS_STYLES, DEFAULT_STATUS_STYLE } from "./status-styles";
 import { HeroActions } from "./HeroActions";
@@ -20,13 +20,15 @@ interface HeroCardProps {
   sub: SubscriptionListItem;
   vm: ReturnType<typeof useSubscriptionsViewModel>;
   t: (key: string, params?: Record<string, string | number>) => string;
+  isInternal?: boolean;
 }
 
 /**
  * Presentation UI component rendering the hero card.
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
-export function HeroCard({ sub, vm, t }: HeroCardProps) {
+export function HeroCard({ sub, vm, t, isInternal }: HeroCardProps) {
+  const resolvedInternal = isInternal ?? Boolean(vm.isInternalTenant);
   const style = STATUS_STYLES[sub.status] ?? DEFAULT_STATUS_STYLE;
 
   const totalAmount = sub.totalAmount;
@@ -74,6 +76,11 @@ export function HeroCard({ sub, vm, t }: HeroCardProps) {
               >
                 {billingCycle}
               </Badge>
+              {resolvedInternal && (
+                <Badge variant="info" className="text-xs">
+                  {t("entSubscriptions.internalSovereignBadge")}
+                </Badge>
+              )}
             </div>
 
             <div className="flex items-center gap-2.5">
@@ -84,7 +91,7 @@ export function HeroCard({ sub, vm, t }: HeroCardProps) {
 
           {/* Actions */}
           <div className="flex shrink-0 items-center gap-2">
-            <HeroActions sub={sub} vm={vm} t={t} />
+            <HeroActions sub={sub} vm={vm} t={t} isInternal={resolvedInternal} />
           </div>
         </div>
       </CardHeader>
@@ -101,7 +108,7 @@ export function HeroCard({ sub, vm, t }: HeroCardProps) {
                 formatUtc(sub.endDate, "MMM d, yyyy")
               ) : (
                 <span className="inline-flex items-center gap-1">
-                  <Infinity className="h-3.5 w-3.5" aria-hidden="true" />
+                  <InfinityIcon className="h-3.5 w-3.5" aria-hidden="true" />
                   <span>{t("entSubscriptions.lifetime")}</span>
                 </span>
               )}

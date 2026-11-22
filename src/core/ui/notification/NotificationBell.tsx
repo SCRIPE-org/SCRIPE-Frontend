@@ -37,16 +37,19 @@
  * the same portal-to-body escape from overflow-hidden parents.
  */
 
-import { useEffect, useMemo, useRef, useState, useCallback } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, useCallback } from "react";
 import type { CSSProperties } from "react";
 import { Bell, CheckCheck, ExternalLink, RotateCcw } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { cn, resolveIntlLocale } from "@core/common/utils";
 import { useNotificationViewModel } from "./useNotificationViewModel";
+import { resolveSafeActionHref } from "@core/ui/sileo-toast/sileo-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { NotificationItem } from "@core/notification/entities/NotificationItem";
 import ReactDOM from "react-dom";
+
+const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 interface NotificationBellProps {
   /** Icon size class */
@@ -168,16 +171,19 @@ export function NotificationBell({ iconClassName = "h-5 w-5", className }: Notif
 
   const handleToggle = useCallback(() => {
     vm.toggleOpen();
-    // recalc after state flips
-    setTimeout(recalcPosition, 0);
-  }, [vm, recalcPosition]);
+  }, [vm]);
 
-  // Close on outside click / Escape; Escape returns focus to the bell.
+  // Measure trigger position synchronously before first painted frame so fixed
+  // panel coordinates never start at auto/(0,0), and close on outside click / Escape.
   const isOpen = vm.isOpen;
   const close = vm.close;
+  useIsomorphicLayoutEffect(() => {
+    if (!isOpen) return;
+    recalcPosition();
+  }, [isOpen, recalcPosition]);
+
   useEffect(() => {
     if (!isOpen) return;
-    queueMicrotask(recalcPosition);
     const handler = (e: MouseEvent) => {
       const target = e.target as Node;
       if (
@@ -237,16 +243,16 @@ export function NotificationBell({ iconClassName = "h-5 w-5", className }: Notif
       ref={panelRef}
       role="dialog"
       aria-label={title}
+      data-dropdown-portal="true"
       dir={direction}
       style={{ ...panelStyle, transformOrigin }}
       className={cn(
-        "fixed z-dropdown flex flex-col overflow-hidden",
+        "fixed z-dropdown flex flex-col overflow-hidden transition-none",
         "rounded-nx-lg border border-nx-line bg-nx-popover text-nx-ink shadow-nx-popover",
-        // Fade always; the 0.95 zoom from the trigger origin only when motion
-        // is welcome. An overlay enters on the 200ms standard beat — the micro
-        // beat is for hover and press, and at 140ms a 340px panel reads as a
-        // pop rather than an arrival.
-        "duration-nx-standard ease-nx-enter animate-in fade-in-0 motion-safe:zoom-in-95"
+        // Fade always; the 0.95 zoom from the computed trigger origin only when
+        // motion is welcome. transition-none prevents async left/top/width changes
+        // from gliding across the viewport while @keyframes enter animates in place.
+        "duration-nx-micro ease-nx-enter animate-in fade-in-0 motion-safe:zoom-in-95"
       )}
     >
       {/* ── Header ───────────────────────────────────────────────────────── */}
@@ -288,7 +294,7 @@ export function NotificationBell({ iconClassName = "h-5 w-5", className }: Notif
           <div className="flex flex-col items-center gap-3 px-6 py-12 text-center">
             <span
               aria-hidden="true"
-              className="flex h-12 w-12 items-center justify-center rounded-full border border-nx-line bg-nx-ground text-destructive"
+              className="flex h-12 w-12 items-center justify-center rounded-full border border-nx-line bg-nx-ground text-nx-danger"
             >
               <Bell className="h-5 w-5" />
             </span>
@@ -328,58 +334,63 @@ export function NotificationBell({ iconClassName = "h-5 w-5", className }: Notif
                 </h3>
               )}
               <ul className="divide-y divide-nx-line">
-                {group.items.map((n) => (
-                  <li key={n.id}>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (!n.isRead) vm.markAsRead(n.id);
-                        if (n.actionUrl) window.location.href = n.actionUrl;
-                        vm.close();
-                      }}
-                      className={cn(
-                        "group relative flex w-full items-start gap-3 px-4 py-3 text-start",
-                        "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-                        "hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none",
-                        // Unread wears the lit inline-start edge — a static
-                        // affordance, never a pulse.
-                        "before:absolute before:inset-y-2 before:start-0 before:w-0.5 before:rounded-full",
-                        n.isRead ? "before:bg-transparent" : "before:bg-nx-accent"
-                      )}
-                    >
-                      {/* Fixed leading slot keeps every title on one optical
-                          column whether or not the row is unread. */}
-                      <span
-                        aria-hidden="true"
-                        className="mt-1.5 flex h-2 w-2 shrink-0 items-center justify-center"
+                {group.items.map((n) => {
+                  const safeActionHref = n.actionUrl
+                    ? resolveSafeActionHref(n.actionUrl)
+                    : null;
+                  return (
+                    <li key={n.id}>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (!n.isRead) vm.markAsRead(n.id);
+                          if (safeActionHref) window.location.href = safeActionHref;
+                          vm.close();
+                        }}
+                        className={cn(
+                          "group relative flex w-full items-start gap-3 px-4 py-3 text-start",
+                          "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+                          "hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none",
+                          // Unread wears the lit inline-start edge — a static
+                          // affordance, never a pulse.
+                          "before:absolute before:inset-y-2 before:start-0 before:w-0.5 before:rounded-full",
+                          n.isRead ? "before:bg-transparent" : "before:bg-nx-accent"
+                        )}
                       >
-                        {!n.isRead && <span className="h-2 w-2 rounded-full bg-nx-accent" />}
-                      </span>
-
-                      <span className="min-w-0 flex-1">
+                        {/* Fixed leading slot keeps every title on one optical
+                            column whether or not the row is unread. */}
                         <span
-                          className={cn(
-                            "block truncate text-[13px] leading-tight",
-                            n.isRead ? "font-normal text-nx-ink-2" : "font-semibold text-nx-ink"
-                          )}
+                          aria-hidden="true"
+                          className="mt-1.5 flex h-2 w-2 shrink-0 items-center justify-center"
                         >
-                          {n.title}
+                          {!n.isRead && <span className="h-2 w-2 rounded-full bg-nx-accent" />}
                         </span>
-                        <span className="mt-1 line-clamp-2 block text-xs leading-snug text-nx-ink-3">
-                          {n.body}
+
+                        <span className="min-w-0 flex-1">
+                          <span
+                            className={cn(
+                              "block truncate text-[13px] leading-tight",
+                              n.isRead ? "font-normal text-nx-ink-2" : "font-semibold text-nx-ink"
+                            )}
+                          >
+                            {n.title}
+                          </span>
+                          <span className="mt-1 line-clamp-2 block text-xs leading-snug text-nx-ink-3">
+                            {n.body}
+                          </span>
+                          <span className="mt-1.5 flex items-center gap-1.5 text-[11px] text-nx-ink-3">
+                            <time dateTime={n.createdAt}>
+                              {formatTimeAgo(n.createdAt, t, language)}
+                            </time>
+                            {safeActionHref && (
+                              <ExternalLink aria-hidden="true" className="h-3 w-3 shrink-0" />
+                            )}
+                          </span>
                         </span>
-                        <span className="mt-1.5 flex items-center gap-1.5 text-[11px] text-nx-ink-3">
-                          <time dateTime={n.createdAt}>
-                            {formatTimeAgo(n.createdAt, t, language)}
-                          </time>
-                          {n.actionUrl && (
-                            <ExternalLink aria-hidden="true" className="h-3 w-3 shrink-0" />
-                          )}
-                        </span>
-                      </span>
-                    </button>
-                  </li>
-                ))}
+                      </button>
+                    </li>
+                  );
+                })}
               </ul>
             </section>
           ))

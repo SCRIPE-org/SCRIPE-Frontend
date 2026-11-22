@@ -2,7 +2,7 @@
  * User Subscriptions Submodule Public Exports
  */
 export { UserSubscriptionsView } from "./src/presentation/views/UserSubscriptionsView";
-export { MySubscriptionView } from "./src/presentation/views/MySubscriptionView";
+export { CurrentTenantSubscriptionView } from "./src/presentation/views/CurrentTenantSubscriptionView";
 export { UserSubscription } from "./src/domain/entities/UserSubscription";
 export type {
   UserSubscriptionData,

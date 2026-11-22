@@ -19,21 +19,12 @@ export function NexusFooter() {
 
   return (
     <footer
+      className="flex flex-shrink-0 flex-wrap items-center justify-between gap-x-3 gap-y-1.5 border-t border-nx-line px-4 py-2 text-[11px] text-nx-ink-3 lg:px-5"
       style={{
-        flexShrink: 0,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        gap: 12,
-        padding: "8px 20px",
-        borderBlockStart: "1px solid var(--nx-line, hsl(var(--border)))",
         background: "color-mix(in oklch, var(--nx-surface, hsl(var(--card))) 40%, transparent)",
-        fontSize: 11,
-        color: "var(--nx-ink-3, hsl(var(--muted-foreground)))",
-        whiteSpace: "nowrap",
       }}
     >
-      <span style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
+      <span className="min-w-0 truncate">
         {/* Both keys ship EN and AR, so the old `|| "English literal"` guards
             were unreachable copy that only ever hid a missing translation. */}
         © {year} {appName}. {t("common.all_rights_reserved")}

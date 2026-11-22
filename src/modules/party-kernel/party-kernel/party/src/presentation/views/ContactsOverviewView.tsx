@@ -141,7 +141,7 @@ export const ContactsOverviewView = React.memo(function ContactsOverviewView() {
                 {vm.totalContacts}
               </p>
             </div>
-            <div className="bg-nx-accent/10 flex h-11 w-11 items-center justify-center rounded-xl text-nx-accent">
+            <div className="bg-nx-accent-wash flex h-11 w-11 items-center justify-center rounded-xl text-nx-accent">
               <Users className="h-5 w-5" />
             </div>
           </CardContent>
@@ -193,7 +193,7 @@ export const ContactsOverviewView = React.memo(function ContactsOverviewView() {
                 {vm.duplicateAlertsCount}
               </p>
             </div>
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-warning/10 text-warning">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-warning/10 text-nx-warning-strong">
               <AlertTriangle className="h-5 w-5" />
             </div>
           </CardContent>
@@ -241,7 +241,7 @@ export const ContactsOverviewView = React.memo(function ContactsOverviewView() {
                     className="flex flex-col justify-between gap-3 py-3 sm:flex-row sm:items-center"
                   >
                     <div className="flex min-w-0 items-center gap-3">
-                      <div className="bg-nx-accent/10 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-xs font-bold text-nx-accent">
+                      <div className="bg-nx-accent-wash flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-xs font-bold text-nx-accent">
                         {party.initials}
                       </div>
                       <div className="min-w-0">
@@ -298,7 +298,7 @@ export const ContactsOverviewView = React.memo(function ContactsOverviewView() {
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center justify-between text-base font-semibold text-nx-ink">
                 <span className="flex items-center gap-2">
-                  <AlertTriangle className="h-4 w-4 text-warning" />
+                  <AlertTriangle className="h-4 w-4 text-nx-warning-strong" />
                   <span>{t("party.overview.duplicateAlerts")}</span>
                 </span>
                 <Badge variant="outline" className="text-xs">

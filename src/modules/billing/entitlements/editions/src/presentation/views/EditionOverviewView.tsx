@@ -30,7 +30,7 @@ import {
   Users,
   Check,
   X,
-  Infinity,
+  Infinity as InfinityIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -103,11 +103,11 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
         <p className="text-destructive">
           {vm.error?.message || t("entitlements.editions.notFound")}
         </p>
-        <Link href="/entitlements/editions">
-          <Button variant="ghost" className="mt-4 gap-2">
-            <ArrowLeft className="h-4 w-4" /> {t("common.back")}
-          </Button>
-        </Link>
+        <Button asChild variant="ghost" className="mt-4 gap-2">
+          <Link href="/entitlements/editions">
+            <ArrowLeft className="h-4 w-4 rtl:rotate-180" aria-hidden="true" /> {t("common.back")}
+          </Link>
+        </Button>
       </div>
     );
   }
@@ -121,11 +121,18 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
       {/* ── Hero Header ── */}
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-start gap-3">
-          <Link href="/entitlements/editions">
-            <Button variant="ghost" size="icon" className="mt-1 shrink-0">
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-          </Link>
+          <Button
+            asChild
+            variant="ghost"
+            size="icon"
+            className="mt-1 shrink-0"
+            aria-label={t("common.back")}
+          >
+            <Link href="/entitlements/editions">
+              <ArrowLeft className="h-5 w-5 rtl:rotate-180" aria-hidden="true" />
+              <span className="sr-only">{t("common.back")}</span>
+            </Link>
+          </Button>
           <div>
             <div className="flex items-center gap-3">
               <h1 className="text-2xl font-bold tracking-tight">
@@ -134,9 +141,14 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
               {edition.isSystem && (
                 <Badge
                   variant="outline"
-                  className="border-warning/50 font-mono text-xs text-warning"
+                  className="border-warning/50 font-mono text-xs text-nx-warning-strong"
                 >
                   SYSTEM
+                </Badge>
+              )}
+              {edition.isInternal && (
+                <Badge variant="info" className="text-xs">
+                  {t("entitlements.editions.internalBadge")}
                 </Badge>
               )}
               {edition.isRetired && (
@@ -153,15 +165,17 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
           </div>
         </div>
         <div className="flex shrink-0 items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            className="gap-1.5"
-            onClick={() => router.push(`/entitlements/editions/${editionId}/edit`)}
-          >
-            <Settings2 className="h-4 w-4" />
-            {t("entitlements.editions.wizard.editSettings")}
-          </Button>
+          {!edition.isInternal && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5"
+              onClick={() => router.push(`/entitlements/editions/${editionId}/edit`)}
+            >
+              <Settings2 className="h-4 w-4" />
+              {t("entitlements.editions.wizard.editSettings")}
+            </Button>
+          )}
           <Button
             size="sm"
             className="gap-1.5"
@@ -193,7 +207,7 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
           value={
             edition.maxActiveSubscriptions === -1 ? (
               <span className="flex items-center gap-1">
-                <Infinity className="h-4 w-4" />
+                <InfinityIcon className="h-4 w-4" />
                 {t("entitlements.editions.wizard.unlimited")}
               </span>
             ) : (
@@ -409,7 +423,7 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
               value={
                 edition.maxActiveSubscriptions === -1 ? (
                   <span className="flex items-center gap-1">
-                    <Infinity className="h-3.5 w-3.5" />
+                    <InfinityIcon className="h-3.5 w-3.5" />
                     {t("entitlements.editions.wizard.unlimited")}
                   </span>
                 ) : (

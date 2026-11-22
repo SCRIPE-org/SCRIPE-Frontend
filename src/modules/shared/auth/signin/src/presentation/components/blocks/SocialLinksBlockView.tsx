@@ -25,9 +25,9 @@ export function SocialLinksBlockView({ block }: { block: SocialLinksBlock }) {
             href={item.url}
             rel="noopener noreferrer"
             className={[
-              "inline-flex items-center justify-center gap-2 rounded-md border px-3 font-medium transition-colors hover:bg-muted",
+              "inline-flex items-center justify-center gap-2 rounded-md border border-nx-line px-3 font-medium text-nx-ink transition-colors hover:bg-nx-hover",
               SIZE_CLASS[props.size || "md"],
-              props.style === "colored-bg" ? "border-primary/20 bg-primary/10 text-nx-accent" : "",
+              props.style === "colored-bg" ? "border-nx-accent bg-nx-accent-wash text-nx-accent" : "",
             ].join(" ")}
             aria-label={item.platform}
           >

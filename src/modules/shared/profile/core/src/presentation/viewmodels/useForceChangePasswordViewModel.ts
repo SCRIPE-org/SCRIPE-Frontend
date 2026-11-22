@@ -1,123 +1,215 @@
-import { useState, useCallback } from "react";
+"use client";
+
+/**
+ * useForceChangePasswordViewModel
+ *
+ * ViewModel orchestrating first-login / mandatory password change (mcp=true)
+ * with MMC parity: single-session rotation without forcing logout.
+ */
+import { useState, useCallback, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useServices } from "@core/providers/service-provider";
 import { useAppStore } from "@core/store/useAppStore";
+import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { buildPostAuthEntryUrl } from "@core/common/redirect-safety";
 import { container } from "@modules/profile/di";
 
-/**
- * React hook/ViewModel orchestrating state and data flows for force change password view model.
- * Coordinates query synchronization (TanStack Query) with application client store indicators (Zustand) and returns validation fields.
- */
+/** Evaluation breakdown of mandatory password complexity rules. */
+export interface PasswordRulesEvaluation {
+  minLength: boolean;
+  uppercase: boolean;
+  lowercase: boolean;
+  number: boolean;
+  special: boolean;
+  allMet: boolean;
+}
+
+/** Evaluates a candidate password against complexity requirements. */
+export function evaluatePasswordRules(password: string): PasswordRulesEvaluation {
+  const minLength = password.length >= 12;
+  const uppercase = /[A-Z]/.test(password);
+  const lowercase = /[a-z]/.test(password);
+  const number = /[0-9]/.test(password);
+  const special = /[^A-Za-z0-9]/.test(password);
+  return {
+    minLength,
+    uppercase,
+    lowercase,
+    number,
+    special,
+    allMet: minLength && uppercase && lowercase && number && special,
+  };
+}
+
+/** ViewModel orchestrating mandatory first-login password rotation without session loss. */
 export function useForceChangePasswordViewModel() {
   const { t, direction } = useI18n();
   const router = useRouter();
-  const logout = useAppStore((state) => state.logout);
-  const { operationSuccess, operationError } = useEnhancedToast();
   const queryClient = useQueryClient();
-  const { profileRepository } = container;
+  const { authRepository } = useServices();
+  const { operationSuccess, operationError } = useEnhancedToast();
 
-  const [currentPassword, setCurrentPassword] = useState("");
+  const user = useAppStore((state) => state.user);
+  const currentSubscriptionStatus = useAppStore((state) => state.subscriptionStatus);
+  const setAuth = useAppStore((state) => state.setAuth);
+  const setSubscriptionInfo = useAppStore((state) => state.setSubscriptionInfo);
+  const setMustChangePassword = useAppStore((state) => state.setMustChangePassword);
+  const setDefaultRedirectPath = useAppStore((state) => state.setDefaultRedirectPath);
+  const logout = useAppStore((state) => state.logout);
+
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  // Password strength
-  const hasMinLength = newPassword.length >= 8;
-  const hasUppercase = /[A-Z]/.test(newPassword);
-  const hasNumber = /[0-9]/.test(newPassword);
-  const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(newPassword);
-  const passwordsMatch = newPassword === confirmPassword && confirmPassword.length > 0;
-  const isValid =
-    hasMinLength &&
-    hasUppercase &&
-    hasNumber &&
-    hasSpecial &&
-    passwordsMatch &&
-    currentPassword.length > 0;
-
-  const strengthItems = [
-    { met: hasMinLength, label: t("profile.security.strength.minLength") },
-    { met: hasUppercase, label: t("profile.security.strength.uppercase") },
-    { met: hasNumber, label: t("profile.security.strength.number") },
-    { met: hasSpecial, label: t("profile.security.strength.special") },
-  ];
+  const rules = evaluatePasswordRules(newPassword);
+  const passwordsMatch = newPassword.length > 0 && newPassword === confirmPassword;
+  const showMismatch = confirmPassword.length > 0 && newPassword !== confirmPassword;
+  const canSubmit = !isSubmitting && rules.allMet && passwordsMatch;
 
   const handleSubmit = useCallback(
-    async (e: React.FormEvent) => {
-      e.preventDefault();
-      if (!isValid) return;
-
-      setIsSubmitting(true);
+    async (e?: FormEvent) => {
+      e?.preventDefault();
       setSubmitError(null);
 
+      const currentRules = evaluatePasswordRules(newPassword);
+      if (!currentRules.allMet) {
+        setSubmitError(t("profile.security.requirementsTitle"));
+        return;
+      }
+      if (newPassword !== confirmPassword) {
+        setSubmitError(t("profile.security.passwordMismatch"));
+        return;
+      }
+
+      setIsSubmitting(true);
       try {
-        await profileRepository.changePassword({
-          currentPassword,
+        const result = await container.profileRepository.forceChangePassword({
           newPassword,
+          confirmPassword,
         });
 
-        // The backend revokes every refresh token for this admin as part of a successful
-        // password change (OWASP V3.3.3 — the old credential may have been compromised,
-        // so old sessions must not survive it). The refresh token this tab is holding is
-        // now dead, so calling refreshToken() here always fails with "Token has been
-        // revoked" — confirmed live. There is no session left to restore; the correct move
-        // is the same clean break as a manual logout, then let the admin sign back in with
-        // the password they just set.
-        logout();
-        queryClient.clear();
+        // Refresh active session tokens/cookies cleanly without forcing logout
+        let resolvedUser = user;
+        let resolvedSubStatus: string | null =
+          result?.subscriptionStatus ?? currentSubscriptionStatus ?? null;
+
+        try {
+          const refreshRes = await authRepository.refreshToken();
+          if (refreshRes.kind === "ok") {
+            resolvedSubStatus = refreshRes.value.subscriptionStatus ?? resolvedSubStatus;
+            setSubscriptionInfo(
+              refreshRes.value.subscriptionStatus ?? null,
+              refreshRes.value.gracePhase ?? null,
+              refreshRes.value.editionName ?? null
+            );
+          } else if (
+            result?.subscriptionStatus !== undefined ||
+            result?.gracePhase !== undefined ||
+            result?.editionName !== undefined
+          ) {
+            setSubscriptionInfo(
+              result.subscriptionStatus ?? null,
+              result.gracePhase ?? null,
+              result.editionName ?? null
+            );
+          }
+
+          const principal = await authRepository.getCurrentPrincipal();
+          if (principal) {
+            resolvedUser = principal;
+          }
+        } catch {
+          // If secondary refresh call encounters transient blip after token already rotated,
+          // retain the freshly issued force-change access token and proceed gracefully.
+        }
+
+        if (resolvedUser) {
+          setAuth(
+            resolvedUser,
+            resolvedUser.permissions ?? [],
+            resolvedUser.roles ?? [],
+            false
+          );
+        }
+        const queryRedirect =
+          typeof window !== "undefined"
+            ? new URLSearchParams(window.location.search).get("redirect")
+            : null;
+        const targetUrl = buildPostAuthEntryUrl({
+          mustChangePassword: false,
+          subscriptionStatus: resolvedSubStatus,
+          redirect: queryRedirect,
+        });
+        useNavigationStore.getState().clearRouteData();
+        useNavigationStore.getState().reset();
+        setDefaultRedirectPath("/");
+        setMustChangePassword(false);
+
+        await queryClient.invalidateQueries();
         operationSuccess(t("profile.security.passwordChanged"));
-        router.replace("/login");
+        if (targetUrl.startsWith("http://") || targetUrl.startsWith("https://")) {
+          window.location.href = targetUrl;
+        } else {
+          router.replace(targetUrl);
+        }
       } catch (err: unknown) {
-        const msg = err instanceof Error ? err.message : "Password change failed";
+        const msg = err instanceof Error ? err.message : t("profile.common.error");
         setSubmitError(msg);
-        operationError("Change password", undefined, msg);
+        operationError(t("profile.security.updatePassword"), undefined, msg);
       } finally {
         setIsSubmitting(false);
       }
     },
     [
-      isValid,
-      currentPassword,
       newPassword,
-      profileRepository,
-      logout,
+      confirmPassword,
+      user,
+      currentSubscriptionStatus,
+      authRepository,
+      setAuth,
+      setSubscriptionInfo,
+      setMustChangePassword,
+      setDefaultRedirectPath,
+      queryClient,
       operationSuccess,
       operationError,
       router,
       t,
-      queryClient,
     ]
   );
 
-  const handleLogout = useCallback(() => {
+  const handleLogout = useCallback(async () => {
+    await authRepository.logout().catch(() => undefined);
     logout();
     queryClient.clear();
     router.replace("/login");
-  }, [logout, router, queryClient]);
+  }, [authRepository, logout, queryClient, router]);
 
   return {
     t,
     direction,
-    currentPassword,
-    setCurrentPassword,
+    username: user?.username ?? "",
+    email: user?.email ?? "",
     newPassword,
     setNewPassword,
     confirmPassword,
     setConfirmPassword,
-    showCurrent,
-    setShowCurrent,
     showNew,
     setShowNew,
+    showConfirm,
+    setShowConfirm,
     isSubmitting,
     submitError,
-    strengthItems,
+    rules,
     passwordsMatch,
-    isValid,
+    showMismatch,
+    canSubmit,
     handleSubmit,
     handleLogout,
   };

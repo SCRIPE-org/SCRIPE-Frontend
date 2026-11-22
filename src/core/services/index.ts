@@ -14,3 +14,4 @@ export { PublicApiService } from "./public-api.service";
 export type { IPublicApiService } from "@core/interfaces/public-api.interface";
 
 export { NotificationService, type INotificationService } from "./notification.service";
+export * from "./webauthn.service";

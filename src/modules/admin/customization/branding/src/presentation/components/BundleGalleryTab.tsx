@@ -1,4 +1,3 @@
-// UI-EXCEPTION: compact studio layout
 "use client";
 
 /**
@@ -38,21 +37,22 @@ export function BundleGalleryTab() {
         {/* Type filter pills */}
         <div className="flex items-center gap-1 overflow-x-auto rounded-nx-md border border-nx-line bg-nx-raised p-1">
           {vm.bundleTypeOptions.map((opt) => (
-            <button
+            <Button
               type="button"
+              variant="ghost"
               key={opt.value}
               onClick={() => vm.setBundleType(opt.value)}
               aria-pressed={vm.filters.bundleType === opt.value}
               className={cn(
-                "whitespace-nowrap rounded-nx-control px-3 py-1.5 text-xs font-medium transition-colors duration-nx-micro motion-reduce:transition-none",
+                "h-auto whitespace-nowrap rounded-nx-control px-3 py-1.5 text-xs font-medium transition-colors duration-nx-micro motion-reduce:transition-none",
                 "focus-visible:shadow-nx-focus focus-visible:outline-none",
                 vm.filters.bundleType === opt.value
-                  ? "bg-nx-surface text-nx-ink shadow-nx-sm"
-                  : "text-nx-ink-2 hover:text-nx-ink"
+                  ? "bg-nx-surface text-nx-ink shadow-nx-sm hover:bg-nx-surface"
+                  : "text-nx-ink-2 hover:bg-transparent hover:text-nx-ink"
               )}
             >
               {opt.label}
-            </button>
+            </Button>
           ))}
         </div>
 

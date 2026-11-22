@@ -1,5 +1,4 @@
 // FILE-EXCEPTION: file length
-// UI-EXCEPTION: compact studio layout
 /**
  * PricingTab — Hybrid Pricing Model (mirrors Edition PricingTab)
  *
@@ -430,7 +429,7 @@ export const PricingTab = memo(function PricingTab(props: PricingTabProps) {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-7 w-7 text-nx-ink-2 opacity-0 transition-opacity duration-nx-micro ease-nx-enter hover:text-nx-danger group-hover:opacity-100 motion-reduce:transition-none"
+                          className="h-7 w-7 text-nx-ink-2 opacity-0 transition-opacity duration-nx-micro ease-nx-enter hover:text-nx-danger group-hover:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100 motion-reduce:transition-none"
                           onClick={() => removeOverride(row.currency)}
                           aria-label={t("common.remove")}
                         >
@@ -672,14 +671,15 @@ export const PricingTab = memo(function PricingTab(props: PricingTabProps) {
 
           <div className="max-h-[300px] space-y-2 overflow-y-auto py-3">
             {availableCurrencies.map((curr) => (
-              <button
+              <Button
                 key={curr.code}
                 type="button"
+                variant="ghost"
                 onClick={() => {
                   addOverride(curr.code);
                   setShowAddDialog(false);
                 }}
-                className="flex w-full items-center gap-3 rounded-nx-md border-2 border-transparent p-3 text-start transition-colors duration-nx-micro ease-nx-enter hover:border-nx-line-hi hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
+                className="flex h-auto w-full items-center justify-start gap-3 rounded-nx-md border-2 border-transparent p-3 text-start transition-colors duration-nx-micro ease-nx-enter hover:border-nx-line-hi hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
               >
                 <span className="text-lg" aria-hidden="true">
                   {curr.flag}
@@ -689,7 +689,7 @@ export const PricingTab = memo(function PricingTab(props: PricingTabProps) {
                   <span className="ms-2 text-xs text-nx-ink-2">{curr.name}</span>
                 </div>
                 <span className="text-xs text-nx-ink-2">{curr.symbol}</span>
-              </button>
+              </Button>
             ))}
             {availableCurrencies.length === 0 && (
               <p className="py-4 text-center text-sm text-nx-ink-2">

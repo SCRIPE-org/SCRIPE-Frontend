@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Plus } from "lucide-react";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { extractCourtBio } from "../../domain/court-photos";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
@@ -24,12 +26,29 @@ export function ResourceGeneralTab({ vm }: Props) {
     vm.resource?.capacity?.maxConcurrentUsage ?? vm.resource?.unitCount ?? 4
   );
   const [description, setDescription] = useState(
-    "Indoor padel court with premium panoramic glass and tournament lighting."
+    extractCourtBio(vm.resource?.description)
   );
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      await vm.uploadCourtPhoto(file);
+      if (e.target) {
+        e.target.value = "";
+      }
+    }
+  };
+
+  const handleCancel = () => {
+    setName(vm.resource?.name ?? "");
+    setCapacity(vm.resource?.capacity?.maxConcurrentUsage ?? vm.resource?.unitCount ?? 4);
+    setDescription(extractCourtBio(vm.resource?.description));
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    void vm.updateGeneral({ name, capacity });
+    void vm.updateGeneral({ name, capacity, description });
   };
 
   const getCleanCategory = () => {
@@ -51,65 +70,75 @@ export function ResourceGeneralTab({ vm }: Props) {
       {/* Left Column: Court Photo Gallery matching approved reference */}
       <div className="space-y-3 lg:col-span-5">
         {/* Main Large Court Photo */}
-        <div className="border-nx-border group relative flex h-64 w-full flex-col justify-between overflow-hidden rounded-2xl border bg-nx-raised p-4 shadow-sm sm:h-72">
+        <div className="border-nx-line group relative flex h-64 w-full flex-col justify-between overflow-hidden rounded-2xl border bg-nx-raised p-4 sm:h-72">
           <img
-            src="/images/venue/padel-court-indoor.svg"
+            src={vm.activePhoto}
             alt="Court Preview"
             className="absolute inset-0 size-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/30" />
+          <div className="bg-gradient-to-t from-nx-ground/85 via-nx-ground/35 to-nx-ground/40 absolute inset-0" />
 
           <div className="relative z-10 flex items-center justify-between">
-            <span className="backdrop-blur-xs rounded-md border border-white/20 bg-black/60 px-2.5 py-1 text-xs font-extrabold uppercase tracking-widest text-white">
+            <span className="backdrop-blur-xs rounded-md border border-nx-line bg-nx-surface/90 px-2.5 py-1 text-xs font-extrabold uppercase tracking-widest text-nx-ink">
               Primary Photo
             </span>
           </div>
 
-          <div className="relative z-10 flex items-center justify-between text-white">
+          <div className="relative z-10 flex items-center justify-between text-nx-ink">
             <span className="text-sm font-bold">Court Preview</span>
-            <span className="text-xs opacity-80">Tournament Indoor Padel</span>
+            <span className="text-xs text-nx-ink-2">Tournament Indoor Padel</span>
           </div>
         </div>
 
         {/* Thumbnail Row */}
         <div className="grid grid-cols-4 gap-2.5">
-          <div className="group relative h-16 cursor-pointer overflow-hidden rounded-xl border-2 border-primary">
-            <img
-              src="/images/venue/padel-court-indoor.svg"
-              alt="Padel indoor"
-              className="size-full object-cover transition-transform group-hover:scale-110"
-            />
-          </div>
-          <div className="border-nx-border group relative h-16 cursor-pointer overflow-hidden rounded-xl border">
-            <img
-              src="/images/venue/padel-court-outdoor.svg"
-              alt="Padel outdoor"
-              className="size-full object-cover transition-transform group-hover:scale-110"
-            />
-          </div>
-          <div className="border-nx-border group relative h-16 cursor-pointer overflow-hidden rounded-xl border">
-            <img
-              src="/images/venue/football-turf-night.svg"
-              alt="Football turf"
-              className="size-full object-cover transition-transform group-hover:scale-110"
-            />
-          </div>
-          {/* + Add Photo button */}
+          {vm.courtPhotos.slice(0, 3).map((photo, idx) => (
+            <div
+              key={idx}
+              onClick={() => vm.setActivePhoto(photo)}
+              className={`group relative h-16 cursor-pointer overflow-hidden rounded-xl border-2 transition-all ${
+                vm.activePhoto === photo ? "border-primary ring-1 ring-primary" : "border-nx-line hover:border-nx-ink-3"
+              }`}
+            >
+              <img
+                src={photo}
+                alt={`Court #${idx + 1}`}
+                className="size-full object-cover transition-transform group-hover:scale-110"
+              />
+            </div>
+          ))}
+          {/* + Add Photo button with real file input */}
+          <Input
+            type="file"
+            ref={fileInputRef}
+            className="hidden"
+            accept="image/png,image/jpeg,image/webp,image/svg+xml"
+            onChange={handlePhotoSelect}
+            disabled={vm.uploadingPhoto}
+          />
           <Button
             variant="outline"
             type="button"
-            className="border-nx-border flex h-16 flex-col items-center justify-center rounded-xl border-2 border-dashed text-nx-ink-2 transition-colors hover:border-primary hover:bg-primary/5"
+            disabled={vm.uploadingPhoto}
+            onClick={() => fileInputRef.current?.click()}
+            className="border-nx-line flex h-16 flex-col items-center justify-center rounded-xl border-2 border-dashed text-nx-ink-2 transition-colors hover:border-primary hover:bg-primary/5"
           >
-            <Plus className="size-4" />
-            <span className="mt-0.5 text-[10px] font-bold">
-              {t("resources.general.addPhoto", { defaultValue: "Add Photo" })}
-            </span>
+            {vm.uploadingPhoto ? (
+              <LoadingSpinner size="sm" showText={false} />
+            ) : (
+              <>
+                <Plus className="size-4" />
+                <span className="mt-0.5 text-[10px] font-bold">
+                  {t("resources.general.addPhoto", { defaultValue: "Add Photo" })}
+                </span>
+              </>
+            )}
           </Button>
         </div>
       </div>
 
       {/* Right Column: General Information Form */}
-      <Card className="rounded-2xl border border-nx-border bg-nx-surface p-6 lg:col-span-7">
+      <Card className="rounded-2xl border border-nx-line bg-nx-surface p-6 lg:col-span-7">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1.5">
             <Label htmlFor="res-name" className="text-xs font-bold text-nx-ink">
@@ -151,7 +180,7 @@ export function ResourceGeneralTab({ vm }: Props) {
                 className={`h-9 rounded-lg text-xs font-bold ${
                   vm.resource?.isPublished && vm.priceConfig?.unitPrice != null
                     ? "border-success/20 bg-success/10 text-success"
-                    : "border-warning/20 bg-warning/10 text-warning"
+                    : "border-warning/20 bg-warning/10 text-nx-warning-strong"
                 }`}
               />
             </div>
@@ -216,7 +245,8 @@ export function ResourceGeneralTab({ vm }: Props) {
               type="button"
               variant="outline"
               size="sm"
-              className="rounded-nx-lg text-xs font-semibold"
+              onClick={handleCancel}
+              className="rounded-lg text-xs font-semibold"
             >
               {t("resources.general.cancel", { defaultValue: "Cancel" })}
             </Button>
@@ -237,7 +267,7 @@ export function ResourceGeneralTab({ vm }: Props) {
               size="sm"
               disabled={vm.saving}
               loading={vm.saving}
-              className="hover:bg-nx-accent/90 text-nx-on-fill rounded-nx-lg bg-nx-accent px-4 text-xs font-bold"
+              className="bg-nx-accent-fill text-nx-on-fill rounded-lg px-4 text-xs font-bold hover:bg-nx-accent-fill/90"
             >
               {t("resources.general.save", { defaultValue: "Save Changes" })}
             </Button>

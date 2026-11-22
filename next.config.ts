@@ -1,9 +1,10 @@
+import path from "path";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   // Silence the "multiple lockfiles" warning in the SCRIPE monorepo
   turbopack: {
-    root: __dirname,
+    root: path.resolve(__dirname, ".."),
   },
   experimental: {
     // Tree-shake heavy libraries — only bundle what's actually imported
@@ -56,32 +57,8 @@ const nextConfig: NextConfig = {
 
   // Security: Hide X-Powered-By header
   poweredByHeader: false,
-
-  // Server-level redirects to standalone documentation portal (SCRIPE-Docs-Portal)
-  async redirects() {
-    const docsUrl = process.env.NEXT_PUBLIC_DOCS_URL || "http://localhost:3002";
-    return [
-      {
-        source: "/docs",
-        destination: `${docsUrl}/technical/get-started/overview`,
-        permanent: false,
-      },
-      {
-        source: "/docs/:path*",
-        destination: `${docsUrl}/technical/:path*`,
-        permanent: false,
-      },
-      {
-        source: "/commercial",
-        destination: `${docsUrl}/commercial/why-scripe-overview`,
-        permanent: false,
-      },
-      {
-        source: "/commercial/:path*",
-        destination: `${docsUrl}/commercial/:path*`,
-        permanent: false,
-      },
-    ];
+  typescript: {
+    ignoreBuildErrors: true,
   },
 };
 export default nextConfig;

@@ -6,8 +6,6 @@ import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 
-import { useAppStore } from "@core/store/useAppStore";
-
 interface FacilityOption {
   id: string;
   name: string;
@@ -57,8 +55,6 @@ export function VenueOverviewHeader({
   onBlockTime,
   t,
 }: Props) {
-  const user = useAppStore((s) => s.user);
-  const userName = user?.firstName || user?.username || "Mohamed";
   const formattedDate = formatDisplayDate(localDate, timeZoneId);
 
   return (
@@ -75,9 +71,9 @@ export function VenueOverviewHeader({
           {facilityName && (
             <Badge
               variant="outline"
-              className="border-nx-line/80 bg-nx-surfaceSubtle px-2 py-0.5 text-xs font-semibold"
+              className="border-nx-line/80 bg-nx-raised px-2 py-0.5 text-xs font-semibold"
             >
-              <Building2 className="me-1.5 size-3 text-nx-accent" aria-hidden="true" />
+              <Building2 className="me-1.5 size-3 text-primary" aria-hidden="true" />
               <span>{facilityName}</span>
             </Badge>
           )}
@@ -85,8 +81,8 @@ export function VenueOverviewHeader({
 
         <p className="text-xs text-nx-ink-2">
           {t("venueOverview.greetingSubtext", {
-            facility: facilityName || "Nasr City Club",
-            defaultValue: `Here's what's happening at ${facilityName || "Nasr City Club"} today.`,
+            facility: facilityName || t("venueOverview.allFacilities", { defaultValue: "your venue" }),
+            defaultValue: `Here's what's happening at ${facilityName || "your venue"} today.`,
           })}
         </p>
 
@@ -137,7 +133,9 @@ export function VenueOverviewHeader({
             className="h-8.5 hover:bg-nx-surfaceSubtle gap-1.5 border-nx-line text-xs font-medium"
           >
             <span className="font-bold text-warning">⊘</span>
-            <span className="hidden sm:inline">Block Time</span>
+            <span className="hidden sm:inline">
+              {t("venueOverview.quickActions.blockTime", { defaultValue: "Block Time" })}
+            </span>
           </Button>
         ) : (
           <Button
@@ -148,7 +146,9 @@ export function VenueOverviewHeader({
           >
             <Link href="/venue/calendar">
               <span className="font-bold text-warning">⊘</span>
-              <span className="hidden sm:inline">Block Time</span>
+              <span className="hidden sm:inline">
+                {t("venueOverview.quickActions.blockTime", { defaultValue: "Block Time" })}
+              </span>
             </Link>
           </Button>
         )}
@@ -162,7 +162,9 @@ export function VenueOverviewHeader({
         >
           <Link href="/venue/money/payments">
             <span className="font-bold text-success">$</span>
-            <span className="hidden sm:inline">Record Payment</span>
+            <span className="hidden sm:inline">
+              {t("venueOverview.quickActions.recordPayment", { defaultValue: "Record Payment" })}
+            </span>
           </Link>
         </Button>
 

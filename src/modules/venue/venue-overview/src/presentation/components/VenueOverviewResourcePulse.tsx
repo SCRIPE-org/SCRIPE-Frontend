@@ -121,7 +121,7 @@ export function VenueOverviewResourcePulse({ items, t }: Props) {
                       {SportIcon}
                     </div>
                     <Link
-                      href={`/venue/availability?resourceId=${encodeURIComponent(item.resourceId)}`}
+                      href={`/venue/resources/${encodeURIComponent(item.resourceId)}?tab=workingHours`}
                       className="truncate font-semibold text-nx-ink hover:text-nx-accent hover:underline"
                     >
                       {item.resourceName}

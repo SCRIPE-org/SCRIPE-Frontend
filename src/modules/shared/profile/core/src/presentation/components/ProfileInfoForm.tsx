@@ -1,184 +1,211 @@
 "use client";
 
-/**
- * ProfileInfoForm — Personal information editing form
- *
- * Two-column layout with firstName, lastName, phoneNumber (editable)
- * and username (read-only).
- */
 import { useState } from "react";
-import { Input } from "@core/ui/input";
-import { PhoneInput, isValidPhoneNumber } from "@core/ui/phone-input";
-import { Label } from "@core/ui/label";
-import { Button } from "@core/ui/button";
 import { useI18n } from "@core/providers/i18n-provider";
-import { Lock, CheckCircle2 } from "lucide-react";
-import type { AdminProfile } from "../../../src/domain/entities/AdminProfile";
-import type { UpdateProfileRequest } from "../../../src/domain/interfaces/IProfileRepository";
+import { Button } from "@core/ui/button";
+import { Badge } from "@core/ui/badge";
+import { CheckCircle2, Pencil, Check, X } from "lucide-react";
+import { ProfileIdentityIdentifiersBar } from "./ProfileIdentityIdentifiersBar";
+import { ProfileInfoReadonlyGrid } from "./ProfileInfoReadonlyGrid";
+import { ProfileInfoEditForm } from "./ProfileInfoEditForm";
+import type { AdminProfile, AdminCustomFieldItem } from "../../domain/entities/AdminProfile";
+import type { UpdateProfileRequest } from "../../domain/interfaces/IProfileRepository";
 
-interface ProfileInfoFormProps {
+/**
+ * Props for {@link ProfileInfoForm}.
+ */
+export interface ProfileInfoFormProps {
+  /** Administrator profile data rendered in the personal dossier. */
   profile: AdminProfile;
+  /** Submit handler invoked when saving updated profile fields. */
   onSubmit: (data: UpdateProfileRequest) => Promise<unknown>;
+  /** Indicates whether a profile save request is in flight. */
   isSubmitting: boolean;
-  submitError: string | null;
-  success: boolean;
+  /** Validation or server error message to display below the form. */
+  error?: string | null;
+  /** Optional handler to dispatch a verification email. */
+  onSendEmailVerification?: () => Promise<unknown>;
+  /** Indicates whether an email verification dispatch is in flight. */
+  isSendingVerification?: boolean;
+  /** True when email verification has been sent in the current session. */
+  verificationSent?: boolean;
+  /** Enterprise custom dossier fields to render and edit. */
+  customFields?: AdminCustomFieldItem[];
+  /** Controlled values for enterprise custom fields keyed by field key. */
+  customFieldValues?: Record<string, string>;
+  /** Change handler for enterprise custom field inputs. */
+  onChangeCustomField?: (key: string, value: string) => void;
+  /** Opens the step-up identity modal for email or username changes. */
+  onOpenIdentityModal?: (mode: "email" | "username") => void;
 }
 
 /**
- * Presentation UI component rendering the profile info form.
- * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ * Personal and enterprise profile dossier component supporting read-only review,
+ * step-up identity identifier triggers, and inline edit mode.
  */
 export function ProfileInfoForm({
   profile,
   onSubmit,
   isSubmitting,
-  submitError,
-  success,
+  error,
+  onSendEmailVerification,
+  isSendingVerification,
+  verificationSent,
+  customFields = [],
+  customFieldValues = {},
+  onChangeCustomField,
+  onOpenIdentityModal,
 }: ProfileInfoFormProps) {
   const { t } = useI18n();
-  const [firstName, setFirstName] = useState(profile.firstName);
-  const [lastName, setLastName] = useState(profile.lastName);
-  const [phoneNumber, setPhoneNumber] = useState(profile.phoneNumber);
-  const [phoneError, setPhoneError] = useState<string | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
 
-  // Reset form when profile data changes (render-time state sync)
-  const [prevProfile, setPrevProfile] = useState({
-    firstName: profile.firstName,
-    lastName: profile.lastName,
-    phoneNumber: profile.phoneNumber,
-  });
-  if (
-    profile.firstName !== prevProfile.firstName ||
-    profile.lastName !== prevProfile.lastName ||
-    profile.phoneNumber !== prevProfile.phoneNumber
-  ) {
-    setPrevProfile({
-      firstName: profile.firstName,
-      lastName: profile.lastName,
-      phoneNumber: profile.phoneNumber,
-    });
-    setFirstName(profile.firstName);
-    setLastName(profile.lastName);
-    setPhoneNumber(profile.phoneNumber);
-    setPhoneError(null);
+  const [firstName, setFirstName] = useState(profile.firstName ?? "");
+  const [lastName, setLastName] = useState(profile.lastName ?? "");
+  const [phoneNumber, setPhoneNumber] = useState(profile.phoneNumber ?? "");
+  const [bio, setBio] = useState(profile.bio ?? "");
+  const [savedSuccess, setSavedSuccess] = useState(false);
+  const [localError, setLocalError] = useState<string | null>(null);
+
+  const profileKey = `${profile.firstName ?? ""}\0${profile.lastName ?? ""}\0${profile.phoneNumber ?? ""}\0${profile.bio ?? ""}`;
+  const [prevProfileKey, setPrevProfileKey] = useState(profileKey);
+  if (prevProfileKey !== profileKey) {
+    setPrevProfileKey(profileKey);
+    setFirstName(profile.firstName ?? "");
+    setLastName(profile.lastName ?? "");
+    setPhoneNumber(profile.phoneNumber ?? "");
+    setBio(profile.bio ?? "");
   }
 
-  const isDirty =
-    firstName !== profile.firstName ||
-    lastName !== profile.lastName ||
-    phoneNumber !== profile.phoneNumber;
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    setPhoneError(null);
-    if (!isDirty) return;
-
-    if (phoneNumber.trim() && !isValidPhoneNumber(phoneNumber)) {
-      setPhoneError(t("profile.errors.phoneInvalid"));
-      return;
+    setSavedSuccess(false);
+    setLocalError(null);
+    try {
+      await onSubmit({
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        phoneNumber: phoneNumber.trim() || undefined,
+        bio: bio.trim() || undefined,
+      });
+      setSavedSuccess(true);
+      setIsEditing(false);
+    } catch (err: unknown) {
+      setLocalError(
+        err instanceof Error && err.message ? err.message : t("profile.common.saveFailed")
+      );
     }
+  };
 
-    onSubmit({ firstName, lastName, phoneNumber });
+  const handleCancel = () => {
+    setFirstName(profile.firstName ?? "");
+    setLastName(profile.lastName ?? "");
+    setPhoneNumber(profile.phoneNumber ?? "");
+    setBio(profile.bio ?? "");
+    setLocalError(null);
+    setIsEditing(false);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        {/* First Name */}
-        <div className="space-y-2">
-          <Label htmlFor="firstName">{t("profile.fields.firstName")}</Label>
-          <Input
-            id="firstName"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-            placeholder={t("profile.fields.firstName")}
-          />
+    <div className="space-y-5" data-testid="personal-info-section">
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-nx-line">
+        <div className="flex items-center gap-2">
+          <Badge
+            variant="outline"
+            data-testid="profile-mode-badge"
+            className={
+              isEditing
+                ? "border-nx-accent text-nx-accent bg-nx-accent-wash text-[10px] font-semibold"
+                : "border-nx-line text-nx-ink-2 text-[10px] font-semibold"
+            }
+          >
+            {isEditing ? t("profile.editingModeBadge") : t("profile.readOnlyModeBadge")}
+          </Badge>
+          {savedSuccess && !isEditing && (
+            <span className="inline-flex items-center gap-1 text-xs font-medium text-success">
+              <CheckCircle2 className="h-3.5 w-3.5" style={{ minWidth: 14, minHeight: 14 }} />
+              {t("profile.saved")}
+            </span>
+          )}
         </div>
 
-        {/* Last Name */}
-        <div className="space-y-2">
-          <Label htmlFor="lastName">{t("profile.fields.lastName")}</Label>
-          <Input
-            id="lastName"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-            placeholder={t("profile.fields.lastName")}
-          />
-        </div>
-
-        {/* Phone Number */}
-        <div className="space-y-2">
-          <Label htmlFor="phoneNumber">{t("profile.fields.phoneNumber")}</Label>
-          <PhoneInput
-            id="phoneNumber"
-            value={phoneNumber}
-            onChange={setPhoneNumber}
-            error={phoneError || undefined}
-          />
-          {phoneError && <p className="text-xs text-destructive">{phoneError}</p>}
-        </div>
-
-        {/* Email Address (read-only) */}
-        <div className="space-y-2">
-          <Label htmlFor="email">{t("profile.fields.email")}</Label>
-          <div className="relative">
-            <Input id="email" value={profile.email} disabled className="bg-nx-raised pe-10" />
-            <Lock
-              className="absolute end-3 top-1/2 h-4 w-4 -translate-y-1/2 text-nx-ink-3"
-              aria-hidden="true"
-            />
+        {!isEditing ? (
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            data-testid="edit-profile-btn"
+            onClick={() => setIsEditing(true)}
+            className="h-8 text-xs font-semibold gap-1.5 border-nx-accent/40 text-nx-accent hover:bg-nx-accent-wash"
+          >
+            <Pencil className="h-3.5 w-3.5" style={{ minWidth: 14, minHeight: 14 }} />
+            <span>{t("profile.editProfileBtn")}</span>
+          </Button>
+        ) : (
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              data-testid="cancel-edit-profile-btn"
+              onClick={handleCancel}
+              className="h-8 text-xs gap-1"
+            >
+              <X className="h-3.5 w-3.5" style={{ minWidth: 14, minHeight: 14 }} />
+              <span>{t("profile.cancel")}</span>
+            </Button>
+            <Button
+              type="submit"
+              form="personal-info-form"
+              size="sm"
+              data-testid="save-dossier-btn"
+              loading={isSubmitting}
+              className="h-8 text-xs font-semibold bg-nx-accent-fill text-nx-on-fill gap-1"
+            >
+              <Check className="h-3.5 w-3.5" style={{ minWidth: 14, minHeight: 14 }} />
+              <span>{t("profile.saveChanges")}</span>
+            </Button>
           </div>
-        </div>
-
-        {/* Username (read-only) */}
-        <div className="space-y-2">
-          <Label htmlFor="username">{t("profile.fields.username")}</Label>
-          <div className="relative">
-            <Input id="username" value={profile.username} disabled className="bg-nx-raised pe-10" />
-            <Lock
-              className="absolute end-3 top-1/2 h-4 w-4 -translate-y-1/2 text-nx-ink-3"
-              aria-hidden="true"
-            />
-          </div>
-          <p className="text-xs text-nx-ink-2">{t("profile.fields.usernameHint")}</p>
-        </div>
+        )}
       </div>
 
-      {/* Role info strip */}
-      <div className="flex items-center gap-4 rounded-nx-control border border-nx-line bg-nx-raised p-3 text-sm text-nx-ink-2">
-        <span>
-          <strong className="text-nx-ink">{t("profile.fields.role")}:</strong>{" "}
-          {profile.adminTypeName || profile.roles?.[0]?.roleName || t("profile.fields.roleDefault")}
-        </span>
-      </div>
+      <ProfileIdentityIdentifiersBar
+        profile={profile}
+        onSendEmailVerification={onSendEmailVerification}
+        isSendingVerification={isSendingVerification}
+        verificationSent={verificationSent}
+        onOpenIdentityModal={onOpenIdentityModal}
+      />
 
-      {submitError && <p className="text-sm text-destructive">{submitError}</p>}
-
-      {success && (
-        <div className="flex items-center gap-2 text-sm text-success">
-          <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
-          {t("profile.general.saved")}
-        </div>
+      {!isEditing ? (
+        <ProfileInfoReadonlyGrid
+          firstName={firstName}
+          lastName={lastName}
+          phoneNumber={phoneNumber}
+          adminTypeName={profile.adminTypeName}
+          bio={bio}
+          customFields={customFields}
+          customFieldValues={customFieldValues}
+        />
+      ) : (
+        <ProfileInfoEditForm
+          firstName={firstName}
+          lastName={lastName}
+          phoneNumber={phoneNumber}
+          adminTypeName={profile.adminTypeName}
+          bio={bio}
+          error={error || localError}
+          isSubmitting={isSubmitting}
+          customFields={customFields}
+          customFieldValues={customFieldValues}
+          onFirstNameChange={setFirstName}
+          onLastNameChange={setLastName}
+          onPhoneNumberChange={setPhoneNumber}
+          onBioChange={setBio}
+          onChangeCustomField={onChangeCustomField}
+          onCancel={handleCancel}
+          onSubmit={handleSave}
+        />
       )}
-
-      <div className="flex justify-end gap-3">
-        <Button
-          type="button"
-          variant="outline"
-          disabled={!isDirty || isSubmitting}
-          onClick={() => {
-            setFirstName(profile.firstName);
-            setLastName(profile.lastName);
-            setPhoneNumber(profile.phoneNumber);
-            setPhoneError(null);
-          }}
-        >
-          {t("common.cancel")}
-        </Button>
-        <Button type="submit" loading={isSubmitting} disabled={!isDirty}>
-          {t("common.save")}
-        </Button>
-      </div>
-    </form>
+    </div>
   );
 }

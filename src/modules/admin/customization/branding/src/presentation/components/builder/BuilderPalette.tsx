@@ -7,12 +7,10 @@
  * Enterprise-only components show a lock badge.
  */
 "use client";
-// UI-EXCEPTION: compact studio layout — native <button> used for pixel-precise
-// compact controls (toggle switches, gradient pickers, layout thumbnails, etc.)
-// where @core/ui/button's padding/sizing would break the layout.
 
 import { useState } from "react";
 import { useDraggable } from "@dnd-kit/core";
+import { Button } from "@core/ui/button";
 import { cn } from "@/core/common/utils";
 import {
   Image,
@@ -201,19 +199,22 @@ function DraggablePaletteItem({
         <Check className="h-3 w-3 shrink-0 text-success" aria-hidden="true" />
       )}
       {!isDisabled && (
-        <button
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
           onClick={(e) => {
             e.stopPropagation();
             onQuickAdd(type);
           }}
-          className="hidden h-5 w-5 shrink-0 items-center justify-center rounded-nx-sm bg-nx-accent-wash text-nx-accent transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-accent-wash focus-visible:shadow-nx-focus focus-visible:outline-none group-hover:flex motion-reduce:transition-none"
+          className="hidden h-5 w-5 shrink-0 items-center justify-center rounded-nx-sm bg-nx-accent-wash p-0 text-nx-accent transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-accent-wash focus-visible:shadow-nx-focus focus-visible:outline-none group-hover:flex motion-reduce:transition-none"
           title={t("studio.builder.palette.quickAdd")}
           aria-label={t("studio.builder.palette.quickAdd")}
         >
           <span className="text-[10px] font-bold" aria-hidden="true">
             +
           </span>
-        </button>
+        </Button>
       )}
     </div>
   );
@@ -253,12 +254,16 @@ export function BuilderPalette({ components, onQuickAdd, activeAuthPage }: Build
           return (
             <div key={group.id} className="overflow-hidden rounded-nx-lg border border-nx-line">
               {/* Group Header */}
-              <button
+              <Button
+                type="button"
+                variant="ghost"
                 onClick={() => toggleGroup(group.id)}
                 aria-expanded={isExpanded}
                 className={cn(
-                  "flex w-full items-center gap-2 px-2.5 py-2 text-start transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
-                  isExpanded ? "bg-nx-raised" : "bg-transparent hover:bg-nx-hover"
+                  "flex h-auto w-full items-center gap-2 rounded-none px-2.5 py-2 text-start font-normal transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
+                  isExpanded
+                    ? "bg-nx-raised hover:bg-nx-raised"
+                    : "bg-transparent hover:bg-nx-hover"
                 )}
               >
                 <GroupIcon className="h-3.5 w-3.5 text-nx-ink-3" aria-hidden="true" />
@@ -280,7 +285,7 @@ export function BuilderPalette({ components, onQuickAdd, activeAuthPage }: Build
                   )}
                   aria-hidden="true"
                 />
-              </button>
+              </Button>
 
               {/* Group Items */}
               {isExpanded && (

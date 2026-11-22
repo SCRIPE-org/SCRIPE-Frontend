@@ -41,11 +41,12 @@ import type { MenuItem } from "@core/navigation";
 import { NotificationBell } from "@core/ui/notification";
 import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
 import { cn, resolveBilingualLabel } from "@core/common/utils";
-import { LayoutGrid } from "lucide-react";
+import { LayoutGrid, Lock } from "lucide-react";
+import { Button } from "@core/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
 import { DynamicIcon, NX_FOCUS_RING } from "./_parts/primary-rail-parts";
 import { useTenantBranding } from "@core/providers/tenant-branding-provider";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { useWorkspaceTransitionContext } from "./nexus-layout";
 import { toast } from "@core/hooks/use-enhanced-toast";
@@ -70,9 +71,8 @@ function findFirstLeafRoute(
   item: MenuItem,
   canAccessPage: (path: string) => boolean
 ): string | null {
-  // First try to find a route the user has permission to access
   const findAccessible = (curr: MenuItem): string | null => {
-    if (curr.href && canAccessPage(curr.href)) return curr.href;
+    if (curr.href && curr.href !== "#" && canAccessPage(curr.href)) return curr.href;
     if (curr.children && curr.children.length > 0) {
       const sorted = [...curr.children].sort((a, b) => a.order - b.order);
       for (const child of sorted) {
@@ -83,23 +83,7 @@ function findFirstLeafRoute(
     return null;
   };
 
-  const accessibleRoute = findAccessible(item);
-  if (accessibleRoute) return accessibleRoute;
-
-  // Fallback to absolute first leaf route if none are accessible
-  const findAny = (curr: MenuItem): string | null => {
-    if (curr.href) return curr.href;
-    if (curr.children && curr.children.length > 0) {
-      const sorted = [...curr.children].sort((a, b) => a.order - b.order);
-      for (const child of sorted) {
-        const route = findAny(child);
-        if (route) return route;
-      }
-    }
-    return null;
-  };
-
-  return findAny(item);
+  return findAccessible(item);
 }
 
 // ── Primary Rail ──────────────────────────────────────────────────────────────
@@ -109,6 +93,7 @@ export function NexusPrimaryRail({
   onOpenAppLauncher,
 }: NexusPrimaryRailProps) {
   const router = useRouter();
+  const pathname = usePathname() ?? "";
   const { canAccessPage } = usePermissions();
   const { logoUrl: tenantLogoUrl } = useTenantBranding();
   const {
@@ -255,7 +240,7 @@ export function NexusPrimaryRail({
   return (
     <nav
       aria-label={t("navigation.primaryNav")}
-      className="relative z-raised flex flex-shrink-0 flex-col items-center"
+      className="relative z-raised hidden flex-shrink-0 flex-col items-center md:flex"
       style={{
         width: "var(--nexus-primary-w)",
         minWidth: "var(--nexus-primary-w)",
@@ -276,7 +261,7 @@ export function NexusPrimaryRail({
       {/* ONE tooltip provider for the whole rail — shared ~150ms delay grouping
           instead of the previous provider-per-button setup */}
       <TooltipProvider delayDuration={150}>
-        {/* ── Logo mark — click navigates home or /venue if in Venue workspace ── */}
+        {/* ── Logo mark — click navigates to /hub ── */}
         <PrimaryRailLogo
           tenantLogoUrl={tenantLogoUrl}
           isModuleMode={isModuleMode}
@@ -285,8 +270,11 @@ export function NexusPrimaryRail({
             // Clear workspace key so Hub page shows clean state
             // (secondary rail collapses, back button hides, admin items clear)
             useNavigationStore.getState().setActiveWorkspace(null);
-            startRoutingProgress();
-            router.push("/");
+            const normalizedPath = pathname.toLowerCase().replace(/\/+$/, "") || "/";
+            if (normalizedPath !== "/hub") {
+              startRoutingProgress();
+              router.push("/hub");
+            }
           }}
         />
 
@@ -380,19 +368,21 @@ export function NexusPrimaryRail({
           {onOpenAppLauncher && (
             <Tooltip>
               <TooltipTrigger asChild>
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="icon"
                   data-testid="nexus-launcher-trigger"
                   aria-label={t("shell.launcher.title")}
                   onClick={onOpenAppLauncher}
                   className={cn(
-                    "flex items-center justify-center rounded-nx-md border border-transparent text-nx-ink-2 transition-[color,background-color,border-color,box-shadow] duration-nx-standard ease-nx-enter hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink motion-reduce:transition-none",
+                    "flex items-center justify-center rounded-nx-md border border-transparent p-0 text-nx-ink-2 transition-[color,background-color,border-color,box-shadow] duration-nx-standard ease-nx-enter hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink motion-reduce:transition-none",
                     NX_FOCUS_RING
                   )}
                   style={{ width: 44, height: 44 }}
                 >
                   <LayoutGrid size={20} aria-hidden="true" />
-                </button>
+                </Button>
               </TooltipTrigger>
               <TooltipContent side={isRTL ? "left" : "right"} sideOffset={16}>
                 {t("shell.launcher.title")}
@@ -447,7 +437,7 @@ export function NexusPrimaryRail({
 
 // ── Module Workspace Button (colored pill icon) ────────────────────────────────
 
-interface ModuleWorkspaceButtonProps {
+export interface ModuleWorkspaceButtonProps {
   label: string;
   abbreviation: string;
   icon: string;
@@ -459,9 +449,9 @@ interface ModuleWorkspaceButtonProps {
   onClick: () => void;
 }
 
-function ModuleWorkspaceButton({
+export function ModuleWorkspaceButton({
   label,
-  abbreviation,
+  abbreviation: _abbreviation,
   icon,
   accentColor,
   isActive,
@@ -470,7 +460,7 @@ function ModuleWorkspaceButton({
   onClick,
 }: ModuleWorkspaceButtonProps) {
   const [hovered, setHovered] = React.useState(false);
-  const { language, t } = useI18n();
+  const { t } = useI18n();
   const lockedLabel = `${label} (${t("chrome.section.locked")})`;
 
   // Identity colour stays per-workspace (accentColor is data, not styling);
@@ -496,8 +486,10 @@ function ModuleWorkspaceButton({
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon"
           aria-label={isLocked ? lockedLabel : label}
           aria-pressed={isActive}
           aria-disabled={isLocked}
@@ -505,13 +497,8 @@ function ModuleWorkspaceButton({
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
           className={cn(
-            "group relative flex items-center justify-center transition-[color,background-color,border-color,box-shadow] duration-nx-standard ease-nx-enter motion-reduce:transition-none",
-            // An active pin is the only lit thing when it renders (the rail
-            // filters the active workspace out of pins, so in practice at most
-            // one glow ever exists on screen). It lives in a class, not inline:
-            // an inline box-shadow beat the focus ring, so an active pin showed
-            // no keyboard focus at all.
-            isActive && "shadow-nx-glow",
+            "group relative flex items-center justify-center p-0 transition-[color,background-color,border-color,box-shadow] duration-nx-standard ease-nx-enter motion-reduce:transition-none",
+            isLocked && "aria-disabled:pointer-events-auto",
             NX_FOCUS_RING
           )}
           style={{
@@ -527,16 +514,6 @@ function ModuleWorkspaceButton({
             opacity: isLocked ? 0.55 : 1,
           }}
         >
-          {/* Active edge ring — STATIC.
-              This carried `animate-pulse`, an unbounded 2s opacity loop that
-              ran for as long as a workspace was active, i.e. permanently. That
-              is the idle pulse the product owner reported seeing on the rail,
-              and it breaks the brand law directly: light collects on the
-              active thing, never as an idle animation. The ring itself is the
-              correct signal and stays — a lit accent edge on the active pin,
-              paired with the --nx-glow box-shadow above. Only the loop is
-              gone, so there is no longer any motion to gate on reduced-motion
-              and nothing about the active state is lost. */}
           {isActive && (
             <div
               style={{
@@ -551,28 +528,18 @@ function ModuleWorkspaceButton({
           {/* Lock overlay for locked modules */}
           {isLocked && (
             <div
+              aria-hidden="true"
+              className="pointer-events-none absolute bottom-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full border bg-nx-surface text-nx-warning-strong"
               style={{
-                position: "absolute",
-                bottom: 2,
                 insetInlineEnd: 2,
-                width: 14,
-                height: 14,
-                borderRadius: "50%",
-                background: "var(--nx-surface)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: 8,
-                color: "hsl(var(--warning))",
-                border: "1px solid hsl(var(--warning) / 0.3)",
-                pointerEvents: "none",
+                borderColor: "hsl(var(--warning-strong) / 0.35)",
               }}
             >
-              🔒
+              <Lock className="h-2.5 w-2.5" aria-hidden="true" />
             </div>
           )}
           <DynamicIcon name={icon} size={20} />
-        </button>
+        </Button>
       </TooltipTrigger>
       <TooltipContent side={isRTL ? "left" : "right"} sideOffset={16}>
         {isLocked ? lockedLabel : label}

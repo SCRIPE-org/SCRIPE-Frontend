@@ -1,5 +1,4 @@
 /* eslint-disable unused-imports/no-unused-vars */
-// UI-EXCEPTION: compact studio layout
 /**
  * Builder Components Index — All 14 canvas component renderers
  *
@@ -17,6 +16,7 @@ import { sanitizeCss, sanitizeRichHtml } from "@core/common/sanitize";
 import { useI18n } from "@core/providers/i18n-provider";
 
 import { Button } from "@core/ui/button";
+import { Checkbox } from "@core/ui/checkbox";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import {
@@ -138,10 +138,12 @@ export function BuilderLoginForm({
                 borderColor: "var(--login-border, hsl(var(--border)))",
               }}
             />
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="icon"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute end-3 top-1/2 -translate-y-1/2 text-[var(--login-text-muted,hsl(var(--muted-foreground)))]"
+              className="absolute end-3 top-1/2 h-auto w-auto -translate-y-1/2 p-0 text-[var(--login-text-muted,hsl(var(--muted-foreground)))] hover:bg-transparent"
               aria-label={t(showPassword ? "auth.hidePassword" : "auth.showPassword")}
             >
               {showPassword ? (
@@ -149,7 +151,7 @@ export function BuilderLoginForm({
               ) : (
                 <Eye className="h-4 w-4" aria-hidden="true" />
               )}
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -158,7 +160,7 @@ export function BuilderLoginForm({
           <div className="flex items-center justify-between text-xs">
             {showRemember && (
               <label className="flex cursor-pointer items-center gap-2 text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
-                <input type="checkbox" className="h-3.5 w-3.5 rounded-nx-sm" readOnly />
+                <Checkbox className="h-3.5 w-3.5" disabled={false} />
                 {t("studio.builder.preview.rememberMe")}
               </label>
             )}

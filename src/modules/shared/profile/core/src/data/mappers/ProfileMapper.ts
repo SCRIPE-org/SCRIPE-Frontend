@@ -21,23 +21,49 @@ import type {
 export const ProfileMapper = {
   toAdminProfile(dto: AdminProfileDto): AdminProfile {
     return {
-      id: dto.id,
-      username: dto.username,
+      id: dto.id ?? dto.adminId ?? "",
+      username: dto.username ?? "",
       firstName: dto.firstName ?? "",
       lastName: dto.lastName ?? "",
       phoneNumber: dto.phoneNumber ?? "",
       email: dto.email ?? "",
+      isEmailVerified: dto.isEmailVerified ?? true,
       adminTypeName: dto.adminTypeName ?? "",
-      profileImageUrl: dto.profileImageUrl,
+      profileImageUrl: dto.profileImageUrl ?? null,
       roles: dto.roles ?? [],
       permissions: dto.permissions ?? [],
       isTwoFactorEnabled: dto.isTwoFactorEnabled ?? false,
-      backupCodesRemaining: dto.backupCodesRemaining,
+      backupCodesRemaining: dto.backupCodesRemaining ?? null,
       isPasswordExpired: dto.isPasswordExpired ?? false,
-      daysUntilPasswordExpiry: dto.daysUntilPasswordExpiry,
+      daysUntilPasswordExpiry: dto.daysUntilPasswordExpiry ?? null,
       passwordLastChanged: dto.passwordLastChanged ? new Date(dto.passwordLastChanged) : null,
+      staffCode: dto.staffCode ?? undefined,
+      bio: dto.bio ?? undefined,
+      clubAffiliation: dto.clubAffiliation ?? undefined,
+      activeBranchName: dto.activeBranchName ?? undefined,
+      editionName: dto.editionName ?? undefined,
+      isAvailableForOperations: dto.isAvailableForOperations ?? true,
+      securityScore: dto.securityScore ?? 0,
+      availableAcademies:
+        dto.availableAcademies ||
+        (dto.academies
+          ? dto.academies.map((a) => ({
+              id: a.id,
+              name: a.name,
+              isCurrent: a.isPrimary ?? false,
+            }))
+          : dto.clubMemberships && dto.clubMemberships.length > 0
+          ? dto.clubMemberships.map((m) => ({
+              id: m.tenantId,
+              name: m.tenantName ?? m.clubName ?? m.tenantId,
+              isCurrent: Boolean(m.isPrimary),
+            }))
+          : []),
+      customFields: dto.customFields ?? [],
+      rowVersion: dto.rowVersion ?? undefined,
     };
   },
+
 
   toActiveSession(dto: ActiveSessionDto): ActiveSession {
     return {
@@ -59,10 +85,14 @@ export const ProfileMapper = {
       id: dto.id,
       eventType: dto.eventType,
       description: dto.description ?? "",
-      ipAddress: dto.ipAddress,
-      userAgent: dto.userAgent,
+      ipAddress: dto.ipAddress ?? null,
+      userAgent: dto.userAgent ?? null,
       timestamp: new Date(dto.timestamp),
-      details: dto.details,
+      details: dto.details
+        ? typeof dto.details === "string"
+          ? dto.details
+          : JSON.stringify(dto.details)
+        : null,
     };
   },
 
@@ -75,8 +105,8 @@ export const ProfileMapper = {
       id: dto.id,
       providerName: dto.providerName,
       providerKey: dto.providerKey,
-      email: dto.email,
-      displayName: dto.displayName,
+      email: dto.email ?? null,
+      displayName: dto.displayName ?? null,
       linkedAt: new Date(dto.linkedAt),
       lastUsedAt: dto.lastUsedAt ? new Date(dto.lastUsedAt) : null,
     };

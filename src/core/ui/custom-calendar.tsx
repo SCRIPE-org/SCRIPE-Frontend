@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import React, { useState, useEffect, useCallback, useMemo, useRef, useId } from "react";
 import { ChevronLeft, ChevronRight, Calendar, Clock } from "lucide-react";
 import { cn, resolveIntlLocale } from "@core/common/utils";
 import { useSettings } from "@core/providers/settings-provider";
 import { useI18n } from "@core/providers/i18n-provider";
+import { Button } from "./button";
+import { Input } from "./input";
 
 // Wave C collapse: 6 calendar skins reduce to "default" (the nexus token
 // treatment) and "elegant" (the accent take — accent-washed header, the
@@ -130,6 +132,16 @@ export function CustomCalendar({
 
   const calendarContainerRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
+  const focusTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const timeInputId = useId();
+
+  useEffect(() => {
+    return () => {
+      if (focusTimerRef.current !== null) {
+        clearTimeout(focusTimerRef.current);
+      }
+    };
+  }, []);
 
   // Reset view mode when value changes
   useEffect(() => {
@@ -274,12 +286,12 @@ export function CustomCalendar({
     [variant]
   );
 
-  // The time field is a field: same sunken ground, same hover lift, same lit
-  // edge as every Input in the product.
+  // The time field is a field: same sunken ground, 3:1 line-hi border,
+  // hover lift, and lit edge as every Input in the product.
   const timeInputStyles = cn(
-    "h-10 w-full rounded-nx-control border border-nx-line bg-nx-ground px-3 py-2 text-sm tabular-nums text-nx-ink",
+    "h-10 w-full rounded-nx-control border border-nx-line-hi bg-nx-ground px-3 py-2 text-sm tabular-nums text-nx-ink",
     "outline-none transition-[border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-    "hover:border-nx-line-hi focus-visible:border-nx-accent focus-visible:shadow-nx-focus"
+    "hover:border-nx-ink-3 focus-visible:border-nx-accent focus-visible:shadow-nx-focus"
   );
 
   // Shared chrome for the header/nav/footer controls — same focus law as the
@@ -562,34 +574,34 @@ export function CustomCalendar({
       }
 
       const daysInMonth = getDaysInMonth(currentDate);
+      const isRtl = direction === "rtl";
+
+      const moveHorizontally = (offset: number, monthDirection: "prev" | "next") => {
+        const targetDate = getDateByOffset(offset);
+        if (!targetDate) return;
+        if (targetDate.isOtherMonth) {
+          navigateMonth(monthDirection);
+          if (focusTimerRef.current !== null) {
+            clearTimeout(focusTimerRef.current);
+          }
+          focusTimerRef.current = setTimeout(() => setFocusedDate(targetDate.day), 0);
+        } else {
+          setFocusedDate(targetDate.day);
+          handleDateSelect(targetDate.day, false);
+        }
+      };
 
       switch (e.key) {
         case "ArrowLeft":
           e.preventDefault();
-          const leftDate = getDateByOffset(-1);
-          if (leftDate) {
-            if (leftDate.isOtherMonth) {
-              navigateMonth("prev");
-              setTimeout(() => setFocusedDate(leftDate.day), 0);
-            } else {
-              setFocusedDate(leftDate.day);
-              handleDateSelect(leftDate.day, false);
-            }
-          }
+          // Columns run right-to-left under RTL, so physical ArrowLeft advances forward.
+          moveHorizontally(isRtl ? 1 : -1, isRtl ? "next" : "prev");
           break;
 
         case "ArrowRight":
           e.preventDefault();
-          const rightDate = getDateByOffset(1);
-          if (rightDate) {
-            if (rightDate.isOtherMonth) {
-              navigateMonth("next");
-              setTimeout(() => setFocusedDate(rightDate.day), 0);
-            } else {
-              setFocusedDate(rightDate.day);
-              handleDateSelect(rightDate.day, false);
-            }
-          }
+          // Columns run right-to-left under RTL, so physical ArrowRight steps backward.
+          moveHorizontally(isRtl ? -1 : 1, isRtl ? "prev" : "next");
           break;
 
         case "ArrowUp":
@@ -602,7 +614,10 @@ export function CustomCalendar({
               } else {
                 navigateMonth("next");
               }
-              setTimeout(() => setFocusedDate(upDate.day), 0);
+              if (focusTimerRef.current !== null) {
+                clearTimeout(focusTimerRef.current);
+              }
+              focusTimerRef.current = setTimeout(() => setFocusedDate(upDate.day), 0);
             } else {
               setFocusedDate(upDate.day);
               handleDateSelect(upDate.day, false);
@@ -620,7 +635,10 @@ export function CustomCalendar({
               } else {
                 navigateMonth("next");
               }
-              setTimeout(() => setFocusedDate(downDate.day), 0);
+              if (focusTimerRef.current !== null) {
+                clearTimeout(focusTimerRef.current);
+              }
+              focusTimerRef.current = setTimeout(() => setFocusedDate(downDate.day), 0);
             } else {
               setFocusedDate(downDate.day);
               handleDateSelect(downDate.day, false);
@@ -666,6 +684,7 @@ export function CustomCalendar({
     },
     [
       viewMode,
+      direction,
       currentDate,
       selectedDate,
       getDaysInMonth,
@@ -681,6 +700,7 @@ export function CustomCalendar({
   // Keyboard event listener
   useEffect(() => {
     const handleWindowKeyDown = (event: KeyboardEvent) => {
+      if (event.defaultPrevented) return;
       if (calendarContainerRef.current?.contains(event.target as Node)) {
         handleKeyDown(event as any);
       }
@@ -705,8 +725,11 @@ export function CustomCalendar({
       const dateKey = `prev-${day}`;
       const cellDisabled = isDisabledDate(resolveCellDate(day, true));
       days.push(
-        <button
+        <Button
           key={dateKey}
+          type="button"
+          variant="ghost"
+          size="icon"
           onClick={() => handleDateSelect(day, true)}
           onDoubleClick={() => handleDateDoubleClick(day, true)}
           onKeyDown={handleKeyDown}
@@ -721,7 +744,7 @@ export function CustomCalendar({
           data-other-month="true"
         >
           {day}
-        </button>
+        </Button>
       );
     }
 
@@ -744,12 +767,18 @@ export function CustomCalendar({
       const cellDisabled = isDisabledDate(resolveCellDate(day));
 
       days.push(
-        <button
+        <Button
           key={day}
+          type="button"
+          variant="ghost"
+          size="icon"
           onClick={() => handleDateSelect(day)}
           onDoubleClick={() => handleDateDoubleClick(day)}
           onKeyDown={handleKeyDown}
-          className={getButtonStyles(isSelected, isToday, false, cellDisabled)}
+          className={cn(
+            getButtonStyles(isSelected, isToday, false, cellDisabled),
+            isSelected && "hover:bg-nx-accent-fill hover:text-nx-on-fill"
+          )}
           aria-label={`${day} ${months[currentDate.getMonth()]} ${currentDate.getFullYear()}${isToday ? `, ${t("common.today")}` : ""}`}
           aria-current={isSelected ? "date" : undefined}
           aria-disabled={cellDisabled || undefined}
@@ -759,7 +788,7 @@ export function CustomCalendar({
           data-day={day}
         >
           {day}
-        </button>
+        </Button>
       );
     }
 
@@ -771,8 +800,11 @@ export function CustomCalendar({
       const dateKey = `next-${day}`;
       const cellDisabled = isDisabledDate(resolveCellDate(day, true));
       days.push(
-        <button
+        <Button
           key={dateKey}
+          type="button"
+          variant="ghost"
+          size="icon"
           onClick={() => handleDateSelect(day, true)}
           onDoubleClick={() => handleDateDoubleClick(day, true)}
           onKeyDown={handleKeyDown}
@@ -787,7 +819,7 @@ export function CustomCalendar({
           data-other-month="true"
         >
           {day}
-        </button>
+        </Button>
       );
     }
 
@@ -870,6 +902,7 @@ export function CustomCalendar({
   return (
     <div
       ref={calendarContainerRef}
+      dir={direction === "rtl" ? "rtl" : undefined}
       data-calendar-content="true"
       className={cn(calendarStyles, "h-full min-w-[320px]", className)}
       tabIndex={-1}
@@ -879,7 +912,10 @@ export function CustomCalendar({
       {/* Header */}
       <div className={headerStyles}>
         <div className="flex items-center justify-between">
-          <button
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
             onClick={() => {
               if (viewMode === "year") {
                 navigateYearRange("prev");
@@ -887,37 +923,52 @@ export function CustomCalendar({
                 navigateMonth("prev");
               }
             }}
-            className={cn(controlButtonStyles, "p-1 text-nx-ink-2 hover:text-nx-ink")}
+            className={cn(controlButtonStyles, "h-8 w-8 p-0 text-nx-ink-2 hover:text-nx-ink")}
             aria-label={
               viewMode === "year" ? t("common.previousYearRange") : t("common.previousMonth")
             }
           >
             <PrevIcon className="h-4 w-4" aria-hidden="true" />
-          </button>
+          </Button>
 
           <div className="flex items-center gap-2">
             <Calendar className="h-4 w-4 text-nx-accent" aria-hidden="true" />
             <div className="flex items-center gap-1">
-              <button
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
                 onClick={handleMonthClick}
-                className={cn(controlButtonStyles, "px-2 py-1 text-sm font-semibold text-nx-ink")}
+                className={cn(
+                  controlButtonStyles,
+                  "h-8 px-2 py-1 text-sm font-semibold text-nx-ink"
+                )}
                 aria-label={t("common.selectMonth")}
                 aria-expanded={viewMode === "month"}
               >
                 {months[currentDate.getMonth()]}
-              </button>
-              <button
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
                 onClick={handleYearClick}
-                className={cn(controlButtonStyles, "px-2 py-1 text-sm font-semibold text-nx-ink")}
+                className={cn(
+                  controlButtonStyles,
+                  "h-8 px-2 py-1 text-sm font-semibold tabular-nums text-nx-ink"
+                )}
                 aria-label={t("common.selectYear")}
                 aria-expanded={viewMode === "year"}
               >
                 {currentDate.getFullYear()}
-              </button>
+              </Button>
             </div>
           </div>
 
-          <button
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
             onClick={() => {
               if (viewMode === "year") {
                 navigateYearRange("next");
@@ -925,11 +976,11 @@ export function CustomCalendar({
                 navigateMonth("next");
               }
             }}
-            className={cn(controlButtonStyles, "p-1 text-nx-ink-2 hover:text-nx-ink")}
+            className={cn(controlButtonStyles, "h-8 w-8 p-0 text-nx-ink-2 hover:text-nx-ink")}
             aria-label={viewMode === "year" ? t("common.nextYearRange") : t("common.nextMonth")}
           >
             <NextIcon className="h-4 w-4" aria-hidden="true" />
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -972,16 +1023,18 @@ export function CustomCalendar({
             {months.map((month, index) => {
               const isSelected = currentDate.getMonth() === index;
               return (
-                <button
+                <Button
                   key={index}
+                  type="button"
+                  variant="ghost"
                   onClick={() => handleMonthSelect(index)}
                   onKeyDown={handleKeyDown}
                   className={cn(
-                    "h-12 rounded-nx-control px-3 text-sm font-medium",
+                    "h-12 w-full rounded-nx-control px-3 text-sm font-medium",
                     "transition-[color,background-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
                     "focus-visible:shadow-nx-focus focus-visible:outline-none",
                     isSelected
-                      ? "bg-nx-accent-fill font-semibold text-nx-on-fill"
+                      ? "bg-nx-accent-fill font-semibold text-nx-on-fill hover:bg-nx-accent-fill hover:text-nx-on-fill"
                       : "text-nx-ink hover:bg-nx-hover"
                   )}
                   role="option"
@@ -989,7 +1042,7 @@ export function CustomCalendar({
                   aria-label={month}
                 >
                   {month}
-                </button>
+                </Button>
               );
             })}
           </div>
@@ -1007,16 +1060,18 @@ export function CustomCalendar({
                 const isSelected = currentDate.getFullYear() === year;
                 const isCurrentYear = new Date().getFullYear() === year;
                 return (
-                  <button
+                  <Button
                     key={year}
+                    type="button"
+                    variant="ghost"
                     onClick={() => handleYearSelect(year)}
                     onKeyDown={handleKeyDown}
                     className={cn(
-                      "h-12 rounded-nx-control px-3 text-sm font-medium tabular-nums",
+                      "h-12 w-full rounded-nx-control px-3 text-sm font-medium tabular-nums",
                       "transition-[color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
                       "focus-visible:shadow-nx-focus focus-visible:outline-none",
                       isSelected
-                        ? "bg-nx-accent-fill font-semibold text-nx-on-fill"
+                        ? "bg-nx-accent-fill font-semibold text-nx-on-fill hover:bg-nx-accent-fill hover:text-nx-on-fill"
                         : isCurrentYear
                           ? // the current year gets the same lit edge as today
                             // in the day grid — one language for "you are here"
@@ -1028,7 +1083,7 @@ export function CustomCalendar({
                     aria-label={year.toString()}
                   >
                     {year}
-                  </button>
+                  </Button>
                 );
               })}
             </div>
@@ -1037,33 +1092,39 @@ export function CustomCalendar({
                 ternary. Digits are tabular so the two ranges stay the same
                 width as the decade rolls. */}
             <div className="mt-2 flex items-center justify-between gap-2 border-t border-nx-line pt-2">
-              <button
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
                 onClick={() => navigateYearRange("prev")}
                 onKeyDown={handleKeyDown}
                 className={cn(
                   controlButtonStyles,
-                  "gap-1 px-2 py-1 text-xs tabular-nums text-nx-ink-2 hover:text-nx-ink"
+                  "h-8 gap-1 px-2 py-1 text-xs tabular-nums text-nx-ink-2 hover:text-nx-ink"
                 )}
                 aria-label={`${yearRangeStart - 12} - ${yearRangeStart - 1}`}
               >
                 <PrevIcon className="h-3 w-3" aria-hidden="true" />
                 {yearRangeStart - 12} – {yearRangeStart - 1}
-              </button>
+              </Button>
               <span className="text-xs tabular-nums text-nx-ink-2" aria-live="polite">
                 {yearRangeStart} – {yearRangeStart + 11}
               </span>
-              <button
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
                 onClick={() => navigateYearRange("next")}
                 onKeyDown={handleKeyDown}
                 className={cn(
                   controlButtonStyles,
-                  "gap-1 px-2 py-1 text-xs tabular-nums text-nx-ink-2 hover:text-nx-ink"
+                  "h-8 gap-1 px-2 py-1 text-xs tabular-nums text-nx-ink-2 hover:text-nx-ink"
                 )}
                 aria-label={`${yearRangeStart + 12} - ${yearRangeStart + 23}`}
               >
                 {yearRangeStart + 12} – {yearRangeStart + 23}
                 <NextIcon className="h-3 w-3" aria-hidden="true" />
-              </button>
+              </Button>
             </div>
           </>
         )}
@@ -1074,12 +1135,12 @@ export function CustomCalendar({
         <div className="border-t border-nx-line p-4">
           <div className="mb-2 flex items-center gap-2">
             <Clock className="h-4 w-4 text-nx-accent" aria-hidden="true" />
-            <label htmlFor="time-input" className="text-sm font-medium text-nx-ink">
+            <label htmlFor={timeInputId} className="text-sm font-medium text-nx-ink">
               {t("common.time")}
             </label>
           </div>
-          <input
-            id="time-input"
+          <Input
+            id={timeInputId}
             type="time"
             value={selectedTime}
             onChange={(e) => handleTimeChange(e.target.value)}
@@ -1091,16 +1152,22 @@ export function CustomCalendar({
 
       {/* Action Buttons */}
       <div className="flex justify-end gap-2 border-t border-nx-line p-4">
-        <button
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
           onClick={onClose}
           onKeyDown={handleKeyDown}
           className={cn(controlButtonStyles, "px-3 py-1.5 text-sm text-nx-ink-2 hover:text-nx-ink")}
           aria-label={t("common.cancel")}
         >
           {t("common.cancel")}
-        </button>
+        </Button>
         {type === "datetime-local" && (
-          <button
+          <Button
+            type="button"
+            variant="default"
+            size="sm"
             onClick={() => {
               if (selectedDate && !isDisabledDate(selectedDate)) {
                 const dateString = `${formatDateLocal(selectedDate)}T${selectedTime}`;
@@ -1109,18 +1176,11 @@ export function CustomCalendar({
               onClose?.();
             }}
             onKeyDown={handleKeyDown}
-            className={cn(
-              // hover lights the top inner edge instead of fading the fill —
-              // opacity math on a filled control reads as "disabled", not "hot"
-              "inline-flex min-h-8 items-center rounded-nx-control bg-nx-accent-fill px-3 py-1.5 text-sm font-medium text-nx-on-fill",
-              "transition-shadow duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-              "hover:shadow-[inset_0_1px_0_0_color-mix(in_srgb,var(--nx-on-fill)_35%,transparent)]",
-              "focus-visible:shadow-nx-focus focus-visible:outline-none"
-            )}
+            className="min-h-8 px-3 py-1.5 text-sm"
             aria-label={t("common.ok")}
           >
             {t("common.ok")}
-          </button>
+          </Button>
         )}
       </div>
     </div>

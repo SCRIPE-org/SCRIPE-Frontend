@@ -25,6 +25,7 @@ export const TenantSettingsMapper = {
       loginLockoutThreshold: model.loginLockoutThreshold,
       loginLockoutMinutes: model.loginLockoutMinutes,
       require2FA: model.require2FA,
+      identityProviderMode: model.identityProviderMode === "custom" ? "custom" : "inherit",
       auditEnabled: model.auditEnabled,
       auditRetentionDays: model.auditRetentionDays,
       logoUrl: model.logoUrl,
@@ -48,6 +49,7 @@ export const TenantSettingsMapper = {
       privacyPolicyUrl: model.privacyPolicyUrl,
       settingsVersion: model.settingsVersion,
       isSafeMode: model.isSafeMode,
+      mode: model.mode,
     };
   },
 
@@ -67,6 +69,7 @@ export const TenantSettingsMapper = {
       loginLockoutThreshold: entity.loginLockoutThreshold,
       loginLockoutMinutes: entity.loginLockoutMinutes,
       require2FA: entity.require2FA,
+      identityProviderMode: entity.identityProviderMode,
       auditEnabled: entity.auditEnabled,
       auditRetentionDays: entity.auditRetentionDays,
       logoUrl: entity.logoUrl,

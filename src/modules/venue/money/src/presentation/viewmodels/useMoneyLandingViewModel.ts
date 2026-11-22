@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect, useMemo } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { getVenueContainer } from "@modules/venue/di";
 import type {
   MoneyInvoice,
@@ -15,6 +15,16 @@ import type {
 
 export type DateRangeFilter = "today" | "days7" | "days30" | "thisMonth" | "custom";
 
+export interface DailyShiftChannelSummary {
+  key: "Cash" | "Card" | "BankTransfer";
+  amount: number;
+  count: number;
+  percentage: number;
+}
+
+/**
+ * Computes UTC date bounds and aggregation interval for a quick-select range filter.
+ */
 export function getDateRange(range: DateRangeFilter): {
   from?: string;
   to?: string;
@@ -44,10 +54,51 @@ export function getDateRange(range: DateRangeFilter): {
   return { interval: "day" };
 }
 
+/**
+ * Aggregates payment method metrics into daily shift operational buckets.
+ */
+export function aggregateDailyShiftChannels(
+  paymentMethods: MoneyPaymentMethodItem[]
+): DailyShiftChannelSummary[] {
+  const definitions: Array<{
+    key: DailyShiftChannelSummary["key"];
+    predicate: (pm: MoneyPaymentMethodItem) => boolean;
+  }> = [
+    {
+      key: "Cash",
+      predicate: (pm) => pm.method.toLowerCase() === "cash",
+    },
+    {
+      key: "Card",
+      predicate: (pm) => {
+        const method = pm.method.toLowerCase();
+        return method === "card" || method === "pos";
+      },
+    },
+    {
+      key: "BankTransfer",
+      predicate: (pm) => {
+        const method = pm.method.toLowerCase();
+        return method.includes("bank") || method === "banktransfer";
+      },
+    },
+  ];
+
+  return definitions.map(({ key, predicate }) => {
+    const matching = paymentMethods.filter(predicate);
+    return {
+      key,
+      amount: matching.reduce((sum, item) => sum + item.amount, 0),
+      count: matching.reduce((sum, item) => sum + item.count, 0),
+      percentage: Math.round(matching.reduce((sum, item) => sum + item.percentage, 0)),
+    };
+  });
+}
+
 export interface UseMoneyLandingViewModelOptions {
   canViewReceivables: boolean;
   canViewPayments: boolean;
-  errorDescriptionMessage?: string;
+  errorDescriptionMessage: string;
 }
 
 /**
@@ -55,10 +106,10 @@ export interface UseMoneyLandingViewModelOptions {
  * Encapsulates financial telemetry, trends, breakdowns, and recent invoices/payments via DI.
  */
 export function useMoneyLandingViewModel(options: UseMoneyLandingViewModelOptions) {
-  const { canViewReceivables, canViewPayments, errorDescriptionMessage = "Could not load metrics." } = options;
+  const { canViewReceivables, canViewPayments, errorDescriptionMessage } = options;
 
   const [dateFilter, setDateFilter] = useState<DateRangeFilter>("thisMonth");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(canViewReceivables && canViewPayments);
 
   const [summary, setSummary] = useState<MoneySummaryItem | null>(null);
   const [summaryError, setSummaryError] = useState<string | null>(null);
@@ -84,8 +135,6 @@ export function useMoneyLandingViewModel(options: UseMoneyLandingViewModelOption
   const [tablesLoading, setTablesLoading] = useState(true);
   const [tablesError, setTablesError] = useState<string | null>(null);
 
-  const currency = summary?.currencyCode || trendBuckets[0]?.currencyCode || "EGP";
-
   const loadAllData = useCallback(async () => {
     if (!canViewReceivables && !canViewPayments) return;
     const { moneyRepository } = getVenueContainer();
@@ -98,10 +147,19 @@ export function useMoneyLandingViewModel(options: UseMoneyLandingViewModelOption
     };
 
     setLoading(true);
-
-    // 1. Authoritative Summary
     setSummaryError(null);
-    moneyRepository
+    setTrendLoading(true);
+    setTrendError(null);
+    setResourceLoading(true);
+    setResourceError(null);
+    setTimeLoading(true);
+    setTimeError(null);
+    setMethodsLoading(true);
+    setMethodsError(null);
+    setTablesLoading(true);
+    setTablesError(null);
+
+    const summaryTask = moneyRepository
       .getSummary(filter)
       .then((res) => {
         setSummary(res.primary || res.items[0] || null);
@@ -110,10 +168,7 @@ export function useMoneyLandingViewModel(options: UseMoneyLandingViewModelOption
         setSummaryError(errorDescriptionMessage);
       });
 
-    // 2. Trend Time Series
-    setTrendLoading(true);
-    setTrendError(null);
-    moneyRepository
+    const trendTask = moneyRepository
       .getTrend(filter)
       .then((res) => {
         setTrendBuckets(res.buckets || []);
@@ -123,10 +178,7 @@ export function useMoneyLandingViewModel(options: UseMoneyLandingViewModelOption
       })
       .finally(() => setTrendLoading(false));
 
-    // 3. Performance by Court
-    setResourceLoading(true);
-    setResourceError(null);
-    moneyRepository
+    const resourceTask = moneyRepository
       .getByResource(filter)
       .then((items) => {
         setResourcePerformance(items || []);
@@ -136,10 +188,7 @@ export function useMoneyLandingViewModel(options: UseMoneyLandingViewModelOption
       })
       .finally(() => setResourceLoading(false));
 
-    // 4. Performance by Time of Day
-    setTimeLoading(true);
-    setTimeError(null);
-    moneyRepository
+    const timeTask = moneyRepository
       .getByTimeOfDay(filter)
       .then((items) => {
         setTimeOfDayBuckets(items || []);
@@ -149,10 +198,7 @@ export function useMoneyLandingViewModel(options: UseMoneyLandingViewModelOption
       })
       .finally(() => setTimeLoading(false));
 
-    // 5. Payment Methods
-    setMethodsLoading(true);
-    setMethodsError(null);
-    moneyRepository
+    const methodsTask = moneyRepository
       .getPaymentMethods(filter)
       .then((items) => {
         setPaymentMethods(items || []);
@@ -162,10 +208,7 @@ export function useMoneyLandingViewModel(options: UseMoneyLandingViewModelOption
       })
       .finally(() => setMethodsLoading(false));
 
-    // 6. Actionable Tables
-    setTablesLoading(true);
-    setTablesError(null);
-    Promise.all([
+    const tablesTask = Promise.all([
       canViewReceivables ? moneyRepository.getInvoices(1, 10) : Promise.resolve({ items: [] }),
       canViewPayments ? moneyRepository.getPayments(1, 10) : Promise.resolve({ items: [] }),
     ])
@@ -178,21 +221,36 @@ export function useMoneyLandingViewModel(options: UseMoneyLandingViewModelOption
       })
       .finally(() => {
         setTablesLoading(false);
-        setLoading(false);
       });
+
+    await Promise.allSettled([
+      summaryTask,
+      trendTask,
+      resourceTask,
+      timeTask,
+      methodsTask,
+      tablesTask,
+    ]);
+    setLoading(false);
   }, [canViewReceivables, canViewPayments, dateFilter, errorDescriptionMessage]);
 
   useEffect(() => {
-    if (canViewReceivables && canViewPayments) {
-      void loadAllData();
-    } else if (!canViewReceivables && !canViewPayments) {
-      setLoading(false);
-    }
+    if (!(canViewReceivables && canViewPayments)) return;
+    let active = true;
+    void Promise.resolve().then(() => {
+      if (active) {
+        void loadAllData();
+      }
+    });
+    return () => {
+      active = false;
+    };
   }, [canViewReceivables, canViewPayments, loadAllData]);
 
-  const outstandingInvoices = useMemo(() => {
-    return invoices.filter((i) => i.outstandingAmount > 0);
-  }, [invoices]);
+  const currency = summary?.currencyCode || trendBuckets[0]?.currencyCode || "EGP";
+  const outstandingInvoices = invoices.filter((i) => i.outstandingAmount > 0);
+  const totalPaymentMethodCount = paymentMethods.reduce((sum, m) => sum + m.count, 0);
+  const dailyShiftChannels = aggregateDailyShiftChannels(paymentMethods);
 
   return {
     dateFilter,
@@ -218,6 +276,8 @@ export function useMoneyLandingViewModel(options: UseMoneyLandingViewModelOption
     tablesError,
     currency,
     outstandingInvoices,
+    totalPaymentMethodCount,
+    dailyShiftChannels,
     loadAllData,
   };
 }

@@ -99,15 +99,23 @@ export function ProvisioningStep({ wizard }: ProvisioningStepProps) {
                 aria-hidden
                 className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full transition-colors duration-300"
                 style={{
-                  background: done || active ? tokens.accent : tokens.surfaceRaised,
-                  border: done || active ? `1px solid ${tokens.accent}` : tokens.borderCard,
+                  background: done
+                    ? tokens.ink
+                    : active
+                      ? tokens.gradientCta
+                      : tokens.surfaceRaised,
+                  border: done
+                    ? `1px solid ${tokens.ink}`
+                    : active
+                      ? `1px solid ${tokens.accent}`
+                      : tokens.borderCard,
                 }}
               >
                 {done ? (
                   <Check
                     className="h-3 w-3"
                     strokeWidth={3}
-                    style={{ color: tokens.accentContrast }}
+                    style={{ color: tokens.surface }}
                   />
                 ) : active ? (
                   <Loader2

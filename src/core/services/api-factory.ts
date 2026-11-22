@@ -19,6 +19,7 @@
  */
 
 import { ApiService } from "./api.service";
+import { STORAGE_KEYS } from "@core/config/storage-keys";
 import type { IApiService } from "../interfaces/api.interface";
 
 /**
@@ -30,9 +31,11 @@ import type { IApiService } from "../interfaces/api.interface";
 const ENV_MAP: Record<string, string | undefined> = {
   IDENTITY: process.env.NEXT_PUBLIC_IDENTITY_API_URL,
   // ── Add new modules below this line ──
-      CATALOG: process.env.NEXT_PUBLIC_CATALOG_API_URL,
-      LOOKUPFIXTURE: process.env.NEXT_PUBLIC_LOOKUPFIXTURE_API_URL,
-      INVENTORY: process.env.NEXT_PUBLIC_INVENTORY_API_URL,
+  DATATRANSFER: process.env.NEXT_PUBLIC_DATATRANSFER_API_URL,
+  CRM: process.env.NEXT_PUBLIC_CRM_API_URL,
+  CATALOG: process.env.NEXT_PUBLIC_CATALOG_API_URL,
+  LOOKUPFIXTURE: process.env.NEXT_PUBLIC_LOOKUPFIXTURE_API_URL,
+  INVENTORY: process.env.NEXT_PUBLIC_INVENTORY_API_URL,
   FINANCE: process.env.NEXT_PUBLIC_FINANCE_API_URL,
   CATALOGPRICING: process.env.NEXT_PUBLIC_CATALOGPRICING_API_URL,
   RESOURCESCHEDULINGBOOKING: process.env.NEXT_PUBLIC_RESOURCESCHEDULINGBOOKING_API_URL,
@@ -57,11 +60,69 @@ const ENV_MAP: Record<string, string | undefined> = {
 /** Cache: moduleKey → ApiService instance */
 const instanceCache = new Map<string, IApiService>();
 
+/** Latest tenant context pushed by broadcastTenantContext (applied to newly constructed instances). */
+let activeBroadcastTenantId: string | null | undefined;
+
 /** The base fallback URL used when no module-specific env var is set */
 const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || "/api").trim();
 
 /** Cache key for the default (non-module) instance */
 const BASE_KEY = "__base__";
+
+function createApiService(url: string): IApiService {
+  const service = new ApiService(url);
+  if (activeBroadcastTenantId !== undefined) {
+    service.setTenantContext(activeBroadcastTenantId);
+  }
+  return service;
+}
+
+/**
+ * Broadcasts tenant context changes across every cached module and base
+ * ApiService instance, and retains the active tenant ID so lazily constructed
+ * module services initialize with the matching X-Tenant-Context header.
+ */
+export function broadcastTenantContext(tenantId: string | null): void {
+  activeBroadcastTenantId = tenantId;
+  const seen = new Set<IApiService>();
+  for (const service of instanceCache.values()) {
+    if (!seen.has(service)) {
+      seen.add(service);
+      service.setTenantContext(tenantId);
+    }
+  }
+}
+
+/**
+ * Returns the active tenant drilldown context ID for out-of-band keepalive requests.
+ */
+export function getActiveTenantContextId(): string | null {
+  if (activeBroadcastTenantId !== undefined) {
+    return activeBroadcastTenantId;
+  }
+  if (typeof window !== "undefined") {
+    try {
+      const saved = sessionStorage.getItem(STORAGE_KEYS.tenant_context);
+      if (saved) {
+        const parsed = JSON.parse(saved) as { id?: unknown };
+        if (typeof parsed?.id === "string" && parsed.id) {
+          return parsed.id;
+        }
+      }
+    } catch {
+      // Ignore parse errors
+    }
+  }
+  return null;
+}
+
+/**
+ * Reset cached factory instances and broadcast state (for deterministic unit tests).
+ */
+export function clearApiServiceCache(): void {
+  instanceCache.clear();
+  activeBroadcastTenantId = undefined;
+}
 
 /**
  * Get an ApiService instance for a specific module.
@@ -82,7 +143,7 @@ const BASE_KEY = "__base__";
 export function getModuleApiService(moduleKey?: string): IApiService {
   if (!moduleKey) {
     if (!instanceCache.has(BASE_KEY)) {
-      instanceCache.set(BASE_KEY, new ApiService(BASE_URL));
+      instanceCache.set(BASE_KEY, createApiService(BASE_URL));
     }
     return instanceCache.get(BASE_KEY)!;
   }
@@ -95,11 +156,11 @@ export function getModuleApiService(moduleKey?: string): IApiService {
     // If module URL equals base URL, reuse the base instance to save memory
     if (moduleUrl === BASE_URL) {
       if (!instanceCache.has(BASE_KEY)) {
-        instanceCache.set(BASE_KEY, new ApiService(BASE_URL));
+        instanceCache.set(BASE_KEY, createApiService(BASE_URL));
       }
       instanceCache.set(moduleKey, instanceCache.get(BASE_KEY)!);
     } else {
-      instanceCache.set(moduleKey, new ApiService(moduleUrl));
+      instanceCache.set(moduleKey, createApiService(moduleUrl));
     }
   }
 

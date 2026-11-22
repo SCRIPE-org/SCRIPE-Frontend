@@ -38,6 +38,8 @@ export interface IdentityProviderData {
   buttonLabel: string | null;
   displayOrder: number;
   isActive: boolean;
+  trustIdpMfa: boolean;
+  rowVersion: string | null;
   createdAt: string;
   modifiedAt: string | null;
 }
@@ -120,6 +122,12 @@ export class IdentityProvider {
   get isActive(): boolean {
     return this.data.isActive;
   }
+  get trustIdpMfa(): boolean {
+    return this.data.trustIdpMfa;
+  }
+  get rowVersion(): string | null {
+    return this.data.rowVersion;
+  }
   get createdAt(): string {
     return this.data.createdAt;
   }
@@ -178,6 +186,7 @@ export interface IdentityProviderListItemData {
   enabledForAdmins: boolean;
   enabledForUsers: boolean;
   isActive: boolean;
+  trustIdpMfa: boolean;
   displayOrder: number;
   iconUrl: string | null;
   buttonColor: string | null;
@@ -210,6 +219,9 @@ export class IdentityProviderListItem {
   }
   get isActive(): boolean {
     return this.data.isActive;
+  }
+  get trustIdpMfa(): boolean {
+    return this.data.trustIdpMfa;
   }
   get displayOrder(): number {
     return this.data.displayOrder;
@@ -244,6 +256,14 @@ export class IdentityProviderListItem {
     if (this.enabledForAdmins) scopes.push("Admin");
     if (this.enabledForUsers) scopes.push("User");
     return scopes.length > 0 ? scopes.join(" & ") : "None";
+  }
+
+  /** Returns an immutable copy of this list item with the specified fields updated. */
+  copyWith(updates: Partial<IdentityProviderListItemData>): IdentityProviderListItem {
+    return new IdentityProviderListItem({
+      ...this.data,
+      ...updates,
+    });
   }
 }
 
@@ -301,6 +321,8 @@ export interface CreateIdentityProviderRequest {
   buttonColor?: string;
   buttonLabel?: string;
   displayOrder?: number;
+  isActive?: boolean;
+  trustIdpMfa?: boolean;
 }
 
 /**
@@ -329,4 +351,7 @@ export interface UpdateIdentityProviderRequest {
   buttonColor?: string;
   buttonLabel?: string;
   displayOrder?: number;
+  isActive?: boolean;
+  trustIdpMfa?: boolean;
+  rowVersion?: string | null;
 }

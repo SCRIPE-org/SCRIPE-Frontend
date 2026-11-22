@@ -1,4 +1,4 @@
-﻿import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import type { ComponentProps } from "react";
 import { describe, expect, it, vi } from "vitest";
 import { BookingOperationalActions } from "./BookingOperationalActions";
@@ -185,5 +185,19 @@ describe("BookingOperationalActions", () => {
     expect(completeBtn).toHaveClass("bg-nx-accent");
     fireEvent.click(completeBtn);
     expect(props.onComplete).toHaveBeenCalledOnce();
+  });
+
+  it("renders amber paid warning alert inside cancel dialog when booking has paidAmount", () => {
+    renderActions({
+      canCancel: true,
+      paidAmount: 750,
+      currencyCode: "EGP",
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "booking360.actions.cancel" }));
+
+    expect(screen.getByTestId("cancel-paid-warning")).toBeInTheDocument();
+    expect(screen.getByText("booking360.cancel.paidWarningTitle")).toBeInTheDocument();
+    expect(screen.getByText("booking360.cancel.paidWarningDescription")).toBeInTheDocument();
   });
 });

@@ -109,9 +109,13 @@ export function MaskedCustomFieldCell({
         : t("common.reveal") || "Reveal sensitive value";
 
   return (
-    <div className="inline-flex items-center gap-1.5 font-mono text-xs text-muted-foreground">
+    <div className="inline-flex items-center gap-1.5 font-mono text-xs text-nx-ink-3">
       <span
-        className={isRevealed ? "font-sans text-sm text-foreground" : "select-none tracking-widest"}
+        className={
+          isRevealed
+            ? "font-sans text-sm text-nx-ink tabular-nums"
+            : "select-none tracking-widest"
+        }
       >
         {formatted}
       </span>
@@ -126,15 +130,18 @@ export function MaskedCustomFieldCell({
                   size="icon"
                   onClick={handleToggle}
                   disabled={loading || !isAuthorized}
-                  className="h-6 w-6 rounded p-0.5 text-muted-foreground hover:bg-muted hover:text-foreground disabled:opacity-40"
+                  className="h-8 w-8 rounded-nx-sm p-1 text-nx-ink-3 hover:bg-nx-hover hover:text-nx-ink"
                   aria-label={tooltipLabel}
                 >
                   {loading ? (
-                    <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+                    <Loader2
+                      className="h-3.5 w-3.5 animate-spin text-nx-accent motion-reduce:animate-none"
+                      aria-hidden="true"
+                    />
                   ) : isRevealed ? (
-                    <EyeOff className="h-3.5 w-3.5" />
+                    <EyeOff className="h-3.5 w-3.5" aria-hidden="true" />
                   ) : (
-                    <Eye className="h-3.5 w-3.5" />
+                    <Eye className="h-3.5 w-3.5" aria-hidden="true" />
                   )}
                 </Button>
               </span>
@@ -145,7 +152,7 @@ export function MaskedCustomFieldCell({
           </Tooltip>
         </TooltipProvider>
       )}
-      {error && <span className="ml-1 text-[10px] text-destructive">{error}</span>}
+      {error && <span className="ms-1 text-[10px] text-nx-danger">{error}</span>}
     </div>
   );
 }

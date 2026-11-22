@@ -1,8 +1,8 @@
-// UI-EXCEPTION: compact studio layout
 "use client";
 
 import * as React from "react";
 import { useI18n } from "@core/providers/i18n-provider";
+import { Button } from "@core/ui/button";
 import { ShieldCheck, Smartphone, Inbox, ChevronRight } from "lucide-react";
 import { StepDots } from "./StepDots";
 import type { useForgotPasswordViewModel } from "../viewmodels/useForgotPasswordViewModel";
@@ -51,11 +51,12 @@ export function MethodStep({ vm, totalSteps }: MethodStepProps) {
 
       <div className="flex flex-col gap-3">
         {/* OTP option */}
-        <button
+        <Button
           type="button"
+          variant="ghost"
           onClick={() => vm.chooseMethod("otp")}
           disabled={vm.isLoading}
-          className="group flex items-center gap-4 rounded-2xl border p-4 text-start transition-all hover:scale-[1.02] active:scale-[0.99] disabled:opacity-50"
+          className="group flex h-auto items-center justify-start gap-4 whitespace-normal rounded-2xl border p-4 text-start transition-all hover:scale-[1.02] hover:bg-transparent active:scale-[0.99] disabled:opacity-50"
           style={{
             background: "var(--sx-chip-bg)",
             borderColor: "var(--sx-chip-border)",
@@ -90,14 +91,15 @@ export function MethodStep({ vm, totalSteps }: MethodStepProps) {
             className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5"
             style={{ color: "var(--sx-text-mute)" }}
           />
-        </button>
+        </Button>
 
         {/* Magic Link option */}
-        <button
+        <Button
           type="button"
+          variant="ghost"
           onClick={() => vm.chooseMethod("magic-link")}
           disabled={vm.isLoading}
-          className="group flex items-center gap-4 rounded-2xl border p-4 text-start transition-all hover:scale-[1.02] active:scale-[0.99] disabled:opacity-50"
+          className="group flex h-auto items-center justify-start gap-4 whitespace-normal rounded-2xl border p-4 text-start transition-all hover:scale-[1.02] hover:bg-transparent active:scale-[0.99] disabled:opacity-50"
           style={{
             background: "var(--sx-chip-bg)",
             borderColor: "var(--sx-chip-border)",
@@ -132,7 +134,7 @@ export function MethodStep({ vm, totalSteps }: MethodStepProps) {
             className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5"
             style={{ color: "var(--sx-text-mute)" }}
           />
-        </button>
+        </Button>
       </div>
 
       {vm.isLoading && (

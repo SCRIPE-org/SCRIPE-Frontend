@@ -4,7 +4,8 @@ export const AUTH_CORE_ENDPOINTS = {
   LOGIN: `${V1}/auth/admin/login`,
   LOGOUT: `${V1}/auth/admin/logout`,
   REFRESH: `${V1}/auth/admin/refresh`,
-  ME: `${V1}/Admins/me`,
+  PRINCIPAL: `${V1}/auth/admin/principal`,
+  DOSSIER: `${V1}/account/dossier`,
   IMPERSONATE: (id: string) => `${V1}/auth/admin/impersonate/${id}`,
   STOP_IMPERSONATION: `${V1}/auth/admin/stop-impersonation`,
   // ── Admin Password Reset (targets Admins table, not Users) ──
@@ -26,6 +27,7 @@ export const AUTH_CORE_ENDPOINTS = {
     CHALLENGE: `${V1}/auth/oidc/challenge`,
     CALLBACK: `${V1}/auth/oidc/callback`,
     AUTHORIZE: `/connect/authorize`,
+    LOGOUT: `/oidc/logout`,
     COMPLETE_WORKSPACE_SELECTION: `${V1}/auth/oidc/complete-workspace-selection`,
   },
   SAML: {

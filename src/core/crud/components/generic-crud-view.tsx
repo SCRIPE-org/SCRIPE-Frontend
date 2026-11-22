@@ -18,21 +18,41 @@
 "use client";
 
 import { Button } from "@core/ui/button";
+import { Card, CardHeader, CardTitle, CardContent } from "@core/ui/card";
+import { Badge } from "@core/ui/badge";
+import { Alert, AlertDescription } from "@core/ui/alert";
 import { GenericTable } from "./generic-table";
 import { GenericModal } from "./generic-modal";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@core/ui/dialog";
+import {
+  DataExchangeToolbarActions,
+  type DataExchangeFeatureConfig,
+} from "@core/data-exchange";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@core/ui/dialog";
 import { GenericForm, FieldConfig } from "@core/ui/forms/generic-form";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { Skeleton } from "@core/ui/skeleton";
 import { ErrorMessage } from "@core/ui/error-message";
 import { EmptyState } from "@core/ui/empty-state";
 import { PageHeader } from "@core/ui/page-header";
 import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@core/ui/tooltip";
 import { useEnhancedDelete } from "@core/hooks/use-enhanced-delete";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useSettings } from "@core/providers/settings-provider";
 import { cn } from "@core/common/utils";
 import type { PaginationInfo } from "@core/common/pagination";
-import { useI18n } from "@core/providers/i18n-provider";
+import { useCrudI18n } from "../hooks/useCrudI18n";
 import { useCallback, useMemo, memo, useEffect, useState, useRef } from "react";
 import {
   Users,
@@ -52,6 +72,8 @@ import {
   Download,
   Upload,
   Printer,
+  AlertCircle,
+  RefreshCw,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { usePermission } from "@core/hooks/use-permission";
@@ -64,6 +86,37 @@ import {
   decodeCustomFieldName,
   getCustomFieldsExtension,
 } from "@core/crud/customFieldsExtension";
+import {
+  GenericWorkflowKanban,
+  type WorkflowKanbanConfig,
+  type WorkflowKanbanStageConfig,
+  type DropEvaluationResult,
+  type DropState,
+  type CardDensity,
+  type SwimlaneMode,
+} from "../kanban";
+import {
+  CrudCardGridSection,
+  CrudSplitPaneSection,
+  CrudCalendarSection,
+} from "../views";
+import { TanStackCrudTable } from "../table";
+
+export type {
+  WorkflowKanbanConfig,
+  WorkflowKanbanStageConfig,
+  DropEvaluationResult,
+  DropState,
+  CardDensity,
+  SwimlaneMode,
+};
+export {
+  GenericWorkflowKanban,
+  TanStackCrudTable,
+  CrudCardGridSection,
+  CrudSplitPaneSection,
+  CrudCalendarSection,
+};
 
 /* ========================================
  * TYPE DEFINITIONS & INTERFACES
@@ -240,6 +293,29 @@ export interface PaginationConfig extends PaginationInfo {
 }
 
 /**
+ * Configuration for an explicit Kanban column
+ * @template TItem - The type of items displayed in the column
+ */
+export interface KanbanColumnConfig<TItem = any> {
+  /** The value matching item[kanbanGroupField] */
+  value: string;
+  /** Display label for the column */
+  label: string;
+  /** Accent or badge color styling (e.g. 'border-nx-line bg-nx-surface text-nx-ink') */
+  colorClass?: string;
+  /** Semantic indicator dot CSS classes (e.g. 'bg-info', 'bg-nx-accent') */
+  dotClass?: string;
+  /** Header container styling overrides */
+  headerClass?: string;
+  /** Column container styling overrides */
+  columnClass?: string;
+  /** Column icon element */
+  icon?: React.ReactNode;
+  /** Column summary/aggregate render function (e.g. total pipeline value) */
+  summary?: (items: TItem[]) => React.ReactNode;
+}
+
+/**
  * Main configuration interface for the GenericCrudView
  * @template TItem - The type of items being managed
  */
@@ -305,6 +381,8 @@ export interface CrudConfig<TItem = any> {
   hideAddButton?: boolean;
   /** Hide all action buttons (add and refresh) */
   hideActionButtons?: boolean;
+  /** Hide the page header completely (useful when embedded in a sub-shell) */
+  hidePageHeader?: boolean;
   /** Hide the actions column completely (simpler than returning [] from getActions) */
   hideActionsColumn?: boolean;
   /** Custom render function for actions column - allows complete customization */
@@ -315,16 +393,60 @@ export interface CrudConfig<TItem = any> {
   defaultView?: CrudViewMode;
   /** Form presentation surface for Create/Edit dialogs */
   formSurface?: CrudFormSurface;
+  /**
+   * Enterprise Workflow Kanban configuration (powered by @dnd-kit + @tanstack/react-virtual).
+   * Supports dynamic 2..N stages, swimlanes, and Smart 3-State Jira Drop Evaluation.
+   */
+  workflowKanbanConfig?: WorkflowKanbanConfig<TItem>;
   /** Field key used to group records into columns in Kanban view */
   kanbanGroupField?: string;
+  /** Explicit ordered columns for Kanban view with labels, colors, indicators, and summaries */
+  kanbanColumns?: KanbanColumnConfig<TItem>[];
+  /** Custom render function for Kanban card */
+  renderKanbanCard?: (item: TItem, actions: React.ReactNode, index: number) => React.ReactNode;
+  /** Custom full Kanban board override content when activeViewMode === "Kanban" */
+  customKanbanContent?: React.ReactNode;
+  /** Search bar configuration for the built-in GenericTable search input */
+  searchConfig?: {
+    enabled?: boolean;
+    placeholder?: string;
+    debounceMs?: number;
+    minSearchLength?: number;
+  };
+  /** Callback fired when an item is moved to another Kanban column (drag-and-drop or column transition) */
+  onKanbanItemMove?: (item: TItem, targetColumnValue: string) => void | Promise<void>;
+
+  /** Custom render function for CardGrid items */
+  renderCardGridItem?: (item: TItem, actions: React.ReactNode, index: number) => React.ReactNode;
+  /** Custom container class for CardGrid view */
+  cardGridClassName?: string;
+  /** Custom card className generator per item in CardGrid */
+  getCardClassName?: (item: TItem) => string;
+
+  /** Custom render function for SplitPane list items (left column) */
+  renderSplitListItem?: (item: TItem, isSelected: boolean, index: number) => React.ReactNode;
+  /** Custom render function for SplitPane detail panel (right column) */
+  renderSplitDetail?: (item: TItem, actions: React.ReactNode) => React.ReactNode;
+
   /** Field key used to group records by date in Calendar view */
   calendarDateField?: string;
+  /** Custom render function for Calendar items */
+  renderCalendarItem?: (item: TItem, actions: React.ReactNode, index: number) => React.ReactNode;
+  /** Custom group title formatter for Calendar view */
+  calendarGroupFormatter?: (rawValue: any, item: TItem) => string;
+
+  /** Where to render the view mode switcher: 'header' (default), 'toolbar', or 'both' */
+  viewSwitchPosition?: "header" | "toolbar" | "both";
+  /** Optional custom toolbar content rendered alongside the view mode switcher */
+  toolbarContent?: React.ReactNode;
   /** Built-in bulk toolbar capabilities (CSV export, CSV import, PDF/print) */
   bulkOptions?: {
     enableCsvExport?: boolean;
     enableCsvImport?: boolean;
     enablePdfPrint?: boolean;
   };
+  /** Enterprise Data Exchange Studio integration (import mapping studio, templates, formula-safe export) */
+  dataExchange?: DataExchangeFeatureConfig;
 
   /* ========================================
    * PERMISSIONS CONFIGURATION
@@ -383,11 +505,13 @@ interface GenericCrudViewProps<T> {
   pagination?: PaginationInfo & {
     onPageChange: (page: number) => void;
     onPageSizeChange?: (size: number) => void;
+    pageSizeOptions?: number[];
   };
   search?: {
     value: string;
     onChange: (term: string) => void;
     inputRef?: React.RefObject<HTMLInputElement | null>;
+    placeholder?: string;
   };
 
   // New configuration-based props
@@ -395,6 +519,9 @@ interface GenericCrudViewProps<T> {
 
   // Callback when create button is clicked
   onCreateClick?: () => void | Promise<void>;
+
+  /** Optional custom empty state node */
+  emptyState?: React.ReactNode;
 }
 
 function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
@@ -410,14 +537,35 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
     search: propSearch,
     config,
     onCreateClick,
+    emptyState,
   } = props;
   const settings = useSettings();
-  const { t } = useI18n();
+  const { t } = useCrudI18n();
   const { hasPermission } = usePermissions();
 
   // Enhanced delete system for professional confirmation dialogs
   const deleteSystem = useEnhancedDelete();
   const { operationSuccess, operationError } = useEnhancedToast();
+
+  const getViewModeLabel = useCallback(
+    (mode: CrudViewMode): string => {
+      switch (mode) {
+        case "Table":
+          return t("crud.views.table", { defaultValue: "Table" });
+        case "Kanban":
+          return t("crud.views.kanban", { defaultValue: "Kanban" });
+        case "CardGrid":
+          return t("crud.views.cardGrid", { defaultValue: "Card Grid" });
+        case "Calendar":
+          return t("crud.views.calendar", { defaultValue: "Calendar" });
+        case "SplitPane":
+          return t("crud.views.splitPane", { defaultValue: "Split Pane" });
+        default:
+          return mode;
+      }
+    },
+    [t]
+  );
 
   // Enhanced delete handler with professional confirmation dialog
   const handleDelete = useCallback(
@@ -785,9 +933,9 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
   }-${JSON.stringify(editFieldsOwn?.map((f) => f.name).sort())}-${config?.formKey || 0}`;
 
   // Auto-generate pagination and search for config-based usage
-  const pagination =
+  const rawPagination =
     propPagination ||
-    (config
+    (config && viewModel.pagination && Number.isFinite(viewModel.pagination.page)
       ? {
           ...viewModel.pagination,
           onPageChange: viewModel.changePage,
@@ -795,15 +943,48 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
         }
       : undefined);
 
-  const search =
-    propSearch ||
-    (config
+  const itemsLength = viewModel.items ? viewModel.items.length : 0;
+  const pagination = rawPagination
+    ? (() => {
+        const itemsCount = Number.isFinite(rawPagination.itemsCount)
+          ? Math.max(0, rawPagination.itemsCount)
+          : itemsLength;
+        const pageSize =
+          Number.isFinite(rawPagination.pageSize) && rawPagination.pageSize > 0
+            ? rawPagination.pageSize
+            : Math.max(itemsCount, 10);
+        const page =
+          Number.isFinite(rawPagination.page) && rawPagination.page > 0
+            ? rawPagination.page
+            : 1;
+        const pagesCount =
+          Number.isFinite(rawPagination.pagesCount) && rawPagination.pagesCount > 0
+            ? rawPagination.pagesCount
+            : Math.max(1, Math.ceil(itemsCount / pageSize));
+
+        return {
+          ...rawPagination,
+          page,
+          itemsCount,
+          pageSize,
+          pagesCount,
+        };
+      })()
+    : undefined;
+
+  const search = propSearch
+    ? {
+        ...propSearch,
+        placeholder: propSearch.placeholder ?? config?.searchConfig?.placeholder,
+      }
+    : config && config.searchConfig?.enabled !== false
       ? {
           value: viewModel.searchValue,
           onChange: viewModel.handleSearchChange,
           inputRef: viewModel.searchInputRef,
+          placeholder: config.searchConfig?.placeholder,
         }
-      : undefined);
+      : undefined;
 
   // ========================================
   // PERMISSION CHECKING LOGIC
@@ -923,6 +1104,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
     const res = config?.resource?.toLowerCase() || "";
 
     if (res.includes("staff") || res.includes("hrms") || res.includes("party")) return Users;
+    if (res.includes("crm") || res.includes("lead")) return Users;
     if (res.includes("work") || res.includes("task")) return ListTodo;
     if (res.includes("custom") || res.includes("field")) return Sliders;
     if (res.includes("analytics") || res.includes("metric") || res.includes("event"))
@@ -994,10 +1176,19 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [search, showAddButton, handleCreateClick, viewModel]);
 
-  const [activeViewMode, setActiveViewMode] = useState<CrudViewMode>(
-    config?.defaultView ?? config?.viewModes?.[0] ?? "Table"
-  );
+  const [userSelectedViewMode, setUserSelectedViewMode] = useState<CrudViewMode | null>(null);
+  const resolvedDefaultView: CrudViewMode =
+    config?.defaultView && config.viewModes?.includes(config.defaultView)
+      ? config.defaultView
+      : (config?.viewModes?.[0] ?? "Table");
+  const activeViewMode: CrudViewMode =
+    userSelectedViewMode &&
+    (!config?.viewModes || config.viewModes.includes(userSelectedViewMode))
+      ? userSelectedViewMode
+      : resolvedDefaultView;
+  const setActiveViewMode = setUserSelectedViewMode;
   const [splitSelectedId, setSplitSelectedId] = useState<string | null>(null);
+  const [isDataExchangeOpen, setIsDataExchangeOpen] = useState(false);
   const csvInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleCsvExport = useCallback(() => {
@@ -1063,6 +1254,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
           .map((l) => l.trim())
           .filter(Boolean);
         if (lines.length < 2) return;
+        const unsafeImportKeys = new Set(["__proto__", "constructor", "prototype"]);
         const headers = parseCsvLine(lines[0]);
         for (let i = 1; i < lines.length; i++) {
           const values = parseCsvLine(lines[i]);
@@ -1074,7 +1266,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
                 c.label.toLowerCase() === header.toLowerCase()
             );
             const key = matchedCol ? matchedCol.key : header;
-            if (key && key !== "id") {
+            if (key && key !== "id" && !unsafeImportKeys.has(key)) {
               payload[key] = values[idx] ?? "";
             }
           });
@@ -1135,9 +1327,12 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
   // pagination rather than rendering a skeleton in place. That is a layout
   // change too large to make safely here and is tracked separately.
   const anyModalOpen =
-    viewModel.isCreateModalOpen || viewModel.isEditModalOpen || viewModel.viewModalOpen;
+    viewModel.isCreateModalOpen ||
+    viewModel.isEditModalOpen ||
+    viewModel.viewModalOpen ||
+    isDataExchangeOpen;
 
-  if (viewModel.loading && viewModel.items.length === 0 && !anyModalOpen) {
+  if (viewModel.loading && viewModel.items.length === 0 && !anyModalOpen && !config?.toolbarContent) {
     return <LoadingSpinner showText={false} />;
   }
 
@@ -1147,6 +1342,55 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
 
   const availableViewModes: CrudViewMode[] =
     config?.viewModes && config.viewModes.length > 0 ? config.viewModes : ["Table"];
+
+  const renderViewSwitcher = (className?: string) => {
+    if (availableViewModes.length <= 1) return null;
+    return (
+      <fieldset
+        className={cn(
+          "m-0 min-w-0 inline-flex items-center rounded-nx-md border border-nx-line bg-nx-surface p-0.5",
+          className
+        )}
+        aria-label={t("crud.views.switcherLabel", { defaultValue: "View mode switcher" })}
+      >
+        {availableViewModes.map((mode) => {
+          const Icon =
+            mode === "Kanban"
+              ? Columns3
+              : mode === "CardGrid"
+                ? LayoutGrid
+                : mode === "Calendar"
+                  ? CalendarIcon
+                  : mode === "SplitPane"
+                    ? PanelLeft
+                    : Table2;
+          const active = activeViewMode === mode;
+          return (
+            <Button
+              key={mode}
+              type="button"
+              variant={active ? "secondary" : "ghost"}
+              size="sm"
+              aria-pressed={active}
+              onClick={() => setActiveViewMode(mode)}
+              data-testid={`toggle-${mode.toLowerCase()}-view`}
+              className={cn(
+                "min-h-[36px] h-9 px-3 text-xs",
+                active && "bg-nx-raised text-nx-ink font-semibold border border-nx-line-hi"
+              )}
+            >
+              <Icon className="me-1.5 h-3.5 w-3.5" aria-hidden="true" />
+              {getViewModeLabel(mode)}
+            </Button>
+          );
+        })}
+      </fieldset>
+    );
+  };
+
+  const effectiveDataExchange =
+    config?.dataExchange ??
+    (config?.entityTypeKey ? { entityKey: config.entityTypeKey } : undefined);
 
   const renderRowActionButtons = (row: any) => {
     if (config?.renderActions) {
@@ -1182,6 +1426,8 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
           ref={csvInputRef}
           type="file"
           accept=".csv,text/csv"
+          tabIndex={-1}
+          aria-label={t("common.importCsv", { defaultValue: "Import CSV" })}
           className="hidden"
           onChange={handleCsvImportFile}
         />
@@ -1190,46 +1436,25 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
       {/* The one page header. It owns the icon tile, the h1 and the description
           measure; the action cluster rides its actions slot, so a list page and
           a record page open identically. */}
-      <PageHeader
-        className="mb-0"
+      {!config?.hidePageHeader && (
+        <PageHeader
+          className="mb-0"
         icon={getPageIcon()}
         title={title}
         description={subtitle}
         actions={
           <>
-            {availableViewModes.length > 1 && (
-              <div
-                className="inline-flex items-center rounded-nx-md border border-nx-line bg-nx-surface p-0.5"
-                role="group"
-                aria-label="View mode switcher"
-              >
-                {availableViewModes.map((mode) => {
-                  const Icon =
-                    mode === "Kanban"
-                      ? Columns3
-                      : mode === "CardGrid"
-                        ? LayoutGrid
-                        : mode === "Calendar"
-                          ? CalendarIcon
-                          : mode === "SplitPane"
-                            ? PanelLeft
-                            : Table2;
-                  const active = activeViewMode === mode;
-                  return (
-                    <Button
-                      key={mode}
-                      type="button"
-                      variant={active ? "default" : "ghost"}
-                      size="sm"
-                      onClick={() => setActiveViewMode(mode)}
-                      className="h-7 px-2.5 text-xs"
-                    >
-                      <Icon className="me-1.5 h-3.5 w-3.5" aria-hidden="true" />
-                      {mode}
-                    </Button>
-                  );
-                })}
-              </div>
+            {renderViewSwitcher()}
+            {effectiveDataExchange && !effectiveDataExchange.hideToolbarActions && (
+              <DataExchangeToolbarActions
+                entityKey={effectiveDataExchange.entityKey}
+                enableMultiSheetMigration={effectiveDataExchange.enableMultiSheetMigration}
+                multiSheetEntityKeys={effectiveDataExchange.multiSheetEntityKeys}
+                activeSearch={effectiveDataExchange.activeSearch ?? viewModel.searchValue}
+                activeFilters={effectiveDataExchange.activeFilters}
+                onImportComplete={() => viewModel.refresh()}
+                onOverlayOpenChange={setIsDataExchangeOpen}
+              />
             )}
             {config?.bulkOptions?.enableCsvExport && (
               <Button
@@ -1240,7 +1465,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
                 className="flex-1 sm:flex-none"
               >
                 <Download className="me-2 h-4 w-4" aria-hidden="true" />
-                CSV
+                {t("common.exportCsv", { defaultValue: "CSV" })}
               </Button>
             )}
             {config?.bulkOptions?.enableCsvImport && effectivePermissions.canCreate && (
@@ -1252,7 +1477,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
                 className="flex-1 sm:flex-none"
               >
                 <Upload className="me-2 h-4 w-4" aria-hidden="true" />
-                Import CSV
+                {t("common.importCsv", { defaultValue: "Import CSV" })}
               </Button>
             )}
             {config?.bulkOptions?.enablePdfPrint && (
@@ -1264,31 +1489,56 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
                 className="flex-1 sm:flex-none"
               >
                 <Printer className="me-2 h-4 w-4" aria-hidden="true" />
-                Print / PDF
+                {t("common.printPdf", { defaultValue: "Print / PDF" })}
               </Button>
             )}
             {config?.customActions
               ?.filter(
                 (action) => !action.requiredPermission || hasPermission(action.requiredPermission)
               )
-              .map((action, index) => (
-                <Button
-                  key={index}
-                  onClick={() => handleCustomAction(action)}
-                  variant={action.variant || "default"}
-                  size={getButtonSize()}
-                  className={cn("flex-1 sm:flex-none", action.className)}
-                  loading={action.loading}
-                  disabled={action.disabled}
-                >
-                  {!action.loading && action.icon && (
-                    <span className="me-2" aria-hidden="true">
-                      {action.icon}
-                    </span>
-                  )}
-                  {action.label}
-                </Button>
-              ))}
+              .map((action, index) => {
+                const buttonNode = (
+                  <Button
+                    key={action.tooltip ? undefined : index}
+                    onClick={() => handleCustomAction(action)}
+                    variant={action.variant || "default"}
+                    size={getButtonSize()}
+                    className={cn(
+                      action.tooltip ? "w-full sm:w-auto" : "flex-1 sm:flex-none",
+                      action.className
+                    )}
+                    loading={action.loading}
+                    disabled={action.disabled}
+                  >
+                    {!action.loading && action.icon && (
+                      <span className="me-2" aria-hidden="true">
+                        {action.icon}
+                      </span>
+                    )}
+                    {action.label}
+                  </Button>
+                );
+
+                if (!action.tooltip) {
+                  return buttonNode;
+                }
+
+                return (
+                  <TooltipProvider key={index} delayDuration={200}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span
+                          className="inline-flex flex-1 sm:flex-none"
+                          tabIndex={action.disabled ? 0 : undefined}
+                        >
+                          {buttonNode}
+                        </span>
+                      </TooltipTrigger>
+                      <TooltipContent>{action.tooltip}</TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                );
+              })}
             {config?.enableBulkActions === true &&
               viewModel.selectedItems.length > 0 &&
               config?.bulkActions
@@ -1358,231 +1608,170 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
           </>
         }
       />
+      )}
+
+      {/* View Switcher & Toolbar */}
+      {((config?.hidePageHeader &&
+        (availableViewModes.length > 1 ||
+          (effectiveDataExchange && !effectiveDataExchange.hideToolbarActions))) ||
+        config?.toolbarContent ||
+        config?.viewSwitchPosition === "toolbar" ||
+        config?.viewSwitchPosition === "both") && (
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <div className="flex items-center gap-2">
+            {config?.toolbarContent}
+          </div>
+          {config?.hidePageHeader &&
+            effectiveDataExchange &&
+            !effectiveDataExchange.hideToolbarActions && (
+              <div className="flex items-center gap-2 sm:ms-auto">
+                <DataExchangeToolbarActions
+                  entityKey={effectiveDataExchange.entityKey}
+                  enableMultiSheetMigration={effectiveDataExchange.enableMultiSheetMigration}
+                  multiSheetEntityKeys={effectiveDataExchange.multiSheetEntityKeys}
+                  activeSearch={effectiveDataExchange.activeSearch ?? viewModel.searchValue}
+                  activeFilters={effectiveDataExchange.activeFilters}
+                  onImportComplete={() => viewModel.refresh()}
+                  onOverlayOpenChange={setIsDataExchangeOpen}
+                />
+              </div>
+            )}
+          {renderViewSwitcher("shrink-0 ms-auto")}
+        </div>
+      )}
 
       {/* Custom header content */}
       {config?.customHeaderContent && <div className="mb-6">{config.customHeaderContent}</div>}
 
+      {/* Non-destructive error banner when background refresh fails while existing items remain visible */}
+      {viewModel.error && viewModel.items.length > 0 && (
+        <Alert
+          variant="destructive"
+          className="flex flex-wrap items-center justify-between gap-3"
+        >
+          <div className="flex items-start gap-2.5">
+            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+            <AlertDescription className="text-sm">
+              {viewModel.error}
+            </AlertDescription>
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={viewModel.refresh}
+            className="shrink-0"
+          >
+            <RefreshCw className="me-1.5 h-3.5 w-3.5" aria-hidden="true" />
+            {t("common.retry", { defaultValue: "Retry" })}
+          </Button>
+        </Alert>
+      )}
+
       {activeViewMode === "CardGrid" ? (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {(viewModel.items || []).length === 0 ? (
-            <div className="col-span-full rounded-nx-lg border border-nx-line bg-nx-surface p-8">
-              <EmptyState bare icon={Inbox} title={t("common.noData")} />
-            </div>
-          ) : (
-            (viewModel.items || []).map((row: any, idx: number) => (
-              <div
-                key={row.id || idx}
-                className="flex flex-col justify-between gap-3 rounded-nx-lg border border-nx-line bg-nx-surface p-4"
-              >
-                <div className="space-y-2">
-                  {columns.map((col) => (
-                    <div key={col.key} className="flex items-center justify-between gap-2 text-sm">
-                      <span className="font-medium text-nx-ink-2">{col.label}</span>
-                      <span className="text-nx-ink">
-                        {col.render
-                          ? col.render(row[col.key], row, idx)
-                          : String(row[col.key] ?? "—")}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-                <div className="border-t border-nx-line pt-3">{renderRowActionButtons(row)}</div>
-              </div>
-            ))
-          )}
-        </div>
+        <CrudCardGridSection
+          items={viewModel.items || []}
+          columns={columns}
+          loading={viewModel.loading}
+          renderCardGridItem={config?.renderCardGridItem as any}
+          renderRowActionButtons={renderRowActionButtons}
+          cardGridClassName={config?.cardGridClassName}
+          getCardClassName={config?.getCardClassName as any}
+          emptyState={emptyState}
+          emptyLabel={t("common.noData")}
+        />
       ) : activeViewMode === "Kanban" ? (
-        (() => {
-          const groupKey =
-            config?.kanbanGroupField ||
-            columns.find((c) => /status|state|stage|phase|category|type/i.test(c.key))?.key ||
-            columns[0]?.key ||
-            "status";
-          const groups = new Map<string, any[]>();
-          for (const item of viewModel.items || []) {
-            const rawVal = item?.[groupKey];
-            const bucket =
-              rawVal === null || rawVal === undefined || rawVal === "" ? "Unassigned" : String(rawVal);
-            const list = groups.get(bucket) ?? [];
-            list.push(item);
-            groups.set(bucket, list);
-          }
-          if (groups.size === 0) {
-            groups.set("All", []);
-          }
-          return (
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3 xl:grid-cols-4">
-              {Array.from(groups.entries()).map(([bucket, bucketItems]) => (
-                <div
-                  key={bucket}
-                  className="flex flex-col gap-3 rounded-nx-lg border border-nx-line bg-nx-surface p-3"
-                >
-                  <div className="flex items-center justify-between border-b border-nx-line pb-2">
-                    <span className="text-sm font-semibold text-nx-ink">{bucket}</span>
-                    <span className="rounded-full bg-nx-hover px-2 py-0.5 text-xs font-medium text-nx-ink-2">
-                      {bucketItems.length}
-                    </span>
-                  </div>
-                  <div className="space-y-2.5">
-                    {bucketItems.map((row: any, idx: number) => (
-                      <div
-                        key={row.id || idx}
-                        className="space-y-2 rounded-nx-md border border-nx-line bg-nx-canvas p-3"
-                      >
-                        {columns.slice(0, 4).map((col) => (
-                          <div
-                            key={col.key}
-                            className="flex items-center justify-between gap-2 text-xs"
-                          >
-                            <span className="text-nx-ink-3">{col.label}</span>
-                            <span className="font-medium text-nx-ink">
-                              {col.render
-                                ? col.render(row[col.key], row, idx)
-                                : String(row[col.key] ?? "—")}
-                            </span>
-                          </div>
-                        ))}
-                        <div className="pt-1">{renderRowActionButtons(row)}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          );
-        })()
+        config?.customKanbanContent ? (
+          <>{config.customKanbanContent}</>
+        ) : config?.workflowKanbanConfig ? (
+          <GenericWorkflowKanban
+            config={config.workflowKanbanConfig as any}
+            items={viewModel.items || []}
+            renderRowActionButtons={renderRowActionButtons}
+            columns={columns}
+            emptyState={emptyState}
+            emptyLabel={t("common.noData")}
+          />
+        ) : (
+          (() => {
+            const groupKey =
+              config?.kanbanGroupField ||
+              columns.find((c) => /status|state|stage|phase|category|type/i.test(c.key))?.key ||
+              columns[0]?.key ||
+              "status";
+
+            const legacyStages: WorkflowKanbanStageConfig[] =
+              config?.kanbanColumns && config.kanbanColumns.length > 0
+                ? config.kanbanColumns.map((col) => ({
+                    stageKey: col.value,
+                    label: col.label,
+                    colorClass: col.colorClass,
+                    swatchClass: col.dotClass,
+                    headerClass: col.headerClass,
+                    columnClass: col.columnClass,
+                    icon: col.icon,
+                    headerSummary: col.summary as any,
+                  }))
+                : Array.from(
+                    new Set(
+                      (viewModel.items || []).map((item: any) => {
+                        const raw = item?.[groupKey];
+                        return raw === null || raw === undefined || raw === "" ? "Unassigned" : String(raw);
+                      })
+                    )
+                  ).map((key) => ({
+                    stageKey: String(key),
+                    label: String(key),
+                  }));
+
+            return (
+              <GenericWorkflowKanban
+                config={{
+                  stages: legacyStages.length > 0 ? legacyStages : [{ stageKey: "All", label: "All" }],
+                  stageField: groupKey,
+                  onMoveItem: (item: any, targetStageKey: string) => {
+                    if (config?.onKanbanItemMove) {
+                      config.onKanbanItemMove(item, targetStageKey);
+                    }
+                  },
+                  renderCard: config?.renderKanbanCard as any,
+                  getItemDisplayName: config?.getItemDisplayName as any,
+                }}
+                items={viewModel.items || []}
+                renderRowActionButtons={renderRowActionButtons}
+                columns={columns}
+                emptyState={emptyState}
+                emptyLabel={t("common.noData")}
+              />
+            );
+          })()
+        )
       ) : activeViewMode === "Calendar" ? (
-        (() => {
-          const dateKey =
-            config?.calendarDateField ||
-            columns.find((c) => /date|time|at|day|due|start/i.test(c.key))?.key ||
-            "createdAt";
-          const groups = new Map<string, any[]>();
-          for (const item of viewModel.items || []) {
-            const rawVal = item?.[dateKey];
-            const dateLabel = rawVal ? String(rawVal).slice(0, 10) : "Unscheduled";
-            const list = groups.get(dateLabel) ?? [];
-            list.push(item);
-            groups.set(dateLabel, list);
-          }
-          return (
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {groups.size === 0 ? (
-                <div className="col-span-full rounded-nx-lg border border-nx-line bg-nx-surface p-8">
-                  <EmptyState bare icon={Inbox} title={t("common.noData")} />
-                </div>
-              ) : (
-                Array.from(groups.entries()).map(([dateLabel, dateItems]) => (
-                  <div
-                    key={dateLabel}
-                    className="space-y-3 rounded-nx-lg border border-nx-line bg-nx-surface p-4"
-                  >
-                    <div className="flex items-center justify-between border-b border-nx-line pb-2">
-                      <span className="text-sm font-semibold text-nx-ink">{dateLabel}</span>
-                      <span className="text-xs text-nx-ink-3">{dateItems.length} items</span>
-                    </div>
-                    <div className="space-y-2">
-                      {dateItems.map((row: any, idx: number) => (
-                        <div
-                          key={row.id || idx}
-                          className="space-y-1.5 rounded-nx-md border border-nx-line p-2.5 text-xs"
-                        >
-                          {columns.slice(0, 3).map((col) => (
-                            <div key={col.key} className="flex items-center justify-between gap-2">
-                              <span className="text-nx-ink-3">{col.label}</span>
-                              <span className="font-medium text-nx-ink">
-                                {col.render
-                                  ? col.render(row[col.key], row, idx)
-                                  : String(row[col.key] ?? "—")}
-                              </span>
-                            </div>
-                          ))}
-                          <div className="pt-1">{renderRowActionButtons(row)}</div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          );
-        })()
+        <CrudCalendarSection
+          items={viewModel.items || []}
+          columns={columns}
+          calendarDateField={config?.calendarDateField}
+          calendarGroupFormatter={config?.calendarGroupFormatter as any}
+          renderCalendarItem={config?.renderCalendarItem as any}
+          renderRowActionButtons={renderRowActionButtons}
+          emptyState={emptyState}
+          emptyLabel={t("common.noData")}
+        />
       ) : activeViewMode === "SplitPane" ? (
-        (() => {
-          const items: any[] = viewModel.items || [];
-          const selectedRow =
-            items.find((r) => String(r.id) === String(splitSelectedId)) || items[0] || null;
-          return (
-            <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
-              <div className="space-y-2 rounded-nx-lg border border-nx-line bg-nx-surface p-3 lg:col-span-5">
-                {items.length === 0 ? (
-                  <EmptyState bare icon={Inbox} title={t("common.noData")} />
-                ) : (
-                  items.map((row: any, idx: number) => {
-                    const isCurrent = selectedRow && row.id === selectedRow.id;
-                    const primaryCol = columns[0];
-                    const secondaryCol = columns[1];
-                    return (
-                      <button
-                        key={row.id || idx}
-                        type="button"
-                        onClick={() => setSplitSelectedId(String(row.id))}
-                        className={cn(
-                          "w-full rounded-nx-md border p-3 text-start transition-colors",
-                          isCurrent
-                            ? "border-nx-accent bg-nx-accent-wash"
-                            : "border-nx-line hover:bg-nx-hover"
-                        )}
-                      >
-                        <div className="text-sm font-medium text-nx-ink">
-                          {primaryCol
-                            ? String(row[primaryCol.key] ?? row.id ?? `#${idx + 1}`)
-                            : String(row.id ?? `#${idx + 1}`)}
-                        </div>
-                        {secondaryCol && (
-                          <div className="mt-0.5 text-xs text-nx-ink-3">
-                            {String(row[secondaryCol.key] ?? "")}
-                          </div>
-                        )}
-                      </button>
-                    );
-                  })
-                )}
-              </div>
-              <div className="rounded-nx-lg border border-nx-line bg-nx-surface p-4 lg:col-span-7">
-                {selectedRow ? (
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between border-b border-nx-line pb-3">
-                      <h3 className="text-base font-semibold text-nx-ink">
-                        {config?.getItemDisplayName
-                          ? config.getItemDisplayName(selectedRow)
-                          : String(selectedRow.name || selectedRow.id || title)}
-                      </h3>
-                      {renderRowActionButtons(selectedRow)}
-                    </div>
-                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                      {columns.map((col, idx) => (
-                        <div
-                          key={col.key}
-                          className="rounded-nx-md border border-nx-line p-2.5 text-sm"
-                        >
-                          <div className="text-xs text-nx-ink-3">{col.label}</div>
-                          <div className="mt-1 font-medium text-nx-ink">
-                            {col.render
-                              ? col.render(selectedRow[col.key], selectedRow, idx)
-                              : String(selectedRow[col.key] ?? "—")}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ) : (
-                  <EmptyState bare icon={Inbox} title={t("common.noData")} />
-                )}
-              </div>
-            </div>
-          );
-        })()
+        <CrudSplitPaneSection
+          items={viewModel.items || []}
+          columns={columns}
+          selectedId={splitSelectedId}
+          onSelectId={setSplitSelectedId}
+          loading={viewModel.loading}
+          renderSplitListItem={config?.renderSplitListItem as any}
+          renderSplitDetail={config?.renderSplitDetail as any}
+          renderRowActionButtons={renderRowActionButtons}
+          getItemDisplayName={config?.getItemDisplayName as any}
+          defaultTitle={title}
+          emptyState={emptyState}
+          emptyLabel={t("common.noData")}
+        />
       ) : (
         <GenericTable
           data={viewModel.items}
@@ -1593,7 +1782,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
           selectedItems={viewModel.selectedItems}
           onSelectionChange={viewModel.setSelectedItems}
           pagination={
-            pagination
+            pagination && Number.isFinite(pagination.page) && Number.isFinite(pagination.pageSize)
               ? {
                   ...pagination,
                   currentPage: pagination.page, // Map page to currentPage for GenericTable
@@ -1603,11 +1792,12 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
           onSearch={search?.onChange}
           searchValue={search?.value}
           searchInputRef={search?.inputRef}
+          searchPlaceholder={search?.placeholder}
           // The empty branch routes through the core EmptyState, so every CRUD
           // list inherits the nexus empty anatomy. `bare` because the table
           // container already draws the surface; customTableProps can still
           // override the node below.
-          emptyMessage={<EmptyState bare icon={Inbox} title={t("common.noData")} />}
+          emptyMessage={emptyState || <EmptyState bare icon={Inbox} title={t("common.noData")} />}
           stickyActions={config?.stickyActions}
           renderActions={
             config?.renderActions ? (row) => config.renderActions?.(row as T) : undefined
@@ -1623,7 +1813,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
       <GenericModal
         open={viewModel.isCreateModalOpen}
         onOpenChange={viewModel.setIsCreateModalOpen}
-        title={t("crud.modal.createTitle", { entity: title })}
+        title={t("crud.modal.createTitle", { entity })}
         description={t("crud.modal.createDescription", { entity })}
         surface={config?.formSurface}
         // Screen's own fields only — see the editFormKey note above: keying on
@@ -1635,9 +1825,16 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
       >
         {config?.formSurface === "Wizard" && (
           <div className="mb-4 flex items-center gap-2 rounded-nx-md border border-nx-line bg-nx-hover px-3 py-2 text-xs text-nx-ink-2">
-            <span className="font-semibold text-nx-accent">Step-by-Step Wizard</span>
-            <span>•</span>
-            <span>Complete all required sections below to create {entity}</span>
+            <span className="font-semibold text-nx-accent">
+              {t("crud.wizard.stepByStep", { defaultValue: "Step-by-Step Wizard" })}
+            </span>
+            <span aria-hidden="true">•</span>
+            <span>
+              {t("crud.wizard.createInstruction", {
+                entity,
+                defaultValue: `Complete all required sections below to create ${entity}`,
+              })}
+            </span>
           </div>
         )}
         <GenericForm
@@ -1717,7 +1914,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
             viewModel.closeEditModal();
           }
         }}
-        title={t("crud.modal.editTitle", { entity: title })}
+        title={t("crud.modal.editTitle", { entity })}
         description={t("crud.modal.editDescription", { entity })}
         surface={config?.formSurface}
         // Frozen while the modal is closing. `closeEditModal` nulls
@@ -1729,9 +1926,16 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
       >
         {config?.formSurface === "Wizard" && (
           <div className="mb-4 flex items-center gap-2 rounded-nx-md border border-nx-line bg-nx-hover px-3 py-2 text-xs text-nx-ink-2">
-            <span className="font-semibold text-nx-accent">Step-by-Step Wizard</span>
-            <span>•</span>
-            <span>Review and update {entity} sections below</span>
+            <span className="font-semibold text-nx-accent">
+              {t("crud.wizard.stepByStep", { defaultValue: "Step-by-Step Wizard" })}
+            </span>
+            <span aria-hidden="true">•</span>
+            <span>
+              {t("crud.wizard.editInstruction", {
+                entity,
+                defaultValue: `Review and update ${entity} sections below`,
+              })}
+            </span>
           </div>
         )}
         <GenericForm
@@ -1800,6 +2004,12 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{t("crud.modal.viewTitle", { entity: title })}</DialogTitle>
+            <DialogDescription className="sr-only">
+              {t("crud.modal.viewDescription", {
+                entity: title,
+                defaultValue: `View ${title} details`,
+              })}
+            </DialogDescription>
           </DialogHeader>
           <GenericForm
             fields={viewFieldsWithCustom || createFieldsWithCustom || []}

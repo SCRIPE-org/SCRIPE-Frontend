@@ -25,20 +25,20 @@ export function CarouselLayout({
 }: LoginLayoutProps) {
   return (
     <div
-      className={`flex min-h-screen w-full ${BG_STYLE} login-page selection:bg-primary/20`}
+      className={`flex min-h-[100dvh] w-full ${BG_STYLE} login-page`}
       dir={direction}
       style={SPLIT_WRAPPER_STYLE}
     >
-      <div className="relative hidden flex-col justify-center overflow-hidden border-e border-border bg-[var(--login-surface,hsl(var(--muted)/0.4))] p-16 lg:flex lg:w-1/2 xl:w-[55%]">
+      <div className="relative hidden flex-col justify-center overflow-hidden border-e border-nx-line bg-[var(--login-surface,var(--nx-raised))] p-16 lg:flex lg:w-1/2 xl:w-[55%]">
         <div className="mb-8">
-          <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-xl border border-border bg-background shadow-sm">
+          <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-xl border border-nx-line bg-nx-surface">
             <LogoImg logoSrc={logoSrc} logoAlt={logoAlt} />
           </div>
         </div>
-        <h2 className="login-heading text-4xl font-bold tracking-tight text-[var(--login-text,hsl(var(--foreground)))]">
+        <h2 className="login-heading text-4xl font-bold tracking-tight text-[var(--login-text,var(--nx-ink))]">
           {branding?.loginHeadline || t("auth.branding.headline")}
         </h2>
-        <p className="mt-4 text-lg text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
+        <p className="mt-4 text-lg text-[var(--login-text-muted,var(--nx-ink-2))]">
           {branding?.loginSubtitle || t("auth.branding.subtitle")}
         </p>
         <SlotRenderer slotId="login.sidebar.content" slotConfig={slotConfig} className="mt-10" />
@@ -48,14 +48,14 @@ export function CarouselLayout({
           className="mt-auto pt-10"
         />
       </div>
-      <div className="relative flex w-full flex-col items-center justify-center px-6 py-12 lg:w-1/2 xl:w-[45%]">
+      <main className="relative flex w-full flex-col items-center justify-center px-6 py-12 lg:w-1/2 xl:w-[45%]">
         {topActions}
         <MobileLogo logoSrc={logoSrc} logoAlt={logoAlt} companyName={companyName} />
         {loginStep === "credentials" && <DesktopHeading companyName={companyName} />}
         {formContent}
         {footer}
         {footerSlot}
-      </div>
+      </main>
     </div>
   );
 }

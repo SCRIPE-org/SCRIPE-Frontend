@@ -1,74 +1,143 @@
 "use client";
 
+import { useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { container } from "@modules/profile/di";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useCoreSsoProviders } from "@core/hooks/use-auth-bridge";
-import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { sanitizeHttpUrl } from "@core/common/sanitize";
+import { useSudoStore } from "@core/store/useSudoStore";
+import { toast } from "@core/ui/sileo-toast";
+import type { AvailableSsoProvider } from "../../domain/entities/SovereignAccountEntities";
+import {
+  useAccountSecuritySliceViewModel,
+  sovereignAccountKeys,
+} from "./useSovereignAccountSlicesViewModel";
+import { ensureSudoElevation, isSudoCancelledError } from "../utils/sudoElevation";
+import { findOrphanedExternalLogins } from "../utils/enterprise-sso.utils";
+import { resolveProfileSaveErrorMessage } from "../utils/concurrency";
 
 /**
- * Exported constant defining parameters and fields for external login keys configurations.
+ * TanStack Query cache keys for linked external logins on `/account/security`.
  */
 export const externalLoginKeys = {
   all: ["profile", "external-logins"] as const,
 };
 
 /**
- * React hook/ViewModel orchestrating state and data flows for external logins view model.
- * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ * ViewModel hook coordinating live DB Enterprise SSO providers (`availableSsoProviders`),
+ * orphaned external login bindings, Sudo-gated federated link initiation (`/initiate-link`),
+ * and Sudo-gated unlinking.
  */
 export function useExternalLoginsViewModel() {
   const repo = container.profileRepository;
   const { t } = useI18n();
   const queryClient = useQueryClient();
-  const { toast } = useEnhancedToast();
+  const isSudoActive = useSudoStore((s) => s.isActive);
+  const { security, isLoadingSecurity } = useAccountSecuritySliceViewModel();
 
-  // Cross-module access goes through the core bridge, not the runtime component registry.
-  // The registry entry for `useSsoProviders` is only populated as a side effect of importing
-  // the auth module barrel; the profile route never imports it, so the lookup resolved to
-  // `undefined` and calling it crashed the page. The bridge is a static import, so the hook
-  // is always defined and its identity is stable across renders (Rules of Hooks).
-  const { providers, initiateSsoLogin, isLoading: isLoadingProviders } = useCoreSsoProviders();
-
-  // 1. Fetch existing linked accounts
-  const { data: externalLogins, isLoading: isLoadingLogins } = useQuery({
+  const {
+    data: externalLogins,
+    isLoading: isLoadingLogins,
+    isError: isLoginsError,
+    error: loginsError,
+    refetch,
+  } = useQuery({
     queryKey: externalLoginKeys.all,
     queryFn: () => repo.getExternalLogins(),
   });
 
-  // 2. Unlink Mutation
-  const { mutate: unlink, isPending: isUnlinking } = useMutation({
-    mutationFn: (id: string) => repo.unlinkExternalLogin(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: externalLoginKeys.all });
-      toast({
-        title: t("common.success"),
-        description: t("sso.accountUnlinked"),
-        variant: "default",
-      });
+  const invalidateSsoQueries = useCallback(() => {
+    void queryClient.invalidateQueries({ queryKey: externalLoginKeys.all });
+    void queryClient.invalidateQueries({ queryKey: sovereignAccountKeys.security() });
+    void queryClient.invalidateQueries({ queryKey: sovereignAccountKeys.context() });
+  }, [queryClient]);
+
+  const initiateLinkMutation = useMutation({
+    mutationFn: async (provider: AvailableSsoProvider) => {
+      const sudoToken = await ensureSudoElevation();
+      const protocol = provider.protocol.trim().toLowerCase();
+      const callbackPath = protocol === "saml" ? "/sso/saml/callback" : "/sso/callback";
+      const redirectUri =
+        typeof window !== "undefined" ? `${window.location.origin}${callbackPath}` : undefined;
+
+      const result = await repo.initiateExternalLoginLink(
+        {
+          identityProviderId: provider.encryptedId,
+          redirectUri,
+        },
+        sudoToken
+      );
+
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem("sso_linking", "true");
+        sessionStorage.setItem("sso_linking_origin", "/account/security");
+        if (protocol !== "saml") {
+          sessionStorage.setItem("sso_provider_id", provider.encryptedId);
+          if (result.state) {
+            sessionStorage.setItem("sso_state", result.state);
+          } else {
+            sessionStorage.removeItem("sso_state");
+          }
+        }
+        sessionStorage.removeItem("sso_code_verifier");
+        if (result.authorizationUrl) {
+          const safeAuthUrl = sanitizeHttpUrl(result.authorizationUrl);
+          if (!safeAuthUrl) {
+            throw new Error("Invalid SSO authorization redirect URL.");
+          }
+          window.location.href = safeAuthUrl;
+        }
+      }
+
+      return result;
     },
-    onError: (err: Error) => {
-      toast({
-        title: t("common.error"),
-        description: err.message || t("sso.unlinkError"),
-        variant: "destructive",
-      });
+    onError: (err: unknown) => {
+      if (isSudoCancelledError(err)) return;
+      toast.error(resolveProfileSaveErrorMessage(err, t));
     },
   });
 
-  // 3. Link Action
-  // We use special session storage state to tell the callback it's a "Link" flow
-  const handleLink = (providerId: string, protocol: string) => {
-    sessionStorage.setItem("sso_linking", "true");
-    initiateSsoLogin(providerId, protocol);
-  };
+  const unlinkMutation = useMutation({
+    mutationFn: async (externalLoginId: string) => {
+      const sudoToken = await ensureSudoElevation();
+      return repo.unlinkExternalLogin(externalLoginId, sudoToken);
+    },
+    onSuccess: () => {
+      invalidateSsoQueries();
+      toast.success(t("profile.security.ssoAccountUnlinkedNotice"));
+    },
+    onError: (err: unknown) => {
+      if (isSudoCancelledError(err)) return;
+      toast.error(resolveProfileSaveErrorMessage(err, t));
+    },
+  });
+
+  const availableSsoProviders = security?.availableSsoProviders ?? [];
+  const loginsList = externalLogins ?? [];
+  const orphanedExternalLogins = findOrphanedExternalLogins(availableSsoProviders, loginsList);
+
+  const rawLinkError = initiateLinkMutation.error;
+  const linkErrorMessage =
+    rawLinkError && !isSudoCancelledError(rawLinkError)
+      ? resolveProfileSaveErrorMessage(rawLinkError, t)
+      : null;
 
   return {
-    externalLogins: externalLogins ?? [],
-    providers,
-    isLoading: isLoadingLogins || isLoadingProviders,
-    isUnlinking,
-    unlink,
-    handleLink,
+    availableSsoProviders,
+    externalLogins: loginsList,
+    orphanedExternalLogins,
+    isLoading: isLoadingLogins || isLoadingSecurity,
+    isError: isLoginsError,
+    error: loginsError instanceof Error ? loginsError.message : null,
+    refetch,
+    isSudoActive,
+    isUnlinking: unlinkMutation.isPending,
+    unlink: unlinkMutation.mutate,
+    unlinkAsync: unlinkMutation.mutateAsync,
+    initiateFederatedLink: initiateLinkMutation.mutateAsync,
+    isInitiatingLink: initiateLinkMutation.isPending,
+    linkErrorMessage,
+    resetLinkError: initiateLinkMutation.reset,
+    invalidateSsoQueries,
   };
 }

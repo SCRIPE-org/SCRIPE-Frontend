@@ -8,7 +8,10 @@ export interface IPasskeyService {
   getAll(): Promise<PasskeyListResponseDto>;
 
   /** Begin passkey registration — get WebAuthn challenge from backend. */
-  beginRegistration(): Promise<PasskeyRegistrationOptionsResponseDto>;
+  beginRegistration(
+    deviceName?: string,
+    mode?: string
+  ): Promise<PasskeyRegistrationOptionsResponseDto>;
 
   /** Complete passkey registration — send attestation to backend. */
   completeRegistration(request: PasskeyCompleteRegistrationRequestDto): Promise<PasskeyResponseDto>;
@@ -47,18 +50,25 @@ export interface PasskeyListResponseDto {
  */
 export interface PasskeyRegistrationOptionsResponseDto {
   challenge: string;
-  rp: { id: string; name: string };
-  user: { id: string; name: string; displayName: string };
+  rpId?: string;
+  rpName?: string;
+  userId?: string;
+  userName?: string;
+  userDisplayName?: string;
+  rp?: { id: string; name: string };
+  user?: { id: string; name: string; displayName: string };
   pubKeyCredParams: Array<{ type: string; alg: number }>;
-  timeout: number;
-  attestation: string;
-  authenticatorSelection: {
+  timeout?: number;
+  attestation?: string;
+  authenticatorSelection?: {
     authenticatorAttachment?: string;
     residentKey?: string;
     requireResidentKey?: boolean;
     userVerification?: string;
   };
   excludeCredentials?: Array<{ type: string; id: string; transports?: string[] }>;
+  challengeToken?: string;
+  mode?: string;
 }
 
 /**
@@ -73,13 +83,21 @@ export interface PasskeyCompleteRegistrationRequestDto {
     response: {
       attestationObject: string;
       clientDataJSON: string;
+      transports?: string[] | null;
     };
+    clientExtensionResults?: Record<string, unknown>;
   };
+  challengeToken?: string;
+  attestationMode?: string;
+  credentialIdBase64?: string;
+  transports?: string[] | null;
+  clientExtensionResults?: Record<string, unknown>;
 }
 
 /**
  * Interface defining property specifications, keys types, and structural contract rules for passkey rename request dto.
  */
 export interface PasskeyRenameRequestDto {
-  name: string;
+  name?: string;
+  newName?: string;
 }

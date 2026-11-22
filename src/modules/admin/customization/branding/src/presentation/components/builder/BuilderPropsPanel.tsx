@@ -5,9 +5,6 @@
  * Renders dynamically based on the selected component's type.
  */
 "use client";
-// UI-EXCEPTION: compact studio layout — native <button> used for pixel-precise
-// compact controls (toggle switches, gradient pickers, layout thumbnails, etc.)
-// where @core/ui/button's padding/sizing would break the layout.
 
 import { cn } from "@/core/common/utils";
 import { sanitizeCss, sanitizeRichHtml } from "@core/common/sanitize";
@@ -96,9 +93,12 @@ export function BuilderPropsPanel({
           {t(catalog?.labelKey || "") || component.type}
         </p>
         <div className="flex items-center gap-1">
-          <button
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
             onClick={() => onToggleVisibility(component.id)}
-            className="flex h-7 w-7 items-center justify-center rounded-nx-sm transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
+            className="flex h-7 w-7 items-center justify-center rounded-nx-sm p-0 transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
             title={visibilityLabel}
             aria-label={visibilityLabel}
           >
@@ -107,24 +107,30 @@ export function BuilderPropsPanel({
             ) : (
               <EyeOff className="h-3.5 w-3.5 text-nx-ink-3" aria-hidden="true" />
             )}
-          </button>
-          <button
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
             onClick={() => onDuplicate(component.id)}
-            className="flex h-7 w-7 items-center justify-center rounded-nx-sm transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
+            className="flex h-7 w-7 items-center justify-center rounded-nx-sm p-0 transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
             title={t("studio.builder.duplicate")}
             aria-label={t("studio.builder.duplicate")}
           >
             <Copy className="h-3.5 w-3.5" aria-hidden="true" />
-          </button>
+          </Button>
           {!catalog?.required && (
-            <button
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
               onClick={() => onRemove(component.id)}
-              className="flex h-7 w-7 items-center justify-center rounded-nx-sm text-nx-danger transition-colors duration-nx-micro ease-nx-enter hover:bg-destructive/10 focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
+              className="flex h-7 w-7 items-center justify-center rounded-nx-sm p-0 text-nx-danger transition-colors duration-nx-micro ease-nx-enter hover:bg-destructive/10 hover:text-nx-danger focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
               title={t("studio.builder.remove")}
               aria-label={t("studio.builder.remove")}
             >
               <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
-            </button>
+            </Button>
           )}
         </div>
       </div>
@@ -138,12 +144,15 @@ export function BuilderPropsPanel({
               <p className="text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
                 {t("studio.builder.props.position")}
               </p>
-              <button
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
                 onClick={() => (component.locked ? onUnlock(component.id) : onLock(component.id))}
                 className={cn(
-                  "flex h-6 w-6 items-center justify-center rounded-nx-sm transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
+                  "flex h-6 w-6 items-center justify-center rounded-nx-sm p-0 transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
                   component.locked
-                    ? "bg-destructive/10 text-nx-danger"
+                    ? "bg-destructive/10 text-nx-danger hover:bg-destructive/15 hover:text-nx-danger"
                     : "text-nx-ink-3 hover:bg-nx-hover"
                 )}
                 title={component.locked ? t("studio.builder.unlock") : t("studio.builder.lock")}
@@ -156,7 +165,7 @@ export function BuilderPropsPanel({
                 ) : (
                   <Unlock className="h-3 w-3" aria-hidden="true" />
                 )}
-              </button>
+              </Button>
             </div>
 
             <div className="grid grid-cols-2 gap-2">
@@ -781,7 +790,6 @@ function ComponentSpecificProps({
               {t("studio.builder.props.textAlign")}
             </Label>
             <div className="mt-0.5 flex gap-1">
-              {/* UI-EXCEPTION: compact studio layout */}
               {(
                 [
                   { value: "left", label: t("studio.builder.props.dirLeft") },
@@ -789,18 +797,20 @@ function ComponentSpecificProps({
                   { value: "right", label: t("studio.builder.props.dirRight") },
                 ] as const
               ).map(({ value, label }) => (
-                <button
+                <Button
                   key={value}
+                  type="button"
+                  variant="ghost"
                   onClick={() => onUpdateProps({ textAlign: value })}
                   className={cn(
-                    "h-7 flex-1 rounded-nx-sm border text-[10px] font-medium transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
+                    "h-7 flex-1 rounded-nx-sm border p-0 text-[10px] font-medium transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
                     (props.textAlign || "center") === value
-                      ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
+                      ? "border-nx-accent bg-nx-accent-wash text-nx-accent hover:bg-nx-accent-wash hover:text-nx-accent"
                       : "border-nx-line bg-nx-ground text-nx-ink-3 hover:bg-nx-hover"
                   )}
                 >
                   {label}
-                </button>
+                </Button>
               ))}
             </div>
           </div>
@@ -1201,29 +1211,33 @@ function ComponentSpecificProps({
           />
           <div>
             <Label className="text-[10px] text-nx-ink-3">{t("studio.builder.props.rating")}</Label>
-            <div className="mt-0.5 flex gap-1">
+            <div className="mt-0.5 flex items-center gap-1">
               {[1, 2, 3, 4, 5].map((star) => (
-                // UI-EXCEPTION: compact studio layout
-                <button
+                <Button
                   key={star}
+                  type="button"
+                  variant="ghost"
+                  size="icon"
                   onClick={() => onUpdateProps({ rating: star })}
                   className={cn(
-                    "text-lg transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
+                    "h-auto w-auto p-0 text-lg transition-colors duration-nx-micro ease-nx-enter hover:bg-transparent focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
                     star <= ((props.rating as number) || 0)
-                      ? "text-warning"
+                      ? "text-warning hover:text-warning"
                       : "text-nx-ink-3 hover:text-warning/70"
                   )}
                   aria-label={t("studio.builder.props.ratingValue", { count: star })}
                 >
                   ★
-                </button>
+                </Button>
               ))}
-              <button
+              <Button
+                type="button"
+                variant="ghost"
                 onClick={() => onUpdateProps({ rating: 0 })}
-                className="ms-1 text-[10px] text-nx-ink-3 hover:text-nx-ink"
+                className="ms-1 h-auto p-0 text-[10px] font-normal text-nx-ink-3 hover:bg-transparent hover:text-nx-ink"
               >
                 {t("studio.builder.props.clear")}
-              </button>
+              </Button>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-2">
@@ -1468,18 +1482,20 @@ function ComponentSpecificProps({
                   { value: "right", label: t("studio.builder.props.dirRight") },
                 ] as const
               ).map(({ value, label }) => (
-                <button
+                <Button
                   key={value}
+                  type="button"
+                  variant="ghost"
                   onClick={() => onUpdateProps({ textAlign: value })}
                   className={cn(
-                    "h-7 flex-1 rounded-nx-sm border text-[10px] font-medium transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
+                    "h-7 flex-1 rounded-nx-sm border p-0 text-[10px] font-medium transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
                     (props.textAlign || "center") === value
-                      ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
+                      ? "border-nx-accent bg-nx-accent-wash text-nx-accent hover:bg-nx-accent-wash hover:text-nx-accent"
                       : "border-nx-line bg-nx-ground text-nx-ink-3 hover:bg-nx-hover"
                   )}
                 >
                   {label}
-                </button>
+                </Button>
               ))}
             </div>
           </div>
@@ -1589,7 +1605,9 @@ function ComponentSpecificProps({
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <Label className="text-[10px] text-nx-ink-3">{t("studio.builder.props.items")}</Label>
-              <button
+              <Button
+                type="button"
+                variant="ghost"
                 onClick={() => {
                   const newItems = [
                     ...featureItems,
@@ -1597,10 +1615,10 @@ function ComponentSpecificProps({
                   ];
                   onUpdateProps({ items: newItems });
                 }}
-                className="text-[10px] text-nx-accent transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink motion-reduce:transition-none"
+                className="h-auto p-0 text-[10px] font-normal text-nx-accent transition-colors duration-nx-micro ease-nx-enter hover:bg-transparent hover:text-nx-ink motion-reduce:transition-none"
               >
                 + {t("studio.builder.props.addItem")}
-              </button>
+              </Button>
             </div>
             {featureItems.map((item, idx) => (
               <div
@@ -1629,16 +1647,19 @@ function ComponentSpecificProps({
                     className="h-6 text-[10px]"
                   />
                 </div>
-                <button
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
                   onClick={() => {
                     const updated = featureItems.filter((_, i) => i !== idx);
                     onUpdateProps({ items: updated });
                   }}
-                  className="mt-0.5 shrink-0 p-0.5 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-danger motion-reduce:transition-none"
+                  className="mt-0.5 h-auto w-auto shrink-0 p-0.5 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:bg-transparent hover:text-nx-danger motion-reduce:transition-none"
                   aria-label={t("studio.builder.props.removeItem")}
                 >
                   <Trash2 className="h-3 w-3" aria-hidden="true" />
-                </button>
+                </Button>
               </div>
             ))}
             {featureItems.length === 0 && (
@@ -1660,7 +1681,9 @@ function ComponentSpecificProps({
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <Label className="text-[10px] text-nx-ink-3">{t("studio.builder.props.links")}</Label>
-            <button
+            <Button
+              type="button"
+              variant="ghost"
               onClick={() => {
                 const newLinks = [
                   ...footerLinks,
@@ -1668,10 +1691,10 @@ function ComponentSpecificProps({
                 ];
                 onUpdateProps({ links: newLinks });
               }}
-              className="text-[10px] text-nx-accent transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink motion-reduce:transition-none"
+              className="h-auto p-0 text-[10px] font-normal text-nx-accent transition-colors duration-nx-micro ease-nx-enter hover:bg-transparent hover:text-nx-ink motion-reduce:transition-none"
             >
               + {t("studio.builder.props.addLink")}
-            </button>
+            </Button>
           </div>
           {footerLinks.map((link, idx) => (
             <div
@@ -1700,16 +1723,19 @@ function ComponentSpecificProps({
                   className="h-6 text-[10px]"
                 />
               </div>
-              <button
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
                 onClick={() => {
                   const updated = footerLinks.filter((_, i) => i !== idx);
                   onUpdateProps({ links: updated });
                 }}
-                className="shrink-0 p-0.5 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-danger motion-reduce:transition-none"
+                className="h-auto w-auto shrink-0 p-0.5 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:bg-transparent hover:text-nx-danger motion-reduce:transition-none"
                 aria-label={t("studio.builder.props.removeItem")}
               >
                 <Trash2 className="h-3 w-3" aria-hidden="true" />
-              </button>
+              </Button>
             </div>
           ))}
           {footerLinks.length === 0 && (

@@ -46,19 +46,16 @@ export function FieldVersionDraftCard({
 
   if (hasDraft && activeDraft) {
     return (
-      <div className="space-y-3 rounded-xl border-2 border-amber-400/60 bg-amber-50/50 p-4 dark:bg-amber-950/20">
+      <div className="space-y-3 rounded-xl border-2 border-warning/40 bg-warning/10 p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-semibold text-amber-950 dark:text-amber-200">
+            <span className="text-sm font-semibold text-nx-ink">
               {t("customField.versions.activeDraftTitle", {
                 version: activeDraft.versionNumber,
                 defaultValue: `Active Draft (v${activeDraft.versionNumber})`,
               })}
             </span>
-            <Badge
-              variant="secondary"
-              className="bg-amber-200 text-xs text-amber-900 dark:bg-amber-900 dark:text-amber-100"
-            >
+            <Badge variant="warning" className="text-xs">
               {t("customField.versions.pendingPublish", { defaultValue: "Pending Publish" })}
             </Badge>
           </div>
@@ -78,7 +75,7 @@ export function FieldVersionDraftCard({
           </div>
         </div>
 
-        <p className="text-xs text-amber-800 dark:text-amber-300">
+        <p className="text-xs text-nx-warning-strong">
           {t("customField.versions.draftNotice", {
             defaultValue:
               "This draft is a snapshot from when it was created. It will not pick up any edits made to the live version while it stays open. Publishing replaces the live version with this draft, discarding any live edits made in the meantime.",
@@ -86,12 +83,12 @@ export function FieldVersionDraftCard({
         </p>
 
         {canMutateVersion && (
-          <div className="flex items-center gap-2 border-t border-amber-200 pt-2 dark:border-amber-900/60">
+          <div className="flex items-center gap-2 border-t border-warning/25 pt-2">
             <Button
               size="sm"
               onClick={onPublish}
               disabled={isMutating}
-              className="gap-1.5 bg-emerald-600 text-white hover:bg-emerald-700"
+              className="gap-1.5 bg-success text-success-foreground hover:bg-success/90"
             >
               <ArrowUpRight className="h-4 w-4" />
               {isPublishing

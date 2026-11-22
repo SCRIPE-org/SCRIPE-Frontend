@@ -78,7 +78,7 @@ export function TenantCommandHeader({
           {isEditing && (
             <Badge
               variant="outline"
-              className="border-nx-accent/40 animate-pulse gap-1 bg-nx-accent-wash text-[10px] font-semibold text-nx-accent"
+              className="border-nx-accent animate-pulse motion-reduce:animate-none gap-1 bg-nx-accent-wash text-[10px] font-semibold text-nx-accent"
             >
               <span>
                 {t("tenantCommandCenter.customization.editingLayout") || "Customizing Layout"}

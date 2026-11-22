@@ -2,8 +2,9 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { saveFacilityId } from "@modules/venue";
 import { getVenueContainer } from "@modules/venue/di";
-import type { Facility } from "@modules/venue";
+import { isClosureBlock } from "../../domain/entities/OperationsCalendar";
 import type {
   CalendarResource,
   OperationsCalendarBlock,
@@ -11,11 +12,13 @@ import type {
 } from "../../domain/entities/OperationsCalendar";
 import { localPrefillForInstant } from "./useCalendarLayout";
 import {
-  getSavedFacilityId,
-  saveFacilityId,
-} from "@modules/venue/shared/src/presentation/utils/venueFacilityPersistence";
+  getCalendarErrorMessage,
+  isCalendarFeatureUnavailable,
+  shiftCalendarDate,
+  todayInTimeZone,
+  useCalendarSetup,
+} from "./useCalendarSetup";
 
-const PAGE_SIZE = 100;
 const LANE_LIMIT = 50;
 
 const initialState: OperationsCalendarState = {
@@ -24,32 +27,8 @@ const initialState: OperationsCalendarState = {
   errorMessage: null,
 };
 
-function details(error: unknown): { errorCode?: string; statusCode?: number } {
-  return error instanceof Error
-    ? ((error as Error & { details?: { errorCode?: string; statusCode?: number } }).details ?? {})
-    : {};
-}
-
-function isFeatureUnavailable(error: unknown) {
-  return details(error).errorCode === "Error.Forbidden";
-}
-
-function message(error: unknown, fallback: string) {
-  return error instanceof Error && error.message ? error.message : fallback;
-}
-
-function shiftDate(value: string, days: number): string {
-  const date = new Date(`${value}T00:00:00Z`);
-  date.setUTCDate(date.getUTCDate() + days);
-  return date.toISOString().slice(0, 10);
-}
-
-function todayIn(timeZoneId: string): string {
-  return localPrefillForInstant(new Date().toISOString(), timeZoneId).date;
-}
-
 /**
- * Documentation for module export
+ * Primary ViewModel orchestrating operations calendar state, filters, and day loading.
  */
 export function useOperationsCalendarViewModel() {
   const router = useRouter();
@@ -60,149 +39,56 @@ export function useOperationsCalendarViewModel() {
     schedulableResourceRepository,
     commercialPricingRepository,
   } = getVenueContainer();
+
   const [state, setState] = useState(initialState);
-  const [setupLoading, setSetupLoading] = useState(true);
-  const [setupReady, setSetupReady] = useState(false);
-  const [facilities, setFacilities] = useState<Facility[]>([]);
-  const [allResources, setAllResources] = useState<CalendarResource[]>([]);
-  const [facilityId, setFacilityIdState] = useState("");
-  const [timeZoneId, setTimeZoneIdState] = useState("");
-  const [resourceId, setResourceIdState] = useState("");
-  const [date, setDateState] = useState(new Date().toISOString().slice(0, 10));
+  const [selectedClosure, setSelectedClosure] = useState<OperationsCalendarBlock | null>(null);
   const requestGeneration = useRef(0);
 
-  useEffect(() => {
-    let active = true;
-    const load = async () => {
-      try {
-        const [facilityPage, profilePage, resourcePage] = await Promise.all([
-          facilityRepository.getAll({ page: 1, pageSize: PAGE_SIZE }),
-          facilityResourceProfileRepository.getAll({ page: 1, pageSize: PAGE_SIZE }),
-          schedulableResourceRepository.getAll({ page: 1, pageSize: PAGE_SIZE }),
-        ]);
-        if (!active) return;
-        let pricingMap = new Map<string, string | null>();
-        if (commercialPricingRepository?.getResourceConfiguration) {
-          try {
-            const pricingEntries = await Promise.all(
-              resourcePage.items.map(async (resource) => {
-                try {
-                  const cfg = await commercialPricingRepository.getResourceConfiguration(
-                    resource.id
-                  );
-                  return [resource.id, cfg?.effectiveFromUtc ?? null] as const;
-                } catch {
-                  return [resource.id, null] as const;
-                }
-              })
-            );
-            pricingMap = new Map(pricingEntries);
-          } catch {
-            // Ignore pricing lookup failure if unavailable
-          }
-        }
-        const profiles = new Map(profilePage.items.map((profile) => [profile.id, profile]));
-        const facilityNames = new Map(
-          facilityPage.items.map((facility) => [facility.id, facility.name])
-        );
-        const defaultZone =
-          typeof Intl !== "undefined"
-            ? Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"
-            : "UTC";
-        const composed = resourcePage.items
-          .filter((resource) => !resource.isComposite)
-          .flatMap((resource) => {
-            const profile = profiles.get(resource.facilityResourceProfileId);
-            const facilityId = profile?.facilityId || (resource as any).facilityId || "";
-            const zone =
-              profile?.operatingPolicy?.timeZoneId ||
-              resource.slotPolicy?.timeZoneId ||
-              defaultZone;
-            if (!facilityId) return [];
-            return [
-              {
-                id: resource.id,
-                name: resource.name,
-                profileId: profile?.id || resource.facilityResourceProfileId,
-                profileName: profile?.name || resource.name,
-                facilityId: facilityId,
-                facilityName: facilityNames.get(facilityId) ?? profile?.name ?? "Facility",
-                resourceKindCode: profile?.resourceKindCode || "court",
-                timeZoneId: zone,
-                slotPolicy: resource.slotPolicy,
-                priceEffectiveFromUtc: pricingMap.get(resource.id) ?? null,
-              } satisfies CalendarResource,
-            ];
-          });
-        const validFacilityId = getSavedFacilityId(facilityPage.items);
-        const initialFacility =
-          (validFacilityId &&
-            facilityPage.items.find(
-              (f) => f.id === validFacilityId && composed.some((r) => r.facilityId === f.id)
-            )) ||
-          facilityPage.items.find((facility) =>
-            composed.some((resource) => resource.facilityId === facility.id)
-          ) ||
-          (validFacilityId && facilityPage.items.find((f) => f.id === validFacilityId)) ||
-          facilityPage.items[0];
-        const initialZone =
-          composed.find((resource) => resource.facilityId === initialFacility?.id)?.timeZoneId ??
-          composed[0]?.timeZoneId ??
-          defaultZone;
-        setFacilities(facilityPage.items);
-        setAllResources(composed);
-        setSetupReady(true);
-        setFacilityIdState(initialFacility?.id ?? "");
-        setTimeZoneIdState(initialZone);
-        if (initialZone) setDateState(todayIn(initialZone));
-      } catch (error) {
-        if (!active) return;
-        setState((current) => ({
-          ...current,
-          stage: isFeatureUnavailable(error) ? "featureUnavailable" : "error",
-          errorMessage: isFeatureUnavailable(error)
-            ? null
-            : message(error, "calendar-setup-failed"),
-        }));
-      } finally {
-        if (active) setSetupLoading(false);
-      }
-    };
-    void load();
-    return () => {
-      active = false;
-    };
-  }, [
+  const {
+    setupLoading,
+    setupReady,
+    facilities,
+    allResources,
+    facilityId,
+    setFacilityIdState,
+    timeZoneId,
+    setTimeZoneIdState,
+    resourceId,
+    setResourceIdState,
+    date,
+    setDateState,
+    syncUrl,
+  } = useCalendarSetup({
     facilityRepository,
     facilityResourceProfileRepository,
     schedulableResourceRepository,
     commercialPricingRepository,
-  ]);
+    onSetupError: setState,
+  });
 
-  const timeZoneOptions = useMemo(
-    () =>
-      Array.from(
-        new Set(
-          allResources
-            .filter((resource) => resource.facilityId === facilityId)
-            .map((resource) => resource.timeZoneId)
-        )
-      ).sort(),
-    [allResources, facilityId]
+  const timeZoneOptions = Array.from(
+    new Set(
+      allResources
+        .filter((resource) => resource.facilityId === facilityId)
+        .map((resource) => resource.timeZoneId),
+    ),
+  ).sort();
+
+  const facilityResources = allResources.filter(
+    (resource) => resource.facilityId === facilityId && resource.timeZoneId === timeZoneId,
   );
-  const facilityResources = useMemo(
-    () =>
-      allResources.filter(
-        (resource) => resource.facilityId === facilityId && resource.timeZoneId === timeZoneId
-      ),
-    [allResources, facilityId, timeZoneId]
-  );
+
   const visibleResources = useMemo(
     () =>
-      facilityResources
-        .filter((resource) => !resourceId || resource.id === resourceId)
+      allResources
+        .filter(
+          (resource) =>
+            resource.facilityId === facilityId &&
+            resource.timeZoneId === timeZoneId &&
+            (!resourceId || resource.id === resourceId),
+        )
         .slice(0, LANE_LIMIT),
-    [facilityResources, resourceId]
+    [allResources, facilityId, resourceId, timeZoneId],
   );
   const resourcesTruncated = !resourceId && facilityResources.length > LANE_LIMIT;
 
@@ -232,29 +118,32 @@ export function useOperationsCalendarViewModel() {
       if (generation !== requestGeneration.current) return null;
       setState((current) => ({
         ...current,
-        stage: isFeatureUnavailable(error) ? "featureUnavailable" : "error",
+        stage: isCalendarFeatureUnavailable(error) ? "featureUnavailable" : "error",
         day: null,
-        errorMessage: isFeatureUnavailable(error) ? null : message(error, "calendar-load-failed"),
+        errorMessage: isCalendarFeatureUnavailable(error) ? null : getCalendarErrorMessage(error),
       }));
       return null;
     }
   }, [date, operationsCalendarRepository, setupLoading, setupReady, timeZoneId, visibleResources]);
 
   useEffect(() => {
-    if (!setupLoading && setupReady) void loadDay();
+    if (setupLoading || !setupReady) return;
+    let cancelled = false;
+    void Promise.resolve().then(() => {
+      if (!cancelled) void loadDay();
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [loadDay, setupLoading, setupReady]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
     const handleUpdate = () => {
-      if (!setupLoading && setupReady) {
-        void loadDay();
-      }
+      if (!setupLoading && setupReady) void loadDay();
     };
     const handleVisibility = () => {
-      if (document.visibilityState === "visible" && !setupLoading && setupReady) {
-        void loadDay();
-      }
+      if (document.visibilityState === "visible" && !setupLoading && setupReady) void loadDay();
     };
     window.addEventListener("venue-booking-updated", handleUpdate);
     document.addEventListener("visibilitychange", handleVisibility);
@@ -273,12 +162,22 @@ export function useOperationsCalendarViewModel() {
     (value: string) => {
       invalidate();
       setDateState(value);
+      syncUrl({ date: value });
     },
-    [invalidate]
+    [invalidate, setDateState, syncUrl],
   );
-  const previousDay = useCallback(() => setDate(shiftDate(date, -1)), [date, setDate]);
-  const nextDay = useCallback(() => setDate(shiftDate(date, 1)), [date, setDate]);
-  const goToday = useCallback(() => setDate(todayIn(timeZoneId || "UTC")), [setDate, timeZoneId]);
+  const previousDay = useCallback(
+    () => setDate(shiftCalendarDate(date, -1)),
+    [date, setDate],
+  );
+  const nextDay = useCallback(
+    () => setDate(shiftCalendarDate(date, 1)),
+    [date, setDate],
+  );
+  const goToday = useCallback(
+    () => setDate(todayInTimeZone(timeZoneId || "UTC")),
+    [setDate, timeZoneId],
+  );
 
   const setFacilityId = useCallback(
     (value: string) => {
@@ -287,26 +186,24 @@ export function useOperationsCalendarViewModel() {
       setFacilityIdState(value);
       setTimeZoneIdState(zone);
       setResourceIdState("");
+      syncUrl({ facilityId: value, resourceId: "" });
       if (typeof window !== "undefined") {
         try {
           saveFacilityId(value);
           window.dispatchEvent(
-            new CustomEvent("venue-facility-changed", { detail: { facilityId: value } })
+            new CustomEvent("venue-facility-changed", { detail: { facilityId: value } }),
           );
         } catch {}
       }
     },
-    [allResources, invalidate]
+    [allResources, invalidate, setFacilityIdState, setResourceIdState, setTimeZoneIdState, syncUrl],
   );
 
   useEffect(() => {
     if (typeof window === "undefined") return;
     const handleFacilityChanged = (e: Event) => {
-      const customEvent = e as CustomEvent<{ facilityId: string }>;
-      const newFacilityId = customEvent.detail?.facilityId;
-      if (newFacilityId && newFacilityId !== facilityId) {
-        setFacilityId(newFacilityId);
-      }
+      const newFacilityId = (e as CustomEvent<{ facilityId: string }>).detail?.facilityId;
+      if (newFacilityId && newFacilityId !== facilityId) setFacilityId(newFacilityId);
     };
     window.addEventListener("venue-facility-changed", handleFacilityChanged);
     return () => window.removeEventListener("venue-facility-changed", handleFacilityChanged);
@@ -317,22 +214,25 @@ export function useOperationsCalendarViewModel() {
       invalidate();
       setTimeZoneIdState(value);
       setResourceIdState("");
+      syncUrl({ resourceId: "" });
     },
-    [invalidate]
+    [invalidate, setResourceIdState, setTimeZoneIdState, syncUrl],
   );
   const setResourceId = useCallback(
     (value: string) => {
       invalidate();
       setResourceIdState(value);
+      syncUrl({ resourceId: value });
     },
-    [invalidate]
+    [invalidate, setResourceIdState, syncUrl],
   );
 
   const openBlock = useCallback(
     (block: OperationsCalendarBlock) => {
-      router.push(`/venue/bookings/${encodeURIComponent(block.reservationId)}`);
+      if (isClosureBlock(block)) setSelectedClosure(block);
+      else router.push(`/venue/bookings/${encodeURIComponent(block.reservationId)}`);
     },
-    [router]
+    [router],
   );
 
   const createFromSlot = useCallback(
@@ -347,7 +247,7 @@ export function useOperationsCalendarViewModel() {
       });
       router.push(`/venue/bookings/new?${params.toString()}`);
     },
-    [router]
+    [router],
   );
 
   return {
@@ -355,6 +255,7 @@ export function useOperationsCalendarViewModel() {
     setupLoading,
     facilities,
     allResources,
+    facilityResources,
     visibleResources,
     resourcesTruncated,
     timeZoneOptions,
@@ -372,5 +273,8 @@ export function useOperationsCalendarViewModel() {
     refresh: loadDay,
     openBlock,
     createFromSlot,
+    selectedClosure,
+    setSelectedClosure,
+    closeClosure: () => setSelectedClosure(null),
   };
 }

@@ -1,4 +1,4 @@
-﻿/* eslint-disable unused-imports/no-unused-vars */
+/* eslint-disable unused-imports/no-unused-vars */
 "use client";
 
 import Link from "next/link";
@@ -6,13 +6,20 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   CalendarDays,
-  Sliders,
+  Settings,
   CircleDollarSign,
   ShieldAlert,
   GitFork,
   Plus,
   Receipt,
   CreditCard,
+  Users,
+  Building2,
+  BarChart3,
+  Search,
+  Tag,
+  MapPin,
+  Sliders,
 } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -27,7 +34,7 @@ interface Props {
 }
 
 /**
- * Documentation for module export
+ * Sovereign Venue module navigation bar implementing the 7 primary operator pillars.
  */
 export function VenueNav({ attentionCount = 0, className = "", hidePrimaryBar = false }: Props) {
   const pathname = usePathname();
@@ -35,31 +42,47 @@ export function VenueNav({ attentionCount = 0, className = "", hidePrimaryBar = 
   const isRtl = language === "ar";
 
   const canViewAttention = usePermission(VENUE_PERMISSIONS.VENUE_ATTENTION_VIEW);
-  const canViewPricing = usePermission(VENUE_PERMISSIONS.CATALOG_PRICING_VIEW_COMMERCIALS);
   const canViewReceivables = usePermission(VENUE_PERMISSIONS.FINANCE_RECEIVABLES_VIEW);
   const canViewPayments = usePermission(VENUE_PERMISSIONS.FINANCE_PAYMENTS_VIEW);
   const canViewMoney = canViewReceivables || canViewPayments;
+  const canViewCustomers = usePermission(VENUE_PERMISSIONS.CUSTOMER_PARTY_VIEW);
+  const canViewFacilities = usePermission(VENUE_PERMISSIONS.FACILITY_VIEW);
+  const canViewResources = usePermission(VENUE_PERMISSIONS.SCHEDULABLE_RESOURCE_VIEW);
+  const canViewPricing = usePermission(VENUE_PERMISSIONS.CATALOG_PRICING_VIEW_COMMERCIALS);
 
   // Determine active primary category
-  const isDashboard = pathname === "/venue";
-  const isCalendar =
-    pathname.startsWith("/venue/calendar") || pathname.startsWith("/venue/bookings");
-  const isResources = pathname === "/venue/resources" || pathname.startsWith("/venue/resources/");
-  const isMoney = pathname.startsWith("/venue/money");
-  const isAttention = pathname.startsWith("/venue/attention");
+  const isDashboard =
+    pathname === "/venue" ||
+    pathname.startsWith("/venue/attention") ||
+    pathname.startsWith("/venue/reports");
 
+  const isCalendar =
+    pathname.startsWith("/venue/calendar") ||
+    pathname.startsWith("/venue/bookings");
+
+  const isResources = pathname.startsWith("/venue/resources");
+
+  const isCustomers = pathname.startsWith("/venue/customers");
+
+  const isFacilities = pathname.startsWith("/venue/facilities");
+
+  const isMoney = pathname.startsWith("/venue/money") || pathname.startsWith("/venue/pricing");
+
+  const isSettings = pathname.startsWith("/venue/settings");
+
+  // 7 Primary Navigation Pillars
   const primaryItems = [
     {
       id: "overview",
-      label: t("venueNav.dashboard", {
-        defaultValue: t("venueNav.overview", { defaultValue: "Dashboard" }),
+      label: t("venueNav.overview", {
+        defaultValue: t("venueNav.dashboard", { defaultValue: "Dashboard" }),
       }),
       href: "/venue",
       icon: LayoutDashboard,
       active: isDashboard,
     },
     {
-      id: "operations",
+      id: "calendar",
       label: t("venueNav.calendar", {
         defaultValue: t("venueNav.operations", { defaultValue: "Calendar" }),
       }),
@@ -69,14 +92,36 @@ export function VenueNav({ attentionCount = 0, className = "", hidePrimaryBar = 
       badge: canViewAttention && attentionCount > 0 ? attentionCount : undefined,
     },
     {
-      id: "setup",
+      id: "resources",
       label: t("venueNav.resources", {
-        defaultValue: t("venueNav.setup", { defaultValue: "Resources" }),
+        defaultValue: t("venueNav.setup", { defaultValue: "Courts & Spaces" }),
       }),
       href: "/venue/resources",
       icon: GitFork,
       active: isResources,
     },
+    ...(canViewCustomers
+      ? [
+          {
+            id: "customers",
+            label: t("venueNav.customers", { defaultValue: "Customers" }),
+            href: "/venue/customers",
+            icon: Users,
+            active: isCustomers,
+          },
+        ]
+      : []),
+    ...(canViewFacilities
+      ? [
+          {
+            id: "facilities",
+            label: t("venueNav.facilities", { defaultValue: "Branches & Facilities" }),
+            href: "/venue/facilities",
+            icon: Building2,
+            active: isFacilities,
+          },
+        ]
+      : []),
     ...(canViewMoney
       ? [
           {
@@ -93,6 +138,13 @@ export function VenueNav({ attentionCount = 0, className = "", hidePrimaryBar = 
           },
         ]
       : []),
+    {
+      id: "settings",
+      label: t("venueNav.settings", { defaultValue: "Settings" }),
+      href: "/venue/settings",
+      icon: Settings,
+      active: isSettings,
+    },
   ];
 
   // Secondary items based on active primary context
@@ -104,19 +156,45 @@ export function VenueNav({ attentionCount = 0, className = "", hidePrimaryBar = 
     badge?: number;
   }> = [];
 
-  if (isCalendar) {
+  if (isDashboard) {
+    secondaryLinks = [
+      ...(canViewAttention
+        ? [
+            {
+              href: "/venue/attention",
+              label: t("venueNav.attention", { defaultValue: "Attention Queue" }),
+              icon: ShieldAlert,
+              active: pathname.startsWith("/venue/attention"),
+              badge: attentionCount > 0 ? attentionCount : undefined,
+            },
+          ]
+        : []),
+      {
+        href: "/venue/reports",
+        label: t("venueNav.reports", { defaultValue: "Reports & Analytics" }),
+        icon: BarChart3,
+        active: pathname.startsWith("/venue/reports"),
+      },
+    ];
+  } else if (isCalendar) {
     secondaryLinks = [
       {
         href: "/venue/calendar",
-        label: t("venueNav.calendar", { defaultValue: "Calendar" }),
+        label: t("venueNav.calendar", { defaultValue: "Calendar Grid" }),
         icon: CalendarDays,
-        active: pathname === "/venue/calendar",
+        active: pathname === "/venue/calendar" && !pathname.includes("newBooking"),
       },
       {
-        href: "/venue/bookings/new",
+        href: "/venue/calendar?newBooking=true",
         label: t("venueNav.newBooking", { defaultValue: "New Booking" }),
         icon: Plus,
-        active: pathname.startsWith("/venue/bookings/new"),
+        active: pathname.includes("newBooking") || pathname.startsWith("/venue/bookings/new"),
+      },
+      {
+        href: "/venue/calendar?findSlot=true",
+        label: t("venueNav.findSlot", { defaultValue: "Find Available Slot" }),
+        icon: Search,
+        active: false,
       },
       ...(canViewAttention && attentionCount > 0
         ? [
@@ -144,20 +222,39 @@ export function VenueNav({ attentionCount = 0, className = "", hidePrimaryBar = 
         icon: Plus,
         active: false,
       },
+    ];
+  } else if (isFacilities) {
+    secondaryLinks = [
       {
-        href: "/venue/settings",
-        label: t("venueNav.advancedSetup", { defaultValue: "Settings" }),
-        icon: Sliders,
-        active: pathname.startsWith("/venue/settings"),
+        href: "/venue/facilities",
+        label: t("venueNav.facilities", { defaultValue: "Facilities & Complexes" }),
+        icon: Building2,
+        active: pathname === "/venue/facilities",
+      },
+      {
+        href: "/venue/facilities?tab=sites",
+        label: t("venueNav.sites", { defaultValue: "Campuses & Branches" }),
+        icon: MapPin,
+        active: pathname.includes("tab=sites"),
       },
     ];
   } else if (isMoney) {
     secondaryLinks = [
+      ...(canViewReceivables && canViewPayments
+        ? [
+            {
+              href: "/venue/money",
+              label: t("venueNav.financialOverview", { defaultValue: "Financial Overview" }),
+              icon: CircleDollarSign,
+              active: pathname === "/venue/money",
+            },
+          ]
+        : []),
       ...(canViewReceivables
         ? [
             {
               href: "/venue/money/receivables",
-              label: t("venueNav.receivables", { defaultValue: "Receivables" }),
+              label: t("venueNav.receivables", { defaultValue: "Invoices & Receivables" }),
               icon: Receipt,
               active: pathname.startsWith("/venue/money/receivables"),
             },
@@ -167,21 +264,36 @@ export function VenueNav({ attentionCount = 0, className = "", hidePrimaryBar = 
         ? [
             {
               href: "/venue/money/payments",
-              label: t("venueNav.payments", { defaultValue: "Payments" }),
+              label: t("venueNav.payments", { defaultValue: "Payment History" }),
               icon: CreditCard,
               active: pathname.startsWith("/venue/money/payments"),
             },
           ]
         : []),
+      ...(canViewPricing
+        ? [
+            {
+              href: "/venue/pricing",
+              label: t("venueNav.pricing", { defaultValue: "Pricing & Rates" }),
+              icon: Tag,
+              active: pathname.startsWith("/venue/pricing"),
+            },
+          ]
+        : []),
     ];
-  } else if (isAttention) {
+  } else if (isSettings) {
     secondaryLinks = [
       {
-        href: "/venue/attention",
-        label: t("venueNav.attention", { defaultValue: "Attention" }),
-        icon: ShieldAlert,
-        active: true,
-        badge: attentionCount > 0 ? attentionCount : undefined,
+        href: "/venue/settings",
+        label: t("venueNav.generalSettings", { defaultValue: "General Settings" }),
+        icon: Settings,
+        active: pathname === "/venue/settings" && !pathname.includes("tab=profile"),
+      },
+      {
+        href: "/venue/settings?tab=profile",
+        label: t("venueNav.venueProfile", { defaultValue: "Venue Profile" }),
+        icon: Sliders,
+        active: pathname.includes("tab=profile") || pathname.startsWith("/venue/venue-setup"),
       },
     ];
   }

@@ -52,7 +52,8 @@ export class TenantModel {
     public readonly domainCount?: number,
     public readonly adminEmail?: string,
     public readonly countryCode?: string,
-    public readonly timeZone?: string
+    public readonly timeZone?: string,
+    public readonly tenantKind?: string
   ) {}
   static fromJson(json: TenantJson): TenantModel {
     return new TenantModel(
@@ -78,7 +79,8 @@ export class TenantModel {
       json.domainCount,
       json.adminEmail,
       json.countryCode,
-      json.timeZone
+      json.timeZone,
+      json.tenantKind
     );
   }
   toJson(): TenantJson {
@@ -104,6 +106,7 @@ export class TenantModel {
       adminEmail: this.adminEmail,
       countryCode: this.countryCode,
       timeZone: this.timeZone,
+      tenantKind: this.tenantKind,
     };
   }
 }
@@ -125,7 +128,8 @@ export class TenantTreeNodeModel {
     public readonly isSuspended?: boolean,
     public readonly suspensionType?: string,
     public readonly suspensionReason?: string,
-    public readonly subscriptionStatus?: string
+    public readonly subscriptionStatus?: string,
+    public readonly tenantKind?: string
   ) {}
   static fromJson(json: TenantTreeNodeJson): TenantTreeNodeModel {
     return new TenantTreeNodeModel(
@@ -142,7 +146,8 @@ export class TenantTreeNodeModel {
       json.isSuspended,
       json.suspensionType,
       json.suspensionReason,
-      json.subscriptionStatus
+      json.subscriptionStatus,
+      json.tenantKind
     );
   }
   toJson(): TenantTreeNodeJson {
@@ -160,6 +165,7 @@ export class TenantTreeNodeModel {
       editionName: this.editionName,
       editionEndDate: this.editionEndDate,
       subscriptionStatus: this.subscriptionStatus,
+      tenantKind: this.tenantKind,
       children: this.children.map((c) => c.toJson()),
     };
   }

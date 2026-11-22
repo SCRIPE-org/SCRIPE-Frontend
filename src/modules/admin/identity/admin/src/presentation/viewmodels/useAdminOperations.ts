@@ -192,7 +192,7 @@ export function useAdminOperations(params: AdminOperationsParams) {
     onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: qk.admins.all });
       try {
-        const user = await authRepository.getMe();
+        const user = await authRepository.getCurrentPrincipal();
         if (user) {
           setAuth(user, user.permissions || [], []);
         }
@@ -297,7 +297,7 @@ export function useAdminOperations(params: AdminOperationsParams) {
         const isExplicitTenant = !!tenantId;
         const result =
           useMyTenant && !isExplicitTenant
-            ? await roleRepository.getMyTenantRoles({ search: query, page: 1, pageSize: 20 })
+            ? await roleRepository.getCurrentTenantRoles({ search: query, page: 1, pageSize: 20 })
             : await roleRepository.getAll({
                 search: query,
                 page: 1,
@@ -324,7 +324,7 @@ export function useAdminOperations(params: AdminOperationsParams) {
         const isExplicitTenant = !!tenantId;
         const result =
           useMyTenant && !isExplicitTenant
-            ? await userGroupRepository.getMyTenantGroups({
+            ? await userGroupRepository.getCurrentTenantGroups({
                 search: query,
                 page: 1,
                 pageSize: 20,

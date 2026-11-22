@@ -27,12 +27,16 @@
       "@modules/auth/*": ["./src/modules/shared/auth/*"],
       "@modules/communication": ["./src/modules/admin/communication"],
       "@modules/communication/*": ["./src/modules/admin/communication/*"],
+      "@modules/crm": ["./src/modules/crm"],
+      "@modules/crm/*": ["./src/modules/crm/*"],
       "@modules/compliance": ["./src/modules/admin/compliance"],
       "@modules/compliance/*": ["./src/modules/admin/compliance/*"],
       "@modules/custom-fields": ["./src/modules/custom-fields/custom-fields"],
       "@modules/custom-fields/*": ["./src/modules/custom-fields/custom-fields/*"],
       "@modules/customization": ["./src/modules/admin/customization"],
       "@modules/customization/*": ["./src/modules/admin/customization/*"],
+      "@modules/data-transfer": ["./src/modules/admin/data-transfer"],
+      "@modules/data-transfer/*": ["./src/modules/admin/data-transfer/*"],
       "@modules/ecosystem": ["./src/modules/admin/ecosystem"],
       "@modules/ecosystem/*": ["./src/modules/admin/ecosystem/*"],
       "@modules/entitlements": ["./src/modules/billing/entitlements"],
@@ -71,5 +75,5 @@
     "**/*.mts",
     ".storybook/**/*.ts"
   ],
-  "exclude": ["node_modules", "vitest.config.ts", "vitest.setup.ts"]
+  "exclude": ["node_modules", "vitest.config.ts", "vitest.setup.ts", "src/core/ui/legacy-toast-backup"]
 }

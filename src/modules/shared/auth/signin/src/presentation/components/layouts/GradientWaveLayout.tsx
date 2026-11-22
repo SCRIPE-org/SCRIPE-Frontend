@@ -21,7 +21,7 @@ export function GradientWaveLayout({
 }: LoginLayoutProps) {
   return (
     <div
-      className={`flex min-h-screen w-full flex-col ${BG_STYLE} login-page selection:bg-primary/20`}
+      className={`flex min-h-[100dvh] w-full flex-col ${BG_STYLE} login-page`}
       dir={direction}
       style={WRAPPER_STYLE}
     >
@@ -29,35 +29,36 @@ export function GradientWaveLayout({
       {/* Top branded section */}
       <div
         className="relative flex flex-col items-center justify-center px-8 pb-24 pt-20 text-center"
-        style={{ backgroundColor: "var(--login-surface, hsl(var(--muted)/0.4))" }}
+        style={{ backgroundColor: "var(--login-surface, var(--nx-raised))" }}
       >
-        <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border border-border bg-background shadow-sm">
+        <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border border-nx-line bg-nx-surface">
           <LogoImg logoSrc={logoSrc} logoAlt={logoAlt} />
         </div>
-        <h1 className="login-heading mt-6 text-4xl font-bold tracking-tight text-[var(--login-text,hsl(var(--foreground)))]">
+        <h1 className="login-heading mt-6 text-4xl font-bold tracking-tight text-[var(--login-text,var(--nx-ink))]">
           {companyName}
         </h1>
-        <p className="mt-3 text-base text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
+        <p className="mt-3 text-base text-[var(--login-text-muted,var(--nx-ink-2))]">
           {branding?.loginSubtitle || t("auth.branding.subtitle")}
         </p>
         {/* Wave SVG divider */}
         <svg
-          className="absolute -bottom-1 left-0 w-full"
+          aria-hidden="true"
+          className="absolute -bottom-1 inset-x-0 w-full"
           viewBox="0 0 1440 100"
           preserveAspectRatio="none"
           style={{ height: "60px" }}
         >
           <path
             d="M0,40 C360,100 720,0 1080,60 C1260,80 1380,50 1440,40 L1440,100 L0,100 Z"
-            fill="var(--login-bg, hsl(var(--background)))"
+            fill="var(--login-bg, var(--nx-ground))"
           />
         </svg>
       </div>
       {/* Bottom form section */}
-      <div className="flex flex-1 flex-col items-center justify-center px-6 py-12">
+      <main className="flex flex-1 flex-col items-center justify-center px-6 py-12">
         {formContent}
         {footerSlot}
-      </div>
+      </main>
     </div>
   );
 }

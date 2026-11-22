@@ -1,4 +1,3 @@
-// UI-EXCEPTION: compact studio layout
 /**
  * Tenant Tabs Component
  *
@@ -15,9 +14,19 @@
 
 import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useAppStore } from "@core/store/useAppStore";
 import { Card, CardContent } from "@core/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@core/ui/tabs";
-import { Users, Shield, Building2, Settings, Crown, UsersRound, Globe } from "lucide-react";
+import {
+  Users,
+  Shield,
+  Building2,
+  Settings,
+  Crown,
+  UsersRound,
+  Globe,
+  KeyRound,
+} from "lucide-react";
 import { cn } from "@core/common/utils";
 
 // Tab components
@@ -28,16 +37,25 @@ import { SubTenantsTab } from "./tabs/SubTenantsTab";
 import { TenantSettingsTab } from "./tabs/TenantSettingsTab";
 import { TenantEntitlementsTab } from "./tabs/TenantEntitlementsTab";
 import { TenantDomainsTab } from "./tabs/TenantDomainsTab";
+import { TenantIdentityProvidersTab } from "./tabs/TenantIdentityProvidersTab";
 
 interface TenantTabsProps {
   tenantId: string;
   tenantName: string;
   tenantCode: string;
   parentTenantId?: string;
+  isInternal?: boolean;
 }
 
 type TabValue =
-  "entitlements" | "admins" | "roles" | "userGroups" | "subtenants" | "settings" | "domains";
+  | "entitlements"
+  | "admins"
+  | "roles"
+  | "userGroups"
+  | "subtenants"
+  | "settings"
+  | "domains"
+  | "identityProviders";
 
 // One literal class per tab — never assembled from a template string, so
 // Tailwind's static scanner can see every combination in source text.
@@ -49,14 +67,23 @@ const TAB_ACTIVE_ACCENT: Record<TabValue, string> = {
   subtenants: "group-data-[state=active]:text-success",
   settings: "group-data-[state=active]:text-nx-ink-2",
   domains: "group-data-[state=active]:text-info",
+  identityProviders: "group-data-[state=active]:text-nx-accent",
 };
 
 /**
  * Presentation UI component rendering the tenant tabs.
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
-export function TenantTabs({ tenantId, tenantName, tenantCode, parentTenantId }: TenantTabsProps) {
+export function TenantTabs({
+  tenantId,
+  tenantName,
+  tenantCode,
+  parentTenantId,
+  isInternal = false,
+}: TenantTabsProps) {
   const { t, direction } = useI18n();
+  const user = useAppStore((state) => state.user);
+  const isPlatformAdmin = Boolean(user && !user.tenantId);
   const [activeTab, setActiveTab] = useState<TabValue>("entitlements");
 
   const tabs: { value: TabValue; label: string; icon: typeof Crown }[] = [
@@ -67,6 +94,15 @@ export function TenantTabs({ tenantId, tenantName, tenantCode, parentTenantId }:
     { value: "subtenants", label: t("tenant.tabSubTenants"), icon: Building2 },
     { value: "settings", label: t("tenant.tabSettings"), icon: Settings },
     { value: "domains", label: t("tenant.tabDomains"), icon: Globe },
+    ...(isPlatformAdmin
+      ? [
+          {
+            value: "identityProviders" as const,
+            label: t("tenant.tabIdentityProviders"),
+            icon: KeyRound,
+          },
+        ]
+      : []),
   ];
 
   return (
@@ -91,7 +127,7 @@ export function TenantTabs({ tenantId, tenantName, tenantCode, parentTenantId }:
         <Card className="overflow-hidden">
           <CardContent className="pt-6">
             <TabsContent value="entitlements">
-              <TenantEntitlementsTab tenantId={tenantId} />
+              <TenantEntitlementsTab tenantId={tenantId} isInternal={isInternal} />
             </TabsContent>
 
             <TabsContent value="admins">
@@ -121,6 +157,12 @@ export function TenantTabs({ tenantId, tenantName, tenantCode, parentTenantId }:
             <TabsContent value="domains">
               <TenantDomainsTab tenantId={tenantId} tenantName={tenantName} />
             </TabsContent>
+
+            {isPlatformAdmin && (
+              <TabsContent value="identityProviders">
+                <TenantIdentityProvidersTab tenantId={tenantId} tenantName={tenantName} />
+              </TabsContent>
+            )}
           </CardContent>
         </Card>
       </Tabs>

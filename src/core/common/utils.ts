@@ -316,11 +316,27 @@ export function formatTimeUtc(date: string | Date | null | undefined): string {
 }
 
 /**
- * Formats a date in UTC as "MMM d" (e.g., "Jul 9")
+ * Formats a date in UTC as "MMM d" (e.g., "Jul 9") in the requested locale.
  */
-export function formatDateUtc(date: string | Date | null | undefined): string {
+export function formatDateUtc(
+  date: string | Date | null | undefined,
+  locale = "en"
+): string {
   const parsed = parseUtcDate(date);
   if (!parsed) return "";
+
+  if (locale && locale !== "en") {
+    try {
+      const normalizedLocale = locale.startsWith("ar") ? "ar-EG" : locale;
+      return new Intl.DateTimeFormat(normalizedLocale, {
+        month: "short",
+        day: "numeric",
+        timeZone: "UTC",
+      }).format(parsed);
+    } catch {
+      /* fallback to canonical English format if Intl rejects locale */
+    }
+  }
 
   const months = [
     "Jan",

@@ -75,6 +75,7 @@ export function CredentialsForm({
     },
     onSwitchToPasskey && {
       key: "passkey",
+      testId: "login-passkey-chip",
       icon: <Fingerprint className="h-[13px] w-[13px]" aria-hidden="true" />,
       label: t("auth.passkey.chip") || "Passkey",
       onClick: onSwitchToPasskey,
@@ -93,6 +94,7 @@ export function CredentialsForm({
     },
   ].filter(Boolean) as Array<{
     key: string;
+    testId?: string;
     icon: React.ReactNode;
     label: string;
     onClick: () => void;
@@ -105,7 +107,7 @@ export function CredentialsForm({
         if (!isLoading && isFormValid) handleLogin();
       }}
       className="flex flex-col gap-[var(--login-gap,16px)]"
-      role="form"
+      
       aria-label={t("auth.loginFormAriaLabel")}
       noValidate
     >
@@ -162,12 +164,22 @@ export function CredentialsForm({
       <Button
         type="submit"
         disabled={!isFormValid || isLoading}
-        className="relative mt-1 flex h-[var(--login-input-height,48px)] w-full items-center justify-center gap-2 overflow-hidden rounded-xl text-[15px] font-semibold text-white shadow-none transition-all active:scale-[0.98] disabled:opacity-50"
-        style={{
-          background: "var(--sx-cta-gradient, hsl(var(--primary)))",
-          boxShadow: "var(--sx-cta-shadow, none)",
-          border: 0,
-        }}
+        className="relative mt-1 flex h-[var(--login-input-height,48px)] w-full items-center justify-center gap-2 overflow-hidden rounded-xl text-[15px] font-semibold shadow-none transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-100"
+        style={
+          !isFormValid || isLoading
+            ? {
+                background: "var(--nx-raised)",
+                color: "var(--nx-ink-2)",
+                border: "1px solid var(--nx-line-hi)",
+                boxShadow: "none",
+              }
+            : {
+                background: "var(--sx-cta-gradient, hsl(var(--primary)))",
+                color: "var(--nx-on-fill)",
+                boxShadow: "var(--sx-cta-shadow, none)",
+                border: 0,
+              }
+        }
       >
         {/* Inner shine overlay */}
         <span

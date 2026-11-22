@@ -3,22 +3,24 @@
 import React from "react";
 import { Search, Home, ChevronDown, Lock } from "lucide-react";
 import { startRoutingProgress } from "@core/ui/routing-progress-bar";
-import { NotificationBell } from "@core/ui/notification";
-import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
-import { useAppStore } from "@core/store/useAppStore";
+import { useAdminContext } from "@core/hooks/useAdminContext";
+import { Button } from "@core/ui/button";
 import {
   PanelMenuIcon,
   PanelMenuIconRTL,
   PanelCollapseIcon,
   PanelCollapseIconRTL,
 } from "@core/ui/layout/shared/nav-icons";
+import { TopbarContextPill, type TopbarContextPillProps } from "@core/ui/layout/shared/topbar-context-pill";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useWorkspace } from "@core/providers/workspace-provider";
 import { useWorkspaceTransitionContext } from "../nexus-layout";
 import { cn, resolveBilingualLabel } from "@core/common/utils";
-import type { MenuItem } from "@core/navigation";
+import type { MenuItem, WorkspaceGroup } from "@core/navigation";
+import { normalizeRoutePath } from "@core/config/app-route-manifest";
+import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { usePermissions } from "@core/providers/permission-provider";
 import {
   DropdownMenu,
@@ -42,7 +44,7 @@ const CONTROL_MOTION =
   "transition-[color,background-color,border-color,box-shadow] ease-nx-enter motion-reduce:transition-none";
 
 // ── Breadcrumbs ──────────────────────────────────────────────────────────────
-export function BreadcrumbSep({ isRTL }: { isRTL: boolean }) {
+export function BreadcrumbSep({ isRTL: _isRTL }: { isRTL?: boolean }) {
   return (
     <svg
       data-testid="breadcrumb-separator"
@@ -51,13 +53,7 @@ export function BreadcrumbSep({ isRTL }: { isRTL: boolean }) {
       height="12"
       viewBox="0 0 24 24"
       fill="none"
-      style={{
-        flexShrink: 0,
-        transform: isRTL ? "scaleX(-1)" : undefined,
-        // ink-3 is the quietest measured step; the old 55% color-mix invented a
-        // fourth one below it and fell under the contrast floor.
-        color: "var(--nx-ink-3, hsl(var(--muted-foreground)))",
-      }}
+      className="shrink-0 text-nx-ink-3 rtl:rotate-180"
     >
       <path
         d="M9 18L15 12L9 6"
@@ -73,7 +69,8 @@ export function BreadcrumbSep({ isRTL }: { isRTL: boolean }) {
 export interface TopbarBreadcrumbsProps {
   isRTL: boolean;
   workspaceName: string;
-  activeRootName?: string | null;
+  activeRootName: string | null;
+  intermediateSegments?: string[];
   displayPageName: string;
 }
 
@@ -81,9 +78,8 @@ function findFirstLeafRoute(
   item: MenuItem,
   canAccessPage: (path: string) => boolean
 ): string | null {
-  // First try to find a route the user has permission to access
   const findAccessible = (curr: MenuItem): string | null => {
-    if (curr.href && canAccessPage(curr.href)) return curr.href;
+    if (curr.href && curr.href !== "#" && canAccessPage(curr.href)) return curr.href;
     if (curr.children && curr.children.length > 0) {
       const sorted = [...curr.children].sort((a, b) => a.order - b.order);
       for (const child of sorted) {
@@ -94,29 +90,205 @@ function findFirstLeafRoute(
     return null;
   };
 
-  const accessibleRoute = findAccessible(item);
-  if (accessibleRoute) return accessibleRoute;
+  return findAccessible(item);
+}
 
-  // Fallback to absolute first leaf route if none are accessible
-  const findAny = (curr: MenuItem): string | null => {
-    if (curr.href) return curr.href;
-    if (curr.children && curr.children.length > 0) {
-      const sorted = [...curr.children].sort((a, b) => a.order - b.order);
-      for (const child of sorted) {
-        const route = findAny(child);
-        if (route) return route;
+function findMenuItemByRoute(items: readonly MenuItem[], targetRoute: string): MenuItem | null {
+  const normalizedTarget = normalizeRoutePath(targetRoute).toLowerCase();
+  for (const item of items) {
+    if (item.href && item.href !== "#") {
+      if (normalizeRoutePath(item.href).toLowerCase() === normalizedTarget) {
+        return item;
       }
     }
-    return null;
+    if (item.children && item.children.length > 0) {
+      const match = findMenuItemByRoute(item.children, normalizedTarget);
+      if (match) return match;
+    }
+  }
+  return null;
+}
+
+export interface ResolveWorkspaceStartTargetParams {
+  activeWorkspace: WorkspaceGroup | null;
+  rootMenuItems: readonly MenuItem[];
+  workspaceRouteMap?: Record<string, string[]>;
+  isPlatformContext: boolean;
+  canAccessPage: (path: string) => boolean;
+  routesLoaded?: boolean;
+  hasRouteAccess?: (path: string) => boolean;
+  language: string;
+  t: (key: string, params?: Record<string, string | number>) => string;
+}
+
+export interface ResolvedWorkspaceStartTarget {
+  route: string;
+  normalizedRoute: string;
+  pageLabel: string | null;
+}
+
+/**
+ * Resolves the authoritative workspace start route (preferring `effectiveHomeRoute`
+ * over raw context routes) and a localized target page label for Topbar Home & Level-1 tooltips.
+ */
+export function resolveWorkspaceStartTarget({
+  activeWorkspace,
+  rootMenuItems,
+  workspaceRouteMap,
+  isPlatformContext,
+  canAccessPage,
+  routesLoaded,
+  hasRouteAccess,
+  language,
+  t,
+}: ResolveWorkspaceStartTargetParams): ResolvedWorkspaceStartTarget {
+  if (!activeWorkspace) {
+    return {
+      route: "/hub",
+      normalizedRoute: "/hub",
+      pageLabel: null,
+    };
+  }
+
+  const isNavAccessible = (candidate: string): boolean => {
+    const norm = normalizeRoutePath(candidate);
+    if (!canAccessPage(norm)) return false;
+    if (routesLoaded && typeof hasRouteAccess === "function") {
+      return hasRouteAccess(norm);
+    }
+    return true;
   };
 
-  return findAny(item);
+  let route: string | null = activeWorkspace.effectiveHomeRoute?.trim() || null;
+  if (route && !canAccessPage(normalizeRoutePath(route))) {
+    route = null;
+  }
+
+  if (!route) {
+    const configured = isPlatformContext
+      ? (activeWorkspace.platformHomeRoute?.trim() || activeWorkspace.homeRoute?.trim() || null)
+      : (activeWorkspace.homeRoute?.trim() || null);
+    if (configured && isNavAccessible(configured)) {
+      route = configured;
+    }
+  }
+
+  const menuPool =
+    rootMenuItems.length > 0 ? rootMenuItems : (activeWorkspace.menuItems ?? []);
+
+  if (!route) {
+    for (const item of menuPool) {
+      const leaf = findFirstLeafRoute(item, isNavAccessible);
+      if (leaf) {
+        route = leaf;
+        break;
+      }
+    }
+  }
+
+  if (!route && workspaceRouteMap) {
+    const lowerKey = activeWorkspace.workspaceKey.toLowerCase();
+    const mapEntry = Object.entries(workspaceRouteMap).find(
+      ([key]) => key.toLowerCase() === lowerKey
+    );
+    const mapRoute = mapEntry?.[1]?.find((r) => Boolean(r && r !== "/" && isNavAccessible(r)));
+    if (mapRoute) {
+      route = mapRoute;
+    }
+  }
+
+  const resolvedRoute = route || "/hub";
+  const normalizedRoute = normalizeRoutePath(resolvedRoute).toLowerCase() || "/";
+
+  const normalizedEffective = activeWorkspace.effectiveHomeRoute?.trim()
+    ? normalizeRoutePath(activeWorkspace.effectiveHomeRoute.trim()).toLowerCase()
+    : null;
+  let pageLabel: string | null = null;
+  if (normalizedEffective && normalizedEffective === normalizedRoute) {
+    if (typeof activeWorkspace.getEffectiveHomeLabel === "function") {
+      pageLabel = activeWorkspace.getEffectiveHomeLabel(language);
+    } else {
+      const en = activeWorkspace.effectiveHomeLabelEn?.trim() || "";
+      const ar = activeWorkspace.effectiveHomeLabelAr?.trim() || "";
+      pageLabel = (language === "ar" ? ar || en : en || ar) || null;
+    }
+  }
+
+  if (!pageLabel) {
+    const matchedMenuItem = findMenuItemByRoute(menuPool, normalizedRoute);
+    if (matchedMenuItem) {
+      pageLabel =
+        resolveBilingualLabel(
+          matchedMenuItem.nameEn || matchedMenuItem.nameAr,
+          matchedMenuItem.nameAr || matchedMenuItem.nameEn,
+          language
+        ) || null;
+    }
+  }
+
+  if (!pageLabel && normalizedRoute !== "/" && normalizedRoute !== "/hub") {
+    const segments = normalizedRoute
+      .split("/")
+      .filter((s) => s.length > 0 && !s.startsWith("["));
+    const tail = segments[segments.length - 1];
+    if (tail) {
+      const segKey = `nav.routeSegments.${tail}`;
+      const translated = t(segKey);
+      if (translated && translated !== segKey) {
+        pageLabel = translated;
+      }
+    }
+  }
+
+  return {
+    route: resolvedRoute,
+    normalizedRoute,
+    pageLabel,
+  };
+}
+
+const WS_TOOLTIP_TOKEN = "__SCRIPE_WS_BDI__";
+const PAGE_TOOLTIP_TOKEN = "__SCRIPE_PAGE_BDI__";
+
+/**
+ * Renders the localized workspace start-page tooltip with `<bdi>` isolation around
+ * workspace and page labels so mixed-direction EN/AR segments render cleanly in RTL/LTR.
+ */
+export function renderBidiWorkspaceStartTooltip(
+  t: (key: string, params?: Record<string, string | number>) => string,
+  workspace: string,
+  page: string
+): React.ReactNode {
+  const template = t("chrome.workspaceStartPageTooltip", {
+    workspace: WS_TOOLTIP_TOKEN,
+    page: PAGE_TOOLTIP_TOKEN,
+  });
+
+  if (!template.includes(WS_TOOLTIP_TOKEN) && !template.includes(PAGE_TOOLTIP_TOKEN)) {
+    return template;
+  }
+
+  const parts = template.split(new RegExp(`(${WS_TOOLTIP_TOKEN}|${PAGE_TOOLTIP_TOKEN})`, "g"));
+  return (
+    <span>
+      {parts.map((part, idx) => {
+        if (part === WS_TOOLTIP_TOKEN) {
+          return <bdi key={`ws-${idx}`}>{workspace}</bdi>;
+        }
+        if (part === PAGE_TOOLTIP_TOKEN) {
+          return <bdi key={`pg-${idx}`}>{page}</bdi>;
+        }
+        return part ? <React.Fragment key={`tx-${idx}`}>{part}</React.Fragment> : null;
+      })}
+    </span>
+  );
 }
 
 export function TopbarBreadcrumbs({
   isRTL,
   workspaceName,
   activeRootName,
+  intermediateSegments,
   displayPageName,
 }: TopbarBreadcrumbsProps) {
   const { workspaceGroups, rootMenuItems, setActiveRootItemId, activeWorkspace, activeRootItem } =
@@ -125,7 +297,32 @@ export function TopbarBreadcrumbs({
   const { language, t } = useI18n();
   const { canAccessPage } = usePermissions();
   const router = useRouter();
-  const tenantCode = useAppStore((s) => s.tenantCode);
+  const pathname = usePathname() ?? "";
+  const normalizedPath = pathname.toLowerCase().replace(/\/+$/, "") || "/";
+  const { isPlatform: isPlatformContext } = useAdminContext();
+  const workspaceRouteMap = useNavigationStore((s) => s?.workspaceRouteMap);
+  const routesLoaded = useNavigationStore((s) => s?.routesLoaded);
+  const hasRouteAccess = useNavigationStore((s) => s?.hasRouteAccess);
+
+  const startTarget = resolveWorkspaceStartTarget({
+    activeWorkspace,
+    rootMenuItems,
+    workspaceRouteMap,
+    isPlatformContext,
+    canAccessPage,
+    routesLoaded,
+    hasRouteAccess,
+    language,
+    t,
+  });
+
+  const level1TooltipNode: React.ReactNode = activeWorkspace
+    ? startTarget.pageLabel
+      ? renderBidiWorkspaceStartTooltip(t, workspaceName, startTarget.pageLabel)
+      : t("chrome.goToHome")
+    : normalizedPath !== "/hub"
+      ? t("chrome.allWorkspaces")
+      : null;
 
   const sortedWorkspaces = React.useMemo(() => {
     return [...workspaceGroups].sort((a, b) => a.workspaceSortOrder - b.workspaceSortOrder);
@@ -135,229 +332,279 @@ export function TopbarBreadcrumbs({
     return rootMenuItems.filter((item) => item.slug !== "modules-group");
   }, [rootMenuItems]);
 
+  const normWs = (workspaceName || "").trim().toLowerCase();
+  const normRoot = (activeRootName || "").trim().toLowerCase();
+  const showActiveRoot = Boolean(
+    activeRootName && activeRootItem && normRoot && normRoot !== normWs
+  );
+  const normDisplay = (displayPageName || "").trim().toLowerCase();
+
+  // Deduplicate intermediate ancestors against workspace, root, neighbors, and leaf
+  const filteredIntermediates: string[] = [];
+  if (intermediateSegments && intermediateSegments.length > 0) {
+    const seen = new Set<string>([normWs]);
+    if (showActiveRoot && normRoot) seen.add(normRoot);
+    for (const seg of intermediateSegments) {
+      const normSeg = seg.trim().toLowerCase();
+      if (!normSeg || seen.has(normSeg) || normSeg === normDisplay) continue;
+      seen.add(normSeg);
+      filteredIntermediates.push(seg);
+    }
+  }
+
+  const lastPriorSegment =
+    filteredIntermediates.length > 0
+      ? filteredIntermediates[filteredIntermediates.length - 1]
+      : showActiveRoot
+        ? activeRootName
+        : workspaceName;
+  const normLast = (lastPriorSegment || "").trim().toLowerCase();
+  const showDisplayPage = Boolean(displayPageName && normDisplay && normDisplay !== normLast);
+
+  const isWorkspaceCurrent =
+    !showActiveRoot && filteredIntermediates.length === 0 && !showDisplayPage;
+  const isActiveRootCurrent = filteredIntermediates.length === 0 && !showDisplayPage;
+
   return (
-    <div
-      style={{
-        fontSize: 13,
-        flex: 1,
-        display: "flex",
-        alignItems: "center",
-        gap: 6,
-        overflow: "hidden",
-        minWidth: 0,
-      }}
-    >
-      {/* ── Level 1: Workspace ── */}
-      <div className="flex shrink-0 items-center gap-0.5">
-        <button
-          type="button"
-          onClick={() => {
-            const isPlatformContext = tenantCode === null;
-            const homeRoute = activeWorkspace
-              ? isPlatformContext
-                ? (activeWorkspace.platformHomeRoute ?? activeWorkspace.homeRoute ?? "/")
-                : (activeWorkspace.homeRoute ?? "/")
-              : "/";
-            startRoutingProgress();
-            router.push(homeRoute);
-          }}
-          className={cn(
-            "cursor-pointer whitespace-nowrap rounded-nx-sm px-1.5 py-0.5 font-medium text-nx-ink-3 duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
-            CONTROL_MOTION,
-            FOCUS_RING
-          )}
-        >
-          {workspaceName}
-        </button>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button
-              type="button"
-              aria-label={t("navigation.topbar.workspacesMenu")}
-              className={cn(
-                "flex h-5 w-5 cursor-pointer items-center justify-center rounded-nx-sm text-nx-ink-3 duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
-                CONTROL_MOTION,
-                FOCUS_RING
-              )}
-            >
-              <ChevronDown size={12} aria-hidden="true" />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="w-56 border-nx-line bg-nx-surface">
-            <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-wider text-nx-ink-3">
-              {t("navigation.topbar.workspacesMenu")}
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            {sortedWorkspaces.map((ws) => {
-              const isActive = activeWorkspace?.workspaceKey === ws.workspaceKey;
-              const wsLabel =
-                resolveBilingualLabel(ws.workspaceNameEn, ws.workspaceNameAr, language) ||
-                resolveBilingualLabel(ws.workspaceNameAr, ws.workspaceNameEn, language);
-              // Each row carries its OWN workspace colour — the active-workspace
-              // token would paint every chip the same. Alpha via color-mix only.
-              const wsAccent = ws.accentColor || "var(--nx-accent, hsl(var(--primary)))";
+    <nav aria-label={t("nav.breadcrumb")} className="min-w-0 flex-1 overflow-hidden">
+      <ol className="flex min-w-0 items-center gap-1 text-[13px] sm:gap-1.5">
+        {/* ── Level 1: Workspace ── */}
+        <li className="flex min-w-0 shrink-0 items-center gap-0.5">
+          {(() => {
+            const level1Button = (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                aria-current={isWorkspaceCurrent ? "page" : undefined}
+                onClick={() => {
+                  if (normalizedPath === startTarget.normalizedRoute) return;
+                  startRoutingProgress();
+                  router.push(startTarget.route);
+                }}
+                className={cn(
+                  "h-auto min-w-0 cursor-pointer whitespace-nowrap rounded-nx-sm px-1.5 py-0.5 duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
+                  isWorkspaceCurrent ? "font-semibold text-nx-ink" : "font-medium text-nx-ink-3",
+                  CONTROL_MOTION,
+                  FOCUS_RING
+                )}
+              >
+                <span className="truncate">{workspaceName}</span>
+              </Button>
+            );
 
-              return (
-                <DropdownMenuItem
-                  key={ws.workspaceKey}
-                  onClick={() => {
-                    if (!isActive && !ws.isLocked) {
-                      switchWorkspace(ws.workspaceKey);
-                    }
-                  }}
-                  disabled={ws.isLocked}
-                  className={cn(
-                    "flex cursor-pointer items-center gap-2.5 rounded-nx-sm px-3 py-2 text-sm transition-colors duration-nx-micro motion-reduce:transition-none",
-                    isActive && "bg-nx-accent-wash font-semibold text-nx-accent"
-                  )}
-                >
-                  <div
-                    style={{
-                      width: 20,
-                      height: 20,
-                      borderRadius: "var(--nx-radius-sm)",
-                      background: `color-mix(in oklch, ${wsAccent} 13%, transparent)`,
-                      border: `1px solid color-mix(in oklch, ${wsAccent} 30%, transparent)`,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: 10,
-                      fontWeight: 700,
-                      color: wsAccent,
-                    }}
-                  >
-                    {ws.abbreviation ?? ws.workspaceKey.slice(0, 2).toUpperCase()}
-                  </div>
-                  <span className="flex-1 truncate">{wsLabel}</span>
-                  {ws.isLocked && (
-                    <>
-                      <Lock className="h-2.5 w-2.5 text-warning" aria-hidden="true" />
-                      <span className="sr-only">{t("navigation.topbar.workspaceLocked")}</span>
-                    </>
-                  )}
-                </DropdownMenuItem>
-              );
-            })}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
+            if (!level1TooltipNode) {
+              return level1Button;
+            }
 
-      {/* ── Level 2: Root Active Group (Deduplicated against workspace name) ── */}
-      {(() => {
-        const normWs = (workspaceName || "").trim().toLowerCase();
-        const normRoot = (activeRootName || "").trim().toLowerCase();
-        const showActiveRoot = Boolean(
-          activeRootName &&
-            activeRootItem &&
-            normRoot &&
-            normRoot !== normWs
-        );
-        const lastRenderedSegment = showActiveRoot ? activeRootName : workspaceName;
-        const normLast = (lastRenderedSegment || "").trim().toLowerCase();
-        const normDisplay = (displayPageName || "").trim().toLowerCase();
-        const showDisplayPage = Boolean(
-          displayPageName &&
-            normDisplay &&
-            normDisplay !== normLast
-        );
+            return (
+              <TooltipProvider delayDuration={150}>
+                <Tooltip>
+                  <TooltipTrigger asChild>{level1Button}</TooltipTrigger>
+                  <TooltipContent side="bottom" sideOffset={8}>
+                    {level1TooltipNode}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            );
+          })()}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                aria-label={t("navigation.topbar.workspacesMenu")}
+                className={cn(
+                  "flex h-8 w-8 cursor-pointer items-center justify-center rounded-nx-sm p-0 text-nx-ink-3 duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
+                  CONTROL_MOTION,
+                  FOCUS_RING
+                )}
+              >
+                <ChevronDown size={12} aria-hidden="true" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-56 border-nx-line bg-nx-surface">
+              <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-wider text-nx-ink-3">
+                {t("navigation.topbar.workspacesMenu")}
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {sortedWorkspaces.map((ws) => {
+                const isActive = activeWorkspace?.workspaceKey === ws.workspaceKey;
+                const wsLabel =
+                  resolveBilingualLabel(ws.workspaceNameEn, ws.workspaceNameAr, language) ||
+                  resolveBilingualLabel(ws.workspaceNameAr, ws.workspaceNameEn, language);
+                const wsAccent = ws.accentColor || "var(--nx-accent, hsl(var(--primary)))";
 
-        return (
-          <>
-            {showActiveRoot && activeRootItem && (
-              <>
-                <BreadcrumbSep isRTL={isRTL} />
-                <div className="flex shrink-0 items-center gap-0.5">
-                  <button
-                    type="button"
+                return (
+                  <DropdownMenuItem
+                    key={ws.workspaceKey}
                     onClick={() => {
-                      const route = findFirstLeafRoute(activeRootItem, canAccessPage);
-                      if (route) {
-                        startRoutingProgress();
-                        router.push(route);
+                      if (!isActive && !ws.isLocked) {
+                        switchWorkspace(ws.workspaceKey);
                       }
                     }}
+                    disabled={ws.isLocked}
                     className={cn(
-                      "cursor-pointer whitespace-nowrap rounded-nx-sm px-1.5 py-0.5 font-medium text-nx-ink-2 duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
+                      "flex cursor-pointer items-center gap-2.5 rounded-nx-sm px-3 py-2 text-sm transition-colors duration-nx-micro motion-reduce:transition-none",
+                      isActive && "bg-nx-accent-wash font-semibold text-nx-accent"
+                    )}
+                  >
+                    <div
+                      style={{
+                        width: 20,
+                        height: 20,
+                        borderRadius: "var(--nx-radius-sm)",
+                        background: `color-mix(in oklch, ${wsAccent} 13%, transparent)`,
+                        border: `1px solid color-mix(in oklch, ${wsAccent} 30%, transparent)`,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: 10,
+                        fontWeight: 700,
+                        color: wsAccent,
+                      }}
+                    >
+                      {ws.abbreviation ?? ws.workspaceKey.slice(0, 2).toUpperCase()}
+                    </div>
+                    <span className="flex-1 truncate">{wsLabel}</span>
+                    {ws.isLocked && (
+                      <>
+                        <Lock className="h-2.5 w-2.5 text-nx-warning-strong" aria-hidden="true" />
+                        <span className="sr-only">{t("navigation.topbar.workspaceLocked")}</span>
+                      </>
+                    )}
+                  </DropdownMenuItem>
+                );
+              })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </li>
+
+        {/* ── Level 2: Root Active Group (Deduplicated against workspace name) ── */}
+        {showActiveRoot && activeRootItem && (
+          <>
+            <li role="presentation" aria-hidden="true" className="inline-flex shrink-0 items-center">
+              <BreadcrumbSep isRTL={isRTL} />
+            </li>
+            <li className="flex min-w-0 shrink items-center gap-0.5">
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                aria-current={isActiveRootCurrent ? "page" : undefined}
+                onClick={() => {
+                  const route = findFirstLeafRoute(activeRootItem, canAccessPage);
+                  if (route) {
+                    startRoutingProgress();
+                    router.push(route);
+                  }
+                }}
+                className={cn(
+                  "h-auto min-w-0 max-w-full cursor-pointer whitespace-nowrap rounded-nx-sm px-1.5 py-0.5 duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
+                  isActiveRootCurrent ? "font-semibold text-nx-ink" : "font-medium text-nx-ink-2",
+                  CONTROL_MOTION,
+                  FOCUS_RING
+                )}
+              >
+                <span className="truncate">{activeRootName}</span>
+              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    aria-label={t("navigation.topbar.sectionsMenu")}
+                    className={cn(
+                      "flex h-8 w-8 cursor-pointer items-center justify-center rounded-nx-sm p-0 text-nx-ink-2 duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
                       CONTROL_MOTION,
                       FOCUS_RING
                     )}
                   >
-                    {activeRootName}
-                  </button>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <button
-                        type="button"
-                        aria-label={t("navigation.topbar.sectionsMenu")}
+                    <ChevronDown size={12} aria-hidden="true" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-52 border-nx-line bg-nx-surface">
+                  <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-wider text-nx-ink-3">
+                    {t("navigation.topbar.sectionsMenu")}
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {activeGroupSiblings.map((item) => {
+                    const isActive = activeRootItem?.id === item.id;
+                    const label =
+                      resolveBilingualLabel(item.nameEn, item.nameAr, language) ||
+                      resolveBilingualLabel(item.nameAr, item.nameEn, language);
+
+                    return (
+                      <DropdownMenuItem
+                        key={item.id}
+                        onClick={() => {
+                          if (!isActive) {
+                            setActiveRootItemId(item.id);
+                          }
+                          const route = findFirstLeafRoute(item, canAccessPage);
+                          if (route) {
+                            startRoutingProgress();
+                            router.push(route);
+                          }
+                        }}
                         className={cn(
-                          "flex h-5 w-5 cursor-pointer items-center justify-center rounded-nx-sm text-nx-ink-2 duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
-                          CONTROL_MOTION,
-                          FOCUS_RING
+                          "flex cursor-pointer items-center gap-2 rounded-nx-sm px-3 py-1.5 text-sm transition-colors duration-nx-micro motion-reduce:transition-none",
+                          isActive && "bg-nx-accent-wash font-semibold text-nx-accent"
                         )}
                       >
-                        <ChevronDown size={12} aria-hidden="true" />
-                      </button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start" className="w-52 border-nx-line bg-nx-surface">
-                      <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-wider text-nx-ink-3">
-                        {t("navigation.topbar.sectionsMenu")}
-                      </DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      {activeGroupSiblings.map((item) => {
-                        const isActive = activeRootItem?.id === item.id;
-                        const label =
-                          resolveBilingualLabel(item.nameEn, item.nameAr, language) ||
-                          resolveBilingualLabel(item.nameAr, item.nameEn, language);
-
-                        return (
-                          <DropdownMenuItem
-                            key={item.id}
-                            onClick={() => {
-                              if (!isActive) {
-                                setActiveRootItemId(item.id);
-                              }
-                              const route = findFirstLeafRoute(item, canAccessPage);
-                              if (route) {
-                                startRoutingProgress();
-                                router.push(route);
-                              }
-                            }}
-                            className={cn(
-                              "flex cursor-pointer items-center gap-2 rounded-nx-sm px-3 py-1.5 text-sm transition-colors duration-nx-micro motion-reduce:transition-none",
-                              isActive && "bg-nx-accent-wash font-semibold text-nx-accent"
-                            )}
-                          >
-                            <span className="flex-1 truncate">{label}</span>
-                          </DropdownMenuItem>
-                        );
-                      })}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-              </>
-            )}
-
-            {/* ── Level 3: Active Page / Entity Name (Deduplicated against previous segment) ── */}
-            {showDisplayPage && (
-              <>
-                <BreadcrumbSep isRTL={isRTL} />
-                <span
-                  className="px-1.5 py-0.5 font-semibold text-nx-ink duration-nx-standard animate-in fade-in"
-                  style={{
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                    letterSpacing: "-0.2px",
-                  }}
-                >
-                  {displayPageName}
-                </span>
-              </>
-            )}
+                        <span className="flex-1 truncate">{label}</span>
+                      </DropdownMenuItem>
+                    );
+                  })}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </li>
           </>
-        );
-      })()}
-    </div>
+        )}
+
+        {/* ── Intermediate Ancestor Groups (if deeply nested) ── */}
+        {filteredIntermediates.map((seg, idx) => {
+          const isLastIntermediate = idx === filteredIntermediates.length - 1 && !showDisplayPage;
+          return (
+            <React.Fragment key={`${seg}-${idx}`}>
+              <li role="presentation" aria-hidden="true" className="inline-flex shrink-0 items-center">
+                <BreadcrumbSep isRTL={isRTL} />
+              </li>
+              <li className={cn("min-w-0 shrink", isLastIntermediate && "max-w-[120px] sm:shrink-0 sm:max-w-[240px]")}>
+                <span
+                  aria-current={isLastIntermediate ? "page" : undefined}
+                  className={cn(
+                    "block truncate px-1.5 py-0.5",
+                    isLastIntermediate ? "font-semibold text-nx-ink" : "font-medium text-nx-ink-2"
+                  )}
+                >
+                  {seg}
+                </span>
+              </li>
+            </React.Fragment>
+          );
+        })}
+
+        {/* ── Leaf Level: Active Page / Entity Name (Deduplicated against previous segment) ── */}
+        {showDisplayPage && (
+          <>
+            <li role="presentation" aria-hidden="true" className="inline-flex shrink-0 items-center">
+              <BreadcrumbSep isRTL={isRTL} />
+            </li>
+            <li className="min-w-0 shrink max-w-[120px] sm:shrink-0 sm:max-w-[240px]">
+              <span
+                aria-current="page"
+                className="block truncate px-1.5 py-0.5 font-semibold tracking-[-0.2px] text-nx-ink duration-nx-standard animate-in fade-in motion-reduce:animate-none"
+              >
+                {displayPageName}
+              </span>
+            </li>
+          </>
+        )}
+      </ol>
+    </nav>
   );
 }
 
@@ -368,6 +615,9 @@ export interface TopbarPanelToggleProps {
   /** collapsibleSidebar setting — false hides the desktop toggle (the panel is
    *  pinned open) while the same button keeps working as the mobile hamburger. */
   collapsible?: boolean;
+  hasSubmenu?: boolean;
+  isMobileMenuOpen?: boolean;
+  toggleRef?: React.Ref<HTMLButtonElement>;
   onToggle: () => void;
   ariaLabel: string;
 }
@@ -376,9 +626,32 @@ export function TopbarPanelToggle({
   isRTL,
   isPanelCollapsed,
   collapsible = true,
+  hasSubmenu = true,
+  isMobileMenuOpen = false,
+  toggleRef,
   onToggle,
   ariaLabel,
 }: TopbarPanelToggleProps) {
+  const subscribeMobileViewport = React.useCallback((onStoreChange: () => void) => {
+    if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+      return () => {};
+    }
+    const mq = window.matchMedia("(max-width: 1023px)");
+    mq.addEventListener("change", onStoreChange);
+    return () => mq.removeEventListener("change", onStoreChange);
+  }, []);
+
+  const isMobileViewport = React.useSyncExternalStore(
+    subscribeMobileViewport,
+    () =>
+      typeof window !== "undefined" && typeof window.matchMedia === "function"
+        ? window.matchMedia("(max-width: 1023px)").matches
+        : false,
+    () => false
+  );
+
+  const isExpanded = isMobileViewport ? Boolean(isMobileMenuOpen) : !isPanelCollapsed;
+
   const renderPanelIcon = () => {
     if (isRTL) {
       return isPanelCollapsed ? (
@@ -398,23 +671,25 @@ export function TopbarPanelToggle({
     <TooltipProvider delayDuration={50}>
       <Tooltip>
         <TooltipTrigger asChild>
-          <button
+          <Button
+            ref={toggleRef}
             type="button"
+            variant="ghost"
+            size="icon"
             onClick={onToggle}
             aria-label={ariaLabel}
+            aria-expanded={isExpanded}
             className={cn(
-              "flex h-[34px] w-[34px] shrink-0 cursor-pointer items-center justify-center rounded-nx-control",
-              "border border-nx-line bg-transparent text-nx-accent",
+              "h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-nx-control p-0",
+              "border border-nx-line bg-transparent text-nx-ink-2",
               CONTROL_MOTION,
-              "duration-nx-micro hover:border-nx-line-hi hover:bg-nx-raised",
-              // Non-collapsible panel: desktop toggle would be a dead button, so
-              // it hides at lg while the mobile hamburger (<1024px) stays live.
-              !collapsible && "lg:hidden",
+              "duration-nx-micro hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink",
+              !hasSubmenu ? "flex md:hidden" : collapsible ? "flex" : "flex lg:hidden",
               FOCUS_RING
             )}
           >
             {renderPanelIcon()}
-          </button>
+          </Button>
         </TooltipTrigger>
         <TooltipContent side="bottom" sideOffset={8}>
           {ariaLabel}
@@ -424,56 +699,8 @@ export function TopbarPanelToggle({
   );
 }
 
-// ── Context Pill ──────────────────────────────────────────────────────────────
-export interface TopbarContextPillProps {
-  isModuleMode: boolean;
-  tenantName: string;
-}
-
-export function TopbarContextPill({ isModuleMode, tenantName }: TopbarContextPillProps) {
-  return (
-    <div
-      className={cn(
-        "hidden items-center rounded-full duration-nx-standard sm:flex",
-        CONTROL_MOTION
-      )}
-      style={{
-        gap: 6,
-        padding: "4px 12px",
-        background: isModuleMode
-          ? "var(--nx-accent-wash, hsl(var(--primary) / 0.1))"
-          : "transparent",
-        border: `1px solid ${
-          isModuleMode
-            ? "color-mix(in oklch, var(--nx-accent, hsl(var(--primary))) 30%, transparent)"
-            : "var(--nx-line, hsl(var(--border)))"
-        }`,
-        fontSize: 11,
-        fontWeight: 600,
-        color: isModuleMode
-          ? "var(--nx-accent, hsl(var(--primary)))"
-          : "var(--nx-ink-2, hsl(var(--muted-foreground)))",
-        cursor: "default",
-        flexShrink: 0,
-        letterSpacing: "0.4px",
-        whiteSpace: "nowrap",
-      }}
-    >
-      {/* Live-context dot — the logo's cyan ("now"), no glow: the primary
-          rail's active root item owns the one glow on this screen */}
-      <div
-        style={{
-          width: 6,
-          height: 6,
-          borderRadius: "50%",
-          background: "var(--nx-secondary, hsl(var(--info)))",
-          flexShrink: 0,
-        }}
-      />
-      <span>{tenantName}</span>
-    </div>
-  );
-}
+// ── Context Pill (re-exported from shared) ────────────────────────────────────
+export { TopbarContextPill, type TopbarContextPillProps };
 
 // ── Search Button ─────────────────────────────────────────────────────────────
 export interface TopbarSearchButtonProps {
@@ -483,71 +710,96 @@ export interface TopbarSearchButtonProps {
 
 export function TopbarSearchButton({ onOpenSearch, placeholder }: TopbarSearchButtonProps) {
   return (
-    <button
-      onClick={onOpenSearch}
-      type="button"
-      className={cn(
-        // Border and surface live in classes, not inline: an inline `border`
-        // shorthand silently beat the hover rule, so the field never lit up.
-        "group hidden items-center rounded-nx-control border border-nx-line bg-nx-surface duration-nx-micro md:flex",
-        CONTROL_MOTION,
-        "text-nx-ink-3 hover:border-nx-line-hi",
-        FOCUS_RING
-      )}
-      style={{
-        gap: 8,
-        padding: "0 12px",
-        height: 33,
-        fontSize: "12px",
-        fontWeight: 500,
-        minWidth: 160,
-        cursor: "pointer",
-      }}
-    >
-      <Search
-        size={13}
-        aria-hidden="true"
-        className="transition-colors duration-nx-micro group-hover:text-nx-ink motion-reduce:transition-none"
-        style={{ flexShrink: 0 }}
-      />
-      <span
-        style={{ flex: 1, userSelect: "none" }}
-        className="text-start transition-colors duration-nx-micro group-hover:text-nx-ink motion-reduce:transition-none"
+    <>
+      {/* Mobile compact icon trigger (<768px) */}
+      <Button
+        onClick={onOpenSearch}
+        type="button"
+        variant="ghost"
+        size="icon"
+        aria-label={placeholder}
+        className={cn(
+          "flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-nx-control border border-nx-line bg-nx-surface p-0 text-nx-ink-2 md:hidden",
+          CONTROL_MOTION,
+          "duration-nx-micro hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink",
+          FOCUS_RING
+        )}
       >
-        {placeholder}
-      </span>
-      <span
-        className="rounded-nx-sm border border-nx-line bg-nx-raised text-nx-ink-2"
+        <Search size={15} aria-hidden="true" />
+      </Button>
+
+      {/* Desktop search trigger (>=768px) */}
+      <Button
+        onClick={onOpenSearch}
+        type="button"
+        variant="ghost"
+        size="sm"
+        className={cn(
+          // Border and surface live in classes, not inline: an inline `border`
+          // shorthand silently beat the hover rule, so the field never lit up.
+          "group hidden h-9 items-center rounded-nx-control border border-nx-line bg-nx-surface duration-nx-micro hover:bg-nx-surface md:flex",
+          CONTROL_MOTION,
+          "text-nx-ink-3 hover:border-nx-line-hi",
+          FOCUS_RING
+        )}
         style={{
-          fontSize: "10px",
-          fontWeight: 600,
-          padding: "2px 6px",
-          letterSpacing: "0.3px",
+          gap: 8,
+          padding: "0 12px",
+          fontSize: "12px",
+          fontWeight: 500,
+          minWidth: 160,
+          cursor: "pointer",
         }}
       >
-        ⌘K
-      </span>
-    </button>
+        <Search
+          size={13}
+          aria-hidden="true"
+          className="transition-colors duration-nx-micro group-hover:text-nx-ink motion-reduce:transition-none"
+          style={{ flexShrink: 0 }}
+        />
+        <span
+          style={{ flex: 1, userSelect: "none" }}
+          className="text-start transition-colors duration-nx-micro group-hover:text-nx-ink motion-reduce:transition-none"
+        >
+          {placeholder}
+        </span>
+        <span
+          className="rounded-nx-sm border border-nx-line bg-nx-raised text-nx-ink-2"
+          style={{
+            fontSize: "10px",
+            fontWeight: 600,
+            padding: "2px 6px",
+            letterSpacing: "0.3px",
+          }}
+        >
+          ⌘K
+        </span>
+      </Button>
+    </>
   );
 }
 
 // ── Home Button ───────────────────────────────────────────────────────────────
 export interface TopbarHomeButtonProps {
   ariaLabel: string;
+  tooltip?: React.ReactNode;
   onClick: () => void;
 }
 
-export function TopbarHomeButton({ ariaLabel, onClick }: TopbarHomeButtonProps) {
+export function TopbarHomeButton({ ariaLabel, tooltip, onClick }: TopbarHomeButtonProps) {
+  const tooltipText = tooltip ?? ariaLabel;
   return (
     <TooltipProvider delayDuration={50}>
       <Tooltip>
         <TooltipTrigger asChild>
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="icon"
             onClick={onClick}
             aria-label={ariaLabel}
             className={cn(
-              "flex h-[33px] w-[33px] shrink-0 cursor-pointer items-center justify-center rounded-nx-control",
+              "flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-nx-control p-0",
               "border border-nx-line bg-transparent text-nx-ink-2",
               CONTROL_MOTION,
               "duration-nx-micro hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink",
@@ -555,32 +807,12 @@ export function TopbarHomeButton({ ariaLabel, onClick }: TopbarHomeButtonProps) 
             )}
           >
             <Home size={15} strokeWidth={2} aria-hidden="true" />
-          </button>
+          </Button>
         </TooltipTrigger>
         <TooltipContent side="bottom" sideOffset={8}>
-          {ariaLabel}
+          {tooltipText}
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
-  );
-}
-
-// ── Mobile Controls ───────────────────────────────────────────────────────────
-export interface TopbarMobileControlsProps {
-  /** showNotifications setting — gates the bell, the profile stays put. */
-  showNotifications?: boolean;
-}
-
-export function TopbarMobileControls({ showNotifications = true }: TopbarMobileControlsProps) {
-  return (
-    <div className="flex items-center gap-3 lg:hidden">
-      {showNotifications && (
-        <NotificationBell
-          iconClassName="h-[16px] w-[16px]"
-          className="h-[33px] w-[33px] rounded-nx-control text-nx-ink-3 transition-[color,background-color,border-color,box-shadow] duration-nx-micro hover:bg-nx-raised hover:text-nx-ink motion-reduce:transition-none"
-        />
-      )}
-      <UserProfileDropdown variant="compact" showName={false} />
-    </div>
   );
 }

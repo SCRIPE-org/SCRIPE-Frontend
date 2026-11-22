@@ -8,6 +8,10 @@
  * @module tenants/data
  */
 import type {
+  TenantSettingsModel,
+  UpdateTenantSettingsRequest,
+} from "@modules/customization/tenant-settings/src/domain/types/SettingsTypes";
+import type {
   ITenantRepository,
   TenantListParams,
   TenantStats,
@@ -23,6 +27,15 @@ import type {
 import type { PagedResult } from "@modules/identity/core/domain/types";
 import type { ITenantService } from "../../domain/interfaces/ITenantService";
 import { TenantMapper } from "../mappers/TenantMapper";
+import { TenantIdentityProviderMapper } from "../mappers/TenantIdentityProviderMapper";
+import type {
+  CreateTenantIdentityProviderPayload,
+  TenantIdentityProviderDetail,
+  TenantIdentityProviderListItem,
+  TenantIdentityProviderListParams,
+  TenantIdpTestConnectionResult,
+  UpdateTenantIdentityProviderPayload,
+} from "../../domain/entities/TenantIdentityProvider";
 import type { Permission, PermissionModuleGroup } from "@modules/identity/core";
 import { PermissionMapper } from "@modules/identity/core";
 import { appLogger } from "@core/common/logger";
@@ -58,8 +71,8 @@ export class TenantRepository implements ITenantRepository {
     return TenantMapper.toTreeNodeList(models);
   }
 
-  async getMyChildren(params?: TenantListParams): Promise<PagedResult<TenantTreeNode>> {
-    const result = await this.service.getMyChildren(params);
+  async getCurrentTenantChildren(params?: TenantListParams): Promise<PagedResult<TenantTreeNode>> {
+    const result = await this.service.getCurrentTenantChildren(params);
     return {
       items: TenantMapper.toTreeNodeList(result.items),
       totalCount: result.totalCount,
@@ -76,8 +89,8 @@ export class TenantRepository implements ITenantRepository {
     return TenantMapper.toTreeNodeList(models);
   }
 
-  async getMyTenantAndChildren(search?: string): Promise<TenantTreeNode[]> {
-    const models = await this.service.getMyTenantAndChildren(search);
+  async getCurrentTenantHierarchy(search?: string): Promise<TenantTreeNode[]> {
+    const models = await this.service.getCurrentTenantHierarchy(search);
     return TenantMapper.toTreeNodeList(models);
   }
 
@@ -341,5 +354,76 @@ export class TenantRepository implements ITenantRepository {
 
   async removeDomain(tenantId: string, domainId: string): Promise<void> {
     await this.service.removeDomain(tenantId, domainId);
+  }
+
+  // ── Platform-Admin Tenant-Scoped Identity Providers ───────
+
+  async getIdentityProviders(
+    tenantId: string,
+    params?: TenantIdentityProviderListParams
+  ): Promise<PagedResult<TenantIdentityProviderListItem>> {
+    const raw = await this.service.getIdentityProviders(tenantId, params);
+    return {
+      items: (raw.items ?? []).map(TenantIdentityProviderMapper.toListItem),
+      totalCount: raw.totalCount ?? 0,
+      page: raw.pageNumber ?? raw.page ?? 1,
+      pageSize: raw.pageSize ?? 20,
+      totalPages: raw.totalPages ?? 1,
+      hasNextPage: Boolean(raw.hasNextPage),
+      hasPreviousPage: Boolean(raw.hasPreviousPage),
+    };
+  }
+
+  async getIdentityProviderById(
+    tenantId: string,
+    id: string
+  ): Promise<TenantIdentityProviderDetail> {
+    const raw = await this.service.getIdentityProviderById(tenantId, id);
+    return TenantIdentityProviderMapper.toDetail(raw);
+  }
+
+  async createIdentityProvider(
+    tenantId: string,
+    payload: CreateTenantIdentityProviderPayload
+  ): Promise<{ id: string }> {
+    const dto = TenantIdentityProviderMapper.toCreateDto(payload);
+    return this.service.createIdentityProvider(tenantId, dto);
+  }
+
+  async updateIdentityProvider(
+    tenantId: string,
+    id: string,
+    payload: UpdateTenantIdentityProviderPayload
+  ): Promise<void> {
+    const dto = TenantIdentityProviderMapper.toUpdateDto(payload);
+    await this.service.updateIdentityProvider(tenantId, id, dto);
+  }
+
+  async deleteIdentityProvider(tenantId: string, id: string): Promise<void> {
+    await this.service.deleteIdentityProvider(tenantId, id);
+  }
+
+  async testIdentityProviderConnection(
+    tenantId: string,
+    id: string
+  ): Promise<TenantIdpTestConnectionResult> {
+    const raw = await this.service.testIdentityProviderConnection(tenantId, id);
+    return TenantIdentityProviderMapper.toTestResult(raw);
+  }
+
+  async toggleStatus(id: string, isActive: boolean): Promise<void> {
+    await this.service.toggleStatus(id, isActive);
+  }
+
+  async getSettings(tenantId: string): Promise<TenantSettingsModel> {
+    return this.service.getSettings(tenantId);
+  }
+
+  async updateSettings(tenantId: string, request: UpdateTenantSettingsRequest): Promise<void> {
+    await this.service.updateSettings(tenantId, request);
+  }
+
+  async uploadLogo(tenantId: string, file: File): Promise<{ url: string }> {
+    return this.service.uploadLogo(tenantId, file);
   }
 }

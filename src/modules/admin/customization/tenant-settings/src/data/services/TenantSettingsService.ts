@@ -17,13 +17,13 @@ export class TenantSettingsService implements ITenantSettingsService {
    * Get the current user's tenant settings
    */
   async getMySettings(): Promise<TenantSettingsModel> {
-    return this.apiService.get<TenantSettingsModel>(TENANT_SETTINGS_ENDPOINTS.MY_SETTINGS);
+    return this.apiService.get<TenantSettingsModel>(TENANT_SETTINGS_ENDPOINTS.CURRENT_SETTINGS);
   }
 
   /**
    * Update the current user's tenant settings
    */
   async updateMySettings(request: UpdateTenantSettingsRequest): Promise<void> {
-    await this.apiService.put(TENANT_SETTINGS_ENDPOINTS.MY_SETTINGS, request);
+    await this.apiService.put(TENANT_SETTINGS_ENDPOINTS.CURRENT_SETTINGS, request);
   }
 }

@@ -164,12 +164,12 @@ export function TwoFactorForm({
         type="button"
         disabled={isVerifying2FA || !twoFactorCode.trim()}
         onClick={handleVerify2FA}
-        className="flex h-12 w-full items-center justify-center gap-2.5 rounded-xl text-[15px] font-semibold text-white shadow-none transition-all active:scale-[0.985] disabled:pointer-events-none disabled:opacity-50"
+        className="flex h-12 w-full items-center justify-center gap-2.5 rounded-xl text-[15px] font-semibold text-nx-on-fill shadow-none transition-colors disabled:pointer-events-none disabled:opacity-50"
       >
         {isVerifying2FA ? (
           <>
             <span
-              className="sx-spin1 inline-block h-[18px] w-[18px] rounded-full border-2 border-white/30 border-t-white"
+              className="sx-spin1 inline-block h-[18px] w-[18px] rounded-full border-2 border-nx-on-fill border-t-transparent opacity-80"
               aria-hidden="true"
             />
             {t("auth.twoFactor.verifying")}

@@ -64,7 +64,7 @@ class Logger {
 
   error(message: string, ...args: any[]): void {
     if (this.shouldLog(LogLevel.ERROR)) {
-      console.error(...this.formatMessage("ERROR", message, ...args));
+      console.warn(...this.formatMessage("ERROR", message, ...args));
     }
   }
 

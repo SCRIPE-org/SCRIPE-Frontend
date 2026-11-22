@@ -6,7 +6,7 @@ import { useAppStore } from "@core/store/useAppStore";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useQueryClient } from "@tanstack/react-query";
 import { useServices } from "@core/providers/service-provider";
-import { getSafeRedirectPath } from "../utils/redirect-safety";
+import { buildPostAuthEntryUrl } from "../utils/redirect-safety";
 
 /**
  * Exported type defining parameters and fields for login step configurations.
@@ -14,12 +14,13 @@ import { getSafeRedirectPath } from "../utils/redirect-safety";
 export type LoginStep = "credentials" | "two-factor" | "workspace-selection";
 
 /**
- * Interface defining property specifications, keys types, and structural contract rules for use2 f a handler options.
+ * Interface defining property specifications, keys types, and structural contract rules for use2FAHandler options.
  */
 export interface Use2FAHandlerOptions {
   redirectPath: string;
   formIdentifier: string;
   formPassword: string;
+  staySignedIn?: boolean;
   tenantId: string | undefined;
   setLoginStep: (step: LoginStep) => void;
   setError: (msg: string) => void;
@@ -27,17 +28,19 @@ export interface Use2FAHandlerOptions {
 }
 
 /**
- * use2FAHandler — manages 2FA verification state and submission.
+ * use2FAHandler — manages 2FA verification state and submission for both
+ * password-based login and passwordless hybrid MFA (`twoFactorPendingToken`).
  *
  * Extracted from useLoginViewModel to keep that hook under 200 lines.
  * Handles: TOTP code state, backup code toggle, verify2FA call,
- * post-verification auth store update, and redirect.
+ * post-verification auth store update (with explicit roles), and safe redirect.
  */
 export function use2FAHandler(opts: Use2FAHandlerOptions) {
   const {
     redirectPath,
     formIdentifier,
     formPassword,
+    staySignedIn = false,
     tenantId,
     setLoginStep,
     setError,
@@ -47,6 +50,8 @@ export function use2FAHandler(opts: Use2FAHandlerOptions) {
   const [twoFactorCode, setTwoFactorCode] = useState("");
   const [useBackupCode, setUseBackupCode] = useState(false);
   const [isVerifying2FA, setIsVerifying2FA] = useState(false);
+  const [twoFactorPendingToken, setTwoFactorPendingToken] = useState<string | null>(null);
+  const [pendingStaySignedIn, setPendingStaySignedIn] = useState(false);
 
   const router = useRouter();
   const { t } = useI18n();
@@ -55,7 +60,8 @@ export function use2FAHandler(opts: Use2FAHandlerOptions) {
   const queryClient = useQueryClient();
 
   const handleVerify2FA = useCallback(async () => {
-    if (!twoFactorCode.trim()) {
+    const trimmedCode = twoFactorCode.trim();
+    if (!trimmedCode) {
       setError(t("auth.twoFactor.enterCode"));
       return;
     }
@@ -64,33 +70,49 @@ export function use2FAHandler(opts: Use2FAHandlerOptions) {
     setIsVerifying2FA(true);
 
     try {
-      const result = await authRepository.verify2FA(
-        formIdentifier,
-        formPassword,
-        twoFactorCode,
-        tenantId
-      );
+      const result = twoFactorPendingToken
+        ? await authRepository.verify2FA(
+            "",
+            null,
+            trimmedCode,
+            undefined,
+            twoFactorPendingToken,
+            pendingStaySignedIn
+          )
+        : await authRepository.verify2FA(
+            formIdentifier,
+            formPassword,
+            trimmedCode,
+            tenantId,
+            null,
+            staySignedIn
+          );
       const { user } = result;
 
-      setAuth(user, user.permissions || [], [], true);
-      useAppStore
-        .getState()
-        .setSubscriptionInfo(result.subscriptionStatus, result.gracePhase, result.editionName);
-      useAppStore.getState().setMustChangePassword(result.mustChangePassword ?? false);
-
+      setAuth(user, user.permissions || [], user.roles || [], true);
+      const store = useAppStore.getState();
+      store.setSubscriptionInfo(result.subscriptionStatus, result.gracePhase, result.editionName);
       const mustChange = result.mustChangePassword ?? false;
+      store.setMustChangePassword(mustChange);
+      store.setDefaultRedirectPath("/");
+
       if (!mustChange) {
         // v2: NavigationProvider auto-fetches when isAuthenticated changes
         queryClient.invalidateQueries();
       }
 
       onRedirectTriggered();
-      // redirectPath can come from the attacker-controlled `?redirect=` query
-      // param — validate same-origin/relative before navigating (open-redirect
-      // protection), since this bypasses use-login-viewmodel's handleRedirect.
-      const targetPath = mustChange ? "/change-password" : getSafeRedirectPath(redirectPath);
+      const targetPath = buildPostAuthEntryUrl({
+        mustChangePassword: mustChange,
+        subscriptionStatus: result.subscriptionStatus,
+        redirect: redirectPath,
+      });
       setTimeout(() => {
-        router.replace(targetPath);
+        if (targetPath.startsWith("http://") || targetPath.startsWith("https://")) {
+          window.location.href = targetPath;
+        } else {
+          router.replace(targetPath);
+        }
       }, 100);
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : t("auth.twoFactor.invalidCode");
@@ -100,8 +122,11 @@ export function use2FAHandler(opts: Use2FAHandlerOptions) {
     }
   }, [
     twoFactorCode,
+    twoFactorPendingToken,
+    pendingStaySignedIn,
     formIdentifier,
     formPassword,
+    staySignedIn,
     tenantId,
     authRepository,
     setAuth,
@@ -122,20 +147,31 @@ export function use2FAHandler(opts: Use2FAHandlerOptions) {
   const reset2FA = useCallback(() => {
     setTwoFactorCode("");
     setUseBackupCode(false);
+    setTwoFactorPendingToken(null);
+    setPendingStaySignedIn(false);
   }, []);
 
-  /** Called from workspace selector when 2FA is needed post-workspace-pick */
-  const enterTwoFactor = useCallback(() => {
-    setLoginStep("two-factor");
-    setTwoFactorCode("");
-    setError("");
-  }, [setLoginStep, setError]);
+  /**
+   * Transitions to the 2FA verification step.
+   * Accepts an optional `pendingToken` for passwordless hybrid MFA flows (Phone OTP, SSO, etc.).
+   */
+  const enterTwoFactor = useCallback(
+    (pendingToken?: string | null, persistSession?: boolean) => {
+      setTwoFactorPendingToken(pendingToken ?? null);
+      setPendingStaySignedIn(Boolean(persistSession ?? staySignedIn));
+      setLoginStep("two-factor");
+      setTwoFactorCode("");
+      setError("");
+    },
+    [setLoginStep, setError, staySignedIn]
+  );
 
   return {
     twoFactorCode,
     setTwoFactorCode,
     useBackupCode,
     isVerifying2FA,
+    twoFactorPendingToken,
     handleVerify2FA,
     toggleBackupCode,
     reset2FA,

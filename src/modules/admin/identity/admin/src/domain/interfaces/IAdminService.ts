@@ -59,7 +59,7 @@ export interface IAdminService {
   /**
    * Get admins belonging to current user's tenant
    */
-  getMyTenantAdmins(params: ServiceAdminListParams): Promise<AdminListResult>;
+  getCurrentTenantAdmins(params: ServiceAdminListParams): Promise<AdminListResult>;
 
   /**
    * Get admin by ID
@@ -74,7 +74,7 @@ export interface IAdminService {
   /**
    * Create admin for current user's tenant (tenantId from token)
    */
-  createForMyTenant(json: Omit<CreateAdminJson, "tenantId">): Promise<{ id: string }>;
+  createInCurrentTenant(json: Omit<CreateAdminJson, "tenantId">): Promise<{ id: string }>;
 
   /**
    * Update an existing admin

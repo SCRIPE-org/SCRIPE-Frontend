@@ -8,24 +8,15 @@
  * - Logout: When one tab logs out, all tabs should redirect to login
  * - Token refresh: When one tab refreshes, other tabs can use the new token
  * - Impersonation: When admin starts/stops impersonation
- *
- * @usage
- * // In a provider/layout component:
- * import { authBroadcast } from "@core/common/broadcast-auth";
- *
- * // Listen for events from other tabs
- * authBroadcast.onLogout(() => {
- *   useAppStore.getState().logout();
- * });
- *
- * // Broadcast events to other tabs
- * authBroadcast.broadcastLogout();
  */
 
 import { secureTokenService } from "./secure-token-service";
 import { appLogger } from "./logger";
 import { BRAND } from "@core/config/branding";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
+import { useAppStore } from "@core/store/useAppStore";
+
+const TENANT_BREADCRUMBS_KEY = "scr_tenant_breadcrumbs";
 
 type AuthBroadcastEvent =
   | { type: "LOGOUT" }
@@ -36,10 +27,9 @@ type AuthBroadcastEvent =
 class AuthBroadcastService {
   private channel: BroadcastChannel | null = null;
 
-  // Callbacks
-  private onLogoutCallback: (() => void) | null = null;
-  private onTokenRefreshedCallback: ((token: string) => void) | null = null;
-  private onImpersonationCallback: ((type: "start" | "stop") => void) | null = null;
+  private onLogoutCallbacks = new Set<() => void>();
+  private onTokenRefreshedCallbacks = new Set<(token: string) => void>();
+  private onImpersonationCallbacks = new Set<(type: "start" | "stop") => void>();
 
   constructor() {
     if (typeof window !== "undefined" && typeof BroadcastChannel !== "undefined") {
@@ -55,12 +45,28 @@ class AuthBroadcastService {
     }
   }
 
+  private clearSiblingSessionForImpersonation(): void {
+    secureTokenService.clearTokens();
+    useAppStore.getState().logout();
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.removeItem(STORAGE_KEYS.APP_STORE);
+        sessionStorage.removeItem(STORAGE_KEYS.tenant_context);
+        sessionStorage.removeItem(TENANT_BREADCRUMBS_KEY);
+      } catch {
+        // Ignore storage errors in restricted browsing contexts
+      }
+    }
+  }
+
   private handleMessage(event: AuthBroadcastEvent): void {
     switch (event.type) {
       case "LOGOUT":
         appLogger.debug("[AuthBroadcast] Received LOGOUT from another tab");
         secureTokenService.clearTokens();
-        this.onLogoutCallback?.();
+        for (const cb of this.onLogoutCallbacks) {
+          cb();
+        }
         break;
 
       case "TOKEN_REFRESHED":
@@ -69,42 +75,57 @@ class AuthBroadcastService {
         if (event.expiresAt) {
           secureTokenService.setTokenExpiry(event.expiresAt);
         }
-        this.onTokenRefreshedCallback?.(event.accessToken);
+        for (const cb of this.onTokenRefreshedCallbacks) {
+          cb(event.accessToken);
+        }
         break;
 
       case "IMPERSONATION_START":
         appLogger.debug("[AuthBroadcast] Received IMPERSONATION_START from another tab");
-        // Sync sessionStorage so this tab's banner also shows
+        this.clearSiblingSessionForImpersonation();
         if (typeof window !== "undefined") {
           sessionStorage.setItem(STORAGE_KEYS.IMPERSONATING, "true");
         }
-        this.onImpersonationCallback?.("start");
+        for (const cb of this.onImpersonationCallbacks) {
+          cb("start");
+        }
         break;
 
       case "IMPERSONATION_STOP":
         appLogger.debug("[AuthBroadcast] Received IMPERSONATION_STOP from another tab");
-        // Clear sessionStorage so this tab's banner also hides
+        this.clearSiblingSessionForImpersonation();
         if (typeof window !== "undefined") {
           sessionStorage.removeItem(STORAGE_KEYS.IMPERSONATING);
           sessionStorage.removeItem(STORAGE_KEYS.admin_backup_token);
         }
-        this.onImpersonationCallback?.("stop");
+        for (const cb of this.onImpersonationCallbacks) {
+          cb("stop");
+        }
         break;
     }
   }
 
   // ─── Register Callbacks ───────────────────────────────────────
 
-  onLogout(callback: () => void): void {
-    this.onLogoutCallback = callback;
+  onLogout(callback: () => void): () => void {
+    this.onLogoutCallbacks.add(callback);
+    return () => {
+      this.onLogoutCallbacks.delete(callback);
+    };
   }
 
-  onTokenRefreshed(callback: (token: string) => void): void {
-    this.onTokenRefreshedCallback = callback;
+  onTokenRefreshed(callback: (token: string) => void): () => void {
+    this.onTokenRefreshedCallbacks.add(callback);
+    return () => {
+      this.onTokenRefreshedCallbacks.delete(callback);
+    };
   }
 
-  onImpersonation(callback: (type: "start" | "stop") => void): void {
-    this.onImpersonationCallback = callback;
+  onImpersonation(callback: (type: "start" | "stop") => void): () => void {
+    this.onImpersonationCallbacks.add(callback);
+    return () => {
+      this.onImpersonationCallbacks.delete(callback);
+    };
   }
 
   // ─── Broadcast Events ────────────────────────────────────────

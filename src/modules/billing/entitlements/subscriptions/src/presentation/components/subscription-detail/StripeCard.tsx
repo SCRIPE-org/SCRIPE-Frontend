@@ -12,7 +12,7 @@ import { Button } from "@core/ui/button";
 import { Separator } from "@core/ui/separator";
 import { DetailRow } from "@core/ui/detail-row";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
-import { CreditCard, ExternalLink, Receipt, Sparkles, XSquare } from "lucide-react";
+import { CreditCard, ExternalLink, Receipt, Shield, Sparkles, XSquare } from "lucide-react";
 import type { SubscriptionListItem } from "../../../domain/entities/Subscription";
 import type { useSubscriptionsViewModel } from "../../viewmodels/useSubscriptionsViewModel";
 
@@ -20,14 +20,46 @@ interface StripeCardProps {
   sub: SubscriptionListItem;
   vm: ReturnType<typeof useSubscriptionsViewModel>;
   t: (key: string) => string;
+  isInternal?: boolean;
 }
 
 /**
  * Presentation UI component rendering the stripe card.
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
-export function StripeCard({ sub, vm, t }: StripeCardProps) {
+export function StripeCard({ sub, vm, t, isInternal }: StripeCardProps) {
   const hasGatewayCustomer = !!sub.gatewayCustomerId;
+  const resolvedInternal = isInternal ?? Boolean(vm.isInternalTenant);
+
+  if (!hasGatewayCustomer && resolvedInternal) {
+    return (
+      <Card className="border-dashed">
+        <CardHeader className="pb-3">
+          <div className="flex items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-nx-md bg-nx-raised">
+              <CreditCard className="h-4 w-4 text-nx-ink-2" aria-hidden="true" />
+            </div>
+            <CardTitle className="text-sm font-semibold">
+              {t("entSubscriptions.paymentGateway")}
+            </CardTitle>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col items-center justify-center py-6 text-center">
+            <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-nx-raised">
+              <Shield className="h-5 w-5 text-info" aria-hidden="true" />
+            </div>
+            <p className="text-sm font-medium text-nx-ink-2">
+              {t("entSubscriptions.internalSovereignTitle")}
+            </p>
+            <p className="mt-1 text-xs text-nx-ink-3">
+              {t("entSubscriptions.internalSovereignGatewayDesc")}
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   // Free edition — no gateway card needed
   if (!hasGatewayCustomer && (sub.totalAmount ?? 0) === 0) {

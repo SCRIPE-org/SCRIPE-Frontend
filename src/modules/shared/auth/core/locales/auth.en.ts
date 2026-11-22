@@ -47,6 +47,9 @@ export const en = {
       headlineL2Accent: "pros.",
       subtitle:
         "Sessions, squads, pitches and player development — one operating system for the people who run the game.",
+      pillarVenue: "Venue",
+      pillarAcademy: "Academy",
+      pillarFootball: "Football Intelligence",
       featureSecurity: "Enterprise Security",
       featureSecurityDesc: "Your athletes' data, protected end to end",
       featureMultiTenant: "Every Branch",
@@ -72,6 +75,7 @@ export const en = {
     sso: {
       orContinueWith: "or continue with",
       signInWith: "Sign in with",
+      signInWithProvider: "Sign in with {{provider}}",
       signingIn: "Signing in...",
       callbackProcessing: "Completing Sign-In",
       callbackProcessingDesc: "Verifying your identity with the provider...",
@@ -85,6 +89,13 @@ export const en = {
       loginSuccess: "Sign-In Successful",
       redirecting: "Redirecting to dashboard...",
       backToLogin: "Back to Sign In",
+      organizationScope: "Org",
+      accountLinkedSuccess: "External SSO provider linked successfully.",
+      discoveryError:
+        "Unable to load sign-in providers. You can still sign in with your credentials or try again.",
+      discoveryRateLimited:
+        "Too many provider lookup requests. Please wait a moment and try again, or sign in with your credentials.",
+      retryProviders: "Retry",
     },
     forgotPassword: "Forgot Password?",
     forgotPasswordDesc: "Enter your email and we'll send you instructions to reset your password.",

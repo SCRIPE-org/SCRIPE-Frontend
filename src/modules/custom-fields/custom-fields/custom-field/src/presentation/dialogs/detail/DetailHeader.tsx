@@ -83,12 +83,12 @@ export function DetailHeader({
           <Badge variant="outline" className="gap-1">
             {field.isGlobal ? (
               <>
-                <Globe className="h-3 w-3 text-sky-500" />
+                <Globe className="h-3 w-3 text-info" />
                 <span>{t("customField.details.fields.globalScope")}</span>
               </>
             ) : (
               <>
-                <Building2 className="h-3 w-3 text-indigo-500" />
+                <Building2 className="h-3 w-3 text-primary" />
                 <span>{t("customField.details.fields.tenantScope")}</span>
               </>
             )}

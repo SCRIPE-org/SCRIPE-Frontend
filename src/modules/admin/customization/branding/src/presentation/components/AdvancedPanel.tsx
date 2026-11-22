@@ -4,9 +4,6 @@
  * All labels localized via t()
  */
 "use client";
-// UI-EXCEPTION: compact studio layout — native <button> used for pixel-precise
-// compact controls (toggle switches, gradient pickers, layout thumbnails, etc.)
-// where @core/ui/button's padding/sizing would break the layout.
 
 import {
   Code,
@@ -21,6 +18,8 @@ import {
   Tag,
   Info,
 } from "lucide-react";
+import { Button } from "@core/ui/button";
+import { Input } from "@core/ui/input";
 import { Switch } from "@core/ui/switch";
 import { Textarea } from "@core/ui/textarea";
 import type { StudioDraftProps as StudioDraft } from "../../domain/entities/StudioDraft";
@@ -281,8 +280,9 @@ export function AdvancedPanel({ draft, updateDraft }: AdvancedPanelProps) {
         </div>
         <p className="text-[10px] text-nx-ink-3">{t("studio.advanced.exportImportDesc")}</p>
         <div className="flex gap-2">
-          <button
+          <Button
             type="button"
+            variant="ghost"
             onClick={() => {
               const json = JSON.stringify(draft, null, 2);
               const blob = new Blob([json], { type: "application/json" });
@@ -293,13 +293,13 @@ export function AdvancedPanel({ draft, updateDraft }: AdvancedPanelProps) {
               a.click();
               URL.revokeObjectURL(url);
             }}
-            className="flex-1 rounded-nx-control border border-nx-line px-3 py-1.5 text-[11px] font-medium text-nx-ink transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
+            className="h-auto flex-1 rounded-nx-control border border-nx-line px-3 py-1.5 text-[11px] font-medium text-nx-ink transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
           >
             {t("studio.advanced.export")}
-          </button>
+          </Button>
           <label className="flex flex-1 cursor-pointer items-center justify-center rounded-nx-control border border-nx-line px-3 py-1.5 text-[11px] font-medium text-nx-ink transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover motion-reduce:transition-none">
             {t("studio.advanced.import")}
-            <input
+            <Input
               type="file"
               accept=".json"
               className="hidden"

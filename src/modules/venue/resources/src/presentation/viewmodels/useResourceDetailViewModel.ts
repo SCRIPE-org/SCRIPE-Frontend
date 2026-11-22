@@ -5,7 +5,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { getVenueContainer } from "@modules/venue/di";
 import type { Facility } from "@modules/venue";
 import type { FacilityResourceProfile } from "@modules/venue";
-import type { SchedulableResource } from "@modules/venue";
+import type {
+  SchedulableResource,
+  PublicationChecklistReport,
+  ResourceAllocationMode,
+} from "@modules/venue";
 import type {
   AvailabilityCalendar,
   AvailabilityWindow,
@@ -17,6 +21,12 @@ import type {
   ResourceRentalPriceConfiguration,
   TaxCategory,
 } from "@modules/venue/commercial/src/domain/entities/CommercialPricing";
+import {
+  extractCourtPhotos,
+  extractCourtBio,
+  getDisplayCourtPhotos,
+  packCourtPhotoMetadata,
+} from "../../domain/court-photos";
 
 const WEEK_DAYS: WeekDay[] = [
   "Sunday",
@@ -38,6 +48,7 @@ export function useResourceDetailViewModel(resourceId: string) {
     schedulableResourceRepository,
     availabilityRepository,
     commercialPricingRepository,
+    resourceMediaService,
   } = getVenueContainer();
 
   const [loading, setLoading] = useState(true);
@@ -53,6 +64,14 @@ export function useResourceDetailViewModel(resourceId: string) {
   const [taxCategories, setTaxCategories] = useState<TaxCategory[]>([]);
   const [maintenanceBlocks, setMaintenanceBlocks] = useState<ResourceBlock[]>([]);
   const [blackoutBlocks, setBlackoutBlocks] = useState<ResourceBlock[]>([]);
+  const [courtPhotos, setCourtPhotos] = useState<string[]>([]);
+  const [activePhoto, setActivePhoto] = useState<string>("/images/venue/padel-court-indoor.svg");
+  const [uploadingPhoto, setUploadingPhoto] = useState<boolean>(false);
+  const [checklist, setChecklist] = useState<PublicationChecklistReport | null>(null);
+  const [checklistLoading, setChecklistLoading] = useState<boolean>(false);
+  const [availableParentResources, setAvailableParentResources] = useState<
+    Array<{ id: string; name: string }>
+  >([]);
   const pricingIntentRef = useRef<{
     fingerprint: string;
     key: string;
@@ -66,6 +85,9 @@ export function useResourceDetailViewModel(resourceId: string) {
     try {
       const res = await schedulableResourceRepository.getById(resourceId);
       setResource(res);
+      const initialPhotos = getDisplayCourtPhotos(res.photoMetadata, res.description);
+      setCourtPhotos(initialPhotos);
+      setActivePhoto((prev) => (initialPhotos.includes(prev) ? prev : res.imageUrl || initialPhotos[0] || "/images/venue/padel-court-indoor.svg"));
 
       const [prof, cal, taxes, maint, black] = await Promise.all([
         facilityResourceProfileRepository.getById(res.facilityResourceProfileId).catch(() => null),
@@ -92,6 +114,23 @@ export function useResourceDetailViewModel(resourceId: string) {
       } catch {
         setPriceConfig(null);
       }
+
+      try {
+        const siblings = await schedulableResourceRepository.getAll({
+          facilityResourceProfileIds: [res.facilityResourceProfileId],
+          page: 1,
+          pageSize: 100,
+        });
+        if (siblings?.items) {
+          setAvailableParentResources(
+            siblings.items
+              .filter((item) => item.id !== resourceId)
+              .map((item) => ({ id: item.id, name: item.name }))
+          );
+        }
+      } catch {
+        setAvailableParentResources([]);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load resource details");
     } finally {
@@ -113,15 +152,19 @@ export function useResourceDetailViewModel(resourceId: string) {
   }, [loadData]);
 
   const updateGeneral = useCallback(
-    async (input: { name: string; capacity: number }) => {
+    async (input: { name: string; capacity: number; description?: string }) => {
       if (!resource) return false;
       setSaving(true);
       setError(null);
       setFeedback(null);
       try {
+        const bioToSave = input.description !== undefined ? input.description.trim() : extractCourtBio(resource.description);
+
         await schedulableResourceRepository.update(resource.id, {
           name: input.name.trim(),
-          description: resource.description ?? null,
+          description: bioToSave,
+          imageUrl: resource.imageUrl ?? null,
+          photoMetadata: resource.photoMetadata ?? null,
           parentSchedulableResourceId: resource.parentSchedulableResourceId ?? null,
           isComposite: resource.isComposite,
           namedUnitLabel: resource.namedUnitLabel ?? null,
@@ -149,6 +192,56 @@ export function useResourceDetailViewModel(resourceId: string) {
       }
     },
     [loadData, resource, schedulableResourceRepository]
+  );
+
+  const uploadCourtPhoto = useCallback(
+    async (file: File) => {
+      if (!resource) return null;
+      setUploadingPhoto(true);
+      setError(null);
+      try {
+        const uploadResult = await resourceMediaService.uploadImage(file, resource.id);
+        const uploadedUrl = uploadResult.url;
+        const currentCustomPhotos = extractCourtPhotos(resource.photoMetadata, resource.description);
+        const newCustomPhotos = [uploadedUrl, ...currentCustomPhotos.filter((p: string) => p !== uploadedUrl)];
+        const currentBio = extractCourtBio(resource.description);
+        const newPhotoMetadata = packCourtPhotoMetadata(newCustomPhotos);
+
+        await schedulableResourceRepository.update(resource.id, {
+          name: resource.name,
+          description: currentBio,
+          imageUrl: uploadedUrl,
+          photoMetadata: newPhotoMetadata,
+          parentSchedulableResourceId: resource.parentSchedulableResourceId ?? null,
+          isComposite: resource.isComposite,
+          namedUnitLabel: resource.namedUnitLabel ?? null,
+          unitCount: resource.unitCount > 0 ? resource.unitCount : 1,
+          allocationMode: resource.capacity?.allocationMode ?? "SingleUnit",
+          maxConcurrentUsage: resource.capacity?.maxConcurrentUsage ?? 1,
+          slotPolicy: resource.slotPolicy
+            ? {
+                slotDurationMinutes: resource.slotPolicy.slotDurationMinutes,
+                startIncrementMinutes: resource.slotPolicy.startIncrementMinutes,
+                timeZoneId: resource.slotPolicy.timeZoneId ?? null,
+                allowMultiSlot: resource.slotPolicy.allowMultiSlot ?? false,
+              }
+            : null,
+        });
+
+        const displayPhotos = getDisplayCourtPhotos(newPhotoMetadata, currentBio);
+        setCourtPhotos(displayPhotos);
+        setActivePhoto(uploadedUrl);
+        setFeedback("photo.uploaded");
+        await loadData();
+        return uploadedUrl;
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to upload photo");
+        return null;
+      } finally {
+        setUploadingPhoto(false);
+      }
+    },
+    [loadData, resource, resourceMediaService, schedulableResourceRepository]
   );
 
   const updateWorkingHours = useCallback(
@@ -261,7 +354,7 @@ export function useResourceDetailViewModel(resourceId: string) {
           pricingIntentRef.current = {
             fingerprint,
             key: crypto.randomUUID(),
-            effectiveFromUtc: new Date(Date.now() + 15_000).toISOString(),
+            effectiveFromUtc: new Date().toISOString(),
           };
         }
         const intent = pricingIntentRef.current;
@@ -372,6 +465,67 @@ export function useResourceDetailViewModel(resourceId: string) {
     }
   }, [loadData, resource, schedulableResourceRepository]);
 
+  const loadChecklist = useCallback(async () => {
+    if (!resourceId) return null;
+    setChecklistLoading(true);
+    try {
+      const report = await schedulableResourceRepository.getPublicationChecklist(resourceId);
+      setChecklist(report);
+      return report;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to load publication checklist");
+      return null;
+    } finally {
+      setChecklistLoading(false);
+    }
+  }, [resourceId, schedulableResourceRepository]);
+
+  const updateAdvanced = useCallback(
+    async (input: {
+      allocationMode: ResourceAllocationMode;
+      maxConcurrentUsage: number;
+      isComposite: boolean;
+      parentSchedulableResourceId: string | null;
+      namedUnitLabel?: string | null;
+    }) => {
+      if (!resource) return false;
+      setSaving(true);
+      setError(null);
+      setFeedback(null);
+      try {
+        await schedulableResourceRepository.update(resource.id, {
+          name: resource.name,
+          description: resource.description,
+          imageUrl: resource.imageUrl ?? null,
+          photoMetadata: resource.photoMetadata ?? null,
+          parentSchedulableResourceId: input.parentSchedulableResourceId || null,
+          isComposite: input.isComposite,
+          namedUnitLabel: input.namedUnitLabel ?? null,
+          unitCount: input.maxConcurrentUsage > 0 ? input.maxConcurrentUsage : 1,
+          allocationMode: input.allocationMode,
+          maxConcurrentUsage: input.maxConcurrentUsage > 0 ? input.maxConcurrentUsage : 1,
+          slotPolicy: resource.slotPolicy
+            ? {
+                slotDurationMinutes: resource.slotPolicy.slotDurationMinutes,
+                startIncrementMinutes: resource.slotPolicy.startIncrementMinutes,
+                timeZoneId: resource.slotPolicy.timeZoneId ?? null,
+                allowMultiSlot: resource.slotPolicy.allowMultiSlot ?? false,
+              }
+            : null,
+        });
+        setFeedback("advanced.saved");
+        await loadData();
+        return true;
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to update advanced settings");
+        return false;
+      } finally {
+        setSaving(false);
+      }
+    },
+    [loadData, resource, schedulableResourceRepository]
+  );
+
   const isCalendar247 = Boolean(
     calendar?.windows &&
     calendar.windows.length >= 7 &&
@@ -384,6 +538,25 @@ export function useResourceDetailViewModel(resourceId: string) {
           w.endLocal === "00:00")
     )
   );
+
+  const deleteCourt = useCallback(async () => {
+    if (!resource) return false;
+    setSaving(true);
+    setError(null);
+    try {
+      if (typeof (schedulableResourceRepository as any).deleteResource === "function") {
+        await (schedulableResourceRepository as any).deleteResource(resource.id);
+      } else {
+        await schedulableResourceRepository.delete(resource.id);
+      }
+      return true;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete court");
+      return false;
+    } finally {
+      setSaving(false);
+    }
+  }, [resource, schedulableResourceRepository]);
 
   return {
     loading,
@@ -399,6 +572,11 @@ export function useResourceDetailViewModel(resourceId: string) {
     maintenanceBlocks,
     blackoutBlocks,
     isCalendar247,
+    courtPhotos,
+    activePhoto,
+    setActivePhoto,
+    uploadingPhoto,
+    uploadCourtPhoto,
     updateGeneral,
     updateWorkingHours,
     updateBookingRules,
@@ -406,6 +584,12 @@ export function useResourceDetailViewModel(resourceId: string) {
     publishCourt,
     addClosure,
     deleteClosure,
+    checklist,
+    checklistLoading,
+    loadChecklist,
+    availableParentResources,
+    updateAdvanced,
+    deleteCourt,
     refresh: loadData,
   };
 }

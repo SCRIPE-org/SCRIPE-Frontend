@@ -173,7 +173,15 @@ export function useBooking360ViewModel(
       setState((current) => ({
         ...current,
         reservation,
-        customer: customerSource ? { displayName: customerSource.displayName } : null,
+        customer: customerSource
+          ? {
+              id: customerSource.id,
+              displayName: customerSource.displayName,
+              phone: customerSource.phone,
+              email: customerSource.email,
+              type: customerSource.type,
+            }
+          : null,
         resource: resourceSource ? { name: resourceSource.name } : null,
         profile,
         facility,

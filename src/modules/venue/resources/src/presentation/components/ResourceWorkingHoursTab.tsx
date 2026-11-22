@@ -93,7 +93,7 @@ export function ResourceWorkingHoursTab({ vm }: Props) {
         (day) => ({
           dayOfWeek: day,
           startLocal: dailyWindows[day].start,
-          endLocal: dailyWindows[day].end,
+          endLocal: dailyWindows[day].end === "00:00" ? "23:59:59" : dailyWindows[day].end,
           capacityOverride: null,
         })
       );
@@ -182,7 +182,7 @@ export function ResourceWorkingHoursTab({ vm }: Props) {
               <div className="overflow-hidden rounded-nx-md border border-nx-line bg-nx-surface">
                 <div className="flex items-center justify-between border-b border-nx-line bg-nx-raised p-3 text-xs font-semibold text-nx-ink">
                   <span>{t("resources.workingHours.day", { defaultValue: "Day" })}</span>
-                  <div className="mr-4 flex items-center gap-8 rtl:ml-4 rtl:mr-0">
+                  <div className="me-4 flex items-center gap-8">
                     <span>
                       {t("resources.workingHours.openingTime", { defaultValue: "Opening Time" })}
                     </span>
@@ -247,7 +247,7 @@ export function ResourceWorkingHoursTab({ vm }: Props) {
                             </Button>
                           </div>
                         ) : (
-                          <span className="mr-16 text-xs italic text-nx-ink-3 rtl:ml-16 rtl:mr-0">
+                          <span className="me-16 text-xs italic text-nx-ink-3">
                             {t("resources.workingHours.closed", { defaultValue: "Closed" })}
                           </span>
                         )}
@@ -282,9 +282,9 @@ export function ResourceWorkingHoursTab({ vm }: Props) {
           </div>
           <Button asChild variant="outline" size="sm" className="h-8 shrink-0 gap-1.5 text-xs">
             <Link
-              href={`/venue/availability?resourceId=${encodeURIComponent(vm.resource?.id ?? "")}`}
+              href={`/venue/calendar?resourceId=${encodeURIComponent(vm.resource?.id ?? "")}`}
             >
-              <span>Open Advanced Availability</span>
+              <span>{t("resources.workingHours.openCalendar", { defaultValue: "Open Operations Calendar" })}</span>
               <ExternalLink className="size-3.5 text-nx-ink-3" aria-hidden="true" />
             </Link>
           </Button>

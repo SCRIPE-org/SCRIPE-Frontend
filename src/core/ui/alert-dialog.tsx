@@ -49,7 +49,7 @@ const AlertDialogContent = React.forwardRef<
         // centering counter-translate riding inside the animation vars (which
         // is why the 1/2 and 48% "slides" stay outside motion-safe: dropping
         // them under reduced motion throws the panel into the corner).
-        "fixed left-[50%] top-[50%] z-modal grid w-[calc(100%-2rem)] max-w-lg translate-x-[-50%] translate-y-[-50%] rounded-nx-lg border",
+        "fixed left-[50%] top-[50%] z-modal grid max-h-[90dvh] w-[calc(100%-2rem)] max-w-lg translate-x-[-50%] translate-y-[-50%] overflow-y-auto overscroll-contain rounded-nx-lg border",
         modalSurfaceClasses,
         modalMotionClasses,
         "data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] motion-safe:data-[state=closed]:zoom-out-95 motion-safe:data-[state=open]:zoom-in-95",
@@ -103,22 +103,28 @@ AlertDialogDescription.displayName = AlertDialogPrimitive.Description.displayNam
 const AlertDialogAction = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Action>,
   React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Action>
->(({ className, ...props }, ref) => (
-  <AlertDialogPrimitive.Action ref={ref} className={cn(buttonVariants(), className)} {...props} />
+>(({ className, asChild, ...props }, ref) => (
+  <AlertDialogPrimitive.Action
+    ref={ref}
+    asChild={asChild}
+    className={asChild ? className : cn(buttonVariants(), className)}
+    {...props}
+  />
 ));
 AlertDialogAction.displayName = AlertDialogPrimitive.Action.displayName;
 
 const AlertDialogCancel = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Cancel>,
   React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Cancel>
->(({ className, ...props }, ref) => (
+>(({ className, asChild, ...props }, ref) => (
   <AlertDialogPrimitive.Cancel
     ref={ref}
+    asChild={asChild}
     // The `mt-2 sm:mt-0` that used to live here dates from a footer that
     // spaced its children with margins. The footer has owned a `gap-2` for a
     // while now, so the margin was pure double-spacing: 16px between the two
     // buttons on mobile against 8px everywhere else in the system.
-    className={cn(buttonVariants({ variant: "outline" }), className)}
+    className={asChild ? className : cn(buttonVariants({ variant: "outline" }), className)}
     {...props}
   />
 ));

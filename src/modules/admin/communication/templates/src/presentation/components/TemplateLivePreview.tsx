@@ -12,7 +12,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Sun, Moon } from "lucide-react";
 import { Button } from "@core/ui/button";
-import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { DesignVariables } from "./DesignVariablesPanel";
 import {
@@ -118,7 +117,7 @@ export function TemplateLivePreview({
               type="button"
               variant={device === d.id ? "default" : "ghost"}
               size="sm"
-              className={cn("h-7 gap-1.5 px-2.5 text-xs", device === d.id && "shadow-nx-sm")}
+              className="h-7 gap-1.5 px-2.5 text-xs"
               onClick={() => setDevice(d.id)}
               title={t(d.labelKey)}
               aria-label={t(d.labelKey)}

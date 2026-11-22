@@ -103,7 +103,7 @@ export function QrApprovalView({
             height="32"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="var(--sx-success-dot, #10B981)"
+            stroke="var(--sx-success-dot, hsl(var(--success)))"
             strokeWidth="2.5"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -258,7 +258,7 @@ export function QrApprovalView({
         style={{
           background: "var(--sx-warning-bg, rgba(245,158,11,0.08))",
           border: "1px solid var(--sx-warning-border, rgba(245,158,11,0.15))",
-          color: "var(--sx-warning-text, #F59E0B)",
+          color: "var(--sx-warning-text, hsl(var(--warning-strong)))",
         }}
       >
         {t("auth.qr.securityWarning") ||
@@ -293,7 +293,7 @@ export function QrApprovalView({
           type="button"
           onClick={handleApprove}
           disabled={isLoading}
-          className="relative flex-1 overflow-hidden rounded-xl py-3 text-sm font-semibold text-white"
+          className="relative flex-1 overflow-hidden rounded-xl py-3 text-sm font-semibold text-nx-on-fill"
           style={{
             background: "var(--sx-cta-gradient)",
             boxShadow: "var(--sx-cta-shadow)",
@@ -301,7 +301,7 @@ export function QrApprovalView({
         >
           {isLoading ? (
             <span className="flex items-center justify-center gap-2">
-              <span className="sx-spin1 inline-block h-4 w-4 rounded-full border-2 border-white/30 border-t-white" />
+              <span className="sx-spin1 inline-block h-4 w-4 rounded-full border-2 border-nx-on-fill border-t-transparent opacity-80" />
             </span>
           ) : (
             t("auth.qr.approve") || "Approve"

@@ -13,6 +13,7 @@
 "use client";
 
 import React, { useMemo, useCallback } from "react";
+import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
 import { Switch } from "@core/ui/switch";
 import { Badge } from "@core/ui/badge";
@@ -164,20 +165,21 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
                   {recommendedEditions.slice(0, 4).map((ed) => {
                     const isSelected = vm.form.editionId === ed.id;
                     return (
-                      <button
+                      <Button
                         key={ed.id}
                         type="button"
+                        variant="ghost"
                         onClick={() => vm.updateField("editionId", ed.id)}
                         className={cn(
-                          "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition-all",
+                          "inline-flex h-auto items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition-all",
                           isSelected
-                            ? "shadow-nx-xs border-nx-accent bg-nx-accent font-semibold text-nx-ground"
+                            ? "shadow-nx-xs border-nx-accent bg-nx-accent font-semibold text-nx-ground hover:bg-nx-accent"
                             : "hover:border-nx-accent/40 border-nx-line bg-nx-ground text-nx-ink hover:bg-nx-raised"
                         )}
                       >
                         <span className="text-[11px]">⭐</span>
                         <span>{ed.name}</span>
-                      </button>
+                      </Button>
                     );
                   })}
                 </div>

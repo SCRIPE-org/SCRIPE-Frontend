@@ -19,6 +19,7 @@ import { useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
+import { getSafeRedirectPath } from "@core/common/redirect-safety";
 import { secureTokenService } from "@core/common/secure-token-service";
 import { useAppStore } from "@core/store/useAppStore";
 import { User } from "@modules/auth/core/domain/entities/User";
@@ -27,6 +28,20 @@ import type {
   ContactSalesPayload,
 } from "../../../domain/interfaces/ISignupRepository";
 import type { SignupStep, SignupWizardData, SelectedPlan } from "../../../domain/entities";
+
+/** Validates hosted Stripe/billing checkout URLs to prevent open-redirect or script-scheme injection. */
+export function getSafeCheckoutUrl(url: string | null | undefined): string | null {
+  if (!url || typeof url !== "string") return null;
+  try {
+    const parsed = new URL(url.trim());
+    if (parsed.protocol === "https:" && parsed.hostname.length > 0) {
+      return parsed.toString();
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
 
 interface UseSignupProvisioningOptions {
   repository: ISignupRepository;
@@ -92,6 +107,7 @@ export function useSignupProvisioning({
       // instead of register (which would create a second tenant).
       if (!isFreeFlow && wizardData.editionId) {
         const existingRef = repository.getPersistedSignupRef();
+        let pendingCheckoutUrl: string | undefined;
         if (existingRef) {
           try {
             const statusResult = await repository.getStatus(existingRef);
@@ -103,16 +119,23 @@ export function useSignupProvisioning({
                 billingCycle: billingCycleStr,
                 currency: wizardData.currency || "USD",
               });
-
-              const { password: _pw, ...safeData } = wizardData;
-              repository.persistWizardState({ step: "review", wizardData: safeData, selectedPlan });
-
-              window.location.href = changePlanResult.checkoutUrl;
-              return;
+              pendingCheckoutUrl = changePlanResult.checkoutUrl;
             }
           } catch {
             // Status check failed — fall through to normal register
           }
+        }
+        if (pendingCheckoutUrl !== undefined) {
+          const safeCheckoutUrl = getSafeCheckoutUrl(pendingCheckoutUrl);
+          if (!safeCheckoutUrl) {
+            throw new Error(
+              t("signup.errors.signupFailed") || "Signup failed. Please try again."
+            );
+          }
+          const { password: _pw, ...safeData } = wizardData;
+          repository.persistWizardState({ step: "review", wizardData: safeData, selectedPlan });
+          window.location.href = safeCheckoutUrl;
+          return;
         }
       }
 
@@ -139,7 +162,8 @@ export function useSignupProvisioning({
 
       // ── CHECKOUT MODE: hand off to Stripe ───────────────────────────────
       if (result.mode === "checkout") {
-        if (!result.checkoutUrl || !result.signupRef) {
+        const safeCheckoutUrl = getSafeCheckoutUrl(result.checkoutUrl);
+        if (!safeCheckoutUrl || !result.signupRef) {
           throw new Error(t("signup.errors.signupFailed") || "Signup failed. Please try again.");
         }
 
@@ -150,7 +174,7 @@ export function useSignupProvisioning({
         const { password: _password, ...safeData } = wizardData;
         repository.persistWizardState({ step: "review", wizardData: safeData, selectedPlan });
 
-        window.location.href = result.checkoutUrl;
+        window.location.href = safeCheckoutUrl;
         return; // navigation in flight — do not touch state
       }
 
@@ -168,10 +192,11 @@ export function useSignupProvisioning({
           adminTypeName: "",
         });
 
+      const safeRedirectPath = getSafeRedirectPath(result.redirectUrl, "/");
       setAuth(user, user.permissions ?? [], [], true);
       if (result.tenantCode) setTenantCode(result.tenantCode);
       setSubscriptionInfo(null, null, null);
-      setDefaultRedirectPath(result.redirectUrl || "/");
+      setDefaultRedirectPath(safeRedirectPath);
       // Clear stale query cache — do NOT use invalidateQueries() here because
       // it triggers immediate refetches before the refresh-token cookie is
       // fully established, causing 401 → logout race conditions. clear()
@@ -185,7 +210,7 @@ export function useSignupProvisioning({
       setStep("complete");
 
       setTimeout(() => {
-        router.replace(result.redirectUrl || "/");
+        router.replace(safeRedirectPath);
       }, 1500);
     } catch (err: unknown) {
       isProvisioningRef.current = false;

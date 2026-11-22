@@ -4,6 +4,7 @@
 "use client";
 
 import { Alert, AlertDescription } from "@core/ui/alert";
+import { Badge } from "@core/ui/badge";
 import { AlertTriangle, Ban, XCircle } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn, formatDateUtc } from "@core/common/utils";
@@ -45,7 +46,7 @@ export function TenantHeaderStatusBanners({
   progress,
   progressColor,
 }: TenantHeaderStatusBannersProps) {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
 
   return (
     <>
@@ -76,32 +77,41 @@ export function TenantHeaderStatusBanners({
         </Alert>
       )}
 
-      {status === "active" && editionName && (
-        <div className="rounded-nx-md border border-nx-line bg-nx-surface p-3">
-          <div className="mb-1.5 flex items-center justify-between text-xs text-nx-ink-2">
-            <span className="font-medium">
-              {editionName}
-              {daysLeft !== null
-                ? ` • ${daysLeft} ${t("tenant.daysLeft")}`
-                : ` • ${t("tenant.lifetime")}`}
+      {status === "active" &&
+        editionName &&
+        (daysLeft === null ? (
+          <div className="flex flex-wrap items-center justify-between gap-2 rounded-nx-md border border-nx-line bg-nx-surface p-3">
+            <span className="text-xs font-medium text-nx-ink-2">
+              {editionName} • {t("tenant.lifetime")}
             </span>
-            {editionEndDate && (
-              <span>
-                {t("tenant.endDate")}: {formatDateUtc(editionEndDate)}
+            <Badge variant="info" className="text-[11px]">
+              {t("tenant.noExpiryBadge")}
+            </Badge>
+          </div>
+        ) : (
+          <div className="rounded-nx-md border border-nx-line bg-nx-surface p-3">
+            <div className="mb-1.5 flex items-center justify-between text-xs text-nx-ink-2">
+              <span className="font-medium">
+                {editionName}
+                {` • ${daysLeft} ${t("tenant.daysLeft")}`}
               </span>
-            )}
-          </div>
-          <div className="h-2 w-full overflow-hidden rounded-full bg-nx-raised">
-            <div
-              className={cn(
-                "h-full rounded-full transition-[width] duration-nx-standard ease-nx-enter motion-reduce:transition-none",
-                progressColor
+              {editionEndDate && (
+                <span>
+                  {t("tenant.endDate")}: {formatDateUtc(editionEndDate, language)}
+                </span>
               )}
-              style={{ width: `${progress}%` }}
-            />
+            </div>
+            <div className="h-2 w-full overflow-hidden rounded-full bg-nx-raised">
+              <div
+                className={cn(
+                  "h-full rounded-full transition-[width] duration-nx-standard ease-nx-enter motion-reduce:transition-none",
+                  progressColor
+                )}
+                style={{ width: `${progress}%` }}
+              />
+            </div>
           </div>
-        </div>
-      )}
+        ))}
 
       {status === "expired" && (
         <div className="rounded-nx-md border border-nx-line bg-nx-surface p-3">

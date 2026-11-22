@@ -24,8 +24,8 @@ export function SetupStep3Attributes({ vm, hasCustomFields }: SetupStep3Attribut
   return (
     <div className="min-w-0 space-y-5">
       {/* Compliance Info Banner */}
-      <div className="flex items-start gap-3 rounded-xl border border-border/60 bg-muted/20 p-3.5 text-xs text-muted-foreground">
-        <Lock className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+      <div className="flex items-start gap-3 rounded-xl border border-nx-line bg-nx-raised p-3.5 text-xs text-nx-ink-2">
+        <Lock className="mt-0.5 h-4 w-4 shrink-0 text-nx-accent" />
         <p>
           Additional organizational and compliance attributes required for your administrator
           profile. Sensitive fields are end-to-end encrypted.
@@ -34,7 +34,7 @@ export function SetupStep3Attributes({ vm, hasCustomFields }: SetupStep3Attribut
 
       {/* Dynamic Custom Fields Grid */}
       {vm.isLoadingCustomFields ? (
-        <div className="py-8 text-center text-sm text-muted-foreground">Loading attributes...</div>
+        <div className="py-8 text-center text-sm text-nx-ink-2">Loading attributes...</div>
       ) : hasCustomFields ? (
         <div className="grid min-w-0 gap-4 sm:grid-cols-2">
           {vm.customFields.map((field) => (
@@ -49,8 +49,8 @@ export function SetupStep3Attributes({ vm, hasCustomFields }: SetupStep3Attribut
           ))}
         </div>
       ) : (
-        <div className="rounded-xl border border-border/50 bg-muted/10 p-6 text-center text-sm text-muted-foreground">
-          <CheckCircle2 className="mx-auto mb-2 h-6 w-6 text-emerald-500" />
+        <div className="rounded-xl border border-nx-line bg-nx-raised p-6 text-center text-sm text-nx-ink-2">
+          <CheckCircle2 className="mx-auto mb-2 h-6 w-6 text-nx-success" />
           {t("auth.accountSetup.noAttributesNeeded")}
         </div>
       )}
@@ -64,14 +64,14 @@ export function SetupStep3Attributes({ vm, hasCustomFields }: SetupStep3Attribut
           className="flex-1 gap-1.5"
           onClick={vm.goToPrevStep}
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="h-4 w-4 rtl:rotate-180" />
           <span>{t("auth.accountSetup.back")}</span>
         </Button>
 
         <Button
           type="button"
           size="lg"
-          className="shadow-xs flex-1 gap-1.5 font-semibold"
+          className="flex-1 gap-1.5 font-semibold"
           disabled={!vm.isAttributesValid}
           loading={vm.pageState === "activating"}
           onClick={vm.activate}

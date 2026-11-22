@@ -5,31 +5,28 @@ import QRCode from "qrcode";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { useQrSignInViewModel } from "../viewmodels/useQrSignInViewModel";
+import type { TokenLoginPayload } from "../viewmodels/useTokenLogin";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface QrSignInViewProps {
-  onSuccess: (result: { accessToken: string; refreshToken: string }) => void;
+  onSuccess: (result: TokenLoginPayload) => void;
   onBack: () => void;
   isRTL: boolean;
+  tenantId?: string | null;
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
 /**
- * QrSignInView — QR Cross-Device Sign-In (pure render)
+ * QrSignInView — QR Cross-Device Sign-In (pure render).
  *
- * All business logic (session creation, polling, countdown) lives in useQrSignInViewModel.
- * This component is a pure render — no DI imports, no HTTP calls.
- *
- * Uses the `qrcode` npm library to render a real, scannable QR code matrix on a canvas.
- * The QR data encodes the /qr-approve?session={sessionId} URL that the mobile device opens.
- *
- * Design: Vault aesthetic, real QR rendered via canvas, status indicators.
+ * All business logic (tenant-scoped session creation, polling, countdown) lives
+ * in `useQrSignInViewModel`.
  */
-export function QrSignInView({ onSuccess, onBack, isRTL }: QrSignInViewProps) {
+export function QrSignInView({ onSuccess, onBack, isRTL, tenantId }: QrSignInViewProps) {
   const { t } = useI18n();
-  const vm = useQrSignInViewModel(onSuccess);
+  const vm = useQrSignInViewModel(onSuccess, tenantId);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const qrData = vm.qrData;
@@ -93,7 +90,11 @@ export function QrSignInView({ onSuccess, onBack, isRTL }: QrSignInViewProps) {
             // Loading skeleton while session is being created
             <div
               className="mx-auto animate-pulse rounded-lg"
-              style={{ width: 200, height: 200, background: "#f3f4f6" }}
+              style={{
+                width: 200,
+                height: 200,
+                background: "color-mix(in srgb, var(--scripe-ink) 8%, transparent)",
+              }}
             />
           ) : (
             <canvas ref={canvasRef} className="mx-auto" style={{ width: 200, height: 200 }} />
@@ -112,16 +113,16 @@ export function QrSignInView({ onSuccess, onBack, isRTL }: QrSignInViewProps) {
                   height="40"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="#4C6200"
+                  stroke="hsl(var(--success))"
                   strokeWidth="1.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   style={{ animation: "sxPop 350ms ease-out both" }}
                 >
                   <rect x="5" y="2" width="14" height="20" rx="2" />
-                  <circle cx="12" cy="17" r="1" fill="#4C6200" stroke="none" />
+                  <circle cx="12" cy="17" r="1" fill="hsl(var(--success))" stroke="none" />
                 </svg>
-                <span className="text-[13px] font-semibold" style={{ color: "#4C6200" }}>
+                <span className="text-[13px] font-semibold" style={{ color: "hsl(var(--success))" }}>
                   {t("auth.qr.scannedLabel") || "Waiting for approval…"}
                 </span>
               </div>
@@ -136,7 +137,7 @@ export function QrSignInView({ onSuccess, onBack, isRTL }: QrSignInViewProps) {
             style={{
               background: "rgba(255,255,255,0.06)",
               border: "1px solid rgba(255,255,255,0.1)",
-              color: vm.timeLeft < 60 ? "#F59E0B" : "var(--sx-text-mute)",
+              color: vm.timeLeft < 60 ? "hsl(var(--warning-strong))" : "var(--sx-text-mute)",
             }}
           >
             <svg
@@ -183,13 +184,13 @@ export function QrSignInView({ onSuccess, onBack, isRTL }: QrSignInViewProps) {
           className="mx-auto rounded-lg px-6 py-2.5 text-sm font-semibold"
           style={{
             background: "var(--sx-cta-gradient)",
-            color: "#fff",
+            color: "var(--nx-on-fill)",
             boxShadow: "var(--sx-cta-shadow)",
           }}
         >
           {vm.isCreating ? (
             <span className="flex items-center gap-2">
-              <span className="sx-spin1 inline-block h-4 w-4 rounded-full border-2 border-white/30 border-t-white" />
+              <span className="sx-spin1 inline-block h-4 w-4 rounded-full border-2 border-nx-on-fill border-t-transparent opacity-80" />
               {t("common.loading") || "Loading…"}
             </span>
           ) : (

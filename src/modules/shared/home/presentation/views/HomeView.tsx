@@ -9,23 +9,27 @@
  * - Tenant Context: TenantOverviewView (Tenant Organization Control Center)
  */
 import { useAdminContext } from "@core/hooks/useAdminContext";
+import { useI18n } from "@core/providers/i18n-provider";
+import { useBreadcrumbOverride } from "@core/hooks/use-breadcrumb-override";
 import { PlatformOverviewView } from "./PlatformOverviewView";
 import { TenantOverviewView } from "./TenantOverviewView";
 
 export function HomeView() {
+  const { t } = useI18n();
+  useBreadcrumbOverride(t("nav.overview"));
   const { isPlatform, isHydrated } = useAdminContext();
 
   if (!isHydrated) {
     return (
-      <div className="animate-pulse space-y-6">
-        <div className="h-20 rounded-xl border border-nx-line bg-nx-raised/40" />
+      <div className="animate-pulse motion-reduce:animate-none space-y-6">
+        <div className="h-20 rounded-xl border border-nx-line bg-nx-raised" />
         <div className="grid gap-4 md:grid-cols-4">
-          <div className="h-28 rounded-xl border border-nx-line bg-nx-raised/40" />
-          <div className="h-28 rounded-xl border border-nx-line bg-nx-raised/40" />
-          <div className="h-28 rounded-xl border border-nx-line bg-nx-raised/40" />
-          <div className="h-28 rounded-xl border border-nx-line bg-nx-raised/40" />
+          <div className="h-28 rounded-xl border border-nx-line bg-nx-raised" />
+          <div className="h-28 rounded-xl border border-nx-line bg-nx-raised" />
+          <div className="h-28 rounded-xl border border-nx-line bg-nx-raised" />
+          <div className="h-28 rounded-xl border border-nx-line bg-nx-raised" />
         </div>
-        <div className="h-64 rounded-xl border border-nx-line bg-nx-raised/40" />
+        <div className="h-64 rounded-xl border border-nx-line bg-nx-raised" />
       </div>
     );
   }

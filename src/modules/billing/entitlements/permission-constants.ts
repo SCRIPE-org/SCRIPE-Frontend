@@ -89,15 +89,6 @@ export const ENTITLEMENTS_PERMISSIONS = {
   TENANT_PAYMENT_GATEWAYS_VERIFY: "tenant_payment_gateways.verify",
   TENANT_PAYMENT_GATEWAYS_REMOVE: "tenant_payment_gateways.remove",
 
-  // ── Platform Leads / CRM ─────────────────────────────
-  LEADS_VIEW: "leads.view",
-  LEADS_CREATE: "leads.create",
-  LEADS_UPDATE: "leads.update",
-  LEADS_DELETE: "leads.delete",
-  LEADS_ASSIGN: "leads.assign",
-  LEADS_CONVERT: "leads.convert",
-  LEADS_SEND_EMAIL: "leads.send_email",
-
   // ── Onboarding Engine ──────────────────────────────────
   ONBOARDING_QUESTIONS_VIEW: "onboarding_questions.view",
   ONBOARDING_QUESTIONS_CREATE: "onboarding_questions.create",

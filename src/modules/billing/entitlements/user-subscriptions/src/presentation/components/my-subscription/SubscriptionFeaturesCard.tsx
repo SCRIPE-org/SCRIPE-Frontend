@@ -5,7 +5,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
-import { Check, X, Infinity, Layers } from "lucide-react";
+import { Check, X, Infinity as InfinityIcon, Layers } from "lucide-react";
 import type { UserSubscription } from "../../../domain/entities/UserSubscription";
 
 interface SubscriptionFeaturesCardProps {
@@ -39,7 +39,7 @@ export function SubscriptionFeaturesCard({
         );
       case "Numeric": {
         const num = parseInt(feat.value);
-        if (num === -1) return <Infinity className="h-4 w-4 text-info" aria-hidden="true" />;
+        if (num === -1) return <InfinityIcon className="h-4 w-4 text-info" aria-hidden="true" />;
         return (
           <Badge variant="secondary" className="tabular-nums">
             {num.toLocaleString()}

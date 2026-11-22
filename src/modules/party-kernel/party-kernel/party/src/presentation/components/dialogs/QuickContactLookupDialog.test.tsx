@@ -104,7 +104,7 @@ describe("QuickContactLookupDialog Component", () => {
   });
 
   it("renders non-modal scrim and dialog content when open", async () => {
-    const { container } = renderWithClient(
+    renderWithClient(
       <QuickContactLookupDialog
         open={true}
         onOpenChange={vi.fn()}

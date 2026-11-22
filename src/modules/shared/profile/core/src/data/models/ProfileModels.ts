@@ -11,22 +11,58 @@
  * Interface defining property specifications, keys types, and structural contract rules for admin profile dto.
  */
 export interface AdminProfileDto {
-  id: string;
+  id?: string;
+  adminId?: string;
   username: string;
   firstName: string;
   lastName: string;
   phoneNumber: string;
   email: string;
-  adminTypeName: string;
+  isEmailVerified?: boolean;
+  adminTypeName?: string;
   profileImageUrl: string | null;
   roles?: Array<{ roleCode?: string; roleName?: string }>;
   permissions?: string[];
-  isTwoFactorEnabled: boolean;
-  backupCodesRemaining: number | null;
-  isPasswordExpired: boolean;
-  daysUntilPasswordExpiry: number | null;
-  passwordLastChanged: string | null;
+  isTwoFactorEnabled?: boolean;
+  backupCodesRemaining?: number | null;
+  isPasswordExpired?: boolean;
+  daysUntilPasswordExpiry?: number | null;
+  passwordLastChanged?: string | null;
+  staffCode?: string;
+  bio?: string;
+  clubAffiliation?: string;
+  activeBranchName?: string;
+  editionName?: string;
+  isAvailableForOperations?: boolean;
+  securityScore?: number;
+  availableAcademies?: Array<{ id: string; name: string; isCurrent: boolean }>;
+  academies?: Array<{ id: string; name: string; isPrimary?: boolean; isCurrent?: boolean }>;
+  clubMemberships?: Array<{
+    membershipId?: string;
+    tenantId: string;
+    tenantName?: string;
+    clubName?: string;
+    editionName?: string;
+    roleTitle?: string;
+    isPrimary?: boolean;
+  }>;
+  customFields?: Array<{
+    key: string;
+    labelEn: string;
+    labelAr?: string | null;
+    placeholderEn?: string | null;
+    placeholderAr?: string | null;
+    valueType: string;
+    isRequired: boolean;
+    sensitivity?: number;
+    options?: string | null;
+    optionsAr?: string | null;
+    sortOrder?: number;
+    currentValue?: unknown;
+  }>;
+  rowVersion?: string | null;
 }
+
 
 /**
  * Interface defining property specifications, keys types, and structural contract rules for active session dto.
@@ -46,11 +82,11 @@ export interface ActiveSessionDto {
 export interface SecurityLogEntryDto {
   id: string;
   eventType: string;
-  description: string;
-  ipAddress: string | null;
-  userAgent: string | null;
+  description?: string;
+  ipAddress?: string;
+  userAgent?: string;
   timestamp: string;
-  details: string | null;
+  details?: Record<string, unknown>;
 }
 
 /**
@@ -60,43 +96,14 @@ export interface ExternalLoginDto {
   id: string;
   providerName: string;
   providerKey: string;
-  email: string | null;
-  displayName: string | null;
+  email?: string;
+  displayName?: string;
   linkedAt: string;
-  lastUsedAt: string | null;
-}
-
-// ===== Request DTOs =====
-
-/**
- * Interface defining property specifications, keys types, and structural contract rules for update profile dto.
- */
-export interface UpdateProfileDto {
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
+  lastUsedAt?: string | null;
 }
 
 /**
- * Interface defining property specifications, keys types, and structural contract rules for change password dto.
- */
-export interface ChangePasswordDto {
-  currentPassword: string;
-  newPassword: string;
-  twoFactorCode?: string;
-}
-
-/**
- * Interface defining property specifications, keys types, and structural contract rules for regenerate backup codes dto.
- */
-export interface RegenerateBackupCodesDto {
-  twoFactorCode: string;
-}
-
-// ===== 2FA Setup DTOs =====
-
-/**
- * Interface defining property specifications, keys types, and structural contract rules for enable2 f a result dto.
+ * Interface defining property specifications, keys types, and structural contract rules for enable2fa result dto.
  */
 export interface Enable2FAResultDto {
   qrCodeDataUri: string;
@@ -105,26 +112,95 @@ export interface Enable2FAResultDto {
 }
 
 /**
- * Interface defining property specifications, keys types, and structural contract rules for confirm2 f a dto.
+ * DTO payload for initiating a Sudo-gated federated external login link handshake.
  */
-export interface Confirm2FADto {
+export interface InitiateExternalLoginLinkDto {
+  identityProviderId: string;
+  redirectUri?: string;
+}
+
+/**
+ * DTO response containing the Identity Provider authorization URL and protocol state.
+ */
+export interface InitiateExternalLoginLinkResultDto {
+  authorizationUrl: string;
+  protocol: string;
+  state?: string | null;
+}
+
+/**
+ * Legacy external login link DTO preserved for type-contract compatibility.
+ */
+export interface LinkExternalLoginDto {
+  provider?: string;
+  idToken?: string;
+  identityProviderId?: string;
+  providerName?: string;
+  providerKey?: string;
+  email?: string | null;
+  displayName?: string | null;
+}
+
+/** Type alias preserving backward compatibility for profile update requests. */
+export type UpdateProfileDto = UpdateProfileRequestDto;
+/** Type alias preserving backward compatibility for password change requests. */
+export type ChangePasswordDto = ChangePasswordRequestDto;
+
+// ===== Request DTOs =====
+
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for update profile request dto.
+ */
+export interface UpdateProfileRequestDto {
+  firstName: string;
+  lastName: string;
+  phoneNumber?: string;
+  bio?: string;
+  staffCode?: string;
+  clubAffiliation?: string;
+  isAvailableForOperations?: boolean;
+  activeBranchName?: string;
+  customFields?: Record<string, unknown>;
+  rowVersion?: string;
+}
+
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for change password request dto.
+ */
+export interface ChangePasswordRequestDto {
+  currentPassword?: string;
+  newPassword?: string;
+  twoFactorCode?: string;
+}
+
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for enable two factor request dto.
+ */
+export interface EnableTwoFactorRequestDto {
+  code: string;
+  secret: string;
+}
+
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for disable two factor request dto.
+ */
+export interface DisableTwoFactorRequestDto {
+  code: string;
+  password?: string;
+}
+
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for verify two factor request dto.
+ */
+export interface VerifyTwoFactorRequestDto {
   code: string;
 }
 
 /**
- * Interface defining property specifications, keys types, and structural contract rules for disable2 f a dto.
+ * Interface defining property specifications, keys types, and structural contract rules for two factor setup response dto.
  */
-export interface Disable2FADto {
-  password: string;
-}
-
-/**
- * Interface defining property specifications, keys types, and structural contract rules for link external login dto.
- */
-export interface LinkExternalLoginDto {
-  identityProviderId: string;
-  providerName: string;
-  providerKey: string;
-  email: string | null;
-  displayName: string | null;
+export interface TwoFactorSetupResponseDto {
+  sharedKey: string;
+  authenticatorUri: string;
+  qrCodeSetupImageUrl?: string;
 }

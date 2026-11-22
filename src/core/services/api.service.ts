@@ -14,6 +14,7 @@ import { authBroadcast } from "@core/common/broadcast-auth";
 import { STORAGE_KEYS } from "../config/storage-keys";
 import { DownloadInterceptedError, isExternalAbort } from "../errors/download-intercepted";
 import { translateCore } from "@core/common/i18n-outside-react";
+import { useSudoStore } from "@core/store/useSudoStore";
 
 /**
  * Generate a UUID v4 string.
@@ -87,6 +88,40 @@ if (typeof window !== "undefined") {
     originalSetItem.call(this, key, value);
     if (key === STORAGE_KEYS.LANGUAGE) cachedLanguage = value;
   };
+}
+
+/**
+ * Builds runtime security and context headers shared by Axios interceptors
+ * and keepalive fetch calls (e.g., beforeunload admin-settings flush).
+ */
+export function buildRequestSecurityHeaders(options?: {
+  tenantContextId?: string | null;
+  isMutating?: boolean;
+}): Record<string, string> {
+  const headers: Record<string, string> = {
+    "Accept-Language": cachedLanguage,
+  };
+
+  if (options?.tenantContextId) {
+    headers["X-Tenant-Context"] = options.tenantContextId;
+  }
+
+  if (options?.isMutating) {
+    headers["X-Request-Timestamp"] = Date.now().toString();
+    headers["X-Request-Nonce"] = generateUUID();
+
+    const csrfToken = getCsrfToken();
+    if (csrfToken) {
+      headers["X-CSRF-Token"] = csrfToken;
+    }
+  }
+
+  const sudoToken = useSudoStore.getState().getValidSudoToken();
+  if (sudoToken) {
+    headers["X-Sudo-Token"] = sudoToken;
+  }
+
+  return headers;
 }
 
 /**
@@ -184,33 +219,18 @@ export class ApiService implements IApiService {
           appLogger.auth("Token added to request");
         }
 
-        // Add tenant context header if set
-        if (this.tenantContextId) {
-          config.headers["X-Tenant-Context"] = this.tenantContextId;
-          appLogger.api(`Tenant context: ${this.tenantContextId}`);
-        }
-
-        // P1.5: Use cached language instead of reading localStorage per request
-        config.headers["Accept-Language"] = cachedLanguage;
-
-        // P6.3: Request replay protection (timestamp + nonce)
         const isMutating = ["post", "put", "patch", "delete"].includes(
           (config.method ?? "").toLowerCase()
         );
-        if (isMutating) {
-          // Replay protection: unique timestamp + nonce per request
-          config.headers["X-Request-Timestamp"] = Date.now().toString();
-          const nonce = generateUUID();
-          config.headers["X-Request-Nonce"] = nonce;
-
-          // S0.15: CSRF protection — OWASP Signed Double-Submit Cookie pattern.
-          // Token was captured from X-CSRF-Token response header on last response.
-          // The token is HMAC-SHA256 signed server-side (secret + JWT jti),
-          // so it cannot be forged by an attacker on another origin.
-          const csrfToken = getCsrfToken();
-          if (csrfToken) {
-            config.headers["X-CSRF-Token"] = csrfToken;
-          }
+        const securityHeaders = buildRequestSecurityHeaders({
+          tenantContextId: this.tenantContextId,
+          isMutating,
+        });
+        for (const [headerName, headerValue] of Object.entries(securityHeaders)) {
+          config.headers[headerName] = headerValue;
+        }
+        if (this.tenantContextId) {
+          appLogger.api(`Tenant context: ${this.tenantContextId}`);
         }
 
         // Fix for 415 Unsupported Media Type with FormData
@@ -330,6 +350,8 @@ export class ApiService implements IApiService {
           return Promise.reject(new DownloadInterceptedError());
         }
 
+        await this.decodeBlobErrorResponse(error);
+
         // Handle 403 — three cases, checked in order:
         if (error.response?.status === 403) {
           const data = (error.response.data ?? {}) as {
@@ -365,6 +387,44 @@ export class ApiService implements IApiService {
           // decision about THIS specific request/record — e.g. "you can't edit this
           // particular record because X" — not "you may not be on this page at all".
           // Show it inline; do not navigate the user away from what they were doing.
+          // On-demand Step-Up Sudo interception: when backend rejects with Identity.SudoRequired,
+          // prompt canonical SudoVerificationModal, acquire X-Sudo-Token, and replay seamlessly.
+          const requestConfig = error.config as
+            | (InternalAxiosRequestConfig & { _sudoRetry?: boolean })
+            | undefined;
+          if (
+            (data.errorCode === "Identity.SudoRequired" ||
+              data.errorCode === "Identity.SudoExpired" ||
+              data.errorCode === "Identity.SudoSessionMismatch") &&
+            requestConfig &&
+            !requestConfig._sudoRetry &&
+            !String(requestConfig.url ?? "").includes("/auth/sudo/")
+          ) {
+            requestConfig._sudoRetry = true;
+            try {
+              const freshSudoToken = await useSudoStore
+                .getState()
+                .requestElevation({ forceChallenge: true });
+              if (requestConfig.headers) {
+                if (freshSudoToken) {
+                  requestConfig.headers["X-Sudo-Token"] = freshSudoToken;
+                } else {
+                  delete requestConfig.headers["X-Sudo-Token"];
+                }
+              }
+              return this.axiosInstance(requestConfig);
+            } catch (sudoErr) {
+              const cancelError =
+                sudoErr instanceof Error
+                  ? sudoErr
+                  : new Error(data.message || translateCore("errors.auth.forbidden"));
+              (cancelError as Error & { details?: unknown; status?: number }).details =
+                error.response?.data ?? data;
+              (cancelError as Error & { details?: unknown; status?: number }).status = 403;
+              return Promise.reject(cancelError);
+            }
+          }
+
           if (data.errorCode) {
             appLogger.warn(
               `Business-rule 403 (${data.errorCode}) — surfacing inline, not redirecting`
@@ -438,7 +498,7 @@ export class ApiService implements IApiService {
         appLogger.api(`Success: ${response.status}`);
         return response;
       },
-      (error: AxiosError) => {
+      async (error: AxiosError) => {
         if (axios.isCancel(error) || error.config?.signal?.aborted) {
           return Promise.reject(error);
         }
@@ -452,13 +512,134 @@ export class ApiService implements IApiService {
           return Promise.reject(new DownloadInterceptedError());
         }
 
+        await this.decodeBlobErrorResponse(error);
+
         const message = this.extractErrorMessage(error);
         appLogger.error(`API Error: ${message}`);
         const errObj = new Error(message) as any;
         errObj.details = error.response?.data;
+        errObj.status = error.response?.status;
         return Promise.reject(errObj);
       }
     );
+  }
+
+  /**
+   * Decodes JSON or text error payloads returned as Blob when responseType is "blob".
+   */
+  private async decodeBlobErrorResponse(error: AxiosError): Promise<void> {
+    const data = error.response?.data as unknown;
+    if (!data || typeof Blob === "undefined" || !(data instanceof Blob)) {
+      return;
+    }
+    if (typeof data.text !== "function") {
+      return;
+    }
+    const headers = error.response?.headers as Record<string, unknown> | undefined;
+    const contentType = String(headers?.["content-type"] ?? data.type ?? "").toLowerCase();
+    if (
+      contentType &&
+      !contentType.includes("json") &&
+      !contentType.includes("text") &&
+      !contentType.includes("problem")
+    ) {
+      return;
+    }
+    try {
+      const text = await data.text();
+      if (!text || text.trim().length === 0) {
+        return;
+      }
+      try {
+        error.response!.data = JSON.parse(text);
+      } catch {
+        error.response!.data = text;
+      }
+    } catch {
+      // Keep original Blob if text reading fails
+    }
+  }
+
+  private async normalizeBlobRejection(error: unknown): Promise<unknown> {
+    if (!error || typeof error !== "object") {
+      return error;
+    }
+    const err = error as Error & {
+      details?: unknown;
+      response?: { status?: number; data?: unknown };
+    };
+    const candidate = err.details instanceof Blob ? err.details : err.response?.data;
+    if (
+      typeof Blob !== "undefined" &&
+      candidate instanceof Blob &&
+      typeof candidate.text === "function"
+    ) {
+      try {
+        const text = await candidate.text();
+        if (text && text.trim().length > 0) {
+          let parsed: unknown = text;
+          try {
+            parsed = JSON.parse(text);
+          } catch {
+            // Preserve plain text body
+          }
+          if (err.details instanceof Blob) err.details = parsed;
+          if (err.response && err.response.data instanceof Blob) err.response.data = parsed;
+          const extracted = this.extractMessageFromPayload(parsed);
+          if (extracted && (!err.message || /^HTTP \d+$/.test(err.message))) {
+            err.message = extracted;
+          }
+        }
+      } catch {
+        // Ignore blob decoding error
+      }
+    }
+    return error;
+  }
+
+  private extractMessageFromPayload(data: unknown): string | null {
+    if (typeof data === "string" && data.trim() !== "") {
+      return data;
+    }
+    if (typeof data === "object" && data !== null && !(data instanceof Blob)) {
+      const obj = data as Record<string, unknown>;
+      if (typeof obj.message === "string" && obj.message.trim() !== "") {
+        return obj.message;
+      }
+      if (typeof obj.detail === "string" && obj.detail.trim() !== "") {
+        return obj.detail;
+      }
+      if (typeof obj.error === "string" && obj.error.trim() !== "") {
+        return obj.error;
+      }
+      if (Array.isArray(obj.errors)) {
+        for (const item of obj.errors) {
+          if (typeof item === "string" && item.trim() !== "") {
+            return item;
+          }
+          if (typeof item === "object" && item !== null) {
+            const rec = item as Record<string, unknown>;
+            const msg = rec.message ?? rec.errorMessage ?? rec.description;
+            if (typeof msg === "string" && msg.trim() !== "") {
+              return msg;
+            }
+          }
+        }
+      } else if (obj.errors && typeof obj.errors === "object") {
+        for (const val of Object.values(obj.errors as Record<string, unknown>)) {
+          if (Array.isArray(val)) {
+            const first = val.find((m) => typeof m === "string" && m.trim() !== "");
+            if (first) return first;
+          } else if (typeof val === "string" && val.trim() !== "") {
+            return val;
+          }
+        }
+      }
+      if (typeof obj.title === "string" && obj.title.trim() !== "") {
+        return obj.title;
+      }
+    }
+    return null;
   }
 
   /**
@@ -466,31 +647,9 @@ export class ApiService implements IApiService {
    */
   private extractErrorMessage(error: AxiosError): string {
     if (error.response?.data) {
-      const data = error.response.data as unknown;
-      if (typeof data === "string" && data.trim() !== "") {
-        return data;
-      }
-      if (typeof data === "object" && data !== null) {
-        const obj = data as Record<string, unknown>;
-        if (typeof obj.message === "string" && obj.message.trim() !== "") {
-          return obj.message;
-        }
-        if (typeof obj.error === "string" && obj.error.trim() !== "") {
-          return obj.error;
-        }
-        if (obj.errors && typeof obj.errors === "object" && !Array.isArray(obj.errors)) {
-          for (const val of Object.values(obj.errors as Record<string, unknown>)) {
-            if (Array.isArray(val)) {
-              const first = val.find((m) => typeof m === "string" && m.trim() !== "");
-              if (first) return first;
-            } else if (typeof val === "string" && val.trim() !== "") {
-              return val;
-            }
-          }
-        }
-        if (typeof obj.title === "string" && obj.title.trim() !== "") {
-          return obj.title;
-        }
+      const extracted = this.extractMessageFromPayload(error.response.data);
+      if (extracted) {
+        return extracted;
       }
       return `HTTP ${error.response.status}`;
     }
@@ -683,7 +842,7 @@ export class ApiService implements IApiService {
       if (!signal?.aborted && isExternalAbort(error)) {
         throw new DownloadInterceptedError();
       }
-      throw error;
+      throw await this.normalizeBlobRejection(error);
     }
   }
 
@@ -697,7 +856,7 @@ export class ApiService implements IApiService {
       if (!signal?.aborted && isExternalAbort(error)) {
         throw new DownloadInterceptedError();
       }
-      throw error;
+      throw await this.normalizeBlobRejection(error);
     }
   }
 
@@ -768,8 +927,17 @@ export class ApiService implements IApiService {
     return this.unwrap<T>(response.data);
   }
 
-  async postPublic<T>(endpoint: string, data?: unknown, signal?: AbortSignal): Promise<T> {
-    const response = await this.axiosPublic.post(endpoint, data, this.buildConfig(signal));
+  async postPublic<T>(
+    endpoint: string,
+    data?: unknown,
+    signal?: AbortSignal,
+    options?: MutationRequestOptions
+  ): Promise<T> {
+    const response = await this.axiosPublic.post(
+      endpoint,
+      data,
+      this.buildConfig(signal, undefined, options)
+    );
     return this.unwrap<T>(response.data);
   }
 

@@ -3,3 +3,4 @@
  */
 export * from "./Role";
 export * from "./RoleRequests";
+export * from "./RoleWorkspaceEntryPolicy";

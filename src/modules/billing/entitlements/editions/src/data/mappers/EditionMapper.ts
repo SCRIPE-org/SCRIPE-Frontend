@@ -1,9 +1,8 @@
 /**
  * Edition Mapper — Model ↔ Entity conversion
  */
-import { Edition } from "../../domain/entities/Edition";
+import { Edition, type EditionData, type EditionScope } from "../../domain/entities/Edition";
 import { EditionVersion } from "../../domain/entities/EditionVersion";
-import type { EditionData } from "../../domain/entities/Edition";
 import type { EditionModel } from "../models/EditionModels";
 import type { EditionVersionModel } from "../models/EditionModels";
 import type {
@@ -31,6 +30,7 @@ const EditionModelSchema = z.object({
   isSystem: z.boolean().optional().default(false),
   isRetired: z.boolean().optional().default(false),
   tierLevel: z.number().int().optional().default(0),
+  scope: optionalString(),
   createdByTenantId: optionalString(),
   category: optionalString(),
   featureCount: z.number().int().optional().default(0),
@@ -78,6 +78,10 @@ export class EditionMapper {
       isSystem: validated.isSystem,
       isRetired: validated.isRetired,
       tierLevel: validated.tierLevel,
+      scope:
+        validated.scope === "Internal" || validated.scope === "Commercial"
+          ? (validated.scope as EditionScope)
+          : undefined,
       createdByTenantId: validated.createdByTenantId ?? undefined,
       category: validated.category ?? undefined,
       featureCount: validated.featureCount,

@@ -1,33 +1,70 @@
 import { V1 } from "@/core/config/api-endpoints/_shared";
 
 /**
- * Documentation for module export
+ * Sovereign Account World v3.0 API Endpoints
  */
 export const PROFILE_ENDPOINTS = {
-  ME: `${V1}/Admins/me`,
-  UPDATE_ME: `${V1}/Admins/me`,
-  AVATAR: `${V1}/Admins/me/avatar`,
-  CHANGE_PASSWORD: (id: string) => `${V1}/Admins/${id}/change-password`,
+  DOSSIER: `${V1}/account/dossier`,
+  UPDATE_DOSSIER: `${V1}/account/dossier`,
+  AVATAR: `${V1}/account/dossier/avatar`,
+  CHANGE_PASSWORD: (id: string) => `${V1}/admins/${id}/change-password`,
   SESSIONS: `${V1}/auth/admin/sessions`,
   REVOKE_SESSION: (tokenId: string) => `${V1}/auth/admin/sessions/${tokenId}`,
   REVOKE_ALL_SESSIONS: `${V1}/auth/admin/sessions/revoke-all`,
   BACKUP_CODES_REGENERATE: `${V1}/auth/admin/2fa/backup-codes/regenerate`,
   SECURITY_LOG: `${V1}/auth/admin/security-log`,
   EXTERNAL_LOGINS: `${V1}/auth/admin/external-logins`,
-  LINK_EXTERNAL_LOGIN: `${V1}/auth/admin/external-logins/link`,
+  INITIATE_EXTERNAL_LOGIN_LINK: `${V1}/auth/admin/external-logins/initiate-link`,
   UNLINK_EXTERNAL_LOGIN: (id: string) => `${V1}/auth/admin/external-logins/${id}`,
   TWO_FA: {
     ENABLE: `${V1}/auth/admin/2fa/enable`,
     CONFIRM: `${V1}/auth/admin/2fa/confirm`,
     DISABLE: `${V1}/auth/admin/2fa/disable`,
   },
-  // NOTE: a `LEGACY` block (`/v1/profile/*`) used to live here. No `ProfileController`
-  // has ever existed in SCRIPE-Backend (verified: zero matches for "ProfileController"
-  // under SCRIPE-Backend/src/Host/API/Controllers) — every one of those routes was a
-  // 404. ProfileService.ts's 13 call sites all used LEGACY.*, making the entire Profile
-  // Settings page (profile/page.tsx) 404 on every operation. Removed 2026-08-02 in favor
-  // of the already-correct, already-implemented endpoints above (ME/UPDATE_ME/AVATAR/
-  // CHANGE_PASSWORD/SESSIONS/REVOKE_SESSION/REVOKE_ALL_SESSIONS/
-  // BACKUP_CODES_REGENERATE/SECURITY_LOG/EXTERNAL_LOGINS/LINK_EXTERNAL_LOGIN/
-  // UNLINK_EXTERNAL_LOGIN) — see ProfileService.test.ts for the call-site contract.
+  FORCE_CHANGE_PASSWORD: `${V1}/auth/admin/force-change-password`,
+  PASSKEYS: {
+    LIST: `${V1}/auth/passkeys`,
+    REGISTER_BEGIN: `${V1}/auth/passkeys/registration/begin`,
+    REGISTER_COMPLETE: `${V1}/auth/passkeys/registration/complete`,
+    AUTH_BEGIN: `${V1}/auth/passkeys/authentication/begin`,
+    DELETE: (id: string) => `${V1}/auth/passkeys/${id}`,
+    RENAME: (id: string) => `${V1}/auth/passkeys/${id}/name`,
+  },
+  SUDO_VERIFY: `${V1}/auth/passkeys/sudo-verify`,
+  SUDO: {
+    STATUS: `${V1}/auth/sudo/status`,
+    PASSKEY_BEGIN: `${V1}/auth/sudo/passkey/begin`,
+    VERIFY: `${V1}/auth/sudo/verify`,
+    LOCK: `${V1}/auth/sudo/lock`,
+  },
+  COLLEAGUES: `${V1}/account/colleagues`,
+  INTEGRATION_PAT_ROLL: (id: string) => `${V1}/account/integrations/pats/${id}/roll`,
+  INTEGRATION_PAT_UPDATE: (id: string) => `${V1}/account/integrations/pats/${id}`,
+  ACCOUNT: {
+    CONTEXT: `${V1}/account/context`,
+    DOSSIER: `${V1}/account/dossier`,
+    SEND_EMAIL_VERIFICATION: `${V1}/account/dossier/send-verification`,
+    EXPORT_DOSSIER: `${V1}/account/dossier/export`,
+    DEACTIVATE_ACCOUNT: `${V1}/account/dossier/deactivate`,
+    SECURITY: `${V1}/account/security`,
+    SESSIONS: `${V1}/account/sessions`,
+    REVOKE_SESSION: (sessionId: string) => `${V1}/account/sessions/${sessionId}`,
+    REVOKE_ALL_SESSIONS: `${V1}/account/sessions/revoke-all`,
+    PING_SESSION: (sessionId: string) => `${V1}/account/sessions/${sessionId}/ping`,
+    GOVERNANCE: `${V1}/account/governance`,
+    DELEGATIONS: `${V1}/account/governance`,
+    REVOKE_DELEGATION: (id: string) => `${V1}/account/governance/${id}`,
+    ACTIVITY: `${V1}/account/activity`,
+    PREFERENCES: `${V1}/account/preferences`,
+    NOTIFICATIONS: `${V1}/account/notifications`,
+    SEND_TEST_NOTIFICATION: `${V1}/account/notifications/test`,
+    MARK_NOTIFICATION_READ: (id: string) => `${V1}/account/notifications/${id}/read`,
+    MARK_ALL_NOTIFICATIONS_READ: `${V1}/account/notifications/read-all`,
+    DELETE_NOTIFICATION: (id: string) => `${V1}/account/notifications/${id}`,
+    PLAN: `${V1}/account/plan`,
+    PLAN_REQUEST: `${V1}/account/plan`,
+    INTEGRATIONS: `${V1}/account/integrations`,
+    INTEGRATION_BY_ID: (kind: string, id: string) => `${V1}/account/integrations/${kind}/${id}`,
+  },
 } as const;
+

@@ -2,7 +2,7 @@
 
 import React, { useRef, useState, useCallback } from "react";
 import { Upload, X, Image as ImageIcon, AlertCircle } from "lucide-react";
-import { Button } from "@core/ui/button";
+import { Button, buttonVariants } from "@core/ui/button";
 import { Progress } from "@core/ui/progress";
 import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -17,6 +17,7 @@ import Image from "next/image";
 
 export interface ImageUploaderProps {
   id?: string;
+  name?: string;
   value?: string; // Base64 string or image URL
   onChange?: (base64: string) => void;
   onRemove?: () => void;
@@ -29,6 +30,9 @@ export interface ImageUploaderProps {
   showPreview?: boolean; // Whether to show image preview
   aspectRatio?: string; // e.g., "16/9", "1/1"
   conversionOptions?: ImageConversionOptions; // Options for image conversion
+  "aria-invalid"?: boolean | "true" | "false";
+  "aria-describedby"?: string;
+  "aria-label"?: string;
 }
 
 /**
@@ -54,6 +58,7 @@ export interface ImageUploaderProps {
  */
 export function ImageUploader({
   id,
+  name,
   value,
   onChange,
   onRemove,
@@ -66,6 +71,9 @@ export function ImageUploader({
   showPreview = true,
   aspectRatio,
   conversionOptions = {},
+  "aria-invalid": ariaInvalid,
+  "aria-describedby": ariaDescribedBy,
+  "aria-label": ariaLabelProp,
 }: ImageUploaderProps) {
   const { t } = useI18n();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -223,27 +231,29 @@ export function ImageUploader({
   // The old `aspect-[${aspectRatio}]` never compiled (Tailwind cannot see a
   // runtime string), so a caller-supplied ratio silently did nothing; it is an
   // inline style now and actually works.
-  const containerClasses = cn(
-    "group relative flex cursor-pointer flex-col items-center justify-center overflow-hidden rounded-nx-control border border-dashed",
+  const isInvalid = ariaInvalid === true || ariaInvalid === "true";
+
+  const triggerClasses = cn(
+    "absolute inset-0 z-0 h-full w-full rounded-nx-control border border-dashed p-0",
     "transition-[border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-    "focus-visible:outline-none focus-visible:border-nx-accent focus-visible:shadow-nx-focus",
+    "focus-visible:outline-none focus-visible:z-0 focus-visible:border-nx-accent focus-visible:shadow-nx-focus",
     isDragging
-      ? "border-nx-accent bg-nx-accent-wash"
-      : "border-nx-line bg-nx-ground hover:border-nx-line-hi hover:bg-nx-hover",
+      ? "border-nx-accent bg-nx-accent-wash hover:bg-nx-accent-wash"
+      : isInvalid && !disabled
+        ? "border-nx-danger bg-nx-ground hover:border-nx-danger hover:bg-nx-hover focus-visible:border-nx-danger focus-visible:shadow-[inset_0_0_0_1px_var(--nx-danger),0_0_0_3px_color-mix(in_srgb,var(--nx-danger)_18%,transparent)]"
+        : "border-nx-line-hi bg-nx-ground hover:border-nx-ink-3 hover:bg-nx-hover",
     // dashed = an invitation to drop; once there IS an image the frame goes
     // solid, because the zone is now a container, not an empty slot
     preview && showPreview && !isDragging && "border-solid",
     disabled &&
-      "cursor-not-allowed border-nx-line bg-nx-raised hover:border-nx-line hover:bg-nx-raised",
-    !aspectRatio && "min-h-60",
-    className
+      "cursor-not-allowed border-nx-line bg-nx-raised hover:border-nx-line hover:bg-nx-raised disabled:border-nx-line disabled:bg-nx-raised"
   );
 
   return (
     <div className="w-full space-y-2">
       <input
         ref={fileInputRef}
-        id={id}
+        name={name}
         type="file"
         accept={accept}
         onChange={handleFileInputChange}
@@ -253,38 +263,48 @@ export function ImageUploader({
       />
 
       <div
-        className={containerClasses}
+        className={cn(
+          "group relative flex w-full flex-col items-center justify-center rounded-nx-control",
+          disabled && "cursor-not-allowed",
+          !aspectRatio && "min-h-60",
+          className
+        )}
         style={aspectRatio ? { aspectRatio } : undefined}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
-        onClick={handleClick}
-        onKeyDown={(e) => {
-          if (disabled || isUploading) return;
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            handleClick();
-          }
-        }}
-        role="button"
-        aria-label={placeholder || t("imageUploader.placeholder")}
-        aria-disabled={disabled || undefined}
-        aria-busy={isUploading || undefined}
-        tabIndex={disabled ? -1 : 0}
       >
+        <Button
+          type="button"
+          variant="ghost"
+          id={id}
+          disabled={disabled || isUploading}
+          className={triggerClasses}
+          onClick={handleClick}
+          aria-label={ariaLabelProp || placeholder || t("imageUploader.placeholder")}
+          aria-invalid={isInvalid ? true : undefined}
+          aria-describedby={ariaDescribedBy}
+          aria-busy={isUploading || undefined}
+        />
+
         {isUploading ? (
           // Honest progress: a determinate bar and a tabular percentage, not a
           // clip-path ring pretending to be a loader.
-          <div className="flex w-full max-w-xs flex-col items-center gap-3 p-8">
+          <div className="pointer-events-none relative z-10 flex w-full max-w-xs flex-col items-center gap-3 p-8">
             <p className="text-sm font-medium text-nx-ink">{t("imageUploader.uploading")}</p>
             <Progress value={uploadProgress} className="h-1 w-full bg-nx-raised" />
             <p className="text-xs tabular-nums text-nx-ink-3">{uploadProgress}%</p>
           </div>
         ) : preview && showPreview ? (
           // Filled: the image is the content, so nothing hovers over it — no
-          // gradient scrim, no zoom on hover, and the remove control is
-          // ALWAYS visible instead of hiding until the pointer arrives.
-          <div className="relative h-full w-full">
+          // gradient scrim, no zoom on hover, and the remove control sits as a
+          // sibling outside the upload trigger so interactive buttons never nest.
+          <div
+            className={cn(
+              "pointer-events-none relative z-10 h-full w-full flex-1 overflow-hidden rounded-nx-control",
+              !aspectRatio && "min-h-60"
+            )}
+          >
             <Image
               src={preview}
               alt={t("imageUploader.preview")}
@@ -293,24 +313,11 @@ export function ImageUploader({
               className="h-full w-full object-cover"
               style={aspectRatio ? { aspectRatio } : undefined}
             />
-            {!disabled && (
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                className="absolute end-3 top-3 z-raised h-8 w-8 bg-nx-surface text-nx-ink-3 hover:text-nx-danger"
-                onClick={handleRemove}
-                aria-label={t("imageUploader.remove")}
-              >
-                <X className="h-4 w-4" aria-hidden="true" />
-              </Button>
-            )}
           </div>
         ) : (
-          // Empty: one neutral tile, one instruction, one action. The tile is a
-          // raised step, not a gradient; the accent appears only while a file
-          // is actually over the zone.
-          <div className="flex w-full flex-col items-center justify-center gap-4 p-8 text-center">
+          // Empty: one neutral tile, one instruction, one visual action affordance
+          // inside the stretched upload button.
+          <div className="pointer-events-none relative z-10 flex w-full flex-col items-center justify-center gap-4 p-8 text-center">
             <div
               className={cn(
                 "rounded-nx-md p-5 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
@@ -330,26 +337,39 @@ export function ImageUploader({
                   : placeholder || t("imageUploader.placeholder")}
               </p>
               <p className="text-xs text-nx-ink-3">
-                {t("imageUploader.supportedFormats")} up to{" "}
+                {t("imageUploader.supportedFormats")}{" "}
+                <span aria-hidden="true">·</span>{" "}
                 <span className="font-medium tabular-nums text-nx-ink-2">
                   {(maxSize / (1024 * 1024)).toFixed(0)}MB
                 </span>
               </p>
             </div>
 
-            <Button
-              type="button"
-              variant="outline"
-              disabled={disabled}
-              onClick={(e) => {
-                e.stopPropagation();
-                handleClick();
-              }}
+            <span
+              aria-hidden="true"
+              className={cn(
+                buttonVariants({ variant: "outline" }),
+                "pointer-events-none",
+                disabled && "border-nx-line bg-nx-raised text-nx-ink-3"
+              )}
             >
               <Upload className="me-2 h-4 w-4" aria-hidden="true" />
               {t("imageUploader.selectFile")}
-            </Button>
+            </span>
           </div>
+        )}
+
+        {preview && showPreview && !isUploading && !disabled && (
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            className="pointer-events-auto absolute end-3 top-3 z-raised h-8 w-8 bg-nx-surface text-nx-ink-3 hover:text-nx-danger"
+            onClick={handleRemove}
+            aria-label={t("imageUploader.remove")}
+          >
+            <X className="h-4 w-4" aria-hidden="true" />
+          </Button>
         )}
       </div>
 

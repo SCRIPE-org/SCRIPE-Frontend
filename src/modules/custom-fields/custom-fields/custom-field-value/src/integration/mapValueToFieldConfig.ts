@@ -1,6 +1,8 @@
 import type { FieldConfig, FieldOption } from "@core/ui/forms/generic-form";
 import { encodeCustomFieldName } from "@core/crud/customFieldsExtension";
 import { VALUE_TYPE_CATALOG } from "../../../custom-field";
+import { en as customFieldEn } from "../../../custom-field/locales/custom-field.en";
+import { ar as customFieldAr } from "../../../custom-field/locales/custom-field.ar";
 import type { EntityCustomFieldValueData } from "../data/models/CustomFieldValueModel";
 import { isFieldVisible } from "../domain/fieldVisibility";
 
@@ -28,8 +30,8 @@ export function mapValueToFieldConfig(
   const isSensitive = data.sensitivity !== undefined && data.sensitivity >= 2;
   const description = isSensitive
     ? language === "ar"
-      ? "حقل مشفر بحماية أمنية عالية"
-      : "Encrypted confidential field"
+      ? customFieldAr.customField.sensitive.encryptedConfidential
+      : customFieldEn.customField.sensitive.encryptedConfidential
     : undefined;
 
   return {

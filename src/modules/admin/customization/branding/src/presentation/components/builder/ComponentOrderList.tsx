@@ -1,4 +1,3 @@
-// UI-EXCEPTION: compact studio layout
 /**
  * ComponentOrderList — Sortable layer list for z-order management
  *
@@ -10,6 +9,7 @@
 
 import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { Button } from "@core/ui/button";
 import { cn } from "@/core/common/utils";
 import {
   Image,
@@ -142,13 +142,16 @@ function SortableLayerItem({
       <span className="flex-1 truncate text-[10px] font-medium text-nx-ink">{componentLabel}</span>
 
       {/* Visibility toggle */}
-      <button
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon"
         onClick={(e) => {
           e.stopPropagation();
           onToggleVisibility();
         }}
         className={cn(
-          "rounded-nx-sm p-0.5 opacity-0 transition-colors duration-nx-micro ease-nx-enter focus-visible:opacity-100 focus-visible:shadow-nx-focus focus-visible:outline-none group-hover:opacity-100 motion-reduce:transition-none",
+          "h-auto w-auto rounded-nx-sm p-0.5 opacity-0 transition-colors duration-nx-micro ease-nx-enter hover:bg-transparent focus-visible:opacity-100 focus-visible:shadow-nx-focus focus-visible:outline-none group-hover:opacity-100 motion-reduce:transition-none",
           component.visible
             ? "text-nx-ink-3 hover:text-nx-ink"
             : "text-nx-ink-3 opacity-100 hover:text-nx-ink"
@@ -161,7 +164,7 @@ function SortableLayerItem({
         ) : (
           <EyeOff className="h-3 w-3" aria-hidden="true" />
         )}
-      </button>
+      </Button>
     </div>
   );
 }

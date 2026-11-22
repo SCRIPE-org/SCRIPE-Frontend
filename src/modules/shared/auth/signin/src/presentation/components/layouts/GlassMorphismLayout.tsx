@@ -20,51 +20,46 @@ export function GlassMorphismLayout({
 }: LoginLayoutProps) {
   return (
     <div
-      className={`relative flex min-h-screen w-full items-center justify-center ${BG_STYLE} login-page selection:bg-primary/20`}
+      className={`relative flex min-h-[100dvh] w-full items-center justify-center ${BG_STYLE} login-page`}
       dir={direction}
       style={WRAPPER_STYLE}
     >
       <div
         className="absolute inset-0"
         style={{
-          backgroundColor: "var(--login-overlay-color, hsl(var(--background)))",
+          backgroundColor: "var(--login-overlay-color, var(--nx-ground))",
           opacity: "var(--login-overlay-opacity, 0.5)",
-          backdropFilter: "blur(var(--login-overlay-blur, 2px))",
         }}
       />
-      {/* Ambient glow orbs */}
-      <div className="bg-[var(--login-primary,hsl(var(--primary)))]/20 pointer-events-none absolute start-1/4 top-1/4 h-64 w-64 rounded-full blur-[100px]" />
-      <div className="bg-[var(--login-primary,hsl(var(--primary)))]/15 pointer-events-none absolute bottom-1/4 end-1/4 h-48 w-48 rounded-full blur-[80px]" />
       {topActions}
-      <div
+      <main
         className="relative z-10 mx-4 w-full"
         style={{ maxWidth: "var(--login-form-width, 440px)" }}
       >
         <div
-          className="border-[var(--login-accent,hsl(var(--border)))]/20 border shadow-2xl backdrop-blur-3xl"
+          className="border border-[var(--login-border,var(--nx-line))]"
           style={{
             borderRadius: "var(--login-radius-card, 24px)",
             padding: "var(--login-card-padding, 40px)",
+            boxShadow: "var(--login-shadow-card, none)",
             backgroundColor:
-              "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 70%, transparent)",
+              "color-mix(in srgb, var(--login-surface, var(--nx-surface)) 92%, transparent)",
           }}
         >
-          <div className="from-[var(--login-primary,hsl(var(--primary)))]/30 to-[var(--login-primary,hsl(var(--primary)))]/15 pointer-events-none absolute -inset-px rounded-3xl bg-gradient-to-br via-transparent" />
           <div className="relative z-10">
             <div className="mb-8 flex flex-col items-center gap-3 text-center">
               <div
-                className="h-18 w-18 border-[var(--login-accent,hsl(var(--border)))]/20 flex items-center justify-center overflow-hidden rounded-2xl border shadow-xl backdrop-blur-md"
+                className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl border border-[var(--login-border,var(--nx-line))]"
                 style={{
-                  backgroundColor:
-                    "color-mix(in srgb, var(--login-surface, hsl(var(--background))) 50%, transparent)",
+                  backgroundColor: "var(--login-surface, var(--nx-raised))",
                 }}
               >
                 <LogoImg logoSrc={logoSrc} logoAlt={logoAlt} />
               </div>
-              <h1 className="text-2xl font-bold tracking-tight text-[var(--login-text,hsl(var(--foreground)))]">
+              <h1 className="text-2xl font-bold tracking-tight text-[var(--login-text,var(--nx-ink))]">
                 {companyName}
               </h1>
-              <p className="text-sm text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
+              <p className="text-sm text-[var(--login-text-muted,var(--nx-ink-2))]">
                 {t("auth.pleaseLogin")}
               </p>
             </div>
@@ -72,7 +67,7 @@ export function GlassMorphismLayout({
             {footerSlot}
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

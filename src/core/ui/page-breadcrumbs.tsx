@@ -82,7 +82,7 @@ export function PageBreadcrumbs({
   onBack,
 }: PageBreadcrumbsProps) {
   const router = useRouter();
-  const { t, direction } = useI18n();
+  const { t } = useI18n();
 
   const handleBack = () => {
     if (onBack) {
@@ -107,17 +107,9 @@ export function PageBreadcrumbs({
           onClick={handleBack}
           // An icon-only button with no accessible name announces as "button".
           aria-label={t("common.back")}
-          className="shrink-0"
+          className="h-9 w-9 shrink-0"
         >
-          {/* Inline rather than `const Icon = getBackArrowIcon(direction)` —
-              binding a component to a local during render is a lint error here
-              (state would reset on every re-render). The exported helper stays
-              the shared source for callers building their own back control. */}
-          {direction === "rtl" ? (
-            <ArrowRight className="h-5 w-5" />
-          ) : (
-            <ArrowLeft className="h-5 w-5" />
-          )}
+          <ArrowLeft className="h-5 w-5 rtl:rotate-180" aria-hidden="true" />
         </Button>
       )}
       <Breadcrumb>

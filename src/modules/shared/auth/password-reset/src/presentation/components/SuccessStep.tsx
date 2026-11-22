@@ -1,4 +1,3 @@
-// UI-EXCEPTION: compact studio layout
 "use client";
 
 import * as React from "react";
@@ -46,18 +45,19 @@ export function SuccessStep({ vm }: SuccessStepProps) {
       </div>
       <div className="flex w-full flex-col gap-2.5">
         <Link href="/login" className="block">
-          <Button className="h-12 w-full rounded-xl text-[15px] font-semibold text-white transition-all active:scale-[0.985]">
+          <Button className="h-12 w-full rounded-xl text-[15px] font-semibold text-nx-on-fill transition-all active:scale-[0.985]">
             {vm.method === "magic-link" ? t("auth.backToLogin") : t("auth.goToLogin")}
           </Button>
         </Link>
-        <button
+        <Button
           type="button"
+          variant="ghost"
           onClick={vm.restart}
           className="h-11 w-full rounded-xl text-[13px] font-medium transition-colors"
           style={{ color: "var(--sx-text-mute)" }}
         >
           {t("auth.tryAnotherEmail")}
-        </button>
+        </Button>
       </div>
     </div>
   );

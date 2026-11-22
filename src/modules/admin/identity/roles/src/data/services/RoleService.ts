@@ -17,13 +17,17 @@ import {
   type UpdateRoleJson,
   type AssignPermissionsJson,
 } from "../models/RoleModel";
+import type {
+  RoleWorkspaceEntryPolicyDto,
+  UpsertRoleWorkspaceEntriesRequestDto,
+} from "../models/RoleWorkspaceEntryPolicyModel";
 import { PermissionModel } from "@modules/identity/core";
 import type { PermissionModuleGroupJson } from "@modules/identity/core";
 import type {
   IRoleService,
   RoleListResult,
   ServiceRoleListParams,
-  MyTenantRoleListParams,
+  CurrentTenantRoleListParams,
 } from "../../domain/interfaces/IRoleService";
 import { ROLES_ENDPOINTS } from "./roles.endpoints";
 
@@ -56,8 +60,8 @@ export class RoleService implements IRoleService {
     };
   }
 
-  async getMyTenantRoles(params: MyTenantRoleListParams): Promise<RoleListResult> {
-    const url = buildUrl(ROLES_ENDPOINTS.MY_TENANT_ROLES, {
+  async getCurrentTenantRoles(params: CurrentTenantRoleListParams): Promise<RoleListResult> {
+    const url = buildUrl(ROLES_ENDPOINTS.CURRENT_TENANT, {
       page: params.page,
       pageSize: params.pageSize,
       search: params.search,
@@ -85,8 +89,8 @@ export class RoleService implements IRoleService {
     return this.api.post<{ id: string }>(ROLES_ENDPOINTS.CREATE, json);
   }
 
-  async createForMyTenant(json: Omit<CreateRoleJson, "tenantId">): Promise<{ id: string }> {
-    return this.api.post<{ id: string }>(ROLES_ENDPOINTS.CREATE_FOR_MY_TENANT, json);
+  async createInCurrentTenant(json: Omit<CreateRoleJson, "tenantId">): Promise<{ id: string }> {
+    return this.api.post<{ id: string }>(ROLES_ENDPOINTS.CREATE_IN_CURRENT_TENANT, json);
   }
 
   async update(id: string, json: UpdateRoleJson): Promise<void> {
@@ -132,8 +136,8 @@ export class RoleService implements IRoleService {
     return this.api.get(url);
   }
 
-  async getMyTenantAvailablePermissions(category?: string): Promise<PermissionModel[]> {
-    const url = buildUrl(ROLES_ENDPOINTS.MY_TENANT_AVAILABLE_PERMISSIONS, {
+  async getCurrentTenantAvailablePermissions(category?: string): Promise<PermissionModel[]> {
+    const url = buildUrl(ROLES_ENDPOINTS.CURRENT_TENANT_AVAILABLE_PERMISSIONS, {
       category: category || undefined,
     });
 
@@ -141,10 +145,12 @@ export class RoleService implements IRoleService {
     return response.map((p) => PermissionModel.fromJson(p));
   }
 
-  async getMyTenantAvailablePermissionsGrouped(
+  async getCurrentTenantAvailablePermissionsGrouped(
     search?: string
   ): Promise<PermissionModuleGroupJson[]> {
-    const url = buildUrl(ROLES_ENDPOINTS.MY_TENANT_AVAILABLE_PERMISSIONS_GROUPED, { search });
+    const url = buildUrl(ROLES_ENDPOINTS.CURRENT_TENANT_AVAILABLE_PERMISSIONS_GROUPED, {
+      search,
+    });
     return this.api.get(url);
   }
 
@@ -166,5 +172,26 @@ export class RoleService implements IRoleService {
     );
     if (typeof response === "number") return response;
     return response.affectedRows ?? ids.length;
+  }
+
+  async getRoleWorkspaceEntries(roleId: string): Promise<RoleWorkspaceEntryPolicyDto[]> {
+    const raw = await this.api.get<unknown>(ROLES_ENDPOINTS.WORKSPACE_ENTRIES(roleId));
+    if (Array.isArray(raw)) return raw as RoleWorkspaceEntryPolicyDto[];
+    const wrapped = raw as { data?: unknown } | null | undefined;
+    return Array.isArray(wrapped?.data) ? (wrapped.data as RoleWorkspaceEntryPolicyDto[]) : [];
+  }
+
+  async upsertRoleWorkspaceEntries(
+    roleId: string,
+    body: UpsertRoleWorkspaceEntriesRequestDto
+  ): Promise<RoleWorkspaceEntryPolicyDto[]> {
+    const raw = await this.api.put<unknown>(ROLES_ENDPOINTS.WORKSPACE_ENTRIES(roleId), body);
+    if (Array.isArray(raw)) return raw as RoleWorkspaceEntryPolicyDto[];
+    const wrapped = raw as { data?: unknown } | null | undefined;
+    return Array.isArray(wrapped?.data) ? (wrapped.data as RoleWorkspaceEntryPolicyDto[]) : [];
+  }
+
+  async deleteRoleWorkspaceEntry(roleId: string, workspaceKey: string): Promise<void> {
+    await this.api.delete<void>(ROLES_ENDPOINTS.DELETE_WORKSPACE_ENTRY(roleId, workspaceKey));
   }
 }

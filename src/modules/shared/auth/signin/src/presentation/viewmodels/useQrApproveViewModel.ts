@@ -11,13 +11,13 @@ import { getAuthContainer } from "@modules/auth/di";
 export function useQrApproveViewModel() {
   const router = useRouter();
 
-  const handleApprove = useCallback(async (sid: string) => {
-    await getAuthContainer().authRepository.approveQrSignIn(sid);
+  const handleApprove = useCallback(async (sessionToken: string, deviceInfo?: string) => {
+    await getAuthContainer().authRepository.approveQrSignIn(sessionToken, deviceInfo);
   }, []);
 
-  const handleReject = useCallback(async (sid: string) => {
+  const handleReject = useCallback(async (sessionToken: string) => {
     try {
-      await getAuthContainer().authRepository.rejectQrSignIn(sid);
+      await getAuthContainer().authRepository.rejectQrSignIn(sessionToken);
     } catch {
       // Rejection is best-effort
     }

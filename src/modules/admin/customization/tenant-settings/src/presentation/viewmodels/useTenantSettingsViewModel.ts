@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -54,11 +53,7 @@ export function useTenantSettingsViewModel() {
 
   // Mode is backend-driven: "my" | "system" | "tenant"
   const mode: "my" | "system" | "tenant" =
-    (settings as any)?.mode === "system"
-      ? "system"
-      : (settings as any)?.mode === "tenant"
-        ? "tenant"
-        : "my";
+    settings?.mode === "system" ? "system" : settings?.mode === "tenant" ? "tenant" : "my";
 
   // Update field helper
   const updateField = <K extends keyof TenantSettings>(field: K, value: TenantSettings[K]) => {
@@ -96,11 +91,22 @@ export function useTenantSettingsViewModel() {
   // Check if there are unsaved changes
   const hasChanges = formData !== null;
 
-  // Save handler
+  // Save handler — SEC-07: strip platform-managed quota/audit fields when a tenant admin edits own settings
   const saveSettings = () => {
-    if (formData) {
-      saveMutation.mutate(formData);
+    if (!formData) return;
+
+    if (mode === "my") {
+      const payload: Partial<TenantSettings> = { ...formData };
+      delete payload.maxAdmins;
+      delete payload.maxRoles;
+      delete payload.maxSubTenants;
+      delete payload.auditEnabled;
+      delete payload.auditRetentionDays;
+      saveMutation.mutate(payload);
+      return;
     }
+
+    saveMutation.mutate(formData);
   };
 
   // Reset form

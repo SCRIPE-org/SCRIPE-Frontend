@@ -10,11 +10,10 @@
  * @module customization/presentation/components
  */
 "use client";
-// UI-EXCEPTION: compact studio layout — native elements for tight sidebar
-// where @core/ui components would break the compact design.
 
 import { useState, useCallback, useMemo } from "react";
 import { cn } from "@/core/common/utils";
+import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
 import { Input } from "@core/ui/input";
 import { Slider } from "@core/ui/slider";
@@ -795,11 +794,13 @@ function ColorSwatch({
   onSelect: (v: string) => void;
 }) {
   return (
-    <button
+    <Button
       type="button"
+      variant="ghost"
+      size="icon"
       onClick={() => onSelect(value)}
       className={cn(
-        "flex h-7 w-7 items-center justify-center rounded-full border-2 transition-[border-color] duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
+        "flex h-7 w-7 items-center justify-center rounded-full border-2 p-0 transition-[border-color] duration-nx-micro ease-nx-enter hover:bg-transparent focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
         selected
           ? "border-nx-accent shadow-nx-sm"
           : "border-transparent hover:border-[color:color-mix(in_srgb,var(--nx-ink-3)_30%,transparent)]"
@@ -809,9 +810,9 @@ function ColorSwatch({
       aria-pressed={selected}
     >
       <div className="h-5 w-5 rounded-full shadow-nx-sm" style={{ background: color }}>
-        {selected && <Check className="h-5 w-5 p-0.5 text-white" aria-hidden="true" />}
+        {selected && <Check className="h-5 w-5 p-0.5 text-[var(--scripe-white)]" aria-hidden="true" />}
       </div>
-    </button>
+    </Button>
   );
 }
 
@@ -842,18 +843,20 @@ function OptionGrid<T extends string>({
       )}
     >
       {options.map((opt) => (
-        <button
+        <Button
           key={opt}
+          type="button"
+          variant="ghost"
           onClick={() => onSelect(opt)}
           className={cn(
-            "truncate rounded-nx-sm border px-2 py-1.5 text-[10px] font-medium transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+            "h-auto min-w-0 justify-center truncate rounded-nx-sm border px-2 py-1.5 text-[10px] font-medium transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
             selected === opt
-              ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
+              ? "border-nx-accent bg-nx-accent-wash text-nx-accent hover:bg-nx-accent-wash hover:text-nx-accent"
               : "border-[color:color-mix(in_srgb,var(--nx-line)_50%,transparent)] text-nx-ink-3 hover:border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] hover:bg-nx-hover"
           )}
         >
           {labelFn ? labelFn(opt) : opt}
-        </button>
+        </Button>
       ))}
     </div>
   );
@@ -1017,11 +1020,13 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
       >
         <div className="grid grid-cols-2 gap-1.5">
           {DASHBOARD_PRESETS.map((preset) => (
-            <button
+            <Button
               key={preset.id}
+              type="button"
+              variant="ghost"
               onClick={() => applyPreset(preset)}
               className={cn(
-                "group relative flex flex-col items-start gap-1 rounded-nx-md border p-2.5 text-start transition-[border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+                "group relative flex h-auto flex-col items-start justify-start gap-1 whitespace-normal rounded-nx-md border p-2.5 text-start font-normal transition-[border-color,box-shadow] duration-nx-micro ease-nx-enter hover:bg-transparent motion-reduce:transition-none",
                 "border-[color:color-mix(in_srgb,var(--nx-line)_50%,transparent)] hover:border-[color:color-mix(in_srgb,var(--nx-accent)_40%,transparent)] hover:shadow-nx-sm"
               )}
             >
@@ -1046,7 +1051,7 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
               <span className="text-[9px] leading-tight text-[color:color-mix(in_srgb,var(--nx-ink-3)_70%,transparent)]">
                 {t(`studio.dashboard.presetDesc.${preset.localeKey}`)}
               </span>
-            </button>
+            </Button>
           ))}
         </div>
       </Section>
@@ -1066,18 +1071,20 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
           </Label>
           <div className="scrollbar-thin grid max-h-[180px] grid-cols-3 gap-1 overflow-y-auto pe-1">
             {LAYOUT_TEMPLATES.map((tmpl) => (
-              <button
+              <Button
                 key={tmpl}
+                type="button"
+                variant="ghost"
                 onClick={() => set("layoutTemplate", tmpl)}
                 className={cn(
-                  "truncate rounded-nx-sm border px-1.5 py-1 text-[9px] font-medium transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+                  "h-auto min-w-0 justify-center truncate rounded-nx-sm border px-1.5 py-1 text-[9px] font-medium transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
                   settings.layoutTemplate === tmpl
-                    ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
+                    ? "border-nx-accent bg-nx-accent-wash text-nx-accent hover:bg-nx-accent-wash hover:text-nx-accent"
                     : "border-[color:color-mix(in_srgb,var(--nx-line)_50%,transparent)] text-nx-ink-3 hover:border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)]"
                 )}
               >
                 {tmpl}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -1215,18 +1222,20 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
             </Label>
             <div className="grid grid-cols-4 gap-1">
               {GRADIENT_DIRS.map((dir) => (
-                <button
+                <Button
                   key={dir}
+                  type="button"
+                  variant="ghost"
                   onClick={() => set("gradientDirection", dir)}
                   className={cn(
-                    "rounded-nx-sm border px-1.5 py-1 text-[9px] transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+                    "h-auto rounded-nx-sm border px-1.5 py-1 text-[9px] font-normal transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
                     settings.gradientDirection === dir
-                      ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
+                      ? "border-nx-accent bg-nx-accent-wash text-nx-accent hover:bg-nx-accent-wash hover:text-nx-accent"
                       : "border-[color:color-mix(in_srgb,var(--nx-line)_30%,transparent)] text-nx-ink-3 hover:border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)]"
                   )}
                 >
                   {dir}
-                </button>
+                </Button>
               ))}
             </div>
             <HexInput
@@ -1247,18 +1256,20 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
               </Label>
               <div className="scrollbar-thin grid max-h-[120px] grid-cols-3 gap-1 overflow-y-auto pe-1">
                 {LIGHT_GRADIENT_THEMES.map((gt) => (
-                  <button
+                  <Button
                     key={gt}
+                    type="button"
+                    variant="ghost"
                     onClick={() => set("lightGradientTheme", gt)}
                     className={cn(
-                      "truncate rounded-nx-sm border px-1.5 py-1 text-[9px] font-medium transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+                      "h-auto min-w-0 justify-center truncate rounded-nx-sm border px-1.5 py-1 text-[9px] font-medium transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
                       settings.lightGradientTheme === gt
-                        ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
+                        ? "border-nx-accent bg-nx-accent-wash text-nx-accent hover:bg-nx-accent-wash hover:text-nx-accent"
                         : "border-[color:color-mix(in_srgb,var(--nx-line)_50%,transparent)] text-nx-ink-3 hover:border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)]"
                     )}
                   >
                     {gradientThemeLabel(gt)}
-                  </button>
+                  </Button>
                 ))}
               </div>
             </div>
@@ -1270,18 +1281,20 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
               </Label>
               <div className="scrollbar-thin grid max-h-[120px] grid-cols-3 gap-1 overflow-y-auto pe-1">
                 {DARK_GRADIENT_THEMES.map((gt) => (
-                  <button
+                  <Button
                     key={gt}
+                    type="button"
+                    variant="ghost"
                     onClick={() => set("darkGradientTheme", gt)}
                     className={cn(
-                      "truncate rounded-nx-sm border px-1.5 py-1 text-[9px] font-medium transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+                      "h-auto min-w-0 justify-center truncate rounded-nx-sm border px-1.5 py-1 text-[9px] font-medium transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
                       settings.darkGradientTheme === gt
-                        ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
+                        ? "border-nx-accent bg-nx-accent-wash text-nx-accent hover:bg-nx-accent-wash hover:text-nx-accent"
                         : "border-[color:color-mix(in_srgb,var(--nx-line)_50%,transparent)] text-nx-ink-3 hover:border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)]"
                     )}
                   >
                     {gradientThemeLabel(gt)}
-                  </button>
+                  </Button>
                 ))}
               </div>
             </div>
@@ -1298,18 +1311,20 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
               </Label>
               <div className="scrollbar-thin grid max-h-[120px] grid-cols-3 gap-1 overflow-y-auto pe-1">
                 {LIGHT_BG_THEMES.map((bg) => (
-                  <button
+                  <Button
                     key={bg}
+                    type="button"
+                    variant="ghost"
                     onClick={() => set("lightBackgroundTheme", bg)}
                     className={cn(
-                      "truncate rounded-nx-sm border px-1.5 py-1 text-[9px] font-medium transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+                      "h-auto min-w-0 justify-center truncate rounded-nx-sm border px-1.5 py-1 text-[9px] font-medium transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
                       settings.lightBackgroundTheme === bg
-                        ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
+                        ? "border-nx-accent bg-nx-accent-wash text-nx-accent hover:bg-nx-accent-wash hover:text-nx-accent"
                         : "border-[color:color-mix(in_srgb,var(--nx-line)_50%,transparent)] text-nx-ink-3 hover:border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)]"
                     )}
                   >
                     {bgThemeLabel(bg)}
-                  </button>
+                  </Button>
                 ))}
               </div>
             </div>
@@ -1321,18 +1336,20 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
               </Label>
               <div className="scrollbar-thin grid max-h-[120px] grid-cols-3 gap-1 overflow-y-auto pe-1">
                 {DARK_BG_THEMES.map((bg) => (
-                  <button
+                  <Button
                     key={bg}
+                    type="button"
+                    variant="ghost"
                     onClick={() => set("darkBackgroundTheme", bg)}
                     className={cn(
-                      "truncate rounded-nx-sm border px-1.5 py-1 text-[9px] font-medium transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+                      "h-auto min-w-0 justify-center truncate rounded-nx-sm border px-1.5 py-1 text-[9px] font-medium transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
                       settings.darkBackgroundTheme === bg
-                        ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
+                        ? "border-nx-accent bg-nx-accent-wash text-nx-accent hover:bg-nx-accent-wash hover:text-nx-accent"
                         : "border-[color:color-mix(in_srgb,var(--nx-line)_50%,transparent)] text-nx-ink-3 hover:border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)]"
                     )}
                   >
                     {bgThemeLabel(bg)}
-                  </button>
+                  </Button>
                 ))}
               </div>
             </div>
@@ -1448,18 +1465,20 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
             </div>
             <div className="scrollbar-thin grid max-h-[100px] grid-cols-3 gap-1 overflow-y-auto pe-1">
               {cs.options.map((opt) => (
-                <button
+                <Button
                   key={opt}
+                  type="button"
+                  variant="ghost"
                   onClick={() => set(cs.key, opt)}
                   className={cn(
-                    "truncate rounded-nx-sm border px-1.5 py-1 text-[9px] font-medium transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+                    "h-auto min-w-0 justify-center truncate rounded-nx-sm border px-1.5 py-1 text-[9px] font-medium transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
                     settings[cs.key] === opt
-                      ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
+                      ? "border-nx-accent bg-nx-accent-wash text-nx-accent hover:bg-nx-accent-wash hover:text-nx-accent"
                       : "border-[color:color-mix(in_srgb,var(--nx-line)_50%,transparent)] text-nx-ink-3 hover:border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] hover:bg-nx-hover"
                   )}
                 >
                   {componentStyleLabel(opt)}
-                </button>
+                </Button>
               ))}
             </div>
           </div>
@@ -1480,18 +1499,20 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
           </Label>
           <div className="scrollbar-thin grid max-h-[120px] grid-cols-3 gap-1 overflow-y-auto pe-1">
             {CHECKBOX_STYLES.map((opt) => (
-              <button
+              <Button
                 key={opt}
+                type="button"
+                variant="ghost"
                 onClick={() => set("checkboxStyle", opt)}
                 className={cn(
-                  "truncate rounded-nx-sm border px-1.5 py-1 text-[9px] font-medium transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+                  "h-auto min-w-0 justify-center truncate rounded-nx-sm border px-1.5 py-1 text-[9px] font-medium transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
                   settings.checkboxStyle === opt
-                    ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
+                    ? "border-nx-accent bg-nx-accent-wash text-nx-accent hover:bg-nx-accent-wash hover:text-nx-accent"
                     : "border-[color:color-mix(in_srgb,var(--nx-line)_50%,transparent)] text-nx-ink-3 hover:border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] hover:bg-nx-hover"
                 )}
               >
                 {componentStyleLabel(opt)}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -1501,18 +1522,20 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
           </Label>
           <div className="scrollbar-thin grid max-h-[120px] grid-cols-3 gap-1 overflow-y-auto pe-1">
             {RADIO_STYLES.map((opt) => (
-              <button
+              <Button
                 key={opt}
+                type="button"
+                variant="ghost"
                 onClick={() => set("radioStyle", opt)}
                 className={cn(
-                  "truncate rounded-nx-sm border px-1.5 py-1 text-[9px] font-medium transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+                  "h-auto min-w-0 justify-center truncate rounded-nx-sm border px-1.5 py-1 text-[9px] font-medium transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
                   settings.radioStyle === opt
-                    ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
+                    ? "border-nx-accent bg-nx-accent-wash text-nx-accent hover:bg-nx-accent-wash hover:text-nx-accent"
                     : "border-[color:color-mix(in_srgb,var(--nx-line)_50%,transparent)] text-nx-ink-3 hover:border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] hover:bg-nx-hover"
                 )}
               >
                 {componentStyleLabel(opt)}
-              </button>
+              </Button>
             ))}
           </div>
         </div>

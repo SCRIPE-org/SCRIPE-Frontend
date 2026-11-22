@@ -9,6 +9,7 @@
 
 import type { IdentityProviderFormState } from "../viewmodels/useIdentityProviderDetailViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
+import { cn } from "@core/common/utils";
 import { Input } from "@core/ui/input";
 import { PasswordInput } from "@core/ui/password-input";
 import { Label } from "@core/ui/label";
@@ -19,24 +20,8 @@ import { Badge } from "@core/ui/badge";
 import { ImageUploadField } from "@core/ui/image-upload-field";
 import { Button } from "@core/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@core/ui/popover";
-import { BrandIcon } from "@core/ui/brand-icons";
 import GenericSelect from "@core/crud/components/generic-select";
 import { Settings2, Globe, Palette, Shield, FileJson, Link2 } from "lucide-react";
-import type * as React from "react";
-import Image from "next/image";
-
-// The live preview always simulates the dark login card regardless of the
-// workspace's own theme, so it pins the frozen `--sx-*` vault tokens to their
-// dark-theme values via a local custom-property override — values copied
-// verbatim from globals.css `:root` (see SSOButtonPreview for the full
-// light+dark pair; this inline preview only ever shows the dark frame).
-const PREVIEW_DARK_SX_VARS = {
-  "--sx-card-bg": "linear-gradient(180deg, rgba(21, 23, 25, 0.86), rgba(13, 13, 14, 0.92))",
-  "--sx-card-border": "rgba(198, 255, 0, 0.16)",
-  "--sx-text": "#f7f8f5",
-  "--sx-field-bg": "rgba(255, 255, 255, 0.03)",
-  "--sx-field-border": "rgba(255, 255, 255, 0.08)",
-} as React.CSSProperties;
 
 // ─── Props ──────────────────────────────────────────────────────
 interface FormSectionProps {
@@ -105,6 +90,7 @@ export function GeneralSection({
             </Label>
             <Input
               id="idp-slug"
+              dir="ltr"
               value={form.slug}
               onChange={(e) => updateField("slug", e.target.value)}
               placeholder={t("identityProviders.slugPlaceholder")}
@@ -143,10 +129,17 @@ export function GeneralSection({
         {/* Active Toggle */}
         <div className="flex items-center justify-between rounded-nx-control border border-nx-line p-3">
           <div>
-            <Label className="text-sm font-medium">{t("identityProviders.activeStatus")}</Label>
+            <Label htmlFor="idp-active" className="text-sm font-medium">
+              {t("identityProviders.activeStatus")}
+            </Label>
             <p className="text-xs text-nx-ink-3">{t("identityProviders.activeStatusHelp")}</p>
           </div>
-          <Switch checked={form.isActive} onCheckedChange={(v) => updateField("isActive", v)} />
+          <Switch
+            id="idp-active"
+            aria-label={t("identityProviders.activeStatus")}
+            checked={form.isActive}
+            onCheckedChange={(v) => updateField("isActive", v)}
+          />
         </div>
       </CardContent>
     </Card>
@@ -158,7 +151,7 @@ export function GeneralSection({
  * Presentation UI component rendering the oidc config section.
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
-export function OidcConfigSection({ form, updateField }: FormSectionProps) {
+export function OidcConfigSection({ form, updateField, isCreateMode }: FormSectionProps) {
   const { t } = useI18n();
 
   return (
@@ -176,6 +169,7 @@ export function OidcConfigSection({ form, updateField }: FormSectionProps) {
           <Label htmlFor="idp-authority">{t("identityProviders.authority")}</Label>
           <Input
             id="idp-authority"
+            dir="ltr"
             value={form.authority}
             onChange={(e) => updateField("authority", e.target.value)}
             placeholder="https://accounts.google.com"
@@ -190,6 +184,7 @@ export function OidcConfigSection({ form, updateField }: FormSectionProps) {
             <Label htmlFor="idp-clientId">{t("identityProviders.clientId")}</Label>
             <Input
               id="idp-clientId"
+              dir="ltr"
               value={form.clientId}
               onChange={(e) => updateField("clientId", e.target.value)}
               placeholder={t("identityProviders.clientIdPlaceholder")}
@@ -202,10 +197,15 @@ export function OidcConfigSection({ form, updateField }: FormSectionProps) {
             <Label htmlFor="idp-clientSecret">{t("identityProviders.clientSecret")}</Label>
             <PasswordInput
               id="idp-clientSecret"
+              dir="ltr"
               value={form.clientSecret}
               onChange={(e) => updateField("clientSecret", e.target.value)}
               autoComplete="new-password"
-              placeholder={t("identityProviders.clientSecretPlaceholder")}
+              placeholder={
+                isCreateMode
+                  ? t("identityProviders.clientSecretCreatePlaceholder")
+                  : t("identityProviders.clientSecretPlaceholder")
+              }
             />
           </div>
         </div>
@@ -215,6 +215,7 @@ export function OidcConfigSection({ form, updateField }: FormSectionProps) {
           <Label htmlFor="idp-scopes">{t("identityProviders.scopes")}</Label>
           <Input
             id="idp-scopes"
+            dir="ltr"
             value={form.scopes}
             onChange={(e) => updateField("scopes", e.target.value)}
             placeholder="openid profile email"
@@ -228,6 +229,7 @@ export function OidcConfigSection({ form, updateField }: FormSectionProps) {
           <Label htmlFor="idp-redirect">{t("identityProviders.redirectUri")}</Label>
           <Input
             id="idp-redirect"
+            dir="ltr"
             value={form.redirectUri}
             onChange={(e) => updateField("redirectUri", e.target.value)}
             placeholder={t("identityProviders.redirectUriPlaceholder")}
@@ -245,7 +247,7 @@ export function OidcConfigSection({ form, updateField }: FormSectionProps) {
  * Presentation UI component rendering the oauth2 config section.
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
-export function Oauth2ConfigSection({ form, updateField }: FormSectionProps) {
+export function Oauth2ConfigSection({ form, updateField, isCreateMode }: FormSectionProps) {
   const { t } = useI18n();
 
   return (
@@ -263,6 +265,7 @@ export function Oauth2ConfigSection({ form, updateField }: FormSectionProps) {
           <Label htmlFor="oauth2-authority">{t("identityProviders.authority")}</Label>
           <Input
             id="oauth2-authority"
+            dir="ltr"
             value={form.authority}
             onChange={(e) => updateField("authority", e.target.value)}
             placeholder="https://accounts.google.com"
@@ -277,6 +280,7 @@ export function Oauth2ConfigSection({ form, updateField }: FormSectionProps) {
             <Label htmlFor="oauth2-clientId">{t("identityProviders.clientId")}</Label>
             <Input
               id="oauth2-clientId"
+              dir="ltr"
               value={form.clientId}
               onChange={(e) => updateField("clientId", e.target.value)}
               placeholder={t("identityProviders.clientIdPlaceholder")}
@@ -289,10 +293,15 @@ export function Oauth2ConfigSection({ form, updateField }: FormSectionProps) {
             <Label htmlFor="oauth2-clientSecret">{t("identityProviders.clientSecret")}</Label>
             <PasswordInput
               id="oauth2-clientSecret"
+              dir="ltr"
               value={form.clientSecret}
               onChange={(e) => updateField("clientSecret", e.target.value)}
               autoComplete="new-password"
-              placeholder={t("identityProviders.clientSecretPlaceholder")}
+              placeholder={
+                isCreateMode
+                  ? t("identityProviders.clientSecretCreatePlaceholder")
+                  : t("identityProviders.clientSecretPlaceholder")
+              }
             />
           </div>
         </div>
@@ -302,6 +311,7 @@ export function Oauth2ConfigSection({ form, updateField }: FormSectionProps) {
           <Label htmlFor="oauth2-scopes">{t("identityProviders.scopes")}</Label>
           <Input
             id="oauth2-scopes"
+            dir="ltr"
             value={form.scopes}
             onChange={(e) => updateField("scopes", e.target.value)}
             placeholder="email profile"
@@ -315,6 +325,7 @@ export function Oauth2ConfigSection({ form, updateField }: FormSectionProps) {
           <Label htmlFor="oauth2-redirect">{t("identityProviders.redirectUri")}</Label>
           <Input
             id="oauth2-redirect"
+            dir="ltr"
             value={form.redirectUri}
             onChange={(e) => updateField("redirectUri", e.target.value)}
             placeholder={t("identityProviders.redirectUriPlaceholder")}
@@ -349,6 +360,7 @@ export function ExplicitEndpointsSection({ form, updateField }: FormSectionProps
           <Label htmlFor="idp-auth-end">{t("identityProviders.authorizationEndpoint")}</Label>
           <Input
             id="idp-auth-end"
+            dir="ltr"
             value={form.authorizationEndpoint ?? ""}
             onChange={(e) => updateField("authorizationEndpoint", e.target.value)}
             placeholder="https://idp.example.com/authorize"
@@ -359,6 +371,7 @@ export function ExplicitEndpointsSection({ form, updateField }: FormSectionProps
           <Label htmlFor="idp-token-end">{t("identityProviders.tokenEndpoint")}</Label>
           <Input
             id="idp-token-end"
+            dir="ltr"
             value={form.tokenEndpoint ?? ""}
             onChange={(e) => updateField("tokenEndpoint", e.target.value)}
             placeholder="https://idp.example.com/token"
@@ -369,6 +382,7 @@ export function ExplicitEndpointsSection({ form, updateField }: FormSectionProps
           <Label htmlFor="idp-user-end">{t("identityProviders.userInformationEndpoint")}</Label>
           <Input
             id="idp-user-end"
+            dir="ltr"
             value={form.userInformationEndpoint ?? ""}
             onChange={(e) => updateField("userInformationEndpoint", e.target.value)}
             placeholder="https://idp.example.com/userinfo"
@@ -402,6 +416,7 @@ export function SamlConfigSection({ form, updateField }: FormSectionProps) {
           <Label htmlFor="saml-entity-id">{t("identityProviders.samlIdpEntityId")}</Label>
           <Input
             id="saml-entity-id"
+            dir="ltr"
             value={form.samlIdpEntityId ?? ""}
             onChange={(e) => updateField("samlIdpEntityId", e.target.value)}
             placeholder="https://idp.example.com/metadata"
@@ -412,6 +427,7 @@ export function SamlConfigSection({ form, updateField }: FormSectionProps) {
           <Label htmlFor="saml-sso-url">{t("identityProviders.samlSsoUrl")}</Label>
           <Input
             id="saml-sso-url"
+            dir="ltr"
             value={form.samlSsoUrl ?? ""}
             onChange={(e) => updateField("samlSsoUrl", e.target.value)}
             placeholder="https://idp.example.com/sso"
@@ -422,6 +438,7 @@ export function SamlConfigSection({ form, updateField }: FormSectionProps) {
           <Label htmlFor="saml-cert">{t("identityProviders.samlCertificate")}</Label>
           <Textarea
             id="saml-cert"
+            dir="ltr"
             value={form.samlCertificate ?? ""}
             onChange={(e) => updateField("samlCertificate", e.target.value)}
             placeholder={t("identityProviders.samlCertificatePlaceholder")}
@@ -490,6 +507,7 @@ export function AppearanceSection({ form, updateField }: FormSectionProps) {
                   <Button
                     type="button"
                     variant="outline"
+                    aria-label={t("identityProviders.chooseColor")}
                     className="h-9 w-12 shrink-0 cursor-pointer overflow-hidden rounded-nx-control border p-0 shadow-none active:shadow-[inset_0_0_0_1px_var(--nx-accent)]"
                     style={{ backgroundColor: form.buttonColor || "#4285F4" }}
                   >
@@ -501,21 +519,31 @@ export function AppearanceSection({ form, updateField }: FormSectionProps) {
                     {t("identityProviders.presetColors")}
                   </div>
                   <div className="grid grid-cols-5 gap-2">
-                    {BUTTON_COLOR_SWATCHES.map((c) => (
-                      <Button
-                        key={c}
-                        type="button"
-                        variant="ghost"
-                        onClick={() => updateField("buttonColor", c)}
-                        className="h-8 w-8 rounded-nx-sm border border-nx-line p-0 shadow-none active:shadow-[inset_0_0_0_1px_var(--nx-accent)]"
-                        style={{ backgroundColor: c }}
-                      />
-                    ))}
+                    {BUTTON_COLOR_SWATCHES.map((c) => {
+                      const isSelected = form.buttonColor?.toLowerCase() === c.toLowerCase();
+                      return (
+                        <Button
+                          key={c}
+                          type="button"
+                          variant="ghost"
+                          aria-label={`${t("identityProviders.chooseColor")}: ${c}`}
+                          aria-pressed={isSelected}
+                          onClick={() => updateField("buttonColor", c)}
+                          className={cn(
+                            "h-8 w-8 rounded-nx-sm border border-nx-line p-0 shadow-none active:shadow-[inset_0_0_0_1px_var(--nx-accent)]",
+                            isSelected && "ring-2 ring-nx-accent ring-offset-2 ring-offset-nx-surface"
+                          )}
+                          style={{ backgroundColor: c }}
+                        />
+                      );
+                    })}
                   </div>
                   <div className="text-xs font-semibold uppercase tracking-wider text-nx-ink-3">
                     {t("identityProviders.customColorHex")}
                   </div>
                   <Input
+                    dir="ltr"
+                    aria-label={t("identityProviders.customColorHex")}
                     value={form.buttonColor}
                     onChange={(e) => updateField("buttonColor", e.target.value)}
                     placeholder="#4285F4"
@@ -524,6 +552,8 @@ export function AppearanceSection({ form, updateField }: FormSectionProps) {
                 </PopoverContent>
               </Popover>
               <Input
+                id="idp-color"
+                dir="ltr"
                 value={form.buttonColor}
                 onChange={(e) => updateField("buttonColor", e.target.value)}
                 placeholder="#4285F4"
@@ -542,57 +572,6 @@ export function AppearanceSection({ form, updateField }: FormSectionProps) {
             onChange={(e) => updateField("buttonLabel", e.target.value)}
             placeholder={t("identityProviders.buttonLabelPlaceholder")}
           />
-        </div>
-
-        {/* Live Button Preview */}
-        <div className="space-y-2">
-          <Label className="text-sm">{t("identityProviders.buttonPreview")}</Label>
-          <div
-            className="flex min-h-[120px] items-center justify-center rounded-nx-lg border p-6 shadow-nx-sm"
-            style={{
-              ...PREVIEW_DARK_SX_VARS,
-              background: "var(--sx-card-bg)",
-              borderColor: "var(--sx-card-border)",
-            }}
-          >
-            <Button
-              type="button"
-              disabled
-              className="pointer-events-none inline-flex w-full max-w-[280px] cursor-default select-none items-center justify-center gap-2.5 rounded-nx-md border text-[13px] font-medium shadow-none"
-              style={{
-                height: 44,
-                padding: "11px 14px",
-                background: "var(--sx-field-bg)",
-                borderColor: "var(--sx-field-border)",
-                color: "var(--sx-text)",
-              }}
-            >
-              {form.iconUrl ? (
-                <Image
-                  src={form.iconUrl}
-                  alt=""
-                  width={18}
-                  height={18}
-                  unoptimized
-                  className="h-[18px] w-[18px] shrink-0 rounded object-contain"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).style.display = "none";
-                  }}
-                />
-              ) : (
-                <BrandIcon
-                  slug={form.slug}
-                  name={form.name}
-                  protocol={form.protocol}
-                  className="h-[18px] w-[18px] shrink-0"
-                />
-              )}
-              <span className="truncate">
-                {form.buttonLabel ||
-                  t("identityProviders.signInWith", { name: form.name || "Provider" })}
-              </span>
-            </Button>
-          </div>
         </div>
       </CardContent>
     </Card>
@@ -620,10 +599,14 @@ export function AccessControlSection({ form, updateField }: FormSectionProps) {
         {/* Admins Toggle */}
         <div className="flex items-center justify-between rounded-nx-control border border-nx-line p-3">
           <div>
-            <Label className="text-sm font-medium">{t("identityProviders.enabledForAdmins")}</Label>
+            <Label htmlFor="idp-enabled-admins" className="text-sm font-medium">
+              {t("identityProviders.enabledForAdmins")}
+            </Label>
             <p className="text-xs text-nx-ink-3">{t("identityProviders.enabledForAdminsHelp")}</p>
           </div>
           <Switch
+            id="idp-enabled-admins"
+            aria-label={t("identityProviders.enabledForAdmins")}
             checked={form.enabledForAdmins}
             onCheckedChange={(v) => updateField("enabledForAdmins", v)}
           />
@@ -632,17 +615,38 @@ export function AccessControlSection({ form, updateField }: FormSectionProps) {
         {/* Users Toggle */}
         <div className="flex items-center justify-between rounded-nx-control border border-nx-line p-3">
           <div>
-            <Label className="text-sm font-medium">{t("identityProviders.enabledForUsers")}</Label>
+            <Label htmlFor="idp-enabled-users" className="text-sm font-medium">
+              {t("identityProviders.enabledForUsers")}
+            </Label>
             <p className="text-xs text-nx-ink-3">{t("identityProviders.enabledForUsersHelp")}</p>
           </div>
           <Switch
+            id="idp-enabled-users"
+            aria-label={t("identityProviders.enabledForUsers")}
             checked={form.enabledForUsers}
             onCheckedChange={(v) => updateField("enabledForUsers", v)}
           />
         </div>
 
+        {/* Trust IdP MFA Assertion Toggle */}
+        <div className="flex items-center justify-between rounded-nx-control border border-nx-line p-3">
+          <div>
+            <Label htmlFor="idp-trust-mfa" className="text-sm font-medium">
+              {t("identityProviders.trustIdpMfa")}
+            </Label>
+            <p className="text-xs text-nx-ink-3">{t("identityProviders.trustIdpMfaHelp")}</p>
+          </div>
+          <Switch
+            id="idp-trust-mfa"
+            data-testid="trust-idp-mfa-switch"
+            aria-label={t("identityProviders.trustIdpMfa")}
+            checked={form.trustIdpMfa}
+            onCheckedChange={(v) => updateField("trustIdpMfa", v)}
+          />
+        </div>
+
         {/* Scope Summary */}
-        <div className="flex items-center gap-2 pt-1">
+        <div className="flex flex-wrap items-center gap-2 pt-1">
           <span className="text-xs text-nx-ink-3">{t("identityProviders.currentScope")}:</span>
           {form.enabledForAdmins && (
             <Badge variant="outline" className="bg-nx-accent-wash text-xs text-nx-accent">
@@ -652,6 +656,11 @@ export function AccessControlSection({ form, updateField }: FormSectionProps) {
           {form.enabledForUsers && (
             <Badge variant="outline" className="bg-info/10 text-xs text-info">
               {t("identityProviders.badgeUser")}
+            </Badge>
+          )}
+          {form.trustIdpMfa && (
+            <Badge variant="outline" className="border-success/30 bg-success/10 text-xs text-success">
+              {t("identityProviders.badgeTrustMfa")}
             </Badge>
           )}
           {!form.enabledForAdmins && !form.enabledForUsers && (
@@ -691,6 +700,7 @@ export function ClaimMappingsSection({ form, updateField }: FormSectionProps) {
       </CardHeader>
       <CardContent className="space-y-3">
         <Textarea
+          dir="ltr"
           value={form.claimMappingJson}
           onChange={(e) => updateField("claimMappingJson", e.target.value)}
           placeholder={

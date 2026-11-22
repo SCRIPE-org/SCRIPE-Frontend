@@ -9,7 +9,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { container } from "@modules/profile/di";
+import { useI18n } from "@core/providers/i18n-provider";
 import type { UpdateProfileRequest } from "../../domain/interfaces/IProfileRepository";
+import {
+  invalidateOnConcurrencyConflict,
+  resolveProfileSaveErrorMessage,
+} from "../utils/concurrency";
 
 /**
  * Exported constant defining parameters and fields for profile keys configurations.
@@ -28,6 +33,7 @@ export const profileKeys = {
 export function useProfilePageViewModel() {
   const repo = container.profileRepository;
   const queryClient = useQueryClient();
+  const { t } = useI18n();
   const [profileSuccess, setProfileSuccess] = useState(false);
 
   // ── Fetch profile ──────────────────────────────
@@ -44,11 +50,18 @@ export function useProfilePageViewModel() {
 
   // ── Update profile ─────────────────────────────
   const updateMutation = useMutation({
-    mutationFn: (data: UpdateProfileRequest) => repo.updateProfile(data),
+    mutationFn: (data: UpdateProfileRequest) =>
+      repo.updateProfile({
+        ...data,
+        rowVersion: data.rowVersion ?? profile?.rowVersion,
+      }),
     onSuccess: (updatedProfile) => {
       queryClient.setQueryData(profileKeys.me(), updatedProfile);
       setProfileSuccess(true);
       setTimeout(() => setProfileSuccess(false), 3000);
+    },
+    onError: (err) => {
+      invalidateOnConcurrencyConflict(queryClient, profileKeys.me(), err);
     },
   });
 
@@ -61,7 +74,9 @@ export function useProfilePageViewModel() {
     // Profile update
     updateProfile: updateMutation.mutateAsync,
     isUpdating: updateMutation.isPending,
-    updateError: updateMutation.error?.message ?? null,
+    updateError: updateMutation.error
+      ? resolveProfileSaveErrorMessage(updateMutation.error, t)
+      : null,
     profileSuccess,
 
     // For sub-pages

@@ -11,8 +11,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Switch } from "@core/ui/switch";
-import { Shield } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
+import { Shield, KeyRound } from "lucide-react";
 import type { TenantSettings } from "../../domain/entities/TenantSettings";
+import type { IdentityProviderMode } from "../../domain/types/SettingsTypes";
 
 interface SecuritySectionProps {
   settings: TenantSettings;
@@ -42,10 +44,13 @@ export function SecuritySection({ settings, updateField }: SecuritySectionProps)
             <Input
               id="passwordMinLength"
               type="number"
-              min={6}
-              max={32}
+              min={8}
+              max={128}
               value={settings.passwordMinLength}
-              onChange={(e) => updateField("passwordMinLength", parseInt(e.target.value) || 8)}
+              onChange={(e) => {
+                const parsed = parseInt(e.target.value, 10);
+                if (!Number.isNaN(parsed)) updateField("passwordMinLength", parsed);
+              }}
             />
             <p className="text-xs text-nx-ink-3">{t("tenantSettings.passwordMinLengthHelp")}</p>
           </div>
@@ -56,7 +61,10 @@ export function SecuritySection({ settings, updateField }: SecuritySectionProps)
               type="number"
               min={0}
               value={settings.passwordExpiryDays ?? 0}
-              onChange={(e) => updateField("passwordExpiryDays", parseInt(e.target.value) || null)}
+              onChange={(e) => {
+                const parsed = parseInt(e.target.value, 10);
+                updateField("passwordExpiryDays", parsed > 0 ? parsed : null);
+              }}
             />
             <p className="text-xs text-nx-ink-3">{t("tenantSettings.passwordExpiryDaysHelp")}</p>
           </div>
@@ -114,9 +122,13 @@ export function SecuritySection({ settings, updateField }: SecuritySectionProps)
             <Input
               id="lockoutThreshold"
               type="number"
-              min={1}
+              min={3}
+              max={20}
               value={settings.loginLockoutThreshold}
-              onChange={(e) => updateField("loginLockoutThreshold", parseInt(e.target.value) || 5)}
+              onChange={(e) => {
+                const parsed = parseInt(e.target.value, 10);
+                if (!Number.isNaN(parsed)) updateField("loginLockoutThreshold", parsed);
+              }}
             />
             <p className="text-xs text-nx-ink-3">{t("tenantSettings.loginLockoutThresholdHelp")}</p>
           </div>
@@ -126,8 +138,12 @@ export function SecuritySection({ settings, updateField }: SecuritySectionProps)
               id="lockoutMinutes"
               type="number"
               min={1}
+              max={1440}
               value={settings.loginLockoutMinutes}
-              onChange={(e) => updateField("loginLockoutMinutes", parseInt(e.target.value) || 15)}
+              onChange={(e) => {
+                const parsed = parseInt(e.target.value, 10);
+                if (!Number.isNaN(parsed)) updateField("loginLockoutMinutes", parsed);
+              }}
             />
             <p className="text-xs text-nx-ink-3">{t("tenantSettings.loginLockoutMinutesHelp")}</p>
           </div>
@@ -142,6 +158,40 @@ export function SecuritySection({ settings, updateField }: SecuritySectionProps)
               onCheckedChange={(checked) => updateField("require2FA", checked)}
             />
           </div>
+        </div>
+
+        {/* Identity Provider Inheritance Mode (BAM-03) */}
+        <div className="space-y-3 rounded-nx-md border border-nx-line bg-nx-raised p-4">
+          <div className="flex items-center gap-2">
+            <KeyRound className="h-4 w-4 text-nx-accent" aria-hidden="true" />
+            <Label htmlFor="identityProviderMode" className="text-sm font-semibold text-nx-ink">
+              {t("tenantSettings.identityProviderMode")}
+            </Label>
+          </div>
+          <p className="text-xs text-nx-ink-2">{t("tenantSettings.identityProviderModeHelp")}</p>
+          <Select
+            value={settings.identityProviderMode === "custom" ? "custom" : "inherit"}
+            onValueChange={(value) =>
+              updateField("identityProviderMode", value as IdentityProviderMode)
+            }
+          >
+            <SelectTrigger id="identityProviderMode" className="max-w-md bg-nx-surface">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="inherit">
+                {t("tenantSettings.identityProviderModeInherit")}
+              </SelectItem>
+              <SelectItem value="custom">
+                {t("tenantSettings.identityProviderModeCustom")}
+              </SelectItem>
+            </SelectContent>
+          </Select>
+          <p className="text-xs text-nx-ink-3">
+            {settings.identityProviderMode === "custom"
+              ? t("tenantSettings.identityProviderModeCustomDesc")
+              : t("tenantSettings.identityProviderModeInheritDesc")}
+          </p>
         </div>
       </CardContent>
     </Card>

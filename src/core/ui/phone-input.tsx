@@ -194,11 +194,11 @@ const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
     const resolvedStyle = resolveFieldStyle(inputStyle);
     const containerRoundedClass =
       resolvedStyle === "underlined"
-        ? "rounded-none border-0 border-b border-nx-line px-0"
+        ? "rounded-none border-0 border-b border-nx-line-hi bg-transparent px-0"
         : resolvedStyle === "rounded"
           ? "rounded-full px-1"
           : resolvedStyle === "filled"
-            ? "rounded-nx-control border-transparent bg-nx-raised"
+            ? "rounded-nx-control border-nx-line-hi bg-nx-raised hover:bg-nx-raised-2 hover:border-nx-ink-3"
             : "rounded-nx-control";
 
     // Focus lights the edge — the composite field carries the Input recipe on
@@ -278,18 +278,18 @@ const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
         <RPNInput.default
           ref={ref as any}
           className={cn(
-            // The shared field surface: sunken ground behind a hairline, the
-            // same hover lift and inert slab Input wears — a composite field
-            // must not read as a different control from a plain one.
-            "flex items-center border border-nx-line bg-nx-ground text-sm text-nx-ink transition-[border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-            "hover:border-nx-line-hi",
+            // The shared field surface: sunken ground behind a 3:1 line-hi
+            // border, same hover lift, read-only separation, and inert slab as Input.
+            "flex items-center border border-nx-line-hi bg-nx-ground text-sm text-nx-ink transition-[border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+            "hover:border-nx-ink-3",
+            "has-[input:read-only:enabled]:cursor-default has-[input:read-only:enabled]:border-nx-line has-[input:read-only:enabled]:bg-transparent has-[input:read-only:enabled]:hover:border-nx-line has-[input:read-only:enabled]:hover:bg-transparent",
             "has-[input:disabled]:cursor-not-allowed has-[input:disabled]:border-nx-line has-[input:disabled]:bg-nx-raised has-[input:disabled]:shadow-none",
             containerRoundedClass,
             focusClasses,
-            // Error re-hues the lit edge to the measured danger token — same
-            // geometry as --nx-focus, different hue, so the field reads wrong
-            // without shouting.
+            // Error re-hues the lit edge to the measured danger token — disabled
+            // still outranks invalid so an inert field never shouts.
             error &&
+              !isDisabled &&
               "border-nx-danger focus-within:border-nx-danger focus-within:shadow-[inset_0_0_0_1px_var(--nx-danger),0_0_0_3px_color-mix(in_srgb,var(--nx-danger)_18%,transparent)] hover:border-nx-danger",
             className
           )}

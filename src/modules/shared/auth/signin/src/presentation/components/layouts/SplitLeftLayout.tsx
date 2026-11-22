@@ -24,11 +24,11 @@ export function SplitLeftLayout({
 }: LoginLayoutProps) {
   return (
     <div
-      className={`flex min-h-screen w-full ${BG_STYLE} login-page selection:bg-primary/20`}
+      className={`flex min-h-[100dvh] w-full ${BG_STYLE} login-page`}
       dir={direction}
       style={SPLIT_WRAPPER_STYLE}
     >
-      <div
+      <main
         className="relative flex w-full flex-col items-center justify-center px-6 py-12 lg:w-1/2 xl:w-[45%]"
         style={FORM_SIDE_BG_STYLE}
       >
@@ -38,7 +38,7 @@ export function SplitLeftLayout({
         {formContent}
         {footer}
         {footerSlot}
-      </div>
+      </main>
       <LoginBranding branding={branding} slotConfig={slotConfig} position="right" />
     </div>
   );

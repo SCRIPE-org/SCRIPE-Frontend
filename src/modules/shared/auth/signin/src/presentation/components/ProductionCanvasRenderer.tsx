@@ -128,12 +128,12 @@ export function ProductionCanvasRenderer({
 
   if (positionMode === "absolute") {
     return (
-      <div
-        className="login-page min-h-screen w-full selection:bg-primary/20"
+      <main
+        className="login-page min-h-[100dvh] w-full selection:bg-nx-accent-wash"
         dir={direction}
         style={{
           position: "relative",
-          minHeight: "100vh",
+          minHeight: "100dvh",
           width: "100%",
           maxWidth: "800px",
           margin: "0 auto",
@@ -161,19 +161,19 @@ export function ProductionCanvasRenderer({
             {renderComponent(comp)}
           </div>
         ))}
-      </div>
+      </main>
     );
   }
 
   return (
-    <div
-      className="login-page min-h-screen w-full selection:bg-primary/20"
+    <main
+      className="login-page min-h-[100dvh] w-full selection:bg-nx-accent-wash"
       dir={direction}
       style={{
         display: "grid",
         gridTemplateColumns: `repeat(${GRID_COLUMNS}, 1fr)`,
         gridTemplateRows: `repeat(${gridRows}, minmax(60px, auto))`,
-        minHeight: "100vh",
+        minHeight: "100dvh",
         gap: "0px",
         background: bg,
         ...commonStyle,
@@ -196,6 +196,6 @@ export function ProductionCanvasRenderer({
           {renderComponent(comp)}
         </div>
       ))}
-    </div>
+    </main>
   );
 }

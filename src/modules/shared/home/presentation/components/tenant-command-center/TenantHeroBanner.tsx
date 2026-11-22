@@ -22,7 +22,7 @@ function renderPillIcon(icon: string) {
     case "admins":
       return <Users className="h-3.5 w-3.5 shrink-0 text-info" />;
     case "plan":
-      return <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-primary" />;
+      return <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-nx-accent" />;
     case "healthy":
       return <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-success" />;
     default:
@@ -99,7 +99,7 @@ export function TenantHeroBanner({
         </div>
 
         {/* Right: Readiness Ring Card */}
-        <aside className="bg-nx-raised/40 backdrop-blur-xs w-full min-w-0 rounded-nx-md border border-nx-line p-4">
+        <aside className="w-full min-w-0 rounded-nx-md border border-nx-line bg-nx-raised p-4">
           <div className="flex items-center gap-3">
             {/* SVG Conic Readiness Ring */}
             <div

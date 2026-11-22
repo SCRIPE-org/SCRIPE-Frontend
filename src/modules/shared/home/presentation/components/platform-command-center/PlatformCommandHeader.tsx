@@ -56,7 +56,7 @@ export function PlatformCommandHeader({
       {/* Title & Subtitle */}
       <div>
         <div className="mb-1 flex items-center gap-2">
-          <span className="block text-xs font-bold uppercase tracking-wider text-primary">
+          <span className="block text-xs font-bold uppercase tracking-wider text-nx-accent">
             {t("platformCommandCenter.administration") || "Administration"}
           </span>
           {isPresentationMode && (
@@ -111,14 +111,14 @@ export function PlatformCommandHeader({
               <span>{currentRangeLabel}</span>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-44 border-nx-line bg-nx-surface shadow-xl">
+          <DropdownMenuContent align="end" className="w-44 border-nx-line-hi bg-nx-popover shadow-nx-popover">
             {ranges.map((r) => (
               <DropdownMenuItem
                 key={r.key}
                 onClick={() => onChangeTimeRange?.(r.key)}
                 className={`cursor-pointer text-xs ${
                   timeRangeKey === r.key
-                    ? "bg-primary/10 font-semibold text-primary"
+                    ? "bg-nx-accent-wash font-semibold text-nx-accent"
                     : "text-nx-ink"
                 }`}
               >
@@ -145,13 +145,13 @@ export function PlatformCommandHeader({
           className={`h-9 cursor-pointer gap-2 border px-3 text-xs font-semibold transition-colors ${
             isLive
               ? "border-success/25 bg-success/10 text-success hover:bg-success/20"
-              : "border-nx-line bg-nx-raised/40 text-nx-ink-3 hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink"
+              : "border-nx-line bg-nx-raised text-nx-ink-3 hover:border-nx-line-hi hover:text-nx-ink"
           }`}
         >
           {isLive ? (
             <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75"></span>
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-success shadow-[0_0_6px_rgba(34,197,94,0.7)]"></span>
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75 motion-reduce:animate-none"></span>
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-success"></span>
             </span>
           ) : (
             <span className="h-2 w-2 rounded-full bg-nx-ink-3"></span>
@@ -161,7 +161,7 @@ export function PlatformCommandHeader({
               ? t("platformCommandCenter.liveStreaming") || "Live · 30s"
               : t("platformCommandCenter.livePaused") || "Paused"}
           </span>
-          {isRefreshing && <RotateCw className="ml-0.5 h-3 w-3 animate-spin text-success" />}
+          {isRefreshing && <RotateCw className="ms-0.5 h-3 w-3 animate-spin text-success motion-reduce:animate-none" />}
         </Button>
 
         {/* Customize Button */}

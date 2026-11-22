@@ -30,6 +30,7 @@ export function GuestBookingPortalView() {
     errorMessage,
     cancelModalOpen,
     setCancelModalOpen,
+    cancelError,
     cancelling,
     cancelSuccessBanner,
     copied,
@@ -77,7 +78,7 @@ export function GuestBookingPortalView() {
               aria-label="Toggle Language"
             >
               <Globe className="size-3.5" aria-hidden="true" />
-              <span className="font-semibold">{language === "ar" ? "English" : "العربية"}</span>
+              <span className="font-semibold">{t("guestPortal.actions.switchLanguage")}</span>
             </Button>
           </div>
         </header>
@@ -134,15 +135,15 @@ export function GuestBookingPortalView() {
           >
             <XCircle className="size-4 text-destructive" aria-hidden="true" />
             <AlertDescription className="text-sm font-medium">
-              This reservation has been cancelled.
+              {t("guestPortal.messages.cancelledBanner", { defaultValue: "This reservation has been cancelled." })}
             </AlertDescription>
           </Alert>
         )}
 
         {/* Primary Booking Card */}
-        <Card className="overflow-hidden border border-nx-line bg-nx-surface shadow-md">
+        <Card className="overflow-hidden border border-nx-line bg-nx-surface">
           {/* Card Top Strip: Reservation Number */}
-          <div className="bg-nx-surfaceSubtle border-nx-line/60 flex items-center justify-between border-b px-4 py-3 sm:px-6">
+          <div className="bg-nx-raised border-nx-line/60 flex items-center justify-between border-b px-4 py-3 sm:px-6">
             <div className="flex items-center gap-2">
               <span className="text-xs font-semibold uppercase tracking-wider text-nx-ink-3">
                 {t("guestPortal.reservationNumber")}
@@ -161,12 +162,12 @@ export function GuestBookingPortalView() {
               {copied ? (
                 <>
                   <Check className="size-3 text-success" aria-hidden="true" />
-                  <span className="text-[11px] font-medium text-success">Copied</span>
+                  <span className="text-[11px] font-medium text-success">{t("guestPortal.actions.copied", { defaultValue: "Copied" })}</span>
                 </>
               ) : (
                 <>
                   <Copy className="size-3 text-nx-ink-3" aria-hidden="true" />
-                  <span className="text-[11px]">Copy</span>
+                  <span className="text-[11px]">{t("guestPortal.actions.copy", { defaultValue: "Copy" })}</span>
                 </>
               )}
             </Button>
@@ -279,7 +280,7 @@ export function GuestBookingPortalView() {
               {t("guestPortal.actions.cancelBooking")}
             </Button>
             <p className="text-center text-[11px] text-nx-ink-3">
-              Free cancellation available according to venue policy.
+              {t("guestPortal.cancellationPolicyNote", { defaultValue: "Free cancellation available according to venue policy." })}
             </p>
           </div>
         )}
@@ -293,7 +294,7 @@ export function GuestBookingPortalView() {
             className="flex items-center gap-1.5 text-xs text-nx-ink-3 hover:text-nx-ink"
           >
             <RefreshCw className="size-3.5" aria-hidden="true" />
-            <span>Refresh details</span>
+            <span>{t("guestPortal.actions.refreshDetails", { defaultValue: "Refresh details" })}</span>
           </Button>
         </div>
       </main>
@@ -305,6 +306,7 @@ export function GuestBookingPortalView() {
         reservationNumber={booking.reservationNumber}
         onConfirmCancel={handleConfirmCancel}
         loading={cancelling}
+        errorMessage={cancelError}
         t={t}
       />
     </div>

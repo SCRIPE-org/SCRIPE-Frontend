@@ -1,12 +1,13 @@
 import { test, expect } from "@playwright/test";
+import { getDevAdminPassword } from "./helpers/auth-credentials";
 
 test.describe("Enterprise Access Foundation: Real Browser Acceptance", () => {
   test.describe.configure({ mode: "serial", timeout: 120_000 });
 
   const freeTenantEmail = "test.free.1792942264586@scripe-test.org";
-  const freeTenantPassword = "P@ssw0rd123!";
+  const freeTenantPassword = process.env.E2E_FREE_TENANT_PASSWORD || getDevAdminPassword();
   const ahlyAdminEmail = "ahly.booking@scripe-dev.local";
-  const standardPassword = "P@ssw0rd";
+  const standardPassword = getDevAdminPassword();
   const superAdminEmail = "admin-seif@scripe.org";
 
   test.beforeEach(async ({ context, page }) => {

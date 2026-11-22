@@ -68,7 +68,7 @@ export function useManageRolesViewModel({
             tenantId: scopeTenantId,
             strict: true,
           })
-        : roleRepository.getMyTenantRoles({
+        : roleRepository.getCurrentTenantRoles({
             page: 1,
             pageSize: 100,
           }),
@@ -124,7 +124,7 @@ export function useManageRolesViewModel({
                   search: code,
                   strict: true,
                 })
-              : await roleRepository.getMyTenantRoles({ page: 1, pageSize: 5, search: code });
+              : await roleRepository.getCurrentTenantRoles({ page: 1, pageSize: 5, search: code });
             return page.items.find((r) => r.code === code) ?? null;
           })
         );
@@ -177,7 +177,7 @@ export function useManageRolesViewModel({
               search: query,
               strict: true,
             })
-          : await roleRepository.getMyTenantRoles({ page: 1, pageSize: 50, search: query });
+          : await roleRepository.getCurrentTenantRoles({ page: 1, pageSize: 50, search: query });
         return page.items.map(mapRoleOption);
       } catch {
         return [];

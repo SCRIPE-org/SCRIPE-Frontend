@@ -5,6 +5,7 @@ import { VenueOverviewLiveFeed } from "./VenueOverviewLiveFeed";
 import { VenueOverviewDemandChart } from "./VenueOverviewDemandChart";
 import { VenueOverviewStatusDonut } from "./VenueOverviewStatusDonut";
 import { VenueOverviewResourcePulse } from "./VenueOverviewResourcePulse";
+import { VenueOverviewKpiStrip } from "./VenueOverviewKpiStrip";
 import { VenueNav } from "@modules/venue";
 
 vi.mock("next/navigation", () => ({
@@ -14,6 +15,10 @@ vi.mock("next/navigation", () => ({
 
 vi.mock("@core/hooks/use-permission", () => ({
   usePermission: vi.fn().mockReturnValue(true),
+}));
+
+vi.mock("@core/providers/i18n-provider", () => ({
+  useI18n: () => ({ t: (key: string) => key, language: "en", direction: "ltr" }),
 }));
 
 const mockT = (key: string, values?: Record<string, string | number>) => {
@@ -240,5 +245,34 @@ describe("VenueOverview Metis-Inspired Components", () => {
     expect(
       screen.getByText("venueOverview.resourceActivity.status.noActiveBooking")
     ).toBeInTheDocument();
+  });
+
+  it("VenueOverviewKpiStrip supplies human-readable defaultValue fallbacks instead of raw camelCase labels", () => {
+    const fallbackOnlyT = (key: string, values?: Record<string, string | number>) =>
+      values && "defaultValue" in values ? String(values.defaultValue) : key;
+
+    const baseKpis = {
+      todayReservationsCount: 4,
+      todayReservationsConfirmedCount: 3,
+      todayReservationsCheckedInCount: 1,
+      activeHoldsCount: 1,
+      nearestHoldExpiryUtc: null,
+      checkedInNowCount: 1,
+      activeResourcesCount: 6,
+      totalSchedulableResourcesCount: 8,
+    };
+
+    const { rerender } = render(<VenueOverviewKpiStrip kpis={baseKpis} t={fallbackOnlyT} />);
+
+    expect(screen.getByText("Bookings Today")).toBeInTheDocument();
+    expect(screen.getByText("Checked In Now")).toBeInTheDocument();
+    expect(screen.getByText("Active Holds")).toBeInTheDocument();
+    expect(screen.getByText("Active Resources Today")).toBeInTheDocument();
+    expect(screen.queryByText("todayReservations")).not.toBeInTheDocument();
+    expect(screen.queryByText("activeResources")).not.toBeInTheDocument();
+
+    rerender(<VenueOverviewKpiStrip kpis={baseKpis} attentionCount={2} t={fallbackOnlyT} />);
+    expect(screen.getByText("Needs Attention")).toBeInTheDocument();
+    expect(screen.queryByText("needsAttention")).not.toBeInTheDocument();
   });
 });

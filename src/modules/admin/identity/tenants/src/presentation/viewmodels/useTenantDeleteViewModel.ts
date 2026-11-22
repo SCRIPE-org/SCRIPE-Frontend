@@ -6,11 +6,10 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { usePermissions } from "@core/providers/permission-provider";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { identityContainer } from "@modules/identity/di";
-import type { Tenant } from "../../domain/entities/Tenant";
 
 interface UseTenantDeleteViewModelProps {
   open: boolean;
-  tenant: Tenant | null;
+  tenant: { id: string; name: string } | null;
   onConfirm: (cascadeChildren: boolean) => Promise<void>;
   onOpenChange: (open: boolean) => void;
 }

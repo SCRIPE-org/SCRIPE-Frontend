@@ -51,15 +51,15 @@ const fieldVariants = cva(
       // The Settings inputStyle values, mapped onto token-backed styles.
       inputStyle: {
         default:
-          "rounded-nx-control border border-nx-line bg-nx-ground hover:border-nx-line-hi focus-visible:border-nx-accent focus-visible:shadow-nx-focus",
+          "rounded-nx-control border border-nx-line-hi bg-nx-ground hover:border-nx-ink-3 focus-visible:border-nx-accent focus-visible:shadow-nx-focus",
         rounded:
-          "rounded-full border border-nx-line bg-nx-ground px-4 hover:border-nx-line-hi focus-visible:border-nx-accent focus-visible:shadow-nx-focus",
+          "rounded-full border border-nx-line-hi bg-nx-ground px-4 hover:border-nx-ink-3 focus-visible:border-nx-accent focus-visible:shadow-nx-focus",
         // one edge carries everything: focus doubles the underline to 2px with
         // an inset line rather than growing the border (which would shift text)
         underlined:
-          "rounded-none border-0 border-b border-nx-line bg-transparent px-0 hover:border-nx-line-hi focus-visible:border-nx-accent focus-visible:shadow-[inset_0_-1px_0_0_var(--nx-accent)] disabled:bg-transparent",
+          "rounded-none border-0 border-b border-nx-line-hi bg-transparent px-0 hover:border-nx-ink-3 focus-visible:border-nx-accent focus-visible:shadow-[inset_0_-1px_0_0_var(--nx-accent)] disabled:bg-transparent",
         filled:
-          "rounded-nx-control border border-transparent bg-nx-raised hover:bg-nx-raised-2 focus-visible:border-nx-accent focus-visible:shadow-nx-focus",
+          "rounded-nx-control border border-nx-line-hi bg-nx-raised hover:bg-nx-raised-2 hover:border-nx-ink-3 focus-visible:border-nx-accent focus-visible:shadow-nx-focus",
       },
     },
     defaultVariants: {
@@ -83,8 +83,10 @@ const resolveFieldStyle = (value: string | undefined | null): FieldStyle =>
 // fields exist to be copied — client secrets, callback URLs), but the field
 // sheds its fill and its hover answer so it stops promising an edit. Guarded
 // with :enabled because a disabled input also matches :read-only in CSS.
+// Read-only stays sharp and selectable (text-nx-ink) without the sunken edit
+// well or hover lift, distinguishing it clearly from both editable and disabled.
 const READ_ONLY_FIELD =
-  "read-only:enabled:cursor-default read-only:enabled:bg-transparent read-only:enabled:hover:bg-transparent read-only:enabled:hover:border-nx-line";
+  "read-only:enabled:cursor-default read-only:enabled:border-nx-line read-only:enabled:bg-transparent read-only:enabled:text-nx-ink read-only:enabled:hover:bg-transparent read-only:enabled:hover:border-nx-line";
 
 // Digits that can be compared column-to-column get tabular figures; prose
 // types keep proportional ones.

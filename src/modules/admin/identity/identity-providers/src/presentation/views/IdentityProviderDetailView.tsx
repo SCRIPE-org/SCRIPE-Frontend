@@ -24,8 +24,11 @@ import { WellKnownProviderGallery } from "../components/WellKnownProviderGallery
 import { ClaimMappingEditor } from "../components/ClaimMappingEditor";
 import { SSOButtonPreview } from "../components/SSOButtonPreview";
 import { CallbackUrlCard } from "../components/CallbackUrlCard";
+import { TestConnectionDiagnosticsBanner } from "../components/TestConnectionDiagnosticsBanner";
 import { useI18n } from "@core/providers/i18n-provider";
-import { cn } from "@core/common/utils";
+import { cn, formatUtc, unresolveFileUrl } from "@core/common/utils";
+import { useResolvedFileUrl } from "@core/hooks/use-resolved-file-url";
+import { BrandIcon } from "@core/ui/brand-icons";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
@@ -36,14 +39,12 @@ import {
   Save,
   Zap,
   Trash2,
-  Fingerprint,
   Clock,
   Compass,
   Palette,
   ShieldAlert,
   FileJson,
 } from "lucide-react";
-import { formatUtc } from "@core/common/utils";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -68,6 +69,19 @@ const WIZARD_STEPS = [
   { step: 3, labelKey: "identityProviders.stepAppearanceClaims" },
 ] as const;
 
+const SAFE_HEX_COLOR = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
+
+function expandSafeHexColor(color: string | null | undefined): string | null {
+  if (!color) return null;
+  const trimmed = color.trim();
+  if (!SAFE_HEX_COLOR.test(trimmed)) return null;
+  if (trimmed.length === 4) {
+    const [, r, g, b] = trimmed;
+    return `#${r}${r}${g}${g}${b}${b}`;
+  }
+  return trimmed;
+}
+
 /**
  * Presentation UI component rendering the identity provider detail view.
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
@@ -75,6 +89,7 @@ const WIZARD_STEPS = [
 export function IdentityProviderDetailView({ providerId }: Props) {
   const vm = useIdentityProviderDetailViewModel(providerId);
   const { t } = useI18n();
+  const resolvedHeaderIconUrl = useResolvedFileUrl(unresolveFileUrl(vm.form.iconUrl));
 
   // Wizard step state for Create Mode
   const [createStep, setCreateStep] = useState(1);
@@ -97,7 +112,7 @@ export function IdentityProviderDetailView({ providerId }: Props) {
           message={`${t("common.error")}: ${(vm.fetchError as Error).message}`}
         />
         <Button variant="outline" size="sm" onClick={vm.goBack}>
-          <ArrowLeft className="me-2 h-4 w-4" aria-hidden="true" />
+          <ArrowLeft className="me-2 h-4 w-4 rtl:rotate-180" aria-hidden="true" />
           {t("common.goBack")}
         </Button>
       </div>
@@ -124,7 +139,7 @@ export function IdentityProviderDetailView({ providerId }: Props) {
             className="shrink-0"
             aria-label={t("common.goBack")}
           >
-            <ArrowLeft className="h-5 w-5" aria-hidden="true" />
+            <ArrowLeft className="h-5 w-5 rtl:rotate-180" aria-hidden="true" />
           </Button>
           <div>
             <h1 className="text-xl font-bold tracking-tight text-nx-ink">
@@ -246,6 +261,8 @@ export function IdentityProviderDetailView({ providerId }: Props) {
                 <Card className="p-5">
                   <SSOButtonPreview
                     name={vm.form.name}
+                    slug={vm.form.slug}
+                    protocol={vm.form.protocol}
                     iconUrl={vm.form.iconUrl}
                     buttonColor={vm.form.buttonColor}
                     buttonLabel={vm.form.buttonLabel}
@@ -286,27 +303,30 @@ export function IdentityProviderDetailView({ providerId }: Props) {
             className="shrink-0"
             aria-label={t("common.goBack")}
           >
-            <ArrowLeft className="h-5 w-5" aria-hidden="true" />
+            <ArrowLeft className="h-5 w-5 rtl:rotate-180" aria-hidden="true" />
           </Button>
           <div className="flex items-center gap-3">
-            <div
-              className={cn(
-                "flex h-11 w-11 shrink-0 items-center justify-center rounded-nx-md p-1.5",
-                !vm.form.buttonColor &&
-                  "border border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] bg-nx-accent-wash"
-              )}
-              style={
-                vm.form.buttonColor
-                  ? {
-                      backgroundColor: `${vm.form.buttonColor}12`,
-                      border: `1px solid ${vm.form.buttonColor}25`,
-                    }
-                  : undefined
-              }
-            >
-              {vm.form.iconUrl ? (
+            {(() => {
+              const safeHeaderColor = expandSafeHexColor(vm.form.buttonColor);
+              return (
+                <div
+                  className={cn(
+                    "flex h-11 w-11 shrink-0 items-center justify-center rounded-nx-md p-1.5",
+                    !safeHeaderColor &&
+                      "border border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] bg-nx-accent-wash"
+                  )}
+                  style={
+                    safeHeaderColor
+                      ? {
+                          backgroundColor: `${safeHeaderColor}12`,
+                          border: `1px solid ${safeHeaderColor}25`,
+                        }
+                      : undefined
+                  }
+                >
+              {vm.form.iconUrl && resolvedHeaderIconUrl ? (
                 <Image
-                  src={vm.form.iconUrl}
+                  src={resolvedHeaderIconUrl}
                   alt={vm.form.name}
                   width={24}
                   height={24}
@@ -314,13 +334,16 @@ export function IdentityProviderDetailView({ providerId }: Props) {
                   className="h-6 w-6 rounded object-contain"
                 />
               ) : (
-                <Fingerprint
-                  className={cn("h-6 w-6", !vm.form.buttonColor && "text-nx-accent")}
-                  style={vm.form.buttonColor ? { color: vm.form.buttonColor } : undefined}
-                  aria-hidden="true"
+                <BrandIcon
+                  slug={vm.form.slug}
+                  name={vm.form.name}
+                  protocol={vm.form.protocol}
+                  className="h-6 w-6 shrink-0"
                 />
               )}
-            </div>
+                </div>
+              );
+            })()}
             <div>
               <h1 className="text-xl font-bold tracking-tight text-nx-ink">
                 {vm.form.name || t("identityProviders.editTitle")}
@@ -352,6 +375,15 @@ export function IdentityProviderDetailView({ providerId }: Props) {
           <span className="h-1.5 w-1.5 rounded-full bg-warning" aria-hidden="true" />
           {t("common.unsavedChanges")}
         </div>
+      )}
+
+      {/* Test Connection Diagnostics */}
+      {(vm.lastTestResult || vm.testError) && (
+        <TestConnectionDiagnosticsBanner
+          result={vm.lastTestResult}
+          errorMessage={vm.testError}
+          onDismiss={vm.clearTestDiagnostics}
+        />
       )}
 
       {/* ─── Tabbed Workspace Layout ───────────────────────────── */}
@@ -452,6 +484,8 @@ export function IdentityProviderDetailView({ providerId }: Props) {
             <Card className="p-6">
               <SSOButtonPreview
                 name={vm.form.name}
+                slug={vm.form.slug}
+                protocol={vm.form.protocol}
                 iconUrl={vm.form.iconUrl}
                 buttonColor={vm.form.buttonColor}
                 buttonLabel={vm.form.buttonLabel}

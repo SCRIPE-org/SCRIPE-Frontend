@@ -105,7 +105,7 @@ export function ExternalDependenciesSection({
                 </div>
                 <span
                   className={`inline-flex items-center gap-1.5 text-xs font-semibold ${
-                    isHealthy ? "text-success" : isDegraded ? "text-warning" : "text-destructive"
+                    isHealthy ? "text-success" : isDegraded ? "text-nx-warning-strong" : "text-destructive"
                   }`}
                 >
                   <span

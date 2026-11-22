@@ -1,6 +1,3 @@
-// UI-EXCEPTION: compact studio layout — the bare <input type="color"> swatch
-// reuses ColorInput's own token recipe (see that file's UI-EXCEPTION note) but
-// stays inline with the row's own label + raw-value text field.
 /**
  * TokenPanel — Design token editor (colors, typography, spacing)
  *
@@ -139,7 +136,7 @@ export function TokenPanel({ tokens, updateToken }: TokenPanelProps) {
             {group.tokens.map((token) => (
               <div key={token.key} className="flex items-center gap-2">
                 {token.type === "color" && (
-                  <input
+                  <Input
                     type="color"
                     aria-label={t(token.labelKey)}
                     value={tokens[token.key] || token.placeholder}

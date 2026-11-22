@@ -150,8 +150,8 @@ export function TenantDashboardGrid({
       >
         <SortableContext items={visibleWidgets.map((w) => w.id)} strategy={rectSortingStrategy}>
           {visibleWidgets.length === 0 ? (
-            <div className="bg-nx-raised/30 flex min-h-[300px] flex-col items-center justify-center rounded-nx-lg border-2 border-dashed border-nx-line p-8 text-center">
-              <div className="bg-nx-accent/10 mb-3 flex h-12 w-12 items-center justify-center rounded-nx-md text-nx-accent">
+            <div className="flex min-h-[300px] flex-col items-center justify-center rounded-nx-lg border-2 border-dashed border-nx-line bg-nx-raised p-8 text-center">
+              <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-nx-md bg-nx-accent-wash text-nx-accent">
                 <LayoutGrid className="h-6 w-6" />
               </div>
               <h3 className="text-sm font-semibold text-nx-ink">
@@ -204,7 +204,7 @@ export function TenantDashboardGrid({
                     getWidgetDefinition(activeDragItem.widgetId)?.titleKey ||
                     activeDragItem.widgetId}
                 </span>
-                <span className="rounded-nx-xs bg-nx-accent/10 px-1.5 py-0.5 text-[10px] font-semibold text-nx-accent">
+                <span className="rounded-nx-sm bg-nx-accent-wash px-1.5 py-0.5 text-[10px] font-semibold text-nx-accent">
                   Moving
                 </span>
               </div>

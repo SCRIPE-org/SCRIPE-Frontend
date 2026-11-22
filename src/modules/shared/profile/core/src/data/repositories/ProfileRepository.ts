@@ -7,11 +7,16 @@
 import type { IApiService } from "@core/interfaces/api.interface";
 import { buildUrl } from "@/core/config/api-endpoints/_shared";
 import { useAppStore } from "@core/store/useAppStore";
+import { secureTokenService } from "@core/common/secure-token-service";
 import { PROFILE_ENDPOINTS } from "../services/profile.endpoints";
 import type {
   IProfileRepository,
   UpdateProfileRequest,
   ChangePasswordRequest,
+  InitiateExternalLoginLinkRequest,
+  InitiateExternalLoginLinkResponse,
+  ForceChangePasswordRequest,
+  ForceChangePasswordResult,
 } from "../../domain/interfaces/IProfileRepository";
 import type { AdminProfile } from "../../domain/entities/AdminProfile";
 import type { ActiveSession } from "../../domain/entities/ActiveSession";
@@ -21,8 +26,8 @@ import type {
   ActiveSessionDto,
   SecurityLogEntryDto,
   Enable2FAResultDto,
-  LinkExternalLoginDto,
   ExternalLoginDto,
+  InitiateExternalLoginLinkResultDto,
 } from "../models/ProfileModels";
 import { ProfileMapper } from "../mappers/ProfileMapper";
 import type { ExternalLogin } from "../../domain/entities/ExternalLogin";
@@ -37,12 +42,16 @@ export class ProfileRepository implements IProfileRepository {
   // ── Profile ──────────────────────────────────────────
 
   async getProfile(): Promise<AdminProfile> {
-    const dto = await this.api.get<AdminProfileDto>(PROFILE_ENDPOINTS.ME);
+    const dto = await this.api.get<AdminProfileDto>(PROFILE_ENDPOINTS.DOSSIER);
     return ProfileMapper.toAdminProfile(dto);
   }
 
   async updateProfile(data: UpdateProfileRequest): Promise<AdminProfile> {
-    const dto = await this.api.put<AdminProfileDto>(PROFILE_ENDPOINTS.UPDATE_ME, data);
+    const payload: UpdateProfileRequest = {
+      ...data,
+      ...(data.rowVersion !== undefined ? { rowVersion: data.rowVersion } : {}),
+    };
+    const dto = await this.api.put<AdminProfileDto>(PROFILE_ENDPOINTS.UPDATE_DOSSIER, payload);
     return ProfileMapper.toAdminProfile(dto);
   }
 
@@ -63,7 +72,7 @@ export class ProfileRepository implements IProfileRepository {
 
   async changePassword(data: ChangePasswordRequest): Promise<void> {
     // Get the current admin's ID from the store — the backend endpoint requires it.
-    // POST /v1/Admins/{id}/change-password is the correct route.
+    // POST /v1/admins/{id}/change-password is the correct route.
     const adminId = useAppStore.getState().user?.id;
     if (!adminId) throw new Error("User not authenticated");
 
@@ -94,9 +103,9 @@ export class ProfileRepository implements IProfileRepository {
   async regenerateBackupCodes(twoFactorCode: string): Promise<string[]> {
     const result = await this.api.post<{ backupCodes: string[] }>(
       PROFILE_ENDPOINTS.BACKUP_CODES_REGENERATE,
-      { username: "", password: "", code: twoFactorCode }
+      { code: twoFactorCode }
     );
-    return result.backupCodes;
+    return result?.backupCodes ?? [];
   }
 
   // ── 2FA Management ─────────────────────────────────────
@@ -135,12 +144,49 @@ export class ProfileRepository implements IProfileRepository {
     return ProfileMapper.toExternalLogins(dtos);
   }
 
-  async linkExternalLogin(data: LinkExternalLoginDto): Promise<ExternalLogin> {
-    const dto = await this.api.post<ExternalLoginDto>(PROFILE_ENDPOINTS.LINK_EXTERNAL_LOGIN, data);
-    return ProfileMapper.toExternalLogin(dto);
+  async initiateExternalLoginLink(
+    data: InitiateExternalLoginLinkRequest,
+    sudoToken?: string
+  ): Promise<InitiateExternalLoginLinkResponse> {
+    const options = sudoToken ? { headers: { "X-Sudo-Token": sudoToken } } : undefined;
+    const dto = options
+      ? await this.api.post<InitiateExternalLoginLinkResultDto>(
+          PROFILE_ENDPOINTS.INITIATE_EXTERNAL_LOGIN_LINK,
+          data,
+          undefined,
+          options
+        )
+      : await this.api.post<InitiateExternalLoginLinkResultDto>(
+          PROFILE_ENDPOINTS.INITIATE_EXTERNAL_LOGIN_LINK,
+          data
+        );
+    return {
+      authorizationUrl: dto.authorizationUrl,
+      protocol: dto.protocol,
+      state: dto.state ?? null,
+    };
   }
 
-  async unlinkExternalLogin(externalLoginId: string): Promise<void> {
+  async unlinkExternalLogin(externalLoginId: string, sudoToken?: string): Promise<void> {
+    if (sudoToken) {
+      await this.api.delete(
+        PROFILE_ENDPOINTS.UNLINK_EXTERNAL_LOGIN(externalLoginId),
+        undefined,
+        { headers: { "X-Sudo-Token": sudoToken } }
+      );
+      return;
+    }
     await this.api.delete(PROFILE_ENDPOINTS.UNLINK_EXTERNAL_LOGIN(externalLoginId));
+  }
+
+  async forceChangePassword(data: ForceChangePasswordRequest): Promise<ForceChangePasswordResult> {
+    const result = await this.api.post<ForceChangePasswordResult>(
+      PROFILE_ENDPOINTS.FORCE_CHANGE_PASSWORD,
+      data
+    );
+    if (result?.accessToken) {
+      secureTokenService.setAccessToken(result.accessToken);
+    }
+    return result ?? {};
   }
 }

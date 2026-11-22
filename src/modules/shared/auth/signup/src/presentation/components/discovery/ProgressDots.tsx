@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { useSignupTheme } from "@core/providers/signup-theme";
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -14,11 +14,6 @@ import { useSignupTheme } from "@core/providers/signup-theme";
 //
 // Pure UI — count + index come from the viewmodel.
 // ═══════════════════════════════════════════════════════════════════════════
-
-const prefersReducedMotion =
-  typeof window !== "undefined"
-    ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    : false;
 
 interface ProgressDotsProps {
   /** Total number of visible questions. */
@@ -35,6 +30,7 @@ interface ProgressDotsProps {
  */
 export function ProgressDots({ total, current, label }: ProgressDotsProps) {
   const { tokens } = useSignupTheme();
+  const prefersReducedMotion = Boolean(useReducedMotion());
 
   if (total <= 1) return null;
 

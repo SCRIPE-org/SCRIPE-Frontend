@@ -400,6 +400,7 @@ export const PricingTab = memo(function PricingTab({
                                 parseLocalizedNumber(e.target.value) ?? 0
                               )
                             }
+                            aria-label={`${row.currency} ${t("entitlements.pricing.monthly")}`}
                             className="h-8 ps-8 text-end text-sm tabular-nums"
                             min={0}
                             step="0.01"
@@ -423,6 +424,7 @@ export const PricingTab = memo(function PricingTab({
                                   parseLocalizedNumber(e.target.value) ?? 0
                                 )
                               }
+                              aria-label={`${row.currency} ${t("entitlements.pricing.yearly")}`}
                               className="h-8 ps-8 text-end text-sm tabular-nums"
                               min={0}
                               step="0.01"
@@ -434,7 +436,7 @@ export const PricingTab = memo(function PricingTab({
                               variant="outline"
                               className="h-5 shrink-0 border-success/30 bg-success/5 px-1.5 py-0 text-[10px] text-success"
                             >
-                              <TrendingDown className="me-0.5 h-2.5 w-2.5" />
+                              <TrendingDown className="me-0.5 h-2.5 w-2.5" aria-hidden="true" />
                               {savings}%
                             </Badge>
                           )}
@@ -445,10 +447,11 @@ export const PricingTab = memo(function PricingTab({
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-7 w-7 text-nx-ink-2 opacity-0 transition-opacity duration-nx-micro ease-nx-enter hover:text-destructive group-hover:opacity-100 motion-reduce:transition-none"
+                            className="h-7 w-7 text-nx-ink-2 opacity-0 transition-opacity duration-nx-micro ease-nx-enter hover:text-destructive group-hover:opacity-100 group-focus-within:opacity-100 focus-visible:opacity-100 motion-reduce:transition-none"
                             onClick={() => vm.removeOverride(row.currency)}
+                            aria-label={`${t("common.remove")} ${row.currency}`}
                           >
-                            <Trash2 className="h-3.5 w-3.5" />
+                            <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                           </Button>
                         </div>
                       </div>
@@ -465,29 +468,33 @@ export const PricingTab = memo(function PricingTab({
         {/* ═══════════════════════════════════════════════════ */}
         {vm.usdMonthly > 0 && (
           <Card className="overflow-hidden">
-            <CardHeader
-              className="cursor-pointer py-3"
-              onClick={() => setShowPreview(!showPreview)}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="rounded-nx-md bg-warning/10 p-1.5">
-                    <Coins className="h-4 w-4 text-warning" />
-                  </div>
-                  <CardTitle className="text-sm font-medium">
-                    {t("entitlements.pricing.livePreview")}
-                  </CardTitle>
-                  <Badge variant="outline" className="text-[10px]">
-                    {vm.preview.length} {t("entitlements.pricing.currencies")}
-                  </Badge>
-                  {vm.ratesLoading && (
-                    <LoadingSpinner size="inline" showText={false} className="text-nx-ink-3" />
-                  )}
-                </div>
-                <ChevronDown
-                  className={`h-4 w-4 text-nx-ink-3 transition-transform duration-nx-micro ease-nx-enter motion-reduce:transition-none ${showPreview ? "rotate-180" : ""}`}
-                />
-              </div>
+            <CardHeader className="p-2">
+              <CardTitle className="text-sm font-medium">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="flex h-auto w-full items-center justify-between rounded-nx-sm px-4 py-2 text-start font-medium hover:bg-nx-hover"
+                  onClick={() => setShowPreview(!showPreview)}
+                  aria-expanded={showPreview}
+                >
+                  <span className="flex items-center gap-2">
+                    <span className="rounded-nx-md bg-warning/10 p-1.5" aria-hidden="true">
+                      <Coins className="h-4 w-4 text-nx-warning-strong" />
+                    </span>
+                    <span>{t("entitlements.pricing.livePreview")}</span>
+                    <Badge variant="outline" className="text-[10px]">
+                      {vm.preview.length} {t("entitlements.pricing.currencies")}
+                    </Badge>
+                    {vm.ratesLoading && (
+                      <LoadingSpinner size="inline" showText={false} className="text-nx-ink-3" />
+                    )}
+                  </span>
+                  <ChevronDown
+                    aria-hidden="true"
+                    className={`h-4 w-4 text-nx-ink-3 transition-transform duration-nx-micro ease-nx-enter motion-reduce:transition-none ${showPreview ? "rotate-180" : ""}`}
+                  />
+                </Button>
+              </CardTitle>
             </CardHeader>
 
             {showPreview && (
@@ -682,14 +689,14 @@ export const PricingTab = memo(function PricingTab({
       <Dialog open={showApplyDialog} onOpenChange={setShowApplyDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-warning">
+            <DialogTitle className="flex items-center gap-2 text-nx-warning-strong">
               <Bolt className="h-5 w-5" />
               {t("entitlements.pricing.applyNowTitle")}
             </DialogTitle>
             <DialogDescription>{t("entitlements.pricing.applyNowDesc")}</DialogDescription>
           </DialogHeader>
           <div className="flex items-center gap-2 rounded-nx-sm border border-warning/20 bg-warning/5 p-2.5 text-xs text-nx-ink-3">
-            <Bolt className="h-3.5 w-3.5 shrink-0 text-warning" />
+            <Bolt className="h-3.5 w-3.5 shrink-0 text-nx-warning-strong" />
             <span>{t("entitlements.pricing.applyWarning")}</span>
           </div>
           <DialogFooter>

@@ -111,11 +111,11 @@ describe("VenueSettingsView", () => {
     );
     expect(screen.getByRole("link", { name: /operating hours & matrix/i })).toHaveAttribute(
       "href",
-      "/venue/availability"
+      "/venue/calendar"
     );
     expect(screen.getByRole("link", { name: /sites & campuses/i })).toHaveAttribute(
       "href",
-      "/venue/sites"
+      "/venue/facilities?tab=sites"
     );
     expect(screen.getByRole("link", { name: /commercial pricing catalog/i })).toHaveAttribute(
       "href",
@@ -123,11 +123,11 @@ describe("VenueSettingsView", () => {
     );
     expect(screen.getByRole("link", { name: /resource builder/i })).toHaveAttribute(
       "href",
-      "/venue/resource-builder"
+      "/venue/resources"
     );
     expect(screen.getByRole("link", { name: /resource profiles/i })).toHaveAttribute(
       "href",
-      "/venue/resource-profiles"
+      "/venue/resources"
     );
   });
 });

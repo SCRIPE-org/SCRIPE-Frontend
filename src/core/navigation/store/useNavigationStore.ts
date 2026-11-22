@@ -8,22 +8,31 @@
 
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+import { normalizeRoutePath } from "@core/config/app-route-manifest";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
-import { NavigationStoreState, WorkspaceRouteMap } from "./types";
+import type {
+  AuthorizedRouteDescriptor,
+  NavigationStoreState,
+  WorkspaceRouteMap,
+} from "./types";
 import { createRouteSlice } from "./slices/routeSlice";
 import { createWorkspaceSlice } from "./slices/workspaceSlice";
 import { createUiSlice } from "./slices/uiSlice";
 
-const NAV_STORE_VERSION = 2;
+export const NAV_STORE_VERSION = 4;
 
 interface PersistedNavState {
   version: number;
   contextKey: string;
+  routesContextKey: string | null;
   allRoutesArray: string[];
   workspaceRouteMap: WorkspaceRouteMap;
+  routeDescriptorsArray?: [string, AuthorizedRouteDescriptor][];
+  routesLoaded: boolean;
   activeWorkspaceKey: string | null;
   previousWorkspaceKey: string | null;
   routesLoadedAt: number | null;
+  recentWorkspaceKeysByContext?: Record<string, string[]>;
 }
 
 export const useNavigationStore = create<NavigationStoreState>()(
@@ -47,11 +56,15 @@ export const useNavigationStore = create<NavigationStoreState>()(
       partialize: (state): PersistedNavState => ({
         version: NAV_STORE_VERSION,
         contextKey: state.contextKey,
+        routesContextKey: state.routesContextKey,
         allRoutesArray: Array.from(state.allRoutes),
         workspaceRouteMap: state.workspaceRouteMap,
+        routeDescriptorsArray: Array.from(state.routeDescriptors.entries()),
+        routesLoaded: state.routesLoaded,
         activeWorkspaceKey: state.activeWorkspaceKey,
         previousWorkspaceKey: state.previousWorkspaceKey,
         routesLoadedAt: state.routesLoadedAt,
+        recentWorkspaceKeysByContext: state.recentWorkspaceKeysByContext,
       }),
       merge: (persistedRaw, currentState) => {
         const persisted = persistedRaw as PersistedNavState | null;
@@ -60,14 +73,30 @@ export const useNavigationStore = create<NavigationStoreState>()(
           return currentState;
         }
 
-        const arr = persisted.allRoutesArray ?? [];
+        const arr = Array.isArray(persisted.allRoutesArray) ? persisted.allRoutesArray : [];
+        const descriptorEntries = Array.isArray(persisted.routeDescriptorsArray)
+          ? persisted.routeDescriptorsArray
+          : [];
+        const isOnHubRoute =
+          typeof window !== "undefined" &&
+          normalizeRoutePath(window.location.pathname).toLowerCase() === "/hub";
         return {
           ...currentState,
           allRoutes: new Set(arr),
           allRoutesSorted: [...new Set(arr)].sort((a, b) => b.length - a.length),
           workspaceRouteMap: persisted.workspaceRouteMap ?? {},
+          routeDescriptors: new Map<string, AuthorizedRouteDescriptor>(descriptorEntries),
+          routesLoaded: Boolean(persisted.routesLoaded),
+          routesContextKey: persisted.routesContextKey ?? (persisted.contextKey || null),
+          routesError: null,
           routesLoadedAt: persisted.routesLoadedAt ?? null,
-          activeWorkspaceKey: persisted.activeWorkspaceKey ?? null,
+          landingResolution: null,
+          recentWorkspaceKeysByContext:
+            persisted.recentWorkspaceKeysByContext &&
+            typeof persisted.recentWorkspaceKeysByContext === "object"
+              ? persisted.recentWorkspaceKeysByContext
+              : {},
+          activeWorkspaceKey: isOnHubRoute ? null : (persisted.activeWorkspaceKey ?? null),
           previousWorkspaceKey: persisted.previousWorkspaceKey ?? null,
           contextKey: persisted.contextKey ?? "",
         };

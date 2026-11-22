@@ -6,9 +6,6 @@
  * Uses ImageUploadField for bg images, Select for fonts, Slider for sizes.
  */
 "use client";
-// UI-EXCEPTION: compact studio layout — native <button> used for pixel-precise
-// compact controls (toggle switches, gradient pickers, layout thumbnails, etc.)
-// where @core/ui/button's padding/sizing would break the layout.
 
 import {
   Ruler,
@@ -33,6 +30,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 
 import { ColorInput } from "./ColorInput";
 import { SliderInput } from "./SliderInput";
+import { Button } from "@core/ui/button";
 import { Switch } from "@core/ui/switch";
 import { ImageUploadField } from "@core/ui/image-upload-field";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
@@ -189,19 +187,20 @@ function BgControls({
           ? (["solid", "gradient"] as const)
           : (["solid", "gradient", "image"] as const)
         ).map((type) => (
-          <button
+          <Button
             key={type}
             type="button"
+            variant="ghost"
             onClick={() => updateDraft(f("bgType"), type as any)}
             className={cn(
-              "h-7 rounded-nx-control border text-[10px] font-medium transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
+              "h-7 rounded-nx-control border p-0 text-[10px] font-medium transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
               bgType === type
-                ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
+                ? "border-nx-accent bg-nx-accent-wash text-nx-accent hover:bg-nx-accent-wash hover:text-nx-accent"
                 : "border-nx-line text-nx-ink-2 hover:border-nx-line-hi"
             )}
           >
             {t(`studio.background.${type}`)}
-          </button>
+          </Button>
         ))}
       </div>
 
@@ -220,20 +219,22 @@ function BgControls({
               const Icon = DIRECTION_ICONS[dir.key] ?? ArrowUp;
               const label = t(`studio.direction.${dir.key}`);
               return (
-                <button
+                <Button
                   key={dir.value}
                   type="button"
+                  variant="ghost"
+                  size="icon"
                   onClick={() => updateDraft(f("bgGradientDirection"), dir.value as any)}
                   aria-label={label}
                   className={cn(
-                    "flex h-6 items-center justify-center rounded-nx-control border transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
+                    "flex h-6 w-full items-center justify-center rounded-nx-control border p-0 transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
                     bgGradientDirection === dir.value
-                      ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
+                      ? "border-nx-accent bg-nx-accent-wash text-nx-accent hover:bg-nx-accent-wash hover:text-nx-accent"
                       : "border-nx-line text-nx-ink-2 hover:border-nx-line-hi"
                   )}
                 >
                   <Icon className="h-3 w-3" aria-hidden="true" />
-                </button>
+                </Button>
               );
             })}
           </div>
@@ -259,14 +260,15 @@ function BgControls({
       {bgType === "image" && (
         <>
           {copyFromLightUrl && (
-            <button
+            <Button
               type="button"
+              variant="ghost"
               onClick={() => updateDraft(f("bgImageUrl"), copyFromLightUrl as any)}
-              className="flex h-7 w-full items-center justify-center gap-1.5 rounded-nx-control border border-warning/40 bg-warning/10 text-[10px] font-medium text-warning transition-colors duration-nx-micro ease-nx-enter hover:bg-warning/20 focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
+              className="flex h-7 w-full items-center justify-center gap-1.5 rounded-nx-control border border-warning/40 bg-warning/10 p-0 text-[10px] font-medium text-warning transition-colors duration-nx-micro ease-nx-enter hover:bg-warning/20 hover:text-warning focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
             >
               <Sun className="h-3 w-3" aria-hidden="true" />
               {t("studio.background.useLight")}
-            </button>
+            </Button>
           )}
           <ImageUploadField
             value={bgImageUrl}
@@ -281,19 +283,20 @@ function BgControls({
             </span>
             <div className="grid grid-cols-5 gap-1">
               {IMAGE_FIT_OPTIONS.map((opt) => (
-                <button
+                <Button
                   key={opt.value}
                   type="button"
+                  variant="ghost"
                   onClick={() => updateDraft(f("bgImageFit"), opt.value as any)}
                   className={cn(
-                    "h-6 rounded-nx-control border text-[9px] font-medium transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
+                    "h-6 rounded-nx-control border p-0 text-[9px] font-medium transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
                     bgImageFit === opt.value
-                      ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
+                      ? "border-nx-accent bg-nx-accent-wash text-nx-accent hover:bg-nx-accent-wash hover:text-nx-accent"
                       : "border-nx-line text-nx-ink-2 hover:border-nx-line-hi"
                   )}
                 >
                   {t(opt.labelKey)}
-                </button>
+                </Button>
               ))}
             </div>
           </div>
@@ -306,20 +309,22 @@ function BgControls({
                 const Icon = DIRECTION_ICONS[opt.key] ?? Circle;
                 const label = t(`studio.direction.${opt.key}`);
                 return (
-                  <button
+                  <Button
                     key={opt.value}
                     type="button"
+                    variant="ghost"
+                    size="icon"
                     onClick={() => updateDraft(f("bgImagePosition"), opt.value as any)}
                     aria-label={label}
                     className={cn(
-                      "flex h-6 w-8 items-center justify-center rounded-nx-control border transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
+                      "flex h-6 w-8 items-center justify-center rounded-nx-control border p-0 transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
                       bgImagePosition === opt.value
-                        ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
+                        ? "border-nx-accent bg-nx-accent-wash text-nx-accent hover:bg-nx-accent-wash hover:text-nx-accent"
                         : "border-nx-line text-nx-ink-2 hover:border-nx-line-hi"
                     )}
                   >
                     <Icon className="h-3 w-3" aria-hidden="true" />
-                  </button>
+                  </Button>
                 );
               })}
             </div>
@@ -386,11 +391,12 @@ function PresetDots({
                 preset.colors.darkSurfaceColor,
               ];
         return (
-          <button
+          <Button
             key={i}
             type="button"
+            variant="ghost"
             onClick={() => onApply(preset.colors)}
-            className="flex flex-col items-center gap-1 rounded-nx-md border border-nx-line p-1.5 transition-colors duration-nx-micro ease-nx-enter hover:border-nx-line-hi hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
+            className="flex h-auto flex-col items-center gap-1 rounded-nx-md border border-nx-line p-1.5 font-normal transition-colors duration-nx-micro ease-nx-enter hover:border-nx-line-hi hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
           >
             <div className="flex gap-0.5">
               {dots.map((c, ci) => (
@@ -402,7 +408,7 @@ function PresetDots({
               ))}
             </div>
             <span className="text-[9px] text-nx-ink-3">{t(preset.labelKey)}</span>
-          </button>
+          </Button>
         );
       })}
     </div>
@@ -483,21 +489,22 @@ export function StylePanel({
             </div>
             <div className="grid grid-cols-2 gap-1.5">
               {(["unified", "independent"] as const).map((mode) => (
-                <button
+                <Button
                   key={mode}
                   type="button"
+                  variant="ghost"
                   onClick={() => updateDraft("splitBgMode", mode)}
                   className={cn(
-                    "h-7 rounded-nx-control border text-[10px] font-medium transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
+                    "h-7 rounded-nx-control border p-0 text-[10px] font-medium transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
                     draft.splitBgMode === mode
-                      ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
+                      ? "border-nx-accent bg-nx-accent-wash text-nx-accent hover:bg-nx-accent-wash hover:text-nx-accent"
                       : "border-nx-line text-nx-ink-2 hover:border-nx-line-hi"
                   )}
                 >
                   {mode === "unified"
                     ? t("studio.background.panelSame")
                     : t("studio.background.panelIndependent")}
-                </button>
+                </Button>
               ))}
             </div>
             <p className="text-[10px] text-nx-ink-3">
@@ -961,19 +968,20 @@ export function StylePanel({
           </label>
           <div className="grid grid-cols-3 gap-1.5">
             {(["sm", "md", "lg"] as const).map((size) => (
-              <button
+              <Button
                 key={size}
                 type="button"
+                variant="ghost"
                 onClick={() => updateDraft("btnSize", size)}
                 className={cn(
-                  "h-8 rounded-nx-control border text-xs font-medium transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
+                  "h-8 rounded-nx-control border p-0 text-xs font-medium transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
                   draft.btnSize === size
-                    ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
+                    ? "border-nx-accent bg-nx-accent-wash text-nx-accent hover:bg-nx-accent-wash hover:text-nx-accent"
                     : "border-nx-line text-nx-ink-2 hover:border-nx-line-hi"
                 )}
               >
                 {size.toUpperCase()}
-              </button>
+              </Button>
             ))}
           </div>
         </div>

@@ -1,4 +1,3 @@
-// UI-EXCEPTION: compact studio layout
 "use client";
 
 import * as React from "react";
@@ -55,14 +54,15 @@ export function WorkspacesStep({ vm, totalSteps }: WorkspacesStepProps) {
         <span className="text-[12px]" style={{ color: "var(--sx-text-mute)" }}>
           {vm.selectedWorkspaces.length} / {vm.workspaces.length} {t("auth.workspacesSelected")}
         </span>
-        <button
+        <Button
           type="button"
+          variant="ghost"
           onClick={vm.allSelected ? vm.deselectAllWorkspaces : vm.selectAllWorkspaces}
-          className="text-[12px] font-semibold transition-opacity hover:opacity-70"
+          className="h-auto p-0 text-[12px] font-semibold transition-opacity hover:bg-transparent hover:opacity-70"
           style={{ color: "var(--sx-accent-text)" }}
         >
           {vm.allSelected ? t("auth.deselectAll") : t("auth.selectAll")}
-        </button>
+        </Button>
       </div>
 
       {/* Workspace checklist */}
@@ -83,7 +83,7 @@ export function WorkspacesStep({ vm, totalSteps }: WorkspacesStepProps) {
         onClick={vm.confirmWorkspaceSelection}
         disabled={!vm.canConfirmWorkspaces || vm.isLoading}
         loading={vm.isLoading}
-        className="flex h-12 w-full items-center justify-center rounded-xl text-[15px] font-semibold text-white transition-all active:scale-[0.985] disabled:pointer-events-none disabled:opacity-50"
+        className="flex h-12 w-full items-center justify-center rounded-xl text-[15px] font-semibold text-nx-on-fill transition-all active:scale-[0.985] disabled:pointer-events-none disabled:opacity-50"
       >
         {vm.selectedWorkspaces.length === vm.workspaces.length
           ? t("auth.resetAllWorkspaces")

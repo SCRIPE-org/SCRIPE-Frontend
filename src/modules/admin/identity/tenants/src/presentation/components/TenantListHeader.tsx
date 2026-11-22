@@ -82,7 +82,7 @@ export function TenantListHeader({
     <PageHeader
       icon={Building2}
       title={t("tenant.title")}
-      description={t("tenant.description")}
+      description={t("tenant.listDescription")}
       meta={meta}
       actions={
         canCreate ? (

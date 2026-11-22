@@ -46,3 +46,7 @@ storybook-static
 /playwright-report
 /test-results
 .vscode/
+
+.ua/
+.understand-anything/
+.understandignore

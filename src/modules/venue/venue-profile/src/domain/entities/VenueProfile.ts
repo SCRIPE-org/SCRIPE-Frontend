@@ -16,6 +16,7 @@ export interface VenueProfileData {
   createdAt: string;
   modifiedAt?: string;
   siteName?: string;
+  rowVersion?: string;
 }
 
 /**
@@ -46,6 +47,10 @@ export class VenueProfile {
 
   get description(): string | undefined {
     return this.data.description;
+  }
+
+  get rowVersion(): string | undefined {
+    return this.data.rowVersion;
   }
 
   get isActive(): boolean {

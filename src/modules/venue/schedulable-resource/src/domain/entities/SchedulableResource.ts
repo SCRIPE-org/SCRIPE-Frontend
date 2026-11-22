@@ -46,6 +46,8 @@ export interface SchedulableResourceData {
   commercialReadinessNote: string;
   createdAt: string;
   modifiedAt?: string;
+  imageUrl?: string;
+  photoMetadata?: string;
 }
 
 /**
@@ -98,6 +100,12 @@ export class SchedulableResource {
   }
   get modifiedAt(): string | undefined {
     return this.data.modifiedAt;
+  }
+  get imageUrl(): string | undefined {
+    return this.data.imageUrl;
+  }
+  get photoMetadata(): string | undefined {
+    return this.data.photoMetadata;
   }
 
   /**

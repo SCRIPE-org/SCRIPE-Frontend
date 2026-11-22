@@ -31,7 +31,7 @@ export function ClusterRewrapCard({
   const isRunning = Boolean(activeSession?.isRunning);
 
   return (
-    <Card className="border border-border shadow-sm">
+    <Card className="border-nx-line">
       <CardHeader className="flex flex-row items-center justify-between pb-3">
         <div className="flex items-center gap-3">
           <div className="rounded-xl bg-primary/10 p-2.5 text-primary">

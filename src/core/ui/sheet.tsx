@@ -47,12 +47,12 @@ const sheetVariants = cva(cn("fixed z-modal", modalSurfaceClasses, modalMotionCl
       // Block-axis corners: the edge that faces the page rounds, the one on
       // the viewport stays square. Top/bottom are unaffected by writing
       // direction, so the physical corner utilities are exact here.
-      top: "inset-x-0 top-0 rounded-b-nx-lg border-b motion-safe:data-[state=closed]:slide-out-to-top motion-safe:data-[state=open]:slide-in-from-top",
+      top: "inset-x-0 top-0 max-h-[90dvh] overflow-y-auto overscroll-contain rounded-b-nx-lg border-b motion-safe:data-[state=closed]:slide-out-to-top motion-safe:data-[state=open]:slide-in-from-top",
       bottom:
-        "inset-x-0 bottom-0 rounded-t-nx-lg border-t motion-safe:data-[state=closed]:slide-out-to-bottom motion-safe:data-[state=open]:slide-in-from-bottom",
-      left: "inset-y-0 left-0 h-full w-3/4 border-r motion-safe:data-[state=closed]:slide-out-to-left motion-safe:data-[state=open]:slide-in-from-left sm:max-w-sm",
+        "inset-x-0 bottom-0 max-h-[90dvh] overflow-y-auto overscroll-contain rounded-t-nx-lg border-t motion-safe:data-[state=closed]:slide-out-to-bottom motion-safe:data-[state=open]:slide-in-from-bottom",
+      left: "inset-y-0 left-0 h-full max-h-[100dvh] w-3/4 overflow-y-auto overscroll-contain border-r motion-safe:data-[state=closed]:slide-out-to-left motion-safe:data-[state=open]:slide-in-from-left sm:max-w-sm",
       right:
-        "inset-y-0 right-0 h-full w-3/4 border-l motion-safe:data-[state=closed]:slide-out-to-right motion-safe:data-[state=open]:slide-in-from-right sm:max-w-sm",
+        "inset-y-0 right-0 h-full max-h-[100dvh] w-3/4 overflow-y-auto overscroll-contain border-l motion-safe:data-[state=closed]:slide-out-to-right motion-safe:data-[state=open]:slide-in-from-right sm:max-w-sm",
     },
   },
   defaultVariants: {
@@ -60,9 +60,10 @@ const sheetVariants = cva(cn("fixed z-modal", modalSurfaceClasses, modalMotionCl
   },
 });
 
-// "start"/"end" resolve against the live direction — tailwindcss-animate
-// slides (and the physical cva keys they hang on) know nothing about writing
-// modes. "left"/"right" keep working for callers that mean it physically.
+// "start"/"end" (default "end") resolve against the live writing direction —
+// opening on the inline-trailing/leading viewport edge in both LTR and RTL.
+// Explicit "left"/"right"/"top"/"bottom" remain physical for backward
+// compatibility with callers targeting a fixed viewport edge.
 type SheetSide = NonNullable<VariantProps<typeof sheetVariants>["side"]> | "start" | "end";
 
 // The inline-axis corner radius, expressed logically. A side panel used to be
@@ -75,13 +76,14 @@ const INLINE_RADIUS = {
 } as const;
 
 interface SheetContentProps extends React.ComponentPropsWithoutRef<typeof SheetPrimitive.Content> {
+  /** Edge the sheet slides out from. Defaults to `"end"` (RTL-logical inline-end). */
   side?: SheetSide;
 }
 
 const SheetContent = React.forwardRef<
   React.ElementRef<typeof SheetPrimitive.Content>,
   SheetContentProps
->(({ side = "right", className, children, dir, ...props }, ref) => {
+>(({ side = "end", className, children, dir, ...props }, ref) => {
   const { t, direction } = useI18n();
   const isRtl = (dir || direction) === "rtl";
 

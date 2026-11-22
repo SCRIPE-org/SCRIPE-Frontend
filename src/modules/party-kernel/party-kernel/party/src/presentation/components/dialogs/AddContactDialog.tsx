@@ -77,7 +77,7 @@ export function AddContactDialog({ open, onOpenChange, onSubmit }: AddContactDia
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <div className="flex items-center gap-2">
-              <div className="bg-nx-accent/10 flex h-9 w-9 items-center justify-center rounded-lg text-nx-accent">
+              <div className="bg-nx-accent-wash flex h-9 w-9 items-center justify-center rounded-lg text-nx-accent">
                 <Phone className="h-5 w-5" />
               </div>
               <DialogTitle>{t("party.dialog.addContactTitle")}</DialogTitle>
@@ -124,12 +124,11 @@ export function AddContactDialog({ open, onOpenChange, onSubmit }: AddContactDia
                 }}
                 placeholder={type === "Email" ? "name@domain.com" : "+966 5x xxx xxxx"}
                 disabled={isSubmitting}
-                autoFocus
                 required
               />
             </div>
 
-            <div className="flex items-center space-x-2 pt-2">
+            <div className="flex items-center gap-2 pt-2">
               <Checkbox
                 id="contact-is-primary"
                 checked={isPrimary}
@@ -149,7 +148,7 @@ export function AddContactDialog({ open, onOpenChange, onSubmit }: AddContactDia
             <Button type="submit" disabled={isSubmitting || !value.trim()}>
               {isSubmitting ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="me-2 h-4 w-4 animate-spin" />
                   {t("party.dialog.save")}...
                 </>
               ) : (

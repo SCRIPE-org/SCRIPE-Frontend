@@ -8,7 +8,7 @@ import {
 } from "@modules/auth/core/domain/errors/AuthErrors";
 import type { WorkspaceChoice } from "@modules/auth/core/domain/errors/AuthErrors";
 import type { LoginStep } from "./use2FAHandler";
-import { getSafeRedirectPath } from "../utils/redirect-safety";
+import { buildPostAuthEntryUrl } from "../utils/redirect-safety";
 
 interface UseWorkspaceSelectorOptions {
   redirectPath: string;
@@ -28,7 +28,7 @@ interface UseWorkspaceSelectorOptions {
   isRedirectTriggered: () => boolean;
   onRedirectTriggered: () => void;
   handleRedirect: (path: string) => void;
-  enterTwoFactor: () => void;
+  enterTwoFactor: (pendingToken?: string | null, persistSession?: boolean) => void;
   /** Called by enterTwoFactor so 2FA knows which tenantId to verify against */
   onTenantResolved: (id: string | undefined) => void;
 }
@@ -98,11 +98,12 @@ export function useWorkspaceSelector(opts: UseWorkspaceSelectorOptions) {
         if (!isRedirectTriggered()) {
           onRedirectTriggered();
           const { useAppStore } = await import("@core/store/useAppStore");
-          const mustChange = useAppStore.getState().mustChangePassword;
-          // redirectPath can originate from the attacker-controlled `?redirect=`
-          // query param — validate same-origin/relative before navigating
-          // (handleRedirect re-validates too, this is defense-in-depth).
-          const targetPath = mustChange ? "/change-password" : getSafeRedirectPath(redirectPath);
+          const storeState = useAppStore.getState();
+          const targetPath = buildPostAuthEntryUrl({
+            mustChangePassword: storeState.mustChangePassword,
+            subscriptionStatus: storeState.subscriptionStatus,
+            redirect: redirectPath,
+          });
           setTimeout(() => handleRedirect(targetPath), 100);
         }
       } catch (err: unknown) {
@@ -110,7 +111,7 @@ export function useWorkspaceSelector(opts: UseWorkspaceSelectorOptions) {
           // Persist the selected tenantId so handleVerify2FA verifies against the right tenant
           onTenantResolved(chosenTenantId);
           setTenantId(chosenTenantId);
-          enterTwoFactor();
+          enterTwoFactor(err.twoFactorPendingToken, err.staySignedIn);
           return;
         }
         if (err instanceof WorkspaceSelectionRequiredError) {
@@ -163,15 +164,19 @@ export function useWorkspaceSelector(opts: UseWorkspaceSelectorOptions) {
         if (!isRedirectTriggered()) {
           onRedirectTriggered();
           const { useAppStore } = await import("@core/store/useAppStore");
-          const mustChange = useAppStore.getState().mustChangePassword;
-          const targetPath = mustChange ? "/change-password" : getSafeRedirectPath(redirectPath);
+          const storeState = useAppStore.getState();
+          const targetPath = buildPostAuthEntryUrl({
+            mustChangePassword: storeState.mustChangePassword,
+            subscriptionStatus: storeState.subscriptionStatus,
+            redirect: redirectPath,
+          });
           setTimeout(() => handleRedirect(targetPath), 100);
         }
       } catch (err: unknown) {
         if (err instanceof TwoFactorRequiredError) {
           onTenantResolved(chosenTenantId);
           setTenantId(chosenTenantId);
-          enterTwoFactor();
+          enterTwoFactor(err.twoFactorPendingToken, err.staySignedIn);
           return;
         }
         // Rethrow so WorkspaceCard can display inline error

@@ -1,5 +1,4 @@
 // FILE-EXCEPTION: file length
-// UI-EXCEPTION: compact studio layout
 /**
  * Tenant Permissions Dialog
  *
@@ -255,9 +254,10 @@ function PermissionModule({ moduleGroup, vm }: PermissionModuleProps) {
   return (
     <div className="overflow-hidden rounded-nx-lg border border-nx-line bg-nx-surface">
       {/* Module Header — manual toggle (no Radix AccordionTrigger) */}
-      <button
+      <Button
         type="button"
-        className="flex w-full items-center gap-3 border-b border-nx-line bg-nx-raised px-4 py-2.5 text-start transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover motion-reduce:transition-none"
+        variant="ghost"
+        className="flex h-auto w-full items-center gap-3 rounded-none border-b border-nx-line bg-nx-raised px-4 py-2.5 text-start font-normal transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover motion-reduce:transition-none"
         onClick={() => vm.toggleModule(moduleGroup.module)}
       >
         <div
@@ -300,7 +300,7 @@ function PermissionModule({ moduleGroup, vm }: PermissionModuleProps) {
           )}
           aria-hidden="true"
         />
-      </button>
+      </Button>
 
       {/* Module Content — conditionally rendered based on manual toggle state */}
       {isExpanded && (

@@ -156,7 +156,7 @@ export function MapRegionalSidebar({ summary, regionNodes = [] }: MapRegionalSid
   const dataSyncRate = "24.6 MB/s";
 
   return (
-    <aside className="flex select-none flex-col justify-between overflow-hidden border-t border-nx-line bg-nx-surface/60 p-3.5 lg:border-s lg:border-t-0">
+    <aside className="flex select-none flex-col justify-between overflow-hidden border-t border-nx-line bg-nx-surface p-3.5 lg:border-s lg:border-t-0">
       {/* 1. Tenants by Region */}
       <div>
         <div className="mb-2 border-b border-nx-line pb-2">
@@ -179,7 +179,7 @@ export function MapRegionalSidebar({ summary, regionNodes = [] }: MapRegionalSid
               </div>
               <div className="h-1.5 w-full overflow-hidden rounded-full bg-nx-raised-2">
                 <div
-                  className="h-full rounded-full bg-primary transition-all duration-500"
+                  className="h-full rounded-full bg-nx-accent-fill transition-all duration-500"
                   style={{ width: `${Math.min(100, Math.max(2, stat.percentage))}%` }}
                 />
               </div>
@@ -203,7 +203,9 @@ export function MapRegionalSidebar({ summary, regionNodes = [] }: MapRegionalSid
               <span className="h-1.5 w-1.5 rounded-full bg-success" />
               <span>{t("platformCommandCenter.activity.apiRequests") || "API Requests"}</span>
             </span>
-            <span className="font-mono font-semibold text-nx-ink">{apiRequests}</span>
+            <span className="font-mono font-semibold text-nx-ink">
+              <span dir="ltr">{apiRequests}</span>
+            </span>
           </div>
 
           <div className="flex items-center justify-between">
@@ -216,7 +218,7 @@ export function MapRegionalSidebar({ summary, regionNodes = [] }: MapRegionalSid
 
           <div className="flex items-center justify-between">
             <span className="flex items-center gap-2 text-nx-ink-3">
-              <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+              <span className="h-1.5 w-1.5 rounded-full bg-nx-accent-fill" />
               <span>{t("platformCommandCenter.activity.backgroundJobs") || "Background Jobs"}</span>
             </span>
             <span className="font-mono font-semibold text-nx-ink">{backgroundJobs}</span>
@@ -227,7 +229,9 @@ export function MapRegionalSidebar({ summary, regionNodes = [] }: MapRegionalSid
               <span className="h-1.5 w-1.5 rounded-full bg-warning" />
               <span>{t("platformCommandCenter.activity.dataSyncRate") || "Data Sync Rate"}</span>
             </span>
-            <span className="font-mono font-semibold text-nx-ink">{dataSyncRate}</span>
+            <span className="font-mono font-semibold text-nx-ink">
+              <span dir="ltr">{dataSyncRate}</span>
+            </span>
           </div>
         </div>
       </div>

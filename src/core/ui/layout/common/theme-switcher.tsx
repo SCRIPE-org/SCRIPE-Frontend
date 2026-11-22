@@ -1,11 +1,33 @@
 "use client";
 
+import { useSyncExternalStore } from "react";
 import { Sun, Moon } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useSignupTheme } from "@core/providers/signup-theme";
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@core/common/utils";
 import { Button } from "@core/ui/button";
+
+function subscribeHtmlThemeClass(callback: () => void) {
+  if (typeof document === "undefined" || typeof MutationObserver === "undefined") {
+    return () => {};
+  }
+  const observer = new MutationObserver(callback);
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+  return () => observer.disconnect();
+}
+
+function getHtmlThemeDarkSnapshot(): boolean | null {
+  if (typeof document === "undefined") return null;
+  const cls = document.documentElement.classList;
+  if (cls.contains("dark")) return true;
+  if (cls.contains("light")) return false;
+  return null;
+}
+
+function getServerHtmlThemeSnapshot(): boolean | null {
+  return null;
+}
 
 /*
  * TWO switchers, on purpose.
@@ -69,13 +91,15 @@ export function ThemeSwitcher({
   }
 
   return (
-    <button
+    <Button
       type="button"
+      variant="outline"
+      size="icon"
       onClick={toggleTheme}
       aria-label={themeLabel}
       title={themeLabel}
       className={cn(
-        "rounded-full p-2 transition-opacity duration-nx-standard ease-nx-enter hover:opacity-80 motion-reduce:transition-none",
+        "h-9 w-9 rounded-full transition-opacity duration-nx-standard ease-nx-enter hover:opacity-80 motion-reduce:transition-none",
         buttonClassName
       )}
       style={{
@@ -85,7 +109,7 @@ export function ThemeSwitcher({
       }}
     >
       {isDark ? <Sun size={15} aria-hidden="true" /> : <Moon size={15} aria-hidden="true" />}
-    </button>
+    </Button>
   );
 }
 
@@ -112,7 +136,12 @@ export function NxThemeSwitcher({
   // adapter does, which is why the swap is behaviour-preserving.
   const { resolvedTheme, setTheme } = useTheme();
   const { t } = useI18n();
-  const isDark = resolvedTheme !== "light";
+  const htmlIsDark = useSyncExternalStore(
+    subscribeHtmlThemeClass,
+    getHtmlThemeDarkSnapshot,
+    getServerHtmlThemeSnapshot
+  );
+  const isDark = htmlIsDark ?? (resolvedTheme !== "light");
 
   const toggleTheme = () => setTheme(isDark ? "light" : "dark");
 
@@ -140,19 +169,19 @@ export function NxThemeSwitcher({
   }
 
   return (
-    <button
+    <Button
       type="button"
+      variant="outline"
+      size="icon"
       onClick={toggleTheme}
       aria-label={themeLabel}
       className={cn(
-        "rounded-full border border-nx-line bg-nx-raised p-2 text-nx-ink-2",
-        "transition-[color,background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-        "hover:text-nx-ink",
-        "focus-visible:shadow-nx-focus focus-visible:outline-none",
+        "h-9 w-9 rounded-full border border-nx-line bg-nx-raised text-nx-ink-2",
+        "hover:border-nx-line-hi hover:bg-nx-hover hover:text-nx-ink",
         buttonClassName
       )}
     >
       <Glyph className="h-4 w-4" aria-hidden="true" />
-    </button>
+    </Button>
   );
 }

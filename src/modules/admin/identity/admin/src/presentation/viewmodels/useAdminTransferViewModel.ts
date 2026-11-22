@@ -17,7 +17,7 @@ export function useAdminTransferViewModel() {
 
   const handleTenantSearch = async (query: string): Promise<GenericSelectOption[]> => {
     try {
-      const result = await identityContainer.tenantRepository.getMyTenantAndChildren(query);
+      const result = await identityContainer.tenantRepository.getCurrentTenantHierarchy(query);
       return result.map((tenant) => ({
         value: tenant.id ?? SYSTEM_TENANT_VALUE,
         label: `${tenant.name} (${tenant.code})`,
@@ -46,7 +46,7 @@ export function useAdminTransferViewModel() {
             tenantId: searchTenantId,
             strict: true,
           })
-        : await identityContainer.roleRepository.getMyTenantRoles({
+        : await identityContainer.roleRepository.getCurrentTenantRoles({
             search: query,
             page: 1,
             pageSize: 20,

@@ -10,6 +10,7 @@ import {
   hasAllPermissions as checkAllPermissions,
   PAGE_PERMISSIONS,
 } from "@core/common/types/permissions";
+import { matchesManifestPattern, normalizeRoutePath } from "@core/config/app-route-manifest";
 
 interface PermissionContextType {
   /**
@@ -66,39 +67,47 @@ interface PermissionProviderProps {
 
 /**
  * Helper to match resolved pathnames with Next.js dynamic page templates in PAGE_PERMISSIONS.
- * Example: matches "/roles/123" with "/roles/[id]"
+ * Supports single params (`[id]`), trailing catch-alls (`[...slug]`), and query/trailing-slash normalization.
  */
 function matchesRoutePattern(pathname: string, pattern: string): boolean {
-  const pathSegs = pathname.split("/").filter(Boolean);
-  const patternSegs = pattern.split("/").filter(Boolean);
+  return matchesManifestPattern(pathname, pattern);
+}
 
-  if (pathSegs.length !== patternSegs.length) return false;
+let cachedDynamicPermissionPatterns: string[] | null = null;
 
-  for (let i = 0; i < patternSegs.length; i++) {
-    const patternSeg = patternSegs[i];
-    const pathSeg = pathSegs[i];
-
-    if (patternSeg.startsWith("[") && patternSeg.endsWith("]")) {
-      continue;
-    }
-
-    if (patternSeg !== pathSeg) {
-      return false;
-    }
+function getDynamicPermissionPatterns(): string[] {
+  if (cachedDynamicPermissionPatterns) {
+    return cachedDynamicPermissionPatterns;
   }
-
-  return true;
+  cachedDynamicPermissionPatterns = Object.keys(PAGE_PERMISSIONS)
+    .filter((p) => p.includes("["))
+    .sort((a, b) => {
+      const aCatchAll = a.includes("[...");
+      const bCatchAll = b.includes("[...");
+      if (aCatchAll !== bCatchAll) return aCatchAll ? 1 : -1;
+      const aLiterals = a
+        .split("/")
+        .filter((s) => s && !s.startsWith("[")).length;
+      const bLiterals = b
+        .split("/")
+        .filter((s) => s && !s.startsWith("[")).length;
+      if (bLiterals !== aLiterals) return bLiterals - aLiterals;
+      return b.length - a.length;
+    });
+  return cachedDynamicPermissionPatterns;
 }
 
 function getRequiredPermissionsForPath(pathname: string): PermissionCode[] | undefined {
-  // Try exact match first
-  if (PAGE_PERMISSIONS[pathname]) {
-    return PAGE_PERMISSIONS[pathname];
+  const normalized = normalizeRoutePath(pathname);
+
+  // Try exact match first (using hasOwnProperty so prototype keys cannot match)
+  if (Object.prototype.hasOwnProperty.call(PAGE_PERMISSIONS, normalized)) {
+    return PAGE_PERMISSIONS[normalized];
   }
 
-  // Try matching dynamic route patterns
-  for (const pattern of Object.keys(PAGE_PERMISSIONS)) {
-    if (pattern.includes("[") && matchesRoutePattern(pathname, pattern)) {
+  // Try matching dynamic route patterns sorted by specificity (single-param before catch-all)
+  for (const pattern of getDynamicPermissionPatterns()) {
+    if (matchesRoutePattern(normalized, pattern)) {
       return PAGE_PERMISSIONS[pattern];
     }
   }
@@ -199,8 +208,13 @@ export function PermissionProvider({ children }: PermissionProviderProps) {
 
       const requiredPermissions = getRequiredPermissionsForPath(path);
 
-      // If no permissions defined for page, allow access (authenticated only)
-      if (!requiredPermissions || requiredPermissions.length === 0) {
+      // Strictly fail-closed for unmapped routes (`undefined`).
+      if (requiredPermissions === undefined) {
+        return false;
+      }
+
+      // Explicitly declared non-privileged route (`[]`).
+      if (requiredPermissions.length === 0) {
         return true;
       }
 

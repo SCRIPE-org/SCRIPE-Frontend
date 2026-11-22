@@ -60,7 +60,7 @@ export function useAuthLogin() {
       } = result;
 
       // 1. Set user in store with permissions and roles
-      setAuth(user, user.permissions || [], [], true);
+      setAuth(user, (user.permissions as any[]) || [], user.roles || [], true);
 
       // 2. Store subscription status for payment wall / grace banner
       setSubscriptionInfo(subscriptionStatus, gracePhase, editionName);

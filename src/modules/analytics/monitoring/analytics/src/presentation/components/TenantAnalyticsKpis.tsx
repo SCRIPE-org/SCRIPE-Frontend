@@ -154,10 +154,10 @@ export function TenantAnalyticsKpis({ kpis, isLoading, timeRangeLabel }: TenantA
       <Card className="border-nx-line bg-nx-surface text-nx-ink transition-colors hover:border-nx-line-hi">
         <CardContent className="p-4 sm:p-5">
           <div className="flex items-start justify-between">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-warning/20 bg-warning/10 text-warning">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-warning/20 bg-warning/10 text-nx-warning-strong">
               <AlertTriangle className="h-5 w-5" />
             </div>
-            <span className="inline-flex items-center rounded-md bg-warning/10 px-2 py-0.5 text-[11px] font-bold text-warning">
+            <span className="inline-flex items-center rounded-md bg-warning/10 px-2 py-0.5 text-[11px] font-bold text-nx-warning-strong">
               {kpis.suspendedPercentage}%
             </span>
           </div>

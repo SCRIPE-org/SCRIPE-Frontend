@@ -86,7 +86,7 @@ export function ResourceClosuresTab({ vm }: Props) {
         </div>
         <Button size="sm" onClick={() => setModalOpen(true)} className="gap-1.5 font-semibold">
           <Plus className="size-4" aria-hidden="true" />
-          <span>{t("resources.closures.blockTimeBtn", { defaultValue: "+ Block Time" })}</span>
+          <span>{t("resources.closures.blockTimeBtn", { defaultValue: "Block Time" })}</span>
         </Button>
       </CardHeader>
       <CardContent>
@@ -101,7 +101,7 @@ export function ResourceClosuresTab({ vm }: Props) {
           </div>
         ) : (
           <div className="overflow-hidden rounded-nx-md border border-nx-line bg-nx-surface">
-            <table className="w-full text-left text-xs rtl:text-right">
+            <table className="w-full text-start text-xs">
               <thead className="border-b border-nx-line bg-nx-raised font-semibold text-nx-ink">
                 <tr>
                   <th className="p-3">
@@ -113,19 +113,19 @@ export function ResourceClosuresTab({ vm }: Props) {
                   <th className="p-3">
                     {t("resources.closures.table.reason", { defaultValue: "Reason" })}
                   </th>
-                  <th className="p-3 text-right rtl:text-left">
+                  <th className="p-3 text-end">
                     {t("resources.closures.table.actions", { defaultValue: "Actions" })}
                   </th>
                 </tr>
               </thead>
               <tbody className="divide-nx-line/60 divide-y">
                 {allClosures.map((closure) => (
-                  <tr key={closure.id} className="hover:bg-nx-surfaceSubtle transition-colors">
+                  <tr key={closure.id} className="hover:bg-nx-raised/50 transition-colors">
                     <td className="p-3 font-medium">
                       {closure.kind === "maintenance" ? (
                         <Badge
                           variant="outline"
-                          className="gap-1 border-warning/30 bg-warning/10 font-semibold text-warning"
+                          className="gap-1 border-warning/30 bg-warning/10 font-semibold text-nx-warning-strong"
                         >
                           <Wrench className="size-3" aria-hidden="true" />
                           <span>
@@ -137,7 +137,7 @@ export function ResourceClosuresTab({ vm }: Props) {
                       ) : (
                         <Badge
                           variant="outline"
-                          className="gap-1 border-nx-border bg-nx-raised font-semibold text-nx-ink-2"
+                          className="gap-1 border-nx-line bg-nx-raised font-semibold text-nx-ink-2"
                         >
                           <Ban className="size-3" aria-hidden="true" />
                           <span>
@@ -152,7 +152,7 @@ export function ResourceClosuresTab({ vm }: Props) {
                       {formatDate(closure.startUtc)} – {formatDate(closure.endUtc)}
                     </td>
                     <td className="p-3 text-nx-ink">{closure.reason}</td>
-                    <td className="p-3 text-right rtl:text-left">
+                    <td className="p-3 text-end">
                       <Button
                         variant="ghost"
                         size="sm"
@@ -192,10 +192,10 @@ export function ResourceClosuresTab({ vm }: Props) {
                     variant="outline"
                     type="button"
                     onClick={() => setReasonType("Maintenance")}
-                    className={`rounded-nx-md border p-2.5 text-left text-xs font-semibold transition-all rtl:text-right ${
+                    className={`rounded-nx-md border p-2.5 text-start text-xs font-semibold transition-all ${
                       reasonType === "Maintenance"
-                        ? "border-warning/40 bg-warning/10 text-warning ring-1 ring-warning/30"
-                        : "hover:bg-nx-surfaceSubtle border-nx-line text-nx-ink-2"
+                        ? "border-warning/40 bg-warning/10 text-nx-warning-strong ring-1 ring-warning/30"
+                        : "hover:bg-nx-raised/50 border-nx-line text-nx-ink-2"
                     }`}
                   >
                     <div className="flex items-center gap-1.5">
@@ -210,10 +210,10 @@ export function ResourceClosuresTab({ vm }: Props) {
                     variant="outline"
                     type="button"
                     onClick={() => setReasonType("Unavailable")}
-                    className={`rounded-nx-md border p-2.5 text-left text-xs font-semibold transition-all rtl:text-right ${
+                    className={`rounded-nx-md border p-2.5 text-start text-xs font-semibold transition-all ${
                       reasonType === "Unavailable"
                         ? "border-nx-accent bg-nx-accent/10 text-nx-ink ring-1 ring-nx-accent font-bold"
-                        : "hover:bg-nx-surfaceSubtle border-nx-line text-nx-ink-2"
+                        : "hover:bg-nx-raised/50 border-nx-line text-nx-ink-2"
                     }`}
                   >
                     <div className="flex items-center gap-1.5">

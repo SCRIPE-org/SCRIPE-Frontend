@@ -15,6 +15,7 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { qk } from "@core/common/query-keys";
 import { appLogger } from "@core/common/logger";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
@@ -26,6 +27,8 @@ import type {
 } from "@modules/identity/permissions";
 import type { Role } from "../../domain/entities/Role";
 import type { PermissionAssignmentJson } from "../../domain/types/PermissionTypes";
+import type { RoleWorkspaceStartPagesCardProps } from "../components/RoleWorkspaceStartPagesCard";
+import { useRoleWorkspaceEntriesViewModel } from "./useRoleWorkspaceEntriesViewModel";
 
 // === Types ===
 /**
@@ -137,7 +140,7 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
       if (role?.tenantId) {
         return roleRepository.getTenantAvailablePermissionsGrouped(role.tenantId);
       }
-      return roleRepository.getMyTenantAvailablePermissionsGrouped(searchQuery || undefined);
+      return roleRepository.getCurrentTenantAvailablePermissionsGrouped(searchQuery || undefined);
     },
     enabled: !roleLoading,
   });
@@ -147,6 +150,15 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
     queryKey: ["role-admin-count", roleId],
     queryFn: () => (roleId ? roleRepository.getAdminCount(roleId) : 0),
     enabled: !!roleId,
+  });
+
+  const selectedPermissionCodes = new Set(assignments.keys());
+  const workspaceEntriesVm = useRoleWorkspaceEntriesViewModel({
+    roleId,
+    role,
+    roleLoading,
+    moduleGroups,
+    selectedPermissionCodes,
   });
 
   // ── Auto-expand all modules when data first loads ──
@@ -212,35 +224,47 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
   // === MUTATION ===
   const saveMutation = useMutation({
     mutationFn: async () => {
-      const allPermissions = getAllPermissionsFlat();
-      const codeToIdMap = new Map<string, string>();
-      allPermissions.forEach((p) => {
-        codeToIdMap.set(p.code, p.id);
-      });
+      if (workspaceEntriesVm.isEntriesDirty && workspaceEntriesVm.hasIncompleteDraftRule) {
+        throw new Error(t("roleDetail.workspaceEntriesMissingTargetError"));
+      }
 
-      const permissionsPayload = Array.from(assignments.entries())
-        .map(([code, assignment]) => {
-          let id = assignment.permissionId;
-          if (!id) {
-            id = codeToIdMap.get(code) || "";
-          }
-          return {
-            permissionId: id,
-            scopeOverride: assignment.scopeOverride ?? null,
-            restrictedFields: assignment.restrictedFields ?? [],
-          };
-        })
-        .filter((p) => !!p.permissionId);
+      if (isDirty) {
+        const allPermissions = getAllPermissionsFlat();
+        const codeToIdMap = new Map<string, string>();
+        allPermissions.forEach((p) => {
+          codeToIdMap.set(p.code, p.id);
+        });
 
-      appLogger.debug("Saving permissions payload:", permissionsPayload);
+        const permissionsPayload = Array.from(assignments.entries())
+          .map(([code, assignment]) => {
+            let id = assignment.permissionId;
+            if (!id) {
+              id = codeToIdMap.get(code) || "";
+            }
+            return {
+              permissionId: id,
+              scopeOverride: assignment.scopeOverride ?? null,
+              restrictedFields: assignment.restrictedFields ?? [],
+            };
+          })
+          .filter((p) => !!p.permissionId);
 
-      await roleRepository.assignPermissions(roleId, {
-        permissions: permissionsPayload,
-      });
+        appLogger.debug("Saving permissions payload:", permissionsPayload);
+
+        await roleRepository.assignPermissions(roleId, {
+          permissions: permissionsPayload,
+        });
+        setIsDirty(false);
+      }
+
+      if (workspaceEntriesVm.isEntriesDirty) {
+        await workspaceEntriesVm.saveWorkspaceEntries();
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["rolePermissions", roleId] });
       queryClient.invalidateQueries({ queryKey: ["role", roleId] });
+      queryClient.invalidateQueries({ queryKey: qk.roles.workspaceEntries(roleId) });
       // Reset immediately rather than waiting on the invalidated refetch, so
       // the Save button/banner clear the instant the save resolves.
       setIsDirty(false);
@@ -364,7 +388,6 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
 
   // === DERIVED STATE ===
   const isLoading = roleLoading || permissionsLoading || rolePermissionsLoading;
-  const selectedPermissionCodes = new Set(assignments.keys());
   const totalPermCount = moduleGroups.reduce(
     (sum, mg) => sum + mg.categories.reduce((s, cat) => s + cat.permissions.length, 0),
     0
@@ -377,7 +400,7 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
       isLoading: roleLoading,
       isSaving: saveMutation.isPending,
       onSave: handleSave,
-      isDirty,
+      isDirty: isDirty || workspaceEntriesVm.isEntriesDirty,
     } as RoleDetailHeaderProps,
 
     info: {
@@ -406,5 +429,21 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
       bulkScopeValue,
       setBulkScopeValue,
     } as PermissionTreeProps,
+
+    workspaceEntries: {
+      rules: workspaceEntriesVm.rules,
+      eligibleWorkspaces: workspaceEntriesVm.eligibleWorkspaces,
+      availableWorkspacesForNewRule: workspaceEntriesVm.availableWorkspacesForNewRule,
+      catalog: workspaceEntriesVm.catalog,
+      scopeMode: workspaceEntriesVm.scopeMode,
+      selectedPermissionCodes,
+      isSystemRole: workspaceEntriesVm.isSystemRole,
+      isLoading: workspaceEntriesVm.isLoading,
+      onAddRule: workspaceEntriesVm.addRule,
+      onUpdateRuleWorkspace: workspaceEntriesVm.updateRuleWorkspace,
+      onUpdateRuleTarget: workspaceEntriesVm.updateRuleTarget,
+      onToggleRuleEnforced: workspaceEntriesVm.toggleRuleEnforced,
+      onRemoveRule: workspaceEntriesVm.removeRule,
+    } as RoleWorkspaceStartPagesCardProps,
   };
 }

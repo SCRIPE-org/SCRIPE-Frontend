@@ -10,7 +10,7 @@
 import type {
   IRoleRepository,
   RoleListParams,
-  MyTenantRoleListParams,
+  CurrentTenantRoleListParams,
 } from "../../domain/interfaces/IRoleRepository";
 import { Role } from "../../domain/entities/Role";
 import type {
@@ -20,9 +20,14 @@ import type {
   DeleteRoleRequest,
   CloneRoleRequest,
 } from "../../domain/entities/RoleRequests";
+import type {
+  RoleWorkspaceEntryPolicy,
+  UpsertRoleWorkspaceEntryInput,
+} from "../../domain/entities/RoleWorkspaceEntryPolicy";
 import type { PagedResult } from "@modules/identity/core/domain/types";
 import type { IRoleService } from "../../domain/interfaces/IRoleService";
 import { RoleMapper } from "../mappers/RoleMapper";
+import { RoleWorkspaceEntryPolicyMapper } from "../mappers/RoleWorkspaceEntryPolicyMapper";
 import { Permission, PermissionModuleGroup, PermissionMapper } from "@modules/identity/core";
 
 /**
@@ -52,8 +57,8 @@ export class RoleRepository implements IRoleRepository {
     };
   }
 
-  async getMyTenantRoles(params: MyTenantRoleListParams): Promise<PagedResult<Role>> {
-    const result = await this.service.getMyTenantRoles(params);
+  async getCurrentTenantRoles(params: CurrentTenantRoleListParams): Promise<PagedResult<Role>> {
+    const result = await this.service.getCurrentTenantRoles(params);
 
     return {
       items: RoleMapper.toEntityList(result.items),
@@ -82,9 +87,9 @@ export class RoleRepository implements IRoleRepository {
     return response.id;
   }
 
-  async createForMyTenant(request: Omit<CreateRoleRequest, "tenantId">): Promise<string> {
+  async createInCurrentTenant(request: Omit<CreateRoleRequest, "tenantId">): Promise<string> {
     const model = RoleMapper.toCreateModel(request as CreateRoleRequest);
-    const response = await this.service.createForMyTenant(model.toJson());
+    const response = await this.service.createInCurrentTenant(model.toJson());
     return response.id;
   }
 
@@ -116,13 +121,15 @@ export class RoleRepository implements IRoleRepository {
     return result ?? [];
   }
 
-  async getMyTenantAvailablePermissions(category?: string): Promise<Permission[]> {
-    const models = await this.service.getMyTenantAvailablePermissions(category);
+  async getCurrentTenantAvailablePermissions(category?: string): Promise<Permission[]> {
+    const models = await this.service.getCurrentTenantAvailablePermissions(category);
     return PermissionMapper.toEntityList(models);
   }
 
-  async getMyTenantAvailablePermissionsGrouped(search?: string): Promise<PermissionModuleGroup[]> {
-    const json = await this.service.getMyTenantAvailablePermissionsGrouped(search);
+  async getCurrentTenantAvailablePermissionsGrouped(
+    search?: string
+  ): Promise<PermissionModuleGroup[]> {
+    const json = await this.service.getCurrentTenantAvailablePermissionsGrouped(search);
     return PermissionMapper.toEntityGrouped(json);
   }
 
@@ -151,5 +158,24 @@ export class RoleRepository implements IRoleRepository {
   async clone(roleId: string, request: CloneRoleRequest): Promise<string> {
     const response = await this.service.clone(roleId, request);
     return response.id;
+  }
+
+  async getRoleWorkspaceEntries(roleId: string): Promise<RoleWorkspaceEntryPolicy[]> {
+    const dtos = await this.service.getRoleWorkspaceEntries(roleId);
+    return RoleWorkspaceEntryPolicyMapper.toEntityList(dtos);
+  }
+
+  async upsertRoleWorkspaceEntries(
+    roleId: string,
+    policies: UpsertRoleWorkspaceEntryInput[],
+    rowVersion?: string | null
+  ): Promise<RoleWorkspaceEntryPolicy[]> {
+    const requestDto = RoleWorkspaceEntryPolicyMapper.toUpsertRequestDto(policies, rowVersion);
+    const updatedDtos = await this.service.upsertRoleWorkspaceEntries(roleId, requestDto);
+    return RoleWorkspaceEntryPolicyMapper.toEntityList(updatedDtos);
+  }
+
+  async deleteRoleWorkspaceEntry(roleId: string, workspaceKey: string): Promise<void> {
+    await this.service.deleteRoleWorkspaceEntry(roleId, workspaceKey.trim().toLowerCase());
   }
 }

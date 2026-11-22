@@ -69,13 +69,12 @@ export function ResetPasswordView() {
   }, [headline, companyName]);
 
   const wrapperClass =
-    "vault-stage relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden";
+    "vault-stage relative flex min-h-[100dvh] w-full flex-col items-center justify-center overflow-hidden";
 
   // Solid surface — DESIGN.md bans default glassmorphism.
   const cardStyle: React.CSSProperties = {
     background: "var(--sx-card-bg)",
     border: "1px solid var(--sx-card-border)",
-    boxShadow: "var(--sx-card-shadow)",
   };
 
   const topActions = (
@@ -90,10 +89,7 @@ export function ResetPasswordView() {
           {companyName}
         </span>
       </div>
-      <div
-        className="absolute right-6 top-6 z-20 flex items-center gap-1"
-        style={direction === "rtl" ? { right: "auto", left: "1.5rem" } : {}}
-      >
+      <div className="absolute end-6 top-6 z-20 flex items-center gap-1">
         <LanguageSwitcher />
         <ThemeSwitcher />
       </div>
@@ -110,11 +106,11 @@ export function ResetPasswordView() {
       >
         <VaultBackground />
         {topActions}
-        <div className="relative z-[1] flex w-full max-w-[480px] flex-1 flex-col items-center justify-center px-5 py-24">
+        <main className="relative z-[1] flex w-full max-w-[480px] flex-1 flex-col items-center justify-center px-5 py-24">
           <div className="sx-screen w-full rounded-[20px] p-8 text-center sm:p-9" style={cardStyle}>
             <div className="flex flex-col items-center gap-4">
               <Loader2
-                className="h-8 w-8 animate-spin"
+                className="h-8 w-8 animate-spin motion-reduce:animate-none"
                 style={{ color: "var(--sx-accent-text)" }}
               />
               <p className="text-[14px]" style={{ color: "var(--sx-text-mute)" }}>
@@ -122,7 +118,7 @@ export function ResetPasswordView() {
               </p>
             </div>
           </div>
-        </div>
+        </main>
       </div>
     );
   }
@@ -137,21 +133,21 @@ export function ResetPasswordView() {
       >
         <VaultBackground />
         {topActions}
-        <div className="relative z-[1] flex w-full max-w-[480px] flex-1 flex-col items-center justify-center px-5 py-24">
+        <main className="relative z-[1] flex w-full max-w-[480px] flex-1 flex-col items-center justify-center px-5 py-24">
           <div className="mb-5 w-full">
             <Link
               href="/login"
               className="inline-flex items-center gap-1.5 text-[13px] font-medium transition-colors hover:opacity-80"
               style={{ color: "var(--sx-text-mute)" }}
             >
-              <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+              <ArrowLeft className="h-4 w-4 rtl:rotate-180" aria-hidden="true" />
               {t("auth.backToLogin")}
             </Link>
           </div>
           <div className="sx-screen w-full rounded-[20px] p-8 text-center sm:p-9" style={cardStyle}>
             <div className="flex flex-col items-center gap-6">
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-warning/10">
-                <AlertTriangle className="h-7 w-7 text-warning" aria-hidden="true" />
+                <AlertTriangle className="h-7 w-7 text-nx-warning-strong" aria-hidden="true" />
               </div>
               <div className="space-y-1.5">
                 <h2
@@ -164,14 +160,15 @@ export function ResetPasswordView() {
                   {t("auth.invalidResetLinkDesc")}
                 </p>
               </div>
-              <Link href="/forgot-password" className="block w-full">
-                <Button className="h-12 w-full rounded-xl text-[15px] font-semibold text-white transition-all active:scale-[0.985]">
-                  {t("auth.requestNewLink")}
-                </Button>
-              </Link>
+              <Button
+                asChild
+                className="h-12 w-full rounded-xl text-[15px] font-semibold text-nx-on-fill transition-all active:scale-[0.985]"
+              >
+                <Link href="/forgot-password">{t("auth.requestNewLink")}</Link>
+              </Button>
             </div>
           </div>
-        </div>
+        </main>
       </div>
     );
   }
@@ -186,11 +183,11 @@ export function ResetPasswordView() {
       >
         <VaultBackground />
         {topActions}
-        <div className="relative z-[1] flex w-full max-w-[480px] flex-1 flex-col items-center justify-center px-5 py-24">
+        <main className="relative z-[1] flex w-full max-w-[480px] flex-1 flex-col items-center justify-center px-5 py-24">
           <div className="sx-screen w-full rounded-[20px] p-8 sm:p-9" style={cardStyle}>
             <ResetWorkspacesStep vm={vm} />
           </div>
-        </div>
+        </main>
       </div>
     );
   }
@@ -205,11 +202,11 @@ export function ResetPasswordView() {
       >
         <VaultBackground />
         {topActions}
-        <div className="relative z-[1] flex w-full max-w-[480px] flex-1 flex-col items-center justify-center px-5 py-24">
+        <main className="relative z-[1] flex w-full max-w-[480px] flex-1 flex-col items-center justify-center px-5 py-24">
           <div className="sx-screen w-full rounded-[20px] p-8 sm:p-9" style={cardStyle}>
             <div className="sx-pop flex flex-col items-center gap-6 text-center">
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-success/10">
-                <CheckCircle className="h-7 w-7 text-success" aria-hidden="true" />
+                <CheckCircle className="h-7 w-7 text-nx-success" aria-hidden="true" />
               </div>
               <div className="space-y-1.5">
                 <h2
@@ -223,14 +220,14 @@ export function ResetPasswordView() {
                 </p>
               </div>
               <Button
-                className="h-12 w-full rounded-xl text-[15px] font-semibold text-white transition-all active:scale-[0.985]"
+                className="h-12 w-full rounded-xl text-[15px] font-semibold text-nx-on-fill transition-colors"
                 onClick={() => router.push("/login")}
               >
                 {t("auth.goToLogin")}
               </Button>
             </div>
           </div>
-        </div>
+        </main>
       </div>
     );
   }
@@ -245,7 +242,7 @@ export function ResetPasswordView() {
       <VaultBackground />
       {topActions}
 
-      <div className="relative z-[1] flex w-full max-w-[480px] flex-1 flex-col items-center justify-center px-5 py-24">
+      <main className="relative z-[1] flex w-full max-w-[480px] flex-1 flex-col items-center justify-center px-5 py-24">
         {/* Back link */}
         <div className="mb-5 w-full">
           <Link
@@ -253,12 +250,12 @@ export function ResetPasswordView() {
             className="inline-flex items-center gap-1.5 text-[13px] font-medium transition-colors hover:opacity-80"
             style={{ color: "var(--sx-text-mute)" }}
           >
-            <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+            <ArrowLeft className="h-4 w-4 rtl:rotate-180" aria-hidden="true" />
             {t("auth.backToLogin")}
           </Link>
         </div>
 
-        {/* Glass card */}
+        {/* Surface card */}
         <div className="sx-screen w-full rounded-[20px] p-8 sm:p-9" style={cardStyle}>
           <ResetPasswordStep vm={vm} headline={headline} />
         </div>
@@ -267,7 +264,7 @@ export function ResetPasswordView() {
         <p className="mt-8 text-[11px]" style={{ color: "var(--sx-text-faint)" }}>
           © {new Date().getFullYear()} {companyName}
         </p>
-      </div>
+      </main>
     </div>
   );
 }

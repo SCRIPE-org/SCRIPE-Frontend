@@ -157,7 +157,7 @@ export function RevenueTab({ mrrData, months, onMonthsChange }: RevenueTabProps)
                         </span>
                       )}
                       {movement.mrrContraction > 0 && (
-                        <span className="rounded-full border border-warning/20 bg-warning/10 px-2 py-0.5 text-[10px] font-medium text-warning">
+                        <span className="rounded-full border border-warning/20 bg-warning/10 px-2 py-0.5 text-[10px] font-medium text-nx-warning-strong">
                           -{formatCurrency(movement.mrrContraction)}{" "}
                           {t("entitlements.analytics.revenue.contraction")}
                         </span>

@@ -1,5 +1,4 @@
 // FILE-EXCEPTION: file length
-// UI-EXCEPTION: compact studio layout
 "use client";
 
 import React from "react";
@@ -103,16 +102,18 @@ function RecipientSearchInput({
             >
               {r.type === "custom" && <Mail className="h-3 w-3" aria-hidden="true" />}
               {r.name || r.email}
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon"
                 onClick={() => onRemove(r.email)}
-                className="rounded-full hover:text-destructive focus-visible:shadow-nx-focus focus-visible:outline-none"
+                className="h-auto w-auto rounded-full p-0 hover:bg-transparent hover:text-destructive focus-visible:shadow-nx-focus focus-visible:outline-none"
                 aria-label={t("messaging.email.removeRecipientNamed", {
                   name: r.name || r.email,
                 })}
               >
                 <X className="h-3 w-3" aria-hidden="true" />
-              </button>
+              </Button>
             </Badge>
           ))}
         </div>
@@ -180,14 +181,15 @@ function RecipientSearchInput({
             {results.length > 0 ? (
               <div id={listboxId} role="listbox" aria-label={label}>
                 {results.map((r, idx) => (
-                  <button
+                  <Button
                     key={r.email}
                     id={`${listboxId}-option-${idx}`}
                     role="option"
                     aria-selected={idx === activeIndex}
                     type="button"
+                    variant="ghost"
                     className={cn(
-                      "flex w-full items-center justify-between px-3 py-2 text-start text-sm hover:bg-nx-hover focus-visible:bg-nx-hover focus-visible:outline-none",
+                      "flex h-auto w-full items-center justify-between rounded-none px-3 py-2 text-start text-sm font-normal hover:bg-nx-hover focus-visible:bg-nx-hover focus-visible:outline-none",
                       idx === activeIndex && "bg-nx-hover"
                     )}
                     onMouseEnter={() => setActiveIndex(idx)}
@@ -198,17 +200,18 @@ function RecipientSearchInput({
                   >
                     <span className="font-medium text-nx-ink">{r.name || r.email}</span>
                     <span className="text-xs text-nx-ink-3">{r.email}</span>
-                  </button>
+                  </Button>
                 ))}
               </div>
             ) : showCustomHint ? (
               <div id={listboxId} role="listbox" aria-label={label}>
-                <button
+                <Button
                   id={`${listboxId}-option-0`}
                   role="option"
                   aria-selected={false}
                   type="button"
-                  className="flex w-full items-center gap-2 px-3 py-3 text-start text-sm hover:bg-nx-hover focus-visible:bg-nx-hover focus-visible:outline-none"
+                  variant="ghost"
+                  className="flex h-auto w-full items-center justify-start gap-2 rounded-none px-3 py-3 text-start text-sm font-normal hover:bg-nx-hover focus-visible:bg-nx-hover focus-visible:outline-none"
                   onClick={() => {
                     if (onCustomEmail) {
                       const added = onCustomEmail(search);
@@ -221,7 +224,7 @@ function RecipientSearchInput({
                     {t("messaging.email.sendToCustomEmail")}{" "}
                     <strong className="text-nx-ink">{search.trim()}</strong>
                   </span>
-                </button>
+                </Button>
               </div>
             ) : (
               noResults && (

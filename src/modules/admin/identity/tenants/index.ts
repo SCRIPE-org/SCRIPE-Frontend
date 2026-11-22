@@ -10,7 +10,7 @@ export { TenantDomainsView } from "./src/presentation/views/TenantDomainsView";
 export { useTenantsViewModel } from "./src/presentation/viewmodels/useTenantsViewModel";
 
 // Entities
-export { Tenant } from "./src/domain/entities/Tenant";
+export { Tenant, isInternalTenantNode } from "./src/domain/entities/Tenant";
 export type {
   TenantProps,
   TenantTreeNode,

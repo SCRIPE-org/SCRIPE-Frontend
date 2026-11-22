@@ -139,7 +139,7 @@ export function SubscriptionDetailModal({
               </div>
             )}
             {sub.isExpiringSoon && (
-              <div className="flex items-center gap-1 text-warning">
+              <div className="flex items-center gap-1 text-nx-warning-strong">
                 <AlertTriangle className="h-3.5 w-3.5" aria-hidden="true" />
                 <span className="tabular-nums">{sub.daysRemaining}d</span>
               </div>
@@ -221,7 +221,7 @@ export function SubscriptionDetailModal({
                   ? formatDate(sub.expiresAt)
                   : t("entitlements.userSubscriptions.detailLifetime")
               }
-              valueClassName={cn(sub.isExpiringSoon && "text-warning")}
+              valueClassName={cn(sub.isExpiringSoon && "text-nx-warning-strong")}
             />
             {sub.trialEndsAt && (
               <DetailRow
@@ -243,7 +243,7 @@ export function SubscriptionDetailModal({
                 icon={AlertTriangle}
                 label={t("entitlements.userSubscriptions.detailGracePeriod")}
                 value={formatDate(sub.gracePeriodEndsAt)}
-                valueClassName="text-warning"
+                valueClassName="text-nx-warning-strong"
               />
             )}
             <DetailRow

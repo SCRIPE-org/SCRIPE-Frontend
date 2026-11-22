@@ -35,7 +35,7 @@ export function useActivateWorkspaceViewModel() {
     queryKey: ["activate-workspace-subscription", tenantId],
     queryFn: async () => {
       if (!tenantId) return null;
-      return entitlementsContainer.subscriptionRepository.getMyTenantSubscription();
+      return entitlementsContainer.subscriptionRepository.getCurrentTenantSubscription();
     },
     enabled: !!tenantId,
   });

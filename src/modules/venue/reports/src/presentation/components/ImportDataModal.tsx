@@ -11,6 +11,7 @@ import {
 } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
+import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
@@ -207,9 +208,9 @@ export function ImportDataModal({
             <div className="space-y-6">
               {/* Scope Selection (A13: Safe Scope Only) */}
               <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-wider text-nx-ink-2">
+                <Label className="text-xs font-bold uppercase tracking-wider text-nx-ink-2">
                   {t("venueReports.import.stepOne")}
-                </label>
+                </Label>
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <Button
                     type="button"
@@ -265,10 +266,10 @@ export function ImportDataModal({
 
               {/* Upload Dropzone */}
               <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-wider text-nx-ink-2">
+                <Label className="text-xs font-bold uppercase tracking-wider text-nx-ink-2">
                   {t("venueReports.import.upload")}
-                </label>
-                <label className="rounded-nx-xl bg-nx-surfaceSubtle/40 hover:bg-nx-surfaceSubtle/70 flex cursor-pointer flex-col items-center justify-center border-2 border-dashed border-nx-line p-8 transition-colors hover:border-nx-accent">
+                </Label>
+                <Label className="rounded-nx-xl bg-nx-surfaceSubtle/40 hover:bg-nx-surfaceSubtle/70 flex cursor-pointer flex-col items-center justify-center border-2 border-dashed border-nx-line p-8 transition-colors hover:border-nx-accent">
                   <UploadCloud className="mb-2 size-10 text-nx-accent" />
                   <span className="text-sm font-semibold text-nx-ink">
                     {t("venueReports.import.dropFile")}
@@ -282,15 +283,15 @@ export function ImportDataModal({
                     onChange={handleFileUpload}
                     className="hidden"
                   />
-                </label>
+                </Label>
               </div>
 
               {/* Quick Paste Alternative */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-semibold text-nx-ink-2">
+                  <Label className="text-xs font-semibold text-nx-ink-2">
                     {t("venueReports.import.pasteHint")}
-                  </label>
+                  </Label>
                   <Button
                     type="button"
                     variant="ghost"
@@ -337,7 +338,7 @@ export function ImportDataModal({
           {/* STEP 2: Column Mapping */}
           {importStep === 2 && parsedTable && (
             <div className="space-y-4">
-              <div className="flex items-center justify-between rounded-lg bg-blue-50/70 p-3 text-xs text-blue-800 dark:bg-blue-950/30 dark:text-blue-300">
+              <div className="border-info/20 bg-info/10 text-info flex items-center justify-between rounded-lg border p-3 text-xs">
                 <span>
                   {t("venueReports.import.detectedRows", {
                     columns: parsedTable.headers.length,

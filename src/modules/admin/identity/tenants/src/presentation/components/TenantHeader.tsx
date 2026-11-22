@@ -23,6 +23,7 @@ import { TenantDeleteDialog } from "./TenantDeleteDialog";
 import { TenantEditDialog } from "./TenantEditDialog";
 import { TenantHeaderStatusBanners } from "./TenantHeaderStatusBanners";
 import { cn, formatDateUtc } from "@core/common/utils";
+import { useI18n } from "@core/providers/i18n-provider";
 import { useTenantHeaderViewModel, TenantStatus } from "../viewmodels/useTenantHeaderViewModel";
 
 interface TenantHeaderProps {
@@ -36,6 +37,7 @@ interface TenantHeaderProps {
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
+  const { language } = useI18n();
   const {
     t,
     status,
@@ -107,7 +109,7 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
       ? [{ label: t("tenant.daysLeft"), value: daysLeft }]
       : []),
     ...(tenant.editionEndDate
-      ? [{ label: t("tenant.endDate"), value: formatDateUtc(tenant.editionEndDate) }]
+      ? [{ label: t("tenant.endDate"), value: formatDateUtc(tenant.editionEndDate, language) }]
       : []),
   ];
 
@@ -116,7 +118,18 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
       <PageHeader
         icon={Building2}
         title={tenant.name}
-        badges={statusBadge}
+        badges={
+          tenant.isInternal ? (
+            <>
+              {statusBadge}
+              <Badge variant="info" className="text-xs">
+                {t("tenant.internalBadge")}
+              </Badge>
+            </>
+          ) : (
+            statusBadge
+          )
+        }
         description={tenant.description}
         meta={meta}
         className={cn("mb-0", (status === "canceled" || status === "inactive") && "opacity-80")}
@@ -139,7 +152,7 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
                 {t("common.edit")}
               </Button>
             )}
-            {canUpdate && (
+            {canUpdate && !tenant.isInternal && (
               <Button
                 variant="outline"
                 size="sm"
@@ -150,7 +163,7 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
                 {tenant.isActive ? t("common.deactivate") : t("common.activate")}
               </Button>
             )}
-            {canDelete && (
+            {canDelete && !tenant.isInternal && (
               <Button variant="destructive" size="sm" onClick={() => setDeleteOpen(true)}>
                 <Trash2 className="me-1.5 h-4 w-4" aria-hidden="true" />
                 {t("common.delete")}
@@ -180,6 +193,7 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
         onSetActive={handleSetFormActive}
         onSubmit={handleEditSubmit}
         isUpdating={isUpdating}
+        isInternal={tenant.isInternal}
       />
 
       {/* Delete Dialog */}

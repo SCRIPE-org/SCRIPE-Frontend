@@ -25,7 +25,7 @@ export function MagazineLayout({
 }: LoginLayoutProps) {
   return (
     <div
-      className={`flex min-h-screen w-full ${BG_STYLE} login-page selection:bg-primary/20`}
+      className={`flex min-h-[100dvh] w-full ${BG_STYLE} login-page`}
       dir={direction}
       style={WRAPPER_STYLE}
     >
@@ -37,12 +37,12 @@ export function MagazineLayout({
           backgroundPosition: "center",
         }}
       >
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[color:color-mix(in_srgb,var(--scripe-void)_80%,transparent)] via-[color:color-mix(in_srgb,var(--scripe-void)_40%,transparent)] to-transparent" />
         <div className="relative z-10 max-w-2xl">
-          <h1 className="login-heading text-6xl font-bold leading-[1.1] tracking-tight text-white">
+          <h1 className="login-heading text-6xl font-bold leading-[1.1] tracking-tight text-[var(--scripe-white)]">
             {branding?.loginHeadline || t("auth.branding.headline")}
           </h1>
-          <p className="mt-4 text-lg text-white/80">
+          <p className="mt-4 text-lg text-[color:color-mix(in_srgb,var(--scripe-white)_80%,transparent)]">
             {branding?.loginSubtitle || t("auth.branding.subtitle")}
           </p>
         </div>
@@ -52,14 +52,14 @@ export function MagazineLayout({
           className="relative z-10 mt-8"
         />
       </div>
-      <div className="relative flex w-full flex-col items-center justify-center px-6 py-12 lg:w-2/5">
+      <main className="relative flex w-full flex-col items-center justify-center px-6 py-12 lg:w-2/5">
         {topActions}
         <MobileLogo logoSrc={logoSrc} logoAlt={logoAlt} companyName={companyName} />
         {loginStep === "credentials" && <DesktopHeading companyName={companyName} />}
         {formContent}
         {footer}
         {footerSlot}
-      </div>
+      </main>
     </div>
   );
 }

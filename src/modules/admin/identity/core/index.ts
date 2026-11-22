@@ -18,13 +18,17 @@ export type {
 export type { IPermissionService } from "../permissions/src/domain/interfaces/IPermissionService";
 
 // Tenants
-export { SYSTEM_TENANT_ID, Tenant } from "../tenants/src/domain/entities/Tenant";
+export { SYSTEM_TENANT_ID, Tenant, isInternalTenantNode } from "../tenants/src/domain/entities/Tenant";
 export type { TenantProps, TenantTreeNode } from "../tenants/src/domain/entities/Tenant";
 
 // Roles
 export { Role } from "../roles/src/domain/entities/Role";
 export { useRolesViewModel } from "../roles/src/presentation/viewmodels/useRolesViewModel";
 export { RolePermissionsDialog } from "../roles/src/presentation/components/RolePermissionsDialog";
+export {
+  getRoleLandingFields,
+  getRoleEditInitialValues,
+} from "../roles/src/presentation/views/rolesFormFields";
 
 // User Groups
 export { UserGroup } from "../user-groups/src/domain/entities/UserGroup";

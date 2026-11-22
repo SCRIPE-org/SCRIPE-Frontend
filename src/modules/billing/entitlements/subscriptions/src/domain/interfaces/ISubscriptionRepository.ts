@@ -18,7 +18,7 @@ export interface ISubscriptionRepository {
   getAll(): Promise<GlobalSubscriptionItem[]>;
   getByTenant(tenantId: string): Promise<SubscriptionListItem[]>;
   getById(id: string): Promise<Subscription>;
-  getMyTenantSubscription(): Promise<Subscription | null>;
+  getCurrentTenantSubscription(): Promise<Subscription | null>;
 
   // Export
   exportSubscriptions(params: ExportParams): Promise<ExportFileResult>;

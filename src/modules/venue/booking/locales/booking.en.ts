@@ -23,6 +23,8 @@ export const en = {
       contactLimitation: "Contact details are not included in the current booking projection.",
       existingOnly: "Create new customer or select an existing party.",
       quickCreate: "Quick create customer",
+      customerLinked: "Customer linked to this booking reservation.",
+      helperTip: "Search by customer name or use Quick Create to register a customer.",
       quickCreateDescription: "Add a new customer without leaving the booking flow.",
       nameLabel: "Customer name",
       namePlaceholder: "e.g. Acme Corp or John Doe",

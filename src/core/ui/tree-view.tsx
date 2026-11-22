@@ -12,8 +12,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@core/ui/dropdown-menu";
-import { ChevronRight, ChevronDown, Folder, FolderOpen, MoreHorizontal } from "lucide-react";
-import { Checkbox } from "@core/ui/checkbox";
+import { ChevronRight, ChevronDown, Folder, FolderOpen, MoreHorizontal, Check, Minus } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
 
@@ -110,10 +109,12 @@ function NodeActions<T>({
   node,
   actions,
   direction,
+  actionsLabel,
 }: {
   node: T;
   actions: (node: T) => TreeAction[];
   direction: string;
+  actionsLabel: string;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -121,7 +122,13 @@ function NodeActions<T>({
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
         {/* 32px minimum: the trigger was 28px, below the hit-target floor. */}
-        <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0 text-nx-ink-3">
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label={actionsLabel}
+          onClick={(e) => e.stopPropagation()}
+          className="h-8 w-8 shrink-0 text-nx-ink-3 hover:text-nx-ink"
+        >
           <MoreHorizontal aria-hidden="true" className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
@@ -173,50 +180,14 @@ export function TreeView<T>({
 }: TreeViewProps<T>) {
   const { direction, t } = useI18n();
   const settings = useSettings();
+  const tr = (key: string, defaultValue: string) => {
+    const resolved = t(key, { defaultValue });
+    return resolved === key ? defaultValue : resolved;
+  };
 
   const computedVariant: TreeVariant = resolveTreeVariant(variant ?? settings.treeStyle);
 
-  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
-  const [isAllExpanded, setIsAllExpanded] = useState<boolean>(defaultExpanded);
-
-  // Initialize expand state whenever data changes
-  const [prevData, setPrevData] = useState(data);
-  const [prevDefaultExpanded, setPrevDefaultExpanded] = useState(defaultExpanded);
-
-  if (data !== prevData || defaultExpanded !== prevDefaultExpanded) {
-    setPrevData(data);
-    setPrevDefaultExpanded(defaultExpanded);
-    const next: Record<string, boolean> = {};
-    const walk = (nodes: T[]) => {
-      nodes.forEach((n) => {
-        const id = getId(n);
-        const children = getChildren(n) ?? [];
-
-        // Only set defaultExpanded if the node hasn't been manually toggled before
-        if (!(id in expanded)) {
-          next[id] = defaultExpanded;
-        } else {
-          next[id] = expanded[id];
-        }
-
-        if (children.length > 0) walk(children);
-      });
-    };
-    walk(data);
-    setExpanded(next);
-
-    // Update isAllExpanded based on current state
-    const allExpanded = Object.values(next).every(Boolean);
-    setIsAllExpanded(allExpanded);
-  }
-
-  const handleToggleNode = (id: string) => {
-    setExpanded((prev) => {
-      const next = { ...prev, [id]: !prev[id] };
-      onExpandChange?.(Object.keys(next).filter((k) => next[k]));
-      return next;
-    });
-  };
+  const [expandedOverrides, setExpandedOverrides] = useState<Record<string, boolean>>({});
 
   const getAllIds = (nodes: T[]): string[] => {
     const ids: string[] = [];
@@ -230,21 +201,34 @@ export function TreeView<T>({
     return ids;
   };
 
+  const allIds = getAllIds(data);
+  const isAllExpanded =
+    allIds.length > 0 &&
+    allIds.every((id) => (id in expandedOverrides ? expandedOverrides[id] : defaultExpanded));
+
+  const handleToggleNode = (id: string) => {
+    const current = id in expandedOverrides ? expandedOverrides[id] : defaultExpanded;
+    const next = { ...expandedOverrides, [id]: !current };
+    setExpandedOverrides(next);
+    onExpandChange?.(allIds.filter((k) => (k in next ? next[k] : defaultExpanded)));
+  };
+
   const expandAll = () => {
     const all: Record<string, boolean> = {};
-    const allIds = getAllIds(data);
-    allIds.forEach((id) => (all[id] = true));
+    allIds.forEach((id) => {
+      all[id] = true;
+    });
+    setExpandedOverrides(all);
     onExpandChange?.(allIds);
-    setExpanded(all);
-    setIsAllExpanded(true);
   };
 
   const collapseAll = () => {
     const all: Record<string, boolean> = {};
-    getAllIds(data).forEach((id) => (all[id] = false));
+    allIds.forEach((id) => {
+      all[id] = false;
+    });
+    setExpandedOverrides(all);
     onExpandChange?.([]);
-    setExpanded(all);
-    setIsAllExpanded(false);
   };
 
   // ── Selection logic ─────────────────────────────────────
@@ -381,7 +365,8 @@ export function TreeView<T>({
             ref={searchInputRef as any}
             value={searchValue}
             onChange={(e) => searchOnChange(e.target.value)}
-            placeholder={searchPlaceholder ?? t("common.search")}
+            placeholder={searchPlaceholder ?? tr("common.search", "Search...")}
+            aria-label={searchPlaceholder ?? tr("common.search", "Search...")}
             className="w-full"
             autoComplete="off"
           />
@@ -389,7 +374,9 @@ export function TreeView<T>({
       </div>
       <div className="flex items-center gap-2">
         <Button variant="outline" size="sm" onClick={isAllExpanded ? collapseAll : expandAll}>
-          {isAllExpanded ? t("common.collapseAll") : t("common.expandAll")}
+          {isAllExpanded
+            ? tr("common.collapseAll", "Collapse All")
+            : tr("common.expandAll", "Expand All")}
         </Button>
         {toolbar}
       </div>
@@ -402,7 +389,12 @@ export function TreeView<T>({
         {headerComponent}
         {/* Static fill steps in the shape of the toolbar and six rows — a
             placeholder is the absence of a tree, and absence does not pulse. */}
-        <div className="space-y-2" role="status" aria-busy="true" aria-label={t("common.loading")}>
+        <div
+          className="space-y-2"
+          role="status"
+          aria-busy="true"
+          aria-label={tr("common.loading", "Loading...")}
+        >
           <div aria-hidden="true" className="h-9 w-56 rounded-nx-control bg-nx-raised-2" />
           {[...Array(6)].map((_, i) => (
             <div
@@ -428,7 +420,7 @@ export function TreeView<T>({
         {aboveTreeComponent}
         {/* The shared empty anatomy, so an empty tree reads exactly like an
             empty table or an empty section — not like a stray grey sentence. */}
-        <EmptyState icon={FolderOpen} title={emptyMessage ?? t("common.noData")} />
+        <EmptyState icon={FolderOpen} title={emptyMessage ?? tr("common.noData", "No data available")} />
         {belowTreeComponent}
         {footerComponent}
       </div>
@@ -447,7 +439,8 @@ export function TreeView<T>({
           getId={getId}
           getLabel={getLabel}
           getChildren={getChildren}
-          expanded={expanded}
+          expandedOverrides={expandedOverrides}
+          defaultExpanded={defaultExpanded}
           onToggle={handleToggleNode}
           direction={direction}
           actions={actions}
@@ -460,6 +453,9 @@ export function TreeView<T>({
           getValueToSend={getValueToSend}
           disabled={disabled}
           expandOnCardClick={expandOnCardClick}
+          labels={{
+            actions: tr("common.actions", "Actions"),
+          }}
         />
       </div>
       {belowTreeComponent}
@@ -511,7 +507,8 @@ function TreeList<T>({
   getId,
   getLabel,
   getChildren,
-  expanded,
+  expandedOverrides,
+  defaultExpanded,
   onToggle,
   direction,
   actions,
@@ -524,14 +521,16 @@ function TreeList<T>({
   isNodeIndeterminate,
   getValueToSend,
   disabled = false,
-  expandOnCardClick = false,
+  expandOnCardClick = false, // Default to false for backward compatibility
+  labels,
 }: {
   nodes: T[];
   variant: TreeVariant;
   getId: (node: T) => string;
   getLabel: (node: T) => React.ReactNode;
   getChildren: (node: T) => T[] | undefined;
-  expanded: Record<string, boolean>;
+  expandedOverrides: Record<string, boolean>;
+  defaultExpanded: boolean;
   onToggle: (id: string) => void;
   direction: "ltr" | "rtl";
   actions?: (node: T) => TreeAction[];
@@ -545,11 +544,12 @@ function TreeList<T>({
   getValueToSend?: (node: T) => string;
   disabled?: boolean;
   expandOnCardClick?: boolean;
+  labels: { actions: string };
 }) {
   // Cheap ARIA-tree keyboard support: Up/Down move between the visible rows
   // (collapsed children are unmounted, so the DOM order IS the visible order),
-  // the inline-end arrow expands, the inline-start arrow collapses, and
-  // Enter/Space toggles selection (or expansion when not selectable).
+  // the inline-end arrow expands, the inline-start arrow collapses (or moves
+  // focus back to its parent treeitem), and Enter/Space toggles selection or expansion.
   const handleRowKeyDown = (
     e: React.KeyboardEvent<HTMLDivElement>,
     node: T,
@@ -557,7 +557,7 @@ function TreeList<T>({
     hasChildren: boolean,
     isOpen: boolean
   ) => {
-    if (disabled) return;
+    if (disabled || e.target !== e.currentTarget) return;
     const expandKey = direction === "rtl" ? "ArrowLeft" : "ArrowRight";
     const collapseKey = direction === "rtl" ? "ArrowRight" : "ArrowLeft";
     const row = e.currentTarget;
@@ -581,7 +581,15 @@ function TreeList<T>({
       else if (hasChildren && isOpen) moveFocus(1);
     } else if (e.key === collapseKey) {
       e.preventDefault();
-      if (hasChildren && isOpen) onToggle(id);
+      if (hasChildren && isOpen) {
+        onToggle(id);
+      } else {
+        const parentGroup = row.closest('[role="group"]');
+        const parentItem = parentGroup
+          ?.closest("li")
+          ?.querySelector(':scope > [data-tree-row-wrapper] > [role="treeitem"]') as HTMLElement | null;
+        parentItem?.focus();
+      }
     } else if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
       if (selectable && getValueToSend && onSelect) {
@@ -604,7 +612,7 @@ function TreeList<T>({
         const nodeValue = getValueToSend ? getValueToSend(node) : "";
         const children = getChildren(node) ?? [];
         const hasChildren = children.length > 0;
-        const isOpen = expanded[id];
+        const isOpen = id in expandedOverrides ? expandedOverrides[id] : defaultExpanded;
         const selected = selectable && getValueToSend ? selectedValues.includes(nodeValue) : false;
         const indeterminate =
           selectable && getValueToSend ? (isNodeIndeterminate?.(node) ?? false) : false;
@@ -613,113 +621,99 @@ function TreeList<T>({
 
         return (
           <li key={id} role="none" className={cn("group relative", variant === "cards" && "mb-2")}>
-            {/* Node row — the focusable treeitem */}
+            {/* Visual row wrapper separating the interactive treeitem from sibling row actions */}
             <div
-              role="treeitem"
-              aria-level={level + 1}
-              aria-expanded={hasChildren ? isOpen : undefined}
-              aria-selected={selectable ? selected : undefined}
-              // Static roving tabindex: Tab lands on the first root row; the
-              // arrow keys move focus from there.
-              tabIndex={level === 0 && index === 0 ? 0 : -1}
-              onKeyDown={(e) => handleRowKeyDown(e, node, id, hasChildren, isOpen)}
-              className={cn(
-                "flex items-center gap-2",
-                nodeBase,
-                "focus-visible:shadow-nx-focus focus-visible:outline-none",
-                disabled && "cursor-not-allowed",
-                expandOnCardClick && hasChildren && !disabled ? "cursor-pointer" : ""
-              )}
-              onClick={() => {
-                // Handle card click expansion if enabled and node has children
-                if (expandOnCardClick && hasChildren && !disabled) {
-                  onToggle(id);
-                }
-              }}
+              data-tree-row-wrapper=""
+              className={cn("flex items-center gap-2", nodeBase, disabled && "cursor-not-allowed")}
             >
-              {/* Toggle column — 32px whether or not the node has children, so
-                  every label on a level shares one optical column. A leaf gets
-                  the rail dot in place of the chevron; it used to get a
-                  disabled BUTTON, which is a control that promises nothing. */}
-              {hasChildren ? (
-                <button
-                  type="button"
-                  // Out of the tab order: the treeitem row carries the keyboard
-                  // interaction and the aria-expanded state.
-                  tabIndex={-1}
-                  className={cn(
-                    "grid h-8 w-8 shrink-0 place-items-center rounded-nx-sm text-nx-ink-2",
-                    NODE_MOTION,
-                    disabled
-                      ? "cursor-not-allowed text-nx-ink-3"
-                      : "hover:bg-nx-hover hover:text-nx-ink"
-                  )}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (!disabled) {
-                      onToggle(id);
-                    }
-                  }}
-                  disabled={disabled}
-                  aria-label={isOpen ? "Collapse" : "Expand"}
-                >
-                  {isOpen ? (
-                    <ChevronDown className="h-4 w-4" />
-                  ) : (
-                    <ChevronRight className="h-4 w-4 rtl:rotate-180" />
-                  )}
-                </button>
-              ) : (
-                <span aria-hidden="true" className="grid h-8 w-8 shrink-0 place-items-center">
-                  <span className="h-1 w-1 rounded-full bg-nx-ink-3" />
-                </span>
-              )}
-
-              {/* Checkbox for selectable mode */}
-              {selectable && getValueToSend && (
-                <div
-                  className={cn(
-                    "grid h-8 w-8 shrink-0 place-items-center rounded-nx-sm",
-                    NODE_MOTION,
-                    disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-nx-hover"
-                  )}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (!disabled) {
-                      onSelect?.(nodeValue, !selected);
-                    }
-                  }}
-                >
-                  <Checkbox
-                    checked={selected}
-                    disabled={disabled}
-                    ref={(ref) => {
-                      if (ref && indeterminate) {
-                        (ref as any).indeterminate = true;
-                      }
-                    }}
-                    onCheckedChange={(checked) =>
-                      !disabled && onSelect?.(nodeValue, checked === true)
-                    }
-                    className="pointer-events-none"
-                    tabIndex={-1}
-                  />
-                </div>
-              )}
-
-              {/* Icon + Label */}
+              {/* Node row — single focusable treeitem with zero nested interactive controls */}
               <div
-                className={cn(
-                  "flex min-w-0 flex-1 items-center gap-2",
-                  selectable && !disabled ? "cursor-pointer" : ""
-                )}
+                role="treeitem"
+                aria-level={level + 1}
+                aria-expanded={hasChildren ? isOpen : undefined}
+                aria-selected={selectable ? selected : undefined}
+                aria-disabled={disabled || undefined}
+                // Static roving tabindex: Tab lands on the first root row; the
+                // arrow keys move focus from there.
+                tabIndex={level === 0 && index === 0 ? 0 : -1}
+                onKeyDown={(e) => handleRowKeyDown(e, node, id, hasChildren, isOpen)}
                 onClick={(e) => {
-                  if (selectable && getValueToSend && !disabled) {
-                    e.stopPropagation();
+                  if (disabled) return;
+                  const target = e.target as HTMLElement | null;
+                  if (target?.closest("[data-tree-toggle]") && hasChildren) {
+                    onToggle(id);
+                    return;
+                  }
+                  if (selectable && getValueToSend) {
                     onSelect?.(nodeValue, !selected);
+                    return;
+                  }
+                  if (expandOnCardClick && hasChildren) {
+                    onToggle(id);
                   }
                 }}
+                className={cn(
+                  "flex min-w-0 flex-1 items-center gap-2 rounded-nx-sm focus-visible:shadow-nx-focus focus-visible:outline-none",
+                  (selectable || (expandOnCardClick && hasChildren)) && !disabled && "cursor-pointer"
+                )}
               >
+                {/* Visual toggle column — 32px whether or not the node has children.
+                    Presentational inside role="treeitem" (aria-expanded + arrows drive state). */}
+                {hasChildren ? (
+                  <span
+                    data-tree-toggle=""
+                    aria-hidden="true"
+                    className={cn(
+                      "grid h-8 w-8 shrink-0 place-items-center rounded-nx-sm text-nx-ink-2",
+                      NODE_MOTION,
+                      disabled
+                        ? "cursor-not-allowed text-nx-ink-3"
+                        : "cursor-pointer hover:bg-nx-hover hover:text-nx-ink"
+                    )}
+                  >
+                    {isOpen ? (
+                      <ChevronDown aria-hidden="true" className="h-4 w-4" />
+                    ) : (
+                      <ChevronRight aria-hidden="true" className="h-4 w-4 rtl:rotate-180" />
+                    )}
+                  </span>
+                ) : (
+                  <span aria-hidden="true" className="grid h-8 w-8 shrink-0 place-items-center">
+                    <span className="h-1 w-1 rounded-full bg-nx-ink-3" />
+                  </span>
+                )}
+
+                {/* Visual selection indicator — treeitem owns aria-selected & keyboard toggle */}
+                {selectable && getValueToSend && (
+                  <span
+                    aria-hidden="true"
+                    className={cn(
+                      "grid h-8 w-8 shrink-0 place-items-center rounded-nx-sm",
+                      NODE_MOTION,
+                      disabled ? "cursor-not-allowed" : "cursor-pointer hover:bg-nx-hover"
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-nx-sm border transition-[border-color,background-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+                        disabled
+                          ? "border-nx-line bg-nx-raised text-nx-ink-3"
+                          : selected || indeterminate
+                            ? "border-nx-accent bg-nx-accent-fill text-nx-on-fill"
+                            : "border-nx-line-hi bg-nx-ground"
+                      )}
+                    >
+                      {indeterminate ? (
+                        <Minus className="h-3 w-3" strokeWidth={3} aria-hidden="true" />
+                      ) : selected ? (
+                        <Check className="h-3 w-3" strokeWidth={3} aria-hidden="true" />
+                      ) : null}
+                    </span>
+                  </span>
+                )}
+
+                {/* Icon + Label */}
+                <div className="flex min-w-0 flex-1 items-center gap-2">
                 {/* Only branches carry a folder. A leaf is not an empty
                     container, so it does not get drawn as one. */}
                 {hasChildren &&
@@ -757,10 +751,18 @@ function TreeList<T>({
                     {children.length}
                   </span>
                 )}
+                </div>
               </div>
 
-              {/* Actions */}
-              {actions && <NodeActions node={node} actions={actions} direction={direction} />}
+              {/* Actions — sibling control outside role="treeitem" */}
+              {actions && (
+                <NodeActions
+                  node={node}
+                  actions={actions}
+                  direction={direction}
+                  actionsLabel={labels.actions}
+                />
+              )}
             </div>
 
             {/* Children — ONE recursive call site for both variants. The old
@@ -781,7 +783,8 @@ function TreeList<T>({
                     getId={getId}
                     getLabel={getLabel}
                     getChildren={getChildren}
-                    expanded={expanded}
+                    expandedOverrides={expandedOverrides}
+                    defaultExpanded={defaultExpanded}
                     onToggle={onToggle}
                     direction={direction}
                     actions={actions}
@@ -795,6 +798,7 @@ function TreeList<T>({
                     getValueToSend={getValueToSend}
                     disabled={disabled}
                     expandOnCardClick={expandOnCardClick}
+                    labels={labels}
                   />
                 </div>
               </div>

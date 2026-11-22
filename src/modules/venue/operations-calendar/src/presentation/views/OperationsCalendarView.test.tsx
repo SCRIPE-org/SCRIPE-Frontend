@@ -77,6 +77,7 @@ function vm(stage: "ready" | "featureUnavailable" | "error" = "ready") {
     setupLoading: false,
     facilities: [{ id: "fac-1", name: "Main Branch" }],
     allResources: [readyResource],
+    facilityResources: [readyResource],
     visibleResources: [readyResource],
     resourcesTruncated: false,
     timeZoneOptions: [],

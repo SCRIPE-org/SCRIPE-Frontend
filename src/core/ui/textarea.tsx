@@ -21,8 +21,8 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, React.ComponentProps<"tex
             inputStyle: resolveFieldStyle(settings.inputStyle),
           }),
           READ_ONLY_FIELD,
-          // a read-only body is a block of text to copy, not a control to drag
-          "read-only:enabled:resize-none",
+          // read-only and disabled bodies are fixed text regions, not resizable controls
+          "read-only:enabled:resize-none disabled:resize-none",
           className
         )}
         ref={ref}

@@ -96,7 +96,6 @@ export function PlatformKpiCards({
               cy="8"
               r="3"
               fill="currentColor"
-              className="drop-shadow-[0_0_6px_var(--success)]"
             />
           </svg>
         </div>
@@ -163,8 +162,8 @@ export function PlatformKpiCards({
       {/* 3. Active Admins */}
       <Card className="relative flex h-[92px] items-center justify-between gap-3 overflow-hidden border-nx-line bg-nx-surface p-3.5 text-nx-ink transition-[border-color,background-color] duration-nx-micro hover:border-nx-line-hi">
         <div className="flex min-w-0 items-center gap-3">
-          <div className="flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-nx-md border border-primary/20 bg-primary/10 text-primary">
-            <Users className="h-5 w-5" />
+          <div className="flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-nx-md border border-nx-line-hi bg-nx-accent-wash text-nx-accent">
+            <Users className="h-5 w-5" aria-hidden="true" />
           </div>
           <div className="min-w-0">
             <span className="block truncate text-[11.5px] text-nx-ink-3">
@@ -202,7 +201,6 @@ export function PlatformKpiCards({
               cy="10"
               r="3"
               fill="currentColor"
-              className="drop-shadow-[0_0_6px_var(--success)]"
             />
           </svg>
         </div>

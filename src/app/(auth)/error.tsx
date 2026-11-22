@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
+import { appLogger } from "@core/common/logger";
 import { Button } from "@core/ui/button";
 
 /** Route-group error boundary for the (auth) surfaces — a Relay vault-styled
@@ -18,12 +19,12 @@ export default function AuthError({
   const { t, direction } = useI18n();
 
   useEffect(() => {
-    console.error(error);
+    appLogger.error("Auth route boundary error", error);
   }, [error]);
 
   return (
-    <div
-      className="scripe-auth-stage flex min-h-screen w-full flex-col items-center justify-center gap-5 p-6 text-center"
+    <main
+      className="scripe-auth-stage flex min-h-[100dvh] w-full flex-col items-center justify-center gap-5 p-6 text-center"
       dir={direction}
     >
       <div
@@ -31,25 +32,20 @@ export default function AuthError({
         style={{
           background: "var(--sx-card-bg)",
           border: "1px solid var(--sx-card-border)",
-          boxShadow: "var(--sx-card-shadow)",
         }}
       >
         <h1 className="text-lg font-semibold" style={{ color: "var(--sx-text)" }}>
-          {t("errors.boundary.title") || "Something went wrong"}
+          {t("errors.boundary.title", { defaultValue: "Something went wrong" })}
         </h1>
         <p className="text-sm" style={{ color: "var(--sx-text-mute)" }}>
-          {t("errors.module.description") || "Please try again."}
+          {t("errors.module.description", { defaultValue: "Please try again." })}
         </p>
         <Button
           type="button"
           onClick={reset}
-          className="w-full"
-          style={{
-            background: "var(--scripe-signal, #C6FF00)",
-            color: "var(--scripe-ink, #0D0D0E)",
-          }}
+          className="w-full bg-nx-accent-fill font-semibold text-nx-on-fill hover:brightness-95"
         >
-          {t("errors.boundary.retry") || "Try again"}
+          {t("errors.boundary.retry", { defaultValue: "Try again" })}
         </Button>
         {process.env.NODE_ENV === "development" && (
           <pre
@@ -60,6 +56,6 @@ export default function AuthError({
           </pre>
         )}
       </div>
-    </div>
+    </main>
   );
 }

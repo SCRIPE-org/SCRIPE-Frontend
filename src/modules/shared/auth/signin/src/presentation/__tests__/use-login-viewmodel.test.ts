@@ -2,6 +2,8 @@ import { renderHook, act, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { useLoginViewModel } from "../viewmodels/use-login-viewmodel";
 
+let mockRedirectQuery: string | null = null;
+
 // Mocks
 const {
   mockLoginMutateAsync,
@@ -10,6 +12,7 @@ const {
   mockOperationError,
   mockRefreshNavigation,
   mockVerify2FA,
+  mockAppState,
   mockUseAppStore,
 } = vi.hoisted(() => {
   const mockLoginMutateAsync = vi.fn();
@@ -24,6 +27,7 @@ const {
     _hasHydrated: true,
     defaultRedirectPath: "/",
     mustChangePassword: false,
+    subscriptionStatus: "Active" as string | null,
     setAuth: mockSetAuth,
   };
   const mockUseAppStore = Object.assign(
@@ -40,6 +44,7 @@ const {
     mockOperationError,
     mockRefreshNavigation,
     mockVerify2FA,
+    mockAppState,
     mockUseAppStore,
   };
 });
@@ -51,7 +56,7 @@ vi.mock("next/navigation", () => ({
     push: vi.fn(),
   }),
   useSearchParams: () => ({
-    get: vi.fn(() => null),
+    get: (key: string) => (key === "redirect" ? mockRedirectQuery : null),
   }),
 }));
 
@@ -127,6 +132,11 @@ vi.mock("@/core/common/logger", () => ({
 describe("useLoginViewModel", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockRedirectQuery = null;
+    mockAppState.isAuthenticated = false;
+    mockAppState.mustChangePassword = false;
+    mockAppState.subscriptionStatus = "Active";
+    mockAppState.defaultRedirectPath = "/";
   });
 
   it("should initialize with default state", () => {
@@ -191,15 +201,60 @@ describe("useLoginViewModel", () => {
       expect(result.current.isRedirecting).toBe(true);
     });
 
-    // Router replace is called inside setTimeout.
-    // The mocked store supplies defaultRedirectPath: "/" (line 25). "/" has no
-    // page in the App Router — there is no src/app/page.tsx — so
-    // use-login-viewmodel.ts normalizes a "/" (or empty) redirect target to
-    // "/overview", which is the real authenticated landing route
-    // (src/app/(modules)/(workspace-admin)/overview/page.tsx). Asserting "/"
-    // here encoded a landing route that never existed.
+    // Router replace is called inside setTimeout -> routes through "/" so
+    // app/(modules)/page.tsx performs single-pass bootstrap and Tier 1–5 landing resolution.
     await new Promise((r) => setTimeout(r, 150));
-    expect(mockRouterReplace).toHaveBeenCalledWith("/overview");
+    expect(mockRouterReplace).toHaveBeenCalledWith("/");
+  });
+
+  it("enforces Tier 0 gates and preserves safe ?redirect= query targets cleanly", async () => {
+    mockRedirectQuery = "/crm/leads?status=open";
+    mockAppState.mustChangePassword = false;
+    mockAppState.subscriptionStatus = "Active";
+    mockLoginMutateAsync.mockResolvedValue({});
+
+    const { result, unmount } = renderHook(() => useLoginViewModel());
+    act(() => {
+      result.current.updateField("identifier", "testuser");
+      result.current.updateField("password", "password123");
+    });
+
+    await act(async () => {
+      await result.current.handleLogin();
+    });
+    await new Promise((r) => setTimeout(r, 150));
+    expect(mockRouterReplace).toHaveBeenCalledWith(
+      `/?redirect=${encodeURIComponent("/crm/leads?status=open")}`
+    );
+    unmount();
+
+    mockRouterReplace.mockClear();
+    mockAppState.subscriptionStatus = "PendingPayment";
+    const pendingHook = renderHook(() => useLoginViewModel());
+    act(() => {
+      pendingHook.result.current.updateField("identifier", "testuser");
+      pendingHook.result.current.updateField("password", "password123");
+    });
+    await act(async () => {
+      await pendingHook.result.current.handleLogin();
+    });
+    await new Promise((r) => setTimeout(r, 150));
+    expect(mockRouterReplace).toHaveBeenCalledWith("/activate-workspace");
+    pendingHook.unmount();
+
+    mockRouterReplace.mockClear();
+    mockAppState.mustChangePassword = true;
+    const mcpHook = renderHook(() => useLoginViewModel());
+    act(() => {
+      mcpHook.result.current.updateField("identifier", "testuser");
+      mcpHook.result.current.updateField("password", "password123");
+    });
+    await act(async () => {
+      await mcpHook.result.current.handleLogin();
+    });
+    await new Promise((r) => setTimeout(r, 150));
+    expect(mockRouterReplace).toHaveBeenCalledWith("/change-password");
+    mcpHook.unmount();
   });
 
   it("should handle login failure", async () => {

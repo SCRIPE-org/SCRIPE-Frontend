@@ -168,7 +168,7 @@ export function ApiPerformanceTelemetry({
         {/* GC Collections */}
         <div className="rounded-lg border border-nx-line bg-nx-raised/40 p-2.5">
           <div className="flex items-center gap-1.5 text-[11px] text-nx-ink-3">
-            <Layers className="h-3 w-3 text-warning" />
+            <Layers className="h-3 w-3 text-nx-warning-strong" />
             <span>{t("platformHealth.performance.gcCollections") || "GC Counts"}</span>
           </div>
           <div className="mt-1 font-mono text-sm font-bold text-nx-ink">

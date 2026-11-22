@@ -30,7 +30,7 @@ function getRiskBadge(score: TenantHealthScore, t: (key: string) => string) {
   }
   if (score.riskLevel === "Moderate") {
     return (
-      <Badge className="gap-1 border-warning/20 bg-warning/10 text-[10px] font-semibold text-warning">
+      <Badge className="gap-1 border-warning/20 bg-warning/10 text-[10px] font-semibold text-nx-warning-strong">
         <AlertTriangle className="h-3 w-3" /> {t("entitlements.analytics.health.riskModerate")}
       </Badge>
     );
@@ -44,7 +44,7 @@ function getRiskBadge(score: TenantHealthScore, t: (key: string) => string) {
 
 function getScoreColor(score: number): string {
   if (score >= 70) return "text-success";
-  if (score >= 40) return "text-warning";
+  if (score >= 40) return "text-nx-warning-strong";
   return "text-destructive";
 }
 
@@ -87,9 +87,9 @@ export function HealthTab({ healthData, page, pageSize, onPageChange }: HealthTa
           </p>
         </div>
         <div className="rounded-nx-md border border-warning/20 bg-warning/[0.04] p-3 text-center">
-          <AlertTriangle className="mx-auto mb-1 h-5 w-5 text-warning" />
-          <p className="text-xl font-bold text-warning">{moderateCount}</p>
-          <p className="text-[10px] font-semibold uppercase text-warning/70">
+          <AlertTriangle className="mx-auto mb-1 h-5 w-5 text-nx-warning-strong" />
+          <p className="text-xl font-bold text-nx-warning-strong">{moderateCount}</p>
+          <p className="text-[10px] font-semibold uppercase text-nx-warning-strong">
             {t("entitlements.analytics.health.riskModerate")}
           </p>
         </div>

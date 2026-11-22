@@ -68,4 +68,20 @@ describe("RadioGroup and RadioGroupItem", () => {
       expect(input).toHaveAttribute("tabindex", "-1");
     });
   });
+
+  it("uses 3:1 line-hi border at rest and high-contrast checked focus-visible treatment", () => {
+    render(
+      <RadioGroup value="a" onValueChange={vi.fn()}>
+        <RadioGroupItem value="a" aria-label="Option A" />
+        <RadioGroupItem value="b" aria-label="Option B" />
+        <RadioGroupItem value="c" disabled aria-label="Option C" />
+      </RadioGroup>
+    );
+
+    const radios = screen.getAllByRole("radio");
+    expect(radios[1].className).toContain("border-nx-line-hi");
+    expect(radios[0].className).toContain("data-[state=checked]:focus-visible:border-nx-on-fill");
+    expect(radios[2]).toBeDisabled();
+    expect(radios[2].className).toContain("disabled:cursor-not-allowed");
+  });
 });

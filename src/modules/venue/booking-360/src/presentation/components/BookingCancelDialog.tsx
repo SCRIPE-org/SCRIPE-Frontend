@@ -1,7 +1,7 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
-import { UserX } from "lucide-react";
+import { AlertCircle, UserX } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,6 +31,8 @@ interface Props {
   scheduledTime?: string;
   direction: "ltr" | "rtl";
   disabled: boolean;
+  paidAmount?: number;
+  currencyCode?: string;
   t: (key: string, values?: Record<string, string | number>) => string;
   onConfirmCancel: (reason: string) => void;
 }
@@ -111,6 +113,26 @@ export function BookingCancelDialog(props: Props) {
                 <span className="font-medium tabular-nums text-nx-ink">{props.scheduledTime}</span>
               </div>
             )}
+          </div>
+        )}
+
+        {Boolean(props.paidAmount && props.paidAmount > 0) && (
+          <div
+            className="mx-6 mt-3 rounded-nx-sm border border-warning/30 bg-warning/10 p-3 text-xs text-warning"
+            data-testid="cancel-paid-warning"
+          >
+            <div className="flex items-center gap-2 font-semibold">
+              <AlertCircle className="size-4 shrink-0" aria-hidden="true" />
+              <span>{props.t("booking360.cancel.paidWarningTitle")}</span>
+            </div>
+            <p className="mt-1 text-nx-ink-2">
+              {props.t("booking360.cancel.paidWarningDescription", {
+                amount: new Intl.NumberFormat(undefined, {
+                  style: "currency",
+                  currency: props.currencyCode || "EGP",
+                }).format(props.paidAmount ?? 0),
+              })}
+            </p>
           </div>
         )}
 

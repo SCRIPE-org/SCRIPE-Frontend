@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { STORAGE_KEYS } from "./core/config/storage-keys";
+import { isManifestPublicRoute, matchAppRoute } from "./core/config/app-route-manifest";
+import { isSafeRedirectTarget } from "./modules/shared/auth/signin/src/presentation/utils/redirect-safety";
 
 /**
  * Next.js Server-Side Route Guard Proxy
@@ -10,45 +12,38 @@ import { STORAGE_KEYS } from "./core/config/storage-keys";
  * at the server level — no HTML/JS leakage.
  *
  * Strategy:
- * - Public paths (login, docs) → always allow
- * - Protected paths (modules, settings, profile) → require refresh token cookie
+ * - Unknown routes (not in APP_ROUTE_MANIFEST) → pass through so Next renders clean 404
+ * - Public routes (from APP_ROUTE_MANIFEST, excluding prod-disabled devOnly) → allow
+ * - Protected routes (all remaining manifest routes) → require scr_auth_state cookie
  * - Static assets (_next, favicons, etc.) → skip entirely via matcher
- *
- * The refresh token cookie is the server-side auth signal.
- * Access tokens live in memory (Zustand) and aren't available server-side.
  */
-
-// Routes that don't require authentication
-const PUBLIC_PATHS = ["/login", "/forgot-password", "/authorize"];
-
-// Routes that explicitly require authentication
-// Everything under (modules) is protected by the layout, but this adds server-level guard
-const PROTECTED_PREFIXES = ["/admin", "/profile", "/settings", "/recycle-bin"];
 
 const AUTH_STATE_COOKIE = STORAGE_KEYS.scr_auth_state;
 
 export function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname, search } = request.nextUrl;
 
-  // Allow public paths
-  if (PUBLIC_PATHS.some((p) => pathname.startsWith(p))) {
+  const entry = matchAppRoute(pathname);
+
+  // Unknown route → let Next.js App Router render not-found (404)
+  if (!entry) {
     return NextResponse.next();
   }
 
-  // Check if route is protected (starts with known module prefixes or is at root level)
-  const isProtected = PROTECTED_PREFIXES.some((p) => pathname.startsWith(p)) || pathname === "/"; // Home/dashboard is protected
-
-  if (!isProtected) {
+  // Public routes (respecting devOnly production gating)
+  if (isManifestPublicRoute(pathname)) {
     return NextResponse.next();
   }
 
-  // Check for frontend auth state cookie as auth signal
+  // Protected shell/devOnly/menu-bound routes → enforce server-side auth state cookie
   const hasAuthState = request.cookies.has(AUTH_STATE_COOKIE);
 
   if (!hasAuthState) {
-    // Build login URL with redirect parameter
     const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("redirect", pathname);
+    const candidateRedirect = search ? `${pathname}${search}` : pathname;
+    if (isSafeRedirectTarget(candidateRedirect)) {
+      loginUrl.searchParams.set("redirect", candidateRedirect);
+    }
     return NextResponse.redirect(loginUrl);
   }
 

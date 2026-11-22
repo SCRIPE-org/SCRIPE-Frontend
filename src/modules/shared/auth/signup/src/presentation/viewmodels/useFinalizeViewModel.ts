@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { secureTokenService } from "@core/common/secure-token-service";
+import { getSafeRedirectPath } from "@core/common/redirect-safety";
 import { useAppStore } from "@core/store/useAppStore";
 import { User } from "@modules/auth/core/domain/entities/User";
 import { authContainer } from "@modules/auth/di";
@@ -83,10 +84,11 @@ export function useFinalizeViewModel() {
             adminTypeName: "",
           });
 
+        const safeRedirectPath = getSafeRedirectPath(result.redirectUrl, "/");
         setAuth(user, user.permissions ?? [], [], true);
         if (result.tenantCode) setTenantCode(result.tenantCode);
         setSubscriptionInfo(null, null, null);
-        setDefaultRedirectPath(result.redirectUrl || "/");
+        setDefaultRedirectPath(safeRedirectPath);
         queryClient.invalidateQueries();
 
         try {
@@ -99,7 +101,7 @@ export function useFinalizeViewModel() {
 
         setPhase("success");
         setTimeout(() => {
-          router.replace(result.redirectUrl || "/");
+          router.replace(safeRedirectPath);
         }, 1800);
       } catch (err: unknown) {
         // 409 already_consumed → the user finished in another tab; send them to login

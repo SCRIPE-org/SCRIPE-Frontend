@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// UI-EXCEPTION: compact studio layout
 /**
  * OnboardingQuestionsCatalogView — Admin CRUD table for onboarding questions.
  *
@@ -38,6 +37,7 @@ export function OnboardingQuestionsCatalogView({
       titleKey: "entitlements.onboarding.questions.title",
       subtitleKey: "entitlements.onboarding.questions.description",
       resource: "onboarding_questions",
+      stickyActions: true,
       // Registered in the backend's EntitlementsEntityTypeCatalog -- must match
       // exactly. Create/edit both route through GenericCrudView's own modal
       // here, so this one line is all the wiring this screen needs.

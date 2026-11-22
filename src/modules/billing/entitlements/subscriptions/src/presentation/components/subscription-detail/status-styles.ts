@@ -32,7 +32,7 @@ export const STATUS_STYLES: Record<string, StatusStyle> = {
     dotColor: "bg-success",
   },
   Trialing: {
-    icon: createElement(Timer, { className: "h-5 w-5 text-warning" }),
+    icon: createElement(Timer, { className: "h-5 w-5 text-nx-warning-strong" }),
     dotColor: "bg-warning",
   },
   Suspended: {
@@ -52,7 +52,7 @@ export const STATUS_STYLES: Record<string, StatusStyle> = {
     dotColor: "bg-info",
   },
   PastDue: {
-    icon: createElement(AlertTriangle, { className: "h-5 w-5 text-warning" }),
+    icon: createElement(AlertTriangle, { className: "h-5 w-5 text-nx-warning-strong" }),
     dotColor: "bg-warning",
   },
 };

@@ -1,5 +1,20 @@
 import type { PasskeyEntity } from "../entities/PasskeyEntity";
 
+/** WebAuthn creation options extended with backend challenge tracking metadata. */
+export type PasskeyBeginRegistrationOptions = PublicKeyCredentialCreationOptions & {
+  challengeToken?: string;
+  mode?: string;
+};
+
+/** Optional attestation transport and challenge metadata sent when completing passkey registration. */
+export interface PasskeyRegistrationCompletionMetadata {
+  challengeToken?: string;
+  attestationMode?: string;
+  credentialIdBase64?: string;
+  transports?: string[] | null;
+  clientExtensionResults?: Record<string, unknown>;
+}
+
 /**
  * IPasskeyRepository — Contract for passkey CRUD operations.
  *
@@ -9,10 +24,13 @@ export interface IPasskeyRepository {
   /** List all passkeys for the current admin. */
   getAll(): Promise<PasskeyEntity[]>;
 
-  /** Begin passkey registration — returns WebAuthn options to pass to navigator.credentials.create(). */
-  beginRegistration(): Promise<PublicKeyCredentialCreationOptions>;
+  /** Begin passkey registration — returns WebAuthn options + challengeToken from backend. */
+  beginRegistration(
+    deviceName?: string,
+    mode?: string
+  ): Promise<PasskeyBeginRegistrationOptions>;
 
-  /** Complete passkey registration — send the attestation result to the backend. */
+  /** Complete passkey registration — send the attestation result and challengeToken to the backend. */
   completeRegistration(
     deviceName: string,
     attestationResponse: {
@@ -22,8 +40,11 @@ export interface IPasskeyRepository {
       response: {
         attestationObject: string;
         clientDataJSON: string;
+        transports?: string[] | null;
       };
-    }
+      clientExtensionResults?: Record<string, unknown>;
+    },
+    metadata?: PasskeyRegistrationCompletionMetadata
   ): Promise<PasskeyEntity>;
 
   /** Rename a passkey. */

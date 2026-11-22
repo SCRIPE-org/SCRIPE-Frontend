@@ -222,7 +222,7 @@ export function PreviewDialog({
             <div className="flex justify-center">
               <div
                 className={cn(
-                  "overflow-hidden rounded-nx-lg border border-nx-line shadow-nx-sm",
+                  "overflow-hidden rounded-nx-lg border border-nx-line",
                   device === "mobile" && "border-2"
                 )}
                 style={{

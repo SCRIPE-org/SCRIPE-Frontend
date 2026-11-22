@@ -55,6 +55,7 @@ export function TenantFeatureDefinitionsView() {
       titleKey: "entitlements.featureDefinitions.title",
       subtitleKey: "entitlements.featureDefinitions.description",
       resource: "tenant_feature_definitions",
+      stickyActions: true,
       entityTypeKey: "entitlements.tenant-feature-definition",
       columns,
       customHeaderContent: (

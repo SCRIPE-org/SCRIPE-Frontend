@@ -58,8 +58,8 @@ export class AdminRepository implements IAdminRepository {
     };
   }
 
-  async getMyTenantAdmins(params: AdminListParams): Promise<PagedResult<Admin>> {
-    const result = await this.service.getMyTenantAdmins(params);
+  async getCurrentTenantAdmins(params: AdminListParams): Promise<PagedResult<Admin>> {
+    const result = await this.service.getCurrentTenantAdmins(params);
 
     return {
       items: result.items.map((model) => AdminMapper.toEntity(model)),
@@ -83,9 +83,9 @@ export class AdminRepository implements IAdminRepository {
     return response.id;
   }
 
-  async createForMyTenant(request: Omit<CreateAdminRequest, "tenantId">): Promise<string> {
+  async createInCurrentTenant(request: Omit<CreateAdminRequest, "tenantId">): Promise<string> {
     const model = AdminMapper.toCreateModel(request as CreateAdminRequest);
-    const response = await this.service.createForMyTenant(model.toJson());
+    const response = await this.service.createInCurrentTenant(model.toJson());
     return response.id;
   }
 

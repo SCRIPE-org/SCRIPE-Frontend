@@ -16,6 +16,7 @@ export class VenueProfileMapper {
       createdAt: model.createdAt,
       modifiedAt: model.modifiedAt,
       siteName: model.siteName,
+      rowVersion: model.rowVersion,
     };
     return new VenueProfile(data);
   }

@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { Label } from "@core/ui/label";
 import { Input } from "@core/ui/input";
 import { GenericSelect } from "@core/crud/components/generic-select";
@@ -23,6 +22,9 @@ interface BookingCourtStepProps {
   courtLabel: string;
 }
 
+/**
+ * Step 0 court, date, start time, and slot duration selector for Click-to-Book.
+ */
 export function BookingCourtStep({
   resources,
   selectedResource,
@@ -38,28 +40,19 @@ export function BookingCourtStep({
   courtLabel,
 }: BookingCourtStepProps) {
   const effectiveTz = selectedResource?.timeZoneId || timeZoneId || "UTC";
-  const prefill = React.useMemo(
-    () => localPrefillForInstant(startUtc, effectiveTz),
-    [startUtc, effectiveTz]
-  );
+  const prefill = localPrefillForInstant(startUtc, effectiveTz);
+  const startIncrementMinutes = selectedResource?.slotPolicy?.startIncrementMinutes ?? 30;
 
-  const startIncrementMinutes = selectedResource?.slotPolicy?.startIncrementMinutes;
-  const prefillStartTime = prefill.startTime;
-
-  const timeOptions = React.useMemo(() => {
-    const increment = startIncrementMinutes ?? 30;
-    const options: string[] = [];
-    for (let m = 0; m < 24 * 60; m += increment) {
-      const hh = String(Math.floor(m / 60)).padStart(2, "0");
-      const mm = String(m % 60).padStart(2, "0");
-      options.push(`${hh}:${mm}`);
-    }
-    if (prefillStartTime && !options.includes(prefillStartTime)) {
-      options.push(prefillStartTime);
-      options.sort();
-    }
-    return options;
-  }, [startIncrementMinutes, prefillStartTime]);
+  const timeOptions: string[] = [];
+  for (let m = 0; m < 24 * 60; m += startIncrementMinutes) {
+    const hh = String(Math.floor(m / 60)).padStart(2, "0");
+    const mm = String(m % 60).padStart(2, "0");
+    timeOptions.push(`${hh}:${mm}`);
+  }
+  if (prefill.startTime && !timeOptions.includes(prefill.startTime)) {
+    timeOptions.push(prefill.startTime);
+    timeOptions.sort();
+  }
 
   return (
     <div className="space-y-3 py-1">
@@ -101,8 +94,7 @@ export function BookingCourtStep({
             value={prefill.date}
             onChange={(e) => {
               if (!e.target.value) return;
-              const newUtc = localToUtcInstant(e.target.value, prefill.startTime, effectiveTz);
-              onStartTimeChange(newUtc);
+              onStartTimeChange(localToUtcInstant(e.target.value, prefill.startTime, effectiveTz));
             }}
             className="h-8 text-xs font-semibold"
           />
@@ -121,8 +113,7 @@ export function BookingCourtStep({
             onValueChange={(value: string | string[]) => {
               const time = Array.isArray(value) ? value[0] : value;
               if (!time) return;
-              const newUtc = localToUtcInstant(prefill.date, time, effectiveTz);
-              onStartTimeChange(newUtc);
+              onStartTimeChange(localToUtcInstant(prefill.date, time, effectiveTz));
             }}
           />
         </div>
@@ -132,7 +123,7 @@ export function BookingCourtStep({
             {t("operationsCalendar.clickToBook.courtStep.duration")}
           </Label>
           {allowedDurations.length <= 1 ? (
-            <div className="border-nx-border bg-nx-raised/40 flex h-8 w-full items-center rounded-md border px-3 text-xs font-semibold text-nx-ink">
+            <div className="flex h-8 w-full items-center rounded-nx-control border border-nx-line bg-nx-raised/40 px-3 text-xs font-semibold text-nx-ink">
               {t("operationsCalendar.clickToBook.courtStep.minutes", {
                 minutes: allowedDurations[0] ?? 60,
               })}

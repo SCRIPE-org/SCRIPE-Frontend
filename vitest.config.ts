@@ -1,5 +1,4 @@
 import { defineConfig } from "vitest/config";
-import react from "@vitejs/plugin-react";
 import path from "path";
 import fs from "fs";
 
@@ -17,7 +16,9 @@ if (tsconfig.compilerOptions && tsconfig.compilerOptions.paths) {
 }
 
 export default defineConfig({
-  plugins: [react()],
+  esbuild: {
+    jsx: "automatic",
+  },
   test: {
     environment: "jsdom",
     globals: true,
@@ -25,14 +26,12 @@ export default defineConfig({
     include: ["**/*.{test,spec}.{ts,tsx}"],
     exclude: ["node_modules", ".next", "dist", "e2e"],
     // Vitest's 5000ms default is too tight for this suite's view-level tests,
-    // which mount a whole screen (GenericCrudView + Radix primitives +
-    // react-query) inside jsdom and await async custom-field/definition
-    // fetches. Those pass in ~1-2s on an idle machine but exceed 5s when the
-    // box is loaded, producing timeouts that look like real failures and
-    // aren't -- the same file passes in 7s when run on its own. Raised so a
-    // busy CI runner doesn't turn a correct test into a flake; genuinely
-    // hung tests still fail, just 15s later.
-    testTimeout: 15000,
+    // which mount a whole screen (GenericCrudView / 2D Workflow Studio + Radix
+    // primitives + react-query) inside jsdom or scan monorepo contract files.
+    // Those pass in ~1-7s on an idle machine but reach ~14-19s when all CPU
+    // workers run in parallel on Windows, turning correct tests into flakes.
+    // Genuinely hung tests still fail, just at 30s instead of 15s.
+    testTimeout: 30000,
     coverage: {
       provider: "v8",
       reporter: ["text", "json", "html"],

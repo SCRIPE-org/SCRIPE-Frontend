@@ -115,7 +115,7 @@ export function TenantKpiCards({ kpis }: TenantKpiCardsProps) {
               >
                 {t("tenantCommandCenter.kpis.branchesAndSites") || "Branches & sites"}
               </span>
-              <span className="shrink-0 font-mono text-[11px] font-bold text-primary">
+              <span className="shrink-0 font-mono text-[11px] font-bold text-nx-accent">
                 {kpis.branchesAndSites.trend}
               </span>
             </div>
@@ -124,7 +124,7 @@ export function TenantKpiCards({ kpis }: TenantKpiCardsProps) {
             </b>
             <div className="mt-2.5 h-1.5 w-full max-w-[130px] overflow-hidden rounded-full bg-nx-raised-2">
               <div
-                className="h-full rounded-full bg-primary"
+                className="h-full rounded-full bg-nx-accent-fill"
                 style={{ width: `${Math.min(100, Math.max(0, kpis.branchesAndSites.percent))}%` }}
               />
             </div>

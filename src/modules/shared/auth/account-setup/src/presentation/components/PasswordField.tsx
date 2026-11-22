@@ -38,7 +38,7 @@ export function PasswordField({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="pe-10 font-mono text-sm tracking-tight focus-visible:ring-2 focus-visible:ring-primary"
+        className="pe-10 font-mono text-sm tracking-tight focus-visible:shadow-nx-focus"
         autoFocus={autoFocus}
       />
       <Button
@@ -46,7 +46,7 @@ export function PasswordField({
         type="button"
         size="sm"
         onClick={onToggle}
-        className="absolute end-1 top-1/2 h-8 w-8 -translate-y-1/2 p-0 text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="absolute end-1 top-1/2 h-8 w-8 -translate-y-1/2 p-0 text-nx-ink-2 transition-colors hover:text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus"
         tabIndex={0}
         aria-label={show ? "Hide password" : "Show password"}
       >

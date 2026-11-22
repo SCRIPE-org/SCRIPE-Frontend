@@ -84,10 +84,10 @@ export function ResourceBookingRulesTab({ vm }: Props) {
                   type="button"
                   key={value}
                   onClick={() => handleDurationChange(value)}
-                  className={`h-auto justify-start rounded-nx-md border p-3 text-left transition-all rtl:text-right ${
+                  className={`flex flex-col items-start h-auto justify-start rounded-nx-md border p-3 text-start transition-all ${
                     slotDuration === value
                       ? "bg-nx-accent/10 border-nx-accent font-bold text-nx-ink ring-1 ring-nx-accent"
-                      : "hover:bg-nx-surfaceSubtle border-nx-line text-nx-ink-2"
+                      : "hover:bg-nx-raised border-nx-line text-nx-ink-2"
                   }`}
                 >
                   <p className="text-xs font-semibold">

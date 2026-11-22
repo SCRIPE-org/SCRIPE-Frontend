@@ -100,7 +100,7 @@ export function PartyQuickPreviewSheet({
               </span>
             </div>
             <div className="flex items-start gap-3 pt-2">
-              <div className="bg-nx-accent/10 flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-base font-bold text-nx-accent">
+              <div className="bg-nx-accent-wash flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-base font-bold text-nx-accent">
                 {party.initials}
               </div>
               <div className="min-w-0">

@@ -1,6 +1,8 @@
-﻿"use client";
+"use client";
 
 import React from "react";
+import Link from "next/link";
+import { ExternalLink } from "lucide-react";
 import { Alert, AlertDescription } from "@core/ui/alert";
 import { Button } from "@core/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
@@ -53,6 +55,19 @@ export function PaymentRecordCard({ canRecord, model }: PaymentRecordCardProps) 
                 }
                 placeholder={t("money.payments.selectInvoice")}
               />
+              {model.selectedInvoice?.reservationId && (
+                <div className="mt-1 flex items-center gap-1.5 text-xs text-nx-ink-2">
+                  <span>{t("money.payments.linkedBooking", { defaultValue: "Linked Booking" })}:</span>
+                  <Link
+                    href={`/venue/bookings/${encodeURIComponent(model.selectedInvoice.reservationId)}`}
+                    className="inline-flex items-center gap-1 font-medium text-nx-accent hover:underline"
+                    data-testid="selected-invoice-booking-link"
+                  >
+                    <span>{t("money.payments.viewBooking", { defaultValue: "Booking 360" })}</span>
+                    <ExternalLink className="size-3" aria-hidden="true" />
+                  </Link>
+                </div>
+              )}
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">

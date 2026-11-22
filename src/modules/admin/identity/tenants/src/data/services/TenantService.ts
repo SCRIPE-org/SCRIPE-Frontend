@@ -40,13 +40,26 @@ import type {
   DowngradeImpactReport,
 } from "../models/TenantSubscription";
 import { TENANTS_ENDPOINTS } from "./tenants.endpoints";
+import { TenantIdentityProviderService } from "./TenantIdentityProviderService";
+import type { TenantIdentityProviderListParams } from "../../domain/entities/TenantIdentityProvider";
+import type {
+  CreateTenantIdentityProviderDto,
+  TenantIdentityProviderDetailDto,
+  TenantIdentityProviderPagedDto,
+  TenantIdpTestConnectionDto,
+  UpdateTenantIdentityProviderDto,
+} from "../models/TenantIdentityProviderModels";
 
 /**
  * Http API network service for tenant.
  * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export class TenantService implements ITenantService {
-  constructor(private readonly api: IApiService) {}
+  private readonly identityProviderService: TenantIdentityProviderService;
+
+  constructor(private readonly api: IApiService) {
+    this.identityProviderService = new TenantIdentityProviderService(api);
+  }
 
   async getAll(params: ServiceTenantListParams): Promise<TenantListResult> {
     const url = buildUrl(TENANTS_ENDPOINTS.LIST, {
@@ -74,8 +87,8 @@ export class TenantService implements ITenantService {
     return jsonList.map((json) => TenantTreeNodeModel.fromJson(json));
   }
 
-  async getMyChildren(params?: ServiceTenantListParams): Promise<TenantTreeListResult> {
-    const url = buildUrl(TENANTS_ENDPOINTS.MY_CHILDREN, {
+  async getCurrentTenantChildren(params?: ServiceTenantListParams): Promise<TenantTreeListResult> {
+    const url = buildUrl(TENANTS_ENDPOINTS.CURRENT_TENANT_CHILDREN, {
       page: params?.page,
       pageSize: params?.pageSize,
       search: params?.search,
@@ -97,8 +110,8 @@ export class TenantService implements ITenantService {
    * For Admin Transfer dialog - returns own tenant + all descendants
    * System admins get a "System" pseudo-tenant (null ID)
    */
-  async getMyTenantAndChildren(search?: string): Promise<TenantTreeNodeModel[]> {
-    const url = buildUrl(TENANTS_ENDPOINTS.MY_TENANT_AND_CHILDREN, { search });
+  async getCurrentTenantHierarchy(search?: string): Promise<TenantTreeNodeModel[]> {
+    const url = buildUrl(TENANTS_ENDPOINTS.CURRENT_TENANT_HIERARCHY, { search });
     const jsonList = await this.api.get<TenantTreeNodeJson[]>(url);
     return jsonList.map((json) => TenantTreeNodeModel.fromJson(json));
   }
@@ -449,5 +462,47 @@ export class TenantService implements ITenantService {
 
   async removeDomain(tenantId: string, domainId: string): Promise<void> {
     await this.api.delete(TENANTS_ENDPOINTS.DOMAIN_BY_ID(tenantId, domainId));
+  }
+
+  // ── Platform-Admin Tenant-Scoped Identity Providers ───────
+
+  async getIdentityProviders(
+    tenantId: string,
+    params?: TenantIdentityProviderListParams
+  ): Promise<TenantIdentityProviderPagedDto> {
+    return this.identityProviderService.getAll(tenantId, params);
+  }
+
+  async getIdentityProviderById(
+    tenantId: string,
+    id: string
+  ): Promise<TenantIdentityProviderDetailDto> {
+    return this.identityProviderService.getById(tenantId, id);
+  }
+
+  async createIdentityProvider(
+    tenantId: string,
+    payload: CreateTenantIdentityProviderDto
+  ): Promise<{ id: string }> {
+    return this.identityProviderService.create(tenantId, payload);
+  }
+
+  async updateIdentityProvider(
+    tenantId: string,
+    id: string,
+    payload: UpdateTenantIdentityProviderDto
+  ): Promise<void> {
+    return this.identityProviderService.update(tenantId, id, payload);
+  }
+
+  async deleteIdentityProvider(tenantId: string, id: string): Promise<void> {
+    return this.identityProviderService.delete(tenantId, id);
+  }
+
+  async testIdentityProviderConnection(
+    tenantId: string,
+    id: string
+  ): Promise<TenantIdpTestConnectionDto> {
+    return this.identityProviderService.testConnection(tenantId, id);
   }
 }

@@ -7,23 +7,69 @@
  * Clean Architecture rule: Domain interfaces NEVER import from the data layer.
  */
 
+import type {
+  LandingTargetCatalog,
+  LandingTargetScopeMode,
+} from "../entities/LandingTargetCatalog";
 import type { NavigationData } from "../entities/NavigationData";
 import type { WorkspaceGroupData } from "../entities/WorkspaceGroup";
+import type { AdminWorkspaceEntryPreference } from "../entities/WorkspaceEntryPreference";
+
+export type RouteAccessState =
+  | "authorized"
+  | "tenant_context_required"
+  | "platform_context_required"
+  | "feature_disabled";
+
+export interface AuthorizedRouteDescriptor {
+  route: string;
+  accessState: RouteAccessState;
+  workspaceKey?: string | null;
+  requiredFeature?: string | null;
+  requiresTenantContext: boolean;
+}
+
+export interface AuthorizedRoutesResult {
+  routes: string[];
+  workspaceRouteMap: Record<string, string[]>;
+  routeDescriptors: AuthorizedRouteDescriptor[];
+}
+
+export interface LandingResolution {
+  targetKind: string;
+  route: string;
+  workspaceKey: string | null;
+  sourceReason: string;
+  isEnforced: boolean;
+  enforcingRoleName: string | null;
+  wasFallbackApplied: boolean;
+  fallbackReason: string | null;
+}
+
+export interface BootstrapNavigationResult {
+  navigationData: NavigationData;
+  routes: string[];
+  workspaceRouteMap: Record<string, string[]>;
+  routeDescriptors: AuthorizedRouteDescriptor[];
+  landingResolution: LandingResolution | null;
+}
 
 export interface INavigationRepository {
   /**
-   * Phase 0 — Eager routes load (called ONCE on login, before any menu trees).
+   * Single-pass bootstrap call (called ONCE on login/context switch/hard reload).
+   * Coalesces authorized routes, descriptors, workspace groups, hydrated target workspace
+   * menu tree, and resolved landing metadata into one HTTP request.
    *
-   * Fetches ALL accessible routes across ALL workspaces in a single lightweight call.
-   * This seeds the allRoutes Set in useNavigationStore, guaranteeing that the
-   * RouteGuard never gets a false "not-authorized" while menu trees are loading.
-   *
-   * Backend: GET /Menus/my/routes
+   * Backend: GET /menus/navigation[?redirect=<encoded>]
    */
-  fetchRoutes(): Promise<{
-    routes: string[];
-    workspaceRouteMap: Record<string, string[]>;
-  }>;
+  fetchNavigationBootstrap(redirect?: string | null): Promise<BootstrapNavigationResult>;
+
+  /**
+   * Legacy / rolling-compat routes load.
+   *
+   * Backend: GET /menus/navigation/routes
+   */
+  fetchRoutes(): Promise<AuthorizedRoutesResult>;
 
   /**
    * Phase 1 — Default workspace load (login / hard reload).
@@ -31,7 +77,7 @@ export interface INavigationRepository {
    * Fetches the default (admin) workspace menu tree + workspace group metadata.
    * No workspace stubs are fetched separately — groups come in this response.
    *
-   * Backend: GET /Menus/my  (no workspace param)
+   * Backend: GET /menus/navigation  (no workspace param)
    */
   fetchDefaultWorkspace(): Promise<NavigationData>;
 
@@ -41,14 +87,14 @@ export interface INavigationRepository {
    * Fetches (and in-memory caches) the full menu tree for a specific workspace.
    * Returns the cached copy instantly if already loaded.
    *
-   * Backend: GET /Menus/my?workspace={key}
+   * Backend: GET /menus/navigation?workspace={key}
    */
   fetchWorkspaceMenu(workspaceKey: string): Promise<NavigationData>;
 
   /**
    * Toggle pin state for a workspace.
    *
-   * Backend: POST /Menus/my/workspaces/{key}/pin
+   * Backend: POST /menus/navigation/workspaces/{key}/pin
    * Returns both the new isPinned state AND the backend-authoritative pinSortOrder.
    * Never compute pinSortOrder client-side — always use the value returned here.
    */
@@ -62,9 +108,37 @@ export interface INavigationRepository {
    * Fetches lightweight workspace stubs so the provider can discover
    * which module workspaces are available. Never called at startup.
    *
-   * Backend: GET /Menus/my/workspaces
+   * Backend: GET /menus/navigation/workspaces
    */
   fetchWorkspaceStubs(): Promise<WorkspaceGroupData[]>;
+
+  /**
+   * On-demand catalog — Lazy lookup for `/account/preferences` and `/roles` landing pickers.
+   * Never called during login bootstrap.
+   *
+   * Backend: GET /menus/navigation/landing-targets[?scopeMode=...]
+   */
+  fetchLandingTargetCatalog(scopeMode?: LandingTargetScopeMode): Promise<LandingTargetCatalog>;
+
+  /**
+   * Sets or updates the current admin's personal start page preference for a workspace
+   * inside the active context.
+   *
+   * Backend: PUT /account/preferences/workspace-entries/{workspaceKey}
+   */
+  setWorkspaceStartPage(
+    workspaceKey: string,
+    target: string,
+    rowVersion?: string | null
+  ): Promise<AdminWorkspaceEntryPreference>;
+
+  /**
+   * Resets (deletes) the current admin's personal start page override for a workspace
+   * inside the active context so role/default resolution applies again.
+   *
+   * Backend: DELETE /account/preferences/workspace-entries/{workspaceKey}
+   */
+  resetWorkspaceStartPage(workspaceKey: string): Promise<void>;
 
   /**
    * Purge ALL in-memory workspace caches.

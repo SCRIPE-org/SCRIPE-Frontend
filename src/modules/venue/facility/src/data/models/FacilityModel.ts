@@ -10,6 +10,7 @@ export interface FacilityJson {
   createdAt: string;
   modifiedAt?: string;
   venueProfileName?: string;
+  rowVersion?: string;
 }
 
 /**
@@ -37,7 +38,8 @@ export class FacilityModel {
     public readonly createdAt: string,
     public readonly description?: string,
     public readonly modifiedAt?: string,
-    public readonly venueProfileName?: string
+    public readonly venueProfileName?: string,
+    public readonly rowVersion?: string
   ) {}
 
   static fromJson(json: FacilityJson): FacilityModel {
@@ -49,7 +51,8 @@ export class FacilityModel {
       json.createdAt,
       json.description,
       json.modifiedAt,
-      json.venueProfileName
+      json.venueProfileName,
+      json.rowVersion
     );
   }
 
@@ -63,6 +66,7 @@ export class FacilityModel {
       createdAt: this.createdAt,
       modifiedAt: this.modifiedAt,
       venueProfileName: this.venueProfileName,
+      rowVersion: this.rowVersion,
     };
   }
 }

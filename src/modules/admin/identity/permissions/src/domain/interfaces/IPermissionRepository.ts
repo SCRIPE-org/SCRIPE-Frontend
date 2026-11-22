@@ -23,9 +23,9 @@ export interface IPermissionRepository {
   getAll(params?: PermissionListParams): Promise<Permission[]>;
 
   /**
-   * Get only current user's assigned permissions
+   * Get effective permissions assigned to the current principal
    */
-  getMyPermissions(params?: PermissionListParams): Promise<Permission[]>;
+  getEffectivePermissions(params?: PermissionListParams): Promise<Permission[]>;
 
   /**
    * Get permissions assigned to a specific tenant

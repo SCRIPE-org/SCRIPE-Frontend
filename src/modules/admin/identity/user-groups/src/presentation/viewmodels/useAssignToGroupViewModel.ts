@@ -49,7 +49,7 @@ export function useAssignToGroupViewModel({
           tenantId,
         });
       } else if (useMyTenant) {
-        result = await identityContainer.userGroupRepository.getMyTenantGroups(baseParams);
+        result = await identityContainer.userGroupRepository.getCurrentTenantGroups(baseParams);
       } else {
         result = await identityContainer.userGroupRepository.getAll(baseParams);
       }

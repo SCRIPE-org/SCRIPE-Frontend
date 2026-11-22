@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
-import { Check } from "lucide-react";
+import { Check, Minus } from "lucide-react";
 
 import { cn } from "@core/common/utils";
 import { useSettings } from "@core/providers/settings-provider";
@@ -50,9 +50,9 @@ export type CheckboxDesign =
 // accent edge and must not drop back to a neutral hairline under the pointer.
 export const CONTROL_SURFACE = {
   default:
-    "border border-nx-line bg-nx-ground data-[state=unchecked]:enabled:hover:border-nx-line-hi enabled:active:border-nx-accent data-[state=checked]:border-nx-accent data-[state=checked]:bg-nx-accent-fill data-[state=checked]:text-nx-on-fill",
+    "border border-nx-line-hi bg-nx-ground data-[state=unchecked]:enabled:hover:border-nx-accent enabled:active:border-nx-accent data-[state=checked]:border-nx-accent data-[state=checked]:bg-nx-accent-fill data-[state=checked]:text-nx-on-fill data-[state=indeterminate]:border-nx-accent data-[state=indeterminate]:bg-nx-accent-fill data-[state=indeterminate]:text-nx-on-fill",
   minimal:
-    "border border-nx-line bg-transparent data-[state=unchecked]:enabled:hover:border-nx-line-hi enabled:active:border-nx-accent data-[state=checked]:border-nx-accent data-[state=checked]:bg-nx-accent-fill data-[state=checked]:text-nx-on-fill",
+    "border border-nx-line-hi bg-transparent data-[state=unchecked]:enabled:hover:border-nx-accent enabled:active:border-nx-accent data-[state=checked]:border-nx-accent data-[state=checked]:bg-nx-accent-fill data-[state=checked]:text-nx-on-fill data-[state=indeterminate]:border-nx-accent data-[state=indeterminate]:bg-nx-accent-fill data-[state=indeterminate]:text-nx-on-fill",
 } as const;
 
 // Inert, not faded: a checked-and-disabled control keeps its glyph but drops
@@ -60,7 +60,8 @@ export const CONTROL_SURFACE = {
 // reads the same on ground, surface and inside a table row.
 export const CONTROL_DISABLED = cn(
   "disabled:cursor-not-allowed disabled:border-nx-line disabled:bg-nx-raised disabled:text-nx-ink-3 disabled:shadow-none",
-  "disabled:data-[state=checked]:border-nx-line disabled:data-[state=checked]:bg-nx-raised-2 disabled:data-[state=checked]:text-nx-ink-3"
+  "disabled:data-[state=checked]:border-nx-line disabled:data-[state=checked]:bg-nx-raised-2 disabled:data-[state=checked]:text-nx-ink-3",
+  "disabled:data-[state=indeterminate]:border-nx-line disabled:data-[state=indeterminate]:bg-nx-raised-2 disabled:data-[state=indeterminate]:text-nx-ink-3"
 );
 
 // 16px is the drawn box; the hit target is 32px. An invisible inset pseudo
@@ -93,12 +94,15 @@ const Checkbox = React.forwardRef<React.ElementRef<typeof CheckboxPrimitive.Root
         ref={ref}
         className={cn(
           // explicit centring so the glyph sits dead centre in every engine
-          "inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-nx-sm",
+          "inline-flex h-4 w-4 shrink-0 cursor-pointer items-center justify-center rounded-nx-sm",
           CONTROL_HIT_TARGET,
           CONTROL_SURFACE[effectiveDesign],
           // colour-only transition at micro speed; motion-reduce drops it
           "transition-[border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
           "focus-visible:border-nx-accent focus-visible:shadow-nx-focus focus-visible:outline-none",
+          "data-[state=checked]:focus-visible:border-nx-on-fill data-[state=checked]:focus-visible:shadow-[inset_0_0_0_1px_var(--nx-on-fill),0_0_0_2px_var(--nx-ground),0_0_0_4px_var(--nx-accent)]",
+          "data-[state=indeterminate]:focus-visible:border-nx-on-fill data-[state=indeterminate]:focus-visible:shadow-[inset_0_0_0_1px_var(--nx-on-fill),0_0_0_2px_var(--nx-ground),0_0_0_4px_var(--nx-accent)]",
+          "aria-[invalid=true]:border-nx-danger disabled:aria-[invalid=true]:border-nx-line",
           CONTROL_DISABLED,
           className
         )}
@@ -106,10 +110,14 @@ const Checkbox = React.forwardRef<React.ElementRef<typeof CheckboxPrimitive.Root
       >
         <CheckboxPrimitive.Indicator
           // check-in at micro speed — transform+opacity only; the indicator
-          // only mounts when checked, so animate-in needs no state variant
+          // only mounts when checked/indeterminate, so animate-in needs no state variant
           className="flex items-center justify-center text-current duration-nx-micro ease-nx-enter animate-in fade-in zoom-in-75 motion-reduce:animate-none"
         >
-          <Check className="h-3 w-3" strokeWidth={3} aria-hidden="true" />
+          {props.checked === "indeterminate" ? (
+            <Minus className="h-3 w-3" strokeWidth={3} aria-hidden="true" />
+          ) : (
+            <Check className="h-3 w-3" strokeWidth={3} aria-hidden="true" />
+          )}
         </CheckboxPrimitive.Indicator>
       </CheckboxPrimitive.Root>
     );

@@ -103,6 +103,8 @@ import { GuestPortalService } from "./guest-portal/src/data/services/guest-porta
 import { GuestPortalRepository } from "./guest-portal/src/data/repositories/GuestPortalRepository";
 import type { IGuestPortalService } from "./guest-portal/src/domain/interfaces/IGuestPortalService";
 import type { IGuestPortalRepository } from "./guest-portal/src/domain/interfaces/IGuestPortalRepository";
+import { ResourceMediaService } from "./resources/src/data/services/ResourceMediaService";
+import type { IResourceMediaService } from "./resources/src/domain/interfaces/IResourceMediaService";
 
 export interface VenueContainer {
   venueProfileRepository: IVenueProfileRepository;
@@ -126,6 +128,7 @@ export interface VenueContainer {
   sitePickerService: ISitePickerService;
   /** Lightweight picker retained for the Resource Builder form. */
   facilityResourceProfilePickerService: IFacilityResourceProfilePickerService;
+  resourceMediaService: IResourceMediaService;
 }
 
 /**
@@ -220,6 +223,7 @@ export function getVenueContainer(): VenueContainer {
     siteRepository: new SiteRepository(siteService),
     sitePickerService: new SitePickerService(organizationCoreApi),
     facilityResourceProfilePickerService: new FacilityResourceProfilePickerService(venueApi),
+    resourceMediaService: new ResourceMediaService(venueApi),
   };
 
   return container;
@@ -279,6 +283,9 @@ export const venueContainer = {
   },
   get sitePickerService() {
     return getVenueContainer().sitePickerService;
+  },
+  get resourceMediaService() {
+    return getVenueContainer().resourceMediaService;
   },
   get facilityResourceProfilePickerService() {
     return getVenueContainer().facilityResourceProfilePickerService;

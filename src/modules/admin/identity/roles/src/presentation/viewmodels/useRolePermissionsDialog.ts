@@ -135,7 +135,7 @@ export function useRolePermissionsDialog({
 
   // ── Fetch available permissions GROUPED from backend ──
   // If a tenant scope exists, fetch tenant's active licensed permissions.
-  // Otherwise, fetch system-wide / myTenant available permissions.
+  // Otherwise, fetch system-wide / current-tenant available permissions.
   const { data: tenantPermissionGroups = [], isLoading: loadingTenant } = useQuery({
     queryKey: ["tenant-permissions-grouped", effectiveTenantId ?? "platform"],
     queryFn: () => {
@@ -144,7 +144,7 @@ export function useRolePermissionsDialog({
           effectiveTenantId
         );
       }
-      return identityContainer.roleRepository.getMyTenantAvailablePermissionsGrouped();
+      return identityContainer.roleRepository.getCurrentTenantAvailablePermissionsGrouped();
     },
     enabled: open,
   });

@@ -58,7 +58,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
   const { isPlatformSuperAdmin } = usePermissions();
   const currentUser = useAppStore((state) => state.user);
 
-  // Use myTenantAdmins if not platform super admin (Tenant Admin mode)
+  // Use current-tenant admins if not platform super admin (Tenant Admin mode)
   // Platform Super Admins outside drill-down use the standard endpoint
   const {
     vm,
@@ -272,6 +272,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
       ],
       // Spread configBase with defaults to satisfy required fields
       entityTypeKey: "identity.admin",
+      dataExchange: { entityKey: "identity.admin" },
       createFields: configBase.createFields || [],
       editFields: configBase.editFields || [],
       createInitialValues: configBase.createInitialValues,

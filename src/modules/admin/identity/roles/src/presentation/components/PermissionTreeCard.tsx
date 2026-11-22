@@ -19,7 +19,7 @@
  * derived here (see PermissionModuleMatrix).
  *
  * Consumed in: RoleDetailView
- * Data source: GET /roles/myTenant/available-permissions/grouped
+ * Data source: GET /roles/current-tenant/available-permissions/grouped
  */
 "use client";
 

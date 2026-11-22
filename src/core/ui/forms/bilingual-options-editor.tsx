@@ -5,6 +5,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { cn } from "@core/common/utils";
+import { useI18n } from "@core/providers/i18n-provider";
 import {
   parseBilingualOptions,
   serializeBilingualOptions,
@@ -124,19 +125,29 @@ export function BilingualOptionsEditor({
     [rows, commit]
   );
 
+  const { t } = useI18n();
   const inert = disabled || readOnly;
   const hasStoredOptions = rows.some((row) => row.en.trim().length > 0 || row.ar.trim().length > 0);
 
   return (
     <div className="space-y-2" id={id}>
       {!hasStoredOptions && emptyHint ? (
-        <p className="text-xs text-muted-foreground">{emptyHint}</p>
+        <p className="text-xs text-nx-ink-3">{emptyHint}</p>
       ) : null}
 
       {rows.length > 5 && (
-        <div className="flex items-center justify-between px-1 pb-1 text-xs text-muted-foreground">
-          <span className="font-medium">{rows.length} options</span>
-          <span className="text-[11px] text-muted-foreground/70">Scroll to view all</span>
+        <div className="flex items-center justify-between px-1 pb-1 text-xs text-nx-ink-3">
+          <span className="font-medium tabular-nums">
+            {t("components.bilingualOptions.count", {
+              defaultValue: "{count} options",
+              count: rows.length,
+            })}
+          </span>
+          <span className="text-[11px] text-nx-ink-3">
+            {t("components.bilingualOptions.scrollToViewAll", {
+              defaultValue: "Scroll to view all",
+            })}
+          </span>
         </div>
       )}
 
@@ -144,7 +155,7 @@ export function BilingualOptionsEditor({
         className={cn(
           "space-y-2",
           rows.length > 5 &&
-            "custom-scrollbar max-h-72 overflow-y-auto rounded-md border border-border/40 bg-muted/10 p-2 pe-1"
+            "custom-scrollbar max-h-72 overflow-y-auto rounded-nx-control border border-nx-line bg-nx-raised p-2 pe-1"
         )}
       >
         {rows.map((row, index) => (
@@ -153,7 +164,7 @@ export function BilingualOptionsEditor({
               value={row.en}
               onChange={(e) => updateRow(row.id, { en: e.target.value })}
               placeholder={labelEn}
-              disabled={inert}
+              disabled={disabled}
               readOnly={readOnly}
               aria-label={`${labelEn} ${index + 1}`}
               dir="ltr"
@@ -163,7 +174,7 @@ export function BilingualOptionsEditor({
               value={row.ar}
               onChange={(e) => updateRow(row.id, { ar: e.target.value })}
               placeholder={labelAr}
-              disabled={inert}
+              disabled={disabled}
               readOnly={readOnly}
               aria-label={`${labelAr} ${index + 1}`}
               dir="rtl"

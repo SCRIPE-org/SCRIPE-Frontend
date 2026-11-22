@@ -22,18 +22,18 @@ export function CenteredLayout({
 }: LoginLayoutProps) {
   return (
     <div
-      className={`flex min-h-screen w-full flex-col items-center ${BG_STYLE} login-page selection:bg-primary/20`}
+      className={`flex min-h-[100dvh] w-full flex-col items-center ${BG_STYLE} login-page`}
       dir={direction}
       style={WRAPPER_STYLE}
     >
       {topActions}
-      <div className="flex w-full max-w-lg flex-1 flex-col items-center justify-center px-6 py-24">
+      <main className="flex w-full max-w-lg flex-1 flex-col items-center justify-center px-6 py-24">
         <div className="mb-10 flex flex-col items-center gap-4 text-center">
-          <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-2xl border border-border bg-background shadow-sm">
+          <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-2xl border border-nx-line bg-nx-surface">
             <LogoImg logoSrc={logoSrc} logoAlt={logoAlt} />
           </div>
-          <h1 className="text-3xl font-semibold tracking-tight text-foreground">{companyName}</h1>
-          <p className="text-sm text-muted-foreground">{t("auth.pleaseLogin")}</p>
+          <h1 className="text-3xl font-semibold tracking-tight text-nx-ink">{companyName}</h1>
+          <p className="text-sm text-nx-ink-2">{t("auth.pleaseLogin")}</p>
         </div>
         <SlotRenderer
           slotId="login.sidebar.content"
@@ -42,10 +42,10 @@ export function CenteredLayout({
         />
         {formContent}
         {footerSlot}
-        <p className="mt-12 text-[11px] font-medium text-muted-foreground/50">
+        <p className="mt-12 text-center text-[11px] font-medium text-nx-ink-3">
           © {new Date().getFullYear()} {companyName} — {t("auth.branding.copyright")}
         </p>
-      </div>
+      </main>
     </div>
   );
 }

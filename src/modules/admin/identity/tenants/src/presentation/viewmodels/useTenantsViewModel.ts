@@ -14,13 +14,12 @@ import { useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useAppStore } from "@core/store/useAppStore";
 import { usePermissions } from "@core/hooks/use-permissions";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { identityContainer } from "@modules/identity/di";
 import { appLogger } from "@core/common/logger";
-import type { TenantTreeNode, Tenant } from "../../domain/entities/Tenant";
+import { isInternalTenantNode, type TenantTreeNode } from "../../domain/entities/Tenant";
 import { type EditFormState, initialEditForm } from "../components/TenantDialogs";
 
 // ─────────────────────────────────────────
@@ -60,19 +59,15 @@ export function useTenantsViewModel() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { t } = useI18n();
-  const { hasPermission } = usePermissions();
+  const { hasPermission, isPlatformSuperAdmin } = usePermissions();
   const { success: toastSuccess, error: toastError } = useEnhancedToast();
-  const user = useAppStore((state) => state.user);
   const { tenantRepository } = identityContainer;
 
   // ── Permissions ──
   const canCreate = hasPermission(SYSTEM_PERMISSIONS.TENANTS_CREATE);
 
-  // ── System admin check ──
-  const isSystemAdmin = useMemo(() => {
-    const adminType = user?.adminTypeName?.toLowerCase() || "";
-    return adminType.includes("super") || adminType.includes("system");
-  }, [user]);
+  // Use the same canonical platform-admin decision as route and permission guards.
+  const isSystemAdmin = isPlatformSuperAdmin;
 
   // ── Search ──
   const [search, setSearch] = useState("");
@@ -82,7 +77,7 @@ export function useTenantsViewModel() {
   const [editForm, setEditForm] = useState<EditFormState>(initialEditForm);
   const [editingNode, setEditingNode] = useState<TenantTreeNode | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [tenantToDelete, setTenantToDelete] = useState<Tenant | null>(null);
+  const [tenantToDelete, setTenantToDelete] = useState<{ id: string; name: string } | null>(null);
 
   // ── Mutation loading states ──
   const [isSaving, setIsSaving] = useState(false);
@@ -94,7 +89,7 @@ export function useTenantsViewModel() {
     queryFn: () =>
       isSystemAdmin
         ? tenantRepository.getTree()
-        : tenantRepository.getMyChildren().then((res) => res.items),
+        : tenantRepository.getCurrentTenantChildren().then((res) => res.items),
   });
 
   const tree = useMemo(() => treeData ?? [], [treeData]);
@@ -117,40 +112,44 @@ export function useTenantsViewModel() {
     setEditForm({
       name: node.name,
       description: node.description || "",
-      isActive: node.isActive,
+      isActive: isInternalTenantNode(node) ? true : node.isActive,
     });
     setEditingNode(node);
     setEditDialogOpen(true);
   }, []);
 
-  const handleEditSubmit = useCallback(async () => {
-    if (!editingNode || !editForm.name) return;
-    setIsSaving(true);
-    try {
-      await tenantRepository.update(editingNode.id, {
-        name: editForm.name,
-        description: editForm.description || undefined,
-        isActive: editForm.isActive,
-      });
-      queryClient.invalidateQueries({ queryKey: ["tenants"] });
-      toastSuccess({
-        title: t("tenant.updated"),
-        description: t("tenant.updatedDescription"),
-      });
-      setEditDialogOpen(false);
-    } catch (err) {
-      appLogger.error("Failed to update tenant:", err);
-      toastError({
-        title: t("common.error"),
-        description: err instanceof Error ? err.message : "Failed to update tenant.",
-      });
-    } finally {
-      setIsSaving(false);
-    }
-  }, [editingNode, editForm, tenantRepository, queryClient, t, toastSuccess, toastError]);
+  const handleEditSubmit = useCallback(
+    async (submitted?: EditFormState) => {
+      const payload = submitted ?? editForm;
+      if (!editingNode || !payload.name) return;
+      setIsSaving(true);
+      try {
+        await tenantRepository.update(editingNode.id, {
+          name: payload.name,
+          description: payload.description || undefined,
+          isActive: isInternalTenantNode(editingNode) ? true : payload.isActive,
+        });
+        queryClient.invalidateQueries({ queryKey: ["tenants"] });
+        toastSuccess({
+          title: t("tenant.updated"),
+          description: t("tenant.updatedDescription"),
+        });
+        setEditDialogOpen(false);
+      } catch (err) {
+        appLogger.error("Failed to update tenant:", err);
+        toastError({
+          title: t("common.error"),
+          description: err instanceof Error ? err.message : "Failed to update tenant.",
+        });
+      } finally {
+        setIsSaving(false);
+      }
+    },
+    [editingNode, editForm, tenantRepository, queryClient, t, toastSuccess, toastError]
+  );
 
   const handleOpenDelete = useCallback((node: TenantTreeNode) => {
-    setTenantToDelete({ id: node.id, name: node.name } as Tenant);
+    setTenantToDelete({ id: node.id, name: node.name });
     setDeleteDialogOpen(true);
   }, []);
 

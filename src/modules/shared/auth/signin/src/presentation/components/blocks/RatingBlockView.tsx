@@ -14,7 +14,7 @@ export function RatingBlockView({ block }: { block: RatingBlock }) {
   const value = clamp(props.value, 1, 5, 5);
   if (props.style === "number-badge") {
     return (
-      <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-nx-accent">
+      <div className="inline-flex items-center gap-2 rounded-full bg-nx-accent-wash px-3 py-1 text-nx-accent">
         <span className="font-bold">{value.toFixed(1)}</span>
         {props.label && <span className="text-sm">{props.label}</span>}
       </div>
@@ -25,11 +25,11 @@ export function RatingBlockView({ block }: { block: RatingBlock }) {
     <div className="flex flex-col items-center gap-1">
       <div
         className={`${SIZE_CLASS[props.size || "md"]} tracking-wide`}
-        style={{ color: blockColor(props.color, "var(--login-primary, hsl(var(--primary)))") }}
+        style={{ color: blockColor(props.color, "var(--login-primary, var(--nx-accent))") }}
       >
         {Array.from({ length: 5 }, (_, index) => (index < Math.round(value) ? "*" : "-")).join(" ")}
       </div>
-      {props.label && <div className="text-sm text-muted-foreground">{props.label}</div>}
+      {props.label && <div className="text-sm text-nx-ink-2">{props.label}</div>}
     </div>
   );
 }

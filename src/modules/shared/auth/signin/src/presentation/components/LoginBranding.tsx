@@ -57,8 +57,8 @@ export function LoginBranding({
   // Resolve branding values with fallbacks
   const resolvedLogoSrc = useResolvedFileUrl(branding?.logoUrl);
   const logoSrc = branding?.logoUrl
-    ? resolvedLogoSrc || "/brand/app-logo-1024.png"
-    : "/brand/app-logo-1024.png";
+    ? resolvedLogoSrc || "/brand/app-logo.svg"
+    : "/brand/app-logo.svg";
   const logoAlt = branding?.companyName ?? branding?.name ?? BRAND.name;
   const headline = branding?.loginHeadline || t("auth.branding.headline");
   const subtitle = branding?.loginSubtitle || t("auth.branding.subtitle");
@@ -76,7 +76,7 @@ export function LoginBranding({
     hasCustomSidebarContent || hasCustomSidebarTop || hasCustomSidebarBottom;
 
   // Border direction based on panel position
-  const borderClass = position === "right" ? "border-l border-border" : "border-r border-border";
+  const borderClass = position === "right" ? "border-s border-nx-line" : "border-e border-nx-line";
 
   return (
     <div
@@ -116,15 +116,15 @@ export function LoginBranding({
 
       {/* ── Theme-Adaptive Background Patterns ── */}
       <div
-        className="pointer-events-none absolute -left-1/4 -top-1/4 h-[800px] w-[800px] rounded-full blur-[120px]"
+        className="pointer-events-none absolute -start-1/4 -top-1/4 h-[800px] w-[800px] rounded-full blur-[120px]"
         style={{
           backgroundColor: branding?.primaryColor ? `${branding.primaryColor}0D` : undefined,
         }}
       >
-        {!branding?.primaryColor && <div className="h-full w-full rounded-full bg-primary/5" />}
+        {!branding?.primaryColor && <div className="h-full w-full rounded-full bg-nx-accent-wash" />}
       </div>
       <div
-        className="pointer-events-none absolute -bottom-1/4 -right-1/4 h-[800px] w-[800px] rounded-full blur-[120px]"
+        className="pointer-events-none absolute -bottom-1/4 -end-1/4 h-[800px] w-[800px] rounded-full blur-[120px]"
         style={{
           backgroundColor: branding?.secondaryColor ? `${branding.secondaryColor}0D` : undefined,
         }}
@@ -133,12 +133,12 @@ export function LoginBranding({
       </div>
 
       {/* Subtle Grid overlay */}
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-30 [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,var(--nx-line)_1px,transparent_1px),linear-gradient(to_bottom,var(--nx-line)_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-30 [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)]" />
 
       {/* ── Top: Logo + Sidebar Top Slot ── */}
       <div className="relative z-10 space-y-6">
         <div className="flex items-center gap-4">
-          <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-2xl border border-[var(--login-accent,hsl(var(--border)))] bg-[var(--login-surface,hsl(var(--background)))] shadow-sm">
+          <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-2xl border border-[var(--login-accent,var(--nx-line))] bg-[var(--login-surface,var(--nx-ground))]">
             <Image
               src={logoSrc}
               alt={`${logoAlt} Logo`}
@@ -159,12 +159,12 @@ export function LoginBranding({
       {/* ── Main Content: Headline + Slot Content or Features ── */}
       <div className="relative z-10 my-auto max-w-xl py-12">
         <h1
-          className="login-heading leading-[1.12] tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
-          style={{ fontSize: "var(--login-size-headline, 3rem)" }}
+          className="login-heading text-balance leading-[1.12] tracking-tight text-[var(--login-text,var(--nx-ink))]"
+          style={{ fontSize: "var(--login-size-headline, clamp(2rem, 2.75vw, 2.75rem))" }}
         >
           {headline}
         </h1>
-        <p className="login-subtitle mt-6 max-w-lg leading-relaxed text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
+        <p className="login-subtitle mt-6 max-w-lg leading-relaxed text-[var(--login-text-muted,var(--nx-ink-2))]">
           {subtitle}
         </p>
 
@@ -177,14 +177,14 @@ export function LoginBranding({
           <div className="mt-16 grid gap-10">
             {features.map((f, i) => (
               <div key={i} className="group flex items-start gap-5">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-[var(--login-accent,hsl(var(--border)))] bg-[var(--login-surface,hsl(var(--background)))] shadow-sm transition-colors group-hover:bg-muted/50">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-[var(--login-accent,var(--nx-line))] bg-[var(--login-surface,var(--nx-ground))] transition-colors group-hover:bg-nx-raised">
                   <span className="text-xl">{f.icon}</span>
                 </div>
                 <div className="pt-1">
-                  <h3 className="text-base font-medium text-[var(--login-text,hsl(var(--foreground)))]">
+                  <h3 className="text-base font-medium text-[var(--login-text,var(--nx-ink))]">
                     {f.label}
                   </h3>
-                  <p className="mt-1.5 text-sm font-light text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
+                  <p className="mt-1.5 text-sm font-light text-[var(--login-text-muted,var(--nx-ink-2))]">
                     {f.desc}
                   </p>
                 </div>
@@ -197,9 +197,9 @@ export function LoginBranding({
       {/* ── Footer + Sidebar Bottom Slot ── */}
       <div className="relative z-10 space-y-4">
         {slotConfig && <SlotRenderer slotId="login.sidebar.bottom" slotConfig={slotConfig} />}
-        <div className="flex items-center gap-4 text-sm font-medium text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
+        <div className="flex items-center gap-4 text-sm font-medium text-[var(--login-text-muted,var(--nx-ink-2))]">
           <span>{copyrightText || `© ${new Date().getFullYear()} ${companyName}`}</span>
-          <span className="h-1 w-1 rounded-full bg-[var(--login-accent,hsl(var(--border)))]" />
+          <span className="h-1 w-1 rounded-full bg-[var(--login-accent,var(--nx-line))]" />
           <span className="text-xs uppercase tracking-widest opacity-80">
             {t("auth.branding.trust")}
           </span>

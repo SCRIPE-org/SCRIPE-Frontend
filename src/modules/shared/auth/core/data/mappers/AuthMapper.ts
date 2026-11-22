@@ -15,6 +15,7 @@
 
 import { LoginRequest, LoginResponse } from "../../domain/entities/Auth";
 import { User } from "../../domain/entities/User";
+import type { AdminRole, PermissionCode } from "@core/common/types/permissions";
 import {
   type LoginRequestJson,
   type LoginResponseJson,
@@ -105,7 +106,7 @@ export class AuthMapper {
     };
   }
 
-  // ===== User Mapping (for getMe response) =====
+  // ===== User Mapping (for getCurrentPrincipal response) =====
 
   /**
    * Convert JSON/API response to User domain model.
@@ -118,24 +119,37 @@ export class AuthMapper {
     // Defensive guard: if middleware double-serializes, parse the string
     const data: UserProfileJson = typeof json === "string" ? JSON.parse(json) : json;
 
+    const mappedRoles: AdminRole[] = (data.roles || []).map((r: any) => ({
+      roleId: r.roleId || "",
+      roleName: r.roleNameEn || r.roleName || r.roleCode || "",
+      roleCode: r.roleCode || "",
+      tenantId: r.tenantId ?? undefined,
+      tenantName: r.tenantName ?? undefined,
+      expiresAt: r.expiresAt ?? undefined,
+      inheritedPermissions: (r.inheritedPermissions || []) as PermissionCode[],
+    }));
+
     return new User({
       id: data.id || "",
       username: data.username || "",
       firstName: data.firstName || "",
       lastName: data.lastName || "",
       phoneNumber: data.phoneNumber || "",
-      adminTypeName: "",
+      adminTypeName: (data as any).adminTypeName || "",
       email: data.email || "",
       profileImageUrl: data.profileImageUrl ?? null,
       role: data.roles?.[0]?.roleCode || data.roles?.[0]?.roleNameEn || undefined,
+      roles: mappedRoles,
       permissions: data.permissions || [],
       isProtected: data.isProtected ?? false,
+      isSuperAdmin: Boolean(data.isSuperAdmin),
       tenantId: data.tenantId ?? null,
       restrictedFields: data.restrictedFields ?? undefined,
     });
   }
 
   static userFromUnknown(value: unknown): User | null {
+    if (value instanceof User) return value;
     if (typeof value === "string") return AuthMapper.userFromJson(value);
     if (isUserProfileJson(value)) return AuthMapper.userFromJson(value);
     return null;

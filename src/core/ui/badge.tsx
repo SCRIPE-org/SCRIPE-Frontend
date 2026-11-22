@@ -37,8 +37,12 @@ const badgeVariants = cva(
         // (which Tailwind would silently drop on a var-valued colour).
         default:
           "border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] bg-nx-accent-wash text-nx-accent",
+        accent:
+          "border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] bg-nx-accent-wash text-nx-accent",
         secondary: "border-nx-line bg-nx-raised text-nx-ink-2",
+        neutral: "border-nx-line bg-nx-raised text-nx-ink-2",
         destructive: "border-destructive/30 bg-destructive/15 text-destructive",
+        danger: "border-destructive/30 bg-destructive/15 text-destructive",
         outline: "border-nx-line-hi bg-transparent text-nx-ink",
         // Status variants — the global measured status tokens (which the
         // --nx- status vars alias); the hsl-triplet form keeps the slash-
@@ -46,9 +50,9 @@ const badgeVariants = cva(
         // 15% fill, 30% hairline, hue-strength text.
         success: "border-success/30 bg-success/15 text-success",
         error: "border-destructive/30 bg-destructive/15 text-destructive",
-        warning: "border-warning/30 bg-warning/15 text-warning",
+        warning: "border-warning-strong/30 bg-warning/15 text-nx-warning-strong",
         info: "border-info/30 bg-info/15 text-info",
-        pending: "border-warning-strong/30 bg-warning-strong/15 text-warning-strong",
+        pending: "border-warning-strong/30 bg-warning-strong/15 text-nx-warning-strong",
         // Active/Inactive variants
         active: "border-success/30 bg-success/15 text-success",
         inactive: "border-nx-line bg-nx-raised text-nx-ink-3",
@@ -81,19 +85,25 @@ const badgeVariants = cva(
 
       // MODERN — soft square, 15% wash (same weight as default, different shape)
       {
+        variant: ["default", "accent"],
+        badgeStyle: "modern",
+        class:
+          "border-[color:color-mix(in_srgb,var(--nx-accent)_25%,transparent)] bg-nx-accent-wash text-nx-accent",
+      },
+      {
         variant: ["success", "active"],
         badgeStyle: "modern",
         class: "border-success/25 bg-success/15 text-success",
       },
       {
-        variant: ["error", "destructive"],
+        variant: ["error", "destructive", "danger"],
         badgeStyle: "modern",
         class: "border-destructive/25 bg-destructive/15 text-destructive",
       },
       {
         variant: "warning",
         badgeStyle: "modern",
-        class: "border-warning/25 bg-warning/15 text-warning",
+        class: "border-warning-strong/25 bg-warning/15 text-nx-warning-strong",
       },
       {
         variant: "info",
@@ -103,7 +113,12 @@ const badgeVariants = cva(
       {
         variant: "pending",
         badgeStyle: "modern",
-        class: "border-warning-strong/25 bg-warning-strong/15 text-warning-strong",
+        class: "border-warning-strong/25 bg-warning-strong/15 text-nx-warning-strong",
+      },
+      {
+        variant: ["secondary", "neutral"],
+        badgeStyle: "modern",
+        class: "border-nx-line bg-nx-raised text-nx-ink-2",
       },
       {
         variant: "inactive",
@@ -114,7 +129,7 @@ const badgeVariants = cva(
       // GLASS — the quietest chip: 10% fill on a 20% hairline. (No blur: a
       // backdrop-filter under a 20px-tall span is pure cost for no signal.)
       {
-        variant: "default",
+        variant: ["default", "accent"],
         badgeStyle: "glass",
         class:
           "border-[color:color-mix(in_srgb,var(--nx-accent)_20%,transparent)] bg-[color:color-mix(in_srgb,var(--nx-accent)_10%,transparent)] text-nx-accent",
@@ -125,14 +140,14 @@ const badgeVariants = cva(
         class: "border-success/20 bg-success/10 text-success",
       },
       {
-        variant: ["error", "destructive"],
+        variant: ["error", "destructive", "danger"],
         badgeStyle: "glass",
         class: "border-destructive/20 bg-destructive/10 text-destructive",
       },
       {
         variant: "warning",
         badgeStyle: "glass",
-        class: "border-warning/20 bg-warning/10 text-warning",
+        class: "border-warning-strong/25 bg-warning/10 text-nx-warning-strong",
       },
       {
         variant: "info",
@@ -142,7 +157,12 @@ const badgeVariants = cva(
       {
         variant: "pending",
         badgeStyle: "glass",
-        class: "border-warning-strong/20 bg-warning-strong/10 text-warning-strong",
+        class: "border-warning-strong/25 bg-warning-strong/10 text-nx-warning-strong",
+      },
+      {
+        variant: ["secondary", "neutral"],
+        badgeStyle: "glass",
+        class: "border-nx-line bg-nx-raised text-nx-ink-2",
       },
       {
         variant: "inactive",
@@ -154,7 +174,7 @@ const badgeVariants = cva(
       // hue-strength ink. The 12px coloured glow it used to cast is gone; a
       // status chip is not the one element per screen allowed to emit light.
       {
-        variant: "default",
+        variant: ["default", "accent"],
         badgeStyle: "neon",
         class:
           "border-[color:color-mix(in_srgb,var(--nx-accent)_60%,transparent)] bg-nx-accent-wash text-nx-accent",
@@ -165,14 +185,14 @@ const badgeVariants = cva(
         class: "border-success/60 bg-success/15 text-success",
       },
       {
-        variant: ["error", "destructive"],
+        variant: ["error", "destructive", "danger"],
         badgeStyle: "neon",
         class: "border-destructive/60 bg-destructive/15 text-destructive",
       },
       {
         variant: "warning",
         badgeStyle: "neon",
-        class: "border-warning/60 bg-warning/15 text-warning",
+        class: "border-warning-strong/60 bg-warning/15 text-nx-warning-strong",
       },
       {
         variant: "info",
@@ -182,10 +202,10 @@ const badgeVariants = cva(
       {
         variant: "pending",
         badgeStyle: "neon",
-        class: "border-warning-strong/60 bg-warning-strong/15 text-warning-strong",
+        class: "border-warning-strong/60 bg-warning-strong/15 text-nx-warning-strong",
       },
       {
-        variant: ["secondary", "outline", "inactive"],
+        variant: ["secondary", "neutral", "outline", "inactive"],
         badgeStyle: "neon",
         class: "border-nx-line-hi bg-nx-raised-2 text-nx-ink",
       },
@@ -194,7 +214,7 @@ const badgeVariants = cva(
       // user settings; the two-stop ramp is not, because gradient fill on a
       // 20px chip is decoration with no state to report.
       {
-        variant: "default",
+        variant: ["default", "accent"],
         badgeStyle: "gradient",
         class: "border-nx-accent-fill bg-nx-accent-fill text-nx-on-fill",
       },
@@ -204,7 +224,7 @@ const badgeVariants = cva(
         class: "border-success bg-success text-success-foreground",
       },
       {
-        variant: ["error", "destructive"],
+        variant: ["error", "destructive", "danger"],
         badgeStyle: "gradient",
         class: "border-destructive bg-destructive text-destructive-foreground",
       },
@@ -224,14 +244,14 @@ const badgeVariants = cva(
         class: "border-warning-strong bg-warning-strong text-warning-strong-foreground",
       },
       {
-        variant: ["secondary", "outline", "inactive"],
+        variant: ["secondary", "neutral", "outline", "inactive"],
         badgeStyle: "gradient",
         class: "border-nx-line-hi bg-nx-raised-2 text-nx-ink",
       },
 
       // OUTLINED — full-strength hairline, no fill.
       {
-        variant: "default",
+        variant: ["default", "accent"],
         badgeStyle: "outlined",
         class: "border-nx-accent bg-transparent text-nx-accent",
       },
@@ -241,14 +261,14 @@ const badgeVariants = cva(
         class: "border-success bg-transparent text-success",
       },
       {
-        variant: ["error", "destructive"],
+        variant: ["error", "destructive", "danger"],
         badgeStyle: "outlined",
         class: "border-destructive bg-transparent text-destructive",
       },
       {
         variant: "warning",
         badgeStyle: "outlined",
-        class: "border-warning bg-transparent text-warning",
+        class: "border-warning-strong bg-transparent text-nx-warning-strong",
       },
       {
         variant: "info",
@@ -258,10 +278,10 @@ const badgeVariants = cva(
       {
         variant: "pending",
         badgeStyle: "outlined",
-        class: "border-warning-strong bg-transparent text-warning-strong",
+        class: "border-warning-strong bg-transparent text-nx-warning-strong",
       },
       {
-        variant: ["secondary", "inactive"],
+        variant: ["secondary", "neutral", "inactive"],
         badgeStyle: "outlined",
         class: "border-nx-line-hi bg-transparent text-nx-ink-2",
       },
@@ -269,7 +289,7 @@ const badgeVariants = cva(
       // FILLED — solid soft square. The loud option, an explicit opt-in now
       // that the default is the tint chip.
       {
-        variant: "default",
+        variant: ["default", "accent"],
         badgeStyle: "filled",
         class: "border-nx-accent-fill bg-nx-accent-fill text-nx-on-fill",
       },
@@ -279,7 +299,7 @@ const badgeVariants = cva(
         class: "border-success bg-success text-success-foreground",
       },
       {
-        variant: ["error", "destructive"],
+        variant: ["error", "destructive", "danger"],
         badgeStyle: "filled",
         class: "border-destructive bg-destructive text-destructive-foreground",
       },
@@ -299,14 +319,14 @@ const badgeVariants = cva(
         class: "border-warning-strong bg-warning-strong text-warning-strong-foreground",
       },
       {
-        variant: ["secondary", "outline", "inactive"],
+        variant: ["secondary", "neutral", "outline", "inactive"],
         badgeStyle: "filled",
         class: "border-nx-line-hi bg-nx-raised-2 text-nx-ink",
       },
 
       // MINIMAL — hue-strength ink on nothing. The chip is the word.
       {
-        variant: "default",
+        variant: ["default", "accent"],
         badgeStyle: "minimal",
         class: "bg-transparent text-nx-accent",
       },
@@ -316,14 +336,14 @@ const badgeVariants = cva(
         class: "bg-transparent text-success",
       },
       {
-        variant: ["error", "destructive"],
+        variant: ["error", "destructive", "danger"],
         badgeStyle: "minimal",
         class: "bg-transparent text-destructive",
       },
       {
         variant: "warning",
         badgeStyle: "minimal",
-        class: "bg-transparent text-warning",
+        class: "bg-transparent text-nx-warning-strong",
       },
       {
         variant: "info",
@@ -333,10 +353,10 @@ const badgeVariants = cva(
       {
         variant: "pending",
         badgeStyle: "minimal",
-        class: "bg-transparent text-warning-strong",
+        class: "bg-transparent text-nx-warning-strong",
       },
       {
-        variant: ["secondary", "outline"],
+        variant: ["secondary", "neutral", "outline"],
         badgeStyle: "minimal",
         class: "bg-transparent text-nx-ink-2",
       },
@@ -350,7 +370,7 @@ const badgeVariants = cva(
       // the sharpest one, for callers who need shape alone to separate two
       // badge populations in the same table.
       {
-        variant: "default",
+        variant: ["default", "accent"],
         badgeStyle: ["pill", "square"],
         class:
           "border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] bg-[color:color-mix(in_srgb,var(--nx-accent)_20%,transparent)] text-nx-accent",
@@ -361,14 +381,14 @@ const badgeVariants = cva(
         class: "border-success/30 bg-success/20 text-success",
       },
       {
-        variant: ["error", "destructive"],
+        variant: ["error", "destructive", "danger"],
         badgeStyle: ["pill", "square"],
         class: "border-destructive/30 bg-destructive/20 text-destructive",
       },
       {
         variant: "warning",
         badgeStyle: ["pill", "square"],
-        class: "border-warning/30 bg-warning/20 text-warning",
+        class: "border-warning-strong/30 bg-warning/20 text-nx-warning-strong",
       },
       {
         variant: "info",
@@ -378,7 +398,12 @@ const badgeVariants = cva(
       {
         variant: "pending",
         badgeStyle: ["pill", "square"],
-        class: "border-warning-strong/30 bg-warning-strong/20 text-warning-strong",
+        class: "border-warning-strong/30 bg-warning-strong/20 text-nx-warning-strong",
+      },
+      {
+        variant: ["secondary", "neutral"],
+        badgeStyle: ["pill", "square"],
+        class: "border-nx-line bg-nx-raised-2 text-nx-ink-2",
       },
       {
         variant: "inactive",

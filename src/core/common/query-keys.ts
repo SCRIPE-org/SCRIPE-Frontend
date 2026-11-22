@@ -63,6 +63,7 @@ const admins = {
 const roles = {
   ...domain("roles"),
   permissions: (roleId: string) => ["roles", "permissions", roleId] as const,
+  workspaceEntries: (roleId: string) => ["roles", "workspace-entries", roleId] as const,
   forSelect: (tenantId?: string) => ["roles", "select", tenantId ?? ""] as const,
   active: (tenantId: string) => ["roles", "active", tenantId] as const,
 };
@@ -366,6 +367,10 @@ const navigation = {
   all: ["navigation"] as const,
   menu: () => ["navigation", "menu"] as const,
   permissions: () => ["navigation", "permissions"] as const,
+  landingTargets: (contextKey: string, scopeMode: string) =>
+    ["navigation", "landing-targets", contextKey || "default", scopeMode] as const,
+  workspaceEntries: (contextKey?: string) =>
+    ["navigation", "workspace-entries", contextKey || "default"] as const,
 };
 
 /** Ecosystem — Recycle Bin */
@@ -379,6 +384,16 @@ const overview = {
   all: ["overview"] as const,
   stats: () => ["overview", "stats"] as const,
   realtime: () => ["overview", "realtime"] as const,
+};
+
+/** Data Transfer — Exchange Entities, Jobs & Presets */
+const dataTransfer = {
+  all: ["data-transfer"] as const,
+  entities: () => ["data-transfer", "entities"] as const,
+  entityDescriptor: (key: string) => ["data-transfer", "entities", key, "descriptor"] as const,
+  jobs: (params?: Record<string, unknown>) => ["data-transfer", "jobs", params ?? {}] as const,
+  job: (id: string) => ["data-transfer", "jobs", id] as const,
+  presets: (entityKey?: string) => ["data-transfer", "presets", entityKey ?? "all"] as const,
 };
 
 // ─── Main Export ──────────────────────────────────────────────────────────────
@@ -463,6 +478,48 @@ export const qk = {
   // Ecosystem
   recycleBin,
   overview,
+
+  // Data Transfer
+  dataTransfer,
+
+  // CRM
+  crm: {
+    all: ["crm"] as const,
+    overview: (tenantId: string, search?: string) =>
+      ["crm", "overview", tenantId, search ?? ""] as const,
+    pipelines: (tenantId: string) =>
+      ["crm", "pipelines", tenantId] as const,
+    pipelineDetail: (tenantId: string, id: string) =>
+      ["crm", "pipelines", tenantId, id] as const,
+    leads: (tenantId: string, params?: Record<string, unknown>) =>
+      ["crm", "leads", tenantId, params ?? {}] as const,
+    leadDetail: (tenantId: string, id: string) =>
+      ["crm", "leads", tenantId, id] as const,
+    opportunities: (tenantId: string, params?: Record<string, unknown>) =>
+      ["crm", "opportunities", tenantId, params ?? {}] as const,
+    opportunityDetail: (tenantId: string, id: string) =>
+      ["crm", "opportunities", tenantId, id] as const,
+    opportunityCommercialPackage: (tenantId: string, userId: string, id: string) =>
+      ["crm", "opportunities", tenantId, userId, id, "commercial-package"] as const,
+    accounts: (tenantId: string, params?: Record<string, unknown>) =>
+      ["crm", "accounts", tenantId, params ?? {}] as const,
+    accountDetail: (tenantId: string, id: string) =>
+      ["crm", "accounts", tenantId, id] as const,
+    contacts: (tenantId: string, params?: Record<string, unknown>) =>
+      ["crm", "contacts", tenantId, params ?? {}] as const,
+    contactDetail: (tenantId: string, id: string) =>
+      ["crm", "contacts", tenantId, id] as const,
+    activities: (tenantId: string, params?: Record<string, unknown>) =>
+      ["crm", "activities", tenantId, params ?? {}] as const,
+    reports: (tenantId: string, currencyCode?: string) =>
+      ["crm", "reports", tenantId, currencyCode ?? "all"] as const,
+    settings: (tenantId: string, userId?: string) =>
+      ["crm", "settings", tenantId, userId ?? ""] as const,
+    governanceCatalog: (tenantId: string) =>
+      ["crm", "governance-catalog", tenantId] as const,
+    assignees: (tenantId: string, query?: string) =>
+      ["crm", "assignees", tenantId, query ?? ""] as const,
+  },
 };
 
 // Backwards-compatible named export (used by existing code referencing `queryKeys`)

@@ -24,10 +24,16 @@ export class PasskeyService implements IPasskeyService {
     return { items: items ?? [] };
   }
 
-  async beginRegistration(): Promise<PasskeyRegistrationOptionsResponseDto> {
+  async beginRegistration(
+    deviceName?: string,
+    mode?: string
+  ): Promise<PasskeyRegistrationOptionsResponseDto> {
     return this.api.post<PasskeyRegistrationOptionsResponseDto>(
       AUTH_CORE_ENDPOINTS.PASSKEY.REGISTER_BEGIN,
-      {}
+      {
+        ...(deviceName ? { deviceName } : {}),
+        ...(mode ? { mode } : {}),
+      }
     );
   }
 
@@ -38,7 +44,13 @@ export class PasskeyService implements IPasskeyService {
       attestationObjectBase64: request.attestationResponse.response.attestationObject,
       clientDataJsonBase64: request.attestationResponse.response.clientDataJSON,
       deviceName: request.deviceName,
-      transports: null,
+      transports:
+        request.transports ?? request.attestationResponse.response.transports ?? null,
+      clientExtensionResults:
+        request.clientExtensionResults ?? request.attestationResponse.clientExtensionResults,
+      challengeToken: request.challengeToken,
+      attestationMode: request.attestationMode,
+      credentialIdBase64: request.credentialIdBase64 ?? request.attestationResponse.rawId,
     };
     return this.api.post<PasskeyResponseDto>(
       AUTH_CORE_ENDPOINTS.PASSKEY.REGISTER_VERIFY,
@@ -47,8 +59,9 @@ export class PasskeyService implements IPasskeyService {
   }
 
   async rename(id: string, request: PasskeyRenameRequestDto): Promise<void> {
-    // PATCH or PUT to rename — use the list endpoint with ID
-    await this.api.put(`${AUTH_CORE_ENDPOINTS.PASSKEY.LIST}/${id}/name`, request);
+    await this.api.patch(`${AUTH_CORE_ENDPOINTS.PASSKEY.LIST}/${id}/name`, {
+      newName: request.newName ?? request.name ?? "",
+    });
   }
 
   async delete(id: string): Promise<void> {

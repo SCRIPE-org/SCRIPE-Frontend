@@ -45,7 +45,7 @@ const alertVariants = cva(
         default: "border-nx-line bg-nx-raised [&>svg]:text-nx-ink-2",
         destructive: "border-destructive/40 bg-destructive/10 [&>svg]:text-destructive",
         success: "border-success/40 bg-success/10 [&>svg]:text-success",
-        warning: "border-warning/40 bg-warning/10 [&>svg]:text-warning",
+        warning: "border-warning-strong/40 bg-warning/15 [&>svg]:text-nx-warning-strong",
         info: "border-info/40 bg-info/10 [&>svg]:text-info",
       },
     },
