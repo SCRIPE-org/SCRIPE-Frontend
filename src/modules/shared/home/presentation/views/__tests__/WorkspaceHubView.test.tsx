@@ -8,6 +8,7 @@ import { NavigationData } from "@core/navigation/domain/entities/NavigationData"
 import { WorkspaceGroup } from "@core/navigation/domain/entities/WorkspaceGroup";
 import type { AuthorizedRouteDescriptor } from "@core/navigation/domain/interfaces/INavigationRepository";
 import { formatHubItemCount, formatPinnedWorkspaceCount } from "../../utils/hub-plurals";
+import { en as homeEn } from "../../../core/locales/home.en";
 import { WorkspaceHubView } from "../WorkspaceHubView";
 
 const mockSwitchWorkspace = vi.fn();
@@ -353,6 +354,14 @@ describe("WorkspaceHubView — Standalone Odoo x Nexus Launchpad", () => {
     expect(screen.queryByTestId("hub-typeahead-input")).not.toBeInTheDocument();
 
     // Pinned Venue Operations renders ONCE (zero duplicates) and appears before unpinned Academy
+    const appsRegion = screen.getByRole("region", { name: "workspaceHub.launchpad.appsGridAria" });
+    const squirclesGrid = appsRegion.firstElementChild as HTMLElement;
+    expect(squirclesGrid.className).toContain("flex");
+    expect(squirclesGrid.className).toContain("flex-wrap");
+    expect(squirclesGrid.className).toContain("justify-center");
+    expect(squirclesGrid.className).toContain("max-w-[752px]");
+    expect(squirclesGrid.className).not.toContain("grid-cols-6");
+
     const squircles = screen.getAllByTestId("hub-app-squircle");
     expect(squircles).toHaveLength(2);
     expect(squircles[0]).toHaveTextContent("Venue Operations");
@@ -380,6 +389,11 @@ describe("WorkspaceHubView — Standalone Odoo x Nexus Launchpad", () => {
     fireEvent.change(input, { target: { value: "venue" } });
     const quickList = screen.getByTestId("hub-quick-jump-list");
     expect(quickList).toBeInTheDocument();
+    const quickJumpHeader = screen.getByText("workspaceHub.launchpad.quickJumpTitle");
+    expect(quickJumpHeader.className).toContain("text-xs");
+    expect(quickJumpHeader.className).toContain("font-medium");
+    expect(quickJumpHeader.className).not.toContain("uppercase");
+    expect(quickJumpHeader.className).not.toContain("tracking-wider");
     expect(screen.getByText("/venue/calendar").closest("bdi")).toHaveAttribute("dir", "ltr");
     expect(screen.getByText("/venue/facilities").closest("bdi")).toHaveAttribute("dir", "ltr");
 
@@ -419,9 +433,25 @@ describe("WorkspaceHubView — Standalone Odoo x Nexus Launchpad", () => {
   });
 
   it("shows locked upgrade squircles for billing admins, renders impersonation notice, and shows toast on pin error", async () => {
+    expect(homeEn.workspaceHub.launchpad.quickJumpTitle).toBe("Quick jump pages");
+    expect(homeEn.workspaceHub.launchpad.availableToUnlock).toBe("Available to unlock");
+
     mockPermissions = [SYSTEM_PERMISSIONS.BILLING_DASHBOARD_VIEW];
     mockTogglePin.mockRejectedValueOnce(new Error("Network error"));
     const { rerender } = render(<WorkspaceHubView />);
+
+    const unlockHeading = screen.getByRole("heading", {
+      name: "workspaceHub.launchpad.availableToUnlock",
+    });
+    expect(unlockHeading.className).toContain("text-xs");
+    expect(unlockHeading.className).toContain("font-medium");
+    expect(unlockHeading.className).not.toContain("uppercase");
+    expect(unlockHeading.className).not.toContain("tracking-[0.08em]");
+    const unlockGrid = unlockHeading.nextElementSibling as HTMLElement;
+    expect(unlockGrid.className).toContain("flex");
+    expect(unlockGrid.className).toContain("flex-wrap");
+    expect(unlockGrid.className).toContain("justify-center");
+    expect(unlockGrid.className).toContain("max-w-[752px]");
 
     fireEvent.click(screen.getByRole("button", { name: /^Enterprise CRM$/i }));
     expect(screen.getByTestId("upgrade-dialog")).toHaveTextContent("Enterprise CRM");
@@ -437,7 +467,10 @@ describe("WorkspaceHubView — Standalone Odoo x Nexus Launchpad", () => {
 
     mockIsImpersonating = true;
     rerender(<WorkspaceHubView />);
-    expect(screen.getByTestId("hub-impersonation-notice")).toBeInTheDocument();
+    const notice = screen.getByTestId("hub-impersonation-notice");
+    expect(notice).toBeInTheDocument();
+    expect(notice.className).toContain("rounded-nx-md");
+    expect(notice.className).not.toContain("rounded-full");
     expect(
       screen.getByRole("button", { name: "workspaceHub.pin.unpinWorkspace:Venue Operations" })
     ).toBeDisabled();

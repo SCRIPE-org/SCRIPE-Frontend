@@ -405,8 +405,37 @@ describe("HubTopbar — Return-to-Workspace pill + Esc, Context Pill & Search Tr
 
     const switcherBtn = screen.getByTestId("topbar-tenant-switcher-trigger");
     expect(switcherBtn).toHaveTextContent("chrome.section.platform");
+    expect(within(switcherBtn).getByText("chrome.section.platform").closest("bdi")).not.toBeNull();
     fireEvent.click(switcherBtn);
     expect(onOpenContextSwitcher).toHaveBeenCalledTimes(1);
+  });
+
+  it("wraps static TopbarContextPill label in <bdi> for mixed-script bidi isolation", () => {
+    mockIsPlatform = false;
+    mockActiveTenantName = "نادي Al-Ahly 2026";
+    mockPermissions = [];
+
+    render(
+      <HubTopbar
+        previousWorkspace={null}
+        onReturnToWorkspace={vi.fn()}
+        onOpenSearch={vi.fn()}
+        isSearchOpen={false}
+        onOpenContextSwitcher={vi.fn()}
+        isImpersonating={false}
+        isLoadingNotifications={false}
+        isNotificationsError={false}
+        onRetryNotifications={vi.fn()}
+        onMarkNotificationAsRead={vi.fn()}
+        onMarkAllNotificationsAsRead={vi.fn()}
+        isLoadingActivity={false}
+        isActivityError={false}
+        onRetryActivity={vi.fn()}
+      />
+    );
+
+    const staticPill = screen.getByTestId("topbar-context-pill");
+    expect(within(staticPill).getByText("نادي Al-Ahly 2026").closest("bdi")).not.toBeNull();
   });
 
   it("hides secondary utilities on <md inside hidden md:flex desktop slots and surfaces Theme, Language, and Copilot in the md:hidden mobile actions popover", () => {

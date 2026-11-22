@@ -48,10 +48,10 @@ export function HubUnlockSection({
           aria-label={t("workspaceHub.launchpad.availableToUnlock")}
           className="mx-auto mt-10 w-full max-w-[760px] border-t border-nx-line/70 pt-8"
         >
-          <h2 className="mb-6 text-center text-xs font-semibold uppercase tracking-[0.08em] text-nx-ink-3">
+          <h2 className="mb-6 text-center text-xs font-medium text-nx-ink-3">
             {t("workspaceHub.launchpad.availableToUnlock")}
           </h2>
-          <div className="grid grid-cols-3 justify-items-center gap-x-4 gap-y-6 sm:grid-cols-4 md:grid-cols-6">
+          <div className="mx-auto flex max-w-[752px] flex-wrap justify-center gap-x-4 gap-y-6">
             {lockedWorkspaces.map((ws) => (
               <HubAppSquircle
                 key={ws.workspaceKey}

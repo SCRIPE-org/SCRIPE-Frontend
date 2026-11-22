@@ -249,9 +249,9 @@ export function WorkspaceHubView() {
           {isImpersonating && (
             <output
               data-testid="hub-impersonation-notice"
-              className="mx-auto mb-6 flex max-w-[600px] items-center gap-2 rounded-full border border-warning-strong/30 bg-warning/10 px-3.5 py-1.5 text-xs text-nx-ink-2"
+              className="mx-auto mb-6 flex max-w-[600px] items-start gap-2.5 rounded-nx-md border border-warning-strong/40 bg-warning/15 px-4 py-2.5 text-start text-xs leading-relaxed text-nx-ink-2"
             >
-              <ShieldAlert className="h-3.5 w-3.5 shrink-0 text-nx-warning-strong" aria-hidden="true" />
+              <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-nx-warning-strong" aria-hidden="true" />
               <span>{t("workspaceHub.impersonationHidden")}</span>
             </output>
           )}
@@ -277,7 +277,7 @@ export function WorkspaceHubView() {
           ) : (
             filteredUnlocked.length > 0 && (
               <section aria-label={t("workspaceHub.launchpad.appsGridAria")}>
-                <div className="mx-auto grid max-w-[760px] grid-cols-3 justify-items-center gap-x-4 gap-y-6 sm:grid-cols-4 md:grid-cols-6">
+                <div className="mx-auto flex max-w-[752px] flex-wrap justify-center gap-x-4 gap-y-6">
                   {filteredUnlocked.map((ws) => (
                     <HubAppSquircle
                       key={ws.workspaceKey}

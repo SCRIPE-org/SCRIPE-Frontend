@@ -60,7 +60,9 @@ export function TopbarContextPill({
         )}
       >
         {dot}
-        <span className="truncate">{tenantName}</span>
+        <span className="truncate">
+          <bdi>{tenantName}</bdi>
+        </span>
         <ChevronDown className="h-3 w-3 shrink-0 opacity-75" aria-hidden="true" />
       </Button>
     );
@@ -69,7 +71,9 @@ export function TopbarContextPill({
   return (
     <div className={pillClasses} data-testid="topbar-context-pill">
       {dot}
-      <span className="truncate">{tenantName}</span>
+      <span className="truncate">
+        <bdi>{tenantName}</bdi>
+      </span>
     </div>
   );
 }

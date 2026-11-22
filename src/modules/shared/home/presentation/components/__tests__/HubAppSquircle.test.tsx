@@ -39,6 +39,9 @@ describe("HubAppSquircle — 72x72 framed matte squircle, sibling pin & accessib
 
     const wrapper = container.firstElementChild as HTMLElement;
     expect(wrapper.className).not.toContain("overflow-hidden");
+    expect(wrapper.className).toContain("w-[calc((100%-32px)/3)]");
+    expect(wrapper.className).toContain("max-w-[112px]");
+    expect(wrapper.className).toContain("sm:w-[112px]");
 
     const primaryBtn = screen.getByRole("button", { name: /^Venue Operations$/i });
     const pinBtn = screen.getByRole("button", {

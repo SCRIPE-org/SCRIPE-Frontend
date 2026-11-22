@@ -74,7 +74,7 @@ export const en = {
       searchTriggerAria: "Search workspaces and pages",
       typeAnywhereHint: "Type anywhere to search",
       typeaheadPlaceholder: "Filter workspaces or jump to a page…",
-      quickJumpTitle: "Quick Jump Pages",
+      quickJumpTitle: "Quick jump pages",
       availableToUnlock: "Available to unlock",
       appsGridAria: "Authorized workspaces",
       brandMarkAria: "SCRIPE Workspace Launchpad",

@@ -79,7 +79,7 @@ export function HubAppSquircle({
   return (
     <div
       data-testid="hub-app-squircle"
-      className="group relative flex w-full max-w-[112px] flex-col items-center rounded-nx-lg p-1.5"
+      className="group relative flex w-[calc((100%-32px)/3)] max-w-[112px] flex-col items-center rounded-nx-lg p-1.5 sm:w-[112px]"
     >
       {/* Stretched primary trigger — sibling to pin control (zero nested buttons) */}
       <Button

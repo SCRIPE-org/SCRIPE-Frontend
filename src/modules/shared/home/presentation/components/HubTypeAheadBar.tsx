@@ -201,7 +201,7 @@ export function HubTypeAheadBar({
           data-testid="hub-quick-jump-list"
           className="mt-2 overflow-hidden rounded-nx-lg border border-nx-line bg-nx-surface p-1.5 shadow-nx-popover"
         >
-          <p className="px-2.5 pb-1.5 pt-1 text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
+          <p className="px-2.5 pb-1.5 pt-1 text-xs font-medium text-nx-ink-3">
             {t("workspaceHub.launchpad.quickJumpTitle")}
           </p>
           <ul className="space-y-0.5">

@@ -1,6 +1,6 @@
 import React from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
 import { TooltipProvider } from "@core/ui/tooltip";
 import { TopbarContextPill } from "@core/ui/layout/shared";
@@ -236,6 +236,7 @@ describe("TopbarBreadcrumbs Deduplication", () => {
     expect(contextPill.className).not.toContain("hidden");
     expect(contextPill.className).toContain("max-w-[100px]");
     expect(contextPill.className).toContain("sm:max-w-[160px]");
+    expect(within(contextPill).getByText("Al-Ahly Sporting Club").closest("bdi")).not.toBeNull();
   });
 
   it("renders standard segment formatting in NexusTopbar without obsolete /hub breadcrumb special-casing", () => {
