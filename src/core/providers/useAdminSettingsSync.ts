@@ -30,7 +30,8 @@ import { useEffect, useRef, useCallback, useState } from "react";
 import { useAppStore } from "@core/store/useAppStore";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { TENANTS_ENDPOINTS } from "@core/config/api-endpoints";
-import { getModuleApiService } from "@core/services/api-factory";
+import { getActiveTenantContextId, getModuleApiService } from "@core/services/api-factory";
+import { buildRequestSecurityHeaders } from "@core/services/api.service";
 import { secureTokenService } from "@core/common/secure-token-service";
 import { appLogger } from "@core/common/logger";
 
@@ -374,7 +375,7 @@ export function useAdminSettingsSync() {
       const token = secureTokenService.getAccessToken();
 
       if (token) {
-        // JWT exists — use fetch with keepalive + Authorization header
+        // JWT exists — use fetch with keepalive + replay-protection/CSRF/tenant headers
         // (keepalive: true allows request to outlive the page AND supports custom headers)
         try {
           fetch(url, {
@@ -382,7 +383,12 @@ export function useAdminSettingsSync() {
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
+              ...buildRequestSecurityHeaders({
+                tenantContextId: getActiveTenantContextId(),
+                isMutating: true,
+              }),
             },
+            credentials: "include",
             body: payloadBody,
             keepalive: true,
           });

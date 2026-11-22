@@ -49,6 +49,9 @@ export interface RoleJson {
   modifiedAt?: string;
   groupNamesEn?: string[];
   groupNamesAr?: string[];
+  defaultLandingTarget?: string | null;
+  isLandingEnforced?: boolean;
+  rowVersion?: string | null;
 }
 
 /**
@@ -76,6 +79,8 @@ export interface CreateRoleJson {
   priority: number;
   tenantId?: string;
   permissionIds?: string[];
+  defaultLandingTarget?: string | null;
+  isLandingEnforced?: boolean;
 }
 
 /**
@@ -88,6 +93,9 @@ export interface UpdateRoleJson {
   descriptionAr?: string;
   priority: number;
   isActive?: boolean;
+  defaultLandingTarget?: string | null;
+  isLandingEnforced?: boolean;
+  rowVersion?: string | null;
 }
 
 // PermissionAssignmentJson re-exported from domain/types/PermissionTypes.ts
@@ -119,7 +127,10 @@ export class RoleModel {
     public readonly tenantName?: string,
     public readonly modifiedAt?: string,
     public readonly groupNamesEn?: string[],
-    public readonly groupNamesAr?: string[]
+    public readonly groupNamesAr?: string[],
+    public readonly defaultLandingTarget?: string | null,
+    public readonly isLandingEnforced?: boolean,
+    public readonly rowVersion?: string | null
   ) {}
 
   static fromJson(json: RoleJson): RoleModel {
@@ -139,7 +150,10 @@ export class RoleModel {
       json.tenantName,
       json.modifiedAt,
       json.groupNamesEn,
-      json.groupNamesAr
+      json.groupNamesAr,
+      json.defaultLandingTarget ?? null,
+      Boolean(json.isLandingEnforced),
+      json.rowVersion ?? null
     );
   }
   toJson(): RoleJson {
@@ -160,6 +174,9 @@ export class RoleModel {
       modifiedAt: this.modifiedAt,
       groupNamesEn: this.groupNamesEn,
       groupNamesAr: this.groupNamesAr,
+      defaultLandingTarget: this.defaultLandingTarget ?? null,
+      isLandingEnforced: Boolean(this.isLandingEnforced),
+      rowVersion: this.rowVersion ?? null,
     };
   }
 }
@@ -199,7 +216,9 @@ export class CreateRoleModel {
     public readonly descriptionEn?: string,
     public readonly descriptionAr?: string,
     public readonly tenantId?: string,
-    public readonly permissionIds?: string[]
+    public readonly permissionIds?: string[],
+    public readonly defaultLandingTarget?: string | null,
+    public readonly isLandingEnforced?: boolean
   ) {}
 
   toJson(): CreateRoleJson {
@@ -212,6 +231,12 @@ export class CreateRoleModel {
       descriptionAr: this.descriptionAr,
       tenantId: this.tenantId,
       permissionIds: this.permissionIds,
+      ...(this.defaultLandingTarget !== undefined
+        ? { defaultLandingTarget: this.defaultLandingTarget }
+        : {}),
+      ...(this.isLandingEnforced !== undefined
+        ? { isLandingEnforced: this.isLandingEnforced }
+        : {}),
     };
   }
 }
@@ -226,7 +251,10 @@ export class UpdateRoleModel {
     public readonly priority: number,
     public readonly descriptionEn?: string,
     public readonly descriptionAr?: string,
-    public readonly isActive?: boolean
+    public readonly isActive?: boolean,
+    public readonly defaultLandingTarget?: string | null,
+    public readonly isLandingEnforced?: boolean,
+    public readonly rowVersion?: string | null
   ) {}
 
   toJson(): UpdateRoleJson {
@@ -237,6 +265,13 @@ export class UpdateRoleModel {
       descriptionAr: this.descriptionAr,
       priority: this.priority,
       isActive: this.isActive,
+      ...(this.defaultLandingTarget !== undefined
+        ? { defaultLandingTarget: this.defaultLandingTarget }
+        : {}),
+      ...(this.isLandingEnforced !== undefined
+        ? { isLandingEnforced: this.isLandingEnforced }
+        : {}),
+      ...(this.rowVersion !== undefined ? { rowVersion: this.rowVersion } : {}),
     };
   }
 }

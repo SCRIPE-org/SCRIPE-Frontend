@@ -44,6 +44,7 @@ interface TenantTabsProps {
   tenantName: string;
   tenantCode: string;
   parentTenantId?: string;
+  isInternal?: boolean;
 }
 
 type TabValue =
@@ -73,7 +74,13 @@ const TAB_ACTIVE_ACCENT: Record<TabValue, string> = {
  * Presentation UI component rendering the tenant tabs.
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
-export function TenantTabs({ tenantId, tenantName, tenantCode, parentTenantId }: TenantTabsProps) {
+export function TenantTabs({
+  tenantId,
+  tenantName,
+  tenantCode,
+  parentTenantId,
+  isInternal = false,
+}: TenantTabsProps) {
   const { t, direction } = useI18n();
   const user = useAppStore((state) => state.user);
   const isPlatformAdmin = Boolean(user && !user.tenantId);
@@ -120,7 +127,7 @@ export function TenantTabs({ tenantId, tenantName, tenantCode, parentTenantId }:
         <Card className="overflow-hidden">
           <CardContent className="pt-6">
             <TabsContent value="entitlements">
-              <TenantEntitlementsTab tenantId={tenantId} />
+              <TenantEntitlementsTab tenantId={tenantId} isInternal={isInternal} />
             </TabsContent>
 
             <TabsContent value="admins">

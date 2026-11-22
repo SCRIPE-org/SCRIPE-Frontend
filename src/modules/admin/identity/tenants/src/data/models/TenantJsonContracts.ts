@@ -34,6 +34,7 @@ export interface TenantJson {
   adminEmail?: string;
   countryCode?: string;
   timeZone?: string;
+  tenantKind?: string;
 }
 
 /**
@@ -54,6 +55,7 @@ export interface TenantTreeNodeJson {
   editionName?: string;
   editionEndDate?: string;
   subscriptionStatus?: string;
+  tenantKind?: string;
   children: TenantTreeNodeJson[];
 }
 

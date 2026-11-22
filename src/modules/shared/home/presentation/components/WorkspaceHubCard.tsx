@@ -4,7 +4,7 @@
  * WorkspaceHubCard — A single workspace card in the Workspace Hub.
  *
  * Accent colour derives from the workspace's own OKLCH hue/chroma, the same
- * data-owned pattern HubModuleTile uses. The card itself stays a plain nx
+ * data-owned pattern HubAppSquircle uses. The card itself stays a plain nx
  * surface with that colour only on the border and the bottom accent line —
  * one glow-carrying element per screen means a card grid cannot each cast
  * its own coloured shadow, so there is no glow and no hover lift here.
@@ -13,8 +13,9 @@
 import { cn, resolveBilingualLabel } from "@core/common/utils";
 import { Button } from "@core/ui/button";
 import { Lock, ChevronRight } from "lucide-react";
-import { DynamicIcon } from "@core/ui/layout/nexus/_parts/primary-rail-parts";
+import { DynamicIcon } from "@core/ui/layout/shared";
 import { useI18n } from "@core/providers/i18n-provider";
+import { formatHubItemCount } from "../utils/hub-plurals";
 
 export interface WorkspaceHubCardProps {
   workspaceKey: string;
@@ -93,10 +94,12 @@ export function WorkspaceHubCard({
           <DynamicIcon name={icon || "Layers"} size={22} />
         </div>
         <div className="flex min-w-0 flex-1 flex-col">
-          <span className="truncate text-sm font-semibold text-nx-ink">{name}</span>
+          <span className="truncate text-sm font-semibold text-nx-ink">
+            <bdi>{name}</bdi>
+          </span>
           {accessibleItemCount > 0 && !isLocked && (
             <span className="text-xs text-nx-ink-3">
-              {formatItemCount(accessibleItemCount, language, t)}
+              {formatHubItemCount(accessibleItemCount, language, t)}
             </span>
           )}
         </div>
@@ -124,26 +127,4 @@ export function WorkspaceHubCard({
       )}
     </Button>
   );
-}
-
-// ── Helpers ──────────────────────────────────────────────────────────────────
-
-/**
- * Format item count with proper localization.
- * English uses simple singular/plural.
- * Arabic uses 4 plural forms (singular, dual, few 3-10, many 11+).
- */
-function formatItemCount(
-  n: number,
-  language: string,
-  t: (key: string, params?: Record<string, string | number>) => string
-): string {
-  if (language === "ar") {
-    if (n === 1) return t("workspaceHub.items.one");
-    if (n === 2) return t("workspaceHub.items.two");
-    if (n >= 3 && n <= 10) return t("workspaceHub.items.few", { count: n });
-    return t("workspaceHub.items.many", { count: n });
-  }
-  if (n === 1) return t("workspaceHub.items.one");
-  return t("workspaceHub.items.other", { count: n });
 }

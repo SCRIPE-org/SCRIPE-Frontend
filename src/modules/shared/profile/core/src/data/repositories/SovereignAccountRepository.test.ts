@@ -586,4 +586,43 @@ describe("SovereignAccountRepository — Clean 9-Page B2B Enterprise Account Con
       isEnabled: false,
     });
   });
+
+  it("maps activeStartupTarget enforcement/fallback metadata and sends startupTarget / clearStartupTarget on updatePreferences()", async () => {
+    const api = createMockApi({
+      get: vi.fn().mockResolvedValue({
+        themeMode: "dark",
+        activeStartupTarget: "workspace:venue",
+        activeContextKey: "tenant:ahly",
+        isStartupTargetEnforcedByRole: true,
+        enforcingRoleName: "Operations Lead",
+        startupTargetFallbackActive: true,
+        startupTargetFallbackReason: "permission_revoked",
+        rowVersion: "AQIDBA==",
+      }),
+    });
+    const repo = new SovereignAccountRepository(api);
+
+    const prefs = await repo.getPreferences();
+    expect(prefs.activeStartupTarget).toBe("workspace:venue");
+    expect(prefs.activeContextKey).toBe("tenant:ahly");
+    expect(prefs.isStartupTargetEnforcedByRole).toBe(true);
+    expect(prefs.enforcingRoleName).toBe("Operations Lead");
+    expect(prefs.startupTargetFallbackActive).toBe(true);
+    expect(prefs.startupTargetFallbackReason).toBe("permission_revoked");
+
+    await repo.updatePreferences({
+      startupTarget: "workspace:academy",
+      clearStartupTarget: false,
+      rowVersion: "AQIDBA==",
+    });
+
+    expect(api.put).toHaveBeenCalledWith(
+      PROFILE_ENDPOINTS.ACCOUNT.PREFERENCES,
+      expect.objectContaining({
+        startupTarget: "workspace:academy",
+        clearStartupTarget: false,
+        rowVersion: "AQIDBA==",
+      })
+    );
+  });
 });

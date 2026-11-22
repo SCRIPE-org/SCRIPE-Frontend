@@ -16,11 +16,15 @@
  */
 
 import React, { useCallback, useEffect, useRef } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { Home, LayoutGrid } from "lucide-react";
 import { useWorkspace } from "@core/providers/workspace-provider";
 import { useI18n } from "@core/providers/i18n-provider";
 import { MenuItem } from "@core/navigation";
+import { Button } from "@core/ui/button";
+import { cn } from "@core/common/utils";
 import { RailHeader, RailContent } from "./_parts/secondary-rail-parts";
+import { useRailStartPageToggle } from "./use-rail-start-page-toggle";
 import { useNexusReducedMotion } from "./nexus-transition";
 import { NEXUS_PANEL_W, getSecondaryMenuItems } from "./_parts/nexus-layout-constants";
 
@@ -29,6 +33,8 @@ interface NexusSecondaryRailProps {
   onMobileClose?: () => void;
   isCollapsed?: boolean;
   returnFocusRef?: React.RefObject<HTMLButtonElement | null>;
+  onOpenAppLauncher?: () => void;
+  mobileFooter?: React.ReactNode;
 }
 
 const FOCUSABLE_SELECTOR =
@@ -40,10 +46,14 @@ export function NexusSecondaryRail({
   onMobileClose,
   isCollapsed,
   returnFocusRef,
+  onOpenAppLauncher,
+  mobileFooter,
 }: NexusSecondaryRailProps) {
-  const { activeWorkspace, activeRootItem, rootMenuItems, isModuleMode } = useWorkspace();
+  const { activeWorkspace, activeRootItem, rootMenuItems, isModuleMode, setActiveRootItemId } =
+    useWorkspace();
   const { language, t } = useI18n();
   const pathname = usePathname();
+  const router = useRouter();
   const reducedMotion = useNexusReducedMotion();
   const mobileDrawerRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
@@ -72,10 +82,30 @@ export function NexusSecondaryRail({
   const hasSubmenu = menuItems.length > 0;
 
   const handleNavigate = useCallback(() => onMobileClose?.(), [onMobileClose]);
+  const handleManageStartPages = useCallback(() => {
+    onMobileClose?.();
+    router.push("/account/preferences");
+  }, [onMobileClose, router]);
+
+  const startPageAction = useRailStartPageToggle({
+    activeWorkspace,
+    activeRootItem,
+    rootMenuItems,
+    pathname: pathname ?? "",
+    language,
+    t,
+  });
+
+  const customStartPageHref =
+    activeWorkspace?.effectiveHomeSource === "PersonalOverride" &&
+    !activeWorkspace.isEffectiveHomeEnforced
+      ? activeWorkspace.effectiveHomeRoute
+      : null;
+  const startPageIndicatorLabel = t("chrome.startPageIndicator");
 
   // Desktop collapse state ONLY — never gates the mobile drawer overlay.
   const effectiveCollapsed = !hasSubmenu || !!isCollapsed;
-  const isMobileDrawerOpen = Boolean(mobileOpen && hasSubmenu);
+  const isMobileDrawerOpen = Boolean(mobileOpen);
 
   // Move focus into the mobile drawer when opened, and restore focus to the
   // toggle trigger (or previously focused element) when closed.
@@ -177,12 +207,20 @@ export function NexusSecondaryRail({
 
   const railContent = (
     <div style={innerContainerStyle}>
-      <RailHeader contextLabel={contextLabel} title={title} />
+      <RailHeader
+        contextLabel={contextLabel}
+        title={title}
+        startPageAction={startPageAction}
+        onManageStartPages={handleManageStartPages}
+        t={t}
+      />
       <RailContent
         menuItems={menuItems}
         pathname={pathname}
         language={language}
         onNavigate={handleNavigate}
+        customStartPageHref={customStartPageHref}
+        startPageIndicatorLabel={startPageIndicatorLabel}
       />
     </div>
   );
@@ -211,8 +249,9 @@ export function NexusSecondaryRail({
             role="dialog"
             aria-modal="true"
             aria-label={title || t("nav.secondary")}
+            data-nexus-mobile-drawer="true"
             tabIndex={-1}
-            className="fixed inset-y-0 start-0 z-modal flex flex-col border-e border-nx-line bg-nx-popover shadow-nx-modal outline-none lg:hidden"
+            className="fixed inset-y-0 start-0 z-modal flex flex-col overflow-hidden border-e border-nx-line bg-nx-surface shadow-nx-modal outline-none lg:hidden"
             style={{ width: NEXUS_PANEL_W }}
           >
             <div style={innerContainerStyle}>
@@ -221,13 +260,96 @@ export function NexusSecondaryRail({
                 title={title}
                 onClose={onMobileClose}
                 closeLabel={t("common.close")}
+                startPageAction={startPageAction}
+                onManageStartPages={handleManageStartPages}
+                t={t}
               />
-              <RailContent
-                menuItems={menuItems}
-                pathname={pathname}
-                language={language}
-                onNavigate={handleNavigate}
-              />
+              <div className="space-y-2 border-b border-nx-line px-3 py-2.5 md:hidden">
+                <div className="flex flex-col gap-1.5">
+                  {onOpenAppLauncher && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        onMobileClose?.();
+                        onOpenAppLauncher();
+                      }}
+                      className="min-h-8 h-auto w-full justify-start gap-2 px-2.5 py-1.5 text-xs !whitespace-normal text-start"
+                    >
+                      <LayoutGrid className="size-3.5 shrink-0" aria-hidden="true" />
+                      <span className="whitespace-normal text-start leading-snug">
+                        {t("shell.launcher.title")}
+                      </span>
+                    </Button>
+                  )}
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      onMobileClose?.();
+                      router.push("/hub");
+                    }}
+                    className="min-h-8 h-auto w-full justify-start gap-2 px-2.5 py-1.5 text-xs !whitespace-normal text-start"
+                    aria-label={t("chrome.allWorkspaces")}
+                  >
+                    <Home className="size-3.5 shrink-0" aria-hidden="true" />
+                    <span className="whitespace-normal text-start leading-snug">
+                      {t("chrome.allWorkspaces")}
+                    </span>
+                  </Button>
+                </div>
+                {rootMenuItems.length > 1 && (
+                  <div className="flex flex-wrap gap-1.5">
+                    {rootMenuItems.map((root) => {
+                      const isActiveRoot = root.id === activeRootItem?.id;
+                      const rootLabel =
+                        language === "ar"
+                          ? root.nameAr || root.nameEn
+                          : root.nameEn || root.nameAr;
+                      return (
+                        <Button
+                          key={root.id}
+                          type="button"
+                          variant={isActiveRoot ? "secondary" : "ghost"}
+                          size="sm"
+                          onClick={() => {
+                            setActiveRootItemId?.(root.id);
+                            if (root.href && (!root.children || root.children.length === 0)) {
+                              onMobileClose?.();
+                              router.push(root.href);
+                            }
+                          }}
+                          className={cn(
+                            "h-7 max-w-full px-2 text-[11px]",
+                            isActiveRoot
+                              ? "border border-nx-line font-semibold text-nx-ink"
+                              : "text-nx-ink-2"
+                          )}
+                        >
+                          <span className="truncate">{rootLabel}</span>
+                        </Button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+              {hasSubmenu ? (
+                <RailContent
+                  menuItems={menuItems}
+                  pathname={pathname}
+                  language={language}
+                  onNavigate={handleNavigate}
+                  customStartPageHref={customStartPageHref}
+                  startPageIndicatorLabel={startPageIndicatorLabel}
+                />
+              ) : (
+                <div className="flex-1" />
+              )}
+              {mobileFooter && (
+                <div className="mt-auto border-t border-nx-line p-2 md:hidden">{mobileFooter}</div>
+              )}
             </div>
           </div>
         </>

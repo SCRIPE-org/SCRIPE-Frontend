@@ -16,6 +16,7 @@ import type { User } from "@modules/auth/core/domain/entities/User";
 import type { WorkspaceChoice } from "@modules/auth/core/domain/errors/AuthErrors";
 import type { PermissionCode, AdminRole } from "@core/common/types/permissions";
 import type { SsoCallbackError, SsoCallbackState } from "./useSsoCallbackHandler";
+import { buildPostAuthEntryUrl } from "../utils/redirect-safety";
 
 const SSO_LINKING_STORAGE_KEY = "sso_linking";
 
@@ -82,24 +83,16 @@ export async function completeAdminLogin(
 ): Promise<void> {
   secureTokenService.setAccessToken(accessToken);
   const user = await deps.authRepository.getCurrentPrincipal();
-  deps.setAuth(
-    user,
-    (user.permissions || []) as PermissionCode[],
-    (user.roles || []) as AdminRole[],
-    true
-  );
-  deps.setSubscriptionInfo(
-    subscription.status ?? null,
-    subscription.gracePhase ?? null,
-    subscription.editionName ?? null
-  );
+  deps.setAuth(user, (user.permissions || []) as PermissionCode[], (user.roles || []) as AdminRole[], true);
+  deps.setSubscriptionInfo(subscription.status ?? null, subscription.gracePhase ?? null, subscription.editionName ?? null);
   const mustChange = Boolean(subscription.mustChangePassword);
   deps.setMustChangePassword?.(mustChange);
   deps.operationSuccess(deps.t("auth.welcomeBack"));
-
-  if (!mustChange) deps.invalidateQueries();
+  if (!mustChange && subscription.status !== "PendingPayment") deps.invalidateQueries();
+  const redirect = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("redirect") : null;
+  const targetPath = buildPostAuthEntryUrl({ mustChangePassword: mustChange, subscriptionStatus: subscription.status, redirect });
   setters.setState("success");
-  setTimeout(() => setters.redirectTo(mustChange ? "/change-password" : "/overview"), 300);
+  setTimeout(() => setters.redirectTo(targetPath), 300);
 }
 
 async function dispatchCallbackResult(

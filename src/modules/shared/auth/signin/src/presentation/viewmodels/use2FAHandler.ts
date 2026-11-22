@@ -6,7 +6,7 @@ import { useAppStore } from "@core/store/useAppStore";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useQueryClient } from "@tanstack/react-query";
 import { useServices } from "@core/providers/service-provider";
-import { getSafeRedirectPath } from "../utils/redirect-safety";
+import { buildPostAuthEntryUrl } from "../utils/redirect-safety";
 
 /**
  * Exported type defining parameters and fields for login step configurations.
@@ -92,31 +92,27 @@ export function use2FAHandler(opts: Use2FAHandlerOptions) {
       setAuth(user, user.permissions || [], user.roles || [], true);
       const store = useAppStore.getState();
       store.setSubscriptionInfo(result.subscriptionStatus, result.gracePhase, result.editionName);
-      store.setMustChangePassword(result.mustChangePassword ?? false);
-
-      const backendDefault =
-        result.defaultRedirectPath && result.defaultRedirectPath !== "/"
-          ? getSafeRedirectPath(result.defaultRedirectPath, "/overview")
-          : "/overview";
-      store.setDefaultRedirectPath(backendDefault);
-
       const mustChange = result.mustChangePassword ?? false;
+      store.setMustChangePassword(mustChange);
+      store.setDefaultRedirectPath("/");
+
       if (!mustChange) {
         // v2: NavigationProvider auto-fetches when isAuthenticated changes
         queryClient.invalidateQueries();
       }
 
       onRedirectTriggered();
-      // redirectPath can come from the attacker-controlled `?redirect=` query
-      // param — validate same-origin/relative before navigating (open-redirect
-      // protection), since this bypasses use-login-viewmodel's handleRedirect.
-      const resolvedFallback =
-        redirectPath && redirectPath !== "/" ? redirectPath : backendDefault;
-      const targetPath = mustChange
-        ? "/change-password"
-        : getSafeRedirectPath(resolvedFallback, backendDefault);
+      const targetPath = buildPostAuthEntryUrl({
+        mustChangePassword: mustChange,
+        subscriptionStatus: result.subscriptionStatus,
+        redirect: redirectPath,
+      });
       setTimeout(() => {
-        router.replace(targetPath);
+        if (targetPath.startsWith("http://") || targetPath.startsWith("https://")) {
+          window.location.href = targetPath;
+        } else {
+          router.replace(targetPath);
+        }
       }, 100);
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : t("auth.twoFactor.invalidCode");

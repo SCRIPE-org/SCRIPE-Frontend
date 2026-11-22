@@ -118,6 +118,10 @@ export interface IAuthService {
     expiresAt?: string;
     approverName?: string | null;
     defaultRedirectPath?: string | null;
+    subscriptionStatus?: string | null;
+    gracePhase?: string | null;
+    editionName?: string | null;
+    mustChangePassword?: boolean;
   }>;
 
   /** Approve a QR sign-in session from the mobile device. */

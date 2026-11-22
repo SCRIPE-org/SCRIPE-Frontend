@@ -51,6 +51,7 @@ import { Separator } from "@core/ui/separator";
 import { ErrorMessage } from "@core/ui/error-message";
 import { Slider } from "@core/ui/slider";
 import { Checkbox } from "@core/ui/checkbox";
+import { GroupedCombobox } from "@core/ui/grouped-combobox";
 import { RadioGroup, RadioGroupItem } from "@core/ui/radio-group";
 import { useSettings } from "@core/providers/settings-provider";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -88,6 +89,18 @@ export interface FieldOption {
   children?: FieldOption[];
   /** Unique key for deduplication when value may change between API calls */
   uniqueKey?: string;
+  /** Optional group key for grouped searchable comboboxes */
+  groupKey?: string;
+  /** Optional localized group heading for grouped searchable comboboxes */
+  groupLabel?: string;
+  /** Optional display prefix before `<bdi>` path segments */
+  displayPrefix?: string;
+  /** Optional ordered path segments wrapped in `<bdi>` for RTL safety */
+  pathSegments?: string[];
+  /** Optional route path metadata for search matching & display hint */
+  route?: string | null;
+  /** True when option represents a persisted legacy/unavailable target */
+  isUnavailable?: boolean;
 }
 
 /**
@@ -215,6 +228,7 @@ export interface FieldConfig {
     | "richtext"
     | "select"
     | "searchable-select"
+    | "grouped-select"
     | "server-select"
     | "multi-select"
     | "tree"
@@ -297,7 +311,7 @@ export interface FieldConfig {
   isVisible?: (formData: Record<string, any>) => boolean; // Function to determine visibility
   onChange?: (value: any, formData: Record<string, any>) => void | Record<string, any>; // Callback when field value changes, can return object to update multiple fields
   loading?: boolean; // Show loading state
-  disabled?: boolean; // Disable field
+  disabled?: boolean | ((formData: Record<string, any>) => boolean); // Disable field statically or based on formData
   // Validation
   pattern?: string; // For text inputs
   patternError?: string; // Custom error message when pattern fails
@@ -340,6 +354,7 @@ interface GenericFormProps {
   onSubmit: (data: Record<string, any>) => Promise<void>;
   onCancel: () => void;
   readOnly?: boolean; // New prop for read-only mode
+  isLoading?: boolean;
   showErrorSummary?: boolean; // Optional prop to render top error summary banner (default: false)
 }
 
@@ -765,6 +780,16 @@ export function isFieldRequired(field: FieldConfig, formData?: Record<string, an
   return Boolean(field.required);
 }
 
+/**
+ * Determines whether a field is disabled, evaluating dynamic predicates against formData if provided.
+ */
+export function isFieldDisabled(field: FieldConfig, formData?: Record<string, any>): boolean {
+  if (typeof field.disabled === "function") {
+    return Boolean(field.disabled(formData ?? {}));
+  }
+  return Boolean(field.disabled);
+}
+
 function isRequiredFieldEmpty(field: FieldConfig, val: unknown): boolean {
   if (val === undefined || val === null || val === "") return true;
   if (typeof val === "string" && val.trim() === "") return true;
@@ -785,6 +810,7 @@ export function GenericForm({
   onSubmit,
   onCancel,
   readOnly = false,
+  isLoading = false,
   showErrorSummary = false,
 }: GenericFormProps) {
   const settings = useSettings();
@@ -954,7 +980,7 @@ export function GenericForm({
     e.preventDefault();
     // Re-entrancy guard: the fields stay editable while a submit is in flight,
     // and Enter in any of them re-fires this handler.
-    if (loading) return;
+    if (loading || isLoading) return;
     setServerError(null);
 
     // Validate required fields for custom components (select, searchable-select, etc.)
@@ -962,6 +988,7 @@ export function GenericForm({
     const customTypes = new Set([
       "select",
       "searchable-select",
+      "grouped-select",
       "server-select",
       "multi-select",
       "tree",
@@ -1365,7 +1392,8 @@ export function GenericForm({
             // Read-only is NOT disabled: text fields stay focusable and
             // selectable so a value can be copied out of a view dialog, while
             // pickers and toggles (which have nothing to copy) go inert.
-            const inert = field.disabled || readOnly;
+            const fieldDisabled = isFieldDisabled(field, formData);
+            const inert = fieldDisabled || readOnly;
             // Boolean, not the number itself — a bare `maxLength &&` would
             // render a literal 0 into the form when a caller passes 0.
             const counted = Boolean(
@@ -1410,7 +1438,7 @@ export function GenericForm({
                           getLabelClasses(),
                           "text-start",
                           invalid && "text-nx-danger",
-                          field.disabled && "text-nx-ink-3"
+                          fieldDisabled && "text-nx-ink-3"
                         )}
                       >
                         {field.label}
@@ -1451,6 +1479,34 @@ export function GenericForm({
                       handleChange(field.name, typeof value === "string" ? value : value[0])
                     }
                     placeholder={field.placeholder}
+                    disabled={inert}
+                    className={getInputClasses(getInputHeight())}
+                  />
+                ) : field.type === "grouped-select" ? (
+                  <GroupedCombobox
+                    id={field.name}
+                    aria-label={field.label ?? field.name}
+                    invalid={invalid}
+                    describedBy={describedBy}
+                    loading={field.loading}
+                    options={
+                      field.options?.map((opt) => ({
+                        value: opt.value,
+                        label: opt.label,
+                        disabled: opt.disabled,
+                        groupKey: opt.groupKey ?? "default",
+                        groupLabel: opt.groupLabel ?? "",
+                        displayPrefix: opt.displayPrefix,
+                        pathSegments: opt.pathSegments,
+                        route: opt.route,
+                        isUnavailable: opt.isUnavailable,
+                      })) || []
+                    }
+                    value={formData[field.name] ?? ""}
+                    onValueChange={(value) => handleChange(field.name, value)}
+                    placeholder={field.placeholder}
+                    searchPlaceholder={field.searchPlaceholder}
+                    emptyText={field.noResultsText}
                     disabled={inert}
                     className={getInputClasses(getInputHeight())}
                   />
@@ -1597,7 +1653,7 @@ export function GenericForm({
                         field.pairedName ? { [field.pairedName]: next.ar } : undefined
                       )
                     }
-                    disabled={field.disabled || inert}
+                    disabled={fieldDisabled || inert}
                     readOnly={readOnly}
                     labelEn={field.placeholder ?? tr("language.english", "English")}
                     labelAr={field.searchPlaceholder ?? tr("language.arabic", "Arabic")}
@@ -1634,7 +1690,7 @@ export function GenericForm({
                     )}
                     placeholder={field.placeholder}
                     rows={field.rows || 4}
-                    disabled={field.disabled}
+                    disabled={fieldDisabled}
                     readOnly={readOnly}
                     minLength={field.minLength}
                     maxLength={field.maxLength}
@@ -1654,7 +1710,7 @@ export function GenericForm({
                     placeholder={field.placeholder}
                     // TipTap editor exposes readOnly (not disabled); honour both the
                     // per-field flag and the form-level read-only mode
-                    readOnly={field.disabled || readOnly}
+                    readOnly={fieldDisabled || readOnly}
                     // px string — the editor feeds this into a CSS custom property
                     minHeight={field.rows ? `${field.rows * 20}px` : "200px"}
                     className="text-start"
@@ -1668,7 +1724,7 @@ export function GenericForm({
                       className={cn(
                         "text-start",
                         invalid && "text-nx-danger",
-                        field.disabled && "text-nx-ink-3"
+                        fieldDisabled && "text-nx-ink-3"
                       )}
                     >
                       {field.label}
@@ -1682,7 +1738,7 @@ export function GenericForm({
                       id={field.name}
                       checked={formData[field.name] || false}
                       onCheckedChange={(checked) => handleChange(field.name, checked)}
-                      disabled={field.disabled}
+                      disabled={fieldDisabled}
                       readOnly={readOnly}
                       aria-required={isFieldRequired(field, formData) || undefined}
                       aria-invalid={invalid || undefined}
@@ -1851,7 +1907,7 @@ export function GenericForm({
                         invalid && "border-nx-danger"
                       )}
                       placeholder={field.placeholder}
-                      disabled={field.disabled}
+                      disabled={fieldDisabled}
                       readOnly={readOnly}
                       autoComplete={field.autoComplete ?? "new-password"}
                       data-1p-ignore="true"
@@ -1884,7 +1940,7 @@ export function GenericForm({
                       pattern={field.pattern}
                       minLength={field.minLength}
                       maxLength={field.maxLength}
-                      disabled={field.disabled}
+                      disabled={fieldDisabled}
                       readOnly={readOnly}
                       autoComplete={field.autoComplete ?? "off"}
                       data-1p-ignore="true"
@@ -1988,14 +2044,14 @@ export function GenericForm({
               variant="outline"
               onClick={onCancel}
               className={getInputHeight()}
-              disabled={loading}
+              disabled={loading || isLoading}
               size={getButtonSize()}
             >
               {t("common.cancel")}
             </Button>
             <Button
               type="submit"
-              loading={loading}
+              loading={loading || isLoading}
               className={getInputHeight()}
               size={getButtonSize()}
             >

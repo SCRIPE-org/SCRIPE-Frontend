@@ -66,7 +66,7 @@ function buildSchema(t: (key: string) => string) {
       currentPassword: z.string().min(1, t("profile.security.currentPasswordRequired")),
       newPassword: z
         .string()
-        .min(8, t("profile.security.strength.minLength"))
+        .min(12, t("profile.security.strength.minLength"))
         .regex(UPPERCASE, t("profile.security.strength.uppercase"))
         .regex(NUMBER, t("profile.security.strength.number"))
         .regex(SPECIAL, t("profile.security.strength.special")),
@@ -107,7 +107,7 @@ export function PasswordChangeForm({
     defaultValue: "",
   });
   const strengthItems = [
-    { met: newPassword.length >= 8, label: t("profile.security.strength.minLength") },
+    { met: newPassword.length >= 12, label: t("profile.security.strength.minLength") },
     { met: UPPERCASE.test(newPassword), label: t("profile.security.strength.uppercase") },
     { met: NUMBER.test(newPassword), label: t("profile.security.strength.number") },
     { met: SPECIAL.test(newPassword), label: t("profile.security.strength.special") },

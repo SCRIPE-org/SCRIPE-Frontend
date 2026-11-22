@@ -41,7 +41,7 @@ export function OpportunitiesToolbarContent({
 }: OpportunitiesToolbarContentProps) {
   return (
     <div className="flex flex-wrap items-center gap-2 flex-1" dir={isRtl ? "rtl" : "ltr"}>
-      <div className="relative flex-1 min-w-[200px] max-w-sm">
+      <div className="relative flex-1 min-w-[220px] max-w-md">
         <Search className="absolute start-3 top-1/2 -translate-y-1/2 size-3.5 text-nx-ink-3 pointer-events-none" />
         <Input
           placeholder={t("crmOpportunities.actions.searchPlaceholder")}
@@ -50,7 +50,7 @@ export function OpportunitiesToolbarContent({
           className="ps-8 h-8 text-xs border-nx-line bg-nx-surface text-nx-ink"
         />
       </div>
-      <div className="w-48">
+      <div className="w-56">
         <PipelineSelector
           pipelines={dealWorkflows}
           value={activeDealWorkflowId}

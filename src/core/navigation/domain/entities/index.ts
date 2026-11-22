@@ -10,3 +10,19 @@ export type { WorkspaceGroupData } from "./WorkspaceGroup";
 
 export { NavigationData } from "./NavigationData";
 export type { NavigationDataInput } from "./NavigationData";
+
+export {
+  LandingTargetCatalog,
+  LandingTargetCatalogItem,
+  LandingTargetWorkspace,
+} from "./LandingTargetCatalog";
+export type {
+  LandingTargetCatalogData,
+  LandingTargetCatalogItemData,
+  LandingTargetContextScope,
+  LandingTargetScopeMode,
+  LandingTargetWorkspaceData,
+} from "./LandingTargetCatalog";
+
+export { AdminWorkspaceEntryPreference } from "./WorkspaceEntryPreference";
+export type { AdminWorkspaceEntryPreferenceData } from "./WorkspaceEntryPreference";

@@ -19,6 +19,7 @@
  */
 
 import { ApiService } from "./api.service";
+import { STORAGE_KEYS } from "@core/config/storage-keys";
 import type { IApiService } from "../interfaces/api.interface";
 
 /**
@@ -90,6 +91,29 @@ export function broadcastTenantContext(tenantId: string | null): void {
       service.setTenantContext(tenantId);
     }
   }
+}
+
+/**
+ * Returns the active tenant drilldown context ID for out-of-band keepalive requests.
+ */
+export function getActiveTenantContextId(): string | null {
+  if (activeBroadcastTenantId !== undefined) {
+    return activeBroadcastTenantId;
+  }
+  if (typeof window !== "undefined") {
+    try {
+      const saved = sessionStorage.getItem(STORAGE_KEYS.tenant_context);
+      if (saved) {
+        const parsed = JSON.parse(saved) as { id?: unknown };
+        if (typeof parsed?.id === "string" && parsed.id) {
+          return parsed.id;
+        }
+      }
+    } catch {
+      // Ignore parse errors
+    }
+  }
+  return null;
 }
 
 /**

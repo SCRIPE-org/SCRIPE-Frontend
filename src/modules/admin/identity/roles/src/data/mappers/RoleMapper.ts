@@ -46,7 +46,24 @@ const RoleModelSchema = z.object({
   modifiedAt: isoDateString().optional().nullable(),
   groupNamesEn: z.array(z.string()).optional(),
   groupNamesAr: z.array(z.string()).optional(),
+  defaultLandingTarget: optionalString(),
+  isLandingEnforced: z.boolean().optional().default(false),
+  rowVersion: optionalString(),
 });
+
+/** Normalizes structured role landing policy before sending to Role create/update endpoints. */
+export function normalizeRoleLandingPolicy(
+  rawTarget?: string | null,
+  rawEnforced?: boolean
+): { defaultLandingTarget: string | null; isLandingEnforced: boolean } {
+  const trimmed = typeof rawTarget === "string" ? rawTarget.trim().toLowerCase() : "";
+  const defaultLandingTarget = !trimmed || trimmed === "default" ? null : trimmed;
+  const canEnforce = defaultLandingTarget !== null && defaultLandingTarget !== "hub";
+  return {
+    defaultLandingTarget,
+    isLandingEnforced: canEnforce ? Boolean(rawEnforced) : false,
+  };
+}
 
 /**
  * Bidirectional data mapper orchestrating conversion between database DTO formats and frontend domain entities, enforcing null-safe defaults.
@@ -81,6 +98,9 @@ export class RoleMapper {
       modifiedAt: validated.modifiedAt ?? undefined,
       groupNamesEn: validated.groupNamesEn,
       groupNamesAr: validated.groupNamesAr,
+      defaultLandingTarget: validated.defaultLandingTarget ?? null,
+      isLandingEnforced: Boolean(validated.isLandingEnforced),
+      rowVersion: validated.rowVersion ?? null,
     };
 
     return new Role(props);
@@ -108,7 +128,12 @@ export class RoleMapper {
       entity.descriptionAr,
       entity.tenantId,
       entity.tenantName,
-      entity.modifiedAt
+      entity.modifiedAt,
+      entity.toProps().groupNamesEn,
+      entity.toProps().groupNamesAr,
+      entity.defaultLandingTarget,
+      entity.isLandingEnforced,
+      entity.rowVersion
     );
   }
 
@@ -123,6 +148,12 @@ export class RoleMapper {
    * Map CreateRoleRequest to CreateRoleModel
    */
   static toCreateModel(request: CreateRoleRequest): RoleModel.CreateRoleModel {
+    const hasLandingField =
+      request.defaultLandingTarget !== undefined || request.isLandingEnforced !== undefined;
+    const normalizedLanding = hasLandingField
+      ? normalizeRoleLandingPolicy(request.defaultLandingTarget, request.isLandingEnforced)
+      : undefined;
+
     return new RoleModel.CreateRoleModel(
       request.nameEn,
       request.nameAr,
@@ -130,7 +161,10 @@ export class RoleMapper {
       request.priority ?? 0,
       request.descriptionEn,
       request.descriptionAr,
-      request.tenantId
+      request.tenantId,
+      undefined,
+      normalizedLanding?.defaultLandingTarget,
+      normalizedLanding?.isLandingEnforced
     );
   }
 
@@ -138,13 +172,22 @@ export class RoleMapper {
    * Map UpdateRoleRequest to UpdateRoleModel
    */
   static toUpdateModel(request: UpdateRoleRequest): RoleModel.UpdateRoleModel {
+    const hasLandingField =
+      request.defaultLandingTarget !== undefined || request.isLandingEnforced !== undefined;
+    const normalizedLanding = hasLandingField
+      ? normalizeRoleLandingPolicy(request.defaultLandingTarget, request.isLandingEnforced)
+      : undefined;
+
     return new RoleModel.UpdateRoleModel(
       request.nameEn,
       request.nameAr,
       request.priority,
       request.descriptionEn,
       request.descriptionAr,
-      undefined
+      undefined,
+      normalizedLanding?.defaultLandingTarget,
+      normalizedLanding?.isLandingEnforced,
+      request.rowVersion
     );
   }
 

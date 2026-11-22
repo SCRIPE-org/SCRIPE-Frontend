@@ -19,6 +19,7 @@ import type { CrmSettingsCardModel } from "../../viewmodels/useCrmSettingsViewMo
 /** Props for `CrmRolesAndPrincipalsSettingsCard`. */
 export interface CrmRolesAndPrincipalsSettingsCardProps {
   settings: CrmSettingsCardModel;
+  baseCurrency?: string;
   recordPrincipals?: Array<{
     key: string;
     nameEn: string;
@@ -35,6 +36,7 @@ export interface CrmRolesAndPrincipalsSettingsCardProps {
  */
 export function CrmRolesAndPrincipalsSettingsCard({
   settings,
+  baseCurrency = "USD",
   recordPrincipals = DEFAULT_RECORD_PRINCIPALS,
   onNotifySaved,
 }: CrmRolesAndPrincipalsSettingsCardProps) {
@@ -112,7 +114,7 @@ export function CrmRolesAndPrincipalsSettingsCard({
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-3">
-        <div className="lg:col-span-6 rounded-lg border border-nx-line bg-nx-ground/40 p-2.5 space-y-2">
+        <div className="lg:col-span-12 rounded-lg border border-nx-line bg-nx-ground/40 p-2.5 space-y-2.5">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-nx-ink">
               {t("crm.settings.rolesCard.section1Title")}
@@ -121,22 +123,24 @@ export function CrmRolesAndPrincipalsSettingsCard({
               {scopedRoles.length} {t("crm.settings.rolesCard.queuesSuffix")}
             </Badge>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
             {scopedRoles.map((role) => (
               <div
                 key={role.key}
-                className="rounded-md border border-nx-line bg-nx-surface px-2 py-1 flex items-start justify-between gap-1"
+                className="rounded-md border border-nx-line bg-nx-surface px-2.5 py-1.5 flex items-start justify-between gap-2"
                 data-testid={`crm-settings-pipeline-role-${role.key}`}
               >
                 <div className="space-y-0.5 min-w-0 flex-1">
                   <div className="text-[11px] font-bold text-nx-ink truncate" title={isRtl ? role.nameAr : role.nameEn}>
                     {isRtl ? (role.nameAr || role.nameEn) : role.nameEn}
                   </div>
-                  <div className="flex items-center justify-between gap-1 text-[9px] font-mono text-nx-ink-3 min-w-0">
-                    <span className="text-nx-ink-2 truncate">{role.key}</span>
+                  <div className="flex items-center justify-between gap-2 text-[9px] font-mono text-nx-ink-3 min-w-0">
+                    <span className="text-nx-ink-2 truncate">{role.key.replace(/^pipe_role:/, "")}</span>
                     <span className="shrink-0 text-nx-ink-2">
                       {role.maxApprovalThresholdAmount
-                        ? `≤$${(role.maxApprovalThresholdAmount / 1000).toFixed(0)}k`
+                        ? role.maxApprovalThresholdAmount >= 1000
+                          ? `≤ ${baseCurrency} ${(role.maxApprovalThresholdAmount / 1000).toFixed(0)}k`
+                          : `≤ ${baseCurrency} ${role.maxApprovalThresholdAmount.toLocaleString()}`
                         : t("crm.settings.rolesCard.unlimitedAuthority")}
                     </span>
                   </div>
@@ -159,11 +163,11 @@ export function CrmRolesAndPrincipalsSettingsCard({
 
           {canManageRoles && (
             <div className="space-y-1.5 pt-1 border-t border-nx-line/60" data-testid="crm-settings-role-creation-form">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <Input value={nameEn} onChange={(e) => setNameEn(e.target.value)} placeholder={t("crm.settings.rolesCard.queueNameEnPlaceholder")} className="h-7 text-xs" data-testid="crm-settings-role-name-en" />
-                <Input dir="rtl" value={nameAr} onChange={(e) => setNameAr(e.target.value)} placeholder={t("crm.settings.rolesCard.queueNameArPlaceholder")} className="h-7 text-xs" data-testid="crm-settings-role-name-ar" />
+                <Input dir={nameAr ? "rtl" : "auto"} value={nameAr} onChange={(e) => setNameAr(e.target.value)} placeholder={t("crm.settings.rolesCard.queueNameArPlaceholder")} className="h-7 text-xs" data-testid="crm-settings-role-name-ar" />
                 <Input value={membersInput} onChange={(e) => setMembersInput(e.target.value)} placeholder={t("crm.settings.rolesCard.membersPlaceholder")} className="h-7 text-xs" data-testid="crm-settings-role-members-input" />
-                <Input type="number" value={maxLimitInput} onChange={(e) => setMaxLimitInput(e.target.value)} placeholder={t("crm.settings.rolesCard.maxLimitPlaceholder")} className="h-7 text-xs font-mono" data-testid="crm-settings-role-limit-input" />
+                <Input type="number" value={maxLimitInput} onChange={(e) => setMaxLimitInput(e.target.value)} placeholder={t("crm.settings.rolesCard.maxLimitPlaceholder", { currency: baseCurrency })} className="h-7 text-xs font-mono" data-testid="crm-settings-role-limit-input" />
               </div>
               <div className="flex justify-end">
                 <Button type="button" size="sm" className="h-7 px-3 text-xs gap-1.5 w-full sm:w-auto" onClick={handleAddPipelineRole} data-testid="crm-settings-save-role-btn">
@@ -175,7 +179,7 @@ export function CrmRolesAndPrincipalsSettingsCard({
           )}
         </div>
 
-        <div className="lg:col-span-6 space-y-2.5">
+        <div className="lg:col-span-12 grid grid-cols-1 lg:grid-cols-2 gap-3">
           <div className="rounded-lg border border-nx-line bg-nx-ground/40 p-2.5 space-y-1.5">
             <div className="flex items-center gap-1.5">
               <UserCheck className="size-3.5 text-info shrink-0" />
@@ -207,9 +211,9 @@ export function CrmRolesAndPrincipalsSettingsCard({
               ))}
             </div>
             {canManageRoles && (
-              <div className="grid grid-cols-3 gap-1.5 pt-0.5">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 pt-0.5">
                 <Input value={commNameEn} onChange={(e) => setCommNameEn(e.target.value)} placeholder={t("crm.settings.rolesCard.committeeRoleEnPlaceholder")} className="h-7 text-xs" data-testid="crm-settings-committee-en" />
-                <Input dir="rtl" value={commNameAr} onChange={(e) => setCommNameAr(e.target.value)} placeholder={t("crm.settings.rolesCard.committeeRoleArPlaceholder")} className="h-7 text-xs" data-testid="crm-settings-committee-ar" />
+                <Input dir={commNameAr ? "rtl" : "auto"} value={commNameAr} onChange={(e) => setCommNameAr(e.target.value)} placeholder={t("crm.settings.rolesCard.committeeRoleArPlaceholder")} className="h-7 text-xs" data-testid="crm-settings-committee-ar" />
                 <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={handleAddCommitteeRole} data-testid="crm-settings-inline-create-committee-btn">
                   <Plus className="size-3 me-1" />{t("crm.settings.rolesCard.addCommitteeBtn")}
                 </Button>

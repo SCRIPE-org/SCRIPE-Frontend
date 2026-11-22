@@ -4,6 +4,10 @@
  *
  * Defines the contract for tenant data operations.
  */
+import type {
+  TenantSettingsModel,
+  UpdateTenantSettingsRequest,
+} from "@modules/customization/tenant-settings/src/domain/types/SettingsTypes";
 import type { Tenant, TenantTreeNode } from "../entities/Tenant";
 import type { TenantDomain, TenantDomainsConfig } from "../entities/TenantDomain";
 import type {
@@ -361,4 +365,16 @@ export interface ITenantRepository {
     tenantId: string,
     id: string
   ): Promise<TenantIdpTestConnectionResult>;
+
+  /** Toggle tenant active status */
+  toggleStatus(id: string, isActive: boolean): Promise<void>;
+
+  /** Get tenant settings */
+  getSettings(tenantId: string): Promise<TenantSettingsModel>;
+
+  /** Update tenant settings */
+  updateSettings(tenantId: string, request: UpdateTenantSettingsRequest): Promise<void>;
+
+  /** Upload tenant logo */
+  uploadLogo(tenantId: string, file: File): Promise<{ url: string }>;
 }

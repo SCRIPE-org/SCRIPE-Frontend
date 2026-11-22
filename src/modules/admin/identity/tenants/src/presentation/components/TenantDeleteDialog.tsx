@@ -16,13 +16,12 @@ import { Checkbox } from "@core/ui/checkbox";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { ShieldAlert } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
-import type { Tenant } from "../../domain/entities/Tenant";
 import { useTenantDeleteViewModel } from "../viewmodels/useTenantDeleteViewModel";
 
 interface TenantDeleteDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  tenant: Tenant | null;
+  tenant: { id: string; name: string } | null;
   onConfirm: (cascadeChildren: boolean) => Promise<void>;
   isDeleting?: boolean;
 }

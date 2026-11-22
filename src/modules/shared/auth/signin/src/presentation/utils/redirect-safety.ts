@@ -1,1 +1,6 @@
-export { isSafeRedirectTarget, getSafeRedirectPath } from "@core/common/redirect-safety";
+export {
+  isSafeRedirectTarget,
+  getSafeRedirectPath,
+  extractEligibleDeepLink,
+  buildPostAuthEntryUrl,
+} from "@core/common/redirect-safety";

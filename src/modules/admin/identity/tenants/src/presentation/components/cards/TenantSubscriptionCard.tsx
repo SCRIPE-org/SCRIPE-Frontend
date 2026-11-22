@@ -57,6 +57,7 @@ import type {
 
 interface TenantSubscriptionCardProps {
   tenantId: string;
+  isInternal?: boolean;
 }
 
 // ── Status & Type Helpers ──
@@ -74,8 +75,16 @@ const STATUS_CONFIG: Record<
   pastdue: { variant: "destructive", icon: AlertTriangle },
 };
 
-function getTypeLabel(type: string, t: (key: string) => string, isFreePlan?: boolean): string {
-  if (isFreePlan || type === "Free") {
+function getTypeLabel(
+  type: string,
+  t: (key: string) => string,
+  isFreePlan?: boolean,
+  isInternal?: boolean
+): string {
+  if (isInternal && type === "Free") {
+    return t("tenant.internalSovereignBadge");
+  }
+  if (!isInternal && (isFreePlan || type === "Free")) {
     return t("tenant.typeLabel.free");
   }
   const map: Record<string, string> = {
@@ -102,9 +111,9 @@ function getStatusLabel(status: string, t: (key: string) => string): string {
   return map[status] || status;
 }
 
-function formatDate(dateStr?: string) {
+function formatDate(dateStr?: string, locale = "en") {
   if (!dateStr) return "—";
-  return formatDateUtc(dateStr);
+  return formatDateUtc(dateStr, locale);
 }
 
 // ── Billing Cycle Options (dynamically filtered by edition capabilities) ──
@@ -169,8 +178,11 @@ function getConvertOptions(
  * Presentation UI component rendering the tenant subscription card.
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
-export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps) {
-  const { t } = useI18n();
+export function TenantSubscriptionCard({
+  tenantId,
+  isInternal = false,
+}: TenantSubscriptionCardProps) {
+  const { t, language } = useI18n();
   const [selectedEditionId, setSelectedEditionId] = useState("");
   const [changePlanOpen, setChangePlanOpen] = useState(false);
   const vm = useTenantSubscriptionViewModel(tenantId, selectedEditionId, changePlanOpen);
@@ -311,20 +323,22 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
           size="sm"
           title={t("tenant.noSubscription")}
           action={
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                setSelectedEditionId("");
-                setSelectedType("Monthly");
-                setChangePlanOpen(true);
-              }}
-            >
-              {t("tenant.assignPlan")}
-            </Button>
+            !isInternal ? (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setSelectedEditionId("");
+                  setSelectedType("Monthly");
+                  setChangePlanOpen(true);
+                }}
+              >
+                {t("tenant.assignPlan")}
+              </Button>
+            ) : undefined
           }
         />
-        {renderChangePlanDialog()}
+        {!isInternal && renderChangePlanDialog()}
       </>
     );
   }
@@ -342,6 +356,11 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
             </CardTitle>
             <CardDescription>{t("tenant.subscriptionPlanDesc")}</CardDescription>
           </div>
+          {isInternal && (
+            <Badge variant="info" className="text-xs">
+              {t("tenant.internalSovereignBadge")}
+            </Badge>
+          )}
         </CardHeader>
 
         <CardContent className="space-y-4 pt-2">
@@ -359,7 +378,12 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
             <div className="space-y-1">
               <p className="text-xs font-medium text-nx-ink-2">{t("tenant.billingCycle")}</p>
               <Badge variant="outline" className="text-xs">
-                {getTypeLabel(subscription.type, t, subscription.totalAmount === 0)}
+                {getTypeLabel(
+                  subscription.type,
+                  t,
+                  !isInternal && subscription.totalAmount === 0,
+                  isInternal
+                )}
               </Badge>
             </div>
 
@@ -377,7 +401,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
               <p className="text-xs font-medium text-nx-ink-2">{t("tenant.startDate")}</p>
               <p className="flex items-center gap-1 text-sm font-medium">
                 <Calendar className="h-3 w-3 text-nx-ink-2" />
-                {formatDate(subscription.startDate)}
+                {formatDate(subscription.startDate, language)}
               </p>
             </div>
 
@@ -386,7 +410,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
               <p className="text-xs font-medium text-nx-ink-2">{t("tenant.endDate")}</p>
               {subscription.endDate ? (
                 <div>
-                  <p className="text-sm font-medium">{formatDate(subscription.endDate)}</p>
+                  <p className="text-sm font-medium">{formatDate(subscription.endDate, language)}</p>
                   {vm.daysRemaining !== null && (
                     <p
                       className={`text-xs ${vm.daysRemaining <= 7 ? "font-semibold text-destructive" : "text-nx-ink-2"}`}
@@ -403,9 +427,19 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
             </div>
           </div>
 
-          {/* ── Pricing Info / Free Plan Banner ── */}
-          {subscription.type === "Free" ||
-          (subscription.type === "Lifetime" && subscription.totalAmount === 0) ? (
+          {/* ── Pricing Info / Internal Sovereign / Free Plan Banner ── */}
+          {isInternal &&
+          (subscription.type === "Free" ||
+            (subscription.type === "Lifetime" && (subscription.totalAmount ?? 0) === 0)) ? (
+            <div className="flex items-center gap-3 rounded-nx-md border border-info/25 bg-info/10 p-4 text-info">
+              <Shield className="h-5 w-5 shrink-0 text-info" />
+              <div>
+                <p className="text-sm font-semibold">{t("tenant.internalSovereignTitle")}</p>
+                <p className="mt-0.5 text-xs text-nx-ink-2">{t("tenant.internalSovereignDesc")}</p>
+              </div>
+            </div>
+          ) : subscription.type === "Free" ||
+            (subscription.type === "Lifetime" && subscription.totalAmount === 0) ? (
             <div className="flex items-center gap-3 rounded-nx-md border border-success/20 bg-success/5 p-4 text-success">
               <Gift className="h-5 w-5 shrink-0 text-success" />
               <div>
@@ -533,20 +567,22 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                   {" ("}
                   {vm.downgradedFromType}
                   {")"}
-                  {vm.downgradedAt && <> — {formatDateUtc(vm.downgradedAt)}</>}
+                  {vm.downgradedAt && <> — {formatDateUtc(vm.downgradedAt, language)}</>}
                 </span>
               </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  setRestoreType((vm.downgradedFromType as SubscriptionType) || "Monthly");
-                  setResumeOpen(true);
-                }}
-              >
-                <RotateCcw className="me-1.5 h-3.5 w-3.5" />
-                {t("tenant.restoreOriginalPlan")}
-              </Button>
+              {!isInternal && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setRestoreType((vm.downgradedFromType as SubscriptionType) || "Monthly");
+                    setResumeOpen(true);
+                  }}
+                >
+                  <RotateCcw className="me-1.5 h-3.5 w-3.5" />
+                  {t("tenant.restoreOriginalPlan")}
+                </Button>
+              )}
             </div>
           )}
 
@@ -572,7 +608,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                     )}
                     {previousRefundedSub.refundedAt && (
                       <span className="ms-1 text-xs text-nx-ink-2">
-                        — {formatDateUtc(previousRefundedSub.refundedAt)}
+                        — {formatDateUtc(previousRefundedSub.refundedAt, language)}
                       </span>
                     )}
                   </span>
@@ -616,7 +652,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                     )}
                     {subscription.refundedAt && (
                       <span className="ms-1 text-xs text-nx-ink-2">
-                        — {formatDateUtc(subscription.refundedAt)}
+                        — {formatDateUtc(subscription.refundedAt, language)}
                       </span>
                     )}
                   </span>
@@ -644,7 +680,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                 <XCircle className="h-4 w-4 shrink-0" />
                 <span>{t("tenant.canceledBanner")}</span>
               </div>
-              {vm.canReassign && (
+              {vm.canReassign && !isInternal && (
                 <Button
                   variant="outline"
                   size="sm"
@@ -668,7 +704,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                 <AlertTriangle className="h-4 w-4 shrink-0" />
                 <span>{t("tenant.expiredBanner")}</span>
               </div>
-              {vm.canReassign && (
+              {vm.canReassign && !isInternal && (
                 <Button
                   variant="outline"
                   size="sm"
@@ -716,8 +752,8 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
 
           {/* ── Actions Row ── */}
           <div className="flex flex-wrap gap-2 border-t border-nx-line pt-3">
-            {/* Change Plan — hidden for PendingPayment, Canceled, Expired */}
-            {!vm.isPendingPayment && !vm.isCanceled && !vm.isExpired && (
+            {/* Change Plan — hidden for PendingPayment, Canceled, Expired, and Internal tenants */}
+            {!vm.isPendingPayment && !vm.isCanceled && !vm.isExpired && !isInternal && (
               <Button
                 variant="outline"
                 size="sm"
@@ -733,7 +769,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
             )}
 
             {/* Renew — hidden for Lifetime */}
-            {vm.canRenew && (
+            {vm.canRenew && !isInternal && (
               <Button
                 variant="outline"
                 size="sm"
@@ -748,7 +784,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
             )}
 
             {/* Convert Trial */}
-            {vm.canConvertTrial && (
+            {vm.canConvertTrial && !isInternal && (
               <Button
                 variant="default"
                 size="sm"
@@ -763,7 +799,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
             )}
 
             {/* Suspend */}
-            {vm.canSuspend && (
+            {vm.canSuspend && !isInternal && (
               <Button
                 variant="outline"
                 size="sm"
@@ -779,7 +815,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
             )}
 
             {/* Resume / Restore — dynamic label */}
-            {vm.canResume && (
+            {vm.canResume && !isInternal && (
               <Button
                 variant="default"
                 size="sm"
@@ -805,7 +841,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
             )}
 
             {/* Cancel */}
-            {vm.canCancel && (
+            {vm.canCancel && !isInternal && (
               <Button
                 variant="outline"
                 size="sm"
@@ -835,7 +871,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
             )}
 
             {/* Change Currency */}
-            {vm.isActive && (
+            {vm.isActive && !isInternal && (
               <Button
                 variant="outline"
                 size="sm"
@@ -864,13 +900,17 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
       </Card>
 
       {/* ── Dialogs ── */}
-      {renderChangePlanDialog()}
-      {renderRenewDialog()}
-      {renderConvertDialog()}
-      {renderSuspendDialog()}
-      {renderCancelDialog()}
-      {renderResumeDialog()}
-      {renderChangeCurrencyDialog()}
+      {!isInternal && (
+        <>
+          {renderChangePlanDialog()}
+          {renderRenewDialog()}
+          {renderConvertDialog()}
+          {renderSuspendDialog()}
+          {renderCancelDialog()}
+          {renderResumeDialog()}
+          {renderChangeCurrencyDialog()}
+        </>
+      )}
     </>
   );
 
@@ -1138,7 +1178,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
               <div className="space-y-1 rounded-nx-md bg-nx-raised p-3">
                 <p className="text-xs text-nx-ink-2">{t("tenant.currentEndDate")}</p>
                 <p className="text-sm font-medium">
-                  {subscription.endDate ? formatDate(subscription.endDate) : t("tenant.never")}
+                  {subscription.endDate ? formatDate(subscription.endDate, language) : t("tenant.never")}
                 </p>
               </div>
             )}
@@ -1619,7 +1659,7 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
                   </p>
                   {vm.downgradedAt && (
                     <p className="text-xs text-nx-ink-2">
-                      {t("tenant.downgradedOn")}: {formatDateUtc(vm.downgradedAt)}
+                      {t("tenant.downgradedOn")}: {formatDateUtc(vm.downgradedAt, language)}
                     </p>
                   )}
                 </div>

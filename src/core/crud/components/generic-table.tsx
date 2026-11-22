@@ -468,6 +468,15 @@ function GenericTableInner<T extends Record<string, any>>({
     sortedData.length > 0 && sortedData.every((row) => selectedItems.includes(row.id));
   const someSelected =
     !allSelected && sortedData.some((row) => selectedItems.includes(row.id));
+  const hasVisibleActions =
+    Boolean(renderActions) ||
+    Boolean(
+      actions &&
+        actions.length > 0 &&
+        (loading ||
+          sortedData.length === 0 ||
+          sortedData.some((row) => actions.some((action) => !action.show || action.show(row))))
+    );
 
   return (
     <div
@@ -555,12 +564,14 @@ function GenericTableInner<T extends Record<string, any>>({
                     return (
                       <div
                         key={String(column.key)}
-                        className="flex items-center justify-between gap-2"
+                        className="flex items-start justify-between gap-3"
                       >
-                        <span className="text-sm font-medium text-nx-ink-2">{column.label}:</span>
+                        <span className="shrink-0 whitespace-nowrap text-sm font-medium text-nx-ink-2">
+                          {column.label}:
+                        </span>
                         <span
                           className={cn(
-                            "text-sm text-nx-ink",
+                            "min-w-0 break-words text-end text-sm text-nx-ink",
                             typeof rawVal === "number" && "tabular-nums"
                           )}
                         >
@@ -571,58 +582,59 @@ function GenericTableInner<T extends Record<string, any>>({
                       </div>
                     );
                   })}
-                {((actions && actions.length > 0) || renderActions) && (
-                  <div className="flex justify-end border-t border-nx-line pt-2">
-                    {renderActions ? (
-                      renderActions(row)
-                    ) : (
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm" aria-label={t("table.actions")}>
-                            <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent
-                          align="end"
-                          className="min-w-[160px]"
-                          // Same focus-restore guard as the desktop row menu below.
-                          onCloseAutoFocus={(e) => e.preventDefault()}
-                        >
-                          {actions &&
-                            actions
-                              .filter((action) => !action.show || action.show(row))
-                              .map((action, actionIndex) => (
-                                <DropdownMenuItem
-                                  key={actionIndex}
-                                  onClick={() => {
-                                    if (action.loading || action.disabled?.(row)) return;
-                                    action.onClick(row);
-                                  }}
-                                  disabled={action.loading || action.disabled?.(row)}
-                                  title={action.tooltip}
-                                  className={cn(
-                                    action.variant === "destructive" &&
-                                      "text-nx-danger focus:text-nx-danger",
-                                    action.className
-                                  )}
-                                >
-                                  {action.loading ? (
-                                    <LoadingSpinner size="inline" className="me-2" />
-                                  ) : (
-                                    action.icon && (
-                                      <span className="me-2" aria-hidden="true">
-                                        {action.icon}
-                                      </span>
-                                    )
-                                  )}
-                                  <span className="font-medium">{action.label}</span>
-                                </DropdownMenuItem>
-                              ))}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    )}
-                  </div>
-                )}
+                {(() => {
+                  const visibleRowActions = actions?.filter((a) => !a.show || a.show(row)) ?? [];
+                  if (!renderActions && visibleRowActions.length === 0) return null;
+                  return (
+                    <div className="flex justify-end border-t border-nx-line pt-2">
+                      {renderActions ? (
+                        renderActions(row)
+                      ) : (
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="sm" aria-label={t("table.actions")}>
+                              <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent
+                            align="end"
+                            className="min-w-[160px]"
+                            // Same focus-restore guard as the desktop row menu below.
+                            onCloseAutoFocus={(e) => e.preventDefault()}
+                          >
+                            {visibleRowActions.map((action, actionIndex) => (
+                              <DropdownMenuItem
+                                key={actionIndex}
+                                onClick={() => {
+                                  if (action.loading || action.disabled?.(row)) return;
+                                  action.onClick(row);
+                                }}
+                                disabled={action.loading || action.disabled?.(row)}
+                                title={action.tooltip}
+                                className={cn(
+                                  action.variant === "destructive" &&
+                                    "text-nx-danger focus:text-nx-danger",
+                                  action.className
+                                )}
+                              >
+                                {action.loading ? (
+                                  <LoadingSpinner size="inline" className="me-2" />
+                                ) : (
+                                  action.icon && (
+                                    <span className="me-2" aria-hidden="true">
+                                      {action.icon}
+                                    </span>
+                                  )
+                                )}
+                                <span className="font-medium">{action.label}</span>
+                              </DropdownMenuItem>
+                            ))}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      )}
+                    </div>
+                  );
+                })()}
               </div>
             );
           })
@@ -729,7 +741,7 @@ function GenericTableInner<T extends Record<string, any>>({
                       </TableHead>
                     );
                   })}
-                  {((actions && actions.length > 0) || renderActions) && (
+                  {hasVisibleActions && (
                     <TableHead
                       ref={actionsColumnRef}
                       className={cn(
@@ -759,7 +771,7 @@ function GenericTableInner<T extends Record<string, any>>({
                           <Skeleton className="h-4 w-full max-w-[160px]" />
                         </TableCell>
                       ))}
-                      {((actions && actions.length > 0) || renderActions) && (
+                      {hasVisibleActions && (
                         <TableCell className={cn(stickyActions && getStickyActionsClasses())}>
                           <div className="flex items-center justify-center">
                             <Skeleton className="h-7 w-7 rounded-nx-sm" />
@@ -773,7 +785,7 @@ function GenericTableInner<T extends Record<string, any>>({
                     <TableCell
                       colSpan={
                         columns.length +
-                        ((actions && actions.length > 0) || renderActions ? 1 : 0) +
+                        (hasVisibleActions ? 1 : 0) +
                         (selectable ? 1 : 0)
                       }
                       className="h-32 text-center text-nx-ink-3"
@@ -831,43 +843,44 @@ function GenericTableInner<T extends Record<string, any>>({
                             </TableCell>
                           );
                         })}
-                        {((actions && actions.length > 0) || renderActions) && (
-                          <TableCell
-                            className={cn(stickyActions && getStickyActionsClasses())}
-                            ref={index === 0 ? actionsColumnRef : undefined}
-                          >
-                            {renderActions ? (
-                              renderActions(row)
-                            ) : (
-                              <div className="flex items-center justify-center">
-                                <DropdownMenu>
-                                  <DropdownMenuTrigger asChild>
-                                    <Button
-                                      variant="ghost"
-                                      className="h-8 w-8 p-0"
-                                      aria-label={t("table.actions")}
-                                    >
-                                      <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
-                                    </Button>
-                                  </DropdownMenuTrigger>
-                                  <DropdownMenuContent
-                                    align={direction === "rtl" ? "start" : "end"}
-                                    className="min-w-[160px]"
-                                    // Radix restores focus to this menu's trigger when it
-                                    // closes — and because the menu keeps an exit animation,
-                                    // that restore lands ~140ms AFTER a chosen action has
-                                    // already opened a dialog. The focus then sits outside
-                                    // the new panel, which is the emitter behind rows whose
-                                    // Edit / Assign form closed the instant it appeared.
-                                    // dialog.tsx now refuses to dismiss on focus movement;
-                                    // this stops the stray focus jump at the source so the
-                                    // caret stays where the dialog wants it.
-                                    onCloseAutoFocus={(e) => e.preventDefault()}
-                                  >
-                                    {actions &&
-                                      actions
-                                        .filter((action) => !action.show || action.show(row))
-                                        .map((action, actionIndex) => (
+                        {hasVisibleActions &&
+                          (() => {
+                            const visibleRowActions =
+                              actions?.filter((action) => !action.show || action.show(row)) ?? [];
+                            return (
+                              <TableCell
+                                className={cn(stickyActions && getStickyActionsClasses())}
+                                ref={index === 0 ? actionsColumnRef : undefined}
+                              >
+                                {renderActions ? (
+                                  renderActions(row)
+                                ) : visibleRowActions.length === 0 ? null : (
+                                  <div className="flex items-center justify-center">
+                                    <DropdownMenu>
+                                      <DropdownMenuTrigger asChild>
+                                        <Button
+                                          variant="ghost"
+                                          className="h-8 w-8 p-0"
+                                          aria-label={t("table.actions")}
+                                        >
+                                          <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
+                                        </Button>
+                                      </DropdownMenuTrigger>
+                                      <DropdownMenuContent
+                                        align={direction === "rtl" ? "start" : "end"}
+                                        className="min-w-[160px]"
+                                        // Radix restores focus to this menu's trigger when it
+                                        // closes — and because the menu keeps an exit animation,
+                                        // that restore lands ~140ms AFTER a chosen action has
+                                        // already opened a dialog. The focus then sits outside
+                                        // the new panel, which is the emitter behind rows whose
+                                        // Edit / Assign form closed the instant it appeared.
+                                        // dialog.tsx now refuses to dismiss on focus movement;
+                                        // this stops the stray focus jump at the source so the
+                                        // caret stays where the dialog wants it.
+                                        onCloseAutoFocus={(e) => e.preventDefault()}
+                                      >
+                                        {visibleRowActions.map((action, actionIndex) => (
                                           <DropdownMenuItem
                                             key={actionIndex}
                                             onClick={() => {
@@ -894,12 +907,13 @@ function GenericTableInner<T extends Record<string, any>>({
                                             <span className="font-medium">{action.label}</span>
                                           </DropdownMenuItem>
                                         ))}
-                                  </DropdownMenuContent>
-                                </DropdownMenu>
-                              </div>
-                            )}
-                          </TableCell>
-                        )}
+                                      </DropdownMenuContent>
+                                    </DropdownMenu>
+                                  </div>
+                                )}
+                              </TableCell>
+                            );
+                          })()}
                       </TableRow>
                     );
                   })

@@ -13,13 +13,22 @@ import { useRolesViewModel } from "../viewmodels/useRolesViewModel";
 import { GenericCrudView, type CrudConfig } from "@core/crud/components/generic-crud-view";
 import { Shield, Pencil, Trash, Copy, Users } from "lucide-react";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
+import { useAdminContext } from "@core/hooks/useAdminContext";
+import type { LandingTargetScopeMode } from "@core/navigation";
+import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { usePermissions } from "@core/providers/permission-provider";
+import { useWorkspace } from "@core/providers/workspace-provider";
 import type { Role } from "../../domain/entities/Role";
 import { AssignToGroupDialog } from "@modules/identity/core";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { RoleDeleteDialog } from "../components/RoleDeleteDialog";
+import { useRoleLandingCatalogViewModel } from "../viewmodels/useRoleLandingCatalogViewModel";
 import { getRolesCrudColumns } from "./rolesCrudColumns";
-import { getRoleCreateFields, getRoleEditFields } from "./rolesFormFields";
+import {
+  getRoleCreateFields,
+  getRoleEditFields,
+  getRoleEditInitialValues,
+} from "./rolesFormFields";
 
 /**
  * Presentation UI component rendering the roles view.
@@ -31,10 +40,37 @@ export function RolesView() {
   const router = useRouter();
   const { t, language } = useI18n();
   const { isPlatformSuperAdmin } = usePermissions();
+  const { activeTenantId, isTenant } = useAdminContext();
+  const { workspaceGroups } = useWorkspace();
+  const cachedWorkspaces = useNavigationStore((s) => s.workspaces);
+  const storeContextKey = useNavigationStore((s) => s.contextKey);
+  const isTenantContext = Boolean(activeTenantId || isTenant || !isPlatformSuperAdmin);
+  const primaryScopeMode: LandingTargetScopeMode = isTenantContext
+    ? "tenant_role"
+    : "platform_role";
+  const resolvedContextKey =
+    storeContextKey ||
+    (activeTenantId ? `tenant:${activeTenantId}` : isTenantContext ? "tenant" : "platform");
 
   // Logic: Platform Super Admins outside drill-down see System roles; Tenant Admins see My Tenant roles
   const viewModel = useRolesViewModel({ useMyTenant: !isPlatformSuperAdmin });
   const { handleBulkDelete, deleteRole, isDeletingRole } = viewModel;
+
+  const primaryCatalogQuery = useRoleLandingCatalogViewModel(
+    primaryScopeMode,
+    resolvedContextKey,
+    true
+  );
+  const editingScopeMode: LandingTargetScopeMode = viewModel.editingItem?.tenantId
+    ? "tenant_role"
+    : "platform_role";
+  const needsSecondaryCatalog =
+    Boolean(viewModel.editingItem) && editingScopeMode !== primaryScopeMode;
+  const secondaryCatalogQuery = useRoleLandingCatalogViewModel(
+    editingScopeMode,
+    resolvedContextKey,
+    needsSecondaryCatalog
+  );
 
   // Assign to Group dialog state
   const [selectedRoleForGroup, setSelectedRoleForGroup] = useState<Role | null>(null);
@@ -67,8 +103,32 @@ export function RolesView() {
     subtitleKey: "roles.description",
     resource: "roles", // Checks permissions (roles.view, roles.create, etc.)
     columns,
-    createFields: getRoleCreateFields(t),
-    editFields: getRoleEditFields(t),
+    createFields: getRoleCreateFields(t, {
+      language,
+      workspaceGroups,
+      cachedWorkspaces,
+      catalog: primaryCatalogQuery.catalog,
+      isCatalogLoading: primaryCatalogQuery.isLoading,
+      isTenantRole: isTenantContext,
+    }),
+    editFields: (role) => {
+      const roleScopeMode: LandingTargetScopeMode = role.tenantId
+        ? "tenant_role"
+        : "platform_role";
+      const matchedCatalogQuery =
+        roleScopeMode === primaryScopeMode ? primaryCatalogQuery : secondaryCatalogQuery;
+      return getRoleEditFields(t, {
+        language,
+        workspaceGroups,
+        cachedWorkspaces,
+        catalog: matchedCatalogQuery.catalog,
+        isCatalogLoading: matchedCatalogQuery.isLoading,
+        isTenantRole: Boolean(role.tenantId),
+        isSystemRole: role.isSystem,
+        currentTarget: role.defaultLandingTarget,
+      });
+    },
+    editInitialValues: getRoleEditInitialValues,
 
     getActions: (vm, t, _handleDelete) => [
       // Manage Permissions (Custom Action)
@@ -119,7 +179,7 @@ export function RolesView() {
       },
     ],
     getItemDisplayName: (role) => role.getLocalizedName(language),
-    itemTypeKey: "roles.roleDetails", // Used for delete confirmation ("Delete Role Details" -> "Delete Role")
+    itemTypeKey: "roles.singular",
     enableBulkActions: true,
     bulkActions: [
       {

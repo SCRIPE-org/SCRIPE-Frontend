@@ -22,6 +22,9 @@ export const en = {
       createDesc: "Define a new subscription plan with feature configurations.",
       edit: "Edit Edition",
       editDesc: "Update edition metadata.",
+      readOnlyNoticeTitle: "Read-Only System Configuration",
+      readOnlyNoticeDesc:
+        "This internal edition's feature entitlements and overflow policy are protected by the platform and cannot be modified.",
       deleteConfirmTitle: "Delete Edition",
       deleteConfirmDesc:
         "This will soft-delete the edition. Active subscriptions will not be affected.",
@@ -147,11 +150,15 @@ export const en = {
         categoryPlaceholder: "Select category",
         categoryDesc: "Select a category for this edition.",
         uncategorized: "Uncategorized",
+        internalLockedTitle: "Internal Sovereign Edition Is Immutable",
+        internalLockedDesc:
+          "Platform-internal editions cannot be modified through the edition wizard or commercial settings.",
       },
       created: "Edition Created",
       status: "Status",
       notFound: "Edition not found",
       retired: "Retired",
+      internalBadge: "Internal",
       createdDesc: "New edition created successfully.",
       updated: "Edition Updated",
       updatedDesc: "Edition details updated.",

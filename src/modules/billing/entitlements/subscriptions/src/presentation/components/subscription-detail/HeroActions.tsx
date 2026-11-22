@@ -39,13 +39,15 @@ interface HeroActionsProps {
   sub: SubscriptionListItem;
   vm: ReturnType<typeof useSubscriptionsViewModel>;
   t: (key: string) => string;
+  isInternal?: boolean;
 }
 
 /**
  * Presentation UI component rendering the hero actions.
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
-export function HeroActions({ sub, vm, t }: HeroActionsProps) {
+export function HeroActions({ sub, vm, t, isInternal }: HeroActionsProps) {
+  const resolvedInternal = isInternal ?? Boolean(vm.isInternalTenant);
   const isActive = sub.status === "Active" || sub.status === "Trialing";
   const isPending = sub.status === "PendingPayment";
   const isSuspended = sub.status === "Suspended";
@@ -57,6 +59,9 @@ export function HeroActions({ sub, vm, t }: HeroActionsProps) {
 
   // ── PendingPayment: Payment link actions ──
   if (isPending) {
+    if (resolvedInternal) {
+      return null;
+    }
     return (
       <>
         <Button
@@ -109,15 +114,17 @@ export function HeroActions({ sub, vm, t }: HeroActionsProps) {
   if (isSuspended) {
     return (
       <>
-        <Button
-          size="sm"
-          className="cursor-pointer gap-2"
-          onClick={() => vm.resumeSubscription()}
-          disabled={vm.isResuming}
-        >
-          <PlayCircle className="h-4 w-4" />
-          {t("entSubscriptions.resume")}
-        </Button>
+        {!resolvedInternal && (
+          <Button
+            size="sm"
+            className="cursor-pointer gap-2"
+            onClick={() => vm.resumeSubscription()}
+            disabled={vm.isResuming}
+          >
+            <PlayCircle className="h-4 w-4" />
+            {t("entSubscriptions.resume")}
+          </Button>
+        )}
         <Button
           size="sm"
           variant="outline"
@@ -134,6 +141,21 @@ export function HeroActions({ sub, vm, t }: HeroActionsProps) {
 
   // ── Active / Trialing: Full action set ──
   if (isActive) {
+    if (resolvedInternal) {
+      return (
+        <Button
+          size="sm"
+          variant="outline"
+          className="cursor-pointer gap-2"
+          onClick={() => vm.resyncPermissions()}
+          disabled={vm.isResyncing}
+        >
+          <RotateCcw className="h-4 w-4" />
+          {t("entSubscriptions.resync")}
+        </Button>
+      );
+    }
+
     return (
       <>
         <Button

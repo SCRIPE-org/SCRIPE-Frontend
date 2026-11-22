@@ -2,11 +2,30 @@
 
 import React, { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
-import { ChevronRight, ArrowRightLeft, X } from "lucide-react";
+import {
+  ChevronRight,
+  ArrowRightLeft,
+  X,
+  Home,
+  Lock,
+  Check,
+  RotateCcw,
+  MoreHorizontal,
+  SlidersHorizontal,
+} from "lucide-react";
 import type { MenuItem } from "@core/navigation";
 import { cn, resolveBilingualLabel } from "@core/common/utils";
 import { Button } from "@core/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@core/ui/dropdown-menu";
+import { DynamicIcon } from "@core/ui/layout/shared/dynamic-icon";
 import { useWorkspaceTransitionContext } from "../nexus-layout";
+import type { RailStartPageActionState } from "../use-rail-start-page-toggle";
 
 // All colour reads the --nx- token layer — theme resolves in CSS, so these
 // parts never see isDark or a JS palette object.
@@ -36,6 +55,8 @@ export interface NavItemProps {
   language: string;
   activeHref: string;
   switchWorkspace: (key: string) => void;
+  customStartPageHref?: string | null;
+  startPageIndicatorLabel?: string;
 }
 
 export function NavItem({
@@ -48,6 +69,8 @@ export function NavItem({
   language,
   activeHref,
   switchWorkspace,
+  customStartPageHref,
+  startPageIndicatorLabel,
 }: NavItemProps) {
   const [hovered, setHovered] = useState(false);
   const label =
@@ -60,7 +83,12 @@ export function NavItem({
     : null;
   const isWorkspaceSwitcher = !!workspaceKey;
 
-  const isActive = !!item.href && cleanPath(item.href) === cleanPath(activeHref);
+  const normalizedHref = cleanPath(item.href);
+  const isActive = !!item.href && normalizedHref === cleanPath(activeHref);
+  const isCustomStartPage =
+    Boolean(customStartPageHref) &&
+    Boolean(normalizedHref) &&
+    normalizedHref.toLowerCase() === cleanPath(customStartPageHref).toLowerCase();
 
   const hasChildren = item.children.length > 0;
   const isExpanded = expandedIds.includes(item.id);
@@ -85,41 +113,40 @@ export function NavItem({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasActiveChild]);
 
-  const indent = depth * 14; // Increased indent for better hierarchy
+  const indent = depth * 12;
 
   const itemStyle: React.CSSProperties = {
-    display: "flex",
-    alignItems: "center",
-    gap: 10,
-    paddingBlock: 8,
     paddingInlineStart: 12 + indent,
     paddingInlineEnd: 10,
-    borderRadius: "var(--nx-radius-control)",
-    cursor: "pointer",
-    textDecoration: "none",
     background: isActive
       ? "var(--nx-accent-wash, hsl(var(--primary) / 0.1))"
       : hovered
         ? "var(--nx-raised, hsl(var(--muted)))"
         : "transparent",
-    userSelect: "none",
-    position: "relative",
-    overflow: "hidden",
   };
 
   // Row colour transitions live in classes so motion-reduce can strip them.
-  const rowClassName = cn("transition-colors duration-nx-micro motion-reduce:transition-none");
+  const rowClassName = cn(
+    "relative flex min-h-9 select-none items-center gap-2.5 overflow-hidden rounded-nx-control no-underline transition-colors duration-nx-micro motion-reduce:transition-none cursor-pointer",
+    FOCUS_RING
+  );
 
-  const dotStyle: React.CSSProperties = {
-    width: 5,
-    height: 5,
-    borderRadius: "50%",
-    flexShrink: 0,
-    background: isActive
-      ? "var(--nx-accent, hsl(var(--primary)))"
-      : "var(--nx-line-hi, hsl(var(--border)))",
-    transform: isActive ? "scale(1.4)" : "scale(1)",
-  };
+  const hasExplicitIcon = Boolean(item.icon?.trim());
+  const iconColorClass = isActive ? "text-nx-accent" : hovered ? "text-nx-ink" : "text-nx-ink-3";
+
+  const leadingGlyph = hasExplicitIcon ? (
+    <DynamicIcon
+      name={item.icon}
+      size={depth === 0 ? 16 : 15}
+      strokeWidth={1.6}
+      className={cn(
+        "shrink-0 transition-colors duration-nx-micro motion-reduce:transition-none",
+        iconColorClass
+      )}
+    />
+  ) : (
+    <span className="size-4 shrink-0" aria-hidden="true" />
+  );
 
   const labelStyle: React.CSSProperties = {
     fontSize: 13,
@@ -139,16 +166,12 @@ export function NavItem({
           type="button"
           aria-expanded={isExpanded || hasActiveChild}
           style={itemStyle}
-          className={cn(rowClassName, "w-full border-0 text-start", FOCUS_RING)}
+          className={cn(rowClassName, "w-full border-0 text-start")}
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
           onClick={() => onToggle(item.id)}
         >
-          <span
-            aria-hidden="true"
-            style={dotStyle}
-            className="transition-[background-color,transform] duration-nx-standard ease-nx-enter motion-reduce:transition-none"
-          />
+          {leadingGlyph}
           <span
             style={labelStyle}
             className="min-w-0 truncate transition-colors duration-nx-micro motion-reduce:transition-none"
@@ -194,6 +217,8 @@ export function NavItem({
                   language={language}
                   activeHref={activeHref}
                   switchWorkspace={switchWorkspace}
+                  customStartPageHref={customStartPageHref}
+                  startPageIndicatorLabel={startPageIndicatorLabel}
                 />
               ))}
             </div>
@@ -210,7 +235,7 @@ export function NavItem({
         <button
           type="button"
           style={itemStyle}
-          className={cn(rowClassName, "w-full border-0 text-start", FOCUS_RING)}
+          className={cn(rowClassName, "w-full border-0 text-start")}
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
           onClick={() => {
@@ -218,11 +243,7 @@ export function NavItem({
             onNavigate();
           }}
         >
-          <span
-            aria-hidden="true"
-            style={dotStyle}
-            className="transition-[background-color,transform] duration-nx-standard ease-nx-enter motion-reduce:transition-none"
-          />
+          {leadingGlyph}
           <span
             style={labelStyle}
             className="min-w-0 truncate transition-colors duration-nx-micro motion-reduce:transition-none"
@@ -245,22 +266,25 @@ export function NavItem({
         href={item.href ?? "#"}
         onClick={onNavigate}
         style={itemStyle}
-        className={cn(rowClassName, FOCUS_RING)}
+        className={rowClassName}
         aria-current={isActive ? "page" : undefined}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
       >
-        <span
-          aria-hidden="true"
-          style={dotStyle}
-          className="transition-[background-color,transform] duration-nx-standard ease-nx-enter motion-reduce:transition-none"
-        />
+        {leadingGlyph}
         <span
           style={labelStyle}
           className="min-w-0 truncate transition-colors duration-nx-micro motion-reduce:transition-none"
         >
           {label}
         </span>
+
+        {isCustomStartPage && (
+          <Home
+            className="size-3 shrink-0 text-nx-ink-3/70"
+            aria-label={startPageIndicatorLabel || undefined}
+          />
+        )}
 
         {/* Active leaf edge light — accent bar at the inline start, no glow */}
         {isActive && (
@@ -287,17 +311,7 @@ export function NavItem({
 
 export function GroupLabel({ label }: { label: string }) {
   return (
-    <div
-      style={{
-        fontSize: 11,
-        fontWeight: 600,
-        color: "var(--nx-ink-3, hsl(var(--muted-foreground)))",
-        textTransform: "uppercase",
-        letterSpacing: "1px",
-        padding: "16px 12px 8px",
-        marginTop: 4,
-      }}
-    >
+    <div className="px-3 pb-1.5 pt-5 text-[11px] font-medium leading-none text-nx-ink-3">
       {label}
     </div>
   );
@@ -308,11 +322,15 @@ export function RailContent({
   pathname,
   language,
   onNavigate,
+  customStartPageHref,
+  startPageIndicatorLabel,
 }: {
   menuItems: MenuItem[];
   pathname: string;
   language: string;
   onNavigate: () => void;
+  customStartPageHref?: string | null;
+  startPageIndicatorLabel?: string;
 }) {
   const { switchWorkspace } = useWorkspaceTransitionContext();
   const [expandedIds, setExpandedIds] = useState<string[]>([]);
@@ -387,6 +405,8 @@ export function RailContent({
                   language={language}
                   activeHref={activeHref}
                   switchWorkspace={switchWorkspace}
+                  customStartPageHref={customStartPageHref}
+                  startPageIndicatorLabel={startPageIndicatorLabel}
                 />
               ))}
             </div>
@@ -404,10 +424,31 @@ export function RailContent({
             language={language}
             activeHref={activeHref}
             switchWorkspace={switchWorkspace}
+            customStartPageHref={customStartPageHref}
+            startPageIndicatorLabel={startPageIndicatorLabel}
           />
         );
       })}
     </div>
+  );
+}
+
+const RAIL_BIDI_TOKEN = "__SCRIPE_RAIL_BDI__";
+
+function renderBidiSingleToken(text: string, value: string): React.ReactNode {
+  if (!text.includes(RAIL_BIDI_TOKEN)) {
+    return text;
+  }
+  const parts = text.split(RAIL_BIDI_TOKEN);
+  return (
+    <>
+      {parts.map((part, idx) => (
+        <React.Fragment key={idx}>
+          {part}
+          {idx < parts.length - 1 ? <bdi>{value}</bdi> : null}
+        </React.Fragment>
+      ))}
+    </>
   );
 }
 
@@ -416,64 +457,157 @@ export function RailHeader({
   title,
   onClose,
   closeLabel,
+  startPageAction,
+  onManageStartPages,
+  t,
 }: {
   contextLabel: string;
   title: string;
   onClose?: () => void;
   closeLabel?: string;
+  startPageAction?: RailStartPageActionState;
+  onManageStartPages?: () => void;
+  t?: (key: string, params?: Record<string, string | number>) => string;
 }) {
-  return (
-    <div
-      style={{
-        padding: "24px 20px 20px",
-        borderBottom: "1px solid var(--nx-line, hsl(var(--border)))",
-        flexShrink: 0,
-        position: "relative",
-      }}
-    >
-      {/* Subtle accent wash bleeding from the top edge — a wash, not a glow */}
-      <div
-        aria-hidden="true"
-        style={{
-          position: "absolute",
-          top: 0,
-          insetInlineStart: 0,
-          insetInlineEnd: 0,
-          height: "60px",
-          background:
-            "linear-gradient(180deg, var(--nx-accent-wash, hsl(var(--primary) / 0.1)) 0%, transparent 100%)",
-          opacity: 0.5,
-          pointerEvents: "none",
-        }}
-      />
+  const showOverflowMenu = Boolean(startPageAction && startPageAction.kind !== "hidden" && t);
+  const trimmedContext = contextLabel.trim();
+  const showContextKicker =
+    Boolean(trimmedContext) && !title.toLowerCase().includes(trimmedContext.toLowerCase());
 
-      <div className="relative flex items-start justify-between gap-2">
-        <div className="min-w-0 flex-1">
-          <div
-            className="truncate transition-colors duration-nx-standard ease-nx-enter motion-reduce:transition-none"
-            style={{
-              fontSize: 10,
-              color: "var(--nx-ink-3, hsl(var(--muted-foreground)))",
-              textTransform: "uppercase",
-              letterSpacing: "1px",
-              fontWeight: 700,
-              marginBottom: 8,
-            }}
+  const renderOverflowMenu = () => {
+    if (!startPageAction || !t || startPageAction.kind === "hidden") return null;
+
+    const enforcedLabel = t("chrome.startPageLocked");
+    const enforcedText = startPageAction.enforcingRoleName
+      ? t("chrome.startPageEnforcedTooltip", { role: startPageAction.enforcingRoleName })
+      : t("chrome.startPageEnforcedGenericTooltip");
+    const enforcedNode = startPageAction.enforcingRoleName
+      ? renderBidiSingleToken(
+          t("chrome.startPageEnforcedTooltip", { role: RAIL_BIDI_TOKEN }),
+          startPageAction.enforcingRoleName
+        )
+      : enforcedText;
+
+    const currentLabel = t("chrome.currentStartPage");
+    const resetLabel = t("chrome.resetStartPage");
+    const setActionNode = renderBidiSingleToken(
+      t("chrome.setAsStartPage", { workspace: RAIL_BIDI_TOKEN }),
+      startPageAction.workspaceName
+    );
+    const manageLabel = t("chrome.manageStartPages");
+    const optionsLabel = t("chrome.workspaceOptions");
+
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            data-testid="rail-workspace-options-trigger"
+            aria-label={optionsLabel}
+            className={cn(
+              "h-7 w-7 shrink-0 rounded-nx-control text-nx-ink-3 hover:bg-nx-raised hover:text-nx-ink",
+              FOCUS_RING
+            )}
           >
-            {contextLabel}
+            <MoreHorizontal className="size-4" aria-hidden="true" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
+          align="end"
+          sideOffset={6}
+          className="w-52 border-nx-line bg-nx-popover opacity-100 !animate-none"
+        >
+          {startPageAction.kind === "settable" && (
+            <DropdownMenuItem
+              disabled={startPageAction.isPending}
+              onSelect={() => void startPageAction.onSetAsStartPage()}
+              className="cursor-pointer gap-2 text-xs font-medium"
+            >
+              <Home className="size-4 shrink-0 text-nx-ink-3" aria-hidden="true" />
+              <span className="min-w-0 flex-1 whitespace-normal leading-snug text-start">
+                {setActionNode}
+              </span>
+            </DropdownMenuItem>
+          )}
+
+          {startPageAction.kind === "current_custom" && (
+            <>
+              <div
+                data-testid="rail-start-page-status"
+                className="flex items-center gap-2 px-2 py-1.5 text-xs font-medium text-nx-ink-2"
+              >
+                <Check className="size-3.5 shrink-0 text-nx-accent" aria-hidden="true" />
+                <span className="min-w-0 flex-1 leading-snug">{currentLabel}</span>
+              </div>
+              <DropdownMenuItem
+                disabled={startPageAction.isPending}
+                onSelect={() => void startPageAction.onResetStartPage()}
+                className="cursor-pointer gap-2 text-xs font-medium"
+              >
+                <RotateCcw className="size-4 shrink-0 text-nx-ink-3" aria-hidden="true" />
+                <span className="min-w-0 flex-1 leading-snug">{resetLabel}</span>
+              </DropdownMenuItem>
+            </>
+          )}
+
+          {startPageAction.kind === "current_default" && (
+            <div
+              data-testid="rail-start-page-status"
+              className="flex items-center gap-2 px-2 py-1.5 text-xs font-medium text-nx-ink-2"
+            >
+              <Check className="size-3.5 shrink-0 text-nx-ink-3" aria-hidden="true" />
+              <span className="min-w-0 flex-1 leading-snug">{currentLabel}</span>
+            </div>
+          )}
+
+          {startPageAction.kind === "locked" && (
+            <div
+              data-testid="rail-start-page-locked"
+              aria-label={`${enforcedLabel} — ${enforcedText}`}
+              className="flex items-start gap-2 px-2 py-1.5"
+            >
+              <Lock className="mt-0.5 size-3.5 shrink-0 text-nx-ink-3" aria-hidden="true" />
+              <div className="min-w-0 flex-1 space-y-0.5">
+                <div className="text-xs font-medium leading-snug text-nx-ink">{enforcedLabel}</div>
+                <div className="text-[11px] leading-snug text-nx-ink-3">{enforcedNode}</div>
+              </div>
+            </div>
+          )}
+
+          {onManageStartPages && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onSelect={() => onManageStartPages()}
+                className="cursor-pointer gap-2 text-xs font-medium"
+              >
+                <SlidersHorizontal className="size-4 shrink-0 text-nx-ink-3" aria-hidden="true" />
+                <span className="min-w-0 flex-1 leading-snug">{manageLabel}</span>
+              </DropdownMenuItem>
+            </>
+          )}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
+  };
+
+  return (
+    <div className="flex min-h-[56px] shrink-0 items-center justify-between gap-2 border-b border-nx-line px-4 py-3">
+      <div className="min-w-0 flex-1">
+        {showContextKicker && (
+          <div className="mb-1 truncate text-[11px] font-medium leading-none text-nx-ink-3 transition-colors duration-nx-standard ease-nx-enter motion-reduce:transition-none">
+            {trimmedContext}
           </div>
-          <div
-            className="truncate"
-            style={{
-              fontSize: 16,
-              fontWeight: 700,
-              color: "var(--nx-ink, hsl(var(--foreground)))",
-              letterSpacing: "-0.3px",
-            }}
-          >
-            {title}
-          </div>
+        )}
+        <div className="truncate text-[15px] font-semibold leading-snug tracking-[-0.01em] text-nx-ink">
+          {title}
         </div>
+      </div>
+
+      <div className="flex shrink-0 items-center gap-1">
+        {showOverflowMenu ? renderOverflowMenu() : null}
         {onClose && (
           <Button
             type="button"
@@ -481,7 +615,7 @@ export function RailHeader({
             size="icon"
             onClick={onClose}
             aria-label={closeLabel}
-            className="-mt-1 h-9 w-9 shrink-0 text-nx-ink-2 hover:text-nx-ink"
+            className="h-8 w-8 shrink-0 text-nx-ink-2 hover:text-nx-ink"
           >
             <X className="h-4 w-4" aria-hidden="true" />
           </Button>

@@ -116,18 +116,19 @@ describe("PermissionProvider - Superadmin and PBAC security tests", () => {
     // Can access own tenant details (/tenants/[id] accepts tenants.view|tenants.view_self|tenants.view_details)
     expect(result.current.canAccessPage("/tenants/tenant-abc")).toBe(true);
 
-    // Can access shared overview (/overview requires no specific permission)
-    expect(result.current.canAccessPage("/overview")).toBe(true);
+    // /overview requires dashboard.view (aligned with IdentityMenuProvider.AdminGroups.cs)
+    expect(result.current.canAccessPage("/overview")).toBe(false);
 
-    // Now grant tenants.view (e.g. platform operator)
+    // Now grant tenants.view and dashboard.view (e.g. platform operator)
     useAppStore.setState({
-      permissions: ["tenants.view" as any],
+      permissions: ["tenants.view" as any, SYSTEM_PERMISSIONS.DASHBOARD_VIEW as any],
     });
     rerender();
 
-    // Now can access global tenants list
+    // Now can access global tenants list and /overview
     expect(result.current.canAccessPage("/tenants")).toBe(true);
     expect(result.current.canAccessPage("/tenants/tenant-abc")).toBe(true);
+    expect(result.current.canAccessPage("/overview")).toBe(true);
   });
 
   it("fails closed for unmapped routes, unknown subpaths, and prototype property keys", () => {
@@ -184,6 +185,28 @@ describe("PermissionProvider - Superadmin and PBAC security tests", () => {
     expect(matchesManifestPattern("/docs/api/v1/auth", "/docs/[...slug]")).toBe(true);
     expect(matchesManifestPattern("/docs", "/docs/[...slug]")).toBe(false);
     expect(matchesManifestPattern("/docs", "/docs/[[...slug]]")).toBe(true);
+  });
+
+  it("authorizes /venue with either venue-dashboard.view or venue-profiles.view and fails closed without both", () => {
+    useAppStore.setState({
+      permissions: [SYSTEM_PERMISSIONS.FACILITY_VIEW] as any,
+      isAuthenticated: true,
+    });
+
+    const { result, rerender } = renderHook(() => usePermissions(), { wrapper });
+    expect(result.current.canAccessPage("/venue")).toBe(false);
+
+    useAppStore.setState({
+      permissions: [SYSTEM_PERMISSIONS.VENUE_DASHBOARD_VIEW] as any,
+    });
+    rerender();
+    expect(result.current.canAccessPage("/venue")).toBe(true);
+
+    useAppStore.setState({
+      permissions: [SYSTEM_PERMISSIONS.VENUE_PROFILE_VIEW] as any,
+    });
+    rerender();
+    expect(result.current.canAccessPage("/venue")).toBe(true);
   });
 });
 

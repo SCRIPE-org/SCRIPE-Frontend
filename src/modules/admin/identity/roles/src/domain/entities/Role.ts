@@ -34,6 +34,9 @@ export interface RoleProps {
   modifiedAt?: string;
   groupNamesEn?: string[];
   groupNamesAr?: string[];
+  defaultLandingTarget?: string | null;
+  isLandingEnforced?: boolean;
+  rowVersion?: string | null;
 }
 
 /**
@@ -102,6 +105,18 @@ export class Role {
 
   get modifiedAt(): string | undefined {
     return this.props.modifiedAt;
+  }
+
+  get defaultLandingTarget(): string | null {
+    return this.props.defaultLandingTarget ?? null;
+  }
+
+  get isLandingEnforced(): boolean {
+    return Boolean(this.props.isLandingEnforced);
+  }
+
+  get rowVersion(): string | null {
+    return this.props.rowVersion ?? null;
   }
 
   // ===== Business Logic =====

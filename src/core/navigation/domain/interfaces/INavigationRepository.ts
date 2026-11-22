@@ -7,8 +7,13 @@
  * Clean Architecture rule: Domain interfaces NEVER import from the data layer.
  */
 
+import type {
+  LandingTargetCatalog,
+  LandingTargetScopeMode,
+} from "../entities/LandingTargetCatalog";
 import type { NavigationData } from "../entities/NavigationData";
 import type { WorkspaceGroupData } from "../entities/WorkspaceGroup";
+import type { AdminWorkspaceEntryPreference } from "../entities/WorkspaceEntryPreference";
 
 export type RouteAccessState =
   | "authorized"
@@ -30,12 +35,37 @@ export interface AuthorizedRoutesResult {
   routeDescriptors: AuthorizedRouteDescriptor[];
 }
 
+export interface LandingResolution {
+  targetKind: string;
+  route: string;
+  workspaceKey: string | null;
+  sourceReason: string;
+  isEnforced: boolean;
+  enforcingRoleName: string | null;
+  wasFallbackApplied: boolean;
+  fallbackReason: string | null;
+}
+
+export interface BootstrapNavigationResult {
+  navigationData: NavigationData;
+  routes: string[];
+  workspaceRouteMap: Record<string, string[]>;
+  routeDescriptors: AuthorizedRouteDescriptor[];
+  landingResolution: LandingResolution | null;
+}
+
 export interface INavigationRepository {
   /**
-   * Phase 0 — Eager routes load (called ONCE on login/context switch, before any menu trees).
+   * Single-pass bootstrap call (called ONCE on login/context switch/hard reload).
+   * Coalesces authorized routes, descriptors, workspace groups, hydrated target workspace
+   * menu tree, and resolved landing metadata into one HTTP request.
    *
-   * Fetches ALL accessible routes and unified context/feature route descriptors across ALL workspaces
-   * in a single lightweight call.
+   * Backend: GET /menus/navigation[?redirect=<encoded>]
+   */
+  fetchNavigationBootstrap(redirect?: string | null): Promise<BootstrapNavigationResult>;
+
+  /**
+   * Legacy / rolling-compat routes load.
    *
    * Backend: GET /menus/navigation/routes
    */
@@ -81,6 +111,34 @@ export interface INavigationRepository {
    * Backend: GET /menus/navigation/workspaces
    */
   fetchWorkspaceStubs(): Promise<WorkspaceGroupData[]>;
+
+  /**
+   * On-demand catalog — Lazy lookup for `/account/preferences` and `/roles` landing pickers.
+   * Never called during login bootstrap.
+   *
+   * Backend: GET /menus/navigation/landing-targets[?scopeMode=...]
+   */
+  fetchLandingTargetCatalog(scopeMode?: LandingTargetScopeMode): Promise<LandingTargetCatalog>;
+
+  /**
+   * Sets or updates the current admin's personal start page preference for a workspace
+   * inside the active context.
+   *
+   * Backend: PUT /account/preferences/workspace-entries/{workspaceKey}
+   */
+  setWorkspaceStartPage(
+    workspaceKey: string,
+    target: string,
+    rowVersion?: string | null
+  ): Promise<AdminWorkspaceEntryPreference>;
+
+  /**
+   * Resets (deletes) the current admin's personal start page override for a workspace
+   * inside the active context so role/default resolution applies again.
+   *
+   * Backend: DELETE /account/preferences/workspace-entries/{workspaceKey}
+   */
+  resetWorkspaceStartPage(workspaceKey: string): Promise<void>;
 
   /**
    * Purge ALL in-memory workspace caches.

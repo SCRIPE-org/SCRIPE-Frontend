@@ -5,6 +5,7 @@ import "@testing-library/jest-dom";
 import { ProductionComponent } from "../components/ProductionComponent";
 import { ProductionCanvasRenderer } from "../components/ProductionCanvasRenderer";
 import { PostCredentialWorkspaceSelector } from "../components/PostCredentialWorkspaceSelector";
+import { LoginBranding } from "../components/LoginBranding";
 import { getSafeRedirectPath } from "../utils/redirect-safety";
 
 vi.mock("next/link", () => ({
@@ -131,5 +132,22 @@ describe("Signin branding URL gating, single-main landmarks, and redirect safety
     expect(getSafeRedirectPath("/\\evil.com", "/")).toBe("/");
     expect(getSafeRedirectPath("https://evil.com/phish", "/")).toBe("/");
     expect(getSafeRedirectPath("/dashboard?view=grid", "/")).toBe("/dashboard?view=grid");
+  });
+
+  it("applies text-balance and responsive clamp font-size on LoginBranding h1 so short trailing words never orphan", () => {
+    render(
+      <LoginBranding
+        branding={{
+          companyName: "SCRIPE Technologies SAE",
+          name: "SCRIPE",
+          loginHeadline: "SCRIPE Internal Operations OS",
+          loginSubtitle: "Commercial Revenue Pipeline & Showcase Arena",
+        } as any}
+      />
+    );
+
+    const heading = screen.getByRole("heading", { level: 1, name: "SCRIPE Internal Operations OS" });
+    expect(heading.className).toContain("text-balance");
+    expect(heading.getAttribute("style")).toContain("clamp(");
   });
 });

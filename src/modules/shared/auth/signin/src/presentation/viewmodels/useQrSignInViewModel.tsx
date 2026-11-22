@@ -138,6 +138,10 @@ export function useQrSignInViewModel(
             accessToken: result.accessToken,
             refreshToken: result.refreshToken,
             defaultRedirectPath: result.defaultRedirectPath,
+            subscriptionStatus: result.subscriptionStatus ?? null,
+            gracePhase: result.gracePhase ?? null,
+            editionName: result.editionName ?? null,
+            mustChangePassword: Boolean(result.mustChangePassword),
           });
           return;
         }

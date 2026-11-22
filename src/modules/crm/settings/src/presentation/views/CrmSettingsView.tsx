@@ -114,7 +114,7 @@ export function CrmSettingsView() {
               <CrmSettingsSkeleton />
             ) : (
               <>
-                {showRolesCard && <CrmRolesAndPrincipalsSettingsCard settings={vm.settings} recordPrincipals={vm.recordPrincipals} onNotifySaved={vm.setSaveBanner} />}
+                {showRolesCard && <CrmRolesAndPrincipalsSettingsCard settings={vm.settings} baseCurrency={vm.currencyHook.baseCurrency} recordPrincipals={vm.recordPrincipals} onNotifySaved={vm.setSaveBanner} />}
                 {showCurrencyCard && <CrmCurrencySettingsCard settings={vm.settings} baseCurrency={vm.currencyHook.baseCurrency} rates={vm.currencyHook.rates} onRefreshLiveRates={vm.currencyHook.refreshLiveRates} onNotifySaved={vm.setSaveBanner} />}
                 {showGovernanceCard && <CrmGovernanceSettingsCard settings={vm.settings} />}
                 {showCustomFieldsCard && <CrmCustomFieldsStudioCard settings={vm.settings} workflows={vm.workflows} onCreateCustomField={vm.createCustomField} onNotifySaved={vm.setSaveBanner} />}

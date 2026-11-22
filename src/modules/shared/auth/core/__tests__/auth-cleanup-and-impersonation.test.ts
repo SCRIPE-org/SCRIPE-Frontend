@@ -3,6 +3,7 @@ import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { useAppStore } from "@core/store/useAppStore";
 import { useSudoStore } from "@core/store/useSudoStore";
 import { usePatOneTimeSecretStore } from "@core/store/usePatOneTimeSecretStore";
+import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { secureTokenService } from "@core/common/secure-token-service";
 import {
   clearAllLocalStorage,
@@ -96,15 +97,34 @@ describe("ImpersonationRepository session & store cleanup", () => {
       isRotated: false,
       ownerUserId: "admin-prev",
     });
+    useNavigationStore.setState({
+      routesLoaded: true,
+      routesContextKey: "tenant-prev:admin",
+      landingResolution: {
+        targetKind: "workspace",
+        route: "/crm",
+        workspaceKey: "crm",
+        sourceReason: "AdminPreference",
+        isEnforced: false,
+        enforcingRoleName: null,
+        wasFallbackApplied: false,
+        fallbackReason: null,
+      },
+      recentWorkspaceKeysByContext: { "tenant-prev:admin": ["crm"] },
+    });
     useAppStore.getState().setAuth(
       { id: "admin-prev", username: "prev", permissions: ["all"] } as never,
       ["all"],
       [],
       false
     );
-    localStorage.setItem(STORAGE_KEYS.APP_STORE, "stale-app-store");
     sessionStorage.setItem(STORAGE_KEYS.tenant_context, "stale-tenant");
     sessionStorage.setItem("scr_tenant_breadcrumbs", '["Prev"]');
+
+    const removeItemSpy = vi.mocked(localStorage.removeItem);
+    const setItemSpy = vi.mocked(localStorage.setItem);
+    removeItemSpy.mockClear();
+    setItemSpy.mockClear();
 
     const serviceMock = {
       impersonate: vi.fn().mockResolvedValue(new LoginResponseModel("impersonated-jwt")),
@@ -118,15 +138,52 @@ describe("ImpersonationRepository session & store cleanup", () => {
     expect(useSudoStore.getState().isActive).toBe(false);
     expect(usePatOneTimeSecretStore.getState().pendingReceipt).toBeNull();
     expect(useAppStore.getState().user).toBeNull();
-    expect(localStorage.getItem(STORAGE_KEYS.APP_STORE) ?? null).toBeNull();
+    expect(useAppStore.getState().permissions).toEqual([]);
+    expect(useAppStore.getState().roles).toEqual([]);
+    expect(useAppStore.getState().isAuthenticated).toBe(true);
+    expect(useAppStore.getState().isAuthTransitioning).toBe(true);
+    expect(document.cookie).toContain(`${STORAGE_KEYS.scr_auth_state}=true`);
+    expect(useNavigationStore.getState().routesLoaded).toBe(false);
+    expect(useNavigationStore.getState().landingResolution).toBeNull();
+    expect(useNavigationStore.getState().recentWorkspaceKeysByContext).toEqual({});
+    expect(removeItemSpy).not.toHaveBeenCalledWith(STORAGE_KEYS.APP_STORE);
+    const appStoreWrites = setItemSpy.mock.calls.filter(
+      ([key]) => key === STORAGE_KEYS.APP_STORE
+    );
+    expect(appStoreWrites.length).toBeGreaterThan(0);
+    const persistedState = JSON.parse(
+      String(appStoreWrites[appStoreWrites.length - 1][1])
+    ).state;
+    expect(persistedState.isAuthenticated).toBe(true);
+    expect(persistedState.user).toBeNull();
+    expect(persistedState.permissions).toEqual([]);
+    expect(persistedState.isAuthTransitioning).toBeUndefined();
     expect(sessionStorage.getItem(STORAGE_KEYS.tenant_context) ?? null).toBeNull();
     expect(sessionStorage.getItem("scr_tenant_breadcrumbs") ?? null).toBeNull();
     expect(sessionStorage.getItem(STORAGE_KEYS.IMPERSONATING)).toBe("true");
     expect(secureTokenService.getAccessToken()).toBe("impersonated-jwt");
 
+    useNavigationStore.setState({
+      routesLoaded: true,
+      landingResolution: {
+        targetKind: "hub",
+        route: "/hub",
+        workspaceKey: null,
+        sourceReason: "MultiWorkspaceHub",
+        isEnforced: false,
+        enforcingRoleName: null,
+        wasFallbackApplied: false,
+        fallbackReason: null,
+      },
+    });
     await repo.stopImpersonation();
+    expect(useAppStore.getState().isAuthenticated).toBe(true);
+    expect(useAppStore.getState().isAuthTransitioning).toBe(true);
+    expect(document.cookie).toContain(`${STORAGE_KEYS.scr_auth_state}=true`);
     expect(sessionStorage.getItem(STORAGE_KEYS.IMPERSONATING) ?? null).toBeNull();
     expect(secureTokenService.getAccessToken()).toBe("restored-admin-jwt");
+    expect(useNavigationStore.getState().routesLoaded).toBe(false);
+    expect(useNavigationStore.getState().landingResolution).toBeNull();
   });
 });
 

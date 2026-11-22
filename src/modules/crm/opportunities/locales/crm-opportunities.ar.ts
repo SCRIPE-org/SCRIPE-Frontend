@@ -8,7 +8,7 @@ export const ar = {
     },
     actions: {
       newDeal: "فرصة جديدة",
-      searchPlaceholder: "البحث عن الصفقات بالعنوان أو العملة أو المرحلة...",
+      searchPlaceholder: "ابحث بالعنوان أو العملة...",
       filterByStage: "تصفية حسب المرحلة",
       filterByStatus: "تصفية حسب الحالة",
       allStages: "جميع المراحل",

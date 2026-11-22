@@ -203,14 +203,14 @@ export const FacilityListView = React.memo(function FacilityListView() {
       <VenueResourceNav />
 
       <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-4">
-        <TabsList className="border border-nx-line bg-nx-surface p-1">
-          <TabsTrigger value="facilities" className="gap-1.5 text-xs font-semibold">
+        <TabsList className="flex h-auto w-full max-w-full justify-start overflow-x-auto border border-nx-line bg-nx-surface p-1 sm:inline-flex sm:w-fit">
+          <TabsTrigger value="facilities" className="shrink-0 gap-1.5 text-xs font-semibold">
             <Building2 className="size-3.5" aria-hidden="true" />
             <span>
               {t("facility.tabs.facilities", { defaultValue: "Facilities & Complexes" })}
             </span>
           </TabsTrigger>
-          <TabsTrigger value="sites" className="gap-1.5 text-xs font-semibold">
+          <TabsTrigger value="sites" className="shrink-0 gap-1.5 text-xs font-semibold">
             <MapPin className="size-3.5" aria-hidden="true" />
             <span>
               {t("facility.tabs.sites", { defaultValue: "Campuses & Branches" })}

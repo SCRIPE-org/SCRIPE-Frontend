@@ -2297,8 +2297,8 @@ html {
    MODERATE — Sidebar Navigation Items
    Nav items slide in from the side
    ======================================== */
-:root[data-animation="moderate"] nav a:not([data-radix-popper-content-wrapper] *, [data-dropdown-portal="true"] *, [role="menu"] *, [role="listbox"] *, [role="tooltip"] *, .animate-spin, .animate-pulse),
-:root[data-animation="moderate"] nav button:not([data-radix-popper-content-wrapper] *, [data-dropdown-portal="true"] *, [role="menu"] *, [role="listbox"] *, [role="tooltip"] *, .animate-spin, .animate-pulse) {
+:root[data-animation="moderate"] nav a:not([data-radix-popper-content-wrapper] *, [data-dropdown-portal="true"] *, [data-nexus-mobile-drawer="true"] *, [role="menu"] *, [role="listbox"] *, [role="tooltip"] *, .animate-spin, .animate-pulse),
+:root[data-animation="moderate"] nav button:not([data-radix-popper-content-wrapper] *, [data-dropdown-portal="true"] *, [data-nexus-mobile-drawer="true"] *, [role="menu"] *, [role="listbox"] *, [role="tooltip"] *, .animate-spin, .animate-pulse) {
   animation: nxFadeIn 0.25s ease-out both;
 }
 
@@ -2342,9 +2342,9 @@ html {
    MODERATE — Flex Gap Containers
    flex with gap children stagger in
    ======================================== */
-:root[data-animation="moderate"] .flex.gap-2 > :not([data-radix-popper-content-wrapper] *, [data-dropdown-portal="true"] *, [role="menu"] *, [role="listbox"] *, [role="tooltip"] *, .animate-spin, .animate-pulse),
-:root[data-animation="moderate"] .flex.gap-3 > :not([data-radix-popper-content-wrapper] *, [data-dropdown-portal="true"] *, [role="menu"] *, [role="listbox"] *, [role="tooltip"] *, .animate-spin, .animate-pulse),
-:root[data-animation="moderate"] .flex.gap-4 > :not([data-radix-popper-content-wrapper] *, [data-dropdown-portal="true"] *, [role="menu"] *, [role="listbox"] *, [role="tooltip"] *, .animate-spin, .animate-pulse) {
+:root[data-animation="moderate"] .flex.gap-2 > :not([data-radix-popper-content-wrapper] *, [data-dropdown-portal="true"] *, [data-nexus-mobile-drawer="true"] *, [role="menu"] *, [role="listbox"] *, [role="tooltip"] *, .animate-spin, .animate-pulse),
+:root[data-animation="moderate"] .flex.gap-3 > :not([data-radix-popper-content-wrapper] *, [data-dropdown-portal="true"] *, [data-nexus-mobile-drawer="true"] *, [role="menu"] *, [role="listbox"] *, [role="tooltip"] *, .animate-spin, .animate-pulse),
+:root[data-animation="moderate"] .flex.gap-4 > :not([data-radix-popper-content-wrapper] *, [data-dropdown-portal="true"] *, [data-nexus-mobile-drawer="true"] *, [role="menu"] *, [role="listbox"] *, [role="tooltip"] *, .animate-spin, .animate-pulse) {
   animation: nxFadeIn 0.25s ease-out both;
 }
 
@@ -2589,8 +2589,8 @@ html {
   animation: nxSlideInFromRight 0.45s ease-out both;
 }
 
-:root[data-animation="high"] nav a:not([data-radix-popper-content-wrapper] *, [data-dropdown-portal="true"] *, [role="menu"] *, [role="listbox"] *, [role="tooltip"] *, .animate-spin, .animate-pulse),
-:root[data-animation="high"] nav button:not([data-radix-popper-content-wrapper] *, [data-dropdown-portal="true"] *, [role="menu"] *, [role="listbox"] *, [role="tooltip"] *, .animate-spin, .animate-pulse) {
+:root[data-animation="high"] nav a:not([data-radix-popper-content-wrapper] *, [data-dropdown-portal="true"] *, [data-nexus-mobile-drawer="true"] *, [role="menu"] *, [role="listbox"] *, [role="tooltip"] *, .animate-spin, .animate-pulse),
+:root[data-animation="high"] nav button:not([data-radix-popper-content-wrapper] *, [data-dropdown-portal="true"] *, [data-nexus-mobile-drawer="true"] *, [role="menu"] *, [role="listbox"] *, [role="tooltip"] *, .animate-spin, .animate-pulse) {
   animation: nxFadeIn 0.35s ease-out both;
 }
 
@@ -3338,11 +3338,11 @@ html[data-hover-effect-type="shimmer"] table tbody tr:hover {
   --tenant-banner-height: 0px;
 }
 
-/* Offset fixed headers that sit at top:0.
-   Exclude the Nexus layout topbar — Nexus places its banner in-flow above the
-   layout, so no CSS-variable offset is needed. Applying top: to a
-   position:relative header still offsets it, causing visible overlap. */
-html[data-tenant-banner] header:not([data-nexus-topbar]) {
+/* Offset fixed/sticky headers that sit at top:0 independently.
+   Exclude Nexus and Account layout topbars — both render TenantContextBanner
+   in-flow above their <header>, so no CSS-variable top offset is needed
+   (applying top: to a relative header still offsets it and leaves a gap above). */
+html[data-tenant-banner] header:not([data-nexus-topbar]):not([data-account-topbar]) {
   top: var(--tenant-banner-height) !important;
 }
 

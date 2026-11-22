@@ -227,6 +227,7 @@ export const SYSTEM_PERMISSIONS = {
   ...CUSTOM_FIELDS_PERMISSIONS,
   ...ANALYTICS_EVENTS_PERMISSIONS,
   ...VENUE_PERMISSIONS,
+  VENUE_REPORTS_VIEW: "venue-reports.view",
   ...CRM_PERMISSIONS,
   ...DATA_TRANSFER_PERMISSIONS,
 } as const;
@@ -276,7 +277,7 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/settings/oauth-apps/[id]": [SYSTEM_PERMISSIONS.OAUTH_APPS_VIEW],
 
   // Monitoring & Analytics pages
-  "/overview": [], // Shared authenticated overview
+  "/overview": [SYSTEM_PERMISSIONS.DASHBOARD_VIEW],
   "/dashboard": [SYSTEM_PERMISSIONS.DASHBOARD_VIEW],
   "/audit": [SYSTEM_PERMISSIONS.AUDIT_VIEW],
   "/security": [SYSTEM_PERMISSIONS.SECURITY_VIEW],
@@ -411,8 +412,10 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   // MergeCandidate Feature
   "/party-kernel/merge-candidates": [SYSTEM_PERMISSIONS.MERGE_CANDIDATE_VIEW],
 
-  // Hrms Module
-  "/hrms": [SYSTEM_PERMISSIONS.STAFF_MEMBER_VIEW],
+  // Hrms Module (accepts any HRMS or WorkManagement view permission; HrmsPage redirects to effectiveHomeRoute)
+  "/hrms": [
+    `${SYSTEM_PERMISSIONS.STAFF_MEMBER_VIEW}|${SYSTEM_PERMISSIONS.EMPLOYMENT_RECORD_VIEW}|${SYSTEM_PERMISSIONS.STAFF_ASSIGNMENT_VIEW}|${SYSTEM_PERMISSIONS.STAFF_COMPETENCY_VIEW}|${SYSTEM_PERMISSIONS.QUALIFICATION_VIEW}|${SYSTEM_PERMISSIONS.CERTIFICATION_VIEW}|${SYSTEM_PERMISSIONS.STAFF_AVAILABILITY_VIEW}|${SYSTEM_PERMISSIONS.WORK_ITEM_VIEW}`,
+  ],
 
   // StaffMember Feature
   "/hrms/staff-members": [SYSTEM_PERMISSIONS.STAFF_MEMBER_VIEW],
@@ -435,13 +438,13 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   // StaffAvailability Feature
   "/hrms/staff-availabilities": [SYSTEM_PERMISSIONS.STAFF_AVAILABILITY_VIEW],
 
-  // Venue Module Canonical Routes
-  "/venue": [SYSTEM_PERMISSIONS.VENUE_PROFILE_VIEW],
-  "/venue/resources": [SYSTEM_PERMISSIONS.FACILITY_VIEW],
-  "/venue/resources/[id]": [SYSTEM_PERMISSIONS.FACILITY_VIEW],
+  // Venue Module Canonical Routes (aligned 1:1 with VenueMenuProvider Resource definitions)
+  "/venue": [SYSTEM_PERMISSIONS.VENUE_DASHBOARD_VIEW],
+  "/venue/resources": [SYSTEM_PERMISSIONS.SCHEDULABLE_RESOURCE_VIEW],
+  "/venue/resources/[id]": [SYSTEM_PERMISSIONS.SCHEDULABLE_RESOURCE_VIEW],
   "/venue/money": [SYSTEM_PERMISSIONS.FINANCE_RECEIVABLES_VIEW],
-  "/venue/reports": [SYSTEM_PERMISSIONS.VENUE_PROFILE_VIEW],
-  "/venue/settings": [SYSTEM_PERMISSIONS.VENUE_PROFILE_VIEW],
+  "/venue/reports": [SYSTEM_PERMISSIONS.VENUE_REPORTS_VIEW],
+  "/venue/settings": [SYSTEM_PERMISSIONS.FACILITY_VIEW],
 
   // VenueProfile Feature
 

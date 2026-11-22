@@ -16,9 +16,11 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useAppStore } from "@core/store/useAppStore";
 import { useSudoStore } from "@core/store/useSudoStore";
 import { usePatOneTimeSecretStore } from "@core/store/usePatOneTimeSecretStore";
+import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { useAuthLogout } from "@modules/auth/core/src/presentation/viewmodels/useAuthLogout";
 import { LanguageSwitcher } from "@core/ui/layout/common/language-switcher";
 import { NxThemeSwitcher } from "@core/ui/layout/common/theme-switcher";
+import { TenantContextBanner } from "@core/ui/layout/shared/tenant-context-banner";
 import { Avatar, AvatarFallback, AvatarImage } from "@core/ui/avatar";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
@@ -102,6 +104,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
   const router = useRouter();
   const { t } = useI18n();
   const user = useAppStore((s) => s.user);
+  const landingResolution = useNavigationStore((s) => s.landingResolution);
   const { handleLogout } = useAuthLogout();
   const { preferences, updatePreferences } = useAccountPreferencesSliceViewModel();
   const isMounted = useSyncExternalStore(
@@ -167,9 +170,12 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
     void handleLogout("/login");
   };
 
-  const navigateToOverview = () => {
+  const dashboardBackRoute =
+    landingResolution?.route && landingResolution.route !== "/" ? landingResolution.route : "/hub";
+
+  const navigateToDashboard = () => {
     startRoutingProgress();
-    router.push("/overview");
+    router.push(dashboardBackRoute);
   };
 
   const displayName = user
@@ -194,15 +200,24 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
         {t("nav.skipToContent")}
       </a>
 
-      {/* ── Top Standalone Sovereign Header ───────────────────────────────── */}
-      <header className="sticky top-0 z-header w-full border-b border-nx-line bg-nx-surface">
+      <div
+        data-account-sticky-chrome="true"
+        className="sticky top-0 z-header w-full bg-nx-surface"
+      >
+        <TenantContextBanner />
+
+        {/* ── Top Standalone Sovereign Header ───────────────────────────────── */}
+        <header
+          data-account-topbar="true"
+          className="w-full border-b border-nx-line bg-nx-surface"
+        >
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-1.5 sm:gap-3 min-w-0">
           {/* Leading: Return to Dashboard Action + Brand Identity */}
           <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <Button
               variant="ghost"
               size="sm"
-              onClick={navigateToOverview}
+              onClick={navigateToDashboard}
               aria-label={t("profile.accountPortal.backToDashboard")}
               className="gap-2 px-2 sm:px-3 text-xs sm:text-sm font-medium text-nx-ink-2 hover:text-nx-ink hover:bg-nx-raised transition-colors shrink-0"
             >
@@ -213,7 +228,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
             <div className="h-5 w-px bg-nx-line hidden md:block" />
 
             <Link
-              href="/overview"
+              href={dashboardBackRoute}
               className="hidden md:flex items-center gap-2.5 min-w-0 group rounded-nx-sm text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus"
             >
               <div className="relative h-8 w-8 rounded-lg overflow-hidden border border-nx-line bg-nx-raised text-nx-ink flex items-center justify-center p-1.5 shrink-0">
@@ -328,7 +343,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator className="bg-nx-line" />
                 <DropdownMenuItem
-                  onClick={navigateToOverview}
+                  onClick={navigateToDashboard}
                   className="text-nx-ink hover:bg-nx-raised cursor-pointer"
                 >
                   <LayoutDashboard className="me-2 h-4 w-4 text-nx-ink-3" aria-hidden="true" />
@@ -347,6 +362,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
           </div>
         </div>
       </header>
+      </div>
 
       {/* Broadcast Privacy Blur Active Banner */}
       {privacyBlur && (

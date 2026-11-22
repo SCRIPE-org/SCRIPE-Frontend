@@ -65,7 +65,7 @@ export function ProfileRailLayout({
 
   return (
     <div className="flex flex-col lg:flex-row gap-6 items-start min-w-0 w-full">
-      <aside className="w-full lg:w-64 xl:w-72 shrink-0 space-y-4 lg:sticky lg:top-18 min-w-0">
+      <aside className="w-full lg:w-64 xl:w-72 shrink-0 space-y-4 lg:sticky lg:top-[calc(4.5rem+var(--tenant-banner-height,0px))] min-w-0">
         {isLoading && !profile ? (
           <ProfileRailSidebarSkeleton />
         ) : (

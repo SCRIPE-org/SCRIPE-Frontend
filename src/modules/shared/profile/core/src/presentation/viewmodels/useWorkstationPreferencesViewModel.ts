@@ -11,6 +11,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 import { useQueryClient } from "@tanstack/react-query";
+import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useAppStore } from "@core/store/useAppStore";
 import { toast } from "@core/ui/sileo-toast";
@@ -226,6 +227,32 @@ export function useWorkstationPreferencesViewModel() {
     [persistSettingsToBackend]
   );
 
+  const isStartupMutationBlocked = useCallback(() => {
+    const isImp =
+      typeof window !== "undefined" && sessionStorage.getItem(STORAGE_KEYS.IMPERSONATING) === "true";
+    return isImp || Boolean(preferences?.isStartupTargetEnforcedByRole);
+  }, [preferences]);
+
+  const setStartupTarget = useCallback(
+    (rawTarget: string) => {
+      if (isStartupMutationBlocked()) return;
+      const normalized = rawTarget.trim().toLowerCase();
+      if (!normalized || normalized === "default") {
+        persistSettingsToBackend({ clearStartupTarget: true, startupTarget: null });
+        return;
+      }
+      persistSettingsToBackend({ startupTarget: normalized, clearStartupTarget: false });
+    },
+    [isStartupMutationBlocked, persistSettingsToBackend]
+  );
+
+  const clearStartupTarget = useCallback(() => {
+    if (isStartupMutationBlocked()) return;
+    persistSettingsToBackend({ clearStartupTarget: true, startupTarget: null });
+  }, [isStartupMutationBlocked, persistSettingsToBackend]);
+
+  const startupTarget = preferences?.activeStartupTarget || "default";
+
   return {
     theme: theme || "system",
     setTheme,
@@ -248,6 +275,14 @@ export function useWorkstationPreferencesViewModel() {
     setReducedMotion,
     toastPosition,
     setToastPosition,
+    startupTarget,
+    setStartupTarget,
+    clearStartupTarget,
+    activeContextKey: preferences?.activeContextKey ?? "",
+    isStartupTargetEnforcedByRole: Boolean(preferences?.isStartupTargetEnforcedByRole),
+    enforcingRoleName: preferences?.enforcingRoleName ?? null,
+    startupTargetFallbackActive: Boolean(preferences?.startupTargetFallbackActive),
+    startupTargetFallbackReason: preferences?.startupTargetFallbackReason ?? null,
     syncStatus: (isUpdatingPreferences && pendingCount === 0
       ? "saving"
       : syncStatus) as PreferencesSyncStatus,

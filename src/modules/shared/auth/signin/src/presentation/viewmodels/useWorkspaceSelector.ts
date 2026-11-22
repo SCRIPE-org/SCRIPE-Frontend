@@ -8,7 +8,7 @@ import {
 } from "@modules/auth/core/domain/errors/AuthErrors";
 import type { WorkspaceChoice } from "@modules/auth/core/domain/errors/AuthErrors";
 import type { LoginStep } from "./use2FAHandler";
-import { getSafeRedirectPath } from "../utils/redirect-safety";
+import { buildPostAuthEntryUrl } from "../utils/redirect-safety";
 
 interface UseWorkspaceSelectorOptions {
   redirectPath: string;
@@ -98,11 +98,12 @@ export function useWorkspaceSelector(opts: UseWorkspaceSelectorOptions) {
         if (!isRedirectTriggered()) {
           onRedirectTriggered();
           const { useAppStore } = await import("@core/store/useAppStore");
-          const mustChange = useAppStore.getState().mustChangePassword;
-          // redirectPath can originate from the attacker-controlled `?redirect=`
-          // query param — validate same-origin/relative before navigating
-          // (handleRedirect re-validates too, this is defense-in-depth).
-          const targetPath = mustChange ? "/change-password" : getSafeRedirectPath(redirectPath);
+          const storeState = useAppStore.getState();
+          const targetPath = buildPostAuthEntryUrl({
+            mustChangePassword: storeState.mustChangePassword,
+            subscriptionStatus: storeState.subscriptionStatus,
+            redirect: redirectPath,
+          });
           setTimeout(() => handleRedirect(targetPath), 100);
         }
       } catch (err: unknown) {
@@ -163,8 +164,12 @@ export function useWorkspaceSelector(opts: UseWorkspaceSelectorOptions) {
         if (!isRedirectTriggered()) {
           onRedirectTriggered();
           const { useAppStore } = await import("@core/store/useAppStore");
-          const mustChange = useAppStore.getState().mustChangePassword;
-          const targetPath = mustChange ? "/change-password" : getSafeRedirectPath(redirectPath);
+          const storeState = useAppStore.getState();
+          const targetPath = buildPostAuthEntryUrl({
+            mustChangePassword: storeState.mustChangePassword,
+            subscriptionStatus: storeState.subscriptionStatus,
+            redirect: redirectPath,
+          });
           setTimeout(() => handleRedirect(targetPath), 100);
         }
       } catch (err: unknown) {

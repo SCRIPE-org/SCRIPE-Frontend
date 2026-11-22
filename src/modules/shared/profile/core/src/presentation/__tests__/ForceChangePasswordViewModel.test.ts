@@ -14,6 +14,7 @@ const mocks = vi.hoisted(() => ({
   forceChangePassword: vi.fn(),
   refreshToken: vi.fn(),
   getCurrentPrincipal: vi.fn(),
+  authLogout: vi.fn(),
   setAuth: vi.fn(),
   setSubscriptionInfo: vi.fn(),
   setMustChangePassword: vi.fn(),
@@ -44,6 +45,7 @@ vi.mock("@core/providers/service-provider", () => ({
     authRepository: {
       refreshToken: mocks.refreshToken,
       getCurrentPrincipal: mocks.getCurrentPrincipal,
+      logout: mocks.authLogout,
     },
   }),
 }));
@@ -114,9 +116,10 @@ describe("ForceChangePasswordViewModel (MMC First-Login Parity)", () => {
       permissions: ["Identity.Users.Read", "Profile.Manage"],
       roles: ["SuperAdmin"],
     });
+    mocks.authLogout.mockResolvedValue(undefined);
   });
 
-  it("evaluates all 5 password complexity rules accurately", () => {
+  it("evaluates all 5 password complexity rules accurately with a 12-character minimum", () => {
     expect(evaluatePasswordRules("abc")).toEqual({
       minLength: false,
       uppercase: false,
@@ -124,6 +127,36 @@ describe("ForceChangePasswordViewModel (MMC First-Login Parity)", () => {
       number: false,
       special: false,
       allMet: false,
+    });
+
+    // 9 characters: meets complexity classes, but fails 12-character minimum
+    expect(evaluatePasswordRules("Pass#2026")).toEqual({
+      minLength: false,
+      uppercase: true,
+      lowercase: true,
+      number: true,
+      special: true,
+      allMet: false,
+    });
+
+    // 11 characters: boundary just below 12 characters
+    expect(evaluatePasswordRules("StrongP@ss1")).toEqual({
+      minLength: false,
+      uppercase: true,
+      lowercase: true,
+      number: true,
+      special: true,
+      allMet: false,
+    });
+
+    // 12 characters: exact threshold meets all rules
+    expect(evaluatePasswordRules("StrongP@ss12")).toEqual({
+      minLength: true,
+      uppercase: true,
+      lowercase: true,
+      number: true,
+      special: true,
+      allMet: true,
     });
 
     expect(evaluatePasswordRules("StrongPass#2026")).toEqual({
@@ -190,13 +223,49 @@ describe("ForceChangePasswordViewModel (MMC First-Login Parity)", () => {
     expect(result.current.submitError).toBe("profile.security.passwordMismatch");
   });
 
-  it("allows explicit sign-out from the wrong-account recovery button", () => {
-    const { result } = renderHook(() => useForceChangePasswordViewModel());
-
-    act(() => {
-      result.current.handleLogout();
+  it("allows explicit sign-out from the wrong-account recovery button and revokes server refresh cookie first", async () => {
+    const callOrder: string[] = [];
+    mocks.authLogout.mockImplementation(async () => {
+      callOrder.push("authRepository.logout");
+    });
+    mocks.logout.mockImplementation(() => {
+      callOrder.push("store.logout");
+    });
+    mocks.clearQueries.mockImplementation(() => {
+      callOrder.push("queryClient.clear");
+    });
+    mocks.replace.mockImplementation(() => {
+      callOrder.push("router.replace");
     });
 
+    const { result } = renderHook(() => useForceChangePasswordViewModel());
+
+    await act(async () => {
+      await result.current.handleLogout();
+    });
+
+    expect(mocks.authLogout).toHaveBeenCalledTimes(1);
+    expect(mocks.logout).toHaveBeenCalledTimes(1);
+    expect(mocks.clearQueries).toHaveBeenCalledTimes(1);
+    expect(mocks.replace).toHaveBeenCalledWith("/login");
+    expect(callOrder).toEqual([
+      "authRepository.logout",
+      "store.logout",
+      "queryClient.clear",
+      "router.replace",
+    ]);
+  });
+
+  it("still clears local auth state and redirects to /login when authRepository.logout fails", async () => {
+    mocks.authLogout.mockRejectedValueOnce(new Error("Network failure"));
+
+    const { result } = renderHook(() => useForceChangePasswordViewModel());
+
+    await act(async () => {
+      await result.current.handleLogout();
+    });
+
+    expect(mocks.authLogout).toHaveBeenCalledTimes(1);
     expect(mocks.logout).toHaveBeenCalledTimes(1);
     expect(mocks.clearQueries).toHaveBeenCalledTimes(1);
     expect(mocks.replace).toHaveBeenCalledWith("/login");

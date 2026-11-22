@@ -41,6 +41,7 @@ export const en = {
     convertDesc: "Convert this trial into a paid subscription.",
     resume: "Resume Subscription",
     expiryBehavior: "On Expiry",
+    noneLifetime: "None (Lifetime)",
     reason: "Reason",
     reasonPlaceholder: "e.g., Payment overdue, Terms violation...",
     useFallback: "Downgrade to fallback edition",
@@ -147,6 +148,10 @@ export const en = {
     loadError: "Failed to load subscription details.",
     downgradedFrom: "From {{edition}}",
     downgradedFromType: "From {{edition}} ({{type}})",
+    internalSovereignBadge: "Internal Sovereign",
+    internalSovereignTitle: "Internal Sovereign Edition",
+    internalSovereignGatewayDesc:
+      "Sovereign internal workspaces do not use commercial payment gateways.",
   },
   entitlements: {
     promotions: {

@@ -40,6 +40,8 @@ import {
   TopbarHomeButton,
   TopbarPanelToggle,
   TopbarSearchButton,
+  renderBidiWorkspaceStartTooltip,
+  resolveWorkspaceStartTarget,
 } from "./_parts/topbar-parts";
 import { hasSecondarySubmenu } from "./_parts/nexus-layout-constants";
 import { useNavigationStore } from "@/core/navigation/store/useNavigationStore";
@@ -54,6 +56,37 @@ interface NexusTopbarProps {
   toggleButtonRef?: React.Ref<HTMLButtonElement>;
   extraActions?: React.ReactNode;
 }
+
+const KNOWN_ENTITY_SINGULAR_SEGMENTS = new Set([
+  "roles",
+  "users",
+  "admins",
+  "tenants",
+  "editions",
+  "user-groups",
+  "leads",
+  "opportunities",
+  "accounts",
+  "contacts",
+  "activities",
+  "pipelines",
+  "bookings",
+  "facilities",
+  "resources",
+  "athletes",
+  "staff-members",
+  "employment-records",
+  "webhooks",
+  "oauth-apps",
+  "apikeys",
+  "domains",
+  "customers",
+  "invoices",
+  "payments",
+  "permissions",
+  "features",
+  "plugins",
+]);
 
 export function NexusTopbar({
   onMobileMenuOpen,
@@ -71,8 +104,11 @@ export function NexusTopbar({
   const router = useRouter();
   const user = useAppStore((s) => s.user);
   const { activeTenantName, isPlatform: isPlatformContext } = useAdminContext();
-  const { hasPermission } = usePermissions();
+  const { hasPermission, canAccessPage } = usePermissions();
   const [switcherOpen, setSwitcherOpen] = useState(false);
+  const workspaceRouteMap = useNavigationStore((s) => s?.workspaceRouteMap);
+  const routesLoaded = useNavigationStore((s) => s?.routesLoaded);
+  const hasRouteAccess = useNavigationStore((s) => s?.hasRouteAccess);
 
   const canSwitchContext =
     typeof hasPermission === "function" &&
@@ -82,6 +118,7 @@ export function NexusTopbar({
   const isRTL = direction === "rtl";
 
   // ── Breadcrumb segments ───────────────────────────────────────────────────
+  const normalizedPathname = pathname.toLowerCase().replace(/\/+$/, "") || "/";
   const breadcrumbOverride = useNavigationStore((s) => s.breadcrumbOverride);
   const segments = pathname.split("/").filter(Boolean);
   const pageName = segments[segments.length - 1] ?? "";
@@ -109,6 +146,16 @@ export function NexusTopbar({
 
   const formatParentSegmentAsTitle = (parentSegment: string): string => {
     if (!parentSegment) return t("common.details");
+    const normalizedSegment = parentSegment.trim().toLowerCase();
+    if (KNOWN_ENTITY_SINGULAR_SEGMENTS.has(normalizedSegment)) {
+      const singularEntity = t(`navigation.entitySingulars.${normalizedSegment}`);
+      return t("navigation.entityDetailsTitle", { entity: singularEntity });
+    }
+    const routeSegmentKey = `nav.routeSegments.${normalizedSegment}`;
+    const localizedRouteSegment = t(routeSegmentKey);
+    if (localizedRouteSegment && localizedRouteSegment !== routeSegmentKey) {
+      return t("navigation.entityDetailsTitle", { entity: localizedRouteSegment });
+    }
     let word = parentSegment.replace(/[-_]/g, " ");
     if (word.toLowerCase().endsWith("ies") && word.length > 3) {
       word = `${word.slice(0, -3)}y`;
@@ -216,14 +263,36 @@ export function NexusTopbar({
     };
   })();
 
-  // ── Home route — context-aware, backend-authoritative per workspace ───────────
-  // Platform context (no tenant): use platformHomeRoute > homeRoute > "/"
-  // Tenant context: use homeRoute > "/"
-  const workspaceHomeRoute = isPlatformContext
-    ? (activeWorkspace?.platformHomeRoute ?? activeWorkspace?.homeRoute ?? "/")
-    : (activeWorkspace?.homeRoute ?? "/");
+  // ── Home route — unified server-authoritative workspace start target ──────────
+  const startTarget = resolveWorkspaceStartTarget({
+    activeWorkspace,
+    rootMenuItems,
+    workspaceRouteMap,
+    isPlatformContext,
+    canAccessPage,
+    routesLoaded,
+    hasRouteAccess,
+    language,
+    t,
+  });
+  const workspaceHomeRoute = startTarget.route;
+  const normalizedHomeRoute = startTarget.normalizedRoute;
   const isOnHome =
-    pathname === workspaceHomeRoute || (workspaceHomeRoute === "/" && pathname === "/");
+    normalizedPathname === normalizedHomeRoute ||
+    (workspaceHomeRoute === "/" && normalizedPathname === "/");
+  const homeTooltip = activeWorkspace
+    ? startTarget.pageLabel
+      ? t("chrome.workspaceStartPageTooltip", {
+          workspace: workspaceName,
+          page: startTarget.pageLabel,
+        })
+      : t("chrome.goToHome")
+    : t("chrome.allWorkspaces");
+  const homeTooltipNode: React.ReactNode = activeWorkspace
+    ? startTarget.pageLabel
+      ? renderBidiWorkspaceStartTooltip(t, workspaceName, startTarget.pageLabel)
+      : t("chrome.goToHome")
+    : t("chrome.allWorkspaces");
 
   return (
     <header
@@ -233,7 +302,7 @@ export function NexusTopbar({
       // flows — it scrolls away with the page.
       className={cn(
         stickyHeader ? "sticky top-0 z-sticky" : "relative z-raised",
-        "flex h-14 min-h-[56px] shrink-0 items-center gap-2 border-b border-nx-line px-3 sm:gap-3 lg:pe-3 lg:ps-5"
+        "flex h-14 min-h-[56px] shrink-0 items-center gap-1.5 border-b border-nx-line px-2.5 sm:gap-3 sm:px-3 lg:pe-3 lg:ps-5"
       )}
       style={{
         direction: isRTL ? "rtl" : "ltr",
@@ -273,7 +342,7 @@ export function NexusTopbar({
       )}
 
       {/* Right-side controls */}
-      <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+      <div className="flex shrink-0 items-center gap-1 sm:gap-2">
         <TopbarContextPill
           isModuleMode={isModuleMode}
           tenantName={tenantName}
@@ -289,7 +358,8 @@ export function NexusTopbar({
 
         {!isOnHome && (
           <TopbarHomeButton
-            ariaLabel={t("chrome.goToHome")}
+            ariaLabel={homeTooltip}
+            tooltip={homeTooltipNode}
             onClick={() => {
               startRoutingProgress();
               router.push(workspaceHomeRoute);
@@ -299,7 +369,7 @@ export function NexusTopbar({
 
         {extraActions}
 
-        <div className="flex items-center gap-1.5 sm:gap-2">
+        <div className="flex items-center gap-1 sm:gap-2">
           <NxThemeSwitcher buttonClassName="h-9 w-9 text-nx-ink-2 hover:text-nx-ink hover:bg-nx-raised rounded-nx-control transition-[color,background-color,border-color,box-shadow] duration-nx-micro motion-reduce:transition-none" />
           <LanguageSwitcher buttonClassName="h-9 min-w-[36px] px-2 text-nx-ink-2 hover:text-nx-ink hover:bg-nx-raised rounded-nx-control transition-[color,background-color,border-color,box-shadow] duration-nx-micro motion-reduce:transition-none" />
         </div>

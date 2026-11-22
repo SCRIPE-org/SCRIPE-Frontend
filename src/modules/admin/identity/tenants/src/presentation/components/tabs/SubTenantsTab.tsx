@@ -21,6 +21,7 @@ import { TenantNodeCard } from "../TenantNodeCard";
 import { TenantDeleteDialog } from "../TenantDeleteDialog";
 import { EditTenantDialog } from "../TenantDialogs";
 import { useSubTenantsViewModel } from "../../viewmodels/useSubTenantsViewModel";
+import { isInternalTenantNode } from "../../../domain/entities/Tenant";
 
 interface SubTenantsTabProps {
   parentId: string;
@@ -94,10 +95,12 @@ export function SubTenantsTab({ parentId, parentName, parentCode }: SubTenantsTa
         open={vm.editDialogOpen}
         onOpenChange={vm.setEditDialogOpen}
         tenantName={vm.editingNode?.name || ""}
+        tenantCode={vm.editingNode?.code}
         form={vm.editForm}
         setForm={vm.setEditForm}
         onSubmit={vm.handleEditSubmit}
         isLoading={vm.isSaving}
+        isInternal={isInternalTenantNode(vm.editingNode)}
       />
 
       <TenantDeleteDialog

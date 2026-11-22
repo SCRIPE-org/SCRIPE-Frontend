@@ -8,6 +8,15 @@
 
 import { MenuItem, type MenuItemData } from "./MenuItem";
 
+export type WorkspaceEffectiveHomeSource =
+  | "RoleEnforced"
+  | "PersonalOverride"
+  | "RoleDefault"
+  | "WorkspaceHome"
+  | "FirstAuthorizedLeaf"
+  | "HubFallback"
+  | (string & {});
+
 // ── Plain data shape (used by mapper → entity constructor) ────────────────────
 
 export interface WorkspaceGroupData {
@@ -73,6 +82,20 @@ export interface WorkspaceGroupData {
    * Used by the Workspace Hub to show item counts on workspace cards.
    */
   accessibleItemCount: number;
+  /** Server-resolved effective home route for the active context (`platformHomeRoute ?? homeRoute ?? firstLeaf`). */
+  effectiveHomeRoute?: string | null;
+  /** Resolution source tier for `effectiveHomeRoute`. */
+  effectiveHomeSource?: WorkspaceEffectiveHomeSource | null;
+  /** Menu item slug backing `effectiveHomeRoute`, when resolved from a menu item. */
+  effectiveHomeMenuSlug?: string | null;
+  /** Server-resolved English label for the workspace's effective home page. */
+  effectiveHomeLabelEn?: string | null;
+  /** Server-resolved Arabic label for the workspace's effective home page. */
+  effectiveHomeLabelAr?: string | null;
+  /** True when the effective home route is currently enforced by a role policy for this caller. */
+  isEffectiveHomeEnforced?: boolean;
+  /** Display name of the enforcing role (null when not enforced or redacted). */
+  enforcingRoleName?: string | null;
   /** Reason why this workspace is locked. */
   lockReason?: string;
 }
@@ -104,6 +127,20 @@ export class WorkspaceGroup {
   public readonly contextScope: "Both" | "PlatformOnly" | "TenantOnly";
   /** Number of accessible menu items for this workspace (for Hub card stats). */
   public readonly accessibleItemCount: number;
+  /** Server-resolved effective home route for the active context. */
+  public readonly effectiveHomeRoute: string | null;
+  /** Resolution source tier for `effectiveHomeRoute`. */
+  public readonly effectiveHomeSource: WorkspaceEffectiveHomeSource | null;
+  /** Menu item slug backing `effectiveHomeRoute`, when resolved from a menu item. */
+  public readonly effectiveHomeMenuSlug: string | null;
+  /** Server-resolved English label for the workspace's effective home page. */
+  public readonly effectiveHomeLabelEn: string | null;
+  /** Server-resolved Arabic label for the workspace's effective home page. */
+  public readonly effectiveHomeLabelAr: string | null;
+  /** True when the effective home route is currently enforced by a role policy for this caller. */
+  public readonly isEffectiveHomeEnforced: boolean;
+  /** Display name of the enforcing role (null when not enforced or redacted). */
+  public readonly enforcingRoleName: string | null;
   /** Reason why this workspace is locked (e.g. "None", "SubscriptionRequired", "TenantContextRequired"). */
   public readonly lockReason: string;
 
@@ -125,6 +162,13 @@ export class WorkspaceGroup {
     this.pinSortOrder = data.pinSortOrder ?? null;
     this.contextScope = data.contextScope ?? "Both";
     this.accessibleItemCount = data.accessibleItemCount ?? 0;
+    this.effectiveHomeRoute = data.effectiveHomeRoute ?? null;
+    this.effectiveHomeSource = data.effectiveHomeSource ?? null;
+    this.effectiveHomeMenuSlug = data.effectiveHomeMenuSlug ?? null;
+    this.effectiveHomeLabelEn = data.effectiveHomeLabelEn ?? null;
+    this.effectiveHomeLabelAr = data.effectiveHomeLabelAr ?? null;
+    this.isEffectiveHomeEnforced = data.isEffectiveHomeEnforced ?? false;
+    this.enforcingRoleName = data.enforcingRoleName ?? null;
     this.lockReason = data.lockReason ?? "None";
   }
 
@@ -134,6 +178,15 @@ export class WorkspaceGroup {
     return language === "ar"
       ? this.workspaceNameAr || this.workspaceNameEn || "Workspace"
       : this.workspaceNameEn || this.workspaceNameAr || "Workspace";
+  }
+
+  getEffectiveHomeLabel(language: string): string | null {
+    const en = this.effectiveHomeLabelEn?.trim() || "";
+    const ar = this.effectiveHomeLabelAr?.trim() || "";
+    if (language === "ar") {
+      return ar || en || null;
+    }
+    return en || ar || null;
   }
 
   /**
@@ -210,6 +263,13 @@ export class WorkspaceGroup {
       pinSortOrder: this.pinSortOrder,
       contextScope: this.contextScope,
       accessibleItemCount: this.accessibleItemCount,
+      effectiveHomeRoute: this.effectiveHomeRoute,
+      effectiveHomeSource: this.effectiveHomeSource,
+      effectiveHomeMenuSlug: this.effectiveHomeMenuSlug,
+      effectiveHomeLabelEn: this.effectiveHomeLabelEn,
+      effectiveHomeLabelAr: this.effectiveHomeLabelAr,
+      isEffectiveHomeEnforced: this.isEffectiveHomeEnforced,
+      enforcingRoleName: this.enforcingRoleName,
       lockReason: this.lockReason,
     };
   }

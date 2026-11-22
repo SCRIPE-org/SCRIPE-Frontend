@@ -24,6 +24,9 @@ export const ar = {
       createDesc: "تعريف خطة اشتراك جديدة مع تهيئة الميزات.",
       edit: "تعديل إصدار",
       editDesc: "تحديث بيانات الإصدار.",
+      readOnlyNoticeTitle: "إعدادات نظام للقراءة فقط",
+      readOnlyNoticeDesc:
+        "ميزات هذا الإصدار الداخلي وسياسة التجاوز محمية من قِبل المنصة ولا يمكن تعديلها.",
       deleteConfirmTitle: "حذف إصدار",
       deleteConfirmDesc: "سيتم حذف الإصدار مؤقتاً. لن تتأثر الاشتراكات النشطة.",
       wizard: {
@@ -139,10 +142,14 @@ export const ar = {
         categoryPlaceholder: "اختر الفئة",
         categoryDesc: "اختر فئة لهذه النسخة.",
         uncategorized: "غير مصنف",
+        internalLockedTitle: "الإصدار الداخلي السيادي محمي ولا يمكن تعديله",
+        internalLockedDesc:
+          "لا يمكن تعديل الإصدارات الداخلية للمنصة عبر معالج التعديل أو الإعدادات التجارية.",
       },
       created: "تم إنشاء الإصدار",
       notFound: "الإصدار غير موجود",
       retired: "متقاعد",
+      internalBadge: "داخلي",
       createdDesc: "تم إنشاء الإصدار الجديد بنجاح.",
       updated: "تم تحديث الإصدار",
       updatedDesc: "تم تحديث تفاصيل الإصدار.",

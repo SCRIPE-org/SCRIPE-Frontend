@@ -43,6 +43,7 @@ import {
   type AppRouteManifestEntry,
 } from "@core/config/app-route-manifest";
 import type { AuthorizedRouteDescriptor } from "@core/navigation/domain/interfaces/INavigationRepository";
+import type { WorkspaceGroup } from "@core/navigation/domain/entities/WorkspaceGroup";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { DashboardLayout } from "@core/ui/layout/dashboard-layout";
@@ -55,7 +56,7 @@ import {
 import { secureTokenService } from "@core/common/secure-token-service";
 import { appLogger } from "@core/common/logger";
 import { authBroadcast } from "@core/common/broadcast-auth";
-import { isSafeRedirectTarget } from "@modules/shared/auth/signin/src/presentation/utils/redirect-safety";
+import { isSafeRedirectTarget, buildPostAuthEntryUrl } from "@core/common/redirect-safety";
 
 interface RouteGuardProps {
   children: React.ReactNode;
@@ -94,6 +95,8 @@ interface ResolveRouteAccessParams {
   contextKey: string;
   activeTenantId: string | null;
   isAuthenticated: boolean;
+  isAuthTransitioning?: boolean;
+  hasUser?: boolean;
   hasToken: boolean;
   subscriptionStatus: string | null;
   mustChangePassword: boolean;
@@ -159,6 +162,102 @@ const emptySubscribe = () => () => {};
 const getClientMountedSnapshot = () => true;
 const getServerMountedSnapshot = () => false;
 
+function findRoutesForWorkspace(
+  workspaceRouteMap: Record<string, string[]>,
+  workspaceKey: string
+): string[] {
+  if (Object.prototype.hasOwnProperty.call(workspaceRouteMap, workspaceKey)) {
+    return workspaceRouteMap[workspaceKey] ?? [];
+  }
+  const lowerKey = workspaceKey.toLowerCase();
+  for (const [key, routes] of Object.entries(workspaceRouteMap)) {
+    if (key.toLowerCase() === lowerKey) {
+      return routes ?? [];
+    }
+  }
+  return [];
+}
+
+function resolveOwningWorkspaceKey(
+  currentPath: string,
+  currentMenuKey: string | undefined,
+  routeDescriptors: Map<string, AuthorizedRouteDescriptor>,
+  workspaceRouteMap: Record<string, string[]>,
+  workspaceGroups: WorkspaceGroup[]
+): string | null {
+  // 1. Authoritative routeDescriptor ownership (exact path or manifest menuRouteKey)
+  const exactDescriptor = routeDescriptors.get(currentPath);
+  if (exactDescriptor?.workspaceKey) {
+    return exactDescriptor.workspaceKey;
+  }
+  const normalizedMenuKey = currentMenuKey ? normalizeRoutePath(currentMenuKey) : null;
+  if (normalizedMenuKey) {
+    const menuDescriptor = routeDescriptors.get(normalizedMenuKey);
+    if (menuDescriptor?.workspaceKey) {
+      return menuDescriptor.workspaceKey;
+    }
+  }
+
+  // 2. Exact membership in workspaceRouteMap
+  for (const [wsKey, routes] of Object.entries(workspaceRouteMap)) {
+    if (
+      routes.some((r) => {
+        const normR = normalizeRoutePath(r);
+        return normR === currentPath || (normalizedMenuKey && normR === normalizedMenuKey);
+      })
+    ) {
+      return wsKey;
+    }
+  }
+
+  // 3. WorkspaceGroup homeRoute / platformHomeRoute / effectiveHomeRoute match
+  //    (handles denied HomeRoutes such as /crm that are omitted from workspaceRouteMap)
+  for (const ws of workspaceGroups) {
+    const candidateHomes = [ws.effectiveHomeRoute, ws.platformHomeRoute, ws.homeRoute]
+      .filter((r): r is string => Boolean(r && r.trim()))
+      .map((r) => normalizeRoutePath(r));
+    if (
+      candidateHomes.includes(currentPath) ||
+      (normalizedMenuKey && candidateHomes.includes(normalizedMenuKey))
+    ) {
+      return ws.workspaceKey;
+    }
+  }
+
+  // 4. Segment/prefix ownership against known workspaces, routeMap, or descriptors
+  const firstSeg = (normalizedMenuKey ?? currentPath).split("/").filter(Boolean)[0]?.toLowerCase();
+  if (firstSeg) {
+    const matchingGroup = workspaceGroups.find(
+      (ws) => ws.workspaceKey.toLowerCase() === firstSeg
+    );
+    if (matchingGroup) {
+      return matchingGroup.workspaceKey;
+    }
+
+    const prefix = `/${firstSeg}/`;
+    for (const [wsKey, routes] of Object.entries(workspaceRouteMap)) {
+      if (wsKey.toLowerCase() === firstSeg) {
+        return wsKey;
+      }
+      if (routes.some((r) => normalizeRoutePath(r).toLowerCase().startsWith(prefix))) {
+        return wsKey;
+      }
+    }
+
+    for (const descriptor of routeDescriptors.values()) {
+      if (
+        descriptor.workspaceKey &&
+        (descriptor.workspaceKey.toLowerCase() === firstSeg ||
+          normalizeRoutePath(descriptor.route).toLowerCase().startsWith(prefix))
+      ) {
+        return descriptor.workspaceKey;
+      }
+    }
+  }
+
+  return null;
+}
+
 function findAlternativeWorkspaceRoute(
   currentPath: string,
   currentMenuKey: string | undefined,
@@ -166,7 +265,12 @@ function findAlternativeWorkspaceRoute(
   hasRouteAccess: (path: string) => boolean,
   requireNavAccess = true
 ): string | null {
-  const workspaceRouteMap = useNavigationStore.getState().workspaceRouteMap || {};
+  const navState = useNavigationStore.getState();
+  const workspaceRouteMap = navState.workspaceRouteMap || {};
+  const routeDescriptors =
+    navState.routeDescriptors instanceof Map ? navState.routeDescriptors : new Map();
+  const workspaceGroups = Array.isArray(navState.workspaceGroups) ? navState.workspaceGroups : [];
+
   const isValidFallback = (candidate: string): boolean => {
     const normalizedCandidate = normalizeRoutePath(candidate);
     if (normalizedCandidate === currentPath) return false;
@@ -177,19 +281,39 @@ function findAlternativeWorkspaceRoute(
     return true;
   };
 
-  for (const routes of Object.values(workspaceRouteMap)) {
-    const belongsToWorkspace = routes.some((r) => {
-      const normR = normalizeRoutePath(r);
-      return normR === currentPath || (currentMenuKey && normR === currentMenuKey);
-    });
-    if (belongsToWorkspace) {
-      const sibling = routes.find(isValidFallback);
-      if (sibling) return sibling;
+  const owningWorkspaceKey = resolveOwningWorkspaceKey(
+    currentPath,
+    currentMenuKey,
+    routeDescriptors,
+    workspaceRouteMap,
+    workspaceGroups
+  );
+
+  if (owningWorkspaceKey) {
+    const owningGroup = workspaceGroups.find(
+      (ws) => ws.workspaceKey.toLowerCase() === owningWorkspaceKey.toLowerCase()
+    );
+    if (owningGroup?.effectiveHomeRoute && isValidFallback(owningGroup.effectiveHomeRoute)) {
+      return normalizeRoutePath(owningGroup.effectiveHomeRoute);
+    }
+
+    const sameWorkspaceRoutes = findRoutesForWorkspace(workspaceRouteMap, owningWorkspaceKey);
+    const sameWorkspaceFallback = sameWorkspaceRoutes.find(isValidFallback);
+    if (sameWorkspaceFallback) {
+      return sameWorkspaceFallback;
     }
   }
 
-  const allWorkspaceRoutes = Object.values(workspaceRouteMap).flat();
-  return allWorkspaceRoutes.find(isValidFallback) ?? null;
+  // Never bounce into an unrelated workspace. When other authorized destinations exist
+  // (e.g. another workspace or unlocked Hub access), route cleanly to /hub; otherwise fail closed.
+  const hasAnyAuthorizedRoute =
+    Object.values(workspaceRouteMap).flat().some(isValidFallback) ||
+    workspaceGroups.some((ws) => !ws.isLocked && ws.accessibleItemCount > 0);
+  if (hasAnyAuthorizedRoute && currentPath !== "/hub" && canAccessPage("/hub")) {
+    return "/hub";
+  }
+
+  return null;
 }
 
 /**
@@ -205,6 +329,8 @@ function resolveRouteAccessSync({
   contextKey,
   activeTenantId,
   isAuthenticated,
+  isAuthTransitioning = false,
+  hasUser = true,
   hasToken,
   subscriptionStatus,
   mustChangePassword,
@@ -220,6 +346,11 @@ function resolveRouteAccessSync({
   // 0. Production gate for development-only routes (e.g., /sileo-playground)
   if (isDevBlockedInProd) {
     return { kind: "redirect", reason: "dev_blocked" };
+  }
+
+  // 0b. Identity swap / impersonation transition in progress -> hold loading until reload completes
+  if (isAuthTransitioning) {
+    return { kind: "settled", outcome: { kind: "loading" } };
   }
 
   // 1. Authenticated user landing on standard auth pages -> safe redirect or dashboard
@@ -253,8 +384,8 @@ function resolveRouteAccessSync({
     return { kind: "redirect", reason: "login" };
   }
 
-  // 6. Case 4: Token exists, store NOT authenticated -> restore principal cleanly
-  if (hasToken && !isAuthenticated) {
+  // 6. Case 4: Token exists, store NOT authenticated (or principal cleared during identity transition) -> restore principal cleanly
+  if (hasToken && (!isAuthenticated || !hasUser)) {
     return { kind: "async_restore_principal" };
   }
 
@@ -276,6 +407,15 @@ function resolveRouteAccessSync({
   if (manifestEntry?.binding === "shell_authenticated") {
     if (!canAccessPage(normalizedPath)) {
       return { kind: "redirect", reason: "shell_pbac_denied" };
+    }
+    if (manifestEntry.requiresTenantContext && !activeTenantId) {
+      return {
+        kind: "settled",
+        outcome: {
+          kind: "tenant_context_required",
+          routePattern: manifestEntry.pattern,
+        },
+      };
     }
     return { kind: "settled", outcome: { kind: "allow" } };
   }
@@ -351,6 +491,7 @@ function renderLoadingScreen() {
 
 export function RouteGuard({ children }: RouteGuardProps) {
   const isAuthenticated = useAppStore((state) => state.isAuthenticated);
+  const isAuthTransitioning = useAppStore((state) => state.isAuthTransitioning ?? false);
   const hasHydrated = useAppStore((state) => state._hasHydrated);
   const setAuth = useAppStore((state) => state.setAuth);
   const setSubscriptionInfo = useAppStore((state) => state.setSubscriptionInfo);
@@ -481,6 +622,8 @@ export function RouteGuard({ children }: RouteGuardProps) {
           contextKey,
           activeTenantId,
           isAuthenticated,
+          isAuthTransitioning,
+          hasUser: Boolean(username),
           hasToken,
           subscriptionStatus,
           mustChangePassword,
@@ -530,29 +673,22 @@ export function RouteGuard({ children }: RouteGuardProps) {
             return;
           case "auth_to_workspace": {
             appLogger.debug("[RouteGuard] Authenticated user on auth page → workspace");
-            const mcp = useAppStore.getState().mustChangePassword;
+            const appState = useAppStore.getState();
             const redirectParam =
               typeof window !== "undefined"
                 ? new URLSearchParams(window.location.search).get("redirect")
                 : null;
-            const safeRedirect = isSafeRedirectTarget(redirectParam) ? redirectParam : null;
-            const rawDefault = useAppStore.getState().defaultRedirectPath;
+            const targetPath = buildPostAuthEntryUrl({
+              mustChangePassword: appState.mustChangePassword,
+              subscriptionStatus: appState.subscriptionStatus,
+              redirect: redirectParam,
+            });
 
-            let targetPath =
-              safeRedirect || (!rawDefault || rawDefault === "/" ? "/overview" : rawDefault);
-
-            if (targetPath === "/overview" && !checkPagePermission("/overview")) {
-              targetPath =
-                findAlternativeWorkspaceRoute(
-                  "/overview",
-                  undefined,
-                  checkPagePermission,
-                  checkNavRoute,
-                  true
-                ) || "/hub";
+            if (targetPath.startsWith("http://") || targetPath.startsWith("https://")) {
+              window.location.href = targetPath;
+            } else {
+              navRouter.replace(targetPath);
             }
-
-            navRouter.replace(mcp ? "/change-password" : targetPath);
             return;
           }
           case "login":

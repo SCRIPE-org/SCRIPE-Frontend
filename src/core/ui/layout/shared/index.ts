@@ -27,3 +27,9 @@ export {
 } from "./nav-utils";
 
 export { TenantContextBanner } from "./tenant-context-banner";
+export {
+  AuthenticatedShellFrame,
+  type AuthenticatedShellFrameProps,
+} from "./authenticated-shell-frame";
+export { TopbarContextPill, type TopbarContextPillProps } from "./topbar-context-pill";
+export { DynamicIcon, type DynamicIconProps } from "./dynamic-icon";

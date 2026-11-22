@@ -379,6 +379,10 @@ export class AuthService implements IAuthService {
     expiresAt?: string;
     approverName?: string | null;
     defaultRedirectPath?: string | null;
+    subscriptionStatus?: string | null;
+    gracePhase?: string | null;
+    editionName?: string | null;
+    mustChangePassword?: boolean;
   }> {
     return this.api.getPublic<{
       status: "pending" | "scanned" | "approved" | "rejected" | "expired" | "consumed";
@@ -387,6 +391,10 @@ export class AuthService implements IAuthService {
       expiresAt?: string;
       approverName?: string | null;
       defaultRedirectPath?: string | null;
+      subscriptionStatus?: string | null;
+      gracePhase?: string | null;
+      editionName?: string | null;
+      mustChangePassword?: boolean;
     }>(AUTH_CORE_ENDPOINTS.QR_LOGIN.SESSION_STATUS(sessionId));
   }
 

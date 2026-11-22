@@ -20,7 +20,7 @@
  * the rows at all). This test is what stands between that regression and a green suite.
  *
  * PARITY IS CHECKED BOTH DIRECTIONS, and Arabic is checked for actual Arabic script -- the same two
- * disciplines `customField.wave34.locale.test.ts` established for this module, so a copied-English
+ * disciplines `customField.locale.test.ts` established for this module, so a copied-English
  * placeholder in `ar` cannot slip through invisible to this suite.
  */
 import { describe, it, expect } from "vitest";

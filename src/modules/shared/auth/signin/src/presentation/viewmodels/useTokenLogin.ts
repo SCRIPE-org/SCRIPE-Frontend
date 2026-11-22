@@ -6,7 +6,7 @@ import { useAppStore } from "@core/store/useAppStore";
 import { useQueryClient } from "@tanstack/react-query";
 import { secureTokenService } from "@core/common/secure-token-service";
 import { authContainer } from "@modules/auth/di";
-import { getSafeRedirectPath } from "../utils/redirect-safety";
+import { buildPostAuthEntryUrl } from "../utils/redirect-safety";
 
 /**
  * Payload returned by token-producing passwordless sign-in methods
@@ -28,8 +28,8 @@ export interface TokenLoginPayload {
  * `LoginResult` object that `useAuthLogin` handles.
  *
  * Hydrates principal profile, permissions, explicit roles, subscription info,
- * must-change-password gate, and redirects safely to `defaultRedirectPath`
- * (defaulting to `/overview`, never hardcoded `/dashboard`).
+ * enforces Tier 0 gates (`mustChangePassword`, `PendingPayment`), and routes
+ * cleanly through `"/"` (`/?redirect=...` or `"/"`) for single-pass bootstrap.
  */
 export function useTokenLogin() {
   const router = useRouter();
@@ -59,19 +59,28 @@ export function useTokenLogin() {
 
         const mustChange = result.mustChangePassword ?? false;
         setMustChangePassword(mustChange);
-
-        const rawPath = result.defaultRedirectPath;
-        const normalizedPath =
-          rawPath && rawPath !== "/" ? getSafeRedirectPath(rawPath, "/overview") : "/overview";
-        setDefaultRedirectPath(normalizedPath);
+        setDefaultRedirectPath("/");
 
         // 4. Invalidate stale queries so protected pages load fresh data
-        if (!mustChange) {
+        if (!mustChange && result.subscriptionStatus !== "PendingPayment") {
           queryClient.invalidateQueries();
         }
 
-        // 5. Redirect to backend-authoritative target (default /overview) or change-password gate
-        router.replace(mustChange ? "/change-password" : normalizedPath);
+        // 5. Enforce Tier 0 gates or hand off to "/" bootstrap resolver (preserving ?redirect=)
+        const queryRedirect =
+          typeof window !== "undefined"
+            ? new URLSearchParams(window.location.search).get("redirect")
+            : null;
+        const targetPath = buildPostAuthEntryUrl({
+          mustChangePassword: mustChange,
+          subscriptionStatus: result.subscriptionStatus,
+          redirect: queryRedirect,
+        });
+        if (targetPath.startsWith("http://") || targetPath.startsWith("https://")) {
+          window.location.href = targetPath;
+        } else {
+          router.replace(targetPath);
+        }
       } catch {
         secureTokenService.clearTokens();
         router.replace("/login");

@@ -11,13 +11,16 @@ import {
   PanelCollapseIcon,
   PanelCollapseIconRTL,
 } from "@core/ui/layout/shared/nav-icons";
+import { TopbarContextPill, type TopbarContextPillProps } from "@core/ui/layout/shared/topbar-context-pill";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useWorkspace } from "@core/providers/workspace-provider";
 import { useWorkspaceTransitionContext } from "../nexus-layout";
 import { cn, resolveBilingualLabel } from "@core/common/utils";
-import type { MenuItem } from "@core/navigation";
+import type { MenuItem, WorkspaceGroup } from "@core/navigation";
+import { normalizeRoutePath } from "@core/config/app-route-manifest";
+import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { usePermissions } from "@core/providers/permission-provider";
 import {
   DropdownMenu,
@@ -75,9 +78,8 @@ function findFirstLeafRoute(
   item: MenuItem,
   canAccessPage: (path: string) => boolean
 ): string | null {
-  // First try to find a route the user has permission to access
   const findAccessible = (curr: MenuItem): string | null => {
-    if (curr.href && canAccessPage(curr.href)) return curr.href;
+    if (curr.href && curr.href !== "#" && canAccessPage(curr.href)) return curr.href;
     if (curr.children && curr.children.length > 0) {
       const sorted = [...curr.children].sort((a, b) => a.order - b.order);
       for (const child of sorted) {
@@ -88,23 +90,198 @@ function findFirstLeafRoute(
     return null;
   };
 
-  const accessibleRoute = findAccessible(item);
-  if (accessibleRoute) return accessibleRoute;
+  return findAccessible(item);
+}
 
-  // Fallback to absolute first leaf route if none are accessible
-  const findAny = (curr: MenuItem): string | null => {
-    if (curr.href) return curr.href;
-    if (curr.children && curr.children.length > 0) {
-      const sorted = [...curr.children].sort((a, b) => a.order - b.order);
-      for (const child of sorted) {
-        const route = findAny(child);
-        if (route) return route;
+function findMenuItemByRoute(items: readonly MenuItem[], targetRoute: string): MenuItem | null {
+  const normalizedTarget = normalizeRoutePath(targetRoute).toLowerCase();
+  for (const item of items) {
+    if (item.href && item.href !== "#") {
+      if (normalizeRoutePath(item.href).toLowerCase() === normalizedTarget) {
+        return item;
       }
     }
-    return null;
+    if (item.children && item.children.length > 0) {
+      const match = findMenuItemByRoute(item.children, normalizedTarget);
+      if (match) return match;
+    }
+  }
+  return null;
+}
+
+export interface ResolveWorkspaceStartTargetParams {
+  activeWorkspace: WorkspaceGroup | null;
+  rootMenuItems: readonly MenuItem[];
+  workspaceRouteMap?: Record<string, string[]>;
+  isPlatformContext: boolean;
+  canAccessPage: (path: string) => boolean;
+  routesLoaded?: boolean;
+  hasRouteAccess?: (path: string) => boolean;
+  language: string;
+  t: (key: string, params?: Record<string, string | number>) => string;
+}
+
+export interface ResolvedWorkspaceStartTarget {
+  route: string;
+  normalizedRoute: string;
+  pageLabel: string | null;
+}
+
+/**
+ * Resolves the authoritative workspace start route (preferring `effectiveHomeRoute`
+ * over raw context routes) and a localized target page label for Topbar Home & Level-1 tooltips.
+ */
+export function resolveWorkspaceStartTarget({
+  activeWorkspace,
+  rootMenuItems,
+  workspaceRouteMap,
+  isPlatformContext,
+  canAccessPage,
+  routesLoaded,
+  hasRouteAccess,
+  language,
+  t,
+}: ResolveWorkspaceStartTargetParams): ResolvedWorkspaceStartTarget {
+  if (!activeWorkspace) {
+    return {
+      route: "/hub",
+      normalizedRoute: "/hub",
+      pageLabel: null,
+    };
+  }
+
+  const isNavAccessible = (candidate: string): boolean => {
+    const norm = normalizeRoutePath(candidate);
+    if (!canAccessPage(norm)) return false;
+    if (routesLoaded && typeof hasRouteAccess === "function") {
+      return hasRouteAccess(norm);
+    }
+    return true;
   };
 
-  return findAny(item);
+  let route: string | null = activeWorkspace.effectiveHomeRoute?.trim() || null;
+  if (route && !canAccessPage(normalizeRoutePath(route))) {
+    route = null;
+  }
+
+  if (!route) {
+    const configured = isPlatformContext
+      ? (activeWorkspace.platformHomeRoute?.trim() || activeWorkspace.homeRoute?.trim() || null)
+      : (activeWorkspace.homeRoute?.trim() || null);
+    if (configured && isNavAccessible(configured)) {
+      route = configured;
+    }
+  }
+
+  const menuPool =
+    rootMenuItems.length > 0 ? rootMenuItems : (activeWorkspace.menuItems ?? []);
+
+  if (!route) {
+    for (const item of menuPool) {
+      const leaf = findFirstLeafRoute(item, isNavAccessible);
+      if (leaf) {
+        route = leaf;
+        break;
+      }
+    }
+  }
+
+  if (!route && workspaceRouteMap) {
+    const lowerKey = activeWorkspace.workspaceKey.toLowerCase();
+    const mapEntry = Object.entries(workspaceRouteMap).find(
+      ([key]) => key.toLowerCase() === lowerKey
+    );
+    const mapRoute = mapEntry?.[1]?.find((r) => Boolean(r && r !== "/" && isNavAccessible(r)));
+    if (mapRoute) {
+      route = mapRoute;
+    }
+  }
+
+  const resolvedRoute = route || "/hub";
+  const normalizedRoute = normalizeRoutePath(resolvedRoute).toLowerCase() || "/";
+
+  const normalizedEffective = activeWorkspace.effectiveHomeRoute?.trim()
+    ? normalizeRoutePath(activeWorkspace.effectiveHomeRoute.trim()).toLowerCase()
+    : null;
+  let pageLabel: string | null = null;
+  if (normalizedEffective && normalizedEffective === normalizedRoute) {
+    if (typeof activeWorkspace.getEffectiveHomeLabel === "function") {
+      pageLabel = activeWorkspace.getEffectiveHomeLabel(language);
+    } else {
+      const en = activeWorkspace.effectiveHomeLabelEn?.trim() || "";
+      const ar = activeWorkspace.effectiveHomeLabelAr?.trim() || "";
+      pageLabel = (language === "ar" ? ar || en : en || ar) || null;
+    }
+  }
+
+  if (!pageLabel) {
+    const matchedMenuItem = findMenuItemByRoute(menuPool, normalizedRoute);
+    if (matchedMenuItem) {
+      pageLabel =
+        resolveBilingualLabel(
+          matchedMenuItem.nameEn || matchedMenuItem.nameAr,
+          matchedMenuItem.nameAr || matchedMenuItem.nameEn,
+          language
+        ) || null;
+    }
+  }
+
+  if (!pageLabel && normalizedRoute !== "/" && normalizedRoute !== "/hub") {
+    const segments = normalizedRoute
+      .split("/")
+      .filter((s) => s.length > 0 && !s.startsWith("["));
+    const tail = segments[segments.length - 1];
+    if (tail) {
+      const segKey = `nav.routeSegments.${tail}`;
+      const translated = t(segKey);
+      if (translated && translated !== segKey) {
+        pageLabel = translated;
+      }
+    }
+  }
+
+  return {
+    route: resolvedRoute,
+    normalizedRoute,
+    pageLabel,
+  };
+}
+
+const WS_TOOLTIP_TOKEN = "__SCRIPE_WS_BDI__";
+const PAGE_TOOLTIP_TOKEN = "__SCRIPE_PAGE_BDI__";
+
+/**
+ * Renders the localized workspace start-page tooltip with `<bdi>` isolation around
+ * workspace and page labels so mixed-direction EN/AR segments render cleanly in RTL/LTR.
+ */
+export function renderBidiWorkspaceStartTooltip(
+  t: (key: string, params?: Record<string, string | number>) => string,
+  workspace: string,
+  page: string
+): React.ReactNode {
+  const template = t("chrome.workspaceStartPageTooltip", {
+    workspace: WS_TOOLTIP_TOKEN,
+    page: PAGE_TOOLTIP_TOKEN,
+  });
+
+  if (!template.includes(WS_TOOLTIP_TOKEN) && !template.includes(PAGE_TOOLTIP_TOKEN)) {
+    return template;
+  }
+
+  const parts = template.split(new RegExp(`(${WS_TOOLTIP_TOKEN}|${PAGE_TOOLTIP_TOKEN})`, "g"));
+  return (
+    <span>
+      {parts.map((part, idx) => {
+        if (part === WS_TOOLTIP_TOKEN) {
+          return <bdi key={`ws-${idx}`}>{workspace}</bdi>;
+        }
+        if (part === PAGE_TOOLTIP_TOKEN) {
+          return <bdi key={`pg-${idx}`}>{page}</bdi>;
+        }
+        return part ? <React.Fragment key={`tx-${idx}`}>{part}</React.Fragment> : null;
+      })}
+    </span>
+  );
 }
 
 export function TopbarBreadcrumbs({
@@ -120,7 +297,32 @@ export function TopbarBreadcrumbs({
   const { language, t } = useI18n();
   const { canAccessPage } = usePermissions();
   const router = useRouter();
+  const pathname = usePathname() ?? "";
+  const normalizedPath = pathname.toLowerCase().replace(/\/+$/, "") || "/";
   const { isPlatform: isPlatformContext } = useAdminContext();
+  const workspaceRouteMap = useNavigationStore((s) => s?.workspaceRouteMap);
+  const routesLoaded = useNavigationStore((s) => s?.routesLoaded);
+  const hasRouteAccess = useNavigationStore((s) => s?.hasRouteAccess);
+
+  const startTarget = resolveWorkspaceStartTarget({
+    activeWorkspace,
+    rootMenuItems,
+    workspaceRouteMap,
+    isPlatformContext,
+    canAccessPage,
+    routesLoaded,
+    hasRouteAccess,
+    language,
+    t,
+  });
+
+  const level1TooltipNode: React.ReactNode = activeWorkspace
+    ? startTarget.pageLabel
+      ? renderBidiWorkspaceStartTooltip(t, workspaceName, startTarget.pageLabel)
+      : t("chrome.goToHome")
+    : normalizedPath !== "/hub"
+      ? t("chrome.allWorkspaces")
+      : null;
 
   const sortedWorkspaces = React.useMemo(() => {
     return [...workspaceGroups].sort((a, b) => a.workspaceSortOrder - b.workspaceSortOrder);
@@ -165,43 +367,62 @@ export function TopbarBreadcrumbs({
 
   return (
     <nav aria-label={t("nav.breadcrumb")} className="min-w-0 flex-1 overflow-hidden">
-      <ol className="flex min-w-0 items-center gap-1.5 text-[13px]">
+      <ol className="flex min-w-0 items-center gap-1 text-[13px] sm:gap-1.5">
         {/* ── Level 1: Workspace ── */}
-        <li className="flex shrink-0 items-center gap-0.5">
-          <button
-            type="button"
-            aria-current={isWorkspaceCurrent ? "page" : undefined}
-            onClick={() => {
-              const homeRoute = activeWorkspace
-                ? isPlatformContext
-                  ? (activeWorkspace.platformHomeRoute ?? activeWorkspace.homeRoute ?? "/")
-                  : (activeWorkspace.homeRoute ?? "/")
-                : "/";
-              startRoutingProgress();
-              router.push(homeRoute);
-            }}
-            className={cn(
-              "cursor-pointer whitespace-nowrap rounded-nx-sm px-1.5 py-0.5 duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
-              isWorkspaceCurrent ? "font-semibold text-nx-ink" : "font-medium text-nx-ink-3",
-              CONTROL_MOTION,
-              FOCUS_RING
-            )}
-          >
-            {workspaceName}
-          </button>
+        <li className="flex min-w-0 shrink-0 items-center gap-0.5">
+          {(() => {
+            const level1Button = (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                aria-current={isWorkspaceCurrent ? "page" : undefined}
+                onClick={() => {
+                  if (normalizedPath === startTarget.normalizedRoute) return;
+                  startRoutingProgress();
+                  router.push(startTarget.route);
+                }}
+                className={cn(
+                  "h-auto min-w-0 cursor-pointer whitespace-nowrap rounded-nx-sm px-1.5 py-0.5 duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
+                  isWorkspaceCurrent ? "font-semibold text-nx-ink" : "font-medium text-nx-ink-3",
+                  CONTROL_MOTION,
+                  FOCUS_RING
+                )}
+              >
+                <span className="truncate">{workspaceName}</span>
+              </Button>
+            );
+
+            if (!level1TooltipNode) {
+              return level1Button;
+            }
+
+            return (
+              <TooltipProvider delayDuration={150}>
+                <Tooltip>
+                  <TooltipTrigger asChild>{level1Button}</TooltipTrigger>
+                  <TooltipContent side="bottom" sideOffset={8}>
+                    {level1TooltipNode}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            );
+          })()}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon"
                 aria-label={t("navigation.topbar.workspacesMenu")}
                 className={cn(
-                  "flex h-6 w-6 cursor-pointer items-center justify-center rounded-nx-sm text-nx-ink-3 duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
+                  "flex h-8 w-8 cursor-pointer items-center justify-center rounded-nx-sm p-0 text-nx-ink-3 duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
                   CONTROL_MOTION,
                   FOCUS_RING
                 )}
               >
                 <ChevronDown size={12} aria-hidden="true" />
-              </button>
+              </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-56 border-nx-line bg-nx-surface">
               <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-wider text-nx-ink-3">
@@ -266,9 +487,11 @@ export function TopbarBreadcrumbs({
             <li role="presentation" aria-hidden="true" className="inline-flex shrink-0 items-center">
               <BreadcrumbSep isRTL={isRTL} />
             </li>
-            <li className="flex shrink-0 items-center gap-0.5">
-              <button
+            <li className="flex min-w-0 shrink items-center gap-0.5">
+              <Button
                 type="button"
+                variant="ghost"
+                size="sm"
                 aria-current={isActiveRootCurrent ? "page" : undefined}
                 onClick={() => {
                   const route = findFirstLeafRoute(activeRootItem, canAccessPage);
@@ -278,27 +501,29 @@ export function TopbarBreadcrumbs({
                   }
                 }}
                 className={cn(
-                  "cursor-pointer whitespace-nowrap rounded-nx-sm px-1.5 py-0.5 duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
+                  "h-auto min-w-0 max-w-full cursor-pointer whitespace-nowrap rounded-nx-sm px-1.5 py-0.5 duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
                   isActiveRootCurrent ? "font-semibold text-nx-ink" : "font-medium text-nx-ink-2",
                   CONTROL_MOTION,
                   FOCUS_RING
                 )}
               >
-                {activeRootName}
-              </button>
+                <span className="truncate">{activeRootName}</span>
+              </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button
+                  <Button
                     type="button"
+                    variant="ghost"
+                    size="icon"
                     aria-label={t("navigation.topbar.sectionsMenu")}
                     className={cn(
-                      "flex h-6 w-6 cursor-pointer items-center justify-center rounded-nx-sm text-nx-ink-2 duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
+                      "flex h-8 w-8 cursor-pointer items-center justify-center rounded-nx-sm p-0 text-nx-ink-2 duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
                       CONTROL_MOTION,
                       FOCUS_RING
                     )}
                   >
                     <ChevronDown size={12} aria-hidden="true" />
-                  </button>
+                  </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start" className="w-52 border-nx-line bg-nx-surface">
                   <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-wider text-nx-ink-3">
@@ -347,7 +572,7 @@ export function TopbarBreadcrumbs({
               <li role="presentation" aria-hidden="true" className="inline-flex shrink-0 items-center">
                 <BreadcrumbSep isRTL={isRTL} />
               </li>
-              <li className="min-w-0 shrink">
+              <li className={cn("min-w-0 shrink", isLastIntermediate && "max-w-[120px] sm:shrink-0 sm:max-w-[240px]")}>
                 <span
                   aria-current={isLastIntermediate ? "page" : undefined}
                   className={cn(
@@ -368,7 +593,7 @@ export function TopbarBreadcrumbs({
             <li role="presentation" aria-hidden="true" className="inline-flex shrink-0 items-center">
               <BreadcrumbSep isRTL={isRTL} />
             </li>
-            <li className="min-w-0">
+            <li className="min-w-0 shrink max-w-[120px] sm:shrink-0 sm:max-w-[240px]">
               <span
                 aria-current="page"
                 className="block truncate px-1.5 py-0.5 font-semibold tracking-[-0.2px] text-nx-ink duration-nx-standard animate-in fade-in motion-reduce:animate-none"
@@ -446,23 +671,25 @@ export function TopbarPanelToggle({
     <TooltipProvider delayDuration={50}>
       <Tooltip>
         <TooltipTrigger asChild>
-          <button
+          <Button
             ref={toggleRef}
             type="button"
+            variant="ghost"
+            size="icon"
             onClick={onToggle}
             aria-label={ariaLabel}
             aria-expanded={isExpanded}
             className={cn(
-              "h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-nx-control",
+              "h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-nx-control p-0",
               "border border-nx-line bg-transparent text-nx-ink-2",
               CONTROL_MOTION,
               "duration-nx-micro hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink",
-              !hasSubmenu ? "hidden" : collapsible ? "flex" : "flex lg:hidden",
+              !hasSubmenu ? "flex md:hidden" : collapsible ? "flex" : "flex lg:hidden",
               FOCUS_RING
             )}
           >
             {renderPanelIcon()}
-          </button>
+          </Button>
         </TooltipTrigger>
         <TooltipContent side="bottom" sideOffset={8}>
           {ariaLabel}
@@ -472,67 +699,8 @@ export function TopbarPanelToggle({
   );
 }
 
-// ── Context Pill ──────────────────────────────────────────────────────────────
-export interface TopbarContextPillProps {
-  isModuleMode: boolean;
-  tenantName: string;
-  canSwitchContext?: boolean;
-  switchAriaLabel?: string;
-  onOpenSwitcher?: () => void;
-}
-
-export function TopbarContextPill({
-  isModuleMode,
-  tenantName,
-  canSwitchContext = false,
-  switchAriaLabel,
-  onOpenSwitcher,
-}: TopbarContextPillProps) {
-  const pillClasses = cn(
-    "hidden items-center gap-1.5 rounded-full border px-3 py-1 text-[11px] font-semibold tracking-wide whitespace-nowrap shrink-0 sm:inline-flex",
-    CONTROL_MOTION,
-    isModuleMode
-      ? "border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] bg-nx-accent-wash text-nx-accent"
-      : "border-nx-line bg-transparent text-nx-ink-2"
-  );
-
-  const dot = (
-    <span
-      aria-hidden="true"
-      className="h-1.5 w-1.5 shrink-0 rounded-full bg-info"
-    />
-  );
-
-  if (canSwitchContext && onOpenSwitcher) {
-    return (
-      <Button
-        type="button"
-        variant="ghost"
-        size="sm"
-        onClick={onOpenSwitcher}
-        aria-label={switchAriaLabel ?? tenantName}
-        data-testid="topbar-tenant-switcher-trigger"
-        className={cn(
-          pillClasses,
-          "h-7 cursor-pointer hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink"
-        )}
-      >
-        {dot}
-        <span>{tenantName}</span>
-        <ChevronDown className="h-3 w-3 opacity-75" aria-hidden="true" />
-      </Button>
-    );
-  }
-
-  return (
-    <div className={pillClasses} data-testid="topbar-context-pill">
-      {/* Live-context dot — the logo's cyan ("now"), no glow: the primary
-          rail's active root item owns the one glow on this screen */}
-      {dot}
-      <span>{tenantName}</span>
-    </div>
-  );
-}
+// ── Context Pill (re-exported from shared) ────────────────────────────────────
+export { TopbarContextPill, type TopbarContextPillProps };
 
 // ── Search Button ─────────────────────────────────────────────────────────────
 export interface TopbarSearchButtonProps {
@@ -544,28 +712,32 @@ export function TopbarSearchButton({ onOpenSearch, placeholder }: TopbarSearchBu
   return (
     <>
       {/* Mobile compact icon trigger (<768px) */}
-      <button
+      <Button
         onClick={onOpenSearch}
         type="button"
+        variant="ghost"
+        size="icon"
         aria-label={placeholder}
         className={cn(
-          "flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-nx-control border border-nx-line bg-nx-surface text-nx-ink-2 md:hidden",
+          "flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-nx-control border border-nx-line bg-nx-surface p-0 text-nx-ink-2 md:hidden",
           CONTROL_MOTION,
           "duration-nx-micro hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink",
           FOCUS_RING
         )}
       >
         <Search size={15} aria-hidden="true" />
-      </button>
+      </Button>
 
       {/* Desktop search trigger (>=768px) */}
-      <button
+      <Button
         onClick={onOpenSearch}
         type="button"
+        variant="ghost"
+        size="sm"
         className={cn(
           // Border and surface live in classes, not inline: an inline `border`
           // shorthand silently beat the hover rule, so the field never lit up.
-          "group hidden h-9 items-center rounded-nx-control border border-nx-line bg-nx-surface duration-nx-micro md:flex",
+          "group hidden h-9 items-center rounded-nx-control border border-nx-line bg-nx-surface duration-nx-micro hover:bg-nx-surface md:flex",
           CONTROL_MOTION,
           "text-nx-ink-3 hover:border-nx-line-hi",
           FOCUS_RING
@@ -602,7 +774,7 @@ export function TopbarSearchButton({ onOpenSearch, placeholder }: TopbarSearchBu
         >
           ⌘K
         </span>
-      </button>
+      </Button>
     </>
   );
 }
@@ -610,20 +782,24 @@ export function TopbarSearchButton({ onOpenSearch, placeholder }: TopbarSearchBu
 // ── Home Button ───────────────────────────────────────────────────────────────
 export interface TopbarHomeButtonProps {
   ariaLabel: string;
+  tooltip?: React.ReactNode;
   onClick: () => void;
 }
 
-export function TopbarHomeButton({ ariaLabel, onClick }: TopbarHomeButtonProps) {
+export function TopbarHomeButton({ ariaLabel, tooltip, onClick }: TopbarHomeButtonProps) {
+  const tooltipText = tooltip ?? ariaLabel;
   return (
     <TooltipProvider delayDuration={50}>
       <Tooltip>
         <TooltipTrigger asChild>
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="icon"
             onClick={onClick}
             aria-label={ariaLabel}
             className={cn(
-              "flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-nx-control",
+              "flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-nx-control p-0",
               "border border-nx-line bg-transparent text-nx-ink-2",
               CONTROL_MOTION,
               "duration-nx-micro hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink",
@@ -631,10 +807,10 @@ export function TopbarHomeButton({ ariaLabel, onClick }: TopbarHomeButtonProps) 
             )}
           >
             <Home size={15} strokeWidth={2} aria-hidden="true" />
-          </button>
+          </Button>
         </TooltipTrigger>
         <TooltipContent side="bottom" sideOffset={8}>
-          {ariaLabel}
+          {tooltipText}
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

@@ -16,12 +16,19 @@
 import { useState, useMemo, useCallback } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useWorkspace } from "@core/providers/workspace-provider";
 import { resolveBilingualLabel } from "@core/common/utils";
 import type { FieldConfig, FieldOption } from "@core/ui/forms/generic-form";
 
 // Role module imports (cross-module boundary via public API)
-import { Role, useRolesViewModel } from "@modules/identity/core";
+import {
+  Role,
+  getRoleEditInitialValues,
+  getRoleLandingFields,
+  useRolesViewModel,
+} from "@modules/identity/core";
 
 // DI Container
 import { identityContainer } from "@modules/identity/di";
@@ -47,7 +54,7 @@ export interface TenantRolesViewModelResult {
 
   // Form Fields (Dynamic based on create/edit)
   createFields: FieldConfig[];
-  editFields: FieldConfig[];
+  editFields: FieldConfig[] | ((item: Role) => FieldConfig[]);
 
   // Initial Values
   createInitialValues: Record<string, unknown>;
@@ -80,6 +87,8 @@ export function useTenantRolesViewModel({
   tenantName,
 }: UseTenantRolesViewModelParams): TenantRolesViewModelResult {
   const { t, language } = useI18n();
+  const { workspaceGroups } = useWorkspace();
+  const cachedWorkspaces = useNavigationStore((s) => s.workspaces);
 
   // Delegate to core roles ViewModel - Dependency Inversion Principle
   const rolesVm = useRolesViewModel({ tenantId });
@@ -107,8 +116,7 @@ export function useTenantRolesViewModel({
     () =>
       async (query: string): Promise<FieldOption[]> => {
         try {
-          // Use tenantService to get tenant's available permissions
-          const permissions = await identityContainer.tenantService.getTenantPermissions(tenantId);
+          const permissions = await identityContainer.tenantRepository.getTenantPermissions(tenantId);
 
           // Client-side filter if there's a search query
           let filtered = permissions;
@@ -122,7 +130,7 @@ export function useTenantRolesViewModel({
               );
               return (
                 name?.toLowerCase().includes(lowerQuery) ||
-                p.permissionCode?.toLowerCase().includes(lowerQuery)
+                p.code?.toLowerCase().includes(lowerQuery)
               );
             });
           }
@@ -133,7 +141,7 @@ export function useTenantRolesViewModel({
               p.nameAr || p.nameEn || "",
               language
             );
-            const code = p.permissionCode || `${p.resource}.${p.action}`;
+            const code = p.code || `${p.resource}.${p.action}`;
             return {
               value: p.id,
               label: `${name} (${code})`,
@@ -207,15 +215,25 @@ export function useTenantRolesViewModel({
         allowClear: true,
         noResultsText: t("permission.noPermissionsFound"),
       },
+      ...getRoleLandingFields(
+        t,
+        {
+          language,
+          workspaceGroups,
+          cachedWorkspaces,
+          isTenantRole: true,
+        },
+        false
+      ),
     ],
-    [t, createPermissionSearch]
+    [t, createPermissionSearch, language, workspaceGroups, cachedWorkspaces]
   );
 
   // ─────────────────────────────────────────────────────────────────
   // Edit Form Fields - basic fields (permissions via dialog)
   // ─────────────────────────────────────────────────────────────────
-  const editFields: FieldConfig[] = useMemo(
-    () => [
+  const editFields = useCallback(
+    (item: Role): FieldConfig[] => [
       {
         name: "nameEn",
         label: t("roles.nameEn"),
@@ -251,8 +269,20 @@ export function useTenantRolesViewModel({
         placeholder: "100",
         required: false,
       },
+      ...getRoleLandingFields(
+        t,
+        {
+          language,
+          workspaceGroups,
+          cachedWorkspaces,
+          isTenantRole: true,
+          isSystemRole: item.isSystem,
+          currentTarget: item.defaultLandingTarget,
+        },
+        true
+      ),
     ],
-    [t]
+    [t, language, workspaceGroups, cachedWorkspaces]
   );
 
   // ─────────────────────────────────────────────────────────────────
@@ -305,16 +335,8 @@ export function useTenantRolesViewModel({
   );
 
   const getEditInitialValues = useCallback(
-    (item: Role) => ({
-      name: resolveBilingualLabel(item.nameEn, item.nameAr, language),
-      description: resolveBilingualLabel(
-        item.descriptionEn ?? "",
-        item.descriptionAr ?? "",
-        language
-      ),
-      priority: item.priority,
-    }),
-    [language]
+    (item: Role) => getRoleEditInitialValues(item),
+    []
   );
 
   // ─────────────────────────────────────────────────────────────────
@@ -329,7 +351,7 @@ export function useTenantRolesViewModel({
   const queryClient = useQueryClient();
   const { success: toastSuccess, error: toastError } = useEnhancedToast();
   const resyncMutation = useMutation({
-    mutationFn: () => identityContainer.tenantService.resyncPermissions(tenantId),
+    mutationFn: () => identityContainer.tenantRepository.resyncPermissions(tenantId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tenant-permissions-raw", tenantId] });
       queryClient.invalidateQueries({ queryKey: ["tenant-current-permissions-service", tenantId] });

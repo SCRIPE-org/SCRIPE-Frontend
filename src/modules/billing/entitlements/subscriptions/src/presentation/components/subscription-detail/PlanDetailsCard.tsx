@@ -65,13 +65,15 @@ export function PlanDetailsCard({ sub, t }: PlanDetailsCardProps) {
           label={t("entSubscriptions.expiryBehavior")}
           value={
             <Badge variant="outline" className="text-[11px]">
-              {sub.expiryBehavior === "Fallback"
-                ? t("entSubscriptions.onExpiryFallback")
-                : t("entSubscriptions.onExpirySuspend")}
+              {sub.type === "Lifetime"
+                ? t("entSubscriptions.noneLifetime")
+                : sub.expiryBehavior === "Fallback"
+                  ? t("entSubscriptions.onExpiryFallback")
+                  : t("entSubscriptions.onExpirySuspend")}
             </Badge>
           }
         />
-        {sub.fallbackEditionName && (
+        {sub.type !== "Lifetime" && sub.fallbackEditionName && (
           <>
             <Separator />
             <DetailRow

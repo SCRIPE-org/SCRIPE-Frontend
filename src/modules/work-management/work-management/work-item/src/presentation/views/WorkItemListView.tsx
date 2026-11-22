@@ -120,13 +120,13 @@ export const WorkItemListView = React.memo(function WorkItemListView() {
         {
           key: "assignedToId",
           label: t("workItem.fields.assignedToId"),
-          render: (value: string | null | undefined) => value ?? "-",
+          render: (value: string | null | undefined) => value ?? "—",
         },
         {
           key: "dueAt",
           label: t("workItem.fields.dueAt"),
           render: (value: string) =>
-            value ? new Date(value).toLocaleDateString(resolveIntlLocale(language)) : "-",
+            value ? new Date(value).toLocaleDateString(resolveIntlLocale(language)) : "—",
         },
         {
           key: "isActive",

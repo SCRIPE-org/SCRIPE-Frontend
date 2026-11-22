@@ -42,6 +42,8 @@ export interface TenantEditDialogProps {
   onSubmit: () => void;
   /** Whether save mutation is currently pending */
   isUpdating: boolean;
+  /** Whether the tenant is an immutable internal platform tenant */
+  isInternal?: boolean;
 }
 
 /**
@@ -59,6 +61,7 @@ export function TenantEditDialog({
   onSetActive,
   onSubmit,
   isUpdating,
+  isInternal = false,
 }: TenantEditDialogProps) {
   const { t } = useI18n();
 
@@ -87,10 +90,12 @@ export function TenantEditDialog({
               rows={3}
             />
           </div>
-          <div className="flex items-center justify-between">
-            <Label htmlFor="tenant-edit-active">{t("tenant.activeStatus")}</Label>
-            <Switch id="tenant-edit-active" checked={form.isActive} onCheckedChange={onSetActive} />
-          </div>
+          {!isInternal && (
+            <div className="flex items-center justify-between">
+              <Label htmlFor="tenant-edit-active">{t("tenant.activeStatus")}</Label>
+              <Switch id="tenant-edit-active" checked={form.isActive} onCheckedChange={onSetActive} />
+            </div>
+          )}
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>

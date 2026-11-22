@@ -13,6 +13,10 @@ import type {
   DeleteRoleRequest,
   CloneRoleRequest,
 } from "../entities/RoleRequests";
+import type {
+  RoleWorkspaceEntryPolicy,
+  UpsertRoleWorkspaceEntryInput,
+} from "../entities/RoleWorkspaceEntryPolicy";
 import type { PagedResult } from "@modules/identity/core/domain/types";
 
 /**
@@ -127,4 +131,23 @@ export interface IRoleRepository {
    */
   clone(roleId: string, request: CloneRoleRequest): Promise<string>;
   bulkDelete(ids: string[]): Promise<number>;
+
+  /**
+   * Fetch sparse per-workspace start-page rules configured for a role.
+   */
+  getRoleWorkspaceEntries(roleId: string): Promise<RoleWorkspaceEntryPolicy[]>;
+
+  /**
+   * Replace all per-workspace start-page rules for a role (`[]` clears all rules).
+   */
+  upsertRoleWorkspaceEntries(
+    roleId: string,
+    policies: UpsertRoleWorkspaceEntryInput[],
+    rowVersion?: string | null
+  ): Promise<RoleWorkspaceEntryPolicy[]>;
+
+  /**
+   * Remove one workspace start-page rule from a role.
+   */
+  deleteRoleWorkspaceEntry(roleId: string, workspaceKey: string): Promise<void>;
 }

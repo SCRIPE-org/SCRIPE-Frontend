@@ -124,4 +124,31 @@ describe("GenericTable Phase C accessibility, sorting, pagination & RTL scroll",
     }
     expect(onPageChange).not.toHaveBeenCalled();
   });
+
+  it("prevents mobile card labels from wrapping and omits empty action footer when all actions are hidden", () => {
+    const { container } = render(
+      <GenericTable
+        data={ROWS}
+        columns={COLUMNS}
+        actions={[
+          {
+            label: "Hidden Action",
+            onClick: vi.fn(),
+            show: () => false,
+          },
+        ]}
+      />
+    );
+
+    const mobileCardLabels = screen.getAllByText("Name:");
+    expect(mobileCardLabels.length).toBeGreaterThan(0);
+    for (const label of mobileCardLabels) {
+      expect(label.className).toContain("shrink-0");
+      expect(label.className).toContain("whitespace-nowrap");
+    }
+
+    expect(
+      container.querySelectorAll('button[aria-label="table.actions"], button[aria-label="Actions"]')
+    ).toHaveLength(0);
+  });
 });
