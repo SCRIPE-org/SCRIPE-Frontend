@@ -82,6 +82,11 @@ export function NexusSecondaryRail({
   const hasSubmenu = menuItems.length > 0;
 
   const handleNavigate = useCallback(() => onMobileClose?.(), [onMobileClose]);
+  const handleManageStartPages = useCallback(() => {
+    onMobileClose?.();
+    router.push("/account/preferences");
+  }, [onMobileClose, router]);
+
   const startPageAction = useRailStartPageToggle({
     activeWorkspace,
     activeRootItem,
@@ -90,6 +95,13 @@ export function NexusSecondaryRail({
     language,
     t,
   });
+
+  const customStartPageHref =
+    activeWorkspace?.effectiveHomeSource === "PersonalOverride" &&
+    !activeWorkspace.isEffectiveHomeEnforced
+      ? activeWorkspace.effectiveHomeRoute
+      : null;
+  const startPageIndicatorLabel = t("chrome.startPageIndicator");
 
   // Desktop collapse state ONLY — never gates the mobile drawer overlay.
   const effectiveCollapsed = !hasSubmenu || !!isCollapsed;
@@ -199,6 +211,7 @@ export function NexusSecondaryRail({
         contextLabel={contextLabel}
         title={title}
         startPageAction={startPageAction}
+        onManageStartPages={handleManageStartPages}
         t={t}
       />
       <RailContent
@@ -206,6 +219,8 @@ export function NexusSecondaryRail({
         pathname={pathname}
         language={language}
         onNavigate={handleNavigate}
+        customStartPageHref={customStartPageHref}
+        startPageIndicatorLabel={startPageIndicatorLabel}
       />
     </div>
   );
@@ -246,6 +261,7 @@ export function NexusSecondaryRail({
                 onClose={onMobileClose}
                 closeLabel={t("common.close")}
                 startPageAction={startPageAction}
+                onManageStartPages={handleManageStartPages}
                 t={t}
               />
               <div className="space-y-2 border-b border-nx-line px-3 py-2.5 md:hidden">
@@ -325,6 +341,8 @@ export function NexusSecondaryRail({
                   pathname={pathname}
                   language={language}
                   onNavigate={handleNavigate}
+                  customStartPageHref={customStartPageHref}
+                  startPageIndicatorLabel={startPageIndicatorLabel}
                 />
               ) : (
                 <div className="flex-1" />

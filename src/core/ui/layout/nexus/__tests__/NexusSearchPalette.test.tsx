@@ -1,19 +1,28 @@
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import "@testing-library/jest-dom";
 import { WorkspaceGroup } from "@core/navigation/domain/entities/WorkspaceGroup";
 import { MenuItem } from "@core/navigation/domain/entities/MenuItem";
 import { NavigationData } from "@core/navigation/domain/entities/NavigationData";
+import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { NexusSearchPalette } from "../nexus-search-palette";
 
 const mockPush = vi.fn();
 const mockSetActiveWorkspace = vi.fn();
 const mockSetActiveRootItemId = vi.fn();
 const mockRecordRecentWorkspace = vi.fn();
+const mockSetWorkspaceStartPage = vi.fn();
+const mockResetWorkspaceStartPage = vi.fn();
+const mockRefreshNavigation = vi.fn();
+const mockToast = vi.fn();
 
 let mockLanguage = "en";
+let mockPathname = "/venue/courts";
 let mockWorkspaceGroups: WorkspaceGroup[] = [];
+let mockActiveWorkspace: WorkspaceGroup | null = null;
+let mockActiveRootItem: MenuItem | null = null;
+let mockRootMenuItems: MenuItem[] = [];
 let mockCachedWorkspaces = new Map<string, NavigationData>();
 let mockRouteDescriptors = new Map<
   string,
@@ -27,21 +36,54 @@ let mockRouteDescriptors = new Map<
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: mockPush }),
+  usePathname: () => mockPathname,
+}));
+
+vi.mock("@core/di", () => ({
+  getCoreContainer: () => ({
+    navigationRepository: {
+      setWorkspaceStartPage: mockSetWorkspaceStartPage,
+      resetWorkspaceStartPage: mockResetWorkspaceStartPage,
+    },
+  }),
+}));
+
+vi.mock("@core/providers/navigation-provider", () => ({
+  useOptionalNavigation: () => ({
+    refreshNavigation: mockRefreshNavigation,
+  }),
+}));
+
+vi.mock("@core/providers/permission-provider", () => ({
+  usePermissions: () => ({
+    canAccessPage: () => true,
+    isSuperAdmin: false,
+    isPlatformSuperAdmin: false,
+    isTenantSuperAdmin: false,
+  }),
+}));
+
+vi.mock("@core/hooks/use-enhanced-toast", () => ({
+  toast: (...args: unknown[]) => mockToast(...args),
 }));
 
 vi.mock("@core/providers/i18n-provider", () => ({
   useI18n: () => ({
-    t: (key: string) => mockTranslate(key),
+    t: (key: string, params?: Record<string, string | number>) => mockTranslate(key, params),
     language: mockLanguage,
     direction: mockLanguage === "ar" ? "rtl" : "ltr",
   }),
 }));
 
-let mockTranslate = (key: string) => key;
+let mockTranslate = (key: string, params?: Record<string, string | number>) =>
+  params ? `${key}:${JSON.stringify(params)}` : key;
 
 vi.mock("@core/providers/workspace-provider", () => ({
   useWorkspace: () => ({
     workspaceGroups: mockWorkspaceGroups,
+    activeWorkspace: mockActiveWorkspace,
+    activeRootItem: mockActiveRootItem,
+    rootMenuItems: mockRootMenuItems,
     setActiveWorkspace: mockSetActiveWorkspace,
     setActiveRootItemId: mockSetActiveRootItemId,
   }),
@@ -64,8 +106,33 @@ vi.mock("@core/ui/routing-progress-bar", () => ({
 describe("NexusSearchPalette — unlocked workspaces, unhydrated routes & <bdi> isolation", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    sessionStorage.removeItem(STORAGE_KEYS.IMPERSONATING);
     mockLanguage = "ar";
-    mockTranslate = (key: string) => key;
+    mockPathname = "/venue/courts";
+    mockActiveWorkspace = null;
+    mockActiveRootItem = null;
+    mockRootMenuItems = [];
+    mockTranslate = (key: string, params?: Record<string, string | number>) => {
+      if (key === "chrome.setAsStartPage" && params) {
+        return `Set as ${params.workspace} start page`;
+      }
+      if (key === "chrome.resetStartPage") return "Reset to default";
+      if (key === "chrome.manageStartPages") return "Manage start pages";
+      if (key === "chrome.paletteActionsGroup") return "Actions";
+      return key;
+    };
+    mockSetWorkspaceStartPage.mockResolvedValue({
+      workspaceKey: "venue",
+      contextKey: "tenant:demo",
+      target: "menu:venue-courts",
+      menuItemSlug: "venue-courts",
+      menuItemNameEn: "Courts",
+      menuItemNameAr: "الملاعب",
+      route: "/venue/courts",
+      updatedAt: "2026-11-22T15:00:00Z",
+    });
+    mockResetWorkspaceStartPage.mockResolvedValue(undefined);
+    mockRefreshNavigation.mockResolvedValue(undefined);
     mockCachedWorkspaces = new Map();
     mockRouteDescriptors = new Map([
       [
@@ -248,5 +315,73 @@ describe("NexusSearchPalette — unlocked workspaces, unhydrated routes & <bdi> 
     expect(screen.getByText("جديد")).toBeInTheDocument();
     // Localized route leaf replaces English raw segment in Arabic
     expect(screen.getByText("الرياضيون")).toBeInTheDocument();
+  });
+
+  afterEach(() => {
+    sessionStorage.removeItem(STORAGE_KEYS.IMPERSONATING);
+  });
+
+  it("exposes start-page set/reset/manage commands in Command Palette and hides them during impersonation", async () => {
+    mockLanguage = "en";
+    mockPathname = "/venue/courts";
+    const activeGroup = mockWorkspaceGroups[0];
+    mockActiveWorkspace = new WorkspaceGroup({
+      workspaceId: "ws-venue",
+      workspaceKey: "venue",
+      workspaceNameEn: "Venue Ops",
+      workspaceNameAr: "عمليات المنشآت",
+      workspaceIcon: "Building2",
+      workspaceSortOrder: 1,
+      colorHue: 145,
+      colorChroma: 0.14,
+      workspaceType: "Module",
+      menuItems: activeGroup.menuItems,
+      isLocked: false,
+      homeRoute: "/venue",
+      platformHomeRoute: null,
+      effectiveHomeRoute: "/venue",
+      effectiveHomeSource: "WorkspaceHome",
+      effectiveHomeMenuSlug: null,
+      isPinned: true,
+      pinSortOrder: 1,
+      accessibleItemCount: 1,
+    });
+    mockRootMenuItems = activeGroup.menuItems;
+
+    const onOpenChange = vi.fn();
+    const { rerender } = render(<NexusSearchPalette open={true} onOpenChange={onOpenChange} />);
+
+    const setAction = screen.getByText("Set as Venue Ops start page").closest("[cmdk-item]") as HTMLElement;
+    fireEvent.click(setAction);
+
+    await waitFor(() => {
+      expect(mockSetWorkspaceStartPage).toHaveBeenCalledWith("venue", "menu:venue-courts");
+    });
+    expect(onOpenChange).toHaveBeenCalledWith(false);
+
+    // Manage start pages routes cleanly to /account/preferences
+    const manageAction = screen.getByText("Manage start pages").closest("[cmdk-item]") as HTMLElement;
+    fireEvent.click(manageAction);
+    expect(mockPush).toHaveBeenCalledWith("/account/preferences");
+
+    // PersonalOverride enables Reset to default
+    mockActiveWorkspace = new WorkspaceGroup({
+      ...activeGroup.toData(),
+      effectiveHomeRoute: "/venue/courts",
+      effectiveHomeSource: "PersonalOverride",
+      effectiveHomeMenuSlug: "venue-courts",
+    });
+    rerender(<NexusSearchPalette open={true} onOpenChange={onOpenChange} />);
+    const resetAction = screen.getByText("Reset to default").closest("[cmdk-item]") as HTMLElement;
+    fireEvent.click(resetAction);
+    await waitFor(() => {
+      expect(mockResetWorkspaceStartPage).toHaveBeenCalledWith("venue");
+    });
+
+    // Impersonation hides start-page palette commands
+    sessionStorage.setItem(STORAGE_KEYS.IMPERSONATING, "true");
+    rerender(<NexusSearchPalette open={true} onOpenChange={onOpenChange} />);
+    expect(screen.queryByText("Reset to default")).not.toBeInTheDocument();
+    expect(screen.queryByText("Manage start pages")).not.toBeInTheDocument();
   });
 });

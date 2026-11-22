@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import * as LucideIcons from "lucide-react";
 import { buildSearchIndex, type SearchableItem } from "@core/navigation/search";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
@@ -16,6 +16,7 @@ import {
   CommandList,
 } from "@core/ui/command";
 import { startRoutingProgress } from "@core/ui/routing-progress-bar";
+import { useRailStartPageToggle } from "./use-rail-start-page-toggle";
 
 interface NexusSearchPaletteProps {
   open: boolean;
@@ -24,16 +25,33 @@ interface NexusSearchPaletteProps {
 
 /**
  * Global Command Palette (`Cmd/Ctrl + K`) indexing unlocked workspaces, hydrated & cached
- * JIT menu trees, and unhydrated authorized route descriptors with `<bdi>` RTL/LTR isolation.
+ * JIT menu trees, unhydrated authorized route descriptors, and contextual start-page actions.
  */
 export function NexusSearchPalette({ open, onOpenChange }: NexusSearchPaletteProps) {
   const { t, language, direction } = useI18n();
   const router = useRouter();
-  const { workspaceGroups, setActiveWorkspace, setActiveRootItemId } = useWorkspace();
+  const pathname = usePathname() ?? "";
+  const {
+    workspaceGroups,
+    activeWorkspace = null,
+    activeRootItem = null,
+    rootMenuItems = [],
+    setActiveWorkspace,
+    setActiveRootItemId,
+  } = useWorkspace();
   const cachedWorkspaces = useNavigationStore((s) => s.workspaces);
   const routeDescriptors = useNavigationStore((s) => s.routeDescriptors);
   const navContextKey = useNavigationStore((s) => s.contextKey);
   const recordRecentWorkspace = useNavigationStore((s) => s.recordRecentWorkspace);
+
+  const startPageAction = useRailStartPageToggle({
+    activeWorkspace,
+    activeRootItem,
+    rootMenuItems,
+    pathname,
+    language,
+    t,
+  });
 
   const searchableItems = buildSearchIndex({
     workspaceGroups,
@@ -87,6 +105,64 @@ export function NexusSearchPalette({ open, onOpenChange }: NexusSearchPalettePro
       <CommandInput placeholder={t("nav.search")} />
       <CommandList dir={direction}>
         <CommandEmpty>{t("common.noResultsFound")}</CommandEmpty>
+
+        {startPageAction.kind !== "hidden" && (
+          <CommandGroup heading={<bdi>{t("chrome.paletteActionsGroup")}</bdi>}>
+            {startPageAction.kind === "settable" && (
+              <CommandItem
+                value={`action:set-start-page:${startPageAction.workspaceName}:${startPageAction.currentPageName}`}
+                disabled={startPageAction.isPending}
+                onSelect={() => {
+                  void startPageAction.onSetAsStartPage();
+                  onOpenChange(false);
+                }}
+                className="flex cursor-pointer items-center gap-2.5"
+              >
+                <LucideIcons.Home className="h-4 w-4 shrink-0 text-nx-ink-2" aria-hidden />
+                <span className="min-w-0 flex-1 truncate text-start">
+                  <bdi>
+                    {t("chrome.setAsStartPage", {
+                      workspace: startPageAction.workspaceName,
+                    })}
+                  </bdi>
+                </span>
+              </CommandItem>
+            )}
+            {startPageAction.kind === "current_custom" && (
+              <CommandItem
+                value={`action:reset-start-page:${startPageAction.workspaceName}`}
+                disabled={startPageAction.isPending}
+                onSelect={() => {
+                  void startPageAction.onResetStartPage();
+                  onOpenChange(false);
+                }}
+                className="flex cursor-pointer items-center gap-2.5"
+              >
+                <LucideIcons.RotateCcw className="h-4 w-4 shrink-0 text-nx-ink-2" aria-hidden />
+                <span className="min-w-0 flex-1 truncate text-start">
+                  <bdi>{t("chrome.resetStartPage")}</bdi>
+                </span>
+              </CommandItem>
+            )}
+            <CommandItem
+              value={`action:manage-start-pages:${startPageAction.workspaceName}`}
+              onSelect={() => {
+                startRoutingProgress();
+                router.push("/account/preferences");
+                onOpenChange(false);
+              }}
+              className="flex cursor-pointer items-center gap-2.5"
+            >
+              <LucideIcons.SlidersHorizontal
+                className="h-4 w-4 shrink-0 text-nx-ink-2"
+                aria-hidden
+              />
+              <span className="min-w-0 flex-1 truncate text-start">
+                <bdi>{t("chrome.manageStartPages")}</bdi>
+              </span>
+            </CommandItem>
+          </CommandGroup>
+        )}
 
         {Array.from(groupedItems.entries()).map(([groupName, items]) => (
           <CommandGroup key={groupName} heading={<bdi>{groupName}</bdi>}>

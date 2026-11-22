@@ -13,6 +13,7 @@ import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 const mockSetWorkspaceStartPage = vi.fn();
 const mockResetWorkspaceStartPage = vi.fn();
 const mockRefreshNavigation = vi.fn();
+const mockRouterPush = vi.fn();
 const mockToast = vi.fn();
 
 let mockPathname = "/crm/accounts";
@@ -27,7 +28,7 @@ let mockIsTenantSuperAdmin = false;
 vi.mock("next/navigation", () => ({
   usePathname: () => mockPathname,
   useRouter: () => ({
-    push: vi.fn(),
+    push: mockRouterPush,
     replace: vi.fn(),
   }),
 }));
@@ -72,6 +73,9 @@ vi.mock("@core/providers/i18n-provider", () => ({
         if (key === "chrome.currentStartPage") return "صفحة البداية الحالية";
         if (key === "chrome.resetStartPage") return "استعادة الافتراضي";
         if (key === "chrome.startPageLocked") return "صفحة البداية مقفولة";
+        if (key === "chrome.workspaceOptions") return "خيارات مساحة العمل";
+        if (key === "chrome.manageStartPages") return "إدارة صفحات البداية";
+        if (key === "chrome.startPageIndicator") return "صفحة بداية مخصصة";
         if (key === "chrome.startPageEnforcedTooltip" && params) {
           return `مفروضة بواسطة دور ${params.role}`;
         }
@@ -92,6 +96,9 @@ vi.mock("@core/providers/i18n-provider", () => ({
       if (key === "chrome.currentStartPage") return "Current start page";
       if (key === "chrome.resetStartPage") return "Reset to default";
       if (key === "chrome.startPageLocked") return "Start page locked";
+      if (key === "chrome.workspaceOptions") return "Workspace options";
+      if (key === "chrome.manageStartPages") return "Manage start pages";
+      if (key === "chrome.startPageIndicator") return "Custom start page";
       if (key === "chrome.startPageEnforcedTooltip" && params) {
         return `Enforced by ${params.role}`;
       }
@@ -244,25 +251,34 @@ describe("NexusSecondaryRail RailHeader start-page toggle", () => {
     useNavigationStore.setState(initialStore, true);
   });
 
-  it("renders one Set as start page button in RailHeader, saves menu:<slug>, patches store optimistically, toasts, and calls refreshNavigation", async () => {
+  function openWorkspaceOptionsMenu() {
+    const trigger = screen.getByTestId("rail-workspace-options-trigger");
+    fireEvent.pointerDown(trigger, { button: 0, ctrlKey: false });
+    fireEvent.click(trigger);
+    return trigger;
+  }
+
+  it("keeps RailHeader calm at rest and sets start page via quiet overflow menu with optimistic update & refresh", async () => {
     render(<NexusSecondaryRail />);
 
-    const setBtn = screen.getByRole("button", { name: "Set as CRM start page" });
-    expect(setBtn).toBeInTheDocument();
-    expect(setBtn.querySelector("bdi")).toHaveTextContent("CRM");
+    // Quiet at rest: zero inline start-page badges/buttons polluting the sidebar
+    expect(screen.queryByRole("button", { name: "Set as CRM start page" })).not.toBeInTheDocument();
+    expect(screen.queryByText("Current start page")).not.toBeInTheDocument();
 
-    // Zero per-row start page buttons inside sidebar links
-    expect(screen.getAllByRole("button", { name: /start page/i })).toHaveLength(1);
+    openWorkspaceOptionsMenu();
 
-    fireEvent.click(setBtn);
+    const setItem = await screen.findByRole("menuitem", { name: "Set as CRM start page" });
+    expect(setItem).toBeInTheDocument();
+    expect(setItem.querySelector("bdi")).toHaveTextContent("CRM");
 
-    // Optimistic store update happened immediately before API resolve
-    expect(
-      useNavigationStore.getState().workspaceGroups[0].effectiveHomeSource
-    ).toBe("PersonalOverride");
-    expect(
-      useNavigationStore.getState().workspaceGroups[0].effectiveHomeMenuSlug
-    ).toBe("crm-accounts");
+    fireEvent.click(setItem);
+
+    expect(useNavigationStore.getState().workspaceGroups[0].effectiveHomeSource).toBe(
+      "PersonalOverride"
+    );
+    expect(useNavigationStore.getState().workspaceGroups[0].effectiveHomeMenuSlug).toBe(
+      "crm-accounts"
+    );
 
     await waitFor(() => {
       expect(mockSetWorkspaceStartPage).toHaveBeenCalledWith("crm", "menu:crm-accounts");
@@ -280,7 +296,9 @@ describe("NexusSecondaryRail RailHeader start-page toggle", () => {
     mockSetWorkspaceStartPage.mockRejectedValueOnce(new Error("403 Enforced"));
     render(<NexusSecondaryRail />);
 
-    fireEvent.click(screen.getByRole("button", { name: "Set as CRM start page" }));
+    openWorkspaceOptionsMenu();
+    const setItem = await screen.findByRole("menuitem", { name: "Set as CRM start page" });
+    fireEvent.click(setItem);
 
     await waitFor(() => {
       expect(mockToast).toHaveBeenCalledWith(
@@ -291,16 +309,16 @@ describe("NexusSecondaryRail RailHeader start-page toggle", () => {
       );
     });
 
-    expect(
-      useNavigationStore.getState().workspaceGroups[0].effectiveHomeSource
-    ).toBe("WorkspaceHome");
-    expect(
-      useNavigationStore.getState().workspaceGroups[0].effectiveHomeMenuSlug
-    ).toBe("crm-leads");
+    expect(useNavigationStore.getState().workspaceGroups[0].effectiveHomeSource).toBe(
+      "WorkspaceHome"
+    );
+    expect(useNavigationStore.getState().workspaceGroups[0].effectiveHomeMenuSlug).toBe(
+      "crm-leads"
+    );
     expect(mockRefreshNavigation).not.toHaveBeenCalled();
   });
 
-  it("shows Current start page badge and Reset to default when on a PersonalOverride start page", async () => {
+  it("shows subtle trailing home icon on custom start-page leaf and exposes status + Reset + Manage in overflow menu", async () => {
     mockPathname = "/crm/accounts";
     mockActiveWorkspace = makeCrmWorkspace({
       effectiveHomeRoute: "/crm/accounts",
@@ -312,14 +330,19 @@ describe("NexusSecondaryRail RailHeader start-page toggle", () => {
 
     render(<NexusSecondaryRail />);
 
-    expect(screen.getByText("Current start page")).toBeInTheDocument();
-    const resetBtn = screen.getByRole("button", { name: "Reset to default" });
-    expect(resetBtn).toBeInTheDocument();
-    expect(
-      screen.queryByRole("button", { name: "Set as CRM start page" })
-    ).not.toBeInTheDocument();
+    // Subtle trailing icon marks the active custom start page without inline pill clutter
+    expect(screen.getByLabelText("Custom start page")).toBeInTheDocument();
+    expect(screen.queryByText("Current start page")).not.toBeInTheDocument();
 
-    fireEvent.click(resetBtn);
+    openWorkspaceOptionsMenu();
+
+    expect(await screen.findByTestId("rail-start-page-status")).toHaveTextContent(
+      "Current start page"
+    );
+    expect(screen.queryByRole("menuitem", { name: "Set as CRM start page" })).not.toBeInTheDocument();
+
+    const resetItem = screen.getByRole("menuitem", { name: "Reset to default" });
+    fireEvent.click(resetItem);
 
     await waitFor(() => {
       expect(mockResetWorkspaceStartPage).toHaveBeenCalledWith("crm");
@@ -333,7 +356,7 @@ describe("NexusSecondaryRail RailHeader start-page toggle", () => {
     });
   });
 
-  it("shows Current start page badge without Reset when matching a non-custom start page", () => {
+  it("shows current start page status without Reset when matching a non-custom start page, plus Manage start pages link", async () => {
     mockPathname = "/crm/leads";
     mockActiveWorkspace = makeCrmWorkspace({
       effectiveHomeRoute: "/crm/leads",
@@ -343,16 +366,20 @@ describe("NexusSecondaryRail RailHeader start-page toggle", () => {
 
     render(<NexusSecondaryRail />);
 
-    expect(screen.getByText("Current start page")).toBeInTheDocument();
-    expect(
-      screen.queryByRole("button", { name: "Reset to default" })
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole("button", { name: "Set as CRM start page" })
-    ).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Custom start page")).not.toBeInTheDocument();
+    openWorkspaceOptionsMenu();
+
+    expect(await screen.findByTestId("rail-start-page-status")).toHaveTextContent(
+      "Current start page"
+    );
+    expect(screen.queryByRole("menuitem", { name: "Reset to default" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("menuitem", { name: "Set as CRM start page" })).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("menuitem", { name: "Manage start pages" }));
+    expect(mockRouterPush).toHaveBeenCalledWith("/account/preferences");
   });
 
-  it("shows locked indicator for non-SuperAdmin when role enforces start page, while SuperAdmin remains immune", () => {
+  it("shows locked policy info inside overflow menu for non-SuperAdmin while SuperAdmin stays unlocked", async () => {
     mockActiveWorkspace = makeCrmWorkspace({
       isEffectiveHomeEnforced: true,
       enforcingRoleName: "Sales Director",
@@ -360,65 +387,79 @@ describe("NexusSecondaryRail RailHeader start-page toggle", () => {
 
     const { rerender } = render(<NexusSecondaryRail />);
 
+    // Zero permanent lock badge clutter at rest
     expect(
-      screen.getByLabelText("Start page locked — Enforced by Sales Director")
-    ).toBeInTheDocument();
-    expect(
-      screen.queryByRole("button", { name: "Set as CRM start page" })
+      screen.queryByLabelText("Start page locked — Enforced by Sales Director")
     ).not.toBeInTheDocument();
 
-    // Platform or Tenant SuperAdmin bypasses role lock cleanly
+    openWorkspaceOptionsMenu();
+
+    expect(
+      await screen.findByLabelText("Start page locked — Enforced by Sales Director")
+    ).toBeInTheDocument();
+    expect(screen.queryByRole("menuitem", { name: "Set as CRM start page" })).not.toBeInTheDocument();
+
+    fireEvent.keyDown(document.activeElement ?? document.body, { key: "Escape" });
+
     mockIsTenantSuperAdmin = true;
     rerender(<NexusSecondaryRail />);
-    expect(screen.getByRole("button", { name: "Set as CRM start page" })).toBeInTheDocument();
+    openWorkspaceOptionsMenu();
+    expect(await screen.findByRole("menuitem", { name: "Set as CRM start page" })).toBeInTheDocument();
   });
 
-  it("hides mutation controls when impersonating, on /hub, on dynamic [id] routes, or when workspace is locked", () => {
+  it("hides overflow trigger when impersonating, on /hub, on dynamic [id] routes, or when workspace is locked", () => {
     sessionStorage.setItem(STORAGE_KEYS.IMPERSONATING, "true");
     const { rerender } = render(<NexusSecondaryRail />);
-    expect(
-      screen.queryByRole("button", { name: /start page/i })
-    ).not.toBeInTheDocument();
-    expect(screen.queryByText("Current start page")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("rail-workspace-options-trigger")).not.toBeInTheDocument();
 
     sessionStorage.removeItem(STORAGE_KEYS.IMPERSONATING);
     mockPathname = "/crm/accounts/12345";
     rerender(<NexusSecondaryRail />);
-    expect(
-      screen.queryByRole("button", { name: /start page/i })
-    ).not.toBeInTheDocument();
+    expect(screen.queryByTestId("rail-workspace-options-trigger")).not.toBeInTheDocument();
 
     mockPathname = "/hub";
     rerender(<NexusSecondaryRail />);
-    expect(
-      screen.queryByRole("button", { name: /start page/i })
-    ).not.toBeInTheDocument();
+    expect(screen.queryByTestId("rail-workspace-options-trigger")).not.toBeInTheDocument();
 
     mockPathname = "/crm/accounts";
     mockActiveWorkspace = makeCrmWorkspace({ isLocked: true });
     rerender(<NexusSecondaryRail />);
-    expect(
-      screen.queryByRole("button", { name: /start page/i })
-    ).not.toBeInTheDocument();
+    expect(screen.queryByTestId("rail-workspace-options-trigger")).not.toBeInTheDocument();
   });
 
-  it("renders localized Arabic RailHeader action label with bidi isolation and multi-line wrapping without truncation", () => {
+  it("deduplicates redundant context kicker when title already contains it, and renders Arabic overflow menu with bidi isolation", async () => {
+    mockLanguage = "en";
+    mockActiveWorkspace = makeCrmWorkspace({ workspaceNameEn: "CRM" });
+    mockActiveRootItem = new MenuItem({
+      id: "crm-ops",
+      slug: "crm-ops",
+      name: "CRM Operations",
+      nameEn: "CRM Operations",
+      nameAr: "عمليات إدارة علاقات العملاء",
+      href: "",
+      icon: "Handshake",
+      order: 1,
+      resource: null,
+      actions: null,
+      children: mockActiveRootItem?.children ?? [],
+    });
+
+    const { rerender } = render(<NexusSecondaryRail />);
+    // "CRM" is already part of "CRM Operations", so redundant uppercase kicker is omitted
+    expect(screen.queryByText(/^CRM$/i)).not.toBeInTheDocument();
+
     mockLanguage = "ar";
     mockActiveWorkspace = makeCrmWorkspace({
       workspaceNameAr: "إدارة علاقات العملاء",
     });
-    render(<NexusSecondaryRail />);
+    rerender(<NexusSecondaryRail />);
 
-    const arButton = screen.getByRole("button", {
+    const trigger = openWorkspaceOptionsMenu();
+    expect(trigger).toHaveAttribute("aria-label", "خيارات مساحة العمل");
+    const arItem = await screen.findByRole("menuitem", {
       name: "تعيين كصفحة بداية إدارة علاقات العملاء",
     });
-    expect(arButton).toBeInTheDocument();
-    expect(arButton.className).toContain("!whitespace-normal");
-    expect(arButton.className).toContain("h-auto");
-    const labelSpan = arButton.querySelector("span");
-    expect(labelSpan?.className).toContain("whitespace-normal");
-    expect(labelSpan?.className).not.toContain("truncate");
-    expect(arButton.querySelector("bdi")).toHaveTextContent("إدارة علاقات العملاء");
+    expect(arItem.querySelector("bdi")).toHaveTextContent("إدارة علاقات العملاء");
   });
 
   it("renders mobile drawer on opaque bg-nx-surface with overflow-hidden, animation isolation, and full-width stacked App Launcher & All Workspaces actions", () => {
