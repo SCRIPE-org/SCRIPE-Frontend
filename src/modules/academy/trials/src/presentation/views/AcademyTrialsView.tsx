@@ -535,26 +535,34 @@ export function AcademyTrialsView() {
         </div>
 
         {/* Card 4: Conversion Rate */}
-        <div className="rounded-xl border border-nx-line bg-nx-surface p-4 flex flex-col justify-between">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex size-9 items-center justify-center rounded-lg bg-nx-accent-fill/15 border border-nx-accent-fill/40 text-nx-accent">
-                <CheckCircle2 className="size-4" />
+        <div className="relative isolate overflow-hidden rounded-xl border border-nx-line bg-nx-surface p-4 flex flex-col justify-between">
+          <img
+            src="/images/academy/backgrounds/brand-decor/kpi-corner-wave-transparent.webp"
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none absolute -bottom-3 -right-3 z-0 w-24 h-24 object-contain opacity-70 dark:opacity-50 select-none rtl:-right-auto rtl:-left-3 rtl:scale-x-[-1]"
+          />
+          <div className="relative z-10 flex flex-col justify-between h-full">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex size-9 items-center justify-center rounded-lg bg-nx-accent-fill/15 border border-nx-accent-fill/40 text-nx-accent">
+                  <CheckCircle2 className="size-4" />
+                </div>
+                <span className="text-xs font-medium text-nx-ink-2">
+                  {isAr ? "نسبة القبول الفعلي" : "Acceptance Rate"}
+                </span>
               </div>
-              <span className="text-xs font-medium text-nx-ink-2">
-                {isAr ? "نسبة القبول الفعلي" : "Acceptance Rate"}
+              <span className="inline-flex items-center rounded-md bg-nx-accent-fill/15 border border-success/30 px-2 py-0.5 text-[10px] font-bold text-success">
+                {decidedCount > 0 ? `${acceptedCount}/${decidedCount}` : "0"}
               </span>
             </div>
-            <span className="inline-flex items-center rounded-md bg-nx-accent-fill/15 border border-success/30 px-2 py-0.5 text-[10px] font-bold text-success">
-              {decidedCount > 0 ? `${acceptedCount}/${decidedCount}` : "0"}
-            </span>
+            <div className="my-2">
+              <p className="text-3xl font-black text-nx-ink tracking-tight">{conversionRate}</p>
+            </div>
+            <p className="text-[11px] text-nx-ink-2">
+              {isAr ? "نسبة قبول الرياضيين من إجمالي القرارات" : "Accepted athletes of decided trials"}
+            </p>
           </div>
-          <div className="my-2">
-            <p className="text-3xl font-black text-nx-ink tracking-tight">{conversionRate}</p>
-          </div>
-          <p className="text-[11px] text-nx-ink-2">
-            {isAr ? "نسبة قبول الرياضيين من إجمالي القرارات" : "Accepted athletes of decided trials"}
-          </p>
         </div>
       </div>
 
@@ -1105,47 +1113,55 @@ export function AcademyTrialsView() {
                   </div>
 
                   {/* Overall Score Banner (Honest State) */}
-                  <div className="rounded-xl border border-nx-accent-fill/40 bg-nx-accent-fill/15 p-3 shadow-[0_0_20px_rgba(200,255,5,0.12)] flex items-center justify-between">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[11px] text-nx-ink-2 block">
-                          {isAr ? "الدرجة الإجمالية للتقييم" : "Overall Evaluation Score"}
-                        </span>
-                        {selectedTrial.overallScore == null && selectedTrial.technicalScore != null && (
-                          <span data-testid="legacy-score-badge" className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30">
-                            {isAr ? "درجة قديمة" : "Legacy score"}
+                  <div className="relative isolate overflow-hidden rounded-xl border border-nx-accent-fill/40 bg-nx-accent-fill/15 p-3 shadow-[0_0_20px_rgba(200,255,5,0.12)] flex items-center justify-between">
+                    <img
+                      src="/images/academy/backgrounds/brand-decor/kpi-corner-wave-transparent.webp"
+                      alt=""
+                      aria-hidden="true"
+                      className="pointer-events-none absolute -bottom-3 -right-3 z-0 w-20 h-20 object-contain opacity-70 dark:opacity-50 select-none rtl:-right-auto rtl:-left-3 rtl:scale-x-[-1]"
+                    />
+                    <div className="relative z-10 flex items-center justify-between w-full">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[11px] text-nx-ink-2 block">
+                            {isAr ? "الدرجة الإجمالية للتقييم" : "Overall Evaluation Score"}
+                          </span>
+                          {selectedTrial.overallScore == null && selectedTrial.technicalScore != null && (
+                            <span data-testid="legacy-score-badge" className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30">
+                              {isAr ? "درجة قديمة" : "Legacy score"}
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-baseline gap-1 mt-0.5">
+                          <span className="text-xl font-black text-nx-accent" data-testid="trial-overall-score">
+                            {selectedTrial.overallScore != null
+                              ? Number(selectedTrial.overallScore).toFixed(2)
+                              : selectedTrial.technicalScore != null
+                                ? Number(selectedTrial.technicalScore).toFixed(1)
+                                : "—"}
+                          </span>
+                          <span className="text-xs text-nx-ink-2">/ 10.0</span>
+                        </div>
+                      </div>
+
+                      <div className="text-right rtl:text-left">
+                        {selectedTrial.technicalRecommendation ? (
+                          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-nx-accent-fill text-black shadow-md shadow-[#c6ff00]/20">
+                            <Check className="h-3 w-3 stroke-[3]" />
+                            <span>RECOMMENDATION: {selectedTrial.technicalRecommendation.toUpperCase()}</span>
+                          </span>
+                        ) : selectedTrial.status === "Accepted" ? (
+                          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-nx-accent-fill text-black shadow-md shadow-[#c6ff00]/20">
+                            <Check className="h-3 w-3 stroke-[3]" />
+                            <span>RECOMMENDATION: ACCEPT - ENROLL</span>
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-warning/15 text-warning border border-warning/40">
+                            <Clock className="h-3 w-3" />
+                            <span>{isAr ? "بانتظار جلسة التقييم" : "AWAITING EVALUATION"}</span>
                           </span>
                         )}
                       </div>
-                      <div className="flex items-baseline gap-1 mt-0.5">
-                        <span className="text-xl font-black text-nx-accent" data-testid="trial-overall-score">
-                          {selectedTrial.overallScore != null
-                            ? Number(selectedTrial.overallScore).toFixed(2)
-                            : selectedTrial.technicalScore != null
-                              ? Number(selectedTrial.technicalScore).toFixed(1)
-                              : "—"}
-                        </span>
-                        <span className="text-xs text-nx-ink-2">/ 10.0</span>
-                      </div>
-                    </div>
-
-                    <div className="text-right rtl:text-left">
-                      {selectedTrial.technicalRecommendation ? (
-                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-nx-accent-fill text-black shadow-md shadow-[#c6ff00]/20">
-                          <Check className="h-3 w-3 stroke-[3]" />
-                          <span>RECOMMENDATION: {selectedTrial.technicalRecommendation.toUpperCase()}</span>
-                        </span>
-                      ) : selectedTrial.status === "Accepted" ? (
-                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-nx-accent-fill text-black shadow-md shadow-[#c6ff00]/20">
-                          <Check className="h-3 w-3 stroke-[3]" />
-                          <span>RECOMMENDATION: ACCEPT - ENROLL</span>
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-warning/15 text-warning border border-warning/40">
-                          <Clock className="h-3 w-3" />
-                          <span>{isAr ? "بانتظار جلسة التقييم" : "AWAITING EVALUATION"}</span>
-                        </span>
-                      )}
                     </div>
                   </div>
 

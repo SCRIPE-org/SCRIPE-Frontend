@@ -2,7 +2,7 @@ const { chromium } = require("@playwright/test");
 const path = require("path");
 const fs = require("fs");
 
-const BRAIN_DIR = "C:/Users/DELL/.gemini/antigravity/brain/555143f1-37eb-4991-af0b-70be4ecc245c";
+const BRAIN_DIR = process.env.SCRIPE_BRAIN_DIR || "C:/Users/DELL/.gemini/antigravity/brain/088ee4ed-4537-4e5c-a5ac-faaac531112a";
 const EVIDENCE_DIR = path.join(BRAIN_DIR, "uat-08-evidence");
 
 if (!fs.existsSync(EVIDENCE_DIR)) {

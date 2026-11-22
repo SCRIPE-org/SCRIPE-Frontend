@@ -10,7 +10,7 @@ import { ACADEMY_PERMISSIONS } from "@modules/academy/shared/permission-constant
 import { SessionRequestError, type SessionAction, type SessionSchedule, type SessionStatus, type TrainingSession } from "../../domain/entities/TrainingSession";
 import type { SessionCopyKey } from "./useSessionsCopy";
 
-const PAGE_SIZE = 25;
+const PAGE_SIZE = 100;
 
 export interface FilterInput {
   from: string;
@@ -47,15 +47,23 @@ function sessionKeys(scope: ReturnType<typeof useSessionScope>) {
   };
 }
 
-export function useSessionsViewModel() {
+export function useSessionsViewModel(initialGroupId?: string) {
   const { sessionsRepository, groupsRepository } = useAcademyServiceLocator();
   const scope = useSessionScope();
   const keys = sessionKeys(scope);
   const canView = usePermission(ACADEMY_PERMISSIONS.ACADEMY_SESSIONS_VIEW);
   const canCreate = usePermission(ACADEMY_PERMISSIONS.ACADEMY_SESSIONS_CREATE);
+  const canUpdate = usePermission(ACADEMY_PERMISSIONS.ACADEMY_SESSIONS_UPDATE);
+  const canCancel = usePermission(ACADEMY_PERMISSIONS.ACADEMY_SESSIONS_UPDATE);
   const canSeeGroups = usePermission(ACADEMY_PERMISSIONS.ACADEMY_GROUPS_VIEW);
-  const [input, setInput] = useState(defaultFilters);
-  const [filters, setFilters] = useState(defaultFilters);
+  const [input, setInput] = useState<FilterInput>(() => ({
+    ...defaultFilters,
+    group: initialGroupId || "",
+  }));
+  const [filters, setFilters] = useState<FilterInput>(() => ({
+    ...defaultFilters,
+    group: initialGroupId || "",
+  }));
   const [page, setPage] = useState(1);
   const [filterError, setFilterError] = useState<SessionCopyKey | null>(null);
   const [created, setCreated] = useState<TrainingSession | null>(null);
@@ -101,7 +109,7 @@ export function useSessionsViewModel() {
   }
 
   return {
-    query, groups, canView, canCreate, canSeeGroups, input, setInput, filterError, applyFilters,
+    query, groups, canView, canCreate, canUpdate, canCancel, canSeeGroups, input, setInput, filterError, applyFilters,
     clearFilters, page, setPage, filtered: Object.values(filters).some(Boolean), created, sessionCreated,
   };
 }
@@ -111,7 +119,7 @@ export function useSessionDetailViewModel(id: string) {
   const keys = sessionKeys(useSessionScope());
   const canView = usePermission(ACADEMY_PERMISSIONS.ACADEMY_SESSIONS_VIEW);
   const canUpdate = usePermission(ACADEMY_PERMISSIONS.ACADEMY_SESSIONS_UPDATE);
-  const canCancel = usePermission("academy-sessions.cancel");
+  const canCancel = usePermission(ACADEMY_PERMISSIONS.ACADEMY_SESSIONS_UPDATE);
   const [notice, setNotice] = useState<SessionCopyKey | null>(null);
   const query = useQuery({
     queryKey: keys.detail(id),
@@ -133,7 +141,7 @@ export function useSaveSession(initial?: TrainingSession) {
       : sessionsRepository.create(schedule),
     onSuccess: (saved) => {
       queryClient.setQueryData(keys.detail(saved.id), saved);
-      void queryClient.invalidateQueries({ queryKey: keys.list });
+      void queryClient.invalidateQueries({ queryKey: keys.list, exact: false, refetchType: "all" });
     },
   });
 }
@@ -146,7 +154,7 @@ export function useTransitionSession(initial: TrainingSession, action: SessionAc
     mutationFn: (reason?: string) => sessionsRepository.transition(initial.id, action, initial.version, reason),
     onSuccess: (saved) => {
       queryClient.setQueryData(keys.detail(saved.id), saved);
-      void queryClient.invalidateQueries({ queryKey: keys.list });
+      void queryClient.invalidateQueries({ queryKey: keys.list, exact: false, refetchType: "all" });
     },
   });
 }

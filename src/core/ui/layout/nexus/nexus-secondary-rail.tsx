@@ -102,17 +102,27 @@ export function NexusSecondaryRail({
     height: "100%",
     minHeight: 0, // critical: allows flex child to scroll
     overflow: "hidden",
+    position: "relative",
   };
 
   const railContent = (
     <div style={innerContainerStyle}>
-      <RailHeader contextLabel={contextLabel} title={title} />
-      <RailContent
-        menuItems={menuItems}
-        pathname={pathname}
-        language={language}
-        onNavigate={handleNavigate}
+      {/* Decorative vertical wave anchored at bottom start */}
+      <img
+        src="/images/academy/backgrounds/brand-decor/sidebar-wave-vertical-transparent.png"
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none absolute bottom-0 start-0 z-0 w-36 max-w-full opacity-60 dark:opacity-45 select-none object-contain object-bottom-left"
       />
+      <div className="relative z-10 flex flex-col h-full min-h-0">
+        <RailHeader contextLabel={contextLabel} title={title} />
+        <RailContent
+          menuItems={menuItems}
+          pathname={pathname}
+          language={language}
+          onNavigate={handleNavigate}
+        />
+      </div>
     </div>
   );
 
@@ -148,14 +158,22 @@ export function NexusSecondaryRail({
               borderInlineEnd: "1px solid var(--nx-line, hsl(var(--border)))", // Logical property
             }}
           >
-            <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}>
-              <RailHeader contextLabel={contextLabel} title={title} />
-              <RailContent
-                menuItems={menuItems}
-                pathname={pathname}
-                language={language}
-                onNavigate={handleNavigate}
+            <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", position: "relative", overflow: "hidden" }}>
+              <img
+                src="/images/academy/backgrounds/brand-decor/sidebar-wave-vertical-transparent.png"
+                alt=""
+                aria-hidden="true"
+                className="pointer-events-none absolute bottom-0 start-0 z-0 w-36 max-w-full opacity-60 dark:opacity-45 select-none object-contain object-bottom-left"
               />
+              <div className="relative z-10 flex flex-col h-full min-h-0">
+                <RailHeader contextLabel={contextLabel} title={title} />
+                <RailContent
+                  menuItems={menuItems}
+                  pathname={pathname}
+                  language={language}
+                  onNavigate={handleNavigate}
+                />
+              </div>
             </div>
           </aside>
         </>

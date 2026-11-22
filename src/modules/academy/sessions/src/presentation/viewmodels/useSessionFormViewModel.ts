@@ -6,7 +6,7 @@ import { stripHtmlTags } from "@core/common/sanitize";
 import { useAcademyServiceLocator } from "@modules/academy/di";
 import type { GroupCoach } from "@modules/academy/groups/src/domain/entities/TrainingGroup";
 import type { TrainingSession } from "../../domain/entities/TrainingSession";
-import { localSessionTimeToUtc, utcToSessionInput } from "../../domain/session-time";
+import { addWallClockMinutes, localSessionTimeToUtc, utcToSessionInput } from "../../domain/session-time";
 import { useSaveSession, useSessionScope } from "./useSessionsViewModel";
 import type { SessionCopyKey } from "./useSessionsCopy";
 
@@ -120,7 +120,18 @@ export function useSessionFormViewModel(initial: TrainingSession | undefined, on
 
   function update<K extends keyof FormFields>(key: K, value: FormFields[K]) {
     setError(null);
-    setFields((prior) => ({ ...prior, [key]: value }));
+    setFields((prior) => {
+      const next = { ...prior, [key]: value };
+      // When start changes, revalidate and ensure end > start
+      if (key === "start" && typeof value === "string" && value) {
+        const currentEnd = next.end ?? (initial && displayTimeZone ? utcToSessionInput(initial.data.endUtc, displayTimeZone) : "");
+        if (!currentEnd || currentEnd <= value) {
+          const suggestedEnd = addWallClockMinutes(value, 60);
+          if (suggestedEnd) next.end = suggestedEnd;
+        }
+      }
+      return next;
+    });
   }
 
   function chooseGroup(id: string) {

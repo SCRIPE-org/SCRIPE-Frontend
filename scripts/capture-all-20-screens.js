@@ -3,7 +3,7 @@ const path = require("path");
 const fs = require("fs");
 const { execSync } = require("child_process");
 
-const BRAIN_DIR = "C:/Users/DELL/.gemini/antigravity/brain/555143f1-37eb-4991-af0b-70be4ecc245c";
+const BRAIN_DIR = process.env.SCRIPE_BRAIN_DIR || "C:/Users/DELL/.gemini/antigravity/brain/088ee4ed-4537-4e5c-a5ac-faaac531112a";
 const EVIDENCE_DIR = path.join(BRAIN_DIR, "design-system-evidence");
 const ZIP_OUTPUT = path.join(BRAIN_DIR, "ACADEMY_DESIGN_SYSTEM_EVIDENCE.zip");
 

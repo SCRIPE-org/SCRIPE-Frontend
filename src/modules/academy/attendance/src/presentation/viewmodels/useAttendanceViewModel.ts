@@ -53,7 +53,7 @@ export function useAttendanceRegister(id: string, scope: AttendanceScope) {
   const key = [...attendanceKey(scope), "register", id] as const;
   const query = useQuery({
     queryKey: key,
-    enabled: canView,
+    enabled: canView && !!id && id.trim().length > 0,
     retry: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
@@ -69,9 +69,9 @@ export function useAttendanceRegister(id: string, scope: AttendanceScope) {
   const [validate, setValidate] = useState(false);
   const register = query.data;
   const rows = register?.rows ?? [];
-  const sessionOpen = register && register.session.status !== "Cancelled";
-  const canRecord = canView && hasRecordPermission && !!sessionOpen && register.canRecord;
-  const canCorrect = canView && hasCorrectPermission && !!sessionOpen && register.canCorrect;
+  const sessionOpen = register?.session?.status ? register.session.status !== "Cancelled" : false;
+  const canRecord = canView && hasRecordPermission && !!sessionOpen && !!register?.canRecord;
+  const canCorrect = canView && hasCorrectPermission && !!sessionOpen && !!register?.canCorrect;
   const locked = busy || query.isFetching || query.isError || needsReload;
   const { entries, invalidAthletes } = buildBulkAttendance(draft, rows);
   const markableCount = rows.filter(canMarkAttendance).length;
@@ -186,7 +186,7 @@ export function useAttendanceHistory(id: string, athleteId: string) {
   const canView = usePermission(ACADEMY_PERMISSIONS.ACADEMY_ATTENDANCE_VIEW);
   return useQuery({
     queryKey: historyKey(scope, id, athleteId),
-    enabled: canView,
+    enabled: canView && !!id && id.trim().length > 0 && !!athleteId && athleteId.trim().length > 0,
     retry: false,
     queryFn: ({ signal }) => attendanceRepository.history(id, athleteId, signal),
   });

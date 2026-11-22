@@ -406,11 +406,21 @@ export function AcademyEnrollmentsView() {
 
   return (
     <div
-      className="min-h-screen text-nx-ink p-5 sm:p-7 space-y-4 academy-bg"
+      className="relative isolate overflow-hidden min-h-screen text-nx-ink p-5 sm:p-7 space-y-4 academy-bg"
       dir={dir}
     >
+      {/* Header Watermark */}
+      <div className="pointer-events-none absolute top-0 end-0 w-[520px] h-[220px] overflow-hidden z-0 select-none opacity-35 dark:opacity-25" aria-hidden="true">
+        <img
+          src="/images/academy/backgrounds/brand-decor/scripe-lime-mark-watermark.png"
+          alt=""
+          aria-hidden="true"
+          className="w-full h-full object-contain object-right-top rtl:scale-x-[-1]"
+        />
+      </div>
+
       {/* 1. Breadcrumbs */}
-      <div className="flex items-center gap-2 text-xs font-medium text-nx-ink-2">
+      <div className="relative z-10 flex items-center gap-2 text-xs font-medium text-nx-ink-2">
         <Link href="/academy" className="hover:text-nx-ink transition-colors flex items-center gap-1">
           <ArrowLeft className="h-3 w-3 rtl:rotate-180" />
           <span>{isAr ? "لوحة الأكاديمية" : "Academy Overview"}</span>
@@ -420,7 +430,7 @@ export function AcademyEnrollmentsView() {
       </div>
 
       {/* 2. Page Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-center gap-3.5">
           <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-nx-accent-fill/40 bg-nx-raised text-nx-accent shadow-nx-glow shrink-0">
             <Layers className="h-6 w-6 text-nx-accent" />

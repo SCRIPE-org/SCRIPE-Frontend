@@ -76,6 +76,8 @@ export function AcademySeasonsView() {
   const [allEnrollments, setAllEnrollments] = useState<any[]>([]);
   const [allSessions, setAllSessions] = useState<any[]>([]);
   const [metricsLoading, setMetricsLoading] = useState<boolean>(true);
+  const [metricsLoaded, setMetricsLoaded] = useState<boolean>(false);
+  const [metricsError, setMetricsError] = useState<string | null>(null);
 
   // Settings inline form states
   const [editNameEn, setEditNameEn] = useState("");
@@ -88,25 +90,43 @@ export function AcademySeasonsView() {
   // Create form states
   const [createNameEn, setCreateNameEn] = useState("");
   const [createNameAr, setCreateNameAr] = useState("");
-  const [createStartDate, setCreateStartDate] = useState("2026-09-01");
-  const [createEndDate, setCreateEndDate] = useState("2027-08-31");
+  const [createStartDate, setCreateStartDate] = useState("");
+  const [createEndDate, setCreateEndDate] = useState("");
 
   // Load authentic backend dataset across linked entities
   const loadRelatedData = useCallback(async () => {
     setMetricsLoading(true);
+    setMetricsLoaded(false);
+    setMetricsError(null);
     try {
+      const fetchAllSessions = async () => {
+        const pageSize = 200;
+        const firstPage: any = await locator.sessionsRepository.list({ page: 1, pageSize });
+        const sessions = [...(firstPage?.items || [])];
+        const totalCount = firstPage?.totalCount ?? sessions.length;
+        const totalPages = Math.ceil(totalCount / pageSize);
+        for (let page = 2; page <= totalPages; page += 1) {
+          const nextPage: any = await locator.sessionsRepository.list({ page, pageSize });
+          sessions.push(...(nextPage?.items || []));
+        }
+        return sessions;
+      };
+
       const [progs, offs, grps, enrs, sess] = await Promise.all([
-        locator.programsRepository.fetchPrograms().catch(() => []),
-        locator.offeringsRepository.fetchOfferings().catch(() => []),
-        locator.groupsRepository.getGroups().catch(() => []),
-        locator.enrollmentsRepository.getEnrollments().catch(() => []),
-        locator.sessionsRepository.list({ page: 1, pageSize: 200 }).then((res: any) => res?.items || []).catch(() => []),
+        locator.programsRepository.fetchPrograms(),
+        locator.offeringsRepository.fetchOfferings(),
+        locator.groupsRepository.getGroups(),
+        locator.enrollmentsRepository.getEnrollments(),
+        fetchAllSessions(),
       ]);
       setAllPrograms(progs || []);
       setAllOfferings(offs || []);
       setAllGroups(grps || []);
       setAllEnrollments(enrs || []);
       setAllSessions(sess || []);
+      setMetricsLoaded(true);
+    } catch (error) {
+      setMetricsError(error instanceof Error ? error.message : "Unable to load season operational metrics.");
     } finally {
       setMetricsLoading(false);
     }
@@ -119,7 +139,8 @@ export function AcademySeasonsView() {
   // Derive Season Code
   const getSeasonCode = useCallback((season: AcademySeason) => {
     if (season.code) return season.code;
-    const year = new Date(season.startDate).getFullYear() || 2026;
+    const parsedStart = new Date(season.startDate);
+    const year = Number.isFinite(parsedStart.valueOf()) ? parsedStart.getFullYear() : "UNKN";
     const cleaned = season.nameEn.replace(/[^A-Za-z0-9]/g, "").substring(0, 4).toUpperCase() || "MAIN";
     return `ACAD-${year}-${cleaned}`;
   }, []);
@@ -304,6 +325,11 @@ export function AcademySeasonsView() {
     return state.seasons.filter((s) => s.status === "Active").length;
   }, [state.seasons]);
 
+  const relatedMetric = (value: number) => {
+    if (metricsLoading) return <LoadingSpinner size="sm" />;
+    return metricsLoaded ? value : "—";
+  };
+
   // Date countdown calculation
   const getCountdownText = (end?: string) => {
     if (!end) return isAr ? "غير محدد" : "Unspecified";
@@ -464,6 +490,23 @@ export function AcademySeasonsView() {
         </div>
       </div>
 
+      {metricsError && (
+        <div role="alert" className="rounded-xl border border-destructive/40 bg-destructive/10 p-4 flex items-start justify-between gap-4">
+          <div className="flex items-start gap-2.5">
+            <AlertCircle className="h-5 w-5 text-destructive shrink-0" />
+            <div>
+              <p className="text-sm font-bold text-nx-ink">
+                {isAr ? "تعذر تحميل مؤشرات الموسم" : "Season metrics are unavailable"}
+              </p>
+              <p className="text-xs text-nx-ink-2 mt-1">{metricsError}</p>
+            </div>
+          </div>
+          <button type="button" onClick={() => void loadRelatedData()} className="text-xs font-bold text-nx-accent hover:underline shrink-0">
+            {isAr ? "إعادة المحاولة" : "Retry"}
+          </button>
+        </div>
+      )}
+
       {/* 2. Four Authentic Season-Scoped KPI Metric Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
         {/* Card 1: Active Season Count */}
@@ -496,7 +539,7 @@ export function AcademySeasonsView() {
           </div>
           <div className="mt-2">
             <div className="text-3xl font-black tracking-tight text-white">
-              {metricsLoading ? <LoadingSpinner size="sm" /> : seasonMetrics.seasonOfferings.length}
+              {relatedMetric(seasonMetrics.seasonOfferings.length)}
             </div>
             <div className="text-[11px] text-nx-accent font-semibold mt-1">
               {isAr ? "عروض منشورة في هذا الموسم" : "Cohorts in selected season"}
@@ -516,7 +559,7 @@ export function AcademySeasonsView() {
           </div>
           <div className="mt-2">
             <div className="text-3xl font-black tracking-tight text-white">
-              {metricsLoading ? <LoadingSpinner size="sm" /> : seasonMetrics.seasonActiveEnrollments.length}
+              {relatedMetric(seasonMetrics.seasonActiveEnrollments.length)}
             </div>
             <div className="text-[11px] text-info font-semibold mt-1">
               {isAr ? "لاعبون مقيدون في هذا الموسم" : "Active season registrations"}
@@ -536,7 +579,7 @@ export function AcademySeasonsView() {
           </div>
           <div className="mt-2">
             <div className="text-3xl font-black tracking-tight text-white">
-              {metricsLoading ? <LoadingSpinner size="sm" /> : seasonMetrics.seasonGroups.length}
+              {relatedMetric(seasonMetrics.seasonGroups.length)}
             </div>
             <div className="text-[11px] text-warning font-semibold mt-1">
               {isAr ? "مجموعات تدريبية لهذا الموسم" : "Cohorts for this season"}
@@ -692,7 +735,7 @@ export function AcademySeasonsView() {
                   <Layers className="h-3.5 w-3.5 text-nx-accent" />
                   <span>{isAr ? "العروض" : "Offerings"}</span>
                   <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-nx-raised border border-nx-line font-mono">
-                    {seasonMetrics.seasonOfferings.length}
+                    {metricsLoaded ? seasonMetrics.seasonOfferings.length : "—"}
                   </span>
                   <ExternalLink className="h-3 w-3 opacity-60" />
                 </button>
@@ -705,7 +748,7 @@ export function AcademySeasonsView() {
                   <Users className="h-3.5 w-3.5 text-warning" />
                   <span>{isAr ? "المجموعات" : "Groups"}</span>
                   <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-nx-raised border border-nx-line font-mono">
-                    {seasonMetrics.seasonGroups.length}
+                    {metricsLoaded ? seasonMetrics.seasonGroups.length : "—"}
                   </span>
                   <ExternalLink className="h-3 w-3 opacity-60" />
                 </button>
@@ -718,7 +761,7 @@ export function AcademySeasonsView() {
                   <CheckCircle2 className="h-3.5 w-3.5 text-info" />
                   <span>{isAr ? "التسجيل" : "Enrollment"}</span>
                   <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-nx-raised border border-nx-line font-mono">
-                    {seasonMetrics.seasonActiveEnrollments.length}
+                    {metricsLoaded ? seasonMetrics.seasonActiveEnrollments.length : "—"}
                   </span>
                   <ExternalLink className="h-3 w-3 opacity-60" />
                 </button>
@@ -753,7 +796,7 @@ export function AcademySeasonsView() {
                         })}
                       </strong>
                       <p className="text-[10px] text-nx-ink-2">
-                        {isAr ? "التواريخ متوافقة مع النطاق الزمني (Asia/Riyadh)" : "Timezone-aware (Asia/Riyadh)"}
+                        {isAr ? "تاريخ تقويمي محفوظ للموسم" : "Stored season calendar date"}
                       </p>
                     </div>
 
@@ -775,7 +818,14 @@ export function AcademySeasonsView() {
                   </div>
 
                   {/* Operational Readiness Progress Bars (AUTHENTIC SEASON-SCOPED DATA) */}
-                  <div className="space-y-3 pt-2">
+                  {!metricsLoading && !metricsLoaded && (
+                    <div className="rounded-xl border border-warning/40 bg-warning/10 p-3 text-xs text-nx-ink-2">
+                      {isAr
+                        ? "مؤشرات الجاهزية محجوبة لأن بيانات التشغيل المرتبطة لم تُحمّل بنجاح."
+                        : "Readiness metrics are withheld because the related operational data did not load successfully."}
+                    </div>
+                  )}
+                  <div className={metricsLoaded ? "space-y-3 pt-2" : "hidden"}>
                     <div className="flex items-center justify-between">
                       <div className="text-xs font-bold text-nx-ink uppercase tracking-wider">
                         {isAr ? "الجاهزية التشغيلية (محسوبة فعلياً للموسم)" : "Operational Readiness (Authentic Season Scope)"}
@@ -897,7 +947,7 @@ export function AcademySeasonsView() {
                             {isAr ? "عروض البرنامج" : "Program Offerings"}
                           </span>
                           <span className="text-[11px] text-nx-accent font-semibold">
-                            {seasonMetrics.seasonOfferings.length} {isAr ? "عروض مسجلة" : "offerings linked"}
+                            {metricsLoaded ? seasonMetrics.seasonOfferings.length : "—"} {isAr ? "عروض مسجلة" : "offerings linked"}
                           </span>
                         </div>
                       </button>
@@ -916,7 +966,7 @@ export function AcademySeasonsView() {
                             {isAr ? "المجموعات التدريبية" : "Training Groups"}
                           </span>
                           <span className="text-[11px] text-warning font-semibold">
-                            {seasonMetrics.seasonGroups.length} {isAr ? "مجموعات مفعلة" : "active cohorts"}
+                            {metricsLoaded ? seasonMetrics.seasonGroups.length : "—"} {isAr ? "مجموعات مفعلة" : "active cohorts"}
                           </span>
                         </div>
                       </button>
@@ -935,7 +985,7 @@ export function AcademySeasonsView() {
                             {isAr ? "التسجيلات المقيدة" : "Season Enrollments"}
                           </span>
                           <span className="text-[11px] text-info font-semibold">
-                            {seasonMetrics.seasonActiveEnrollments.length} {isAr ? "تسجيلات نشطة" : "active records"}
+                            {metricsLoaded ? seasonMetrics.seasonActiveEnrollments.length : "—"} {isAr ? "تسجيلات نشطة" : "active records"}
                           </span>
                         </div>
                       </button>
@@ -1076,9 +1126,13 @@ export function AcademySeasonsView() {
                         {isAr ? "معلومات النطاق والربط:" : "Scope & Relationship Summary:"}
                       </span>
                       <p>
-                        {isAr
-                          ? `رمز الموسم: ${getSeasonCode(selectedSeason)} • العروض المرتبطة: ${seasonMetrics.seasonOfferings.length} • المجموعات: ${seasonMetrics.seasonGroups.length}`
-                          : `Season Code: ${getSeasonCode(selectedSeason)} • Linked Offerings: ${seasonMetrics.seasonOfferings.length} • Groups: ${seasonMetrics.seasonGroups.length}`}
+                        {metricsLoaded
+                          ? isAr
+                            ? `رمز الموسم: ${getSeasonCode(selectedSeason)} • العروض المرتبطة: ${seasonMetrics.seasonOfferings.length} • المجموعات: ${seasonMetrics.seasonGroups.length}`
+                            : `Season Code: ${getSeasonCode(selectedSeason)} • Linked Offerings: ${seasonMetrics.seasonOfferings.length} • Groups: ${seasonMetrics.seasonGroups.length}`
+                          : isAr
+                            ? `رمز الموسم: ${getSeasonCode(selectedSeason)} • مؤشرات التشغيل غير متاحة`
+                            : `Season Code: ${getSeasonCode(selectedSeason)} • Operational metrics unavailable`}
                       </p>
                     </div>
 

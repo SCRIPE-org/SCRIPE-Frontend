@@ -303,10 +303,15 @@ export function AcademyAthletesView() {
   }
 
   return (
-    <div className="relative w-full space-y-6 p-6 text-nx-ink academy-bg" dir={dir}>
-      {/* Ambient background mesh glow at top right */}
-      <div className="absolute top-0 right-0 w-[700px] h-[260px] pointer-events-none overflow-hidden" aria-hidden="true">
-        <div className="w-full h-full bg-[radial-gradient(ellipse_at_85%_0%,rgba(200,255,5,0.08),transparent_70%)]" />
+    <div className="relative isolate overflow-hidden w-full space-y-6 p-6 text-nx-ink academy-bg" dir={dir}>
+      {/* Header top-right decorative wave */}
+      <div className="pointer-events-none absolute top-0 end-0 w-[55%] max-w-[680px] h-[240px] overflow-hidden z-0 select-none" aria-hidden="true">
+        <img
+          src="/images/academy/backgrounds/brand-decor/header-wave-right-transparent.webp"
+          alt=""
+          aria-hidden="true"
+          className="w-full h-full object-contain object-right-top opacity-70 dark:opacity-55 rtl:scale-x-[-1]"
+        />
       </div>
 
       {/* Top Breadcrumb */}

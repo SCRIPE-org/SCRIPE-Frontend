@@ -51,23 +51,23 @@ export function getProgramImage(sportCode?: string, sportName?: string, programN
     .join(" ")
     .toUpperCase();
 
+  if (terms.includes("ELITE") || terms.includes("TRAINING") || (terms.includes("FOOT") && terms.includes("U12"))) {
+    return "/images/academy/backgrounds/sport-cards/football-training-card-reference.webp";
+  }
   if (terms.includes("SWIM") || terms.includes("AQUATIC") || terms.includes("WATER") || terms.includes("سباحة")) {
-    return "/images/academy/program_swimming.png";
+    return "/images/academy/backgrounds/sport-cards/swimming-card-reference.webp";
   }
   if (terms.includes("PADEL") || terms.includes("PADDLE") || terms.includes("باديل") || terms.includes("بادل")) {
-    return "/images/academy/program_padel.png";
+    return "/images/academy/backgrounds/sport-cards/padel-card-reference.webp";
   }
   if (terms.includes("BASKET") || terms.includes("HOOPS") || terms.includes("BBALL") || terms.includes("سلة")) {
-    return "/images/academy/program_basketball.png";
+    return "/images/academy/backgrounds/sport-cards/basketball-card-reference.webp";
   }
   if (terms.includes("GYM") || terms.includes("TUMBLING") || terms.includes("FITNESS") || terms.includes("جمباز")) {
-    return "/images/academy/program_gymnastics.png";
+    return "/images/academy/backgrounds/sport-cards/gymnastics-card-reference.webp";
   }
   if (terms.includes("FOOT") || terms.includes("SOCC") || terms.includes("FUTSAL") || terms.includes("قدم")) {
-    return "/images/academy/program_football.png";
-  }
-  if (terms.includes("ELITE") || terms.includes("U12")) {
-    return "/images/academy/program_u12_elite.png";
+    return "/images/academy/backgrounds/sport-cards/football-card-reference.webp";
   }
 
   // Never return an arbitrary football fallback for unsupported sports (e.g., Tennis, Multi-Sport, etc.)

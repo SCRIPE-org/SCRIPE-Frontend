@@ -108,6 +108,7 @@ export function AcademyGroupsView({ initialGroupId, initialOfferingId }: Academy
   // Offerings for selector
   const [offerings, setOfferings] = useState<ProgramOffering[]>([]);
   const [loadingOfferings, setLoadingOfferings] = useState(false);
+  const [offeringsError, setOfferingsError] = useState<string | null>(null);
 
   // Modals state
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -154,13 +155,27 @@ export function AcademyGroupsView({ initialGroupId, initialOfferingId }: Academy
   const [availableCoaches, setAvailableCoaches] = useState<AvailableCoach[]>([]);
   const [loadingCoaches, setLoadingCoaches] = useState(false);
 
+  const loadOfferings = useCallback(async () => {
+    setLoadingOfferings(true);
+    setOfferingsError(null);
+    try {
+      const data = await locator.offeringsRepository.fetchOfferings();
+      setOfferings(data);
+    } catch {
+      setOfferings([]);
+      setOfferingsError(isAr
+        ? "تعذر تحميل عروض البرامج."
+        : "Unable to load program offerings.");
+    } finally {
+      setLoadingOfferings(false);
+    }
+  }, [isAr, locator.offeringsRepository]);
+
   // Initial Data Fetch
   useEffect(() => {
     fetchGroups();
-    locator.offeringsRepository.fetchOfferings()
-      .then(data => setOfferings(data))
-      .catch(() => {});
-  }, [fetchGroups, locator.offeringsRepository]);
+    void loadOfferings();
+  }, [fetchGroups, loadOfferings]);
 
   // Auto-select first group if none selected
   useEffect(() => {
@@ -247,7 +262,7 @@ export function AcademyGroupsView({ initialGroupId, initialOfferingId }: Academy
 
   const handleCreateGroupSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!createOfferingId || !createNameEn.trim() || !createNameAr.trim()) return;
+    if (!selectedOfferingIsEligible || !createNameEn.trim() || !createNameAr.trim()) return;
 
     try {
       const payload: CreateTrainingGroupPayload = {
@@ -337,10 +352,16 @@ export function AcademyGroupsView({ initialGroupId, initialOfferingId }: Academy
     }
   };
 
-  const offeringSelectOptions: GenericSelectOption[] = offerings.map(o => ({
+  const eligibleOfferings = offerings.filter((offering) =>
+    offering.status !== "Completed"
+    && offering.status !== "Cancelled"
+    && (!seasonFilter || offering.seasonId === seasonFilter));
+  const selectedOfferingIsEligible = eligibleOfferings.some((offering) => offering.id === createOfferingId);
+
+  const offeringSelectOptions: GenericSelectOption[] = eligibleOfferings.map(o => ({
     value: o.id,
     label: isAr && o.nameAr ? o.nameAr : o.nameEn,
-    description: `Capacity: ${o.enrolledCount ?? 0}/${o.maxCapacity}`
+    description: `${isAr ? "البرنامج" : "Program"}: ${o.programId} • ${isAr ? "الموسم" : "Season"}: ${o.seasonId} • ${isAr ? "السعة" : "Capacity"}: ${o.enrolledCount ?? 0}/${o.maxCapacity}`
   }));
 
   const enrolledAthletesOptions: GenericSelectOption[] = availableEnrollments.map(e => ({
@@ -377,8 +398,15 @@ export function AcademyGroupsView({ initialGroupId, initialOfferingId }: Academy
       <div className="pointer-events-none absolute top-1/3 -left-40 h-80 w-80 rounded-full bg-nx-accent-fill/5 blur-[100px]" />
 
       {/* 1. Header Banner */}
-      <div className="relative overflow-hidden rounded-2xl border border-nx-line bg-gradient-to-r from-nx-surface via-nx-raised to-nx-surface p-5 shadow-2xl">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_600px_200px_at_85%_20%,rgba(200,255,5,0.08),transparent_75%)]" />
+      <div className="relative isolate overflow-hidden rounded-2xl border border-nx-line bg-gradient-to-r from-nx-surface via-nx-raised to-nx-surface p-5 shadow-2xl">
+        <div className="pointer-events-none absolute top-0 end-0 w-[55%] max-w-[600px] h-[160px] overflow-hidden z-0 select-none" aria-hidden="true">
+          <img
+            src="/images/academy/backgrounds/brand-decor/header-wave-right-transparent.webp"
+            alt=""
+            aria-hidden="true"
+            className="w-full h-full object-contain object-right-top opacity-70 dark:opacity-55 rtl:scale-x-[-1]"
+          />
+        </div>
         
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
@@ -632,7 +660,18 @@ export function AcademyGroupsView({ initialGroupId, initialOfferingId }: Academy
           ) : (
             <>
               {/* Group Hero Banner with Ambient Sport Graphic */}
-              <div className="relative overflow-hidden rounded-xl border border-nx-line bg-gradient-to-r from-nx-raised via-nx-raised to-nx-surface p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="relative isolate overflow-hidden rounded-xl border border-nx-line bg-gradient-to-r from-nx-raised via-nx-raised to-nx-surface p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                {/* Background Hero Pitch Photography */}
+                <div className="pointer-events-none absolute top-0 end-0 w-2/5 h-full z-0 overflow-hidden select-none" aria-hidden="true">
+                  <div className="absolute inset-0 bg-gradient-to-r from-nx-raised via-nx-raised/60 to-transparent z-10 rtl:bg-gradient-to-l" />
+                  <img
+                    src="/images/academy/backgrounds/venue-photography/football-pitch-night-hero.webp"
+                    alt=""
+                    aria-hidden="true"
+                    className="w-full h-full object-cover object-center opacity-70 dark:opacity-55"
+                  />
+                </div>
+
                 <div className="relative z-10 flex items-center gap-3.5 min-w-0">
                   <div className="h-12 w-12 rounded-xl flex items-center justify-center border border-nx-accent-fill bg-nx-accent-fill/15 text-nx-accent shadow-[0_0_18px_rgba(200,255,5,0.2)] shrink-0">
                     <Users className="h-6 w-6" />
@@ -652,7 +691,7 @@ export function AcademyGroupsView({ initialGroupId, initialOfferingId }: Academy
                   </div>
                 </div>
 
-                {/* Right Decorative Graphic and Quick Action */}
+                {/* Right Quick Action */}
                 <div className="relative z-10 flex items-center gap-3">
                   {canManage && (
                     <button
@@ -663,10 +702,6 @@ export function AcademyGroupsView({ initialGroupId, initialOfferingId }: Academy
                       <span>{isAr ? "تعديل المجموعة" : "Edit Group"}</span>
                     </button>
                   )}
-                  {/* Subtle Soccer ball silhouette decoration */}
-                  <div className="h-12 w-16 opacity-30 overflow-hidden pointer-events-none hidden md:block">
-                    <img src="/images/academy/program_football.png" alt="" className="h-full w-full object-cover" />
-                  </div>
                 </div>
               </div>
 
@@ -940,8 +975,12 @@ export function AcademyGroupsView({ initialGroupId, initialOfferingId }: Academy
                 <GenericSelect
                   options={offeringSelectOptions}
                   value={createOfferingId}
-                  onChange={(val: string) => setCreateOfferingId(val)}
+                  onValueChange={(value: string) => setCreateOfferingId(value)}
                   placeholder={isAr ? "اختر العرض..." : "Select offering..."}
+                  loading={loadingOfferings}
+                  error={offeringsError}
+                  onRetry={loadOfferings}
+                  emptyText={isAr ? "لا توجد عروض مؤهلة." : "No eligible program offerings found."}
                 />
               </div>
 
@@ -1013,7 +1052,7 @@ export function AcademyGroupsView({ initialGroupId, initialOfferingId }: Academy
                 </button>
                 <button
                   type="submit"
-                  disabled={!createOfferingId || !createNameEn.trim()}
+                  disabled={!selectedOfferingIsEligible || !createNameEn.trim()}
                   className="px-4 py-2 rounded-xl bg-nx-accent-fill text-nx-on-fill font-bold disabled:opacity-50"
                 >
                   {isAr ? "إنشاء المجموعة" : "Create Group"}
@@ -1087,7 +1126,7 @@ export function AcademyGroupsView({ initialGroupId, initialOfferingId }: Academy
                     <GenericSelect
                       options={enrolledAthletesOptions}
                       value={enrollmentIdInput}
-                      onChange={(val: string) => setEnrollmentIdInput(val)}
+                      onValueChange={(value: string) => setEnrollmentIdInput(value)}
                       placeholder={loadingEnrollments ? "Loading..." : "Select enrolled athlete..."}
                     />
                   </div>
@@ -1151,7 +1190,7 @@ export function AcademyGroupsView({ initialGroupId, initialOfferingId }: Academy
                     <GenericSelect
                       options={otherGroupsOptions}
                       value={targetGroupIdInput}
-                      onChange={(val: string) => setTargetGroupIdInput(val)}
+                      onValueChange={(value: string) => setTargetGroupIdInput(value)}
                       placeholder="Select destination group..."
                     />
                   </div>
@@ -1275,7 +1314,7 @@ export function AcademyGroupsView({ initialGroupId, initialOfferingId }: Academy
                 <GenericSelect
                   options={availableCoachesOptions}
                   value={staffMemberIdInput}
-                  onChange={(val: string) => setStaffMemberIdInput(val)}
+                  onValueChange={(value: string) => setStaffMemberIdInput(value)}
                   placeholder={loadingCoaches ? "Loading..." : "Select available coach..."}
                 />
               </div>

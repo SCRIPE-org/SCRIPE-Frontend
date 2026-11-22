@@ -42,9 +42,9 @@ export interface TrainingSessionData {
 export class TrainingSession {
   constructor(readonly data: Readonly<TrainingSessionData>) {}
 
-  get id() { return this.data.id; }
-  get status() { return this.data.status; }
-  get version() { return this.data.version; }
+  get id() { return this.data?.id ?? ""; }
+  get status() { return this.data?.status ?? ("Scheduled" as SessionStatus); }
+  get version() { return this.data?.version ?? ""; }
 
   get canReschedule() { return this.status === "Scheduled"; }
   get canCancel() { return this.status === "Scheduled"; }

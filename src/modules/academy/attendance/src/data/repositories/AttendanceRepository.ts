@@ -14,6 +14,9 @@ export class AttendanceRepository implements IAttendanceRepository {
   }
 
   async get(sessionId: string, signal?: AbortSignal) {
+    if (!sessionId || !sessionId.trim()) {
+      throw new AttendanceRequestError("notFound");
+    }
     const register = await this.request(this.service.get(sessionId, signal));
     return { ...register, session: new TrainingSession(register.session) };
   }

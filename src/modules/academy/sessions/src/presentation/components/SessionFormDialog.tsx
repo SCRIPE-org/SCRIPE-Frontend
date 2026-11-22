@@ -84,7 +84,10 @@ function SessionForm({ initial, onSaved, onBusy, onReload }: {
             <div className="min-w-0 space-y-1.5">
               <Label htmlFor={id + "-end"}>{copy("ends")}</Label>
               <Input id={id + "-end"} className="min-h-11 w-full min-w-0" type="datetime-local" dir="ltr"
-                required value={vm.end} onChange={(event) => update("end", event.target.value)} />
+                min={vm.start} required value={vm.end} onChange={(event) => update("end", event.target.value)} />
+              {vm.start && vm.end && vm.end <= vm.start && (
+                <p className="text-xs text-destructive font-medium">{copy("invalidOrder")}</p>
+              )}
             </div>
           </div>
           <div className="space-y-1.5">

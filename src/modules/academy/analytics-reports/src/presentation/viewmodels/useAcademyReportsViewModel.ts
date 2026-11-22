@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import type { IAcademyAnalyticsRepository } from "../../domain/interfaces/IAcademyAnalyticsRepository";
 import type {
   AcademyOperationalMetrics,
@@ -15,40 +15,58 @@ export function useAcademyReportsViewModel(repository: IAcademyAnalyticsReposito
   const [branchFilter, setBranchFilter] = useState<string>("");
   const [programFilter, setProgramFilter] = useState<string>("");
   const [seasonFilter, setSeasonFilter] = useState<string>("");
+  const [appliedFilters, setAppliedFilters] = useState<AnalyticsFilterParams>({});
+  const requestSequence = useRef(0);
 
   const [isExportDialogOpen, setIsExportDialogOpen] = useState<boolean>(false);
   const [selectedDataset, setSelectedDataset] = useState<string>("athletes");
 
-  const fetchMetrics = useCallback(async (filters?: AnalyticsFilterParams) => {
+  const loadMetrics = useCallback(async (filters: AnalyticsFilterParams) => {
+    const requestId = ++requestSequence.current;
+    const normalizedFilters: AnalyticsFilterParams = {
+      branchId: filters.branchId || undefined,
+      programId: filters.programId || undefined,
+      seasonId: filters.seasonId || undefined,
+    };
     setLoading(true);
     setError(null);
     try {
-      const data = await repository.getOperationalMetrics({
-        branchId: filters?.branchId !== undefined ? filters.branchId : branchFilter || undefined,
-        programId: filters?.programId !== undefined ? filters.programId : programFilter || undefined,
-        seasonId: filters?.seasonId !== undefined ? filters.seasonId : seasonFilter || undefined
-      });
+      const data = await repository.getOperationalMetrics(normalizedFilters);
+      if (requestId !== requestSequence.current) return;
       setMetrics(data);
+      setAppliedFilters(normalizedFilters);
     } catch (err) {
+      if (requestId !== requestSequence.current) return;
       setError(err instanceof Error ? err.message : "Failed to load operational metrics.");
     } finally {
-      setLoading(false);
+      if (requestId === requestSequence.current) setLoading(false);
     }
-  }, [repository, branchFilter, programFilter, seasonFilter]);
+  }, [repository]);
+
+  const fetchMetrics = useCallback(async (filters?: AnalyticsFilterParams) => {
+    await loadMetrics(filters ?? {
+      branchId: branchFilter,
+      programId: programFilter,
+      seasonId: seasonFilter,
+    });
+  }, [loadMetrics, branchFilter, programFilter, seasonFilter]);
 
   const handleDownloadExport = useCallback((dataset: string) => {
     const url = repository.getExportUrl(dataset, {
-      branchId: branchFilter || undefined,
-      programId: programFilter || undefined,
-      seasonId: seasonFilter || undefined
+      branchId: appliedFilters.branchId,
+      programId: appliedFilters.programId,
+      seasonId: appliedFilters.seasonId,
     });
     window.open(url, "_blank");
     setIsExportDialogOpen(false);
-  }, [repository, branchFilter, programFilter, seasonFilter]);
+  }, [repository, appliedFilters]);
 
   useEffect(() => {
-    fetchMetrics();
-  }, [fetchMetrics]);
+    void loadMetrics({});
+    return () => {
+      requestSequence.current += 1;
+    };
+  }, [loadMetrics]);
 
   return {
     metrics,

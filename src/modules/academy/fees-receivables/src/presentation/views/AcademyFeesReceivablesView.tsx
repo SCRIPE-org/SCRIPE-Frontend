@@ -78,7 +78,16 @@ export function AcademyFeesReceivablesView({ locale = "en" }: AcademyFeesReceiva
       className="min-h-screen bg-nx-surface text-white p-4 sm:p-6 lg:p-8 space-y-6 selection:bg-nx-accent-fill selection:text-black"
     >
       {/* ── Top Header Banner with Neon Ambient Streaks ── */}
-      <div className="relative overflow-hidden rounded-2xl border border-nx-line bg-nx-surface p-6 shadow-xl">
+      <div className="relative isolate overflow-hidden rounded-2xl border border-nx-line bg-nx-surface p-6 shadow-xl">
+        {/* Header Watermark */}
+        <div className="pointer-events-none absolute top-0 end-0 w-[420px] h-[180px] overflow-hidden z-0 select-none opacity-40 dark:opacity-30" aria-hidden="true">
+          <img
+            src="/images/academy/backgrounds/brand-decor/scripe-lime-mark-watermark.png"
+            alt=""
+            aria-hidden="true"
+            className="w-full h-full object-contain object-right-top rtl:scale-x-[-1]"
+          />
+        </div>
         {/* Background diagonal neon streaks */}
         <div className="pointer-events-none absolute -end-24 -top-24 h-64 w-96 rounded-full bg-nx-accent-fill/10 blur-3xl" />
         <div className="pointer-events-none absolute end-1/4 -bottom-16 h-32 w-48 rounded-full bg-nx-accent-fill/5 blur-2xl" />
