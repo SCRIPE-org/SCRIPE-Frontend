@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, within } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import "@testing-library/jest-dom";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
@@ -407,5 +407,109 @@ describe("HubTopbar — Return-to-Workspace pill + Esc, Context Pill & Search Tr
     expect(switcherBtn).toHaveTextContent("chrome.section.platform");
     fireEvent.click(switcherBtn);
     expect(onOpenContextSwitcher).toHaveBeenCalledTimes(1);
+  });
+
+  it("hides secondary utilities on <md inside hidden md:flex desktop slots and surfaces Theme, Language, and Copilot in the md:hidden mobile actions popover", () => {
+    const onReturnToWorkspace = vi.fn();
+
+    render(
+      <HubTopbar
+        previousWorkspace={{ key: "venue", name: "Venue" }}
+        onReturnToWorkspace={onReturnToWorkspace}
+        onOpenSearch={vi.fn()}
+        isSearchOpen={false}
+        onOpenContextSwitcher={vi.fn()}
+        copilotTrigger={<button type="button" data-testid="ai-copilot-trigger">AI Copilot</button>}
+        isImpersonating={false}
+        isLoadingNotifications={false}
+        isNotificationsError={false}
+        onRetryNotifications={vi.fn()}
+        onMarkNotificationAsRead={vi.fn()}
+        onMarkAllNotificationsAsRead={vi.fn()}
+        isLoadingActivity={false}
+        isActivityError={false}
+        onRetryActivity={vi.fn()}
+      />
+    );
+
+    const header = screen.getByTestId("hub-topbar");
+    expect(header.className).toContain("max-w-full");
+    expect(header.className).toContain("overflow-x-clip");
+
+    const returnBtn = screen.getByTestId("hub-return-workspace-btn");
+    expect(returnBtn).toHaveAttribute(
+      "aria-label",
+      "workspaceHub.launchpad.returnToWorkspace:Venue"
+    );
+    expect(returnBtn.className).toContain("w-8");
+    expect(returnBtn.className).toContain("sm:w-auto");
+
+    const searchBtn = screen.getByTestId("hub-search-trigger");
+    expect(searchBtn.className).toContain("w-8");
+    expect(searchBtn.className).toContain("sm:w-auto");
+
+    expect(screen.getByTestId("hub-notifications-trigger").className).toContain("h-8");
+    expect(screen.getByTestId("hub-notifications-trigger").className).toContain("sm:h-9");
+    expect(screen.getByTestId("hub-activity-trigger").className).toContain("h-8");
+    expect(screen.getByTestId("hub-activity-trigger").className).toContain("sm:h-9");
+
+    // Inline desktop utility slots carry hidden md:flex
+    const desktopCopilotSlot = screen.getByTestId("hub-desktop-copilot-slot");
+    expect(desktopCopilotSlot.className).toContain("hidden");
+    expect(desktopCopilotSlot.className).toContain("md:flex");
+    expect(within(desktopCopilotSlot).getByTestId("ai-copilot-trigger")).toBeInTheDocument();
+
+    const desktopUtilities = screen.getByTestId("hub-desktop-utilities");
+    expect(desktopUtilities.className).toContain("hidden");
+    expect(desktopUtilities.className).toContain("md:flex");
+    expect(within(desktopUtilities).getByTestId("theme-switcher")).toBeInTheDocument();
+    expect(within(desktopUtilities).getByTestId("language-switcher")).toBeInTheDocument();
+
+    // Mobile More Utility Popover trigger is md:hidden and opens Theme + Language + Copilot
+    const mobileTrigger = screen.getByTestId("hub-mobile-actions-trigger");
+    expect(mobileTrigger.className).toContain("md:hidden");
+    expect(mobileTrigger).toHaveAttribute("aria-label", "workspaceHub.launchpad.moreActions");
+    expect(screen.queryByTestId("hub-mobile-actions-popover")).not.toBeInTheDocument();
+
+    fireEvent.click(mobileTrigger);
+
+    const mobilePopover = screen.getByTestId("hub-mobile-actions-popover");
+    expect(mobilePopover).toBeInTheDocument();
+    expect(within(mobilePopover).getByTestId("ai-copilot-trigger")).toBeInTheDocument();
+    expect(within(mobilePopover).getByTestId("theme-switcher")).toBeInTheDocument();
+    expect(within(mobilePopover).getByTestId("language-switcher")).toBeInTheDocument();
+
+    // Pressing Escape while mobile actions popover is open must NOT fire onReturnToWorkspace
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(onReturnToWorkspace).not.toHaveBeenCalled();
+  });
+
+  it("renders mobile actions popover cleanly without copilotTrigger when demo mode is disabled", () => {
+    render(
+      <HubTopbar
+        previousWorkspace={null}
+        onReturnToWorkspace={vi.fn()}
+        onOpenSearch={vi.fn()}
+        isSearchOpen={false}
+        onOpenContextSwitcher={vi.fn()}
+        isImpersonating={false}
+        isLoadingNotifications={false}
+        isNotificationsError={false}
+        onRetryNotifications={vi.fn()}
+        onMarkNotificationAsRead={vi.fn()}
+        onMarkAllNotificationsAsRead={vi.fn()}
+        isLoadingActivity={false}
+        isActivityError={false}
+        onRetryActivity={vi.fn()}
+      />
+    );
+
+    expect(screen.queryByTestId("hub-desktop-copilot-slot")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByTestId("hub-mobile-actions-trigger"));
+
+    const mobilePopover = screen.getByTestId("hub-mobile-actions-popover");
+    expect(within(mobilePopover).queryByTestId("ai-copilot-trigger")).not.toBeInTheDocument();
+    expect(within(mobilePopover).getByTestId("theme-switcher")).toBeInTheDocument();
+    expect(within(mobilePopover).getByTestId("language-switcher")).toBeInTheDocument();
   });
 });

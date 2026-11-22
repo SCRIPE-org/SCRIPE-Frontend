@@ -113,7 +113,7 @@ export function HubNotificationsPopover({
           size="icon"
           data-testid="hub-notifications-trigger"
           aria-label={triggerLabel}
-          className="relative h-9 w-9 shrink-0 rounded-nx-control border border-nx-line bg-nx-surface text-nx-ink-2 hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink"
+          className="relative h-8 w-8 shrink-0 rounded-nx-control border border-nx-line bg-nx-surface text-nx-ink-2 hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink sm:h-9 sm:w-9"
         >
           <Bell className="h-4 w-4" aria-hidden="true" />
           {unreadCount > 0 && (

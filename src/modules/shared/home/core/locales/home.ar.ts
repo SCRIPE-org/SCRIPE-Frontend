@@ -75,6 +75,7 @@ export const ar = {
       availableToUnlock: "متاح للتفعيل",
       appsGridAria: "مساحات العمل المصرّح بها",
       brandMarkAria: "مشغّل مساحات عمل SCRIPE",
+      moreActions: "المزيد من الإجراءات",
     },
     impersonationHidden:
       "يتم إخفاء الإشعارات الشخصية وسجل تسجيل الدخول وتعديل التثبيت أثناء انتحال جلسة مسؤول آخر.",

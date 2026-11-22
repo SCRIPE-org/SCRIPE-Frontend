@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { ArrowLeft, Search } from "lucide-react";
+import { ArrowLeft, MoreHorizontal, Search } from "lucide-react";
 import { BRAND } from "@core/config/branding";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { cn } from "@core/common/utils";
@@ -15,6 +15,7 @@ import { useAppStore } from "@core/store/useAppStore";
 import { Button } from "@core/ui/button";
 import { LanguageSwitcher, NxThemeSwitcher } from "@core/ui/layout/common";
 import { TopbarContextPill } from "@core/ui/layout/shared";
+import { Popover, PopoverContent, PopoverTrigger } from "@core/ui/popover";
 import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
 import type {
   HubNotificationsFeed,
@@ -105,12 +106,15 @@ export function HubTopbar({
   const [failedLogoUrl, setFailedLogoUrl] = useState<string | null>(null);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [activityOpen, setActivityOpen] = useState(false);
+  const [mobileActionsOpen, setMobileActionsOpen] = useState(false);
 
   const previousWorkspaceKey = previousWorkspace?.key ?? null;
   const previousWorkspaceName = previousWorkspace?.name ?? "";
 
   useEffect(() => {
-    if (!previousWorkspaceKey || isSearchOpen || notificationsOpen || activityOpen) return;
+    if (!previousWorkspaceKey || isSearchOpen || notificationsOpen || activityOpen || mobileActionsOpen) {
+      return;
+    }
 
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key !== "Escape" || e.defaultPrevented) return;
@@ -127,7 +131,14 @@ export function HubTopbar({
 
     document.addEventListener("keydown", handleEscape);
     return () => document.removeEventListener("keydown", handleEscape);
-  }, [previousWorkspaceKey, isSearchOpen, notificationsOpen, activityOpen, onReturnToWorkspace]);
+  }, [
+    previousWorkspaceKey,
+    isSearchOpen,
+    notificationsOpen,
+    activityOpen,
+    mobileActionsOpen,
+    onReturnToWorkspace,
+  ]);
 
   const canSwitchContext =
     typeof hasPermission === "function" &&
@@ -151,12 +162,12 @@ export function HubTopbar({
       data-testid="hub-topbar"
       dir={direction}
       className={cn(
-        "sticky top-0 z-30 flex h-14 min-h-[56px] shrink-0 items-center justify-between gap-2 border-b border-nx-line/70 px-3 sm:px-5",
+        "sticky top-0 z-30 flex h-14 min-h-[56px] w-full max-w-full shrink-0 items-center justify-between gap-1 overflow-x-clip border-b border-nx-line/70 px-2.5 sm:gap-2 sm:px-5",
         getHeaderBackdropClasses(cardStyle)
       )}
     >
       {/* Top-Start: Brand Mark + Conditional Return-to-Workspace Pill */}
-      <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
+      <div className="flex min-w-0 items-center gap-1.5 sm:gap-3">
         <div
           className="flex min-w-0 items-center gap-2"
           aria-label={t("workspaceHub.launchpad.brandMarkAria")}
@@ -195,10 +206,13 @@ export function HubTopbar({
             size="sm"
             data-testid="hub-return-workspace-btn"
             onClick={onReturnToWorkspace}
-            className="h-8 max-w-[220px] gap-1.5 rounded-full border-nx-line bg-nx-surface px-2.5 text-xs font-medium text-nx-ink-2 hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink sm:max-w-[280px]"
+            aria-label={t("workspaceHub.launchpad.returnToWorkspace", {
+              name: previousWorkspaceName,
+            })}
+            className="h-8 w-8 shrink-0 gap-1.5 rounded-full border-nx-line bg-nx-surface px-0 text-xs font-medium text-nx-ink-2 hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink sm:w-auto sm:max-w-[280px] sm:shrink sm:px-2.5"
           >
             <ArrowLeft className="h-3.5 w-3.5 shrink-0 rtl:rotate-180" aria-hidden="true" />
-            <span className="truncate">
+            <span className="hidden truncate sm:inline">
               {t("workspaceHub.launchpad.returnToWorkspace", { name: previousWorkspaceName })}
             </span>
             <kbd className="hidden rounded-nx-sm border border-nx-line bg-nx-raised px-1.5 py-0.5 font-mono text-[10px] font-semibold text-nx-ink-3 md:inline-block">
@@ -217,7 +231,7 @@ export function HubTopbar({
           data-testid="hub-search-trigger"
           onClick={onOpenSearch}
           aria-label={t("workspaceHub.launchpad.searchTriggerAria")}
-          className="h-9 gap-2 rounded-nx-control border-nx-line bg-nx-surface px-2.5 text-xs font-medium text-nx-ink-2 hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink"
+          className="h-8 w-8 shrink-0 gap-2 rounded-nx-control border-nx-line bg-nx-surface px-0 text-xs font-medium text-nx-ink-2 hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink sm:h-9 sm:w-auto sm:px-2.5"
         >
           <Search className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
           <span className="hidden lg:inline">{t("workspaceHub.launchpad.searchShort")}</span>
@@ -249,7 +263,11 @@ export function HubTopbar({
           onRetry={onRetryActivity}
         />
 
-        {copilotTrigger}
+        {copilotTrigger && (
+          <div data-testid="hub-desktop-copilot-slot" className="hidden md:flex items-center">
+            {copilotTrigger}
+          </div>
+        )}
 
         <TopbarContextPill
           isModuleMode={false}
@@ -259,9 +277,54 @@ export function HubTopbar({
           onOpenSwitcher={onOpenContextSwitcher}
         />
 
-        <NxThemeSwitcher buttonClassName="h-9 w-9 rounded-nx-control border border-transparent text-nx-ink-2 hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink" />
-        <LanguageSwitcher buttonClassName="h-9 min-w-[36px] rounded-nx-control border border-transparent px-2 text-nx-ink-2 hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink" />
-        <UserProfileDropdown variant="compact" showName={false} align="end" />
+        <div data-testid="hub-desktop-utilities" className="hidden md:flex items-center gap-1.5">
+          <NxThemeSwitcher buttonClassName="h-9 w-9 rounded-nx-control border border-transparent text-nx-ink-2 hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink" />
+          <LanguageSwitcher buttonClassName="h-9 min-w-[36px] rounded-nx-control border border-transparent px-2 text-nx-ink-2 hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink" />
+        </div>
+
+        <Popover open={mobileActionsOpen} onOpenChange={setMobileActionsOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              data-testid="hub-mobile-actions-trigger"
+              aria-label={t("workspaceHub.launchpad.moreActions")}
+              className="h-8 w-8 shrink-0 rounded-nx-control border border-nx-line bg-nx-surface text-nx-ink-2 hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink md:hidden"
+            >
+              <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent
+            align="end"
+            sideOffset={8}
+            dir={direction}
+            data-testid="hub-mobile-actions-popover"
+            onInteractOutside={(event) => {
+              const target = event.target as HTMLElement | null;
+              if (target?.closest('[role="menu"]')) {
+                event.preventDefault();
+              }
+            }}
+            className="w-auto max-w-[calc(100vw-24px)] border-nx-line bg-nx-surface p-2 text-nx-ink"
+          >
+            <div className="flex items-center gap-1.5">
+              {copilotTrigger}
+              <NxThemeSwitcher buttonClassName="h-9 w-9 rounded-nx-control border border-nx-line bg-nx-raised text-nx-ink-2 hover:border-nx-line-hi hover:bg-nx-hover hover:text-nx-ink" />
+              <LanguageSwitcher
+                buttonClassName="h-9 min-w-[36px] rounded-nx-control border border-nx-line bg-nx-raised px-2 text-nx-ink-2 hover:border-nx-line-hi hover:bg-nx-hover hover:text-nx-ink"
+                contentClassName="z-popover"
+              />
+            </div>
+          </PopoverContent>
+        </Popover>
+
+        <UserProfileDropdown
+          variant="compact"
+          showName={false}
+          align="end"
+          className="h-8 w-8 shrink-0 rounded-full p-0 sm:h-9 sm:w-9"
+        />
       </div>
     </header>
   );

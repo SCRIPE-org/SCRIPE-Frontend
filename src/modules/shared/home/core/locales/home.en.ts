@@ -78,6 +78,7 @@ export const en = {
       availableToUnlock: "Available to unlock",
       appsGridAria: "Authorized workspaces",
       brandMarkAria: "SCRIPE Workspace Launchpad",
+      moreActions: "More actions",
     },
     impersonationHidden:
       "Personal notifications, sign-in activity, and pin updates are hidden while impersonating another administrator.",
