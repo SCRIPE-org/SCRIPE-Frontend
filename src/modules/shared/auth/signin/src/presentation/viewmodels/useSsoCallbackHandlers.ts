@@ -153,7 +153,7 @@ async function dispatchCallbackResult(
     deps.operationSuccess(deps.t("auth.welcomeBack"));
     deps.invalidateQueries();
     setters.setState("success");
-    setTimeout(() => setters.redirectTo("/overview"), 300);
+    setTimeout(() => setters.redirectTo("/"), 300);
     return;
   }
 

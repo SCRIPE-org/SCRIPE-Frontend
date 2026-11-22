@@ -12,6 +12,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useServices } from "@core/providers/service-provider";
 import { useAppStore } from "@core/store/useAppStore";
+import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { buildPostAuthEntryUrl } from "@core/common/redirect-safety";
 import { container } from "@modules/profile/di";
@@ -145,6 +146,8 @@ export function useForceChangePasswordViewModel() {
           subscriptionStatus: resolvedSubStatus,
           redirect: queryRedirect,
         });
+        useNavigationStore.getState().clearRouteData();
+        useNavigationStore.getState().reset();
         setDefaultRedirectPath("/");
         setMustChangePassword(false);
 

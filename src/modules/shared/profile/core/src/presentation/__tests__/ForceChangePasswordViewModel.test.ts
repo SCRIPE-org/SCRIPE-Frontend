@@ -20,6 +20,8 @@ const mocks = vi.hoisted(() => ({
   setMustChangePassword: vi.fn(),
   setDefaultRedirectPath: vi.fn(),
   logout: vi.fn(),
+  clearRouteData: vi.fn(),
+  resetNavigation: vi.fn(),
 }));
 
 vi.mock("next/navigation", () => ({
@@ -85,6 +87,15 @@ vi.mock("@core/store/useAppStore", () => {
     useAppStore: (selector: (s: typeof storeState) => unknown) => selector(storeState),
   };
 });
+
+vi.mock("@core/navigation/store/useNavigationStore", () => ({
+  useNavigationStore: {
+    getState: () => ({
+      clearRouteData: mocks.clearRouteData,
+      reset: mocks.resetNavigation,
+    }),
+  },
+}));
 
 describe("ForceChangePasswordViewModel (MMC First-Login Parity)", () => {
   beforeEach(() => {
@@ -199,6 +210,8 @@ describe("ForceChangePasswordViewModel (MMC First-Login Parity)", () => {
       false
     );
     expect(mocks.setMustChangePassword).toHaveBeenCalledWith(false);
+    expect(mocks.clearRouteData).toHaveBeenCalledTimes(1);
+    expect(mocks.resetNavigation).toHaveBeenCalledTimes(1);
     expect(mocks.logout).not.toHaveBeenCalled();
     expect(mocks.operationSuccess).toHaveBeenCalledWith("profile.security.passwordChanged");
     expect(mocks.replace).toHaveBeenCalledWith("/");

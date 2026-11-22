@@ -24,6 +24,7 @@ const mockRefetchNotifications = vi.fn();
 const mockRefetchActivity = vi.fn();
 
 let mockIsImpersonating = false;
+let mockActiveTenantId: string | null = "tenant-ahly";
 let mockPermissions: string[] = [];
 let mockWorkspaceGroups: WorkspaceGroup[] = [];
 let mockRecentByContext: Record<string, string[]> = {};
@@ -98,9 +99,9 @@ vi.mock("@core/store/useAppStore", () => ({
 
 vi.mock("@core/hooks/useAdminContext", () => ({
   useAdminContext: () => ({
-    activeTenantId: "tenant-ahly",
-    activeTenantName: "Al Ahly SC",
-    isPlatform: false,
+    activeTenantId: mockActiveTenantId,
+    activeTenantName: mockActiveTenantId ? "Al Ahly SC" : null,
+    isPlatform: mockActiveTenantId === null,
   }),
 }));
 
@@ -289,6 +290,7 @@ describe("WorkspaceHubView — Standalone Odoo x Nexus Launchpad", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockIsImpersonating = false;
+    mockActiveTenantId = "tenant-ahly";
     mockPermissions = [];
     mockPreviousWorkspaceKey = null;
     mockRecentByContext = { "tenant:ahly": ["venue"] };
@@ -483,5 +485,45 @@ describe("WorkspaceHubView — Standalone Odoo x Nexus Launchpad", () => {
     expect(screen.getByRole("status")).toBeInTheDocument();
     expect(screen.getByText("workspaceHub.emptyState")).toBeInTheDocument();
     expect(screen.getByText("workspaceHub.emptyStateHint")).toBeInTheDocument();
+  });
+
+  it("never renders TenantOnly workspaces, Upgrade badges, or Available to unlock section in Platform context even for billing admins", () => {
+    mockActiveTenantId = null;
+    mockPermissions = [SYSTEM_PERMISSIONS.BILLING_DASHBOARD_VIEW, SYSTEM_PERMISSIONS.BILLING_MANAGE];
+    mockWorkspaceGroups = [
+      makeWorkspace("admin", "Administration", {
+        workspaceType: "Admin",
+        contextScope: "Both",
+        workspaceSortOrder: 1,
+        isPinned: true,
+        pinSortOrder: 1,
+      }),
+      makeWorkspace("venue", "Venue", {
+        workspaceType: "Module",
+        contextScope: "TenantOnly",
+        workspaceSortOrder: 2,
+        isLocked: true,
+        lockReason: "TenantContextRequired",
+      }),
+      makeWorkspace("crm", "CRM", {
+        workspaceType: "Module",
+        contextScope: "TenantOnly",
+        workspaceSortOrder: 3,
+        isLocked: true,
+      }),
+    ];
+
+    render(<WorkspaceHubView />);
+
+    const squircles = screen.getAllByTestId("hub-app-squircle");
+    expect(squircles).toHaveLength(1);
+    expect(squircles[0]).toHaveTextContent("Administration");
+
+    expect(screen.queryByText("Venue")).not.toBeInTheDocument();
+    expect(screen.queryByText("CRM")).not.toBeInTheDocument();
+    expect(screen.queryByText("workspaceHub.upgradeBadge")).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("region", { name: "workspaceHub.launchpad.availableToUnlock" })
+    ).not.toBeInTheDocument();
   });
 });

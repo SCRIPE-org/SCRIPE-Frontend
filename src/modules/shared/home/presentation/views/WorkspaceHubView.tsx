@@ -120,12 +120,22 @@ export function WorkspaceHubView() {
     SYSTEM_PERMISSIONS.EDITIONS_VIEW,
   ]);
 
-  const unlockedWorkspaces = workspaceGroups.filter((ws) => !ws.isLocked);
+  const visibleWorkspaces = workspaceGroups.filter(
+    (ws) =>
+      hasTenantContext ||
+      (!ws.isTenantOnly && !ws.isLocked && ws.lockReason !== "TenantContextRequired")
+  );
+  const unlockedWorkspaces = visibleWorkspaces.filter((ws) => !ws.isLocked);
   const unlockedByKey = new Map<string, WorkspaceGroup>(
     unlockedWorkspaces.map((ws) => [ws.workspaceKey, ws])
   );
   const orderedUnlockedWorkspaces = orderUnlockedWorkspaces(unlockedWorkspaces);
-  const lockedWorkspaces = canManageBilling ? workspaceGroups.filter((ws) => ws.isLocked) : [];
+  const lockedWorkspaces =
+    canManageBilling && hasTenantContext
+      ? visibleWorkspaces.filter(
+          (ws) => ws.isLocked && ws.lockReason !== "TenantContextRequired"
+        )
+      : [];
 
   const isSearchActive = searchQuery.trim().length > 0;
   const filteredUnlocked = orderedUnlockedWorkspaces.filter((ws) =>
@@ -147,7 +157,7 @@ export function WorkspaceHubView() {
     : null;
 
   const searchableItems = buildSearchIndex({
-    workspaceGroups,
+    workspaceGroups: visibleWorkspaces,
     cachedWorkspaces,
     routeDescriptors,
     language,
@@ -173,7 +183,7 @@ export function WorkspaceHubView() {
 
   const handleSquircleClick = (ws: WorkspaceGroup) => {
     if (ws.isLocked) {
-      if (canManageBilling) setUpgradeTarget(ws.workspaceKey);
+      if (canManageBilling && hasTenantContext) setUpgradeTarget(ws.workspaceKey);
       return;
     }
     switchWorkspace(ws.workspaceKey, { preserveHistory: true });
@@ -195,7 +205,7 @@ export function WorkspaceHubView() {
   };
 
   const upgradeWs = upgradeTarget
-    ? workspaceGroups.find((w) => w.workspaceKey === upgradeTarget) ?? null
+    ? visibleWorkspaces.find((w) => w.workspaceKey === upgradeTarget) ?? null
     : null;
 
   if (isLoading) return <LoadingSpinner fullHeight />;
@@ -306,7 +316,7 @@ export function WorkspaceHubView() {
             />
           )}
 
-          {canManageBilling && (
+          {canManageBilling && hasTenantContext && (
             <HubUnlockSection
               lockedWorkspaces={filteredLocked}
               upgradeTargetWorkspace={upgradeWs}

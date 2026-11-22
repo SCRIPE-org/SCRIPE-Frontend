@@ -13,6 +13,7 @@ import { NexusTopbar } from "../nexus-topbar";
 let mockPathname = "/venue/resources";
 let mockIsHubMode = false;
 let mockCanSwitchContext = false;
+let mockActiveTenantId: string | null = "tenant-1";
 let mockDirection: "ltr" | "rtl" = "ltr";
 let mockLanguage: "en" | "ar" = "en";
 let mockLogoType: "sparkles" | "shield" | "image" = "sparkles";
@@ -67,11 +68,39 @@ const mockLockedWorkspace = {
   isPinned: false,
   isModuleWorkspace: true,
   isAdminWorkspace: false,
+  isTenantOnly: true,
+  contextScope: "TenantOnly",
+  lockReason: "TenantContextRequired",
   homeRoute: "/crm",
   defaultHref: "/crm",
   displayOrder: 3,
   getLocalizedName: (lang: string) => (lang === "ar" ? "علاقات العملاء" : "CRM"),
 };
+
+const mockAdminWorkspace = {
+  workspaceKey: "admin",
+  workspaceNameEn: "Administration",
+  workspaceNameAr: "الإدارة",
+  abbreviation: "AD",
+  icon: "Shield",
+  isLocked: false,
+  isPinned: true,
+  isModuleWorkspace: false,
+  isAdminWorkspace: true,
+  isTenantOnly: false,
+  contextScope: "Both",
+  lockReason: "None",
+  homeRoute: "/overview",
+  defaultHref: "/overview",
+  displayOrder: 0,
+  getLocalizedName: (lang: string) => (lang === "ar" ? "الإدارة" : "Administration"),
+};
+
+let mockWorkspaceGroups: Array<Record<string, unknown>> = [
+  mockActiveWorkspace,
+  mockOtherWorkspace,
+  mockLockedWorkspace,
+];
 
 const mockRootMenu = [
   {
@@ -185,7 +214,7 @@ vi.mock("@core/providers/workspace-provider", () => ({
     activeRootItem: mockIsHubMode ? null : mockRootMenu[0],
     rootMenuItems: mockIsHubMode ? [] : mockRootMenu,
     isModuleMode: !mockIsHubMode,
-    workspaceGroups: [mockActiveWorkspace, mockOtherWorkspace, mockLockedWorkspace],
+    workspaceGroups: mockWorkspaceGroups,
     togglePin: mockTogglePin,
   }),
 }));
@@ -199,9 +228,9 @@ vi.mock("@core/providers/permission-provider", () => ({
 
 vi.mock("@core/hooks/useAdminContext", () => ({
   useAdminContext: () => ({
-    activeTenantId: "tenant-1",
-    activeTenantName: "Al Ahly SC",
-    isPlatform: false,
+    activeTenantId: mockActiveTenantId,
+    activeTenantName: mockActiveTenantId ? "Al Ahly SC" : null,
+    isPlatform: mockActiveTenantId === null,
   }),
 }));
 
@@ -226,7 +255,7 @@ vi.mock("@core/navigation/store/useNavigationStore", () => ({
     const state = {
       isHubMode: mockIsHubMode,
       activeWorkspaceKey: mockIsHubMode ? null : "venue",
-      workspaceGroups: [mockActiveWorkspace, mockOtherWorkspace, mockLockedWorkspace],
+      workspaceGroups: mockWorkspaceGroups,
     };
     return selector ? selector(state) : state;
   },
@@ -308,6 +337,8 @@ describe("Nexus Shell — Accessibility, Hierarchy, Branding & Deduplication", (
     mockPathname = "/venue/resources";
     mockIsHubMode = false;
     mockCanSwitchContext = false;
+    mockActiveTenantId = "tenant-1";
+    mockWorkspaceGroups = [mockActiveWorkspace, mockOtherWorkspace, mockLockedWorkspace];
     mockDirection = "ltr";
     mockLanguage = "en";
     mockLogoType = "sparkles";
@@ -599,6 +630,65 @@ describe("Nexus Shell — Accessibility, Hierarchy, Branding & Deduplication", (
       expect(document.activeElement).toBe(opener);
 
       opener.remove();
+    });
+
+    it("hides TenantOnly and locked upgrade workspaces from NexusAppLauncher in Platform context while keeping launcher operational", () => {
+      mockActiveTenantId = null;
+      mockIsHubMode = true;
+      mockWorkspaceGroups = [
+        mockAdminWorkspace,
+        { ...mockOtherWorkspace, isTenantOnly: true, contextScope: "TenantOnly" },
+        mockLockedWorkspace,
+      ];
+
+      render(
+        <TooltipProvider>
+          <NexusAppLauncher open={true} onOpenChange={vi.fn()} />
+        </TooltipProvider>
+      );
+
+      const launcher = screen.getByTestId("nexus-app-launcher");
+      expect(launcher).toHaveTextContent("Administration");
+      expect(launcher).not.toHaveTextContent("Academy");
+      expect(launcher).not.toHaveTextContent("CRM");
+      expect(screen.queryByText("shell.launcher.legend.locked")).not.toBeInTheDocument();
+    });
+
+    it("renders UpgradeDialog via standard @core/ui/dialog and dismisses it on outside click without closing NexusAppLauncher", async () => {
+      const onOpenChange = vi.fn();
+
+      render(
+        <TooltipProvider>
+          <NexusAppLauncher open={true} onOpenChange={onOpenChange} />
+        </TooltipProvider>
+      );
+
+      // Flush mount microtasks scheduled by NexusAppLauncher open effect before clicking
+      await act(async () => {
+        await Promise.resolve();
+      });
+
+      const crmBtn = screen.getByRole("button", { name: /^CRM/i });
+      await act(async () => {
+        fireEvent.click(crmBtn);
+      });
+
+      // Standard Dialog (role="dialog") — NOT AlertDialog
+      const upgradeTitle = screen.getByText("shell.launcher.upgrade.title");
+      const upgradeDialog = upgradeTitle.closest("[role='dialog']");
+      expect(upgradeDialog).not.toBeNull();
+      expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument();
+      expect(upgradeDialog?.querySelector("button span.sr-only")).toHaveTextContent("common.close");
+
+      // Outside click (pointerDown + click outside DialogContent) closes UpgradeDialog cleanly
+      await act(async () => {
+        fireEvent.pointerDown(document.body, { button: 0 });
+        fireEvent.click(document.body);
+      });
+
+      expect(screen.queryByText("shell.launcher.upgrade.title")).not.toBeInTheDocument();
+      expect(screen.getByTestId("nexus-app-launcher")).toBeInTheDocument();
+      expect(onOpenChange).not.toHaveBeenCalledWith(false);
     });
   });
 

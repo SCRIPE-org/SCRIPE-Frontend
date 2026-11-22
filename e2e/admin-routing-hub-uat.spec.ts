@@ -660,66 +660,60 @@ test.describe("Task 12 — Admin Routing, Personal Hub (/hub), Landing Policy & 
   }
 
   // ── Scenario 1 & 2: Platform Super Admin & Tenant Super Admin ──────────────────────
-  test("01 & 02: Platform Super Admin and Tenant Super Admin land on /overview, logo navigates to /hub, standalone Launchpad landmarks", async ({
+  test("01 & 02: Platform Super Admin and Tenant Super Admin land on /hub, no TenantOnly Upgrade in Platform, Administration navigates to /overview & logo returns to /hub", async ({
     page,
   }) => {
     const monitor = attachRuntimeMonitor(page);
     try {
-      // 1. Platform Super Admin
+      // 1. Platform Super Admin lands directly on standalone /hub Launchpad
       await resetBrowserSession(page);
       await loginViaUi(page, PLATFORM_SUPER_ADMIN_EMAIL, adminPwd);
 
-      await expect(page).toHaveURL(/\/overview(?:\?.*)?$/);
-      await assertSingleMainLandmark(page, "Platform SA /overview");
+      await expect(page).toHaveURL(/\/hub(?:\?.*)?$/);
+      await assertSingleHubLaunchpadLandmark(page, "Platform SA /hub");
       await setTheme(page, "dark");
-      await assertNoHorizontalOverflow(page, "Platform SA /overview");
+      await assertNoHorizontalOverflow(page, "Platform SA /hub");
 
-      // Logo click navigates to standalone /hub Launchpad
+      // Platform Super Admin without tenant context must NEVER see TenantOnly workspaces or Upgrade badges
+      await expect(page.getByRole("region", { name: /Available to unlock/i })).toHaveCount(0);
+      await expect(page.getByText(/^Upgrade$/i)).toHaveCount(0);
+
+      // Launch Administration workspace -> /overview, then logo navigates back to standalone /hub Launchpad
+      await page.getByRole("button", { name: /^Administration$/i }).first().click();
+      await page.waitForURL(/\/overview(?:\?.*)?$/, { timeout: 15_000 });
+      await waitForAppSettled(page);
+      await assertSingleMainLandmark(page, "Platform SA /overview");
+
       const logoBtn = page.getByRole("button", { name: "Go to Home" }).first();
       await expect(logoBtn).toBeVisible({ timeout: 10_000 });
       await logoBtn.click();
       await page.waitForURL(/\/hub(?:\?.*)?$/, { timeout: 15_000 });
       await waitForAppSettled(page);
-      await assertSingleHubLaunchpadLandmark(page, "Platform SA /hub");
+      await assertSingleHubLaunchpadLandmark(page, "Platform SA return to /hub");
       await expect(page.getByTestId("hub-return-workspace-btn")).toBeVisible({ timeout: 10_000 });
-
-      // Billing-only "Available to unlock" section renders for Platform SA without tenant context
-      const unlockRegion = page.getByRole("region", { name: /Available to unlock/i });
-      await expect(unlockRegion).toBeVisible({ timeout: 10_000 });
-      const firstLockedBtn = unlockRegion
-        .getByTestId("hub-app-squircle")
-        .first()
-        .locator("button[aria-disabled='true']")
-        .first();
-      await expect(firstLockedBtn).toBeVisible({ timeout: 5_000 });
-      const lockedBox = await firstLockedBtn.boundingBox();
-      expect(lockedBox).toBeTruthy();
-      await page.mouse.click(
-        lockedBox!.x + lockedBox!.width / 2,
-        lockedBox!.y + lockedBox!.height / 2
-      );
-      const upgradeAlert = page.getByRole("alertdialog");
-      await expect(upgradeAlert).toBeVisible({ timeout: 5_000 });
-      await upgradeAlert.getByRole("button", { name: /Cancel/i }).click();
-      await expect(upgradeAlert).toBeHidden({ timeout: 5_000 });
 
       monitor.assertClean("Scenario 1 Platform Super Admin");
 
-      // 2. Tenant Super Admin
+      // 2. Tenant Super Admin lands directly on standalone /hub Launchpad
       monitor.reset();
       await resetBrowserSession(page);
       await loginViaUi(page, AHLY_SUPER_ADMIN_EMAIL, adminPwd);
 
-      await expect(page).toHaveURL(/\/overview(?:\?.*)?$/);
+      await expect(page).toHaveURL(/\/hub(?:\?.*)?$/);
+      await assertSingleHubLaunchpadLandmark(page, "Tenant SA /hub");
+
+      // Launch Administration -> /overview, return to /hub via logo, then Return-to-Workspace round-trip
+      await page.getByRole("button", { name: /^Administration$/i }).first().click();
+      await page.waitForURL(/\/overview(?:\?.*)?$/, { timeout: 15_000 });
+      await waitForAppSettled(page);
       await assertSingleMainLandmark(page, "Tenant SA /overview");
 
-      // Navigate to /hub via logo click, verify standalone Launchpad + Return-to-Workspace round-trip
       const tenantLogoBtn = page.getByRole("button", { name: "Go to Home" }).first();
       await expect(tenantLogoBtn).toBeVisible({ timeout: 10_000 });
       await tenantLogoBtn.click();
       await page.waitForURL(/\/hub(?:\?.*)?$/, { timeout: 15_000 });
       await waitForAppSettled(page);
-      await assertSingleHubLaunchpadLandmark(page, "Tenant SA /hub");
+      await assertSingleHubLaunchpadLandmark(page, "Tenant SA return to /hub");
 
       const returnToAdminBtn = page.getByTestId("hub-return-workspace-btn");
       await expect(returnToAdminBtn).toBeVisible({ timeout: 10_000 });
@@ -1347,7 +1341,7 @@ test.describe("Task 12 — Admin Routing, Personal Hub (/hub), Landing Policy & 
       await loginViaUi(page, enforcedUserEmail, adminPwd, "/login?redirect=%2Ftenants");
       await expect(page).toHaveURL(/\/party-kernel(?:\?.*)?$/, { timeout: 20_000 });
 
-      // Super Admin immunity: assign enforced role as secondary role via POST /admins/{id}/roles (BUG-05) -> still lands on /overview.
+      // Super Admin immunity: assign enforced role as secondary role via POST /admins/{id}/roles (BUG-05) -> still lands on /hub (not enforced CRM Leads).
       const ahlySaRes = await request.get(`${API_URL}/api/v1/admins/current-tenant?page=1&pageSize=50&search=ahly.admin`, {
         headers: { Authorization: `Bearer ${ahlyToken}` },
       });
@@ -1375,7 +1369,7 @@ test.describe("Task 12 — Admin Routing, Personal Hub (/hub), Landing Policy & 
 
       await resetBrowserSession(page);
       await loginViaUi(page, AHLY_SUPER_ADMIN_EMAIL, adminPwd);
-      await expect(page).toHaveURL(/\/overview(?:\?.*)?$/, { timeout: 20_000 });
+      await expect(page).toHaveURL(/\/hub(?:\?.*)?$/, { timeout: 20_000 });
 
       monitor.assertClean("Scenario 5 & 6 Role Policy + Redirect Precedence");
     } finally {
@@ -1491,9 +1485,9 @@ test.describe("Task 12 — Admin Routing, Personal Hub (/hub), Landing Policy & 
       // Scenario 8: Multi-tenant context switching isolation (Platform SA -> AHLY -> Platform)
       await resetBrowserSession(page);
       await loginViaUi(page, PLATFORM_SUPER_ADMIN_EMAIL, adminPwd);
-      await expect(page).toHaveURL(/\/overview(?:\?.*)?$/);
+      await expect(page).toHaveURL(/\/hub(?:\?.*)?$/);
 
-      // Save a personal preference in Platform context ("hub")
+      // Save a personal preference in Platform context ("overview")
       await page.goto("/account/preferences");
       await waitForAppSettled(page);
       await expect(page.getByTestId("startup-active-context-badge")).toContainText(/platform/i);
@@ -1502,7 +1496,7 @@ test.describe("Task 12 — Admin Routing, Personal Hub (/hub), Landing Policy & 
         { timeout: 15_000 }
       );
       await page.getByTestId("startup-target-select").click();
-      await page.getByRole("option", { name: /Workspace Hub/i }).first().click();
+      await page.getByRole("option", { name: /Overview/i }).first().click();
       expect((await platPut).ok()).toBeTruthy();
 
       // Switch context via Topbar Switcher UI (mounted in NexusLayout on /overview) to AHLY
@@ -1700,7 +1694,7 @@ test.describe("Task 12 — Admin Routing, Personal Hub (/hub), Landing Policy & 
       expect((await stopPromise).ok()).toBeTruthy();
       await waitForAppSettled(page);
       await expect(page.getByRole("button", { name: /Stop impersonating/i })).toHaveCount(0);
-      await expect(page).toHaveURL(/\/overview(?:\?.*)?$/, { timeout: 20_000 });
+      await expect(page).toHaveURL(/\/hub(?:\?.*)?$/, { timeout: 20_000 });
 
       // Server-side 403 verification for impersonated writes (isolated via APIRequestContext)
       const apiImpRes = await sendWithRateLimitRetry(() =>
@@ -1950,7 +1944,7 @@ test.describe("Task 12 — Admin Routing, Personal Hub (/hub), Landing Policy & 
     try {
       await resetBrowserSession(page);
       await loginViaUi(page, PLATFORM_SUPER_ADMIN_EMAIL, adminPwd);
-      await expect(page).toHaveURL(/\/overview(?:\?.*)?$/);
+      await expect(page).toHaveURL(/\/hub(?:\?.*)?$/);
 
       // Simulate HTTP 429 on navigation bootstrap (immediate fail-closed recovery without retry wait)
       monitor.allowNextHttpStatus((url, status) => url.includes("/menus/navigation") && status >= 429);
@@ -1993,15 +1987,15 @@ test.describe("Task 12 — Admin Routing, Personal Hub (/hub), Landing Policy & 
       await page.getByTestId("navigation-error-retry").click();
       await expect(recovery).toBeVisible({ timeout: 15_000 });
 
-      // Remove route mock and click Retry -> recovers cleanly to /overview!
+      // Remove route mock and click Retry -> recovers cleanly to /hub!
       await page.unroute("**/api/v1/menus/navigation*");
       monitor.clearAllowedHttpStatus();
       monitor.allowNextConsoleError(null);
 
       await page.getByTestId("navigation-error-retry").click();
-      await page.waitForURL(/\/overview(?:\?.*)?$/, { timeout: 20_000 });
+      await page.waitForURL(/\/hub(?:\?.*)?$/, { timeout: 20_000 });
       await waitForAppSettled(page);
-      await assertSingleMainLandmark(page, "Post-retry /overview");
+      await assertSingleHubLaunchpadLandmark(page, "Post-retry /hub");
       expect(monitor.pageErrors).toEqual([]);
       expect(monitor.serverErrors).toEqual([]);
     } finally {

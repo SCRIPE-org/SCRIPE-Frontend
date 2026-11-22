@@ -257,6 +257,7 @@ describe("NavigationProvider single-pass bootstrap, app/(modules)/page.tsx & Das
       user: { id: "u-1", username: "admin" } as never,
       isAuthenticated: true,
       isAuthTransitioning: false,
+      mustChangePassword: false,
       _hasHydrated: true,
     });
   });
@@ -691,5 +692,31 @@ describe("NavigationProvider single-pass bootstrap, app/(modules)/page.tsx & Das
     expect(useNavigationStore.getState().activeWorkspaceKey).toBeNull();
     expect(useNavigationStore.getState().previousWorkspaceKey).toBeNull();
     expect(mockFetchWorkspaceMenu).not.toHaveBeenCalled();
+  });
+
+  it("defers navigation bootstrap while mustChangePassword is true and fetches cleanly once cleared", async () => {
+    useAppStore.setState({ mustChangePassword: true });
+    mockFetchNavigationBootstrap.mockResolvedValue(
+      buildBootstrapFixture({ landingRoute: "/hub", landingWsKey: null })
+    );
+
+    render(
+      <QueryClientProvider client={new QueryClient()}>
+        <NavigationProvider>
+          <HomePage />
+        </NavigationProvider>
+      </QueryClientProvider>
+    );
+
+    expect(mockFetchNavigationBootstrap).not.toHaveBeenCalled();
+
+    await act(async () => {
+      useAppStore.setState({ mustChangePassword: false });
+    });
+
+    await waitFor(() => {
+      expect(mockFetchNavigationBootstrap).toHaveBeenCalledTimes(1);
+      expect(mockRouterReplace).toHaveBeenCalledWith("/hub");
+    });
   });
 });

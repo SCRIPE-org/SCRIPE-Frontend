@@ -86,5 +86,5 @@ export function resolvePostLoginRedirectTarget(
   queryRedirect: string | null,
   backendTarget: string | null | undefined
 ): string {
-  return queryRedirect || (backendTarget && backendTarget !== "/" ? backendTarget : "/overview");
+  return queryRedirect || (backendTarget && backendTarget !== "/" ? backendTarget : "/");
 }

@@ -27,9 +27,10 @@
  *    languages inside a JSX expression: `aria-label="Close"` and the pin
  *    toggle's name had already fallen out of that pattern in English only.
  *  - The upgrade prompt was a hand-built role="alertdialog" with its own
- *    scrim, its own focus trap and two hsl() fills of its own. It is now an
- *    AlertDialog, so it inherits the family's scrim, motion, footer order and
- *    focus behaviour, and the CTA is simply the primary button.
+ *    scrim, its own focus trap and two hsl() fills of its own. It now uses
+ *    our standard Dialog (@core/ui/dialog), so it inherits the family's scrim,
+ *    outside-click dismissal, close button, motion, footer order and focus
+ *    behaviour, and the CTA uses standard Button primitives.
  *  - The search field is the Input primitive; it was a raw <input> wearing a
  *    hand-rolled focus-within ring.
  *  - Cards no longer lift on hover and their icon no longer scales: hover is
@@ -49,15 +50,13 @@ import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { EmptyState } from "@core/ui/empty-state";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@core/ui/alert-dialog";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@core/ui/dialog";
 
 import {
   Search,
@@ -153,21 +152,30 @@ const CARD_GRID = "grid gap-2.5 grid-cols-[repeat(auto-fill,minmax(120px,1fr))]"
 // ── Main Component ───────────────────────────────────────────────────────────
 export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) {
   const { workspaceGroups, activeWorkspace, togglePin } = useWorkspace();
+  const { activeTenantId } = useAdminContext();
+  const hasTenantContext = Boolean(activeTenantId);
   const { language, direction, t } = useI18n();
   const { switchWorkspace } = useWorkspaceTransitionContext();
   const router = useRouter();
 
   const [search, setSearch] = useState("");
   const [upgradeTarget, setUpgradeTarget] = useState<string | null>(null);
+  const [switcherOpen, setSwitcherOpen] = useState(false);
   const [pinningKey, setPinningKey] = useState<string | null>(null); // loading state for pin toggle
   const [phase, setPhase] = useState<LauncherPhase>("closed");
   const searchRef = useRef<HTMLInputElement>(null);
   const launcherRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
   const wasOpenRef = useRef(false);
+  const upgradeDismissedAtRef = useRef(0);
   const titleId = React.useId();
 
   const isRTL = direction === "rtl";
+
+  const handleCloseUpgradeDialog = useCallback(() => {
+    upgradeDismissedAtRef.current = Date.now();
+    setUpgradeTarget(null);
+  }, []);
 
   // Drive the phase machine from the `open` prop
   useEffect(() => {
@@ -228,25 +236,40 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
       if (e.key === "Escape") {
         if (e.defaultPrevented) return;
         e.stopPropagation();
-        if (upgradeTarget) setUpgradeTarget(null);
+        if (upgradeTarget) handleCloseUpgradeDialog();
         else onOpenChange(false);
       }
     };
     window.addEventListener("keydown", handler, true);
     return () => window.removeEventListener("keydown", handler, true);
-  }, [open, onOpenChange, upgradeTarget]);
+  }, [open, onOpenChange, upgradeTarget, handleCloseUpgradeDialog]);
+
+  // Platform context (no active tenant) must never show TenantOnly or locked/upgrade module cards
+  const contextWorkspaces = useMemo(
+    () =>
+      workspaceGroups.filter((ws) => {
+        if (
+          !hasTenantContext &&
+          (ws.isTenantOnly || ws.isLocked || ws.lockReason === "TenantContextRequired")
+        ) {
+          return false;
+        }
+        return true;
+      }),
+    [workspaceGroups, hasTenantContext]
+  );
 
   // Filter by search query
   const filteredWorkspaces = useMemo(() => {
-    if (!search.trim()) return workspaceGroups;
+    if (!search.trim()) return contextWorkspaces;
     const q = search.toLowerCase();
-    return workspaceGroups.filter(
+    return contextWorkspaces.filter(
       (ws) =>
         ws.workspaceNameEn.toLowerCase().includes(q) ||
         ws.workspaceNameAr.includes(q) ||
         ws.workspaceKey.toLowerCase().includes(q)
     );
-  }, [workspaceGroups, search]);
+  }, [contextWorkspaces, search]);
 
   // Sort helper: pinned items first (by pinSortOrder asc), then unpinned (by workspaceSortOrder asc)
   const sortByPinThenCatalog = useCallback(
@@ -289,10 +312,6 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
     [filteredWorkspaces, sortByPinThenCatalog, activeWorkspaceKey]
   );
 
-  const { activeTenantId } = useAdminContext();
-  const hasTenantContext = Boolean(activeTenantId);
-  const [switcherOpen, setSwitcherOpen] = useState(false);
-
   // Handle card click — locked → show upgrade/context dialog, else switch
   const handleSelect = useCallback(
     (wsKey: string, status: WorkspaceStatus) => {
@@ -331,7 +350,7 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
   );
 
   // Focus trap — active when launcher is open and no upgrade dialog shown
-  // (the AlertDialog brings Radix's own trap when it is).
+  // (the Dialog brings Radix's own trap when it is).
   useFocusTrap(launcherRef, open && !upgradeTarget);
 
   // Stay mounted through the exit transition, then release the DOM
@@ -349,7 +368,10 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
           visible ? "opacity-100 ease-nx-enter" : "opacity-0 ease-nx-exit",
           !open && "pointer-events-none"
         )}
-        onClick={() => onOpenChange(false)}
+        onClick={() => {
+          if (upgradeTarget || Date.now() - upgradeDismissedAtRef.current < 250) return;
+          onOpenChange(false);
+        }}
         aria-hidden="true"
       />
 
@@ -525,11 +547,13 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
             colorClass="text-nx-accent"
             label={t("shell.launcher.legend.pinned")}
           />
-          <LegendItem
-            icon={<Lock className="h-2.5 w-2.5" aria-hidden="true" />}
-            colorClass="text-nx-warning-strong"
-            label={t("shell.launcher.legend.locked")}
-          />
+          {hasTenantContext && contextWorkspaces.some((ws) => ws.isLocked) && (
+            <LegendItem
+              icon={<Lock className="h-2.5 w-2.5" aria-hidden="true" />}
+              colorClass="text-nx-warning-strong"
+              label={t("shell.launcher.legend.locked")}
+            />
+          )}
           <LegendItem
             icon={<Clock className="h-2.5 w-2.5" aria-hidden="true" />}
             colorClass="text-nx-ink-3"
@@ -542,7 +566,7 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
       {upgradeTarget && (
         <UpgradeDialog
           workspaceName={
-            workspaceGroups
+            contextWorkspaces
               .find((ws) => ws.workspaceKey === upgradeTarget)
               ?.getLocalizedName(language) ?? upgradeTarget
           }
@@ -550,7 +574,7 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
           // modules require a tenant to be active — show "Select a Tenant"
           // rather than the misleading "Upgrade your plan" copy.
           isNeedsTenant={!hasTenantContext}
-          onClose={() => setUpgradeTarget(null)}
+          onClose={handleCloseUpgradeDialog}
           onUpgrade={() => {
             setUpgradeTarget(null);
             if (!hasTenantContext) {
@@ -768,14 +792,14 @@ export function UpgradeDialog({
       };
 
   return (
-    <AlertDialog
+    <Dialog
       open
       onOpenChange={(next) => {
         if (!next) onClose();
       }}
     >
-      <AlertDialogContent>
-        <AlertDialogHeader>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
           {/* Severity speaks through glyph + hairline + wash; the copy below
               keeps neutral ink. */}
           <div
@@ -788,14 +812,18 @@ export function UpgradeDialog({
           >
             <ArrowUpCircle className="h-6 w-6" aria-hidden="true" />
           </div>
-          <AlertDialogTitle>{copy.title}</AlertDialogTitle>
-          <AlertDialogDescription>{copy.description}</AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
-          <AlertDialogAction onClick={onUpgrade}>{copy.cta}</AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+          <DialogTitle>{copy.title}</DialogTitle>
+          <DialogDescription>{copy.description}</DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <Button type="button" variant="outline" onClick={onClose}>
+            {t("common.cancel")}
+          </Button>
+          <Button type="button" onClick={onUpgrade}>
+            {copy.cta}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
