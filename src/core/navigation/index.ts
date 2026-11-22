@@ -18,12 +18,30 @@ export { MenuItem } from "./domain/entities/MenuItem";
 export type { MenuItemData, MenuItemActions } from "./domain/entities/MenuItem";
 
 export { WorkspaceGroup } from "./domain/entities/WorkspaceGroup";
-export type { WorkspaceGroupData } from "./domain/entities/WorkspaceGroup";
+export type {
+  WorkspaceEffectiveHomeSource,
+  WorkspaceGroupData,
+} from "./domain/entities/WorkspaceGroup";
 
 export { NavigationData } from "./domain/entities/NavigationData";
 export type { NavigationDataInput } from "./domain/entities/NavigationData";
 export {
+  LandingTargetCatalog,
+  LandingTargetCatalogItem,
+  LandingTargetWorkspace,
+} from "./domain/entities/LandingTargetCatalog";
+export type {
+  LandingTargetCatalogData,
+  LandingTargetCatalogItemData,
+  LandingTargetContextScope,
+  LandingTargetScopeMode,
+  LandingTargetWorkspaceData,
+} from "./domain/entities/LandingTargetCatalog";
+export { AdminWorkspaceEntryPreference } from "./domain/entities/WorkspaceEntryPreference";
+export type { AdminWorkspaceEntryPreferenceData } from "./domain/entities/WorkspaceEntryPreference";
+export {
   buildStructuredLandingTargetOptions,
+  buildWorkspaceScopedMenuOptions,
   canEnforceLandingTarget,
   formatLandingTargetLabel,
 } from "./domain/utils/landing-target-options";
@@ -45,9 +63,19 @@ export type {
 
 // ── Data layer (DI wiring + provider) ───────────────────────────────────────
 export { NavigationRepository } from "./data/repositories/NavigationRepository";
+export { NavigationService } from "./data/services/NavigationService";
+export type { INavigationService } from "./data/services/NavigationService";
 export { NavigationDataMapper } from "./data/mappers/NavigationDataMapper";
 export { MenuItemMapper } from "./data/mappers/MenuItemMapper";
 export { WorkspaceGroupMapper } from "./data/mappers/WorkspaceGroupMapper";
+export { LandingTargetCatalogMapper } from "./data/mappers/LandingTargetCatalogMapper";
+export { WorkspaceEntryPreferenceMapper } from "./data/mappers/WorkspaceEntryPreferenceMapper";
+
+// ── Presentation hooks & components ─────────────────────────────────────────
+export { useLandingTargetCatalog } from "./presentation/hooks/useLandingTargetCatalog";
+export type { UseLandingTargetCatalogArgs } from "./presentation/hooks/useLandingTargetCatalog";
+export { LandingTargetPicker } from "./presentation/components/LandingTargetPicker";
+export type { LandingTargetPickerProps } from "./presentation/components/LandingTargetPicker";
 
 // ── Pure search indexing ────────────────────────────────────────────────────
 export {

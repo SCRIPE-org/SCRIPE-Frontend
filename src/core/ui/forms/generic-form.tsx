@@ -51,6 +51,7 @@ import { Separator } from "@core/ui/separator";
 import { ErrorMessage } from "@core/ui/error-message";
 import { Slider } from "@core/ui/slider";
 import { Checkbox } from "@core/ui/checkbox";
+import { GroupedCombobox } from "@core/ui/grouped-combobox";
 import { RadioGroup, RadioGroupItem } from "@core/ui/radio-group";
 import { useSettings } from "@core/providers/settings-provider";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -88,6 +89,18 @@ export interface FieldOption {
   children?: FieldOption[];
   /** Unique key for deduplication when value may change between API calls */
   uniqueKey?: string;
+  /** Optional group key for grouped searchable comboboxes */
+  groupKey?: string;
+  /** Optional localized group heading for grouped searchable comboboxes */
+  groupLabel?: string;
+  /** Optional display prefix before `<bdi>` path segments */
+  displayPrefix?: string;
+  /** Optional ordered path segments wrapped in `<bdi>` for RTL safety */
+  pathSegments?: string[];
+  /** Optional route path metadata for search matching & display hint */
+  route?: string | null;
+  /** True when option represents a persisted legacy/unavailable target */
+  isUnavailable?: boolean;
 }
 
 /**
@@ -215,6 +228,7 @@ export interface FieldConfig {
     | "richtext"
     | "select"
     | "searchable-select"
+    | "grouped-select"
     | "server-select"
     | "multi-select"
     | "tree"
@@ -974,6 +988,7 @@ export function GenericForm({
     const customTypes = new Set([
       "select",
       "searchable-select",
+      "grouped-select",
       "server-select",
       "multi-select",
       "tree",
@@ -1464,6 +1479,34 @@ export function GenericForm({
                       handleChange(field.name, typeof value === "string" ? value : value[0])
                     }
                     placeholder={field.placeholder}
+                    disabled={inert}
+                    className={getInputClasses(getInputHeight())}
+                  />
+                ) : field.type === "grouped-select" ? (
+                  <GroupedCombobox
+                    id={field.name}
+                    aria-label={field.label ?? field.name}
+                    invalid={invalid}
+                    describedBy={describedBy}
+                    loading={field.loading}
+                    options={
+                      field.options?.map((opt) => ({
+                        value: opt.value,
+                        label: opt.label,
+                        disabled: opt.disabled,
+                        groupKey: opt.groupKey ?? "default",
+                        groupLabel: opt.groupLabel ?? "",
+                        displayPrefix: opt.displayPrefix,
+                        pathSegments: opt.pathSegments,
+                        route: opt.route,
+                        isUnavailable: opt.isUnavailable,
+                      })) || []
+                    }
+                    value={formData[field.name] ?? ""}
+                    onValueChange={(value) => handleChange(field.name, value)}
+                    placeholder={field.placeholder}
+                    searchPlaceholder={field.searchPlaceholder}
+                    emptyText={field.noResultsText}
                     disabled={inert}
                     className={getInputClasses(getInputHeight())}
                   />

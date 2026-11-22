@@ -7,8 +7,13 @@
  * Clean Architecture rule: Domain interfaces NEVER import from the data layer.
  */
 
+import type {
+  LandingTargetCatalog,
+  LandingTargetScopeMode,
+} from "../entities/LandingTargetCatalog";
 import type { NavigationData } from "../entities/NavigationData";
 import type { WorkspaceGroupData } from "../entities/WorkspaceGroup";
+import type { AdminWorkspaceEntryPreference } from "../entities/WorkspaceEntryPreference";
 
 export type RouteAccessState =
   | "authorized"
@@ -106,6 +111,34 @@ export interface INavigationRepository {
    * Backend: GET /menus/navigation/workspaces
    */
   fetchWorkspaceStubs(): Promise<WorkspaceGroupData[]>;
+
+  /**
+   * On-demand catalog — Lazy lookup for `/account/preferences` and `/roles` landing pickers.
+   * Never called during login bootstrap.
+   *
+   * Backend: GET /menus/navigation/landing-targets[?scopeMode=...]
+   */
+  fetchLandingTargetCatalog(scopeMode?: LandingTargetScopeMode): Promise<LandingTargetCatalog>;
+
+  /**
+   * Sets or updates the current admin's personal start page preference for a workspace
+   * inside the active context.
+   *
+   * Backend: PUT /account/preferences/workspace-entries/{workspaceKey}
+   */
+  setWorkspaceStartPage(
+    workspaceKey: string,
+    target: string,
+    rowVersion?: string | null
+  ): Promise<AdminWorkspaceEntryPreference>;
+
+  /**
+   * Resets (deletes) the current admin's personal start page override for a workspace
+   * inside the active context so role/default resolution applies again.
+   *
+   * Backend: DELETE /account/preferences/workspace-entries/{workspaceKey}
+   */
+  resetWorkspaceStartPage(workspaceKey: string): Promise<void>;
 
   /**
    * Purge ALL in-memory workspace caches.

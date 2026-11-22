@@ -1,5 +1,8 @@
 import type { NavigationData } from "@core/navigation/domain/entities/NavigationData";
-import type { WorkspaceGroup } from "@core/navigation/domain/entities/WorkspaceGroup";
+import type {
+  WorkspaceEffectiveHomeSource,
+  WorkspaceGroup,
+} from "@core/navigation/domain/entities/WorkspaceGroup";
 import type { MenuItem, MenuItemActions } from "@core/navigation/domain/entities/MenuItem";
 import type {
   AuthorizedRouteDescriptor,
@@ -63,6 +66,23 @@ export interface WorkspaceSlice {
     workspaceKey: string,
     isPinned: boolean,
     pinSortOrder: number | null
+  ) => void;
+
+  /**
+   * Optimistically patch resolved effective home fields for a workspace group
+   * while `refreshNavigation()` synchronizes authoritative server state.
+   */
+  updateWorkspaceStartPageLocal: (
+    workspaceKey: string,
+    patch: {
+      effectiveHomeRoute?: string | null;
+      effectiveHomeSource?: WorkspaceEffectiveHomeSource | null;
+      effectiveHomeMenuSlug?: string | null;
+      effectiveHomeLabelEn?: string | null;
+      effectiveHomeLabelAr?: string | null;
+      isEffectiveHomeEnforced?: boolean;
+      enforcingRoleName?: string | null;
+    }
   ) => void;
 }
 

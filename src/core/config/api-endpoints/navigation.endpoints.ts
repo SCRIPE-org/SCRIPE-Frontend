@@ -1,4 +1,4 @@
-import { V1 } from "./_shared";
+import { V1, buildUrl } from "./_shared";
 
 export const NAVIGATION_ENDPOINTS = {
   MENUS: {
@@ -11,6 +11,9 @@ export const NAVIGATION_ENDPOINTS = {
       `${V1}/menus/navigation?workspace=${encodeURIComponent(workspaceKey)}`,
     /** GET /menus/navigation/workspaces — lightweight workspace stubs (no menu items) */
     AUTHORIZED_WORKSPACES: `${V1}/menus/navigation/workspaces`,
+    /** GET /menus/navigation/landing-targets — lazy flat catalog of unlocked workspaces & authorized leaf targets */
+    LANDING_TARGETS: (scopeMode?: string | null) =>
+      buildUrl(`${V1}/menus/navigation/landing-targets`, scopeMode ? { scopeMode } : undefined),
     /** POST /menus/navigation/workspaces/{key}/pin — toggle pin state for current admin */
     TOGGLE_WORKSPACE_PIN: (workspaceKey: string) =>
       `${V1}/menus/navigation/workspaces/${encodeURIComponent(workspaceKey)}/pin`,
@@ -39,5 +42,11 @@ export const NAVIGATION_ENDPOINTS = {
     UPDATE: (id: string) => `${V1}/workspaces/${id}`,
     DELETE: (id: string) => `${V1}/workspaces/${id}`,
     REORDER: `${V1}/workspaces/reorder`,
+  },
+
+  ACCOUNT: {
+    /** PUT / DELETE /account/preferences/workspace-entries/{workspaceKey} — set or reset personal workspace start page */
+    WORKSPACE_ENTRY: (workspaceKey: string) =>
+      `${V1}/account/preferences/workspace-entries/${encodeURIComponent(workspaceKey)}`,
   },
 };
