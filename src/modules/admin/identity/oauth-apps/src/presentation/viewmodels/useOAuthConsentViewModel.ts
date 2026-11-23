@@ -35,7 +35,6 @@ export interface OAuthConsentViewModelResult {
   // Form Submission Data
   formAction: string | null;
   formParams: Record<string, string>;
-  accessToken: string | null;
   formRef: React.RefObject<HTMLFormElement | null>;
 
   // Actions
@@ -78,7 +77,6 @@ export function useOAuthConsentViewModel(): OAuthConsentViewModelResult {
   const formRef = useRef<HTMLFormElement | null>(null);
   const [formAction, setFormAction] = useState<string | null>(null);
   const [formParams, setFormParams] = useState<Record<string, string>>({});
-  const [accessToken, setAccessToken] = useState<string | null>(null);
 
   const clientId = searchParams.get("client_id");
   const redirectUri = searchParams.get("redirect_uri");
@@ -158,11 +156,10 @@ export function useOAuthConsentViewModel(): OAuthConsentViewModelResult {
         }
 
         // Delegate to repository so backend OpenIddict validates client_id + redirect_uri
-        const formRequest = authRepository.buildOidcConsentForm(searchParams, token, decision);
+        const formRequest = authRepository.buildOidcConsentForm(searchParams, decision);
 
         setFormAction(formRequest.action);
         setFormParams(formRequest.params);
-        setAccessToken(token);
 
         setTimeout(() => {
           if (formRef.current) {
@@ -233,7 +230,6 @@ export function useOAuthConsentViewModel(): OAuthConsentViewModelResult {
     userDisplayName,
     formAction,
     formParams,
-    accessToken,
     formRef,
     handleApprove,
     handleDeny,

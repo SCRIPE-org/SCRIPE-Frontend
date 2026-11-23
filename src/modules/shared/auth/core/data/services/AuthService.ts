@@ -108,7 +108,6 @@ export class AuthService implements IAuthService {
    */
   buildOidcConsentForm(
     searchParams: URLSearchParams,
-    accessToken: string,
     decision: "approve" | "deny" = "approve"
   ): { action: string; params: Record<string, string> } {
     const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5035/api";
@@ -123,7 +122,6 @@ export class AuthService implements IAuthService {
     });
 
     params["decision"] = decision;
-    params["access_token"] = accessToken;
 
     return { action, params };
   }

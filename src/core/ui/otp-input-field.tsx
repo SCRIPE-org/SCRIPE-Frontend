@@ -22,6 +22,7 @@ interface OtpInputFieldProps {
   variant?: "nexus" | "vault" | "glass";
   id?: string;
   disabled?: boolean;
+  onComplete?: (value: string) => void;
   "aria-invalid"?: boolean | "true" | "false";
 }
 
@@ -33,6 +34,7 @@ export function OtpInputField({
   variant = "nexus",
   id = "otp-field",
   disabled = false,
+  onComplete,
   "aria-invalid": ariaInvalid,
 }: OtpInputFieldProps) {
   const isInvalid = ariaInvalid === true || ariaInvalid === "true";
@@ -42,6 +44,7 @@ export function OtpInputField({
       maxLength={length}
       value={value}
       onChange={onChange}
+      onComplete={onComplete}
       pattern="[0-9]*"
       inputMode="numeric"
       id={id}

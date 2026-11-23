@@ -48,7 +48,6 @@ export interface IAuthRepository {
   /** Abstract the OIDC Consent form parameters generation out of the Presentation layer */
   buildOidcConsentForm(
     searchParams: URLSearchParams,
-    accessToken: string,
     decision?: "approve" | "deny"
   ): { action: string; params: Record<string, string> };
   /** Build backend `/oidc/logout` redirect URL with sanitized `/connect/authorize` returnUrl */

@@ -1,9 +1,9 @@
 "use client";
 
-import { Fragment, useEffect } from "react";
+import { useEffect } from "react";
 import { ArrowLeft, Loader2, MailCheck, RotateCcw } from "lucide-react";
 import { Button } from "@core/ui/button";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@core/ui/input-otp";
+import { OtpInputField } from "@core/ui/otp-input-field";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSignupTheme } from "@core/providers/signup-theme";
 import type { SignupWizardViewModel } from "../../viewmodels/useSignupWizard";
@@ -56,9 +56,6 @@ export function VerificationStep({ wizard }: VerificationStepProps) {
       start + "•".repeat(Math.min(mid.length, 5)) + end
   );
 
-  const slotBase =
-    "relative flex h-14 w-12 items-center justify-center rounded-xl border text-[1.375rem] font-semibold transition-all duration-150 first:rounded-s-xl last:rounded-e-xl";
-
   return (
     <div className="mx-auto w-full max-w-md flex-1 px-5 py-10 sm:px-8 sm:py-14" dir={direction}>
       {/* ── Heading ── */}
@@ -95,47 +92,15 @@ export function VerificationStep({ wizard }: VerificationStepProps) {
         role="group"
         aria-label={t("signup.verification.codeInputLabel")}
       >
-        <InputOTP
-          maxLength={OTP_LENGTH}
+        <OtpInputField
+          id="signup-otp"
+          length={OTP_LENGTH}
           value={otpCode}
           onChange={setOtpCode}
-          pattern="[0-9]*"
-          inputMode="numeric"
-          autoFocus
+          variant="nexus"
           disabled={isSubmitting}
-          id="signup-otp"
-          containerClassName="justify-center"
-        >
-          <div className="flex items-center gap-2">
-            {Array.from({ length: OTP_LENGTH }).map((_, i) => {
-              const filled = !!otpCode[i];
-              return (
-                <Fragment key={i}>
-                  <InputOTPGroup>
-                    <InputOTPSlot
-                      index={i}
-                      className={`${slotBase} border data-[active=true]:z-10`}
-                      style={{
-                        background: filled ? `${tokens.accent}14` : tokens.surfaceRaised,
-                        borderColor: filled ? tokens.accent : tokens.border,
-                        color: tokens.ink,
-                      }}
-                    />
-                  </InputOTPGroup>
-                  {i === 2 && (
-                    <span
-                      aria-hidden="true"
-                      className="select-none px-0.5 text-[1.25rem]"
-                      style={{ color: tokens.inkGhost }}
-                    >
-                      –
-                    </span>
-                  )}
-                </Fragment>
-              );
-            })}
-          </div>
-        </InputOTP>
+          aria-invalid={Boolean(wizard.error)}
+        />
       </div>
 
       {/* ── Error ── */}

@@ -2,7 +2,7 @@
 
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
-import { Input } from "@core/ui/input";
+import { OtpInputField } from "@core/ui/otp-input-field";
 import { PhoneInput } from "@core/ui/phone-input";
 import { Label } from "@core/ui/label";
 import { usePhoneOtpViewModel } from "../viewmodels/usePhoneOtpViewModel";
@@ -174,26 +174,18 @@ export function PhoneOtpForm({
       <div className="space-y-2">
         <Label
           htmlFor="phone-otp-code"
-          className="text-sm font-medium"
+          className="block text-center text-sm font-medium"
           style={{ color: "var(--sx-text-mute)" }}
         >
           {t("auth.phoneOtp.codeLabel") || "Verification code"}
         </Label>
-        <Input
+        <OtpInputField
           id="phone-otp-code"
-          type="text"
-          inputMode="numeric"
-          maxLength={6}
-          placeholder="000000"
           value={vm.code}
-          onChange={(e) => vm.setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-          autoComplete="one-time-code"
-          className="h-12 rounded-lg text-center font-mono text-xl tracking-[0.4em]"
-          style={{
-            background: "rgba(255,255,255,0.04)",
-            border: "1px solid rgba(255,255,255,0.1)",
-            color: "var(--sx-text)",
-          }}
+          onChange={vm.setCode}
+          variant="vault"
+          disabled={vm.isLoading}
+          aria-invalid={Boolean(vm.error)}
         />
       </div>
 

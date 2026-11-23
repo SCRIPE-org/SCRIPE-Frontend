@@ -104,10 +104,9 @@ export class ImpersonationRepository {
    */
   buildOidcConsentForm(
     searchParams: URLSearchParams,
-    accessToken: string,
     decision: "approve" | "deny" = "approve"
   ): { action: string; params: Record<string, string> } {
-    return this.service.buildOidcConsentForm(searchParams, accessToken, decision);
+    return this.service.buildOidcConsentForm(searchParams, decision);
   }
 
   /**

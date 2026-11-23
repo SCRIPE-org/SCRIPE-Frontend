@@ -28,7 +28,6 @@ export interface IAuthService {
   stopImpersonation(): Promise<LoginResponseModel>;
   buildOidcConsentForm(
     searchParams: URLSearchParams,
-    accessToken: string,
     decision?: "approve" | "deny"
   ): { action: string; params: Record<string, string> };
   buildOidcLogoutUrl(searchParams: URLSearchParams): string;

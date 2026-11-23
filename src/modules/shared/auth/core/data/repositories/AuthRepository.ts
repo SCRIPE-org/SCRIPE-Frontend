@@ -291,10 +291,9 @@ export class AuthRepository implements IAuthRepository {
 
   buildOidcConsentForm(
     searchParams: URLSearchParams,
-    accessToken: string,
     decision: "approve" | "deny" = "approve"
   ): { action: string; params: Record<string, string> } {
-    return this.impersonation.buildOidcConsentForm(searchParams, accessToken, decision);
+    return this.impersonation.buildOidcConsentForm(searchParams, decision);
   }
 
   buildOidcLogoutUrl(searchParams: URLSearchParams): string {
