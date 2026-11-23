@@ -1,4 +1,5 @@
 import { LoginRequest, LoginResponse } from "../entities/Auth";
+import type { PasswordPolicyModel } from "@core/common/password-policy";
 import { User } from "../entities/User";
 import type { WorkspaceInfo } from "../entities/WorkspaceInfo";
 import { Result } from "@core/common/types/result";
@@ -104,6 +105,14 @@ export interface IAuthRepository {
   approveQrSignIn(sessionToken: string, deviceInfo?: string): Promise<void>;
   /** Reject QR sign-in from mobile */
   rejectQrSignIn(sessionToken: string): Promise<void>;
+  /** Fetch effective tenant/system password policy for client validation and checklist UI. */
+  getPasswordPolicy(params?: {
+    tenantId?: string | null;
+    tenantCode?: string | null;
+    isPublic?: boolean;
+  }): Promise<PasswordPolicyModel>;
+  /** Request a passwordless magic-link sign-in email (enumeration-safe). */
+  requestMagicLink(email: string, tenantId?: string): Promise<{ sent: boolean }>;
   /** Verify a magic-link token from the email URL and issue a session, workspace picker, or 2FA challenge. */
   verifyMagicLink(
     token: string,

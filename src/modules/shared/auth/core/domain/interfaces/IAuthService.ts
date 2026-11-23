@@ -6,6 +6,7 @@
  *
  * @module auth/core/domain
  */
+import type { PasswordPolicyDto } from "@core/common/password-policy";
 import type { LoginRequestModel, LoginResponseModel } from "../types/AuthTypes";
 import type {
   DiscoverWorkspacesResponseDto,
@@ -123,6 +124,13 @@ export interface IAuthService {
     editionName?: string | null;
     mustChangePassword?: boolean;
   }>;
+
+  /** Fetch the effective password policy for an optional tenantId/tenantCode or the signed-in admin's tenant. */
+  getPasswordPolicy(params?: {
+    tenantId?: string | null;
+    tenantCode?: string | null;
+    isPublic?: boolean;
+  }): Promise<PasswordPolicyDto>;
 
   /** Approve a QR sign-in session from the mobile device. */
   approveQrSignIn(sessionToken: string, deviceInfo?: string): Promise<void>;

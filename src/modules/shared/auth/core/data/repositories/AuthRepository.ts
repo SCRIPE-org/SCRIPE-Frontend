@@ -19,6 +19,7 @@
  * @module auth/data
  */
 import { secureTokenService } from "@core/common/secure-token-service";
+import { mapPasswordPolicyDto, type PasswordPolicyModel } from "@core/common/password-policy";
 import { authBroadcast } from "@core/common/broadcast-auth";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { LoginRequest, LoginResponse } from "../../domain/entities/Auth";
@@ -410,6 +411,19 @@ export class AuthRepository implements IAuthRepository {
   }
 
   // ── Magic Link ───────────────────────────────────────────────────────────
+  async getPasswordPolicy(params?: {
+    tenantId?: string | null;
+    tenantCode?: string | null;
+    isPublic?: boolean;
+  }): Promise<PasswordPolicyModel> {
+    const dto = await this.service.getPasswordPolicy(params);
+    return mapPasswordPolicyDto(dto);
+  }
+
+  async requestMagicLink(email: string, tenantId?: string): Promise<{ sent: boolean }> {
+    return this.service.requestMagicLink(email, tenantId);
+  }
+
   async verifyMagicLink(
     token: string,
     tenantId?: string,

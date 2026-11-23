@@ -8,6 +8,8 @@ export const AUTH_ENDPOINTS = {
     DOSSIER: `${V1}/account/dossier`,
     IMPERSONATE: (id: string) => `${V1}/auth/admin/impersonate/${id}`,
     STOP_IMPERSONATION: `${V1}/auth/admin/stop-impersonation`,
+    // ── Password Policy (public with optional ?tenantId=&tenantCode= or bearer context) ──
+    PASSWORD_POLICY: `${V1}/auth/admin/password-policy`,
     // ── Admin Password Reset (targets Admins table, not Users) ──
     ADMIN_REQUEST_PASSWORD_RESET: `${V1}/auth/admin/request-password-reset`,
     ADMIN_VERIFY_RESET_OTP: `${V1}/auth/admin/verify-reset-otp`,

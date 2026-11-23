@@ -18,6 +18,8 @@ import {
   type Verify2FAResponseJson,
 } from "../models/TwoFactorModels";
 import type { IApiService } from "@core/interfaces/api.interface";
+import type { PasswordPolicyDto } from "@core/common/password-policy";
+import { secureTokenService } from "@core/common/secure-token-service";
 import { ALLOWED_OIDC_PARAMS, OIDC_KEYS } from "@core/config/oidc-keys";
 import type { IAuthService } from "../../domain/interfaces/IAuthService";
 import type {
@@ -396,6 +398,21 @@ export class AuthService implements IAuthService {
       editionName?: string | null;
       mustChangePassword?: boolean;
     }>(AUTH_CORE_ENDPOINTS.QR_LOGIN.SESSION_STATUS(sessionId));
+  }
+
+  async getPasswordPolicy(params?: {
+    tenantId?: string | null;
+    tenantCode?: string | null;
+    isPublic?: boolean;
+  }): Promise<PasswordPolicyDto> {
+    const query: Record<string, unknown> = {};
+    if (params?.tenantId) query.tenantId = params.tenantId;
+    if (params?.tenantCode) query.tenantCode = params.tenantCode;
+
+    if (!params?.isPublic && secureTokenService.hasToken()) {
+      return this.api.get<PasswordPolicyDto>(AUTH_CORE_ENDPOINTS.PASSWORD_POLICY, query);
+    }
+    return this.api.getPublic<PasswordPolicyDto>(AUTH_CORE_ENDPOINTS.PASSWORD_POLICY, query);
   }
 
   async approveQrSignIn(sessionToken: string, deviceInfo?: string): Promise<void> {

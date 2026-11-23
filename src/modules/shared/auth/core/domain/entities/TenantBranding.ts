@@ -1,3 +1,5 @@
+import type { PasswordPolicyModel } from "@core/common/password-policy";
+
 export interface TenantBrandingData {
   tenantId: string;
   name: string;
@@ -15,6 +17,7 @@ export interface TenantBrandingData {
   slotConfigJson: string | null;
   dashboardThemeJson: string | null;
   isSafeMode: boolean;
+  passwordPolicy?: PasswordPolicyModel | null;
 }
 
 export class TenantBranding {
@@ -67,6 +70,9 @@ export class TenantBranding {
   }
   get isSafeMode() {
     return this.data.isSafeMode;
+  }
+  get passwordPolicy(): PasswordPolicyModel | null {
+    return this.data.passwordPolicy ?? null;
   }
 
   get displayName() {

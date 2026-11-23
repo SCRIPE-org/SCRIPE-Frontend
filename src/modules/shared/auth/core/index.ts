@@ -1,3 +1,16 @@
+export {
+  DEFAULT_PASSWORD_MAX_LENGTH,
+  evaluatePasswordPolicy,
+  findFirstPolicyViolation,
+  mapLegacySetupPolicy,
+  mapPasswordPolicyDto,
+  type PasswordPolicyDto,
+  type PasswordPolicyEvaluation,
+  type PasswordPolicyModel,
+  type PasswordPolicyRuleItem,
+  type PasswordPolicyRuleKey,
+  type PasswordStrengthTier,
+} from "./domain/entities/PasswordPolicy";
 export { PasskeyManagementView } from "./src/presentation/views/PasskeyManagementView";
 export { VaultBackground } from "./src/presentation/views/VaultBackground";
 export { useAuthLogin } from "./src/presentation/viewmodels/useAuthLogin";
