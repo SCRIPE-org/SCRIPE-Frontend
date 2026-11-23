@@ -610,8 +610,8 @@ export const en = {
       stepUpBtn: "Step-Up Biometric Auth",
       infoNotice: "Elevated Sudo authorization lasts for 15 minutes after verification.",
       expires: "Expires: {{time}}",
-      modalTitle: "Confirm Identity (Biometric Sudo)",
-      modalDescription: "This sensitive action requires step-up biometric authentication.",
+      modalTitle: "Confirm Identity (Step-Up Sudo)",
+      modalDescription: "This sensitive action requires step-up identity verification.",
       promptSensor: "Please touch your biometric sensor or confirm platform prompt…",
       clickToAuthenticate: "Click the button below to prompt your biometric authenticator.",
       authenticateBtn: "Authenticate",
@@ -634,6 +634,7 @@ export const en = {
       onDemandBanner: "This sensitive operation requires an active Sudo window. Complete step-up below to continue seamlessly.",
       countdownLabel: "Remaining",
       noPasskeyEnrolledHint: "Your policy requires a registered Passkey, but none is enrolled on this account yet.",
+      noTwoFactorEnrolledHint: "Your policy requires a registered Passkey or Authenticator App (TOTP), but neither is enrolled on this account yet.",
       idleStatus: "Sudo Locked",
     },
     lockdown: {

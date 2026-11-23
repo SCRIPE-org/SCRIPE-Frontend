@@ -28,6 +28,7 @@ import { PatCidrAllowlistCard, parseCidrEntries } from "../sections/integrations
 import { PatPermissionStudioCard } from "../sections/integrations/PatPermissionStudioCard";
 import { PatSummaryRailCard } from "../sections/integrations/PatSummaryRailCard";
 import { PatReviewGenerateModal } from "../sections/integrations/PatReviewGenerateModal";
+import { isSudoCancelledError } from "../utils/sudoElevation";
 
 /**
  * Full-canvas Fine-Grained Personal Access Token Studio (/account/integrations/new).
@@ -137,6 +138,7 @@ export function PatCreatePageView() {
       startRoutingProgress();
       router.push("/account/integrations");
     } catch (err: unknown) {
+      if (isSudoCancelledError(err)) return;
       setFormError(err instanceof Error ? err.message : t("profile.common.error"));
     }
   };

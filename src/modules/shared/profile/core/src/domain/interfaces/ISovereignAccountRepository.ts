@@ -15,11 +15,13 @@ import type {
   PersonalAccessTokenSummary,
 } from "../entities/SovereignAccountEntities";
 
+/** Payload for dispatching an email or username change verification OTP. */
 export interface SendEmailVerificationPayload {
   targetEmail?: string;
   mode?: "email" | "username";
 }
 
+/** Response returned after requesting an identity verification OTP. */
 export interface SendEmailVerificationResponse {
   sent?: boolean;
   success?: boolean;
@@ -28,6 +30,7 @@ export interface SendEmailVerificationResponse {
   retryAfterSeconds?: number | null;
 }
 
+/** Payload for requesting emergency break-glass privileged access elevation. */
 export interface RequestBreakGlassPayload {
   incidentTicketId: string;
   justification: string;

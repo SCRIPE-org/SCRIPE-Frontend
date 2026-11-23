@@ -45,7 +45,11 @@ export function useSessionsFleetViewModel() {
 
   // Revoke single session mutation
   const revokeMutation = useMutation({
-    mutationFn: (tokenId: string) => securityRepo.revokeSession(tokenId),
+    mutationFn: (tokenId: string) =>
+      securityRepo.revokeSession(
+        tokenId,
+        useSudoStore.getState().getValidSudoToken() ?? undefined
+      ),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: sessionsFleetKeys.list() });
       queryClient.invalidateQueries({ queryKey: sovereignAccountKeys.sessions() });
@@ -55,7 +59,10 @@ export function useSessionsFleetViewModel() {
 
   // Revoke all other sessions mutation
   const revokeAllOthersMutation = useMutation({
-    mutationFn: () => securityRepo.revokeAllOtherSessions(),
+    mutationFn: () =>
+      securityRepo.revokeAllOtherSessions(
+        useSudoStore.getState().getValidSudoToken() ?? undefined
+      ),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: sessionsFleetKeys.list() });
       queryClient.invalidateQueries({ queryKey: sovereignAccountKeys.sessions() });

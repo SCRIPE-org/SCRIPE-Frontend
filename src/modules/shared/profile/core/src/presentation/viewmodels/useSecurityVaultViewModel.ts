@@ -174,7 +174,11 @@ export function useSecurityVaultViewModel() {
   });
 
   const changePasswordMutation = useMutation({
-    mutationFn: (data: ChangePasswordRequest) => securityRepo.changePassword(data),
+    mutationFn: (data: ChangePasswordRequest) =>
+      securityRepo.changePassword(
+        data,
+        useSudoStore.getState().getValidSudoToken() ?? undefined
+      ),
     onSuccess: (result) => {
       if (result && typeof result === "object" && "accessToken" in result && result.accessToken) {
         secureTokenService.setAccessToken(result.accessToken);

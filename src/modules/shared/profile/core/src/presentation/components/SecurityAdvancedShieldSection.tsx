@@ -20,6 +20,7 @@ import {
   isConcurrencyConflictError,
   resolveProfileSaveErrorMessage,
 } from "../utils/concurrency";
+import { isSudoCancelledError } from "../utils/sudoElevation";
 import {
   type SubnetEntry,
   parseInitialCidrs,
@@ -164,6 +165,7 @@ export function SecurityAdvancedShieldSection({
       setSavedNotice(true);
       setTimeout(() => setSavedNotice(false), 2500);
     } catch (error: unknown) {
+      if (isSudoCancelledError(error)) return;
       const message = resolveProfileSaveErrorMessage(error, t);
       setSaveError(message);
       if (isConcurrencyConflictError(error)) {

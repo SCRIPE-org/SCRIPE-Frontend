@@ -3,6 +3,8 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, act, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { evaluatePasswordPolicy, type PasswordPolicyModel } from "@core/common/password-policy";
+import { useSudoStore } from "@core/store/useSudoStore";
+import { usePatOneTimeSecretStore } from "@core/store/usePatOneTimeSecretStore";
 import { useForceChangePasswordViewModel } from "../viewmodels/useForceChangePasswordViewModel";
 
 const mocks = vi.hoisted(() => ({
@@ -246,6 +248,19 @@ describe("ForceChangePasswordViewModel (Dynamic PasswordPolicy & Session Rotatio
       callOrder.push("queryClient.clear");
     });
 
+    useSudoStore.getState().markVerified({
+      sudoToken: "sudo-ephemeral-jwt",
+      expiresAtUtc: new Date(Date.now() + 600_000).toISOString(),
+      methodUsed: "passkey",
+    });
+    usePatOneTimeSecretStore.getState().setPendingReceipt({
+      tokenId: "pat-1",
+      tokenName: "CI",
+      plainTextSecret: "scr_pat_secret",
+      fingerprintOrPrefix: "scr_pat_",
+      isRotated: false,
+    });
+
     const { result } = renderHook(() => useForceChangePasswordViewModel(), { wrapper });
 
     await act(async () => {
@@ -254,7 +269,9 @@ describe("ForceChangePasswordViewModel (Dynamic PasswordPolicy & Session Rotatio
 
     expect(mocks.authLogout).toHaveBeenCalledTimes(1);
     expect(mocks.logout).toHaveBeenCalledTimes(1);
-    expect(mocks.replace).toHaveBeenCalledWith("/login");
+    expect(useSudoStore.getState().isActive).toBe(false);
+    expect(usePatOneTimeSecretStore.getState().pendingReceipt).toBeNull();
+    expect(mocks.replace).toHaveBeenCalledWith("/login?logged_out=1");
     expect(callOrder).toEqual([
       "authRepository.logout",
       "store.logout",
@@ -263,7 +280,7 @@ describe("ForceChangePasswordViewModel (Dynamic PasswordPolicy & Session Rotatio
     ]);
   });
 
-  it("still clears local auth state and redirects to /login when authRepository.logout fails", async () => {
+  it("still clears local auth state and redirects to /login?logged_out=1 when authRepository.logout fails", async () => {
     mocks.authLogout.mockRejectedValueOnce(new Error("Network failure"));
 
     const { wrapper, client } = createTestWrapper();
@@ -277,7 +294,7 @@ describe("ForceChangePasswordViewModel (Dynamic PasswordPolicy & Session Rotatio
     expect(mocks.authLogout).toHaveBeenCalledTimes(1);
     expect(mocks.logout).toHaveBeenCalledTimes(1);
     expect(clearSpy).toHaveBeenCalledTimes(1);
-    expect(mocks.replace).toHaveBeenCalledWith("/login");
+    expect(mocks.replace).toHaveBeenCalledWith("/login?logged_out=1");
   });
 
   it("chains into /account/security?mfa_enroll=true when rotated session requires mandatory 2FA enrollment", async () => {

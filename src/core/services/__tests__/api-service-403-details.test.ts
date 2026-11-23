@@ -385,5 +385,41 @@ describe("ApiService 403 handling", () => {
         expect(location.href).toBe("http://localhost/dashboard");
       });
     }
+
+    it("attaches active in-memory X-Sudo-Token in the request interceptor except on /auth/sudo/ endpoints", async () => {
+      const instance = (service as unknown as { axiosInstance: AxiosInstance }).axiosInstance;
+      const reqHandlers = (
+        instance.interceptors.request as unknown as {
+          handlers: Array<{
+            fulfilled?: (cfg: InternalAxiosRequestConfig) => InternalAxiosRequestConfig;
+          } | null>;
+        }
+      ).handlers;
+      const fulfilled = reqHandlers.find((entry) => typeof entry?.fulfilled === "function")
+        ?.fulfilled;
+      expect(fulfilled).toBeDefined();
+
+      useSudoStore.getState().markVerified({
+        sudoToken: "sudo-jwt-active-123",
+        expiresAtUtc: new Date(Date.now() + 600_000).toISOString(),
+        methodUsed: "passkey",
+      });
+
+      const normalCfg = fulfilled!({
+        url: "/v1/account/sessions",
+        headers: {},
+      } as unknown as InternalAxiosRequestConfig);
+      expect((normalCfg.headers as Record<string, string>)["X-Sudo-Token"]).toBe(
+        "sudo-jwt-active-123"
+      );
+
+      const sudoEndpointCfg = fulfilled!({
+        url: "/v1/auth/sudo/status",
+        headers: {},
+      } as unknown as InternalAxiosRequestConfig);
+      expect((sudoEndpointCfg.headers as Record<string, string>)["X-Sudo-Token"]).toBeUndefined();
+
+      useSudoStore.getState().reset();
+    });
   });
 });

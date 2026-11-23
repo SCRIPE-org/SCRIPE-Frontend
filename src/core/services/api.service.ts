@@ -98,6 +98,7 @@ if (typeof window !== "undefined") {
 export function buildRequestSecurityHeaders(options?: {
   tenantContextId?: string | null;
   isMutating?: boolean;
+  url?: string;
 }): Record<string, string> {
   const headers: Record<string, string> = {
     "Accept-Language": cachedLanguage,
@@ -117,9 +118,11 @@ export function buildRequestSecurityHeaders(options?: {
     }
   }
 
-  const sudoToken = useSudoStore.getState().getValidSudoToken();
-  if (sudoToken) {
-    headers["X-Sudo-Token"] = sudoToken;
+  if (!String(options?.url ?? "").includes("/auth/sudo/")) {
+    const sudoToken = useSudoStore.getState().getValidSudoToken();
+    if (sudoToken) {
+      headers["X-Sudo-Token"] = sudoToken;
+    }
   }
 
   return headers;
@@ -234,8 +237,12 @@ export class ApiService implements IApiService {
         const securityHeaders = buildRequestSecurityHeaders({
           tenantContextId: this.tenantContextId,
           isMutating,
+          url: config.url,
         });
         for (const [headerName, headerValue] of Object.entries(securityHeaders)) {
+          if (headerName === "X-Sudo-Token" && config.headers?.["X-Sudo-Token"]) {
+            continue;
+          }
           config.headers[headerName] = headerValue;
         }
         if (this.tenantContextId) {

@@ -21,6 +21,7 @@ import {
 import { GovernanceBreakGlassSection } from "../sections/governance/GovernanceBreakGlassSection";
 import { GrantDelegationModal } from "../sections/governance/GrantDelegationModal";
 import { RevokeDelegationModal } from "../sections/governance/RevokeDelegationModal";
+import { isSudoCancelledError } from "../utils/sudoElevation";
 
 /**
  * Access governance, role/branch scope coverage, PBAC provenance matrix,
@@ -116,6 +117,7 @@ export function AccountGovernanceView() {
       await revokeDelegation(pendingRevoke.id);
       setPendingRevoke(null);
     } catch (err: unknown) {
+      if (isSudoCancelledError(err)) return;
       setRevokeError(err instanceof Error ? err.message : t("profile.common.error"));
     }
   };
@@ -127,24 +129,15 @@ export function AccountGovernanceView() {
     setBreakGlassSubmitted(false);
 
     const rawTicket = incidentTicketId.trim();
-    if (rawTicket.length > 0 && rawTicket.length < 4) {
-      setBreakGlassError(t("profile.governance.breakGlassTicketError"));
-      return;
-    }
-    if (trimmedReason.length < 10) {
-      setBreakGlassError(t("profile.governance.breakGlassReasonMinError"));
-      return;
-    }
+    if (rawTicket.length > 0 && rawTicket.length < 4) return setBreakGlassError(t("profile.governance.breakGlassTicketError"));
+    if (trimmedReason.length < 10) return setBreakGlassError(t("profile.governance.breakGlassReasonMinError"));
 
     const resolvedTicket = rawTicket.length >= 4 ? rawTicket : "INC-JIT";
     const resolvedScopes =
       selectedBreakGlassScopes.length > 0
         ? selectedBreakGlassScopes
         : customBreakGlassScope.trim()
-          ? customBreakGlassScope
-              .split(",")
-              .map((s) => s.trim())
-              .filter(Boolean)
+          ? customBreakGlassScope.split(",").map((s) => s.trim()).filter(Boolean)
           : ["account.break_glass"];
 
     try {
@@ -162,6 +155,7 @@ export function AccountGovernanceView() {
       setCustomBreakGlassScope("");
       toast.success(t("profile.governance.breakGlassLoggedNotice"));
     } catch (err: unknown) {
+      if (isSudoCancelledError(err)) return;
       const msg = err instanceof Error && err.message ? err.message : t("profile.common.error");
       setBreakGlassError(msg);
       toast.error(msg);

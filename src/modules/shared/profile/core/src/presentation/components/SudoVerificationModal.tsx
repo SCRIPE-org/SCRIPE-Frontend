@@ -21,6 +21,7 @@ import {
 } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
+import { Alert, AlertDescription } from "@core/ui/alert";
 import { Skeleton } from "@core/ui/skeleton";
 import { SectionInfoPopover } from "./SectionInfoPopover";
 import { SudoFactorPanels } from "./SudoFactorPanels";
@@ -171,10 +172,16 @@ export function SudoVerificationModal() {
             <Skeleton className="h-28 w-full rounded-nx-lg" />
           </div>
         ) : allowedFactors.length === 0 ? (
-          <div className="my-3 rounded-nx-lg border border-warning/40 bg-warning/10 p-4 text-xs text-warning flex items-start gap-2.5">
-            <ShieldAlert className="h-4 w-4 shrink-0 mt-0.5" aria-hidden="true" />
-            <span>{t("profile.sudo.noPasskeyEnrolledHint")}</span>
-          </div>
+          <Alert variant="warning" className="my-3">
+            <ShieldAlert className="h-4 w-4 shrink-0" aria-hidden="true" />
+            <AlertDescription className="text-xs">
+              {t(
+                mandatoryFactorPolicy === "TwoFactorRequired"
+                  ? "profile.sudo.noTwoFactorEnrolledHint"
+                  : "profile.sudo.noPasskeyEnrolledHint"
+              )}
+            </AlertDescription>
+          </Alert>
         ) : (
           <SudoFactorPanels
             allowedFactors={allowedFactors}

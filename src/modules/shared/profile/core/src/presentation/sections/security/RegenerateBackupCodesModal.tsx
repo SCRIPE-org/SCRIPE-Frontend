@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Button } from "@core/ui/button";
+import { Alert, AlertDescription } from "@core/ui/alert";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import {
@@ -170,9 +171,11 @@ export function RegenerateBackupCodesModal({
                 </div>
               ))}
             </div>
-            <div className="rounded-xl border border-warning/30 bg-warning/10 p-2.5 text-xs text-warning">
-              {t("profile.security.twoFactor.setup.backupWarning")}
-            </div>
+            <Alert variant="warning">
+              <AlertDescription className="text-xs">
+                {t("profile.security.twoFactor.setup.backupWarning")}
+              </AlertDescription>
+            </Alert>
             <DialogFooter className="gap-2 flex-wrap">
               <Button
                 type="button"

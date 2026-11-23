@@ -29,6 +29,7 @@ import {
 import { PasskeyRenameDeleteModals } from "../sections/security/PasskeyRenameDeleteModals";
 import { DisableTwoFactorModal } from "../sections/security/DisableTwoFactorModal";
 import { RegenerateBackupCodesModal } from "../sections/security/RegenerateBackupCodesModal";
+import { isSudoCancelledError } from "../utils/sudoElevation";
 import type { PasskeyCredential } from "../../domain/entities/PasskeyCredential";
 import type { ChangePasswordRequest } from "../../domain/interfaces/IProfileRepository";
 import { AlertCircle, RefreshCw } from "lucide-react";
@@ -118,6 +119,7 @@ export function AccountSecurityView() {
     try {
       await vm.begin2FaSetup();
     } catch (err: unknown) {
+      if (isSudoCancelledError(err)) return;
       const msg = err instanceof Error && err.message ? err.message : t("profile.common.error");
       setTwoFaSetupError(msg);
       toast.error(msg);

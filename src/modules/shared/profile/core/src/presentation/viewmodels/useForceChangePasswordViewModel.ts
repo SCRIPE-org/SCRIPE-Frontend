@@ -12,6 +12,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useServices } from "@core/providers/service-provider";
 import { useAppStore } from "@core/store/useAppStore";
+import { useSudoStore } from "@core/store/useSudoStore";
+import { usePatOneTimeSecretStore } from "@core/store/usePatOneTimeSecretStore";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { buildPostAuthEntryUrl } from "@core/common/redirect-safety";
@@ -192,10 +194,21 @@ export function useForceChangePasswordViewModel() {
   );
 
   const handleLogout = useCallback(async () => {
+    const queryTenant =
+      typeof window !== "undefined"
+        ? new URLSearchParams(window.location.search).get("_tenant")
+        : null;
     await authRepository.logout().catch(() => undefined);
+    useSudoStore.getState().reset();
+    usePatOneTimeSecretStore.getState().clearPendingReceipt();
     logout();
     queryClient.clear();
-    router.replace("/login");
+    const loginParams = new URLSearchParams();
+    if (queryTenant) {
+      loginParams.set("_tenant", queryTenant);
+    }
+    loginParams.set("logged_out", "1");
+    router.replace(`/login?${loginParams.toString()}`);
   }, [authRepository, logout, queryClient, router]);
 
   return {

@@ -116,8 +116,13 @@ export function ProfileTelemetryHud({
     security?.securityPostureScore ??
     profile?.securityScore ??
     0;
+  const rawSessionCount = activeSessionCount ?? accountContext?.activeSessionsCount ?? 0;
   const resolvedSessionCount =
-    activeSessionCount ?? accountContext?.activeSessionsCount ?? 0;
+    rawSessionCount > 0
+      ? rawSessionCount
+      : authUser || profile || accountContext || security
+        ? 1
+        : 1;
 
   const primaryOrgTitle = isPlatformAdmin
     ? principalContext?.controlPlaneLabel || t("profile.hud.globalControlPlane")
