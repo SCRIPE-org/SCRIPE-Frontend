@@ -51,7 +51,7 @@ export function OtpInputField({
       autoFocus={autoFocus}
       disabled={disabled}
       aria-invalid={isInvalid ? true : undefined}
-      containerClassName="justify-center w-full"
+      containerClassName="justify-center w-full max-w-full overflow-hidden p-1"
       dir="ltr"
     >
       {/* OTP digit runs stay dir="ltr" in every locale (see input-otp.tsx). */}

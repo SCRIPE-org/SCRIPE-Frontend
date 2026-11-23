@@ -44,7 +44,7 @@ export function MethodStep({ vm, totalSteps }: MethodStepProps) {
         <p className="mt-1.5 text-[13px] leading-relaxed" style={{ color: "var(--sx-text-mute)" }}>
           {t("auth.chooseMethodSubtitle").replace("{{email}}", "")}{" "}
           <strong style={{ color: "var(--sx-text)" }}>
-            <bdi dir="ltr">{vm.email}</bdi>
+            <bdi dir="ltr" className="inline-block">{vm.email}</bdi>
           </strong>
         </p>
       </div>
