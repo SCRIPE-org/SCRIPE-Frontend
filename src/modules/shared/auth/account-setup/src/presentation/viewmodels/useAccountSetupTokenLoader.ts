@@ -8,7 +8,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { appLogger } from "@core/common/logger";
-import { getAuthContainer } from "@modules/auth/di";
+import { useServices } from "@core/providers/service-provider";
 import type { SetupCustomField, SetupTokenInfo } from "../../domain/entities";
 import type { PageState } from "./useAccountSetupViewModel";
 import { extractAccountSetupApiError } from "../utils/account-setup-validation.utils";
@@ -33,12 +33,21 @@ export function useAccountSetupTokenLoader({
   validationFailedMessage,
   onProfileHydrated,
 }: UseAccountSetupTokenLoaderParams) {
+  const { accountSetupRepository } = useServices();
   const [pageState, setPageState] = useState<PageState>(!token ? "invalid" : "loading");
   const [tokenData, setTokenData] = useState<SetupTokenInfo | null>(null);
   const [errorMessage, setErrorMessage] = useState<string>(!token ? missingTokenMessage : "");
   const [customFields, setCustomFields] = useState<SetupCustomField[]>([]);
   const [isLoadingCustomFields, setIsLoadingCustomFields] = useState(false);
   const [customFieldValues, setCustomFieldValues] = useState<Record<string, unknown>>({});
+  const [reloadNonce, setReloadNonce] = useState(0);
+
+  const retryLoad = useCallback(() => {
+    if (!token) return;
+    setPageState("loading");
+    setErrorMessage("");
+    setReloadNonce((n) => n + 1);
+  }, [token]);
 
   const setCustomFieldValue = useCallback((key: string, value: unknown) => {
     setCustomFieldValues((prev) => ({ ...prev, [key]: value }));
@@ -46,12 +55,13 @@ export function useAccountSetupTokenLoader({
 
   useEffect(() => {
     if (!token) return;
+    void reloadNonce;
 
     let cancelled = false;
 
     async function validate() {
       try {
-        const result = await getAuthContainer().accountSetupRepository.validateToken(token);
+        const result = await accountSetupRepository.validateToken(token);
         if (cancelled) return;
 
         if (result.isValid) {
@@ -61,7 +71,7 @@ export function useAccountSetupTokenLoader({
 
           try {
             setIsLoadingCustomFields(true);
-            const fields = await getAuthContainer().accountSetupRepository.getCustomFields(token);
+            const fields = await accountSetupRepository.getCustomFields(token);
             if (cancelled) return;
             setCustomFields(fields || []);
             const initialVals: Record<string, unknown> = {};
@@ -91,7 +101,7 @@ export function useAccountSetupTokenLoader({
     return () => {
       cancelled = true;
     };
-  }, [invalidTokenMessage, onProfileHydrated, token, validationFailedMessage]);
+  }, [accountSetupRepository, invalidTokenMessage, onProfileHydrated, reloadNonce, token, validationFailedMessage]);
 
   return {
     pageState,
@@ -103,5 +113,6 @@ export function useAccountSetupTokenLoader({
     isLoadingCustomFields,
     customFieldValues,
     setCustomFieldValue,
+    retryLoad,
   };
 }

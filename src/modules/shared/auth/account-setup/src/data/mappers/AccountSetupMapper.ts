@@ -5,6 +5,7 @@
  * @module auth/account-setup/data/mappers
  */
 
+import { mapLegacySetupPolicy } from "@core/common/password-policy";
 import { SetupTokenInfo, SetupCustomField, AccountActivationResult } from "../../domain/entities";
 import type {
   ValidateTokenResponse,
@@ -29,7 +30,9 @@ export class AccountSetupMapper {
       passwordMinLength: dto.passwordMinLength ?? 8,
       passwordRequireUppercase: dto.passwordRequireUppercase ?? true,
       passwordRequireNumber: dto.passwordRequireNumber ?? true,
-      passwordRequireSpecial: dto.passwordRequireSpecial ?? true,
+      passwordRequireLowercase: dto.passwordRequireLowercase ?? false,
+      passwordRequireSpecial: dto.passwordRequireSpecial ?? false,
+      passwordPolicy: mapLegacySetupPolicy(dto),
       adminId: dto.adminId,
       firstName: dto.firstName ?? "",
       lastName: dto.lastName ?? "",

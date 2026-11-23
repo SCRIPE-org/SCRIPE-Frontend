@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { DEFAULT_PASSWORD_MAX_LENGTH } from "@core/common/password-policy";
 import type { SetupTokenInfo } from "../../domain/entities";
 import {
   computeAccountSetupPasswordEntropy,
@@ -48,12 +49,16 @@ export function useAccountSetupViewModel(params: {
   activationUnexpectedMessage: string;
   passwordValidationMessages: {
     minLength: string;
+    maxLength?: string;
     hasUpper: string;
     hasLower: string;
     hasNumber: string;
     hasSpecial: string;
     matches: string;
   };
+  avatarInvalidTypeMessage?: string;
+  avatarTooLargeMessage?: string;
+  requiredFieldMessage?: string;
 }) {
   const {
     token,
@@ -63,6 +68,9 @@ export function useAccountSetupViewModel(params: {
     activationFailedMessage,
     activationUnexpectedMessage,
     passwordValidationMessages,
+    avatarInvalidTypeMessage,
+    avatarTooLargeMessage,
+    requiredFieldMessage,
   } = params;
 
   const [currentStep, setCurrentStep] = useState<SetupStep>(1);
@@ -93,11 +101,18 @@ export function useAccountSetupViewModel(params: {
     onProfileHydrated: handleProfileHydrated,
   });
 
+  const passwordPolicyModel = loader.tokenData?.passwordPolicy ?? null;
+  const isPasswordPolicyLoading = loader.pageState === "loading";
+  const passwordPolicyError =
+    loader.pageState === "valid" && !passwordPolicyModel ? validationFailedMessage : null;
+
   const passwordPolicy = {
-    minLength: loader.tokenData?.passwordMinLength ?? 8,
-    requireUppercase: loader.tokenData?.passwordRequireUppercase !== false,
-    requireNumber: loader.tokenData?.passwordRequireNumber !== false,
-    requireSpecial: loader.tokenData?.passwordRequireSpecial === true,
+    minLength: passwordPolicyModel?.minLength ?? 8,
+    maxLength: passwordPolicyModel?.maxLength ?? DEFAULT_PASSWORD_MAX_LENGTH,
+    requireUppercase: passwordPolicyModel?.requireUppercase ?? false,
+    requireLowercase: passwordPolicyModel?.requireLowercase ?? false,
+    requireNumber: passwordPolicyModel?.requireNumber ?? false,
+    requireSpecial: passwordPolicyModel?.requireSpecial ?? false,
   };
 
   const passwordChecks = evaluateAccountSetupPasswordChecks(
@@ -105,13 +120,15 @@ export function useAccountSetupViewModel(params: {
     confirmPassword,
     passwordPolicy
   );
-  const isPasswordValid = Object.values(passwordChecks).every(Boolean);
+  const isPasswordValid =
+    Boolean(passwordPolicyModel) && Object.values(passwordChecks).every(Boolean);
   const passwordScore = computeAccountSetupPasswordScore(passwordChecks, passwordPolicy);
   const passwordEntropy = computeAccountSetupPasswordEntropy(password);
   const isProfileValid = firstName.trim().length > 0;
   const customFieldErrors = validateAccountSetupCustomFields(
     loader.customFields,
-    loader.customFieldValues
+    loader.customFieldValues,
+    requiredFieldMessage
   );
   const isAttributesValid = Object.keys(customFieldErrors).length === 0;
   const hasCustomFields = loader.customFields.length > 0;
@@ -150,6 +167,8 @@ export function useAccountSetupViewModel(params: {
     isAttributesValid,
     activationFailedMessage,
     activationUnexpectedMessage,
+    avatarInvalidTypeMessage,
+    avatarTooLargeMessage,
   });
 
   return {
@@ -158,6 +177,10 @@ export function useAccountSetupViewModel(params: {
     currentStep,
     setCurrentStep,
     tokenData: loader.tokenData,
+    passwordPolicy: passwordPolicyModel,
+    isPasswordPolicyLoading,
+    passwordPolicyError,
+    retryPasswordPolicy: loader.retryLoad,
     errorMessage: loader.errorMessage,
     validationErrors,
     password,

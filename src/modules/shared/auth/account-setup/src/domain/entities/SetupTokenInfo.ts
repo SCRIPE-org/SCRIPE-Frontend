@@ -6,6 +6,8 @@
  * @module auth/account-setup/domain/entities
  */
 
+import { mapLegacySetupPolicy, type PasswordPolicyModel } from "@core/common/password-policy";
+
 export interface SetupTokenInfoData {
   adminUsername: string;
   tenantName: string;
@@ -14,8 +16,10 @@ export interface SetupTokenInfoData {
   errorMessage?: string;
   passwordMinLength?: number;
   passwordRequireUppercase?: boolean;
+  passwordRequireLowercase?: boolean;
   passwordRequireNumber?: boolean;
   passwordRequireSpecial?: boolean;
+  passwordPolicy?: import("@core/common/password-policy").PasswordPolicyModel | null;
   adminId?: string;
   firstName?: string;
   lastName?: string;
@@ -61,19 +65,34 @@ export class SetupTokenInfo {
   }
 
   get passwordMinLength(): number {
-    return this.data.passwordMinLength ?? 8;
+    return this.passwordPolicy?.minLength ?? this.data.passwordMinLength ?? 8;
   }
 
   get passwordRequireUppercase(): boolean {
-    return this.data.passwordRequireUppercase ?? true;
+    return this.passwordPolicy?.requireUppercase ?? this.data.passwordRequireUppercase ?? false;
+  }
+
+  get passwordRequireLowercase(): boolean {
+    return this.passwordPolicy?.requireLowercase ?? this.data.passwordRequireLowercase ?? false;
   }
 
   get passwordRequireNumber(): boolean {
-    return this.data.passwordRequireNumber ?? true;
+    return this.passwordPolicy?.requireNumber ?? this.data.passwordRequireNumber ?? false;
   }
 
   get passwordRequireSpecial(): boolean {
-    return this.data.passwordRequireSpecial ?? true;
+    return this.passwordPolicy?.requireSpecial ?? this.data.passwordRequireSpecial ?? false;
+  }
+
+  get passwordPolicy(): PasswordPolicyModel | null {
+    return mapLegacySetupPolicy({
+      passwordPolicy: this.data.passwordPolicy,
+      passwordMinLength: this.data.passwordMinLength,
+      passwordRequireUppercase: this.data.passwordRequireUppercase,
+      passwordRequireLowercase: this.data.passwordRequireLowercase,
+      passwordRequireNumber: this.data.passwordRequireNumber,
+      passwordRequireSpecial: this.data.passwordRequireSpecial,
+    });
   }
 
   get adminId(): string | undefined {

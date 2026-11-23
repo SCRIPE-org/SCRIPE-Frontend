@@ -7,14 +7,15 @@ import { SetupTokenInfo, SetupCustomField, AccountActivationResult } from "../..
 const mockValidateToken = vi.fn<(token: string) => Promise<SetupTokenInfo>>();
 const mockGetCustomFields = vi.fn<(token: string) => Promise<SetupCustomField[]>>();
 const mockActivateAccount = vi.fn<(req: any) => Promise<AccountActivationResult>>();
+const mockAccountSetupRepository = {
+  validateToken: mockValidateToken,
+  getCustomFields: mockGetCustomFields,
+  activateAccount: mockActivateAccount,
+};
 
-vi.mock("@modules/auth/di", () => ({
-  getAuthContainer: () => ({
-    accountSetupRepository: {
-      validateToken: mockValidateToken,
-      getCustomFields: mockGetCustomFields,
-      activateAccount: mockActivateAccount,
-    },
+vi.mock("@core/providers/service-provider", () => ({
+  useServices: () => ({
+    accountSetupRepository: mockAccountSetupRepository,
   }),
 }));
 

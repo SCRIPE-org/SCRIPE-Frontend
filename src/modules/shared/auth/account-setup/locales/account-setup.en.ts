@@ -72,6 +72,10 @@ export const en = {
       strong: "Strong",
       securityNotice:
         "Your credentials are encrypted and your one-time activation link has now expired.",
+      administrator: "Administrator",
+      assignedRole: "Assigned Role",
+      requiredField: "This field is required",
+      passwordMaxLength: "Password must not exceed {{max}} characters",
     },
   },
 };

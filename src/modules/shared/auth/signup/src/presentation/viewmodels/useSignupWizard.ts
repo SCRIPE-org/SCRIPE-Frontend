@@ -23,6 +23,7 @@ import type {
   WelcomeContent,
 } from "../../domain/entities/OnboardingEntities";
 import { INITIAL_WIZARD_DATA } from "../../domain/constants/signupConstants";
+import type { PasswordPolicyModel } from "@core/common/password-policy";
 import { calcPasswordStrengthScore } from "../helpers/accountLogic";
 import { useSignupOtp } from "./hooks/useSignupOtp";
 import { useSignupSubdomain } from "./hooks/useSignupSubdomain";
@@ -154,6 +155,14 @@ export interface SignupWizardViewModel {
   updatePassword: (value: string) => void;
   /** Password strength bucket (0–5), derived from wizardData.password. */
   passwordStrength: number;
+  /** Effective backend password policy for public tenant onboarding. */
+  passwordPolicy: PasswordPolicyModel | null;
+  /** True while backend password policy is loading. */
+  isPasswordPolicyLoading: boolean;
+  /** Localized error when backend password policy failed to load. */
+  passwordPolicyError: string | null;
+  /** Re-fetch backend password policy after a transient error. */
+  retryPasswordPolicy: () => void;
   /** Server/flow error surfaced to the current phase (shared across F5–F7). */
   error: string;
   /** True while an account-submit / OTP-verify / register call is in flight. */
@@ -283,7 +292,7 @@ export interface UseSignupWizardArgs {
  */
 export function useSignupWizard(args?: UseSignupWizardArgs): SignupWizardViewModel {
   const { initialCountry, initialCurrency } = args || {};
-  const { language } = useI18n();
+  const { language, t } = useI18n();
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -362,6 +371,24 @@ export function useSignupWizard(args?: UseSignupWizardArgs): SignupWizardViewMod
     staleTime: 10 * 60 * 1000, // 10 min — welcome content is stable per session
     retry: false,
   });
+
+  const {
+    data: passwordPolicy = null,
+    isLoading: isPasswordPolicyLoading,
+    isError: isPasswordPolicyError,
+    refetch: refetchPasswordPolicy,
+  } = useQuery({
+    queryKey: ["signup-password-policy"],
+    queryFn: () => authContainer.authRepository.getPasswordPolicy({ isPublic: true }),
+    staleTime: 10 * 60 * 1000,
+    retry: false,
+  });
+  const passwordPolicyError = isPasswordPolicyError
+    ? t("common.passwordPolicy.loadFailed")
+    : null;
+  const retryPasswordPolicy = useCallback(() => {
+    void refetchPasswordPolicy();
+  }, [refetchPasswordPolicy]);
 
   // ── Pricing context — load early to lock the currency ──────────────────────
   const { data: pricingContext } = useQuery({
@@ -729,6 +756,10 @@ export function useSignupWizard(args?: UseSignupWizardArgs): SignupWizardViewMod
       updateField,
       updatePassword,
       passwordStrength,
+      passwordPolicy,
+      isPasswordPolicyLoading,
+      passwordPolicyError,
+      retryPasswordPolicy,
       error,
       isSubmitting,
       submitAccount: otp.submitAccount,
@@ -784,6 +815,10 @@ export function useSignupWizard(args?: UseSignupWizardArgs): SignupWizardViewMod
       updateField,
       updatePassword,
       passwordStrength,
+      passwordPolicy,
+      isPasswordPolicyLoading,
+      passwordPolicyError,
+      retryPasswordPolicy,
       error,
       isSubmitting,
       otp,

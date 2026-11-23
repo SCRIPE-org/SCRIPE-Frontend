@@ -82,7 +82,7 @@ function createContainer(): AuthContainer {
     new PasswordResetService(publicApiService)
   );
   const accountSetupRepository = new AccountSetupRepository(
-    new AccountSetupService(apiService)
+    new AccountSetupService(publicApiService)
   );
   const signupRepository = new SignupRepository(new SignupService(publicApiService));
   const passkeyRepository = new PasskeyRepository(new PasskeyService(apiService));

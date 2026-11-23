@@ -11,7 +11,7 @@
 
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
@@ -37,7 +37,36 @@ import { useAccountSetupViewModel } from "../viewmodels/useAccountSetupViewModel
 export function SetupAccountView() {
   const { t } = useI18n();
   const searchParams = useSearchParams();
-  const token = searchParams.get("token") || "";
+  const [token] = useState(() => {
+    const queryToken = searchParams.get("token") || "";
+    if (queryToken) return queryToken;
+    if (typeof window === "undefined") return "";
+    const hash = window.location.hash.startsWith("#") ? window.location.hash.slice(1) : "";
+    const hashParams = new URLSearchParams(hash);
+    return hashParams.get("token") || "";
+  });
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const url = new URL(window.location.href);
+    let mutated = false;
+    if (url.searchParams.has("token")) {
+      url.searchParams.delete("token");
+      mutated = true;
+    }
+    if (url.hash) {
+      const hashParams = new URLSearchParams(url.hash.slice(1));
+      if (hashParams.has("token")) {
+        hashParams.delete("token");
+        const remainingHash = hashParams.toString();
+        url.hash = remainingHash ? `#${remainingHash}` : "";
+        mutated = true;
+      }
+    }
+    if (mutated) {
+      window.history.replaceState({}, document.title, `${url.pathname}${url.search}${url.hash}`);
+    }
+  }, []);
 
   const vm = useAccountSetupViewModel({
     token,
@@ -53,7 +82,11 @@ export function SetupAccountView() {
       hasNumber: t("auth.accountSetup.passwordNumber"),
       hasSpecial: t("auth.accountSetup.passwordSpecial"),
       matches: t("auth.accountSetup.passwordsMatch"),
+      maxLength: t("auth.accountSetup.passwordMaxLength"),
     },
+    avatarInvalidTypeMessage: t("auth.accountSetup.photoInvalidType"),
+    avatarTooLargeMessage: t("auth.accountSetup.photoTooLarge"),
+    requiredFieldMessage: t("auth.accountSetup.requiredField"),
   });
 
   // ── Lifecycle State Routing ──
@@ -138,7 +171,10 @@ export function SetupAccountView() {
                     {vm.currentStep === 3 && t("auth.accountSetup.step3Attributes")}
                   </CardTitle>
                   <Badge variant="secondary" className="px-2 py-0.5 text-[10px] font-medium">
-                    Step {vm.currentStep} of {hasCustomFields ? 3 : 2}
+                    {t("common.stepOfTotal", {
+                      current: vm.currentStep,
+                      total: hasCustomFields ? 3 : 2,
+                    })}
                   </Badge>
                 </div>
                 <CardDescription className="text-xs sm:text-sm">
