@@ -8,6 +8,7 @@ import {
 } from "@core/services/api-factory";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { proxy } from "../../../proxy";
+import nextConfig from "../../../../next.config";
 
 describe("api-factory centralized auth handler wiring", () => {
   beforeEach(() => {
@@ -85,5 +86,25 @@ describe("proxy pre-hydration auth-state UX hint routing", () => {
       const res = proxy(req);
       expect(res.status).toBe(200);
     }
+  });
+});
+
+describe("next.config.ts TypeScript & HTTP security header hardening", () => {
+  it("removes typescript.ignoreBuildErrors and sets baseline security headers including CSP and WebAuthn Permissions-Policy", async () => {
+    expect(nextConfig.typescript?.ignoreBuildErrors).not.toBe(true);
+    expect(typeof nextConfig.headers).toBe("function");
+
+    const rules = await nextConfig.headers!();
+    const globalRule = rules.find((r) => r.source === "/(.*)");
+    expect(globalRule).toBeDefined();
+
+    const headerMap = new Map(globalRule!.headers.map((h) => [h.key, h.value]));
+    expect(headerMap.get("X-Frame-Options")).toBe("DENY");
+    expect(headerMap.get("X-Content-Type-Options")).toBe("nosniff");
+    expect(headerMap.get("Referrer-Policy")).toBe("strict-origin-when-cross-origin");
+    expect(headerMap.get("Permissions-Policy")).toContain("publickey-credentials-get=(self)");
+    expect(headerMap.get("Permissions-Policy")).toContain("publickey-credentials-create=(self)");
+    expect(headerMap.get("Content-Security-Policy")).toContain("frame-ancestors 'none'");
+    expect(headerMap.get("Content-Security-Policy")).toContain("object-src 'none'");
   });
 });
