@@ -194,6 +194,13 @@ export function mapSecuritySlice(raw: any): SovereignSecuritySlice {
     isSsoFeatureEnabled: raw.isSsoFeatureEnabled !== false,
     isSecurityPageEnabled: raw.isSecurityPageEnabled !== false,
     backupCodesRemaining: Number(raw.backupCodesRemaining ?? 0),
+    passwordLastChangedUtc:
+      raw.passwordLastChangedUtc ?? raw.passwordLastChanged ?? null,
+    isPasswordExpired: Boolean(raw.isPasswordExpired),
+    daysUntilPasswordExpiry:
+      typeof raw.daysUntilPasswordExpiry === "number"
+        ? raw.daysUntilPasswordExpiry
+        : null,
     passkeyCount: passkeysCount,
     hardwareKeyCount: Number(raw.hardwareKeyCount ?? passkeysCount),
     securityPostureScore: Number(

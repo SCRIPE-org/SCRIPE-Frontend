@@ -14,10 +14,18 @@ const mocks = vi.hoisted(() => ({
   replace: vi.fn(),
   getPasswordPolicy: vi.fn(),
   changePassword: vi.fn(),
+  enable2FA: vi.fn(),
   confirm2FA: vi.fn(),
   refreshToken: vi.fn(),
   listPasskeys: vi.fn().mockResolvedValue([]),
   getProfile: vi.fn().mockResolvedValue({ isTwoFactorEnabled: false, backupCodesRemaining: 0 }),
+  getSecurity: vi.fn().mockResolvedValue({
+    isTwoFactorEnabled: false,
+    backupCodesRemaining: 0,
+    isPasswordExpired: false,
+    daysUntilPasswordExpiry: null,
+    passwordLastChangedUtc: null,
+  }),
   getContext: vi.fn().mockResolvedValue({ principalContext: { email: "a@b.c" }, featureFlags: {} }),
 }));
 
@@ -54,6 +62,7 @@ vi.mock("@modules/profile/di", () => ({
       listPasskeys: () => mocks.listPasskeys(),
       getPasswordPolicy: () => mocks.getPasswordPolicy(),
       changePassword: (data: unknown) => mocks.changePassword(data),
+      enable2FA: () => mocks.enable2FA(),
       confirm2FA: (code: string) => mocks.confirm2FA(code),
     },
     profileRepository: {
@@ -61,6 +70,7 @@ vi.mock("@modules/profile/di", () => ({
     },
     sovereignAccountRepository: {
       getContext: () => mocks.getContext(),
+      getSecurity: () => mocks.getSecurity(),
     },
   },
 }));
@@ -88,7 +98,20 @@ describe("PasswordChangeForm & SecurityVault rotated token handling", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     secureTokenService.clearTokens();
+    useAppStore.getState().setRequireMfaEnrollment(false);
     mocks.getPasswordPolicy.mockResolvedValue(POLICY);
+    mocks.getSecurity.mockResolvedValue({
+      isTwoFactorEnabled: false,
+      backupCodesRemaining: 0,
+      isPasswordExpired: false,
+      daysUntilPasswordExpiry: null,
+      passwordLastChangedUtc: null,
+    });
+    mocks.enable2FA.mockResolvedValue({
+      qrCodeUri: "otpauth://totp/SCRIPE:admin?secret=TESTSECRET",
+      manualEntryKey: "TESTSECRET",
+      backupCodes: ["ABCD-1111", "EFGH-2222"],
+    });
     mocks.changePassword.mockResolvedValue({
       accessToken: "hdr.payload.rotatedsig",
       expiresAt: new Date(Date.now() + 900_000).toISOString(),
@@ -146,7 +169,7 @@ describe("PasswordChangeForm & SecurityVault rotated token handling", () => {
     );
   });
 
-  it("refreshes session, clears requireMfaEnrollment, and navigates to / after confirming mandatory 2FA", async () => {
+  it("keeps twoFaSetupData for backup codes step on confirm2Fa and clears requireMfaEnrollment when wizard closes", async () => {
     useAppStore.getState().setRequireMfaEnrollment(true);
     mocks.confirm2FA.mockResolvedValueOnce(undefined);
     mocks.refreshToken.mockResolvedValueOnce({
@@ -160,10 +183,23 @@ describe("PasswordChangeForm & SecurityVault rotated token handling", () => {
     await waitFor(() => expect(result.current.passwordPolicy).toEqual(POLICY));
 
     await act(async () => {
+      await result.current.begin2FaSetup();
+    });
+    expect(result.current.twoFaSetupData?.backupCodes).toEqual(["ABCD-1111", "EFGH-2222"]);
+
+    await act(async () => {
       await result.current.confirm2Fa("123456");
     });
 
     expect(mocks.confirm2FA).toHaveBeenCalledWith("123456");
+    expect(result.current.twoFaSetupData).not.toBeNull();
+    expect(mocks.refreshToken).not.toHaveBeenCalled();
+
+    await act(async () => {
+      await result.current.clearTwoFaSetup();
+    });
+
+    expect(result.current.twoFaSetupData).toBeNull();
     expect(mocks.refreshToken).toHaveBeenCalledTimes(1);
     expect(useAppStore.getState().requireMfaEnrollment).toBe(false);
     expect(mocks.replace).toHaveBeenCalledWith("/");
@@ -205,6 +241,12 @@ describe("PasswordChangeForm & SecurityVault rotated token handling", () => {
 
     await act(async () => {
       await result.current.confirm2Fa("123456");
+    });
+
+    expect(mocks.refreshToken).not.toHaveBeenCalled();
+
+    await act(async () => {
+      await result.current.clearTwoFaSetup();
     });
 
     expect(mocks.refreshToken).toHaveBeenCalledTimes(1);

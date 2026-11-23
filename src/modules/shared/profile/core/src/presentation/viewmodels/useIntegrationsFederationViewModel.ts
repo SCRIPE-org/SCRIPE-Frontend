@@ -61,6 +61,7 @@ export const integrationsKeys = {
 export function useIntegrationsFederationViewModel() {
   const profileRepo = container.profileRepository;
   const queryClient = useQueryClient();
+  const requireMfaEnrollment = useAppStore((s) => s.requireMfaEnrollment);
   const {
     integrations,
     isLoadingIntegrations,
@@ -108,6 +109,7 @@ export function useIntegrationsFederationViewModel() {
   } = useQuery({
     queryKey: integrationsKeys.externalLogins(),
     queryFn: () => profileRepo.getExternalLogins(),
+    enabled: !requireMfaEnrollment,
     staleTime: 60 * 1000,
   });
 

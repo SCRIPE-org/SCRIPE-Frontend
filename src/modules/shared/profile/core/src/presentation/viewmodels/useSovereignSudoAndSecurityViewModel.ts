@@ -6,6 +6,7 @@
  */
 import { useCallback } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useAppStore } from "@core/store/useAppStore";
 import { useSudoStore } from "@core/store/useSudoStore";
 import { assertPasskey } from "@core/services/webauthn.service";
 import { container } from "@modules/profile/di";
@@ -125,6 +126,13 @@ export function useAccountSecuritySliceViewModel() {
   return {
     security: data
       ? {
+          isTwoFactorEnabled: data.isTwoFactorEnabled,
+          backupCodesRemaining: data.backupCodesRemaining,
+          passwordLastChangedUtc: data.passwordLastChangedUtc ?? null,
+          isPasswordExpired: Boolean(data.isPasswordExpired),
+          daysUntilPasswordExpiry: data.daysUntilPasswordExpiry ?? null,
+          securityPostureScore: data.securityPostureScore,
+          postureChecklist: data.postureChecklist,
           trustedCidrs: data.trustedCidrs,
           currentClientIp: data.currentClientIp,
           isCurrentIpAllowed: data.isCurrentIpAllowed,
@@ -151,9 +159,11 @@ export function useAccountSecuritySliceViewModel() {
 
 /** Queries active account sessions and exposes session RTT latency ping mutations. */
 export function useSovereignSessionsSlice() {
+  const requireMfaEnrollment = useAppStore((s) => s.requireMfaEnrollment);
   const query = useQuery({
     queryKey: sovereignAccountKeys.sessions(),
     queryFn: () => container.sovereignAccountRepository.getSessions(),
+    enabled: !requireMfaEnrollment,
   });
   const pingMutation = useMutation({
     mutationFn: (sessionId: string) =>

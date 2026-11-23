@@ -15,6 +15,7 @@ import { Skeleton } from "@core/ui/skeleton";
 import { useProfileDossierViewModel } from "@modules/profile/core/src/presentation/viewmodels/useProfileDossierViewModel";
 import {
   useAccountContextSliceViewModel,
+  useAccountSecuritySliceViewModel,
   useSudoViewModel,
 } from "@modules/profile/core/src/presentation/viewmodels/useSovereignAccountSlicesViewModel";
 import { sessionsFleetKeys } from "@modules/profile/core/src/presentation/viewmodels/useSessionsFleetViewModel";
@@ -55,6 +56,7 @@ export default function SovereignAccountSectionLayout({ children }: { children: 
   const { profile, toggleAvailability, switchAcademy, selectedAcademyId } =
     useProfileDossierViewModel();
   const { accountContext, isLoadingContext } = useAccountContextSliceViewModel();
+  const { security } = useAccountSecuritySliceViewModel();
   const { sudoActive, openSudoModal, refreshStatus, lockSudo } = useSudoViewModel();
   const queryClient = useQueryClient();
   const cachedSessions = queryClient.getQueryData<unknown[]>(sessionsFleetKeys.list());
@@ -72,12 +74,13 @@ export default function SovereignAccountSectionLayout({ children }: { children: 
         <ProfileTelemetryHud
           profile={profile}
           accountContext={accountContext}
+          security={security}
           activeSessionCount={activeSessionCount}
           onToggleAvailability={toggleAvailability}
           onOpenSudoGate={openSudoModal}
           onLockSudo={lockSudo}
           sudoActive={sudoActive}
-          isLoading={isLoadingContext && !profile}
+          isLoading={isLoadingContext && !profile && !security}
         />
         <ProfileRailLayout
           profile={profile}

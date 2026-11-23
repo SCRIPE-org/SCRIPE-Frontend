@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { container } from "@modules/profile/di";
 import { useI18n } from "@core/providers/i18n-provider";
 import { sanitizeHttpUrl } from "@core/common/sanitize";
+import { useAppStore } from "@core/store/useAppStore";
 import { useSudoStore } from "@core/store/useSudoStore";
 import { toast } from "@core/ui/sileo-toast";
 import type { AvailableSsoProvider } from "../../domain/entities/SovereignAccountEntities";
@@ -32,6 +33,7 @@ export function useExternalLoginsViewModel() {
   const repo = container.profileRepository;
   const { t } = useI18n();
   const queryClient = useQueryClient();
+  const requireMfaEnrollment = useAppStore((s) => s.requireMfaEnrollment);
   const isSudoActive = useSudoStore((s) => s.isActive);
   const { security, isLoadingSecurity } = useAccountSecuritySliceViewModel();
 
@@ -44,6 +46,7 @@ export function useExternalLoginsViewModel() {
   } = useQuery({
     queryKey: externalLoginKeys.all,
     queryFn: () => repo.getExternalLogins(),
+    enabled: !requireMfaEnrollment,
   });
 
   const invalidateSsoQueries = useCallback(() => {

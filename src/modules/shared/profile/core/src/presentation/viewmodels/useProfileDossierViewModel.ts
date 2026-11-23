@@ -30,6 +30,7 @@ export function useProfileDossierViewModel() {
   const profileRepo = container.profileRepository;
   const queryClient = useQueryClient();
   const { t } = useI18n();
+  const requireMfaEnrollment = useAppStore((s) => s.requireMfaEnrollment);
   const [profileSuccess, setProfileSuccess] = useState(false);
   const [selectedAcademyId, setSelectedAcademyId] = useState<string>("default-hq");
   const [, startTransition] = useTransition();
@@ -70,6 +71,7 @@ export function useProfileDossierViewModel() {
       }
       return data;
     },
+    enabled: !requireMfaEnrollment,
     staleTime: 60 * 1000,
   });
 

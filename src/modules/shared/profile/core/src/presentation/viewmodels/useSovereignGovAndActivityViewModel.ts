@@ -5,6 +5,7 @@
  * and forensic account activity queries.
  */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useAppStore } from "@core/store/useAppStore";
 import { container } from "@modules/profile/di";
 import type { SovereignActivityQuery } from "../../domain/entities/SovereignAccountEntities";
 import type { RequestBreakGlassPayload } from "../../domain/interfaces/ISovereignAccountRepository";
@@ -13,9 +14,11 @@ import { sovereignAccountKeys } from "../utils/sovereignAccountKeys";
 /** Queries governance state and mutates time-bounded authority delegations. */
 export function useSovereignGovernanceSlice() {
   const qc = useQueryClient();
+  const requireMfaEnrollment = useAppStore((s) => s.requireMfaEnrollment);
   const query = useQuery({
     queryKey: sovereignAccountKeys.governance(),
     queryFn: () => container.sovereignAccountRepository.getGovernance(),
+    enabled: !requireMfaEnrollment,
   });
   const createDelegationMutation = useMutation({
     mutationFn: (
@@ -120,9 +123,11 @@ export function useAccountGovernanceSliceViewModel() {
 
 /** Queries the paginated sovereign forensic audit activity feed. */
 export function useSovereignActivitySlice(query?: SovereignActivityQuery) {
+  const requireMfaEnrollment = useAppStore((s) => s.requireMfaEnrollment);
   return useQuery({
     queryKey: sovereignAccountKeys.activity(query),
     queryFn: () => container.sovereignAccountRepository.getActivity(query ?? 50),
+    enabled: !requireMfaEnrollment,
   });
 }
 

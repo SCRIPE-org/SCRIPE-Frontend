@@ -80,6 +80,9 @@ export const en = {
       mfaEnrollRequiredTitle: "Two-Factor Authentication Required",
       mfaEnrollRequiredDesc:
         "Your workspace security policy requires enabling 2FA or registering a passkey before accessing other pages.",
+      mfaEnrollLockedControlsTitle: "Additional Security Controls Locked Until MFA Enrollment",
+      mfaEnrollLockedControlsDesc:
+        "Password rotation, Enterprise SSO linking, Trusted IP Perimeter rules, and Emergency Lockdown become available once you enable 2FA or register a passkey above.",
       showPassword: "Show password",
       hidePassword: "Hide password",
       twoFaStep: "Two-Factor Auth",
