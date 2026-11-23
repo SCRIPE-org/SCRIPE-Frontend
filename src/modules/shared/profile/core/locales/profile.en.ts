@@ -55,7 +55,7 @@ export const en = {
       title: "Security & Identity Vault",
       description: "Manage your cryptographic passkeys, two-factor authentication, and password rotation.",
       changePassword: "Change Password",
-      passwordRequirements: "Ensure your password is at least 12 characters and includes numbers and symbols.",
+      passwordRequirements: "Your new password must meet your organization's active password policy.",
       currentPassword: "Current Password",
       newPassword: "New Password",
       confirmPassword: "Confirm New Password",

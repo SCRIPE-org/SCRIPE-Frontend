@@ -95,12 +95,29 @@ describe("ProfileService — no call site targets the dead /v1/profile/* or lega
     expect(api.delete).toHaveBeenCalledWith(PROFILE_ENDPOINTS.AVATAR);
   });
 
-  it("changePassword() resolves the current admin id via DOSSIER then POSTs /v1/admins/{id}/change-password", async () => {
-    const api = mockApiService({ get: vi.fn().mockResolvedValue({ id: "admin-123" }) });
+  it("changePassword() resolves adminId (or legacy id fallback) via DOSSIER then POSTs /v1/admins/{id}/change-password", async () => {
     const data = { currentPassword: "old", newPassword: "new" };
-    await new ProfileService(api).changePassword(data);
-    expect(api.get).toHaveBeenCalledWith(PROFILE_ENDPOINTS.DOSSIER);
-    expect(api.post).toHaveBeenCalledWith(PROFILE_ENDPOINTS.CHANGE_PASSWORD("admin-123"), data);
+
+    const apiWithAdminId = mockApiService({
+      get: vi.fn().mockResolvedValue({ adminId: "admin-123" }),
+    });
+    await new ProfileService(apiWithAdminId).changePassword(data);
+    expect(apiWithAdminId.get).toHaveBeenCalledWith(PROFILE_ENDPOINTS.DOSSIER);
+    expect(apiWithAdminId.post).toHaveBeenCalledWith(PROFILE_ENDPOINTS.CHANGE_PASSWORD("admin-123"), data);
+
+    const apiWithLegacyId = mockApiService({
+      get: vi.fn().mockResolvedValue({ id: "admin-legacy" }),
+    });
+    await new ProfileService(apiWithLegacyId).changePassword(data);
+    expect(apiWithLegacyId.post).toHaveBeenCalledWith(PROFILE_ENDPOINTS.CHANGE_PASSWORD("admin-legacy"), data);
+
+    const apiMissingId = mockApiService({
+      get: vi.fn().mockResolvedValue({}),
+    });
+    await expect(new ProfileService(apiMissingId).changePassword(data)).rejects.toThrow(
+      "Unable to resolve administrator identifier"
+    );
+    expect(apiMissingId.post).not.toHaveBeenCalled();
   });
 
   it("getSessions() GETs /v1/auth/admin/sessions, not /v1/profile/sessions", async () => {

@@ -48,12 +48,16 @@ export class ProfileService implements IProfileService {
   /**
    * AdminsController.ChangePassword is `POST /v1/admins/{id}/change-password` — it needs
    * the current admin's own id, which this service doesn't otherwise hold. Resolve it via
-   * GET /v1/account/dossier (AdminProfileDto always carries `id`) before posting.
+   * GET /v1/account/dossier (`AccountDossierDto` returns `adminId`; legacy DTOs return `id`).
    */
   async changePassword(data: ChangePasswordRequest): Promise<ChangePasswordSessionResult | void> {
-    const me = await this.api.get<{ id: string }>(PROFILE_ENDPOINTS.DOSSIER);
+    const me = await this.api.get<{ adminId?: string; id?: string }>(PROFILE_ENDPOINTS.DOSSIER);
+    const adminId = (me?.adminId ?? me?.id ?? "").trim();
+    if (!adminId) {
+      throw new Error("Unable to resolve administrator identifier for password change.");
+    }
     return this.api.post<ChangePasswordSessionResult | void>(
-      PROFILE_ENDPOINTS.CHANGE_PASSWORD(me.id),
+      PROFILE_ENDPOINTS.CHANGE_PASSWORD(adminId),
       data
     );
   }
