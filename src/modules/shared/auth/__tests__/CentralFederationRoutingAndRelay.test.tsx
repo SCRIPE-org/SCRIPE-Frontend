@@ -842,4 +842,78 @@ describe("CentralFederationRoutingAndRelay (Stage 3B-4)", () => {
     );
     expect(useAppStore.getState().isAuthenticated).toBe(false);
   });
+
+  it("does not resurrect Club A returnOrigin when cross-tenant workspace selection returns returnOrigin: null before Hybrid-2FA (#276)", async () => {
+    vi.stubEnv("NEXT_PUBLIC_APP_URL", "https://admin.scripe.org");
+    vi.stubEnv("NEXT_PUBLIC_AUTH_URL", "https://auth.scripe.org");
+    setBrowserUrl("https://auth.scripe.org/sso/continue?code=c-ab&state=s-ab");
+    mockSearchParams = new URLSearchParams("code=c-ab&state=s-ab");
+
+    mockRedeemCallback.mockResolvedValueOnce({
+      purpose: "login",
+      requiresWorkspaceSelection: true,
+      token: "ws-ab-tok",
+      email: "admin@multi.com",
+      returnOrigin: "https://portal.cluba.com",
+      returnPath: "/club-a/secret",
+      availableWorkspaces: [
+        {
+          tenantId: "t-clubb",
+          tenantCode: "CLUBB",
+          tenantName: "Club B",
+          logoUrl: null,
+          isPlatformAdmin: false,
+          isActivated: true,
+          isDisabled: false,
+          isPasswordVerified: true,
+        },
+      ],
+    });
+
+    // Backend explicitly clears returnOrigin/returnPath to null for cross-tenant selection
+    mockCompleteWorkspaceSelection.mockResolvedValueOnce({
+      type: "admin",
+      requires2FA: true,
+      twoFactorPendingToken: "pending-clubb-mfa",
+      staySignedIn: false,
+      returnOrigin: null,
+      returnPath: null,
+    });
+
+    mockVerify2FA.mockResolvedValueOnce({
+      user: { id: "adm-clubb", tenantId: "t-clubb", permissions: [], roles: [] },
+      mustChangePassword: false,
+      requireMfaEnrollment: false,
+      subscriptionStatus: "Active",
+      gracePhase: null,
+      editionName: "Pro",
+      defaultRedirectPath: "/",
+    });
+
+    const { result } = renderHook(() => useSsoCallbackHandler("continue"), {
+      wrapper: createQueryWrapper(),
+    });
+    await waitFor(() => expect(result.current.state).toBe("workspace_selection"));
+
+    await act(async () => {
+      await result.current.handleSelectWorkspace(result.current.workspaceData!.workspaces[0]);
+    });
+    await waitFor(() => expect(result.current.state).toBe("two_factor"));
+
+    act(() => result.current.setTwoFactorCode("123456"));
+    await act(async () => {
+      await result.current.handleVerify2FA();
+    });
+
+    // Must NOT forward Club A's returnOrigin to Club B's POST /2fa/verify
+    expect(mockVerify2FA).toHaveBeenCalledWith(
+      "",
+      null,
+      "123456",
+      undefined,
+      "pending-clubb-mfa",
+      false
+    );
+    await waitFor(() => expect(result.current.state).toBe("success"));
+  });
 });

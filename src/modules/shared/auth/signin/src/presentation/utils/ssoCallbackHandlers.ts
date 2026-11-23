@@ -192,7 +192,13 @@ export async function handleOidcCallback(
       setters.redirectTo("/account/security?error=sso_missing_params");
       return;
     }
-    setSsoCallbackFailure(setters, deps.t("auth.sso.callbackError"), deps.t("auth.sso.missingParams"));
+    setSsoCallbackFailure(
+      setters,
+      deps.t("auth.sso.callbackError"),
+      deps.t("auth.sso.missingParams"),
+      "error",
+      "sso_missing_params"
+    );
     return;
   }
 
@@ -247,7 +253,13 @@ export async function handleSamlCallback(
       setters.redirectTo("/account/security?error=sso_missing_params");
       return;
     }
-    setSsoCallbackFailure(setters, deps.t("auth.sso.callbackError"), deps.t("auth.sso.missingParams"));
+    setSsoCallbackFailure(
+      setters,
+      deps.t("auth.sso.callbackError"),
+      deps.t("auth.sso.missingParams"),
+      "error",
+      "sso_missing_params"
+    );
     return;
   }
 

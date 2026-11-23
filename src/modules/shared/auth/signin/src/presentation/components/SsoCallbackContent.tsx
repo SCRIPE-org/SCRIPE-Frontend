@@ -128,7 +128,7 @@ export function SsoCallbackContent({
                   {errorCode && (
                     <code
                       dir="ltr"
-                      className="mt-3 inline-block rounded-md border border-nx-line bg-nx-surface-2 px-2.5 py-0.5 font-mono text-[11px] text-nx-ink-3"
+                      className="mt-3 inline-block rounded-md border border-nx-line bg-nx-raised px-2.5 py-0.5 font-mono text-[11px] text-nx-ink-3"
                     >
                       {errorCode}
                     </code>
@@ -158,7 +158,7 @@ export function SsoCallbackContent({
                   {errorCode && (
                     <code
                       dir="ltr"
-                      className="mt-3 inline-block rounded-md border border-nx-line bg-nx-surface-2 px-2.5 py-0.5 font-mono text-[11px] text-nx-ink-3"
+                      className="mt-3 inline-block rounded-md border border-nx-line bg-nx-raised px-2.5 py-0.5 font-mono text-[11px] text-nx-ink-3"
                     >
                       {errorCode}
                     </code>

@@ -128,8 +128,17 @@ export function useSsoCallbackHandler(kind: SsoCallbackKind) {
         workspaceData.token,
         targetTenantId
       );
-      const returnOrigin = result.returnOrigin ?? handoffContext.returnOrigin ?? null;
-      const returnPath = result.returnPath ?? handoffContext.returnPath ?? null;
+      const returnOrigin =
+        result.returnOrigin !== undefined
+          ? result.returnOrigin
+          : (handoffContext.returnOrigin ?? null);
+      const returnPath =
+        result.returnOrigin === null
+          ? (result.returnPath ?? null)
+          : (result.returnPath ?? handoffContext.returnPath ?? null);
+      if (result.returnOrigin === null) {
+        setHandoffContext({ returnOrigin: null, returnPath });
+      }
       // Resolve central hybrid-2FA BEFORE forwarding to any cross-origin custom domain (#227/#228).
       if (result.requires2FA && result.twoFactorPendingToken) {
         setTwoFactorPending({
@@ -146,11 +155,11 @@ export function useSsoCallbackHandler(kind: SsoCallbackKind) {
         return;
       }
       const crossOrigin = buildVerifiedCrossOriginCallbackUrl(
-        returnOrigin,
+        result.returnOrigin,
         result.handoffCode,
         result.handoffState,
         returnPath,
-        returnOrigin ? [returnOrigin] : undefined
+        result.returnOrigin ? [result.returnOrigin] : undefined
       );
       if (crossOrigin) {
         setState("success");

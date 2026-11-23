@@ -38,8 +38,14 @@ export async function executeSsoTwoFactorVerification(
   params: SsoTwoFactorExecutionParams
 ): Promise<void> {
   const { twoFactorPending, handoffContext, queryRedirect } = params;
-  const resolvedOrigin = twoFactorPending.returnOrigin ?? handoffContext.returnOrigin ?? null;
-  const resolvedPath = twoFactorPending.returnPath ?? handoffContext.returnPath ?? queryRedirect ?? null;
+  const resolvedOrigin =
+    twoFactorPending.returnOrigin !== undefined
+      ? twoFactorPending.returnOrigin
+      : (handoffContext.returnOrigin ?? null);
+  const resolvedPath =
+    twoFactorPending.returnOrigin === null
+      ? (twoFactorPending.returnPath ?? null)
+      : (twoFactorPending.returnPath ?? handoffContext.returnPath ?? queryRedirect ?? null);
   const isCrossOriginReturn =
     Boolean(resolvedOrigin) &&
     typeof window !== "undefined" &&
