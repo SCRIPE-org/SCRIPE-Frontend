@@ -958,10 +958,32 @@ test.describe.serial("Identity Authentication, Recovery & Security Policy Certif
       const changeResPromise = page.waitForResponse(
         (res) =>
           /\/api\/v1\/admins\/[^/]+\/change-password/i.test(res.url()) &&
+          res.request().method() === "POST" &&
+          res.status() !== 403,
+        { timeout: 25_000 }
+      );
+      await updateBtn.click();
+
+      const sudoModal = page.getByTestId("sudo-verification-modal");
+      await expect(sudoModal).toBeVisible({ timeout: 15_000 });
+      const pwdTab = sudoModal.getByTestId("sudo-tab-password");
+      if ((await pwdTab.count()) > 0) {
+        await pwdTab.click();
+      }
+      const sudoPwdInput = sudoModal.getByTestId("sudo-password-input");
+      await expect(sudoPwdInput).toBeVisible({ timeout: 10_000 });
+      await sudoPwdInput.fill(activeCurrentPassword);
+
+      const sudoVerifyPromise = page.waitForResponse(
+        (res) =>
+          res.url().toLowerCase().includes("/api/v1/auth/sudo/verify") &&
           res.request().method() === "POST",
         { timeout: 20_000 }
       );
-      await updateBtn.click();
+      await sudoModal.getByTestId("sudo-verify-submit-btn").click();
+      expect((await sudoVerifyPromise).status()).toBe(200);
+      await expect(sudoModal).toBeHidden({ timeout: 15_000 });
+
       const changeRes = await changeResPromise;
       expect(changeRes.status()).toBe(200);
 
