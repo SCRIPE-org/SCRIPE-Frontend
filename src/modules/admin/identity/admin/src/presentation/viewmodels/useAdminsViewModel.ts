@@ -8,6 +8,7 @@
 "use client";
 
 import { useCallback, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { identityContainer } from "@modules/identity/di";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
@@ -144,11 +145,37 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
     refreshItems: vm.refreshItems,
   });
 
+  // ============ Effective Password Policy ============
+  const {
+    data: passwordPolicy = null,
+    isLoading: isPasswordPolicyLoading,
+    isError: isPasswordPolicyError,
+    refetch: refetchPasswordPolicy,
+  } = useQuery({
+    queryKey: ["admins", "password-policy", tenantId ?? (useMyTenant ? "current" : "system")],
+    queryFn: () => adminRepository.getPasswordPolicy(tenantId),
+    staleTime: 5 * 60 * 1000,
+    retry: false,
+  });
+
+  const passwordPolicyError = isPasswordPolicyError
+    ? t("common.passwordPolicy.loadFailed")
+    : null;
+  const retryPasswordPolicy = useCallback(() => {
+    void refetchPasswordPolicy();
+  }, [refetchPasswordPolicy]);
+
   // ============ Config Fields & Values ============
   const fieldsConfig = useAdminFieldsConfig(
     t,
     operations.handleRoleSearch,
-    operations.handleGroupSearch
+    operations.handleGroupSearch,
+    {
+      passwordPolicy,
+      isLoading: isPasswordPolicyLoading,
+      error: passwordPolicyError,
+      onRetry: retryPasswordPolicy,
+    }
   );
 
   // ============ Config Base ============
@@ -175,6 +202,10 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
   return {
     vm,
     getConfigBase,
+    passwordPolicy,
+    isPasswordPolicyLoading,
+    passwordPolicyError,
+    retryPasswordPolicy,
     ...operations,
   };
 }

@@ -84,6 +84,10 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
     isResendingSetupEmail,
     handleManualSetup,
     isManualSettingUp,
+    passwordPolicy,
+    isPasswordPolicyLoading,
+    passwordPolicyError,
+    retryPasswordPolicy,
   } = useAdminsViewModel({ useMyTenant: !isPlatformSuperAdmin, tenantId });
 
   const configBase = getConfigBase();
@@ -502,6 +506,10 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
         admin={selectedAdminForAction}
         onResetPassword={onResetPasswordSubmit}
         isLoading={isResettingPassword}
+        passwordPolicy={passwordPolicy}
+        isPasswordPolicyLoading={isPasswordPolicyLoading}
+        passwordPolicyError={passwordPolicyError}
+        onRetryPasswordPolicy={retryPasswordPolicy}
       />
 
       <ManualSetupDialog
@@ -510,6 +518,10 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
         admin={selectedAdminForAction}
         onManualSetup={onManualSetupSubmit}
         isLoading={isManualSettingUp}
+        passwordPolicy={passwordPolicy}
+        isPasswordPolicyLoading={isPasswordPolicyLoading}
+        passwordPolicyError={passwordPolicyError}
+        onRetryPasswordPolicy={retryPasswordPolicy}
       />
 
       <AdminTransferDialog

@@ -9,6 +9,7 @@
  * - Repository uses Mapper to convert to Entities
  * - ViewModel uses Repository, works with Entities
  */
+import { mapPasswordPolicyDto, type PasswordPolicyModel } from "@core/common/password-policy";
 import type { IAdminRepository, AdminListParams } from "../../domain/interfaces/IAdminRepository";
 import type { IAdminService } from "../../domain/interfaces/IAdminService";
 import { Admin, type AdminRoleData } from "../../domain/entities/Admin";
@@ -181,5 +182,10 @@ export class AdminRepository implements IAdminRepository {
 
   async resendSetupEmail(adminId: string): Promise<void> {
     return this.service.resendSetupEmail(adminId);
+  }
+
+  async getPasswordPolicy(tenantId?: string): Promise<PasswordPolicyModel> {
+    const dto = await this.service.getPasswordPolicy(tenantId);
+    return mapPasswordPolicyDto(dto);
   }
 }
