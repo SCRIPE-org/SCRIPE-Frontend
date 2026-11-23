@@ -103,11 +103,7 @@ export function NewPasswordStep({
         />
 
         <div className="space-y-2">
-          <Label
-            htmlFor="fp-confirm-password"
-            className="block text-[11px] font-semibold uppercase tracking-wider"
-            style={{ color: "var(--sx-text-mute)" }}
-          >
+          <Label htmlFor="fp-confirm-password" className="text-xs font-semibold text-nx-ink">
             {t("auth.confirmPassword")}
           </Label>
           <PasswordInput

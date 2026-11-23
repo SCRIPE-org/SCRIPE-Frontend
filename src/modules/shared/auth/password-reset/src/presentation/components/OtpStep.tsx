@@ -54,7 +54,9 @@ export function OtpStep({ vm, totalSteps }: OtpStepProps) {
         </h1>
         <p className="mt-1.5 text-[13px] leading-relaxed" style={{ color: "var(--sx-text-mute)" }}>
           {t("auth.enterOtpSubtitle").replace("{{email}}", "")}{" "}
-          <strong style={{ color: "var(--sx-text)" }}>{vm.email}</strong>
+          <strong style={{ color: "var(--sx-text)" }}>
+            <bdi dir="ltr">{vm.email}</bdi>
+          </strong>
         </p>
       </div>
 
@@ -97,7 +99,7 @@ export function OtpStep({ vm, totalSteps }: OtpStepProps) {
           variant="ghost"
           onClick={() => void vm.resendCode()}
           disabled={vm.cooldown > 0 || vm.isLoading}
-          className="inline-flex h-auto items-center gap-1.5 p-0 text-[12px] font-medium hover:bg-transparent disabled:opacity-40"
+          className="inline-flex h-auto items-center gap-1.5 border-transparent p-0 text-[12px] font-medium hover:bg-transparent disabled:border-transparent disabled:opacity-40"
           style={{ color: "var(--sx-text-mute)" }}
         >
           <RefreshCw className="h-3.5 w-3.5" aria-hidden="true" />

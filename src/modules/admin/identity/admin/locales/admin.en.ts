@@ -111,7 +111,7 @@ export const en = {
     impersonating: "Impersonating",
     useDefaultPassword: "Use Default Password",
     writePassword: "Write Password",
-    resetPasswordDescription: "Reset Password Description",
+    resetPasswordDescription: "Reset password for",
     isActive: "Is Active",
     inActive: "In Active",
     sendSetupEmail: "Send setup email",
