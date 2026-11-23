@@ -189,6 +189,17 @@ async function completeAuthenticatedSession(
   setTimeout(() => setters.redirectTo(targetPath), 300);
 }
 
+/** Completes an authenticated admin or portal user session after SSO/handoff redemption. */
+export async function completePrincipalLogin(
+  principalType: "admin" | "user",
+  accessToken: string,
+  meta: SsoSessionMeta,
+  deps: SsoCallbackDeps,
+  setters: SsoCallbackSetters
+): Promise<void> {
+  return completeAuthenticatedSession(principalType, accessToken, meta, deps, setters);
+}
+
 /** Completes an authenticated admin session after OIDC or SAML callback redemption. */
 export async function completeAdminLogin(
   accessToken: string,

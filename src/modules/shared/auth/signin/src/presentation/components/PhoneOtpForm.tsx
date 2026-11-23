@@ -12,7 +12,7 @@ import { PostCredentialWorkspaceSelector } from "./PostCredentialWorkspaceSelect
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface PhoneOtpFormProps {
-  onSuccess: (result: TokenLoginPayload) => void;
+  onSuccess: (result: TokenLoginPayload) => void | Promise<void>;
   onBack: () => void;
   isRTL: boolean;
   tenantId?: string | null;
@@ -42,7 +42,9 @@ export function PhoneOtpForm({
       <PostCredentialWorkspaceSelector
         email={vm.phone}
         workspaces={vm.availableWorkspaces}
-        onSelect={vm.selectWorkspace}
+        onSelect={(ws) => {
+          void Promise.resolve(vm.selectWorkspace(ws)).catch(() => {});
+        }}
         onUnlock={async () => {}}
         onBack={vm.changeNumber}
         isLoading={vm.isLoading}
@@ -108,7 +110,7 @@ export function PhoneOtpForm({
         {/* Submit */}
         <Button
           type="button"
-          onClick={vm.requestOtp}
+          onClick={() => void vm.requestOtp()}
           disabled={vm.isLoading || !vm.phone.trim()}
           className="relative w-full overflow-hidden rounded-lg py-3 text-sm font-semibold"
           style={{
@@ -192,7 +194,7 @@ export function PhoneOtpForm({
       {/* Verify */}
       <Button
         type="button"
-        onClick={vm.verifyOtp}
+        onClick={() => void vm.verifyOtp()}
         disabled={vm.isLoading || vm.code.length !== 6}
         className="relative w-full overflow-hidden rounded-lg py-3 text-sm font-semibold"
         style={{
@@ -216,7 +218,7 @@ export function PhoneOtpForm({
         <Button
           variant="link"
           disabled={vm.cooldown > 0}
-          onClick={vm.resendOtp}
+          onClick={() => void vm.resendOtp()}
           className="text-sm font-medium transition-colors duration-150"
           style={{
             color: vm.cooldown > 0 ? "var(--sx-text-faint)" : "var(--sx-accent-text)",

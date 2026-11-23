@@ -44,9 +44,10 @@ export interface UsePasskeyLoginViewModelReturn {
  * - Handles AbortError, NotAllowedError, SecurityError gracefully
  */
 export function usePasskeyLoginViewModel(
-  onSuccess: (result: PasskeyAuthVerifyResult) => void,
+  onSuccess: (result: PasskeyAuthVerifyResult) => void | Promise<void>,
   tenantId?: string | null,
-  identifier?: string
+  identifier?: string,
+  onTwoFactorRequired?: (pendingToken: string, staySignedIn: boolean) => void
 ): UsePasskeyLoginViewModelReturn {
   const { t } = useI18n();
   const { authRepository } = authContainer;
@@ -118,7 +119,19 @@ export function usePasskeyLoginViewModel(
         tenantId,
       });
 
-      onSuccess(verifyResult);
+      if (verifyResult.requires2FA && verifyResult.twoFactorPendingToken) {
+        if (onTwoFactorRequired) {
+          onTwoFactorRequired(
+            verifyResult.twoFactorPendingToken,
+            Boolean(verifyResult.staySignedIn)
+          );
+          return;
+        }
+        setError(t("auth.sso.errors.temporarilyUnavailable") || t("auth.passkey.failed"));
+        return;
+      }
+
+      await Promise.resolve(onSuccess(verifyResult));
     } catch (err) {
       if (err instanceof Error) {
         // Handle specific WebAuthn errors
@@ -143,7 +156,7 @@ export function usePasskeyLoginViewModel(
     } finally {
       setIsLoading(false);
     }
-  }, [isSupported, onSuccess, t, authRepository, tenantId, identifier]);
+  }, [isSupported, onSuccess, onTwoFactorRequired, t, authRepository, tenantId, identifier]);
 
   return {
     isLoading,

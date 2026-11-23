@@ -10,7 +10,7 @@ import { useAppStore } from "@core/store/useAppStore";
 import { useServices } from "@core/providers/service-provider";
 import {
   buildVerifiedCrossOriginCallbackUrl,
-  completeAdminLogin,
+  completePrincipalLogin,
   emitSsoLoginBroadcast,
   handleOidcCallback,
   handleSamlCallback,
@@ -156,8 +156,9 @@ export function useSsoCallbackHandler(kind: SsoCallbackKind) {
         setState("two_factor");
         return;
       }
-      if (result.type === "admin" && result.accessToken) {
-        await completeAdminLogin(
+      if ((result.type === "admin" || result.type === "user") && result.accessToken) {
+        await completePrincipalLogin(
+          result.type,
           result.accessToken,
           {
             status: result.subscriptionStatus,

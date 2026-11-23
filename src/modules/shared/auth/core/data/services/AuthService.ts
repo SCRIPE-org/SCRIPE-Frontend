@@ -307,6 +307,7 @@ export class AuthService implements IAuthService {
       deviceInfo: typeof window !== "undefined" ? window.navigator.userAgent : null,
       clientExtensionResults: data.clientExtensionResults ?? null,
       challengeToken: data.challengeToken ?? data.challengeId ?? null,
+      staySignedIn: Boolean(data.staySignedIn),
     };
 
     return this.api.postPublic<PasskeyAuthVerifyResult>(

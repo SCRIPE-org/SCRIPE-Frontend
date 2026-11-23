@@ -13,6 +13,7 @@ import { useWorkspaceSelector } from "./useWorkspaceSelector";
 import { useMagicLinkHandler } from "./useMagicLinkHandler";
 import { useLoginRedirect } from "./useLoginRedirect";
 import { classifyLoginError, resolveDevTenantCode } from "../utils/login-error.utils";
+import { resolveSsoErrorOutcome } from "../utils/ssoCallbackHandlers";
 import type { LoginFormData, LoginStep } from "../types/loginTypes";
 
 /** Re-exported login form and step types for signin consumers. */
@@ -26,6 +27,7 @@ export function useLoginViewModel() {
   const searchParams = useSearchParams();
   const queryEmail = searchParams?.get("email")?.trim() || "";
   const queryResetSuccess = searchParams?.get("reset") === "success";
+  const querySsoErrorRaw = searchParams?.get("error") ?? searchParams?.get("error_code") ?? "";
   const queryTenant = searchParams?.get("_tenant")?.trim() || undefined;
   const queryRedirect = searchParams?.get("redirect") || null;
 
@@ -43,6 +45,7 @@ export function useLoginViewModel() {
   const [accountNotActivatedMessage, setAccountNotActivatedMessage] = useState("");
   const [cooldownSeconds, setCooldownSeconds] = useState(0);
   const [isPasswordResetSuccess, setIsPasswordResetSuccess] = useState(queryResetSuccess);
+  const appliedQueryErrorRef = useRef<string | null>(null);
 
   const tenantIdRef = useRef<string | undefined>(undefined);
   const loginMutation = useAuthLogin();
@@ -74,6 +77,13 @@ export function useLoginViewModel() {
       setIsPasswordResetSuccess(true);
     }
   }, [queryResetSuccess]);
+
+  useEffect(() => {
+    if (!querySsoErrorRaw) return;
+    if (appliedQueryErrorRef.current === querySsoErrorRaw) return;
+    appliedQueryErrorRef.current = querySsoErrorRaw;
+    setError(resolveSsoErrorOutcome(querySsoErrorRaw, t).message);
+  }, [querySsoErrorRaw, t]);
 
   const setTenantId = useCallback((id: string | undefined) => {
     tenantIdRef.current = id;

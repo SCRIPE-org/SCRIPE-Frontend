@@ -1115,4 +1115,32 @@ describe("RouteGuard - Hardened Phase 2 Option C Security & Context Gates", () =
 
     expect(mockRouterReplace).toHaveBeenCalledWith("/change-password");
   });
+
+  it("allows /logout cleanly without stalling behind PendingPayment, mustChangePassword, requireMfaEnrollment, or token-loss redirect loops (FE-LOW-01)", () => {
+    currentPathname = "/logout";
+    mockUseAppStore.getState().subscriptionStatus = "PendingPayment";
+    mockUseAppStore.getState().mustChangePassword = true;
+    mockUseAppStore.getState().requireMfaEnrollment = true;
+
+    const { rerender } = render(
+      <RouteGuard>
+        <div data-testid="logout-content">Signing out...</div>
+      </RouteGuard>
+    );
+
+    expect(screen.getByTestId("logout-content")).toBeInTheDocument();
+    expect(mockRouterReplace).not.toHaveBeenCalled();
+    expect(mockRouterPush).not.toHaveBeenCalled();
+
+    // Even unauthenticated or missing in-memory token during logout transitions passes cleanly
+    mockHasToken.mockReturnValue(false);
+    mockUseAppStore.getState().isAuthenticated = false;
+    rerender(
+      <RouteGuard>
+        <div data-testid="logout-content">Signing out...</div>
+      </RouteGuard>
+    );
+    expect(screen.getByTestId("logout-content")).toBeInTheDocument();
+    expect(mockRouterPush).not.toHaveBeenCalled();
+  });
 });

@@ -133,7 +133,9 @@ export function SsoCallbackContent({
           <PostCredentialWorkspaceSelector
             email={workspaceEmail || ""}
             workspaces={workspaceData.workspaces}
-            onSelect={handleSelectWorkspace || (() => {})}
+            onSelect={(ws) => {
+              void Promise.resolve(handleSelectWorkspace?.(ws)).catch(() => {});
+            }}
             onUnlock={async () => {}}
             onBack={handleBack || (() => {})}
             isLoading={isSelectingWorkspace}

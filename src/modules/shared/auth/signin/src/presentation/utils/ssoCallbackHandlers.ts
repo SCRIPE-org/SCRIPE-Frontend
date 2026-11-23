@@ -8,6 +8,7 @@ import { resolvePostAuthTargetForOrigin } from "@core/common/origin-routing";
 import {
   buildVerifiedCrossOriginCallbackUrl,
   completeAdminLogin,
+  completePrincipalLogin,
   dispatchCallbackResult,
   emitSsoLoginBroadcast,
   isNoLinkedAccountError,
@@ -20,6 +21,7 @@ import {
 export {
   buildVerifiedCrossOriginCallbackUrl,
   completeAdminLogin,
+  completePrincipalLogin,
   emitSsoLoginBroadcast,
   isNoLinkedAccountError,
   resolvePostAuthTargetForOrigin,
@@ -53,6 +55,93 @@ function clearLegacySsoStorage(): boolean {
   return hadLegacyLinking;
 }
 
+const SSO_ERROR_LOCALE_KEYS: Record<string, string> = {
+  account_locked: "auth.sso.errors.accountLocked",
+  account_deactivated: "auth.sso.errors.accountDeactivated",
+  sso_subject_mismatch: "auth.sso.errors.subjectMismatch",
+  sso_identity_linked_elsewhere: "auth.sso.errors.linkedElsewhere",
+  access_denied: "auth.sso.errors.accessDenied",
+  invalid_credentials: "auth.sso.errors.invalidCredentials",
+  invalid_provider: "auth.sso.errors.invalidProvider",
+  provider_disabled: "auth.sso.errors.invalidProvider",
+  invalid_state: "auth.sso.errors.stateExpired",
+  state_expired: "auth.sso.errors.stateExpired",
+  login_required: "auth.sso.errors.stateExpired",
+  consent_required: "auth.sso.errors.stateExpired",
+  interaction_required: "auth.sso.errors.stateExpired",
+  server_error: "auth.sso.errors.temporarilyUnavailable",
+  temporarily_unavailable: "auth.sso.errors.temporarilyUnavailable",
+};
+
+function safeNormalizeErrorCode(rawError: string | null | undefined): string {
+  if (!rawError) return "";
+  let decoded = rawError;
+  try {
+    decoded = decodeURIComponent(rawError);
+  } catch {
+    decoded = rawError;
+  }
+  return decoded.trim().toLowerCase();
+}
+
+/**
+ * Maps URL `?error=` / `?error_code=` values from OIDC/SAML redirects into localized,
+ * user-safe messages and never echoes untrusted free-text or internal stack strings.
+ */
+export function resolveSsoErrorOutcome(
+  rawError: string | null | undefined,
+  t: (key: string) => string
+): {
+  state: "error" | "no_linked_account";
+  title: string;
+  message: string;
+  safeCode: string;
+} {
+  const normalized = safeNormalizeErrorCode(rawError);
+  if (
+    normalized === "no_linked_account" ||
+    normalized === "no_linked_account_saml" ||
+    normalized.includes("no_linked_account")
+  ) {
+    return {
+      state: "no_linked_account",
+      title: t("auth.sso.noLinkedAccount"),
+      message: t("auth.sso.noLinkedAccountDesc"),
+      safeCode: normalized === "no_linked_account_saml" ? "no_linked_account_saml" : "no_linked_account",
+    };
+  }
+  const localeKey = SSO_ERROR_LOCALE_KEYS[normalized];
+  if (localeKey) {
+    return {
+      state: "error",
+      title: t("auth.sso.callbackError"),
+      message: t(localeKey),
+      safeCode: normalized,
+    };
+  }
+  return {
+    state: "error",
+    title: t("auth.sso.callbackError"),
+    message: t("auth.sso.callbackErrorGeneric"),
+    safeCode: "sso_failed",
+  };
+}
+
+function handleCallbackQueryError(
+  errorParam: string,
+  isQueryLink: boolean,
+  deps: SsoCallbackDeps,
+  setters: SsoCallbackSetters
+): void {
+  const hadLegacyLink = clearLegacySsoStorage();
+  const outcome = resolveSsoErrorOutcome(errorParam, deps.t);
+  if (isQueryLink || hadLegacyLink) {
+    setters.redirectTo(`/account/security?error=${encodeURIComponent(outcome.safeCode)}`);
+    return;
+  }
+  setSsoCallbackFailure(setters, outcome.title, outcome.message, outcome.state);
+}
+
 /**
  * Processes an OIDC/OAuth 2.0 callback (`code` + `state`), supporting server-authoritative linking,
  * hybrid IdP MFA step-up (`requires2FA + twoFactorPendingToken`), workspace selection, and login.
@@ -66,22 +155,7 @@ export async function handleOidcCallback(
   const isQueryLink = searchParams.get("purpose") === "link" || searchParams.get("linking") === "1";
 
   if (errorParam) {
-    const hadLegacyLink = clearLegacySsoStorage();
-    if (isQueryLink || hadLegacyLink) {
-      setters.redirectTo(`/account/security?error=${encodeURIComponent(errorParam)}`);
-      return;
-    }
-    const decoded = decodeURIComponent(errorParam);
-    if (decoded === "no_linked_account") {
-      setSsoCallbackFailure(
-        setters,
-        deps.t("auth.sso.noLinkedAccount"),
-        deps.t("auth.sso.noLinkedAccountDesc"),
-        "no_linked_account"
-      );
-      return;
-    }
-    setSsoCallbackFailure(setters, deps.t("auth.sso.callbackError"), decoded);
+    handleCallbackQueryError(errorParam, isQueryLink, deps, setters);
     return;
   }
 
@@ -93,11 +167,7 @@ export async function handleOidcCallback(
       setters.redirectTo("/account/security?error=sso_missing_params");
       return;
     }
-    setSsoCallbackFailure(
-      setters,
-      deps.t("auth.sso.callbackError"),
-      deps.t("auth.sso.missingParams")
-    );
+    setSsoCallbackFailure(setters, deps.t("auth.sso.callbackError"), deps.t("auth.sso.missingParams"));
     return;
   }
 
@@ -108,9 +178,11 @@ export async function handleOidcCallback(
   } catch (error) {
     clearLegacySsoStorage();
     if (isQueryLink) {
-      const codeParam =
-        error instanceof Error ? encodeURIComponent(error.message) : "sso_link_failed";
-      setters.redirectTo(`/account/security?error=${codeParam}`);
+      const outcome = resolveSsoErrorOutcome(
+        error instanceof Error ? error.message : null,
+        deps.t
+      );
+      setters.redirectTo(`/account/security?error=${encodeURIComponent(outcome.safeCode)}`);
       return;
     }
     if (isNoLinkedAccountError(error)) {
@@ -122,11 +194,7 @@ export async function handleOidcCallback(
       );
       return;
     }
-    setSsoCallbackFailure(
-      setters,
-      deps.t("auth.sso.callbackError"),
-      error instanceof Error ? error.message : deps.t("auth.sso.callbackErrorGeneric")
-    );
+    setSsoCallbackFailure(setters, deps.t("auth.sso.callbackError"), deps.t("auth.sso.callbackErrorGeneric"));
   }
 }
 
@@ -151,13 +219,23 @@ export async function handleSamlCallback(
 
   const errorParam = searchParams.get("error") ?? searchParams.get("error_code");
   if (errorParam) {
-    const hadLegacyLink = clearLegacySsoStorage();
-    if (isQueryLink || hadLegacyLink) {
-      setters.redirectTo(`/account/security?error=${encodeURIComponent(errorParam)}`);
-      return;
-    }
-    const errorMessage = decodeURIComponent(errorParam);
-    if (errorMessage.includes("no_linked_account") || errorMessage.includes("automatically linked")) {
+    handleCallbackQueryError(errorParam, isQueryLink, deps, setters);
+    return;
+  }
+
+  clearLegacySsoStorage();
+  const code = searchParams.get("code");
+  const state = searchParams.get("state");
+  if (!code || !state) {
+    setSsoCallbackFailure(setters, deps.t("auth.sso.callbackError"), deps.t("auth.sso.missingParams"));
+    return;
+  }
+
+  try {
+    const result = await deps.ssoRepository.completeSamlCallback(code, state);
+    await dispatchCallbackResult(result, deps, setters);
+  } catch (error) {
+    if (isNoLinkedAccountError(error)) {
       setSsoCallbackFailure(
         setters,
         deps.t("auth.sso.noLinkedAccount"),
@@ -166,30 +244,6 @@ export async function handleSamlCallback(
       );
       return;
     }
-    setSsoCallbackFailure(setters, deps.t("auth.sso.callbackError"), errorMessage);
-    return;
-  }
-
-  clearLegacySsoStorage();
-  const code = searchParams.get("code");
-  const state = searchParams.get("state");
-  if (!code || !state) {
-    setSsoCallbackFailure(
-      setters,
-      deps.t("auth.sso.callbackError"),
-      deps.t("auth.sso.missingParams")
-    );
-    return;
-  }
-
-  try {
-    const result = await deps.ssoRepository.completeSamlCallback(code, state);
-    await dispatchCallbackResult(result, deps, setters);
-  } catch (error) {
-    setSsoCallbackFailure(
-      setters,
-      deps.t("auth.sso.callbackError"),
-      error instanceof Error ? error.message : deps.t("auth.sso.callbackErrorGeneric")
-    );
+    setSsoCallbackFailure(setters, deps.t("auth.sso.callbackError"), deps.t("auth.sso.callbackErrorGeneric"));
   }
 }

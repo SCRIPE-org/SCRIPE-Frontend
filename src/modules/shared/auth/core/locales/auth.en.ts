@@ -96,6 +96,20 @@ export const en = {
       discoveryRateLimited:
         "Too many provider lookup requests. Please wait a moment and try again, or sign in with your credentials.",
       retryProviders: "Retry",
+      errors: {
+        accountLocked:
+          "Your account is temporarily locked. Please wait before trying again or contact an administrator.",
+        accountDeactivated:
+          "This account has been deactivated. Contact your organization administrator for assistance.",
+        subjectMismatch: "This sign-in identity does not match the expected linked SSO account.",
+        linkedElsewhere: "This external SSO identity is already linked to another account.",
+        accessDenied: "Sign-in was cancelled or denied by your identity provider.",
+        invalidCredentials: "Your external credentials could not be verified. Please try again.",
+        invalidProvider: "This sign-in provider is unavailable or misconfigured.",
+        stateExpired: "Your sign-in session expired. Please start signing in again.",
+        temporarilyUnavailable:
+          "Your identity provider is temporarily unavailable. Please try again shortly.",
+      },
     },
     forgotPassword: "Forgot Password?",
     forgotPasswordDesc: "Enter your email and we'll send you instructions to reset your password.",

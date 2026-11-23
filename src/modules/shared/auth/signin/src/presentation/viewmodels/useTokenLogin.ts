@@ -15,12 +15,20 @@ import { buildPostAuthEntryUrl } from "../utils/redirect-safety";
 export interface TokenLoginPayload {
   accessToken: string;
   refreshToken?: string;
+  requires2FA?: boolean;
+  twoFactorPendingToken?: string | null;
+  staySignedIn?: boolean;
   mustChangePassword?: boolean;
   requireMfaEnrollment?: boolean;
   subscriptionStatus?: string | null;
   gracePhase?: string | null;
   editionName?: string | null;
   defaultRedirectPath?: string | null;
+}
+
+/** Optional callbacks for {@link useTokenLogin}. */
+export interface UseTokenLoginOptions {
+  onTwoFactorRequired?: (pendingToken: string, staySignedIn: boolean) => void;
 }
 
 /**
@@ -32,7 +40,7 @@ export interface TokenLoginPayload {
  * enforces Tier 0 gates (`mustChangePassword`, `requireMfaEnrollment`, `PendingPayment`), and routes
  * cleanly through `"/"` (`/?redirect=...` or `"/"`) for single-pass bootstrap.
  */
-export function useTokenLogin() {
+export function useTokenLogin(options?: UseTokenLoginOptions) {
   const router = useRouter();
   const { authRepository } = useServices();
   const setAuth = useAppStore((state) => state.setAuth);
@@ -41,9 +49,22 @@ export function useTokenLogin() {
   const setRequireMfaEnrollment = useAppStore((state) => state.setRequireMfaEnrollment);
   const setDefaultRedirectPath = useAppStore((state) => state.setDefaultRedirectPath);
   const queryClient = useQueryClient();
+  const onTwoFactorRequired = options?.onTwoFactorRequired;
 
   const completeTokenLogin = useCallback(
     async (result: TokenLoginPayload) => {
+      if (result.requires2FA && result.twoFactorPendingToken) {
+        onTwoFactorRequired?.(
+          result.twoFactorPendingToken,
+          Boolean(result.staySignedIn)
+        );
+        return;
+      }
+      if (!result.accessToken) {
+        secureTokenService.clearTokens();
+        router.replace("/login");
+        return;
+      }
       try {
         // 1. Persist the access token
         secureTokenService.setAccessToken(result.accessToken);
@@ -100,6 +121,7 @@ export function useTokenLogin() {
       setDefaultRedirectPath,
       queryClient,
       router,
+      onTwoFactorRequired,
     ]
   );
 

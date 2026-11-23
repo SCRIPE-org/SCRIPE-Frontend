@@ -150,6 +150,7 @@ function buildLoginRedirectUrl(normalizedPath: string): string {
   if (
     !normalizedPath ||
     normalizedPath === "/" ||
+    normalizedPath === "/logout" ||
     normalizedPath === "/not-authorized" ||
     ALL_AUTH_PAGES.has(normalizedPath)
   ) {
@@ -360,6 +361,11 @@ function resolveRouteAccessSync({
   // 0b. Identity swap / impersonation transition in progress -> hold loading until reload completes
   if (isAuthTransitioning) {
     return { kind: "settled", outcome: { kind: "loading" } };
+  }
+
+  // 0c. Explicit logout lifecycle path must never stall behind compliance or PBAC walls
+  if (normalizedPath === "/logout") {
+    return { kind: "settled", outcome: { kind: "allow" } };
   }
 
   // 1. Authenticated user landing on standard auth pages -> safe redirect or dashboard

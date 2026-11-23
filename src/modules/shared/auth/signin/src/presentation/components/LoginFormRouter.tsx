@@ -57,7 +57,10 @@ export function LoginFormRouter({
   isPlatformMode = false,
 }: LoginFormRouterProps) {
   const { t } = useI18n();
-  const { completeTokenLogin } = useTokenLogin();
+  const { completeTokenLogin } = useTokenLogin({
+    onTwoFactorRequired: (pendingToken, staySignedIn) =>
+      vm.enterTwoFactor(pendingToken, staySignedIn),
+  });
 
   return (
     <div
@@ -143,9 +146,7 @@ export function LoginFormRouter({
         </>
       ) : vm.loginStep === "phone-otp" ? (
         <PhoneOtpForm
-          onSuccess={(result) => {
-            completeTokenLogin(result);
-          }}
+          onSuccess={(result) => void completeTokenLogin(result)}
           onBack={vm.goBackToCredentials}
           isRTL={isRTL}
           tenantId={tenantId}
@@ -155,9 +156,10 @@ export function LoginFormRouter({
         />
       ) : vm.loginStep === "passkey" ? (
         <PasskeyPrompt
-          onSuccess={(result) => {
-            completeTokenLogin(result);
-          }}
+          onSuccess={(result) => void completeTokenLogin(result)}
+          onTwoFactorRequired={(pendingToken, staySignedIn) =>
+            vm.enterTwoFactor(pendingToken, staySignedIn)
+          }
           onBack={vm.goBackToCredentials}
           isRTL={isRTL}
           tenantId={tenantId}
@@ -165,9 +167,7 @@ export function LoginFormRouter({
         />
       ) : vm.loginStep === "qr-login" ? (
         <QrSignInView
-          onSuccess={(result) => {
-            completeTokenLogin(result);
-          }}
+          onSuccess={(result) => void completeTokenLogin(result)}
           onBack={vm.goBackToCredentials}
           isRTL={isRTL}
           tenantId={tenantId}

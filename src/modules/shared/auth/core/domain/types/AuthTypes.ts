@@ -159,6 +159,7 @@ export interface VerifyPasskeyAuthRequestData {
   clientExtensionResults?: Record<string, unknown>;
   tenantId?: string | null;
   challengeId?: string;
+  staySignedIn?: boolean;
 }
 
 export interface PasskeyAuthVerifyResult {
@@ -168,6 +169,8 @@ export interface PasskeyAuthVerifyResult {
   mustChangePassword?: boolean;
   requireMfaEnrollment?: boolean;
   requires2FA?: boolean;
+  twoFactorPendingToken?: string | null;
+  staySignedIn?: boolean;
   subscriptionStatus?: string | null;
   gracePhase?: string | null;
   editionName?: string | null;
