@@ -32,7 +32,7 @@ export interface IAuthRepository {
     twoFactorPendingToken?: string | null,
     staySignedIn?: boolean
   ): Promise<LoginResult>;
-  logout(): Promise<void>;
+  logout(logoutScope?: "app" | "central"): Promise<void>;
   getCurrentPrincipal(): Promise<User>;
   hasToken(): boolean;
   refreshToken(): Promise<Result<LoginResponse, Error>>;
@@ -51,16 +51,10 @@ export interface IAuthRepository {
     searchParams: URLSearchParams,
     decision?: "approve" | "deny"
   ): { action: string; params: Record<string, string> };
+  /** Build backend `/connect/authorize?...` URL without stale consent_ticket for fresh re-auth */
+  buildOidcAuthorizeUrl(searchParams: URLSearchParams): string;
   /** Build backend `/oidc/logout` redirect URL with sanitized `/connect/authorize` returnUrl */
   buildOidcLogoutUrl(searchParams: URLSearchParams): string;
-  /** Link an external SSO account to the current admin profile */
-  linkExternalLogin(data: {
-    identityProviderId: string;
-    providerName: string;
-    providerKey: string;
-    email: string;
-    displayName?: string;
-  }): Promise<void>;
   /** Begin WebAuthn authentication — get challenge from backend */
   beginPasskeyAuth(
     identifier?: string,

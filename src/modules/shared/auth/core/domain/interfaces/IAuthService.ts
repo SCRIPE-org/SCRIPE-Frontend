@@ -20,7 +20,7 @@ import type {
 export interface IAuthService {
   login(request: LoginRequestModel): Promise<LoginResponseModel>;
   verify2FA(request: Verify2FARequestModel): Promise<Verify2FAResponseModel>;
-  logout(): Promise<void>;
+  logout(logoutScope?: "app" | "central"): Promise<void>;
   refreshToken(): Promise<LoginResponseModel>;
   getCurrentPrincipal<T>(): Promise<T>;
   discoverWorkspaces(email: string): Promise<DiscoverWorkspacesResponseDto>;
@@ -30,15 +30,8 @@ export interface IAuthService {
     searchParams: URLSearchParams,
     decision?: "approve" | "deny"
   ): { action: string; params: Record<string, string> };
+  buildOidcAuthorizeUrl(searchParams: URLSearchParams): string;
   buildOidcLogoutUrl(searchParams: URLSearchParams): string;
-  /** Link an external SSO account to the current admin profile */
-  linkExternalLogin(data: {
-    identityProviderId: string;
-    providerName: string;
-    providerKey: string;
-    email: string;
-    displayName?: string;
-  }): Promise<void>;
 
   /** Request a passwordless magic-link sign-in email (enumeration-safe, always resolves). */
   requestMagicLink(email: string, tenantId?: string): Promise<{ sent: boolean }>;

@@ -15,8 +15,9 @@ const envSchema = z.object({
   // API Configuration
   NEXT_PUBLIC_API_URL: z.string().url().default("http://localhost:3001/api"),
 
-  // App Configuration
+  // App & Central Auth Configuration
   NEXT_PUBLIC_APP_URL: z.string().url().default("http://localhost:3000"),
+  NEXT_PUBLIC_AUTH_URL: z.string().url().optional(),
   NEXT_PUBLIC_APP_NAME: z.string().default("Next Frontend Template"),
 
   // Feature Flags
@@ -44,6 +45,7 @@ function validateEnv() {
   const env = {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+    NEXT_PUBLIC_AUTH_URL: process.env.NEXT_PUBLIC_AUTH_URL,
     NEXT_PUBLIC_APP_NAME: process.env.NEXT_PUBLIC_APP_NAME,
     NEXT_PUBLIC_ENABLE_ANALYTICS: process.env.NEXT_PUBLIC_ENABLE_ANALYTICS,
     NEXT_PUBLIC_ENABLE_DEVTOOLS: process.env.NEXT_PUBLIC_ENABLE_DEVTOOLS,

@@ -32,6 +32,9 @@ export const AUTH_CORE_ENDPOINTS = {
     LOGOUT: `/oidc/logout`,
     COMPLETE_WORKSPACE_SELECTION: `${V1}/auth/oidc/complete-workspace-selection`,
   },
+  SSO: {
+    HANDOFF: `${V1}/auth/sso/handoff`,
+  },
   SAML: {
     LOGIN: `${V1}/auth/saml/login`,
     CALLBACK: `${V1}/auth/saml/callback`,
@@ -54,9 +57,6 @@ export const AUTH_CORE_ENDPOINTS = {
     SESSION_STATUS: (id: string) => `${V1}/auth/qr-login/session/${id}/status`,
     APPROVE: `${V1}/auth/qr-login/approve`,
     REJECT: `${V1}/auth/qr-login/reject`,
-  },
-  PROFILE: {
-    LINK_EXTERNAL_LOGIN: `${V1}/auth/admin/external-logins/link`,
   },
   TENANTS: {
     RESOLVE: `${V1}/customization/resolve`,

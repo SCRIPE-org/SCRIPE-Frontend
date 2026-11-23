@@ -1,13 +1,9 @@
 /**
  * Cross-Tab Authentication Broadcast
  *
- * Uses BroadcastChannel API to sync auth events across browser tabs.
- * With in-memory tokens, there's no automatic cross-tab sync via localStorage
- * storage events. This module provides explicit communication for:
- *
- * - Logout: When one tab logs out, all tabs should redirect to login
- * - Token refresh: When one tab refreshes, other tabs can use the new token
- * - Impersonation: When admin starts/stops impersonation
+ * Uses BroadcastChannel API to sync auth events across same-origin browser tabs
+ * with origin/tenant/principal scoping so foreign origins, tenants, or differing
+ * principals in another tab never silently corrupt the active tab's state.
  */
 
 import { secureTokenService } from "./secure-token-service";
@@ -15,19 +11,31 @@ import { appLogger } from "./logger";
 import { BRAND } from "@core/config/branding";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { useAppStore } from "@core/store/useAppStore";
+import { formatActivePrincipalKey, getActivePrincipalKey } from "./active-principal";
 
 const TENANT_BREADCRUMBS_KEY = "scr_tenant_breadcrumbs";
 
-type AuthBroadcastEvent =
-  | { type: "LOGOUT" }
-  | { type: "TOKEN_REFRESHED"; accessToken: string; expiresAt?: number }
-  | { type: "IMPERSONATION_START" }
-  | { type: "IMPERSONATION_STOP" };
+export interface AuthBroadcastScope {
+  origin?: string;
+  tenantId?: string | null;
+  tenantCode?: string | null;
+  principalId?: string | null;
+  principalType?: "admin" | "user" | string | null;
+  logoutScope?: "app" | "central";
+}
+
+export type AuthBroadcastEvent =
+  | { type: "LOGOUT"; scope?: AuthBroadcastScope }
+  | { type: "LOGIN_SUCCESS"; scope?: AuthBroadcastScope }
+  | { type: "TOKEN_REFRESHED"; accessToken: string; expiresAt?: number; scope?: AuthBroadcastScope }
+  | { type: "IMPERSONATION_START"; scope?: AuthBroadcastScope }
+  | { type: "IMPERSONATION_STOP"; scope?: AuthBroadcastScope };
 
 class AuthBroadcastService {
   private channel: BroadcastChannel | null = null;
 
   private onLogoutCallbacks = new Set<() => void>();
+  private onLoginSuccessCallbacks = new Set<(scope?: AuthBroadcastScope) => void>();
   private onTokenRefreshedCallbacks = new Set<(token: string) => void>();
   private onImpersonationCallbacks = new Set<(type: "start" | "stop") => void>();
 
@@ -59,9 +67,81 @@ class AuthBroadcastService {
     }
   }
 
+  private isMatchingOrigin(scope?: AuthBroadcastScope): boolean {
+    if (!scope?.origin || typeof window === "undefined") return true;
+    return scope.origin === window.location.origin;
+  }
+
+  private isCompatibleTenantAndPrincipal(
+    scope: AuthBroadcastScope | undefined,
+    allowCentralOverride = false
+  ): boolean {
+    if (!this.isMatchingOrigin(scope)) return false;
+    if (allowCentralOverride && scope?.logoutScope === "central") return true;
+    if (!scope) return true;
+
+    const appState = useAppStore.getState();
+    const tabKey = getActivePrincipalKey();
+    const storePrincipalKey = appState.user?.id
+      ? formatActivePrincipalKey({
+          principalType: "admin",
+          tenantId: appState.user.tenantId ?? null,
+          principalId: String(appState.user.id),
+        })
+      : null;
+
+    const effectiveKey = tabKey ?? storePrincipalKey;
+    const [, currentTenantIdRaw, currentPrincipalId] = effectiveKey
+      ? effectiveKey.split(":")
+      : [null, null, null];
+    const currentTenantId = currentTenantIdRaw === "platform" ? null : currentTenantIdRaw;
+    const currentTenantCode = appState.tenantCode?.toUpperCase() ?? null;
+
+    if (
+      scope.tenantId &&
+      currentTenantId &&
+      scope.tenantId !== currentTenantId
+    ) {
+      return false;
+    }
+
+    if (
+      scope.tenantCode &&
+      currentTenantCode &&
+      scope.tenantCode.toUpperCase() !== currentTenantCode
+    ) {
+      return false;
+    }
+
+    if (
+      scope.principalId &&
+      currentPrincipalId &&
+      scope.principalId !== currentPrincipalId
+    ) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private resolveOutgoingScope(scope?: AuthBroadcastScope): AuthBroadcastScope | undefined {
+    const currentOrigin = typeof window !== "undefined" ? window.location.origin : undefined;
+    if (!scope && !currentOrigin) return undefined;
+    return {
+      origin: currentOrigin,
+      ...scope,
+    };
+  }
+
   private handleMessage(event: AuthBroadcastEvent): void {
+    if (!event || typeof event !== "object") return;
+
     switch (event.type) {
       case "LOGOUT":
+        if (!this.isCompatibleTenantAndPrincipal(event.scope, true)) {
+          appLogger.debug("[AuthBroadcast] Ignored foreign-origin/foreign-tenant LOGOUT");
+          return;
+        }
         appLogger.debug("[AuthBroadcast] Received LOGOUT from another tab");
         secureTokenService.clearTokens();
         for (const cb of this.onLogoutCallbacks) {
@@ -69,7 +149,22 @@ class AuthBroadcastService {
         }
         break;
 
+      case "LOGIN_SUCCESS":
+        if (!this.isMatchingOrigin(event.scope)) {
+          appLogger.debug("[AuthBroadcast] Ignored foreign-origin LOGIN_SUCCESS");
+          return;
+        }
+        appLogger.debug("[AuthBroadcast] Received LOGIN_SUCCESS from another tab");
+        for (const cb of this.onLoginSuccessCallbacks) {
+          cb(event.scope);
+        }
+        break;
+
       case "TOKEN_REFRESHED":
+        if (!this.isCompatibleTenantAndPrincipal(event.scope, false)) {
+          appLogger.debug("[AuthBroadcast] Ignored foreign-origin/foreign-tenant TOKEN_REFRESHED");
+          return;
+        }
         appLogger.debug("[AuthBroadcast] Received TOKEN_REFRESHED from another tab");
         secureTokenService.setAccessToken(event.accessToken);
         if (event.expiresAt) {
@@ -81,6 +176,7 @@ class AuthBroadcastService {
         break;
 
       case "IMPERSONATION_START":
+        if (!this.isMatchingOrigin(event.scope)) return;
         appLogger.debug("[AuthBroadcast] Received IMPERSONATION_START from another tab");
         this.clearSiblingSessionForImpersonation();
         if (typeof window !== "undefined") {
@@ -92,6 +188,7 @@ class AuthBroadcastService {
         break;
 
       case "IMPERSONATION_STOP":
+        if (!this.isMatchingOrigin(event.scope)) return;
         appLogger.debug("[AuthBroadcast] Received IMPERSONATION_STOP from another tab");
         this.clearSiblingSessionForImpersonation();
         if (typeof window !== "undefined") {
@@ -114,6 +211,13 @@ class AuthBroadcastService {
     };
   }
 
+  onLoginSuccess(callback: (scope?: AuthBroadcastScope) => void): () => void {
+    this.onLoginSuccessCallbacks.add(callback);
+    return () => {
+      this.onLoginSuccessCallbacks.delete(callback);
+    };
+  }
+
   onTokenRefreshed(callback: (token: string) => void): () => void {
     this.onTokenRefreshedCallbacks.add(callback);
     return () => {
@@ -130,20 +234,33 @@ class AuthBroadcastService {
 
   // ─── Broadcast Events ────────────────────────────────────────
 
-  broadcastLogout(): void {
-    this.post({ type: "LOGOUT" });
+  broadcastLogout(scope?: AuthBroadcastScope): void {
+    this.post({ type: "LOGOUT", scope: this.resolveOutgoingScope(scope) });
   }
 
-  broadcastTokenRefreshed(accessToken: string, expiresAt?: number): void {
-    this.post({ type: "TOKEN_REFRESHED", accessToken, expiresAt });
+  broadcastLoginSuccess(scope?: AuthBroadcastScope): void {
+    this.post({ type: "LOGIN_SUCCESS", scope: this.resolveOutgoingScope(scope) });
+  }
+
+  broadcastTokenRefreshed(
+    accessToken: string,
+    expiresAt?: number,
+    scope?: AuthBroadcastScope
+  ): void {
+    this.post({
+      type: "TOKEN_REFRESHED",
+      accessToken,
+      expiresAt,
+      scope: this.resolveOutgoingScope(scope),
+    });
   }
 
   broadcastImpersonationStart(): void {
-    this.post({ type: "IMPERSONATION_START" });
+    this.post({ type: "IMPERSONATION_START", scope: this.resolveOutgoingScope() });
   }
 
   broadcastImpersonationStop(): void {
-    this.post({ type: "IMPERSONATION_STOP" });
+    this.post({ type: "IMPERSONATION_STOP", scope: this.resolveOutgoingScope() });
   }
 
   private post(event: AuthBroadcastEvent): void {

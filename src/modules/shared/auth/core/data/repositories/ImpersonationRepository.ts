@@ -86,17 +86,11 @@ export class ImpersonationRepository {
   }
 
   /**
-   * Link an external SSO account to the currently authenticated admin profile.
-   * Used by SSO/SAML callback views when auto-linking during a linking session.
+   * Builds the backend `/connect/authorize?...` URL without stale `consent_ticket`
+   * so unauthenticated consent sessions re-authenticate through OpenIddict cleanly.
    */
-  async linkExternalLogin(data: {
-    identityProviderId: string;
-    providerName: string;
-    providerKey: string;
-    email: string;
-    displayName?: string;
-  }): Promise<void> {
-    await this.service.linkExternalLogin(data);
+  buildOidcAuthorizeUrl(searchParams: URLSearchParams): string {
+    return this.service.buildOidcAuthorizeUrl(searchParams);
   }
 
   /**

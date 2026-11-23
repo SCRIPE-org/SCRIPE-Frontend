@@ -3,6 +3,7 @@ import { persist } from "zustand/middleware";
 import { User } from "@modules/auth/core/domain/entities/User";
 import { PermissionCode, AdminRole } from "@core/common/types/permissions";
 import { secureTokenService } from "@core/common/secure-token-service";
+import { clearActivePrincipalKey, syncActivePrincipalKey } from "@core/common/active-principal";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { useSudoStore } from "@core/store/useSudoStore";
 import { usePatOneTimeSecretStore } from "@core/store/usePatOneTimeSecretStore";
@@ -109,6 +110,13 @@ export const useAppStore = create<AppState>()(
           } catch {
             /* ignore */
           }
+          if (user?.id) {
+            syncActivePrincipalKey({
+              principalType: "admin",
+              tenantId: user.tenantId ?? null,
+              principalId: String(user.id),
+            });
+          }
         }
         set(() => {
           const resolvedRoles =
@@ -139,6 +147,7 @@ export const useAppStore = create<AppState>()(
       },
       beginSessionTransition: () => {
         writeAuthStateHintCookie(true);
+        clearActivePrincipalKey();
         useSudoStore.getState().reset();
         usePatOneTimeSecretStore.getState().clearPendingReceipt();
         set({
@@ -159,6 +168,7 @@ export const useAppStore = create<AppState>()(
       },
       logout: () => {
         writeAuthStateHintCookie(false);
+        clearActivePrincipalKey();
         // Also clear tokens, sudo elevation, and ephemeral PAT secrets when logging out from store
         secureTokenService.clearTokens();
         useSudoStore.getState().reset();

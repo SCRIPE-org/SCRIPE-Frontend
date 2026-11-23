@@ -20,6 +20,8 @@ import {
 import type { IApiService } from "@core/interfaces/api.interface";
 import type { PasswordPolicyDto } from "@core/common/password-policy";
 import { secureTokenService } from "@core/common/secure-token-service";
+import { isExternalCustomDomain } from "@core/common/origin-routing";
+import { postCustomDomainSessionRelay } from "@core/services/custom-domain-relay-client";
 import { ALLOWED_OIDC_PARAMS, OIDC_KEYS } from "@core/config/oidc-keys";
 import type { IAuthService } from "../../domain/interfaces/IAuthService";
 import type {
@@ -52,19 +54,25 @@ export class AuthService implements IAuthService {
   }
 
   /**
-   * Logout — the httpOnly cookie is sent automatically via withCredentials.
-   * Backend CookieAuthMiddleware reads the refresh token from the cookie.
+   * Logout — clears same-site httpOnly cookies directly, or forwards revocation + cookie
+   * clearing through `/api/auth/session/logout` on verified external custom domains.
    */
-  async logout(): Promise<void> {
-    await this.api.post(AUTH_CORE_ENDPOINTS.LOGOUT, {});
+  async logout(logoutScope: "app" | "central" = "app"): Promise<void> {
+    if (isExternalCustomDomain()) {
+      await postCustomDomainSessionRelay("/api/auth/session/logout", { logoutScope });
+      return;
+    }
+    await this.api.post(AUTH_CORE_ENDPOINTS.LOGOUT, { logoutScope });
   }
 
   /**
-   * Refresh — the httpOnly cookie is sent automatically via withCredentials.
-   * Backend CookieAuthMiddleware injects the refresh token into the request body.
+   * Refresh — reads same-site httpOnly cookie directly, or relays via first-party
+   * `__Host-scripe_refresh_token` on verified external custom domains.
    */
   async refreshToken(): Promise<LoginResponseModel> {
-    const json = await this.api.postPublic<LoginResponseJson>(AUTH_CORE_ENDPOINTS.REFRESH, {});
+    const json = isExternalCustomDomain()
+      ? await postCustomDomainSessionRelay<LoginResponseJson>("/api/auth/session/refresh", {})
+      : await this.api.postPublic<LoginResponseJson>(AUTH_CORE_ENDPOINTS.REFRESH, {});
     return LoginResponseModel.fromJson(json);
   }
 
@@ -100,6 +108,32 @@ export class AuthService implements IAuthService {
     return LoginResponseModel.fromJson(json);
   }
 
+  private resolveOidcBackendOrigin(): string {
+    const backendUrl =
+      process.env.NEXT_PUBLIC_IDENTITY_API_URL ||
+      process.env.NEXT_PUBLIC_API_URL ||
+      "http://localhost:5035/api";
+    try {
+      return new URL(backendUrl).origin;
+    } catch {
+      return backendUrl.replace(/\/(?:api|identity)\/?$/, "");
+    }
+  }
+
+  private buildAllowedOidcQueryString(
+    searchParams: URLSearchParams,
+    excludeConsentTicket = true
+  ): string {
+    const authorizeParams = new URLSearchParams();
+    searchParams.forEach((value, key) => {
+      if (excludeConsentTicket && key === OIDC_KEYS.CONSENT_TICKET) return;
+      if (allowedOidcParams.has(key)) {
+        authorizeParams.set(key, value);
+      }
+    });
+    return authorizeParams.toString();
+  }
+
   /**
    * Constructs the HTML Form action URL and whitelist of hidden input parameters
    * required to securely POST the OIDC consent decision (approve or deny) back to
@@ -110,8 +144,7 @@ export class AuthService implements IAuthService {
     searchParams: URLSearchParams,
     decision: "approve" | "deny" = "approve"
   ): { action: string; params: Record<string, string> } {
-    const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5035/api";
-    const baseHost = backendUrl.replace(/\/api\/?$/, "");
+    const baseHost = this.resolveOidcBackendOrigin();
     const action = `${baseHost}${AUTH_CORE_ENDPOINTS.OIDC.AUTHORIZE}`;
 
     const params: Record<string, string> = {};
@@ -127,42 +160,32 @@ export class AuthService implements IAuthService {
   }
 
   /**
+   * Builds the canonical backend `/connect/authorize?...` URL without stale
+   * `consent_ticket` parameters so unauthenticated `/authorize` sessions can
+   * re-authenticate cleanly and have OpenIddict mint a fresh bound `consent_ticket`.
+   */
+  buildOidcAuthorizeUrl(searchParams: URLSearchParams): string {
+    const baseHost = this.resolveOidcBackendOrigin();
+    const authorizeQuery = this.buildAllowedOidcQueryString(searchParams, true);
+    return authorizeQuery
+      ? `${baseHost}${AUTH_CORE_ENDPOINTS.OIDC.AUTHORIZE}?${authorizeQuery}`
+      : `${baseHost}${AUTH_CORE_ENDPOINTS.OIDC.AUTHORIZE}`;
+  }
+
+  /**
    * Builds the backend `/oidc/logout?returnUrl=...` URL to clear the server-side
    * OidcSession cookie before redirecting back to `/connect/authorize` without
    * stale `consent_ticket` parameters.
    */
   buildOidcLogoutUrl(searchParams: URLSearchParams): string {
-    const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5035/api";
-    const baseHost = backendUrl.replace(/\/api\/?$/, "");
-
-    const authorizeParams = new URLSearchParams();
-    searchParams.forEach((value, key) => {
-      if (key === OIDC_KEYS.CONSENT_TICKET) return;
-      if (allowedOidcParams.has(key)) {
-        authorizeParams.set(key, value);
-      }
-    });
-
-    const authorizeQuery = authorizeParams.toString();
+    const baseHost = this.resolveOidcBackendOrigin();
+    const authorizeQuery = this.buildAllowedOidcQueryString(searchParams, true);
     const returnUrl = authorizeQuery
       ? `${AUTH_CORE_ENDPOINTS.OIDC.AUTHORIZE}?${authorizeQuery}`
       : "/";
 
     const logoutParams = new URLSearchParams({ returnUrl });
     return `${baseHost}${AUTH_CORE_ENDPOINTS.OIDC.LOGOUT}?${logoutParams.toString()}`;
-  }
-
-  /**
-   * Link an external SSO account to the currently authenticated admin profile.
-   */
-  async linkExternalLogin(data: {
-    identityProviderId: string;
-    providerName: string;
-    providerKey: string;
-    email: string;
-    displayName?: string;
-  }): Promise<void> {
-    await this.api.post(AUTH_CORE_ENDPOINTS.PROFILE.LINK_EXTERNAL_LOGIN, data);
   }
 
   /**

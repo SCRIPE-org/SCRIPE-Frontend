@@ -14,6 +14,12 @@
  */
 
 import { normalizeRoutePath } from "@core/config/app-route-manifest";
+import { isAllowedCentralOrTenantOrigin } from "@core/common/origin-routing";
+
+export interface RedirectValidationOptions {
+  /** Verified custom-domain or backend-supplied trusted origins allowed for cross-origin handoff. */
+  allowedOrigins?: readonly string[];
+}
 
 const ENCODED_BACKSLASH_PATTERN = /%5c/i;
 
@@ -73,11 +79,14 @@ function getConfiguredBackendOrigins(): Set<string> {
 /**
  * Returns true when `path` is safe to navigate to: either a strict same-app
  * relative path starting with a single "/", an absolute HTTP(S) URL whose
- * origin matches the current page's origin, or an allow-listed backend
- * OIDC/SAML resume endpoint (`/connect/authorize`, `/oidc/login`,
- * `/api/v1/auth/saml/sso`) on the configured API origin.
+ * origin matches the current page's origin, a verified SCRIPE central/tenant
+ * origin, or an allow-listed backend OIDC/SAML resume endpoint (`/connect/authorize`,
+ * `/oidc/login`, `/api/v1/auth/saml/sso`) on the configured API origin.
  */
-export function isSafeRedirectTarget(path: string | null | undefined): boolean {
+export function isSafeRedirectTarget(
+  path: string | null | undefined,
+  options?: RedirectValidationOptions
+): boolean {
   if (!path) return false;
   const trimmed = path.trim();
   if (!trimmed || hasControlChar(trimmed)) return false;
@@ -121,10 +130,12 @@ export function isSafeRedirectTarget(path: string | null | undefined): boolean {
 
     // Permit validated backend OIDC/SAML resume flows on configured API/Identity origins only.
     const backendOrigins = getConfiguredBackendOrigins();
-    if (
-      backendOrigins.has(target.origin) &&
-      ALLOWED_BACKEND_RESUME_PATHS.has(target.pathname)
-    ) {
+    if (backendOrigins.has(target.origin)) {
+      return ALLOWED_BACKEND_RESUME_PATHS.has(target.pathname);
+    }
+
+    // Permit verified central auth <-> platform/tenant origin hops (e.g. auth.scripe.org <-> ahly.admin.scripe.org or verified custom domains).
+    if (isAllowedCentralOrTenantOrigin(target.origin, options?.allowedOrigins)) {
       return true;
     }
 
@@ -141,9 +152,10 @@ export function isSafeRedirectTarget(path: string | null | undefined): boolean {
  */
 export function getSafeRedirectPath(
   path: string | null | undefined,
-  fallback = "/overview"
+  fallback = "/overview",
+  options?: RedirectValidationOptions
 ): string {
-  if (!isSafeRedirectTarget(path)) return fallback;
+  if (!isSafeRedirectTarget(path, options)) return fallback;
 
   const trimmed = (path as string).trim();
   if (trimmed.startsWith("/") && !trimmed.startsWith("//")) {
@@ -167,14 +179,33 @@ export function getSafeRedirectPath(
  * Rejects root "/", auth/gate routes, and "/api/*" paths while preserving
  * relative query strings and allow-listed OIDC/SAML API resume URLs.
  */
-export function extractEligibleDeepLink(path: string | null | undefined): string | null {
-  if (!isSafeRedirectTarget(path)) return null;
+export function extractEligibleDeepLink(
+  path: string | null | undefined,
+  options?: RedirectValidationOptions
+): string | null {
+  if (!isSafeRedirectTarget(path, options)) return null;
 
-  const safeTarget = getSafeRedirectPath(path, "");
+  const safeTarget = getSafeRedirectPath(path, "", options);
   if (!safeTarget) return null;
 
   if (safeTarget.startsWith("http://") || safeTarget.startsWith("https://")) {
-    return safeTarget;
+    try {
+      const parsed = new URL(safeTarget);
+      const backendOrigins = getConfiguredBackendOrigins();
+      if (backendOrigins.has(parsed.origin)) {
+        return safeTarget;
+      }
+      const crossOriginNorm = normalizeRoutePath(parsed.pathname).toLowerCase();
+      if (
+        (EXCLUDED_DEEP_LINK_ROUTES.has(crossOriginNorm) && crossOriginNorm !== "/") ||
+        EXCLUDED_DEEP_LINK_PREFIXES.some((prefix) => crossOriginNorm.startsWith(prefix))
+      ) {
+        return null;
+      }
+      return safeTarget;
+    } catch {
+      return null;
+    }
   }
 
   const normalized = normalizeRoutePath(safeTarget).toLowerCase();
@@ -191,7 +222,7 @@ export function extractEligibleDeepLink(path: string | null | undefined): string
 /**
  * Resolves the post-authentication destination across all admin sign-in channels.
  * Enforces Tier 0 gates (`mustChangePassword`, `PendingPayment`) first,
- * preserves allow-listed OIDC/SAML external resume targets directly, and routes
+ * preserves allow-listed OIDC/SAML external resume and verified tenant targets directly, and routes
  * relative destinations through `"/"` (`/?redirect=...` or `"/"`) so the entry
  * resolver runs single-pass navigation bootstrap and Tier 1–5 resolution cleanly.
  */
@@ -200,6 +231,7 @@ export function buildPostAuthEntryUrl(params: {
   requireMfaEnrollment?: boolean | null;
   subscriptionStatus?: string | null;
   redirect?: string | null;
+  allowedOrigins?: readonly string[];
 }): string {
   if (params.mustChangePassword) {
     return "/change-password";
@@ -211,7 +243,9 @@ export function buildPostAuthEntryUrl(params: {
     return "/activate-workspace";
   }
 
-  const eligible = extractEligibleDeepLink(params.redirect);
+  const eligible = extractEligibleDeepLink(params.redirect, {
+    allowedOrigins: params.allowedOrigins,
+  });
   if (!eligible) {
     return "/";
   }

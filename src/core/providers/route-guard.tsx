@@ -54,8 +54,14 @@ import {
   NavigationErrorRecovery,
 } from "@core/components/tenant-context";
 import { secureTokenService } from "@core/common/secure-token-service";
+import {
+  detectPrincipalDivergence,
+  getActivePrincipalKey,
+  setActivePrincipalKey,
+  syncActivePrincipalKey,
+} from "@core/common/active-principal";
 import { appLogger } from "@core/common/logger";
-import { authBroadcast } from "@core/common/broadcast-auth";
+import { authBroadcast, type AuthBroadcastScope } from "@core/common/broadcast-auth";
 import { isSafeRedirectTarget, buildPostAuthEntryUrl } from "@core/common/redirect-safety";
 
 interface RouteGuardProps {
@@ -120,6 +126,7 @@ const ALL_AUTH_PAGES = new Set([
   "/magic-link",
   "/qr-approve",
   "/sso/callback",
+  "/sso/continue",
   "/sso/saml/callback",
 ]);
 
@@ -599,17 +606,85 @@ export function RouteGuard({ children }: RouteGuardProps) {
     hasRedirected.current = false;
   }, [normalizedPath, contextKey]);
 
-  // Cross-tab token refresh and in-memory token store coordination
+  // Cross-tab token refresh, login isolation, and in-memory token store coordination
   useEffect(() => {
-    authBroadcast.onTokenRefreshed(() => {
-      appLogger.debug("[RouteGuard] Observed cross-tab token refresh — re-checking access");
-      setCheckTrigger((prev) => prev + 1);
-    });
-    if (typeof secureTokenService.subscribe === "function") {
-      return secureTokenService.subscribe(() => {
-        setCheckTrigger((prev) => prev + 1);
+    const handlePrincipalDivergence = (incomingScope?: AuthBroadcastScope) => {
+      const { diverged, persistedKey } = detectPrincipalDivergence({
+        storeUser: useAppStore.getState().user,
+        incoming: incomingScope,
       });
+      if (!diverged) return;
+
+      appLogger.warn("[RouteGuard] Cross-tab principal divergence detected — re-synchronizing tab");
+      secureTokenService.clearTokens();
+      useNavigationStore.getState().reset();
+      useSudoStore.getState().reset();
+      usePatOneTimeSecretStore.getState().clearPendingReceipt();
+      latestDepsRef.current.queryClient.clear();
+
+      if (persistedKey) {
+        setActivePrincipalKey(persistedKey);
+        const persistApi = (useAppStore as unknown as { persist?: { rehydrate?: () => unknown } })
+          .persist;
+        if (typeof persistApi?.rehydrate === "function") {
+          void persistApi.rehydrate();
+        }
+      } else {
+        forceLogout();
+      }
+      setCheckTrigger((prev) => prev + 1);
+    };
+
+    const unsubTokenRefresh =
+      typeof authBroadcast.onTokenRefreshed === "function"
+        ? authBroadcast.onTokenRefreshed(() => {
+            appLogger.debug("[RouteGuard] Observed cross-tab token refresh — re-checking access");
+            setCheckTrigger((prev) => prev + 1);
+          })
+        : undefined;
+    const unsubLoginSuccess =
+      typeof authBroadcast.onLoginSuccess === "function"
+        ? authBroadcast.onLoginSuccess((scope) => {
+            handlePrincipalDivergence(scope);
+          })
+        : undefined;
+    const handleVisibilityOrFocus = () => {
+      if (typeof document !== "undefined" && document.visibilityState === "hidden") return;
+      handlePrincipalDivergence();
+    };
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === STORAGE_KEYS.APP_STORE) {
+        handlePrincipalDivergence();
+      }
+    };
+
+    if (typeof window !== "undefined") {
+      window.addEventListener("focus", handleVisibilityOrFocus);
+      window.addEventListener("storage", handleStorage);
     }
+    if (typeof document !== "undefined") {
+      document.addEventListener("visibilitychange", handleVisibilityOrFocus);
+    }
+
+    const unsubTokenStore =
+      typeof secureTokenService.subscribe === "function"
+        ? secureTokenService.subscribe(() => {
+            setCheckTrigger((prev) => prev + 1);
+          })
+        : undefined;
+
+    return () => {
+      if (typeof unsubTokenRefresh === "function") unsubTokenRefresh();
+      if (typeof unsubLoginSuccess === "function") unsubLoginSuccess();
+      if (typeof unsubTokenStore === "function") unsubTokenStore();
+      if (typeof window !== "undefined") {
+        window.removeEventListener("focus", handleVisibilityOrFocus);
+        window.removeEventListener("storage", handleStorage);
+      }
+      if (typeof document !== "undefined") {
+        document.removeEventListener("visibilitychange", handleVisibilityOrFocus);
+      }
+    };
   }, []);
 
   const tokenExpired =
@@ -767,6 +842,13 @@ export function RouteGuard({ children }: RouteGuardProps) {
 
             const user = await authRepo.getCurrentPrincipal();
             if (user && user.id) {
+              if (!getActivePrincipalKey()) {
+                syncActivePrincipalKey({
+                  principalType: "admin",
+                  tenantId: user.tenantId ?? null,
+                  principalId: String(user.id),
+                });
+              }
               const resolvedPermissions = (user.permissions ?? []) as any[];
               const resolvedRoles = user.roles ?? [];
               commitAuth(user, resolvedPermissions, resolvedRoles);
@@ -813,6 +895,13 @@ export function RouteGuard({ children }: RouteGuardProps) {
           const user = await authRepo.getCurrentPrincipal();
           if (user && user.id) {
             appLogger.debug("[RouteGuard] Session restored");
+            if (!getActivePrincipalKey()) {
+              syncActivePrincipalKey({
+                principalType: "admin",
+                tenantId: user.tenantId ?? null,
+                principalId: String(user.id),
+              });
+            }
             const resolvedPermissions = (user.permissions ?? []) as any[];
             const resolvedRoles = user.roles ?? [];
             commitAuth(user, resolvedPermissions, resolvedRoles);

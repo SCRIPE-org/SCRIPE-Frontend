@@ -19,9 +19,11 @@
  * @module auth/data
  */
 import { secureTokenService } from "@core/common/secure-token-service";
+import { clearActivePrincipalKey } from "@core/common/active-principal";
 import { mapPasswordPolicyDto, type PasswordPolicyModel } from "@core/common/password-policy";
 import { authBroadcast } from "@core/common/broadcast-auth";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
+import { useAppStore } from "@core/store/useAppStore";
 import { LoginRequest, LoginResponse } from "../../domain/entities/Auth";
 import { User } from "../../domain/entities/User";
 import type {
@@ -181,14 +183,24 @@ export class AuthRepository implements IAuthRepository {
     throw new Error("2FA verification failed: No access token received.");
   }
 
-  async logout(): Promise<void> {
+  async logout(logoutScope: "app" | "central" = "app"): Promise<void> {
+    const appState = useAppStore.getState();
+    const scope = {
+      origin: typeof window !== "undefined" ? window.location.origin : undefined,
+      tenantId: appState.user?.tenantId ?? null,
+      tenantCode: appState.tenantCode ?? null,
+      principalId: appState.user?.id ? String(appState.user.id) : null,
+      principalType: "admin" as const,
+      logoutScope,
+    };
     try {
-      await this.service.logout();
+      await this.service.logout(logoutScope);
     } catch (error) {
       appLogger.warn("Logout API call failed, clearing tokens locally:", error);
     } finally {
+      clearActivePrincipalKey();
       clearAllLocalStorage();
-      authBroadcast.broadcastLogout();
+      authBroadcast.broadcastLogout(scope);
     }
   }
 
@@ -230,7 +242,14 @@ export class AuthRepository implements IAuthRepository {
 
         if (responseModel.isSuccessful) {
           secureTokenService.setAccessToken(responseModel.accessToken);
-          authBroadcast.broadcastTokenRefreshed(responseModel.accessToken);
+          const appState = useAppStore.getState();
+          authBroadcast.broadcastTokenRefreshed(responseModel.accessToken, undefined, {
+            origin: typeof window !== "undefined" ? window.location.origin : undefined,
+            tenantId: appState.user?.tenantId ?? null,
+            tenantCode: appState.tenantCode ?? null,
+            principalId: appState.user?.id ? String(appState.user.id) : null,
+            principalType: "admin",
+          });
           const loginResponse = AuthMapper.loginResponseFromModel(responseModel);
           return Result.ok(loginResponse);
         }
@@ -298,18 +317,12 @@ export class AuthRepository implements IAuthRepository {
     return this.impersonation.buildOidcConsentForm(searchParams, decision);
   }
 
-  buildOidcLogoutUrl(searchParams: URLSearchParams): string {
-    return this.impersonation.buildOidcLogoutUrl(searchParams);
+  buildOidcAuthorizeUrl(searchParams: URLSearchParams): string {
+    return this.impersonation.buildOidcAuthorizeUrl(searchParams);
   }
 
-  async linkExternalLogin(data: {
-    identityProviderId: string;
-    providerName: string;
-    providerKey: string;
-    email: string;
-    displayName?: string;
-  }): Promise<void> {
-    return this.impersonation.linkExternalLogin(data);
+  buildOidcLogoutUrl(searchParams: URLSearchParams): string {
+    return this.impersonation.buildOidcLogoutUrl(searchParams);
   }
 
   // ── Passkey / WebAuthn authentication (delegated) ─────────────────────────

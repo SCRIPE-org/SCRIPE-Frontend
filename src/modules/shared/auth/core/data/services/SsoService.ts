@@ -1,5 +1,11 @@
 import { buildUrl } from "@/core/config/api-endpoints/_shared";
-import type { ISsoService } from "../interfaces/ISsoService";
+import { isExternalCustomDomain } from "@core/common/origin-routing";
+import { postCustomDomainSessionRelay } from "@core/services/custom-domain-relay-client";
+import type {
+  ISsoService,
+  OidcChallengeParams,
+  SamlLoginUrlParams,
+} from "../interfaces/ISsoService";
 import type { IPublicApiService } from "@core/interfaces/public-api.interface";
 import type { SsoCallbackResultDto, SsoChallengeDto, SsoProviderDto } from "../models/SsoModels";
 import { AUTH_CORE_ENDPOINTS } from "./auth-core.endpoints";
@@ -19,11 +25,15 @@ export class SsoService implements ISsoService {
     return providers ?? [];
   }
 
-  initiateOidcChallenge(params: {
-    providerId: string;
-    redirectUri?: string;
-  }): Promise<SsoChallengeDto> {
+  initiateOidcChallenge(params: OidcChallengeParams): Promise<SsoChallengeDto> {
     return this.api.post<SsoChallengeDto>(AUTH_CORE_ENDPOINTS.OIDC.CHALLENGE, params);
+  }
+
+  redeemHandoff(params: { code: string; state: string }): Promise<SsoCallbackResultDto> {
+    if (isExternalCustomDomain()) {
+      return postCustomDomainSessionRelay<SsoCallbackResultDto>("/api/auth/session/establish", params);
+    }
+    return this.api.post<SsoCallbackResultDto>(AUTH_CORE_ENDPOINTS.SSO.HANDOFF, params);
   }
 
   completeOidcCallback(params: {
@@ -46,7 +56,7 @@ export class SsoService implements ISsoService {
     );
   }
 
-  buildSamlLoginUrl(params: { providerId: string; redirectUri?: string }): string {
+  buildSamlLoginUrl(params: SamlLoginUrlParams): string {
     const backendUrl = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:5035/api").replace(
       /\/+$/,
       ""
@@ -54,6 +64,11 @@ export class SsoService implements ISsoService {
     const url = buildUrl(AUTH_CORE_ENDPOINTS.SAML.LOGIN, {
       providerId: params.providerId,
       redirectUri: params.redirectUri || undefined,
+      returnOrigin: params.returnOrigin || undefined,
+      returnPath: params.returnPath || undefined,
+      targetTenantId: params.targetTenantId || undefined,
+      targetTenantCode: params.targetTenantCode || undefined,
+      staySignedIn: params.staySignedIn ? "true" : undefined,
     });
     return `${backendUrl}${url}`;
   }

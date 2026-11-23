@@ -23,8 +23,14 @@ export class SsoMapper {
   /** Maps an API callback response DTO to the domain `SsoCallbackResult`. */
   static callbackResultToDomain(dto: SsoCallbackResultDto): SsoCallbackResult {
     return {
+      purpose: dto.purpose,
+      protocol: dto.protocol ?? null,
+      returnOrigin: dto.returnOrigin ?? null,
+      returnPath: dto.returnPath ?? null,
       type: dto.type,
       linked: Boolean(dto.linked),
+      handoffCode: dto.handoffCode ?? null,
+      handoffState: dto.handoffState ?? null,
       accessToken: dto.accessToken,
       refreshToken: dto.refreshToken,
       expiresAt: dto.expiresAt,

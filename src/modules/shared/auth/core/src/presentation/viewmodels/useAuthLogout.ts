@@ -4,13 +4,24 @@ import { useAppStore } from "@core/store/useAppStore";
 import { useSudoStore } from "@core/store/useSudoStore";
 import { usePatOneTimeSecretStore } from "@core/store/usePatOneTimeSecretStore";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { getAuthServiceBaseUrl, isPlatformDomain } from "@core/common/origin-routing";
+import { isSafeRedirectTarget, getSafeRedirectPath } from "@core/common/redirect-safety";
 import { useRouter } from "next/navigation";
 import { useCallback, useRef } from "react";
 
+/** Logout scope distinguishing local app revocation from central SSO sign-out. */
+export type LogoutScope = "app" | "central";
+
+/** Options accepted by `useAuthLogout` logout actions. */
+export interface AuthLogoutOptions {
+  /** `"app"` (default) revokes current app session while keeping `scr.oidc.session`; `"central"` revokes everywhere. */
+  logoutScope?: LogoutScope;
+}
+
 /**
- * Tenant-aware logout hook.
- * Reads the stored `tenantCode` BEFORE clearing auth state,
- * then redirects back to the tenant's login page (or an explicit `redirectTo`).
+ * Tenant- and federation-aware logout hook.
+ * Reads stored `tenantCode` BEFORE clearing auth state, sends `logoutScope` to
+ * backend revocation, and routes back to `/login` without re-triggering IdP auto-login loops.
  */
 export function useAuthLogout() {
   const { authRepository } = useServices();
@@ -19,62 +30,103 @@ export function useAuthLogout() {
   const { operationError } = useEnhancedToast();
   const router = useRouter();
 
-  // Snapshot tenantCode and optional explicit redirect before logout clears state
   const tenantCodeRef = useRef<string | null>(null);
   const explicitRedirectRef = useRef<string | null>(null);
+  const logoutScopeRef = useRef<LogoutScope>("app");
 
   const getLogoutRedirectUrl = useCallback((): string => {
-    if (explicitRedirectRef.current) {
-      return explicitRedirectRef.current;
+    const scope = logoutScopeRef.current;
+
+    if (scope === "central" && typeof window !== "undefined") {
+      const authBase = getAuthServiceBaseUrl();
+      if (authBase && authBase !== window.location.origin) {
+        return `${authBase}/login?logged_out=1`;
+      }
+      return "/login?logged_out=1";
     }
+
+    if (explicitRedirectRef.current && isSafeRedirectTarget(explicitRedirectRef.current)) {
+      return getSafeRedirectPath(explicitRedirectRef.current, "/login?logged_out=1");
+    }
+
+    if (typeof window !== "undefined" && !isPlatformDomain(window.location.hostname)) {
+      return "/login?logged_out=1";
+    }
+
     const code = tenantCodeRef.current;
     if (code) {
-      // Dev: use query param; Production: would use subdomain
-      return `/login?_tenant=${code}`;
+      return `/login?_tenant=${encodeURIComponent(code)}&logged_out=1`;
     }
-    return "/login";
+    return "/login?logged_out=1";
   }, []);
 
+  const navigateAfterLogout = useCallback(
+    (redirectUrl: string) => {
+      if (redirectUrl.startsWith("http://") || redirectUrl.startsWith("https://")) {
+        window.location.href = redirectUrl;
+      } else {
+        router.push(redirectUrl);
+      }
+    },
+    [router]
+  );
+
   const mutation = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (options?: AuthLogoutOptions) => {
+      const scope: LogoutScope = options?.logoutScope === "central" ? "central" : "app";
+      logoutScopeRef.current = scope;
       // Capture tenant code BEFORE clearing store
       tenantCodeRef.current = useAppStore.getState().tenantCode;
       useSudoStore.getState().reset();
       usePatOneTimeSecretStore.getState().clearPendingReceipt();
-      return authRepository.logout();
+      return authRepository.logout(scope);
     },
     onSuccess: () => {
       const redirectUrl = getLogoutRedirectUrl();
       explicitRedirectRef.current = null;
+      logoutScopeRef.current = "app";
       logoutStore();
       queryClient.clear();
-      router.push(redirectUrl);
+      navigateAfterLogout(redirectUrl);
     },
     onError: (error: Error) => {
       const redirectUrl = getLogoutRedirectUrl();
       explicitRedirectRef.current = null;
-      // Even if API fails, we should clear local state
+      logoutScopeRef.current = "app";
+      // Even if API fails, always clear local state
       logoutStore();
       queryClient.clear();
-      router.push(redirectUrl);
+      navigateAfterLogout(redirectUrl);
       operationError("Logout", undefined, error.message);
     },
   });
 
+  const logout = useCallback(
+    async (options?: AuthLogoutOptions): Promise<void> => {
+      explicitRedirectRef.current = null;
+      try {
+        await mutation.mutateAsync(options);
+      } catch {
+        // Error notification, local cleanup, and redirect handled in onError
+      }
+    },
+    [mutation]
+  );
+
   const handleLogout = useCallback(
-    async (redirectTo?: string): Promise<void> => {
+    async (redirectTo?: string, options?: AuthLogoutOptions): Promise<void> => {
       explicitRedirectRef.current = redirectTo ?? null;
       try {
-        await mutation.mutateAsync();
+        await mutation.mutateAsync(options);
       } catch {
-        // Error notification, local cleanup, and redirect are handled in onError
+        // Error notification, local cleanup, and redirect handled in onError
       }
     },
     [mutation]
   );
 
   return {
-    logout: mutation.mutateAsync,
+    logout,
     handleLogout,
     isLoading: mutation.isPending,
   };

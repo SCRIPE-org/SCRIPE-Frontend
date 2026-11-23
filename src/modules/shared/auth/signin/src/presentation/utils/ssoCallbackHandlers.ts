@@ -1,199 +1,60 @@
 /**
- * useSsoCallbackHandlers — Pure async SSO callback processors (OIDC, OAuth 2.0, SAML 2.0).
+ * ssoCallbackHandlers — Pure async SSO callback processors (OIDC, OAuth 2.0, SAML 2.0).
  *
  * Plain async functions accepting injected dependencies (no React hooks) so they are
- * independently testable. Supports:
- *  - Federated account-linking callback (`{ linked: true }` on OIDC or `?linked=1` on SAML)
- *    redirecting to `/account/security?ssoLinked=success` without requiring in-memory JWT.
- *  - Hybrid IdP MFA step-up (`requires2FA + twoFactorPendingToken`) transitioning to `two_factor`.
- *  - Multi-workspace selection (`requiresWorkspaceSelection`).
+ * independently testable. Delegates session completion and handoff routing to `ssoHandoffDispatch`.
  */
-import { secureTokenService } from "@core/common/secure-token-service";
-import type { IAuthRepository } from "@modules/auth/core/domain/interfaces/IAuthRepository";
-import type { ISsoRepository } from "@modules/auth/core/domain/interfaces/ISsoRepository";
-import type { SsoCallbackResult } from "@modules/auth/core/domain/entities/SsoProvider";
-import type { User } from "@modules/auth/core/domain/entities/User";
-import type { WorkspaceChoice } from "@modules/auth/core/domain/errors/AuthErrors";
-import type { PermissionCode, AdminRole } from "@core/common/types/permissions";
-import type { SsoCallbackError, SsoCallbackState } from "../viewmodels/useSsoCallbackHandler";
-import { buildPostAuthEntryUrl } from "./redirect-safety";
+import { resolvePostAuthTargetForOrigin } from "@core/common/origin-routing";
+import {
+  buildVerifiedCrossOriginCallbackUrl,
+  completeAdminLogin,
+  dispatchCallbackResult,
+  emitSsoLoginBroadcast,
+  isNoLinkedAccountError,
+  setSsoCallbackFailure,
+  type SsoCallbackDeps,
+  type SsoCallbackSetters,
+  type SsoTwoFactorPendingData,
+} from "./ssoHandoffDispatch";
 
-const SSO_LINKING_STORAGE_KEY = "sso_linking";
+export {
+  buildVerifiedCrossOriginCallbackUrl,
+  completeAdminLogin,
+  emitSsoLoginBroadcast,
+  isNoLinkedAccountError,
+  resolvePostAuthTargetForOrigin,
+  type SsoCallbackDeps,
+  type SsoCallbackSetters,
+  type SsoTwoFactorPendingData,
+};
 
-/** Pending passwordless 2FA state handed off from OIDC/SAML callback to the 2FA form. */
-export interface SsoTwoFactorPendingData {
-  token: string;
-  staySignedIn: boolean;
-  email?: string;
-}
-
-/** Injected dependencies for SSO callback handlers. */
-export interface SsoCallbackDeps {
-  authRepository: IAuthRepository;
-  ssoRepository: ISsoRepository;
-  setAuth: (user: User, permissions: PermissionCode[], roles: AdminRole[], isFreshLogin?: boolean) => void;
-  setSubscriptionInfo: (status: string | null, grace: string | null, edition: string | null) => void;
-  setMustChangePassword?: (mustChange: boolean) => void;
-  setRequireMfaEnrollment?: (require: boolean) => void;
-  refreshNavigation: () => Promise<void>;
-  invalidateQueries: () => void;
-  operationSuccess: (msg: string) => void;
-  t: (key: string) => string;
-}
-
-/** UI state setters passed into SSO callback handlers. */
-export interface SsoCallbackSetters {
-  setState: (s: SsoCallbackState) => void;
-  setErrorInfo: (e: SsoCallbackError | null) => void;
-  redirectTo: (path: string) => void;
-  setWorkspaceSelectionData?: (data: { workspaces: WorkspaceChoice[]; token: string; email?: string }) => void;
-  setTwoFactorPending?: (data: SsoTwoFactorPendingData) => void;
-}
+const LEGACY_SSO_STORAGE_KEYS = [
+  "sso_linking",
+  "sso_linking_origin",
+  "sso_code_verifier",
+  "sso_state",
+  "sso_provider_id",
+] as const;
 
 /** Minimal search-params reader compatible with Next.js `ReadonlyURLSearchParams` and `URLSearchParams`. */
 export type SsoSearchParams = { get: (key: string) => string | null };
 
-function isLinkingFlowActive(): boolean {
-  return typeof window !== "undefined" && sessionStorage.getItem(SSO_LINKING_STORAGE_KEY) === "true";
-}
-
-function setCallbackFailure(
-  setters: SsoCallbackSetters,
-  title: string,
-  message: string,
-  state: "error" | "no_linked_account" = "error"
-): void {
-  setters.setState(state);
-  setters.setErrorInfo({ title, message });
-}
-
-function clearLinkingFlag(): void {
-  if (typeof window !== "undefined") sessionStorage.removeItem(SSO_LINKING_STORAGE_KEY);
-}
-
-/** Returns true when an API error indicates the external identity is not linked to any admin account. */
-export function isNoLinkedAccountError(error: unknown): boolean {
-  const details = (error as { details?: { error?: string } })?.details;
-  return (
-    (error instanceof Error && error.message.includes("no_linked_account")) ||
-    details?.error === "no_linked_account"
-  );
-}
-
-/** Completes an authenticated admin session after OIDC or SAML callback redemption. */
-export async function completeAdminLogin(
-  accessToken: string,
-  subscription: {
-    status?: string | null;
-    gracePhase?: string | null;
-    editionName?: string | null;
-    mustChangePassword?: boolean;
-    requireMfaEnrollment?: boolean;
-  },
-  deps: SsoCallbackDeps,
-  setters: SsoCallbackSetters
-): Promise<void> {
-  secureTokenService.setAccessToken(accessToken);
-  const user = await deps.authRepository.getCurrentPrincipal();
-  deps.setAuth(user, (user.permissions || []) as PermissionCode[], (user.roles || []) as AdminRole[], true);
-  deps.setSubscriptionInfo(subscription.status ?? null, subscription.gracePhase ?? null, subscription.editionName ?? null);
-  const mustChange = Boolean(subscription.mustChangePassword);
-  const requireMfa = Boolean(subscription.requireMfaEnrollment);
-  deps.setMustChangePassword?.(mustChange);
-  deps.setRequireMfaEnrollment?.(requireMfa);
-  deps.operationSuccess(deps.t("auth.welcomeBack"));
-  if (!mustChange && !requireMfa && subscription.status !== "PendingPayment") deps.invalidateQueries();
-  const redirect = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("redirect") : null;
-  const targetPath = buildPostAuthEntryUrl({
-    mustChangePassword: mustChange,
-    requireMfaEnrollment: requireMfa,
-    subscriptionStatus: subscription.status,
-    redirect,
-  });
-  setters.setState("success");
-  setTimeout(() => setters.redirectTo(targetPath), 300);
-}
-
-async function dispatchCallbackResult(
-  result: SsoCallbackResult,
-  deps: SsoCallbackDeps,
-  setters: SsoCallbackSetters
-): Promise<void> {
-  // Hybrid IdP MFA step-up (BAM-01)
-  if (result.requires2FA && result.twoFactorPendingToken && setters.setTwoFactorPending) {
-    setters.setTwoFactorPending({
-      token: result.twoFactorPendingToken,
-      staySignedIn: Boolean(result.staySignedIn),
-      email: result.email,
-    });
-    setters.setState("two_factor");
-    return;
+function clearLegacySsoStorage(): boolean {
+  if (typeof window === "undefined") return false;
+  let hadLegacyLinking = false;
+  try {
+    hadLegacyLinking = window.sessionStorage.getItem("sso_linking") === "true";
+    for (const key of LEGACY_SSO_STORAGE_KEYS) {
+      window.sessionStorage.removeItem(key);
+    }
+  } catch {
+    // Ignore storage access errors in restricted browsing contexts
   }
-
-  if (
-    result.requiresWorkspaceSelection &&
-    result.availableWorkspaces &&
-    result.token &&
-    setters.setWorkspaceSelectionData
-  ) {
-    setters.setWorkspaceSelectionData({
-      workspaces: result.availableWorkspaces as WorkspaceChoice[],
-      token: result.token,
-      email: result.email,
-    });
-    setters.setState("workspace_selection");
-    return;
-  }
-
-  if (result.type === "admin" && result.accessToken) {
-    await completeAdminLogin(
-      result.accessToken,
-      {
-        status: result.subscriptionStatus,
-        gracePhase: result.gracePhase,
-        editionName: result.editionName,
-        mustChangePassword: result.mustChangePassword,
-        requireMfaEnrollment: result.requireMfaEnrollment,
-      },
-      deps,
-      setters
-    );
-    return;
-  }
-
-  if (result.type === "user" && result.accessToken) {
-    secureTokenService.setAccessToken(result.accessToken);
-    const user = await deps.authRepository.getCurrentPrincipal();
-    deps.setAuth(
-      user,
-      (user.permissions || []) as PermissionCode[],
-      (user.roles || []) as AdminRole[],
-      true
-    );
-    const mustChange = Boolean(result.mustChangePassword);
-    const requireMfa = Boolean(result.requireMfaEnrollment);
-    deps.setMustChangePassword?.(mustChange);
-    deps.setRequireMfaEnrollment?.(requireMfa);
-    const queryRedirect =
-      typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("redirect") : null;
-    const targetPath = buildPostAuthEntryUrl({
-      mustChangePassword: mustChange,
-      requireMfaEnrollment: requireMfa,
-      subscriptionStatus: result.subscriptionStatus,
-      redirect: queryRedirect,
-    });
-    deps.operationSuccess(deps.t("auth.welcomeBack"));
-    if (!mustChange && !requireMfa) deps.invalidateQueries();
-    setters.setState("success");
-    setTimeout(() => setters.redirectTo(targetPath), 300);
-    return;
-  }
-
-  setCallbackFailure(setters, deps.t("auth.sso.callbackError"), deps.t("auth.sso.unsupportedAccountType"));
+  return hadLegacyLinking;
 }
 
 /**
- * Processes an OIDC/OAuth 2.0 callback (`code` + `state`), supporting federated account linking,
+ * Processes an OIDC/OAuth 2.0 callback (`code` + `state`), supporting server-authoritative linking,
  * hybrid IdP MFA step-up (`requires2FA + twoFactorPendingToken`), workspace selection, and login.
  */
 export async function handleOidcCallback(
@@ -201,49 +62,71 @@ export async function handleOidcCallback(
   deps: SsoCallbackDeps,
   setters: SsoCallbackSetters
 ): Promise<void> {
-  const errorParam = searchParams.get("error");
-  const isLinking = isLinkingFlowActive();
+  const errorParam = searchParams.get("error") ?? searchParams.get("error_code");
+  const isQueryLink = searchParams.get("purpose") === "link" || searchParams.get("linking") === "1";
 
   if (errorParam) {
-    clearLinkingFlag();
-    if (isLinking) { setters.redirectTo(`/account/security?error=${encodeURIComponent(errorParam)}`); return; }
-    setCallbackFailure(setters, deps.t("auth.sso.callbackError"), decodeURIComponent(errorParam));
+    const hadLegacyLink = clearLegacySsoStorage();
+    if (isQueryLink || hadLegacyLink) {
+      setters.redirectTo(`/account/security?error=${encodeURIComponent(errorParam)}`);
+      return;
+    }
+    const decoded = decodeURIComponent(errorParam);
+    if (decoded === "no_linked_account") {
+      setSsoCallbackFailure(
+        setters,
+        deps.t("auth.sso.noLinkedAccount"),
+        deps.t("auth.sso.noLinkedAccountDesc"),
+        "no_linked_account"
+      );
+      return;
+    }
+    setSsoCallbackFailure(setters, deps.t("auth.sso.callbackError"), decoded);
     return;
   }
 
   const code = searchParams.get("code");
   const stateParam = searchParams.get("state");
   if (!code || !stateParam) {
-    clearLinkingFlag();
-    if (isLinking) { setters.redirectTo("/account/security?error=sso_missing_params"); return; }
-    setCallbackFailure(setters, deps.t("auth.sso.callbackError"), deps.t("auth.sso.missingParams"));
+    const hadLegacyLink = clearLegacySsoStorage();
+    if (isQueryLink || hadLegacyLink) {
+      setters.redirectTo("/account/security?error=sso_missing_params");
+      return;
+    }
+    setSsoCallbackFailure(
+      setters,
+      deps.t("auth.sso.callbackError"),
+      deps.t("auth.sso.missingParams")
+    );
     return;
   }
 
   try {
     const result = await deps.ssoRepository.completeCallback(code, stateParam);
-    clearLinkingFlag();
-
-    if (result.linked) {
-      deps.operationSuccess(deps.t("auth.sso.accountLinkedSuccess"));
-      setters.setState("success");
-      setters.redirectTo("/account/security?ssoLinked=success");
-      return;
-    }
-
+    clearLegacySsoStorage();
     await dispatchCallbackResult(result, deps, setters);
   } catch (error) {
-    clearLinkingFlag();
-    if (isLinking) {
-      const codeParam = error instanceof Error ? encodeURIComponent(error.message) : "sso_link_failed";
+    clearLegacySsoStorage();
+    if (isQueryLink) {
+      const codeParam =
+        error instanceof Error ? encodeURIComponent(error.message) : "sso_link_failed";
       setters.redirectTo(`/account/security?error=${codeParam}`);
       return;
     }
     if (isNoLinkedAccountError(error)) {
-      setCallbackFailure(setters, deps.t("auth.sso.noLinkedAccount"), deps.t("auth.sso.noLinkedAccountDesc"), "no_linked_account");
+      setSsoCallbackFailure(
+        setters,
+        deps.t("auth.sso.noLinkedAccount"),
+        deps.t("auth.sso.noLinkedAccountDesc"),
+        "no_linked_account"
+      );
       return;
     }
-    setCallbackFailure(setters, deps.t("auth.sso.callbackError"), error instanceof Error ? error.message : deps.t("auth.sso.callbackErrorGeneric"));
+    setSsoCallbackFailure(
+      setters,
+      deps.t("auth.sso.callbackError"),
+      error instanceof Error ? error.message : deps.t("auth.sso.callbackErrorGeneric")
+    );
   }
 }
 
@@ -256,34 +139,46 @@ export async function handleSamlCallback(
   setters: SsoCallbackSetters
 ): Promise<void> {
   const linkedParam = searchParams.get("linked") ?? searchParams.get("ssoLinked");
-  const isLinking = isLinkingFlowActive();
+  const isQueryLink = searchParams.get("purpose") === "link" || searchParams.get("linking") === "1";
 
   if (linkedParam === "1" || linkedParam === "true" || linkedParam === "success") {
-    clearLinkingFlag();
+    clearLegacySsoStorage();
     deps.operationSuccess(deps.t("auth.sso.accountLinkedSuccess"));
     setters.setState("success");
     setters.redirectTo("/account/security?ssoLinked=success");
     return;
   }
 
-  const errorParam = searchParams.get("error");
+  const errorParam = searchParams.get("error") ?? searchParams.get("error_code");
   if (errorParam) {
-    clearLinkingFlag();
-    if (isLinking) { setters.redirectTo(`/account/security?error=${encodeURIComponent(errorParam)}`); return; }
-    const errorMessage = decodeURIComponent(errorParam);
-    if (errorMessage.includes("no_linked_account") || errorMessage.includes("automatically linked")) {
-      setCallbackFailure(setters, deps.t("auth.sso.noLinkedAccount"), deps.t("auth.sso.noLinkedAccountDesc"), "no_linked_account");
+    const hadLegacyLink = clearLegacySsoStorage();
+    if (isQueryLink || hadLegacyLink) {
+      setters.redirectTo(`/account/security?error=${encodeURIComponent(errorParam)}`);
       return;
     }
-    setCallbackFailure(setters, deps.t("auth.sso.callbackError"), errorMessage);
+    const errorMessage = decodeURIComponent(errorParam);
+    if (errorMessage.includes("no_linked_account") || errorMessage.includes("automatically linked")) {
+      setSsoCallbackFailure(
+        setters,
+        deps.t("auth.sso.noLinkedAccount"),
+        deps.t("auth.sso.noLinkedAccountDesc"),
+        "no_linked_account"
+      );
+      return;
+    }
+    setSsoCallbackFailure(setters, deps.t("auth.sso.callbackError"), errorMessage);
     return;
   }
 
-  clearLinkingFlag();
+  clearLegacySsoStorage();
   const code = searchParams.get("code");
   const state = searchParams.get("state");
   if (!code || !state) {
-    setCallbackFailure(setters, deps.t("auth.sso.callbackError"), deps.t("auth.sso.missingParams"));
+    setSsoCallbackFailure(
+      setters,
+      deps.t("auth.sso.callbackError"),
+      deps.t("auth.sso.missingParams")
+    );
     return;
   }
 
@@ -291,6 +186,10 @@ export async function handleSamlCallback(
     const result = await deps.ssoRepository.completeSamlCallback(code, state);
     await dispatchCallbackResult(result, deps, setters);
   } catch (error) {
-    setCallbackFailure(setters, deps.t("auth.sso.callbackError"), error instanceof Error ? error.message : deps.t("auth.sso.callbackErrorGeneric"));
+    setSsoCallbackFailure(
+      setters,
+      deps.t("auth.sso.callbackError"),
+      error instanceof Error ? error.message : deps.t("auth.sso.callbackErrorGeneric")
+    );
   }
 }
