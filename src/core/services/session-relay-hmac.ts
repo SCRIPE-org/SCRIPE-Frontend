@@ -21,6 +21,13 @@ export interface ValidatedRelayContext {
   hmacSecret: string;
 }
 
+const SECURITY_RESPONSE_HEADERS = {
+  "Cache-Control": "private, no-store, no-cache, max-age=0",
+  Pragma: "no-cache",
+  "X-Content-Type-Options": "nosniff",
+  Vary: "Origin, Sec-Fetch-Site",
+} as const;
+
 export function methodNotAllowedResponse(): NextResponse {
   return NextResponse.json(
     { error: "method_not_allowed" },
@@ -28,8 +35,7 @@ export function methodNotAllowedResponse(): NextResponse {
       status: 405,
       headers: {
         Allow: "POST",
-        "Cache-Control": "no-store",
-        Pragma: "no-cache",
+        ...SECURITY_RESPONSE_HEADERS,
       },
     }
   );
@@ -38,24 +44,55 @@ export function methodNotAllowedResponse(): NextResponse {
 export function noStoreJson(body: unknown, status: number): NextResponse {
   return NextResponse.json(body, {
     status,
-    headers: {
-      "Cache-Control": "no-store",
-      Pragma: "no-cache",
-    },
+    headers: { ...SECURITY_RESPONSE_HEADERS },
   });
 }
 
+const VALID_IP_RE = /^[\da-fA-F.:]+$/;
+
+function isPrivateOrLoopbackIp(ip: string): boolean {
+  const lower = ip.toLowerCase();
+  if (lower === "::1" || lower.startsWith("fe80:") || lower.startsWith("fc") || lower.startsWith("fd")) {
+    return true;
+  }
+  const v4 = lower.startsWith("::ffff:") ? lower.slice(7) : lower;
+  const parts = v4.split(".");
+  if (parts.length !== 4) return false;
+  const a = Number.parseInt(parts[0], 10);
+  const b = Number.parseInt(parts[1], 10);
+  if (Number.isNaN(a) || Number.isNaN(b)) return false;
+  return (
+    a === 10 ||
+    a === 127 ||
+    a === 0 ||
+    (a === 172 && b >= 16 && b <= 31) ||
+    (a === 192 && b === 168) ||
+    (a === 169 && b === 254) ||
+    (a === 100 && b >= 64 && b <= 127)
+  );
+}
+
 function resolveClientIp(request: NextRequest): string {
-  const forwardedFor = request.headers.get("x-forwarded-for");
-  if (forwardedFor) {
-    const first = forwardedFor.split(",")[0]?.trim();
-    if (first && /^[\da-fA-F.:]+$/.test(first)) {
-      return first;
+  for (const singleHeader of ["cf-connecting-ip", "x-vercel-forwarded-for", "x-real-ip"]) {
+    const val = request.headers.get(singleHeader)?.split(",")[0]?.trim();
+    if (val && VALID_IP_RE.test(val)) {
+      return val;
     }
   }
-  const realIp = request.headers.get("x-real-ip")?.trim();
-  if (realIp && /^[\da-fA-F.:]+$/.test(realIp)) {
-    return realIp;
+  const forwardedFor = request.headers.get("x-forwarded-for");
+  if (forwardedFor) {
+    const hops = forwardedFor
+      .split(",")
+      .map((s) => s.trim())
+      .filter((s) => Boolean(s) && VALID_IP_RE.test(s));
+    for (let i = hops.length - 1; i >= 0; i -= 1) {
+      if (!isPrivateOrLoopbackIp(hops[i])) {
+        return hops[i];
+      }
+    }
+    if (hops.length > 0) {
+      return hops[hops.length - 1];
+    }
   }
   return "127.0.0.1";
 }
@@ -71,9 +108,9 @@ function resolveRequestAuthority(request: NextRequest): {
     return null;
   }
 
-  const forwardedHost = request.headers.get("x-forwarded-host")?.split(",")[0]?.trim();
   const hostHeader = request.headers.get("host")?.trim();
-  const rawHost = forwardedHost || hostHeader || fallbackUrl.host;
+  const forwardedHost = request.headers.get("x-forwarded-host")?.split(",")[0]?.trim();
+  const rawHost = hostHeader || forwardedHost || fallbackUrl.host;
   if (!rawHost || /[\s\\/@]/.test(rawHost)) {
     return null;
   }
@@ -89,6 +126,17 @@ function resolveRequestAuthority(request: NextRequest): {
   } catch {
     return null;
   }
+}
+
+function isKnownPlaceholderOrDevSecret(secret: string): boolean {
+  const lower = secret.toLowerCase();
+  return (
+    lower.startsWith("change-this") ||
+    lower.startsWith("scripe_dev_") ||
+    lower.includes("not_for_production") ||
+    lower.includes("dev-secret") ||
+    lower.includes("placeholder")
+  );
 }
 
 export function validateRelayRequest(
@@ -125,7 +173,7 @@ export function validateRelayRequest(
 
   const isProd = process.env.NODE_ENV === "production";
   const hmacSecret = process.env.SCRIPE_SESSION_RELAY_HMAC_SECRET?.trim() ?? "";
-  if (!hmacSecret || (isProd && hmacSecret.length < 32)) {
+  if (!hmacSecret || hmacSecret.length < 32 || (isProd && isKnownPlaceholderOrDevSecret(hmacSecret))) {
     return {
       ok: false,
       response: noStoreJson({ error: "session_relay_not_configured" }, 503),

@@ -41,6 +41,8 @@ export async function POST(request: NextRequest) {
       headers,
       body: forwardBody,
       cache: "no-store",
+      redirect: "manual",
+      signal: AbortSignal.timeout(10_000),
     });
 
     const text = await upstreamResponse.text();

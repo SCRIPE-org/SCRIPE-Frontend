@@ -47,6 +47,8 @@ export async function POST(request: NextRequest) {
       headers,
       body: forwardBody,
       cache: "no-store",
+      redirect: "manual",
+      signal: AbortSignal.timeout(10_000),
     });
 
     const text = await upstreamResponse.text();
@@ -67,6 +69,23 @@ export async function POST(request: NextRequest) {
         upstreamResponse,
         rawJson
       );
+      const bodyObj =
+        rawJson && typeof rawJson === "object" && !Array.isArray(rawJson)
+          ? (rawJson as Record<string, unknown>)
+          : null;
+      const unwrapped =
+        bodyObj?.data && typeof bodyObj.data === "object" && !Array.isArray(bodyObj.data)
+          ? (bodyObj.data as Record<string, unknown>)
+          : bodyObj;
+      const isPendingContinuation =
+        Boolean(unwrapped?.requires2FA) || Boolean(unwrapped?.requiresWorkspaceSelection);
+      const hasAccessToken =
+        typeof unwrapped?.accessToken === "string" && unwrapped.accessToken.trim().length > 0;
+
+      if (!refreshToken && hasAccessToken && !isPendingContinuation) {
+        return noStoreJson({ error: "missing_relay_refresh_token" }, 502);
+      }
+
       if (refreshToken) {
         if (!principalType) {
           return noStoreJson({ error: "invalid_principal_type" }, 502);

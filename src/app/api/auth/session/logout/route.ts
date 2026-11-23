@@ -54,6 +54,8 @@ export async function POST(request: NextRequest) {
       headers,
       body: forwardBody,
       cache: "no-store",
+      redirect: "manual",
+      signal: AbortSignal.timeout(10_000),
     });
   } catch {
     // Always expire local first-party relay cookie even if upstream fails

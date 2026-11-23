@@ -283,4 +283,108 @@ describe("Custom-domain 3-route session micro-relay (/api/auth/session/*)", () =
     const rejectedRes = await refreshPost(prodWithDevCookie);
     expect(rejectedRes.status).toBe(401);
   });
+
+  it("enforces FE-RELAY-01..03 & #256/#258: non-spoofable IP/authority, placeholder secret guard, ephemeral cookie (maxAge=0), 502 missing refresh cookie, security headers, and manual redirect", async () => {
+    // 1. Short (<32 chars) rejected even outside prod; dev placeholder rejected in prod (#256 #2, FE-RELAY-03)
+    vi.stubEnv("NODE_ENV", "development");
+    vi.stubEnv("SCRIPE_SESSION_RELAY_HMAC_SECRET", "short-secret-under-32-chars");
+    const shortRes = await establishPost(
+      buildJsonPostRequest(
+        "https://portal.club.com/api/auth/session/establish",
+        { code: "c1", state: "s1" },
+        { host: "portal.club.com", origin: "https://portal.club.com" }
+      )
+    );
+    expect(shortRes.status).toBe(503);
+    expect(shortRes.headers.get("x-content-type-options")).toBe("nosniff");
+    expect(shortRes.headers.get("vary")).toBe("Origin, Sec-Fetch-Site");
+
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv(
+      "SCRIPE_SESSION_RELAY_HMAC_SECRET",
+      "SCRIPE_DEV_SESSION_RELAY_HMAC_not_for_production"
+    );
+    const placeholderRes = await establishPost(
+      buildJsonPostRequest(
+        "https://portal.club.com/api/auth/session/establish",
+        { code: "c1", state: "s1" },
+        { host: "portal.club.com", origin: "https://portal.club.com" }
+      )
+    );
+    expect(placeholderRes.status).toBe(503);
+
+    // 2. Host header takes precedence over spoofable X-Forwarded-Host (#256 #1)
+    vi.stubEnv("SCRIPE_SESSION_RELAY_HMAC_SECRET", TEST_RELAY_SECRET);
+    const spoofHostRes = await establishPost(
+      buildJsonPostRequest(
+        "https://portal.club.com/api/auth/session/establish",
+        { code: "c1", state: "s1" },
+        {
+          host: "real.club.com",
+          "x-forwarded-host": "portal.club.com",
+          origin: "https://portal.club.com",
+        }
+      )
+    );
+    expect(spoofHostRes.status).toBe(403);
+
+    // 3. Fail closed 502 when accessToken returned without refresh cookie (FE-RELAY-01)
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () =>
+        new Response(JSON.stringify({ accessToken: "orphan-jwt", type: "admin" }), {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        })
+      )
+    );
+    const missingCookieRes = await establishPost(
+      buildJsonPostRequest(
+        "https://portal.club.com/api/auth/session/establish",
+        { code: "c1", state: "s1" },
+        { host: "portal.club.com", origin: "https://portal.club.com" }
+      )
+    );
+    expect(missingCookieRes.status).toBe(502);
+
+    // 4. Rightmost non-private IP in X-Forwarded-For, manual redirect + signal, and staySignedIn=false (maxAge=0 -> session cookie omitted maxAge) (#256 #1/#3, #258, FE-RELAY-02)
+    let capturedClientIp = "";
+    let capturedRedirect: RequestRedirect | undefined;
+    let hasSignal = false;
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (_url: string | URL | Request, init?: RequestInit) => {
+        const hdrs = (init?.headers ?? {}) as Record<string, string>;
+        capturedClientIp = hdrs["X-Scripe-Session-Relay-Client-Ip"] ?? "";
+        capturedRedirect = init?.redirect;
+        hasSignal = Boolean(init?.signal);
+        return new Response(JSON.stringify({ accessToken: "ephemeral-jwt", type: "admin" }), {
+          status: 200,
+          headers: {
+            "content-type": "application/json",
+            "x-scripe-relay-refresh-token": "ephemeral-rtok",
+            "x-scripe-relay-principal-type": "admin",
+            "x-scripe-relay-refresh-maxage": "0",
+          },
+        });
+      })
+    );
+    const ephemeralRes = await establishPost(
+      buildJsonPostRequest(
+        "https://portal.club.com/api/auth/session/establish",
+        { code: "c2", state: "s2" },
+        {
+          host: "portal.club.com",
+          origin: "https://portal.club.com",
+          "x-forwarded-for": "198.51.100.99, 203.0.113.42, 10.0.0.5",
+        }
+      )
+    );
+    expect(ephemeralRes.status).toBe(200);
+    expect(capturedClientIp).toBe("203.0.113.42");
+    expect(capturedRedirect).toBe("manual");
+    expect(hasSignal).toBe(true);
+    expect(ephemeralRes.cookies.get(RELAY_COOKIE_PROD)?.maxAge).toBeUndefined();
+    expect(ephemeralRes.headers.get("set-cookie") ?? "").not.toMatch(/Max-Age=/i);
+  });
 });

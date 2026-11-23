@@ -2,7 +2,6 @@ import { NextResponse, type NextRequest } from "next/server";
 
 export const RELAY_COOKIE_PROD = "__Host-scripe_refresh_token";
 export const RELAY_COOKIE_DEV_HTTP = "scripe_custom_refresh_token";
-const DEFAULT_MAX_AGE_SECONDS = 60 * 60 * 24 * 7;
 
 export type RelayPrincipalType = "admin" | "user";
 
@@ -50,14 +49,14 @@ export function setRelayCookie(
   const maxAge =
     params.maxAgeSeconds && Number.isFinite(params.maxAgeSeconds) && params.maxAgeSeconds > 0
       ? Math.floor(params.maxAgeSeconds)
-      : DEFAULT_MAX_AGE_SECONDS;
+      : undefined;
 
   response.cookies.set(cookieName, `${params.principalType}|${params.refreshToken}`, {
     httpOnly: true,
     sameSite: "lax",
     path: "/",
     secure: isProd || params.isSecureTransport,
-    maxAge,
+    ...(maxAge !== undefined ? { maxAge } : {}),
   });
 }
 
