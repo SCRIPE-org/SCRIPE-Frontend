@@ -160,6 +160,14 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
   enterTwoFactorStepRef.current = enterTwoFactorStep;
   const hydrateAndRedirectRef = useRef(hydrateAndRedirect);
   hydrateAndRedirectRef.current = hydrateAndRedirect;
+  const isMountedRef = useRef(true);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   useEffect(() => {
     const resolvedToken = extractAndScrubMagicLinkToken(queryToken);
@@ -174,12 +182,11 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
     }
     if (verifiedTokenRef.current === activeToken) return;
     verifiedTokenRef.current = activeToken;
-    let cancelled = false;
 
     (async () => {
       try {
         const response = await authRepositoryRef.current.verifyMagicLink(activeToken, tenantId);
-        if (cancelled) return;
+        if (!isMountedRef.current) return;
 
         if (response.requires2FA && response.twoFactorPendingToken) {
           enterTwoFactorStepRef.current(
@@ -197,19 +204,15 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
           hydrateAndRedirectRef.current(
             { ...response, user: response.user },
             1200,
-            () => cancelled
+            () => !isMountedRef.current
           );
           return;
         }
         setState("error");
       } catch {
-        if (!cancelled) setState("error");
+        if (isMountedRef.current) setState("error");
       }
     })();
-
-    return () => {
-      cancelled = true;
-    };
   }, [queryToken, tenantId]);
 
   const selectWorkspace = useCallback(

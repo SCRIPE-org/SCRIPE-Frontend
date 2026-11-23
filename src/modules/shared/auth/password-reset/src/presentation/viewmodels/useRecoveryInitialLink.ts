@@ -68,6 +68,14 @@ export function useRecoveryInitialLink({
   setSelectedWorkspaces,
 }: UseRecoveryInitialLinkParams): void {
   const mountedRecoveryRef = useRef(false);
+  const isMountedRef = useRef(true);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (mountedRecoveryRef.current) return;
@@ -102,14 +110,13 @@ export function useRecoveryInitialLink({
       return;
     }
 
-    let cancelled = false;
     (async () => {
       try {
         const result = await repoRef.current.verifyOtp(resolvedEmail, resolvedCredential, {
           method: detectedMethod,
           tenantId: tenantId ?? undefined,
         });
-        if (cancelled) return;
+        if (!isMountedRef.current) return;
         if (result.isValid === false) {
           setStep("invalid-link");
           return;
@@ -128,13 +135,9 @@ export function useRecoveryInitialLink({
           setStep("new-password");
         }
       } catch {
-        if (!cancelled) setStep("invalid-link");
+        if (isMountedRef.current) setStep("invalid-link");
       }
     })();
-
-    return () => {
-      cancelled = true;
-    };
   }, [
     mode,
     initialEmail,

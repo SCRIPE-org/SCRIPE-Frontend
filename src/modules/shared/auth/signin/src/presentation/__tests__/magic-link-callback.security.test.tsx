@@ -183,4 +183,31 @@ describe("Magic-link URL security & Signin recovery context continuity", () => {
     expect(screen.getByText("auth.accountSetup.resendAvailableIn")).toBeInTheDocument();
     expect(screen.getByText("auth.accountSetup.resendEmailAction")).toBeInTheDocument();
   });
+
+  it("completes #token= magic-link verification under React.StrictMode double-invocation without stalling on verifying", async () => {
+    window.history.replaceState({}, "", "/magic-link#token=strict-magic-login");
+    let resolveVerify!: (val: unknown) => void;
+    mockVerifyMagicLink.mockReturnValueOnce(
+      new Promise((resolve) => {
+        resolveVerify = resolve;
+      })
+    );
+
+    const { result } = renderHook(() => useMagicLinkCallbackViewModel(), {
+      wrapper: ({ children }) => <React.StrictMode>{children}</React.StrictMode>,
+    });
+
+    expect(mockVerifyMagicLink).toHaveBeenCalledTimes(1);
+
+    resolveVerify({
+      user: { id: "u-strict", email: "strict@ahly.club", roles: ["TenantAdmin"], permissions: [] },
+      mustChangePassword: false,
+      subscriptionStatus: "Active",
+    });
+
+    await waitFor(() => {
+      expect(result.current.state).toBe("success");
+    });
+    expect(mockVerifyMagicLink).toHaveBeenCalledTimes(1);
+  });
 });

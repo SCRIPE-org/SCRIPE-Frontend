@@ -445,4 +445,43 @@ describe("Password recovery helpers & consolidated ViewModel", () => {
       expect(screen.queryByTestId("recovery-active-session-notice")).not.toBeInTheDocument();
     });
   });
+
+  it("transitions /reset-password#token= out of verifying-link under React.StrictMode double-invocation", async () => {
+    window.history.replaceState(
+      {},
+      "",
+      "/reset-password#token=strict-magic-tok&email=coach@ahly.club&method=magic-link"
+    );
+    mockSearchParams = new URLSearchParams();
+    let resolveVerify!: (val: unknown) => void;
+    mockVerifyOtp.mockReturnValueOnce(
+      new Promise((resolve) => {
+        resolveVerify = resolve;
+      })
+    );
+    mockGetPasswordPolicy.mockResolvedValue(ENTERPRISE_POLICY);
+
+    render(
+      <React.StrictMode>
+        <PasswordRecoveryView mode="reset" />
+      </React.StrictMode>
+    );
+
+    expect(mockVerifyOtp).toHaveBeenCalledTimes(1);
+    expect(screen.getByText("auth.verifyingLink")).toBeInTheDocument();
+
+    await act(async () => {
+      resolveVerify({
+        isValid: true,
+        resetGrantToken: "strict-grant-tok",
+        passwordPolicy: ENTERPRISE_POLICY,
+        workspaces: [],
+      });
+    });
+
+    await waitFor(() => {
+      expect(document.getElementById("fp-new-password")).toBeInTheDocument();
+    });
+    expect(mockVerifyOtp).toHaveBeenCalledTimes(1);
+  });
 });
