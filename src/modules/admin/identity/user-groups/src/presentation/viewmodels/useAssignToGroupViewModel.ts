@@ -5,6 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { identityContainer } from "@modules/identity/di";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { useSessionAuthorizationSync } from "@core/hooks/use-session-authorization-sync";
 import { userGroupKeys } from "./useUserGroupsViewModel";
 import { appLogger } from "@/core/common/logger";
 import { resolveBilingualLabel } from "@core/common/utils";
@@ -32,6 +33,7 @@ export function useAssignToGroupViewModel({
   // would double up on the already-complete multiAssignSuccess sentence below.
   const { success, error } = useEnhancedToast();
   const queryClient = useQueryClient();
+  const syncSessionAuthorization = useSessionAuthorizationSync();
 
   const fetchGroups = async (term: string): Promise<GenericSelectOption[]> => {
     try {
@@ -118,6 +120,7 @@ export function useAssignToGroupViewModel({
         });
         queryClient.invalidateQueries({ queryKey: userGroupKeys.all });
         queryClient.invalidateQueries({ queryKey: ["admins"] });
+        await syncSessionAuthorization(tenantId ?? null);
         onOpenChange(false);
       } catch (err: any) {
         error({ title: t("userGroups.assignToGroups"), description: err.message });
@@ -135,6 +138,7 @@ export function useAssignToGroupViewModel({
         });
         queryClient.invalidateQueries({ queryKey: userGroupKeys.all });
         queryClient.invalidateQueries({ queryKey: ["roles"] });
+        await syncSessionAuthorization(tenantId ?? null);
         onOpenChange(false);
       } catch (err: any) {
         error({ title: t("userGroups.assignToGroups"), description: err.message });

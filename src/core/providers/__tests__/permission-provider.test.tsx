@@ -208,5 +208,55 @@ describe("PermissionProvider - Superadmin and PBAC security tests", () => {
     rerender();
     expect(result.current.canAccessPage("/venue")).toBe(true);
   });
+
+  it("enforces aligned PAGE_PERMISSIONS on payouts, analytics events, onboarding rules, customization gallery, sso continue, and tenant audit/security", () => {
+    useAppStore.setState({
+      user: {
+        id: "tenant-admin-1",
+        tenantId: "tenant-1",
+        isSuperAdmin: false,
+      } as any,
+      permissions: [SYSTEM_PERMISSIONS.BILLING_MANAGE, SYSTEM_PERMISSIONS.ANALYTICS_VIEW] as any,
+      roles: [
+        {
+          roleId: "role-ta",
+          roleCode: "TENANT_ADMIN",
+          roleName: "Tenant Admin",
+          inheritedPermissions: [],
+        },
+      ],
+      isAuthenticated: true,
+    });
+
+    const { result, rerender } = renderHook(() => usePermissions(), { wrapper });
+
+    // Authenticated shell SSO relay allows entry; stale permissions on payouts/events fail closed
+    expect(result.current.canAccessPage("/sso/continue")).toBe(true);
+    expect(result.current.canAccessPage("/entitlements/payouts")).toBe(false);
+    expect(result.current.canAccessPage("/analytics/events")).toBe(false);
+    expect(result.current.canAccessPage("/entitlements/onboarding/rules")).toBe(false);
+    expect(result.current.canAccessPage("/customization/gallery")).toBe(false);
+    expect(result.current.canAccessPage("/audit")).toBe(false);
+    expect(result.current.canAccessPage("/security")).toBe(false);
+
+    useAppStore.setState({
+      permissions: [
+        SYSTEM_PERMISSIONS.TENANT_STRIPE_CONNECT_VIEW,
+        SYSTEM_PERMISSIONS.ANALYTICS_EVENTS_VIEW,
+        SYSTEM_PERMISSIONS.ONBOARDING_RULES_VIEW,
+        SYSTEM_PERMISSIONS.TENANT_SETTINGS_UPDATE,
+        SYSTEM_PERMISSIONS.AUDIT_VIEW,
+        SYSTEM_PERMISSIONS.SECURITY_VIEW,
+      ] as any,
+    });
+    rerender();
+
+    expect(result.current.canAccessPage("/entitlements/payouts")).toBe(true);
+    expect(result.current.canAccessPage("/analytics/events")).toBe(true);
+    expect(result.current.canAccessPage("/entitlements/onboarding/rules")).toBe(true);
+    expect(result.current.canAccessPage("/customization/gallery")).toBe(true);
+    expect(result.current.canAccessPage("/audit")).toBe(true);
+    expect(result.current.canAccessPage("/security")).toBe(true);
+  });
 });
 

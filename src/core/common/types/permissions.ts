@@ -170,10 +170,12 @@ export function isTenantSuperAdminUser(
 
   return roles.some(
     (r) =>
-      r.isTenantSuperAdmin === true ||
-      r.roleCode === "TENANT_SUPER_ADMIN" ||
-      r.roleCode === "T_SCRIPE_SA" ||
-      Boolean(r.roleCode?.endsWith("_SUPER_ADMIN"))
+      r.roleCode !== "SYSTEM_SUPER_ADMIN" &&
+      r.roleCode !== "PLATFORM_SUPER_ADMIN" &&
+      (r.isTenantSuperAdmin === true ||
+        r.roleCode === "TENANT_SUPER_ADMIN" ||
+        r.roleCode === "T_SCRIPE_SA" ||
+        Boolean(r.roleCode?.endsWith("_SUPER_ADMIN")))
   );
 }
 
@@ -398,7 +400,9 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/customization/branding": [SYSTEM_PERMISSIONS.TENANT_SETTINGS_VIEW],
   "/customizer": [SYSTEM_PERMISSIONS.TENANT_SETTINGS_VIEW],
   "/customization/themes": [SYSTEM_PERMISSIONS.THEMES_VIEW],
-  "/customization/gallery": [SYSTEM_PERMISSIONS.THEMES_VIEW],
+  "/customization/gallery": [
+    `${SYSTEM_PERMISSIONS.THEMES_VIEW}|${SYSTEM_PERMISSIONS.TENANT_SETTINGS_VIEW}|${SYSTEM_PERMISSIONS.TENANT_SETTINGS_UPDATE}`,
+  ],
   "/customization/menus": [SYSTEM_PERMISSIONS.MENUS_VIEW],
   "/customization/menus/customize": [SYSTEM_PERMISSIONS.MENUS_CUSTOMIZE],
 
@@ -414,7 +418,7 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
 
   "/entitlements/billing-hub": [SYSTEM_PERMISSIONS.BILLING_DASHBOARD_VIEW],
   "/payment-gateways": [SYSTEM_PERMISSIONS.PAYMENT_GATEWAYS_MANAGE],
-  "/entitlements/payouts": [SYSTEM_PERMISSIONS.BILLING_MANAGE],
+  "/entitlements/payouts": [SYSTEM_PERMISSIONS.TENANT_STRIPE_CONNECT_VIEW],
   "/entitlements/tenant-plans": [SYSTEM_PERMISSIONS.TENANT_PLANS_VIEW],
   "/entitlements/tenant-plans/compare": [SYSTEM_PERMISSIONS.TENANT_PLANS_VIEW],
   "/entitlements/tenant-plans/[id]": [SYSTEM_PERMISSIONS.TENANT_PLANS_VIEW],
@@ -629,20 +633,20 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/custom-fields/security": [SYSTEM_PERMISSIONS.MANAGE_KEYS],
 
   // Analytics & Dashboard Events
-  "/analytics/events": [SYSTEM_PERMISSIONS.ANALYTICS_VIEW],
+  "/analytics/events": [SYSTEM_PERMISSIONS.ANALYTICS_EVENTS_VIEW],
   "/dashboard-preview": [SYSTEM_PERMISSIONS.DASHBOARD_VIEW],
 
   // Dynamic Integrations details
   "/integrations/apikeys/[id]": [SYSTEM_PERMISSIONS.API_KEYS_VIEW],
 
   // Billing & Entitlements Details
-  "/entitlements/tenant-plans/[id]/edit": [SYSTEM_PERMISSIONS.TENANT_PLANS_VIEW],
-  "/entitlements/tenant-plans/create": [SYSTEM_PERMISSIONS.TENANT_PLANS_VIEW],
+  "/entitlements/tenant-plans/[id]/edit": [SYSTEM_PERMISSIONS.TENANT_PLANS_UPDATE],
+  "/entitlements/tenant-plans/create": [SYSTEM_PERMISSIONS.TENANT_PLANS_CREATE],
   "/entitlements/editions/create": [SYSTEM_PERMISSIONS.EDITIONS_CREATE],
   "/entitlements/editions/[id]/edit": [SYSTEM_PERMISSIONS.EDITIONS_UPDATE],
   "/entitlements/editions/[id]/overview": [SYSTEM_PERMISSIONS.EDITIONS_VIEW],
   "/entitlements/edition-categories": [SYSTEM_PERMISSIONS.EDITIONS_VIEW],
-  "/entitlements/onboarding/rules": [SYSTEM_PERMISSIONS.ONBOARDING_QUESTIONS_VIEW],
+  "/entitlements/onboarding/rules": [SYSTEM_PERMISSIONS.ONBOARDING_RULES_VIEW],
 
   // Studio Customization Preview
   "/studio-preview": [SYSTEM_PERMISSIONS.TENANT_SETTINGS_VIEW],
@@ -681,6 +685,7 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/signup/finalize": [],
   "/sileo-playground": [],
   "/sso/callback": [],
+  "/sso/continue": [],
   "/sso/saml/callback": [],
   "/terms": [],
   "/not-authorized": [],

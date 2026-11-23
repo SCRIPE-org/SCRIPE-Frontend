@@ -95,10 +95,24 @@ export const ar = {
       noPermissionsSelected: "اختر صلاحية أولاً.",
       manageRestrictions: "إدارة القيود",
       manageRestrictionsDesc: "تكوين قيود الحقول لهذه المجموعة.",
-      addPermission: "إضافة رمز صلاحية",
-      permissionPlaceholder: "مثال: admins.view",
+      addPermission: "إضافة مورد",
+      permissionPlaceholder: "مثال: crm.opportunities",
       fieldPlaceholder: "أضف اسم حقل...",
       permissionCode: "رمز الصلاحية",
+      additiveNotice:
+        "تُطبَّق قيود الحقول بشكل تراكمي عبر جميع المجموعات المعينة للعضو. تنطبق القيود على الموارد ذات النقاط (مثل crm.opportunities) على عمليات العرض والتحديث معاً.",
+      alreadyAdded: "يوجد قيد مضاف لهذا المورد بالفعل.",
+      duplicateField: "الحقل \"{{field}}\" مقيد بالفعل لهذا المورد.",
+      requiredFieldAlert:
+        "الحقل \"{{field}}\" إلزامي، لذا سيُرفض تقييده عند الحفظ. اجعله اختيارياً أولاً أو أزله من هنا.",
+      suggestionsTruncated:
+        "يتم عرض المجموعة الأولى من مفاتيح الحقول المخصصة لهذا المورد. لا يزال بإمكانك كتابة أي مفتاح حقل بدقة.",
+      suggestionsUnavailable:
+        "اقتراحات الحقول المخصصة غير متاحة بصلاحياتك الحالية. يمكنك كتابة مفتاح الحقل مباشرة.",
+      loadingSuggestions: "جاري تحميل مفاتيح الحقول المخصصة...",
+      noFieldsYet: "لم تتم إضافة أي حقول مقيدة بعد.",
+      requiredBadge: "مطلوب",
+      customFieldHint: "اكتب مفتاح الحقل أو اختر من اقتراحات الحقول المخصصة أدناه.",
       addField: "إضافة حقل",
       removeField: "إزالة {{field}}",
       removeRestriction: "إزالة القيد",

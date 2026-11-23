@@ -10,6 +10,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { identityContainer } from "@modules/identity/di";
 import { userGroupKeys } from "./useUserGroupsViewModel";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { useSessionAuthorizationSync } from "@core/hooks/use-session-authorization-sync";
 import { useI18n } from "@core/providers/i18n-provider";
 
 /**
@@ -19,6 +20,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 export function useUserGroupDetailViewModel(groupId: string) {
   const repo = identityContainer.userGroupRepository;
   const queryClient = useQueryClient();
+  const syncSessionAuthorization = useSessionAuthorizationSync();
   // `success`/`toastError` are used directly (not the operationSuccess/
   // operationError wrapper) so every word in the toast — including the
   // dynamic ones — goes through t(): the wrapper always builds
@@ -41,9 +43,10 @@ export function useUserGroupDetailViewModel(groupId: string) {
   // ─── Add Members Mutation ───────────────────────────
   const addMembersMutation = useMutation({
     mutationFn: (adminIds: string[]) => repo.addMembers(groupId, { adminIds }),
-    onSuccess: () => {
+    onSuccess: async () => {
       success({ title: t("common.success"), description: t("userGroups.membersAdded") });
       queryClient.invalidateQueries({ queryKey: userGroupKeys.detail(groupId) });
+      await syncSessionAuthorization(group?.tenantId ?? null);
     },
     onError: (err: Error) => toastError({ title: t("common.error"), description: err.message }),
   });
@@ -51,9 +54,10 @@ export function useUserGroupDetailViewModel(groupId: string) {
   // ─── Remove Member Mutation ─────────────────────────
   const removeMemberMutation = useMutation({
     mutationFn: (adminId: string) => repo.removeMember(groupId, adminId),
-    onSuccess: () => {
+    onSuccess: async () => {
       success({ title: t("common.success"), description: t("userGroups.memberRemoved") });
       queryClient.invalidateQueries({ queryKey: userGroupKeys.detail(groupId) });
+      await syncSessionAuthorization(group?.tenantId ?? null);
     },
     onError: (err: Error) => toastError({ title: t("common.error"), description: err.message }),
   });
@@ -61,9 +65,10 @@ export function useUserGroupDetailViewModel(groupId: string) {
   // ─── Set Roles Mutation ─────────────────────────────
   const setRolesMutation = useMutation({
     mutationFn: (roleIds: string[]) => repo.setRoles(groupId, { roleIds }),
-    onSuccess: () => {
+    onSuccess: async () => {
       success({ title: t("common.success"), description: t("userGroups.rolesUpdated") });
       queryClient.invalidateQueries({ queryKey: userGroupKeys.detail(groupId) });
+      await syncSessionAuthorization(group?.tenantId ?? null);
     },
     onError: (err: Error) => toastError({ title: t("common.error"), description: err.message }),
   });
@@ -72,9 +77,10 @@ export function useUserGroupDetailViewModel(groupId: string) {
   const setRestrictionsMutation = useMutation({
     mutationFn: (restrictions: Array<{ permissionCode: string; restrictedFields: string[] }>) =>
       repo.setRestrictions(groupId, { restrictions }),
-    onSuccess: () => {
+    onSuccess: async () => {
       success({ title: t("common.success"), description: t("userGroups.restrictionsUpdated") });
       queryClient.invalidateQueries({ queryKey: userGroupKeys.detail(groupId) });
+      await syncSessionAuthorization(group?.tenantId ?? null);
     },
     onError: (err: Error) => toastError({ title: t("common.error"), description: err.message }),
   });

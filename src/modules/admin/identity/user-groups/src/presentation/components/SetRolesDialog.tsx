@@ -7,7 +7,7 @@
  */
 "use client";
 
-import { useState, useMemo } from "react";
+import { useId, useState, useMemo } from "react";
 import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
 import { GenericModal } from "@core/crud/components/generic-modal";
@@ -39,6 +39,7 @@ export function SetRolesDialog({
   tenantId,
 }: SetRolesDialogProps) {
   const { t, language, rolesData, isLoading } = useSetRolesViewModel({ tenantId, open });
+  const selectRolesLabelId = useId();
   const [selectedRoleIds, setSelectedRoleIds] = useState<string[]>([]);
 
   // Transform to options
@@ -89,11 +90,12 @@ export function SetRolesDialog({
           <LoadingSpinner />
         ) : (
           <div className="space-y-2">
-            <Label className="flex items-center gap-2">
+            <Label id={selectRolesLabelId} className="flex items-center gap-2">
               <Shield className="h-4 w-4" aria-hidden="true" />
               {t("userGroups.rolesTab.selectRoles")}
             </Label>
             <GenericSelect
+              aria-labelledby={selectRolesLabelId}
               options={roleOptions}
               value={selectedRoleIds}
               onValueChange={(val: string | string[]) =>

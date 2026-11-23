@@ -9,6 +9,8 @@
 "use client";
 
 import { useState } from "react";
+import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
+import { usePermission } from "@core/hooks/use-permission";
 import { useUserGroupDetailViewModel } from "../viewmodels/useUserGroupDetailViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
@@ -24,6 +26,10 @@ import { formatUtc, resolveBilingualLabel } from "@core/common/utils";
 import { AddMembersDialog } from "../components/AddMembersDialog";
 import { SetRolesDialog } from "../components/SetRolesDialog";
 import { SetRestrictionsDialog } from "../components/SetRestrictionsDialog";
+import {
+  formatRestrictableResourceLabel,
+  resolveRestrictableResource,
+} from "../components/restriction-resource-label";
 
 interface Props {
   groupId: string;
@@ -36,6 +42,7 @@ interface Props {
 export function UserGroupDetailView({ groupId }: Props) {
   const { t, language } = useI18n();
   const router = useRouter();
+  const canUpdateGroup = usePermission(SYSTEM_PERMISSIONS.USER_GROUPS_UPDATE);
   const {
     group,
     isLoading,
@@ -89,8 +96,8 @@ export function UserGroupDetailView({ groupId }: Props) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-start justify-between">
-        <div className="flex items-center gap-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="flex min-w-0 items-center gap-4">
           <Button
             variant="ghost"
             size="icon"
@@ -99,12 +106,14 @@ export function UserGroupDetailView({ groupId }: Props) {
           >
             <ArrowLeft className="h-5 w-5 rtl:rotate-180" aria-hidden="true" />
           </Button>
-          <div>
+          <div className="min-w-0">
             <h1 className="text-balance text-xl font-bold leading-tight tracking-tight text-nx-ink">
               {name}
             </h1>
-            <div className="mt-1 flex items-center gap-2">
-              <span className="font-mono text-sm text-nx-ink-2">{group.code}</span>
+            <div className="mt-1 flex flex-wrap items-center gap-2">
+              <bdi dir="ltr" className="font-mono text-sm text-nx-ink-2">
+                {group.code}
+              </bdi>
               <Badge variant={group.isActive ? "default" : "secondary"}>
                 {group.isActive ? t("common.active") : t("common.inactive")}
               </Badge>
@@ -112,14 +121,14 @@ export function UserGroupDetailView({ groupId }: Props) {
             {description && <p className="mt-2 max-w-xl text-sm text-nx-ink-2">{description}</p>}
           </div>
         </div>
-        <div className="text-xs text-nx-ink-3">
-          {t("common.createdAt")}: {formatUtc(group.createdAt, "PPp")}
+        <div className="shrink-0 text-xs text-nx-ink-3">
+          {t("common.createdAt")}: <bdi dir="ltr">{formatUtc(group.createdAt, "PPp")}</bdi>
         </div>
       </div>
 
       {/* Tabs */}
       <Tabs defaultValue="members" className="w-full">
-        <TabsList>
+        <TabsList className="w-full justify-start overflow-x-auto">
           <TabsTrigger value="members" className="gap-2">
             <Users className="h-4 w-4" aria-hidden="true" />
             {t("userGroups.members")} ({group.members.length})
@@ -137,15 +146,17 @@ export function UserGroupDetailView({ groupId }: Props) {
         {/* Members Tab */}
         <TabsContent value="members">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
+            <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <CardTitle>{t("userGroups.membersTab.title")}</CardTitle>
                 <CardDescription>{t("userGroups.membersTab.description")}</CardDescription>
               </div>
-              <Button size="sm" className="gap-2" onClick={() => setShowAddMembers(true)}>
-                <Plus className="h-4 w-4" aria-hidden="true" />
-                {t("userGroups.membersTab.addMembers")}
-              </Button>
+              {canUpdateGroup && (
+                <Button size="sm" className="gap-2 self-start sm:self-auto" onClick={() => setShowAddMembers(true)}>
+                  <Plus className="h-4 w-4" aria-hidden="true" />
+                  {t("userGroups.membersTab.addMembers")}
+                </Button>
+              )}
             </CardHeader>
             <CardContent>
               {group.members.length === 0 ? (
@@ -155,10 +166,12 @@ export function UserGroupDetailView({ groupId }: Props) {
                   icon={Users}
                   title={t("userGroups.noMembers")}
                   action={
-                    <Button size="sm" className="gap-2" onClick={() => setShowAddMembers(true)}>
-                      <Plus className="h-4 w-4" aria-hidden="true" />
-                      {t("userGroups.membersTab.addMembers")}
-                    </Button>
+                    canUpdateGroup ? (
+                      <Button size="sm" className="gap-2" onClick={() => setShowAddMembers(true)}>
+                        <Plus className="h-4 w-4" aria-hidden="true" />
+                        {t("userGroups.membersTab.addMembers")}
+                      </Button>
+                    ) : undefined
                   }
                 />
               ) : (
@@ -166,17 +179,19 @@ export function UserGroupDetailView({ groupId }: Props) {
                   {group.members.map((member) => (
                     <div
                       key={member.adminId}
-                      className="flex items-center justify-between rounded-nx-md border border-nx-line p-3"
+                      className="flex flex-wrap items-center justify-between gap-3 rounded-nx-md border border-nx-line p-3"
                     >
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-nx-accent-wash">
+                      <div className="flex min-w-0 items-center gap-3">
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-nx-accent-wash">
                           <Users className="h-4 w-4 text-nx-accent" aria-hidden="true" />
                         </div>
-                        <div>
+                        <div className="min-w-0">
                           <p className="text-sm font-medium">
                             {member.firstName} {member.lastName}
                           </p>
-                          <p className="text-xs text-nx-ink-2">{member.username}</p>
+                          <p className="truncate text-xs text-nx-ink-2">
+                            <bdi dir="ltr">{member.username}</bdi>
+                          </p>
                         </div>
                         <Badge
                           variant={member.isActive ? "default" : "secondary"}
@@ -185,16 +200,18 @@ export function UserGroupDetailView({ groupId }: Props) {
                           {member.isActive ? t("common.active") : t("common.inactive")}
                         </Badge>
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-destructive hover:text-destructive/90"
-                        disabled={isRemovingMember}
-                        onClick={() => removeMember(member.adminId)}
-                        aria-label={`${t("userGroups.membersTab.removeMember")}: ${member.firstName} ${member.lastName}`}
-                      >
-                        <Trash2 className="h-4 w-4" aria-hidden="true" />
-                      </Button>
+                      {canUpdateGroup && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-destructive hover:text-destructive/90"
+                          disabled={isRemovingMember}
+                          onClick={() => removeMember(member.adminId)}
+                          aria-label={`${t("userGroups.membersTab.removeMember")}: ${member.firstName} ${member.lastName}`}
+                        >
+                          <Trash2 className="h-4 w-4" aria-hidden="true" />
+                        </Button>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -206,15 +223,17 @@ export function UserGroupDetailView({ groupId }: Props) {
         {/* Roles Tab */}
         <TabsContent value="roles">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
+            <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <CardTitle>{t("userGroups.rolesTab.title")}</CardTitle>
                 <CardDescription>{t("userGroups.rolesTab.description")}</CardDescription>
               </div>
-              <Button size="sm" className="gap-2" onClick={() => setShowSetRoles(true)}>
-                <Settings className="h-4 w-4" aria-hidden="true" />
-                {t("userGroups.rolesTab.manageRoles")}
-              </Button>
+              {canUpdateGroup && (
+                <Button size="sm" className="gap-2 self-start sm:self-auto" onClick={() => setShowSetRoles(true)}>
+                  <Settings className="h-4 w-4" aria-hidden="true" />
+                  {t("userGroups.rolesTab.manageRoles")}
+                </Button>
+              )}
             </CardHeader>
             <CardContent>
               {group.roles.length === 0 ? (
@@ -224,10 +243,12 @@ export function UserGroupDetailView({ groupId }: Props) {
                   icon={Shield}
                   title={t("userGroups.noRoles")}
                   action={
-                    <Button size="sm" className="gap-2" onClick={() => setShowSetRoles(true)}>
-                      <Settings className="h-4 w-4" aria-hidden="true" />
-                      {t("userGroups.rolesTab.manageRoles")}
-                    </Button>
+                    canUpdateGroup ? (
+                      <Button size="sm" className="gap-2" onClick={() => setShowSetRoles(true)}>
+                        <Settings className="h-4 w-4" aria-hidden="true" />
+                        {t("userGroups.rolesTab.manageRoles")}
+                      </Button>
+                    ) : undefined
                   }
                 />
               ) : (
@@ -235,15 +256,17 @@ export function UserGroupDetailView({ groupId }: Props) {
                   {group.roles.map((role) => (
                     <div
                       key={role.roleId}
-                      className="flex items-center justify-between rounded-nx-md border border-nx-line p-3"
+                      className="flex flex-wrap items-center justify-between gap-3 rounded-nx-md border border-nx-line p-3"
                     >
-                      <div className="flex items-center gap-3">
-                        <Shield className="h-5 w-5 text-nx-accent" aria-hidden="true" />
-                        <div>
+                      <div className="flex min-w-0 items-center gap-3">
+                        <Shield className="h-5 w-5 shrink-0 text-nx-accent" aria-hidden="true" />
+                        <div className="min-w-0">
                           <p className="text-sm font-medium">
                             {resolveBilingualLabel(role.nameEn, role.nameAr, language)}
                           </p>
-                          <p className="font-mono text-xs text-nx-ink-2">{role.code}</p>
+                          <p className="font-mono text-xs text-nx-ink-2">
+                            <bdi dir="ltr">{role.code}</bdi>
+                          </p>
                         </div>
                       </div>
                       <Badge variant="outline" className="text-xs">
@@ -260,15 +283,21 @@ export function UserGroupDetailView({ groupId }: Props) {
         {/* Restrictions Tab */}
         <TabsContent value="restrictions">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
+            <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <CardTitle>{t("userGroups.restrictionsTab.title")}</CardTitle>
                 <CardDescription>{t("userGroups.restrictionsTab.description")}</CardDescription>
               </div>
-              <Button size="sm" className="gap-2" onClick={() => setShowSetRestrictions(true)}>
-                <Settings className="h-4 w-4" aria-hidden="true" />
-                {t("userGroups.restrictionsTab.manageRestrictions")}
-              </Button>
+              {canUpdateGroup && (
+                <Button
+                  size="sm"
+                  className="gap-2 self-start sm:self-auto"
+                  onClick={() => setShowSetRestrictions(true)}
+                >
+                  <Settings className="h-4 w-4" aria-hidden="true" />
+                  {t("userGroups.restrictionsTab.manageRestrictions")}
+                </Button>
+              )}
             </CardHeader>
             <CardContent>
               {group.restrictions.length === 0 ? (
@@ -278,37 +307,49 @@ export function UserGroupDetailView({ groupId }: Props) {
                   icon={Lock}
                   title={t("userGroups.noRestrictions")}
                   action={
-                    <Button
-                      size="sm"
-                      className="gap-2"
-                      onClick={() => setShowSetRestrictions(true)}
-                    >
-                      <Settings className="h-4 w-4" aria-hidden="true" />
-                      {t("userGroups.restrictionsTab.manageRestrictions")}
-                    </Button>
+                    canUpdateGroup ? (
+                      <Button
+                        size="sm"
+                        className="gap-2"
+                        onClick={() => setShowSetRestrictions(true)}
+                      >
+                        <Settings className="h-4 w-4" aria-hidden="true" />
+                        {t("userGroups.restrictionsTab.manageRestrictions")}
+                      </Button>
+                    ) : undefined
                   }
                 />
               ) : (
                 <div className="space-y-2">
-                  {group.restrictions.map((restriction, idx) => (
-                    <div
-                      key={`${restriction.permissionCode}-${idx}`}
-                      className="flex items-start justify-between rounded-nx-md border border-nx-line p-3"
-                    >
-                      <div>
-                        <p className="font-mono text-sm font-medium">
-                          {restriction.permissionCode}
-                        </p>
-                        <div className="mt-1 flex flex-wrap gap-1">
-                          {restriction.restrictedFields.map((field) => (
-                            <Badge key={field} variant="outline" className="text-xs">
-                              {field}
-                            </Badge>
-                          ))}
+                  {group.restrictions.map((restriction, idx) => {
+                    const canonicalResource = resolveRestrictableResource(restriction.permissionCode);
+                    const resourceLabel = formatRestrictableResourceLabel(restriction.permissionCode, t);
+                    return (
+                      <div
+                        key={`${restriction.permissionCode}-${idx}`}
+                        className="flex items-start justify-between gap-3 rounded-nx-md border border-nx-line p-3"
+                      >
+                        <div className="min-w-0 space-y-1.5">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="text-sm font-medium text-nx-ink">{resourceLabel}</span>
+                            <bdi
+                              dir="ltr"
+                              className="rounded-nx-xs bg-nx-raised px-1.5 py-0.5 font-mono text-xs text-nx-ink-2"
+                            >
+                              {canonicalResource || restriction.permissionCode}
+                            </bdi>
+                          </div>
+                          <div className="flex flex-wrap gap-1">
+                            {restriction.restrictedFields.map((field) => (
+                              <Badge key={field} variant="outline" className="text-xs">
+                                <bdi dir="ltr">{field}</bdi>
+                              </Badge>
+                            ))}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </CardContent>

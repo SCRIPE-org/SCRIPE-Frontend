@@ -7,7 +7,7 @@
  */
 "use client";
 
-import { useState, useMemo } from "react";
+import { useId, useState, useMemo } from "react";
 import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
 import { GenericModal } from "@core/crud/components/generic-modal";
@@ -44,6 +44,7 @@ export function AddMembersDialog({
     tenantId,
     open,
   });
+  const selectMembersLabelId = useId();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   // Filter out existing members
@@ -83,11 +84,12 @@ export function AddMembersDialog({
           <LoadingSpinner />
         ) : (
           <div className="space-y-2">
-            <Label className="flex items-center gap-2">
+            <Label id={selectMembersLabelId} className="flex items-center gap-2">
               <Users className="h-4 w-4" aria-hidden="true" />
               {t("userGroups.membersTab.selectMembers")} *
             </Label>
             <GenericSelect
+              aria-labelledby={selectMembersLabelId}
               options={adminOptions}
               value={selectedIds}
               onValueChange={(val: string | string[]) =>

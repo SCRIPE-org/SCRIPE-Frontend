@@ -1,6 +1,21 @@
 import { renderHook } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import type { AdminRole } from "@core/common/types/permissions";
 import usePermission, { usePermissions } from "../use-permission";
+
+function makeRole(
+  roleCode: string,
+  roleName = roleCode,
+  isTenantSuperAdmin = false
+): AdminRole {
+  return {
+    roleId: `role-${roleCode}`,
+    roleCode,
+    roleName,
+    isTenantSuperAdmin,
+    inheritedPermissions: [],
+  };
+}
 
 // Mock the app store the hook reads permissions/user from. Follows the
 // selector-mock pattern used in route-guard.test.tsx: useAppStore is a
@@ -9,7 +24,13 @@ import usePermission, { usePermissions } from "../use-permission";
 const { mockUseAppStore, mockAppState } = vi.hoisted(() => {
   const mockAppState = {
     permissions: [] as string[],
-    user: null as { id: string } | null,
+    roles: [] as AdminRole[],
+    user: null as {
+      id: string;
+      tenantId?: string | null;
+      isSuperAdmin?: boolean;
+      isTenantSuperAdmin?: boolean;
+    } | null,
   };
 
   const mockUseAppStore = Object.assign(
@@ -29,6 +50,7 @@ vi.mock("@core/store/useAppStore", () => ({
 describe("usePermission — deny-by-default", () => {
   beforeEach(() => {
     mockAppState.permissions = [];
+    mockAppState.roles = [];
     mockAppState.user = null;
   });
 
@@ -74,6 +96,7 @@ describe("usePermission — deny-by-default", () => {
 describe("usePermissions().has — deny-by-default", () => {
   beforeEach(() => {
     mockAppState.permissions = [];
+    mockAppState.roles = [];
     mockAppState.user = null;
   });
 
@@ -100,5 +123,70 @@ describe("usePermissions().has — deny-by-default", () => {
     const { result } = renderHook(() => usePermissions());
 
     expect(result.current.has("anything.at.all")).toBe(true);
+  });
+});
+
+describe("usePermission & usePermissions — tenant vs platform superadmin isolation", () => {
+  beforeEach(() => {
+    mockAppState.permissions = [];
+    mockAppState.roles = [];
+    mockAppState.user = null;
+  });
+
+  it("never grants platform superadmin bypass to a tenant-scoped admin even with isSuperAdmin or superadmin role", () => {
+    mockAppState.user = {
+      id: "tenant-sa-1",
+      tenantId: "tenant-1",
+      isSuperAdmin: true,
+      isTenantSuperAdmin: true,
+    };
+    mockAppState.roles = [makeRole("TENANT_SUPER_ADMIN", "superadmin", true)];
+    mockAppState.permissions = ["admins.view"];
+
+    const { result: canCreateTenant } = renderHook(() => usePermission("tenants.create"));
+    const { result: canViewAdmins } = renderHook(() => usePermission("admins.view"));
+    const { result: helpers } = renderHook(() => usePermissions());
+
+    expect(helpers.current.isPlatformSuperAdmin).toBe(false);
+    expect(helpers.current.isTenantSuperAdmin).toBe(true);
+    expect(canCreateTenant.current).toBe(false);
+    expect(canViewAdmins.current).toBe(true);
+  });
+
+  it("does not elevate heuristic superadmin or Supervisor role names into superadmin status", () => {
+    mockAppState.user = {
+      id: "supervisor-1",
+      tenantId: "tenant-1",
+      isSuperAdmin: false,
+      isTenantSuperAdmin: false,
+    };
+    mockAppState.roles = [makeRole("Supervisor", "superadmin", false)];
+    mockAppState.permissions = ["user_groups.view"];
+
+    const { result: canUpdateGroups } = renderHook(() => usePermission("user_groups.update"));
+    const { result: canViewGroups } = renderHook(() => usePermission("user_groups.view"));
+    const { result: helpers } = renderHook(() => usePermissions());
+
+    expect(helpers.current.isPlatformSuperAdmin).toBe(false);
+    expect(helpers.current.isTenantSuperAdmin).toBe(false);
+    expect(canUpdateGroups.current).toBe(false);
+    expect(canViewGroups.current).toBe(true);
+  });
+
+  it("grants platform superadmin bypass exclusively to platform-level principals and excludes them from isTenantSuperAdmin", () => {
+    mockAppState.user = {
+      id: "platform-sa-1",
+      tenantId: null,
+      isSuperAdmin: true,
+    };
+    mockAppState.roles = [makeRole("SYSTEM_SUPER_ADMIN", "System Super Admin", false)];
+    mockAppState.permissions = [];
+
+    const { result: canManageGroups } = renderHook(() => usePermission("user_groups.update"));
+    const { result: helpers } = renderHook(() => usePermissions());
+
+    expect(helpers.current.isPlatformSuperAdmin).toBe(true);
+    expect(helpers.current.isTenantSuperAdmin).toBe(false);
+    expect(canManageGroups.current).toBe(true);
   });
 });

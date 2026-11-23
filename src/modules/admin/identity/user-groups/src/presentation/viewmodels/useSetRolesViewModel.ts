@@ -1,6 +1,8 @@
 "use client";
 
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { resolveBilingualLabel } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 import { identityContainer } from "@modules/identity/di";
 
@@ -34,10 +36,26 @@ export function useSetRolesViewModel({ tenantId, open }: UseSetRolesViewModelPro
     enabled: open,
   });
 
+  const sortedRolesData = useMemo(() => {
+    if (!rolesData) return rolesData;
+    const sortedItems = [...(rolesData.items ?? [])].sort((a, b) => {
+      const priorityDiff =
+        (a.priority ?? Number.MAX_SAFE_INTEGER) - (b.priority ?? Number.MAX_SAFE_INTEGER);
+      if (priorityDiff !== 0) return priorityDiff;
+      const labelA = resolveBilingualLabel(a.nameEn, a.nameAr, language);
+      const labelB = resolveBilingualLabel(b.nameEn, b.nameAr, language);
+      return labelA.localeCompare(labelB) || a.code.localeCompare(b.code);
+    });
+    return {
+      ...rolesData,
+      items: sortedItems,
+    };
+  }, [rolesData, language]);
+
   return {
     t,
     language,
-    rolesData,
+    rolesData: sortedRolesData,
     isLoading,
   };
 }

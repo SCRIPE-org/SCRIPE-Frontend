@@ -15,7 +15,9 @@ import type {
   UpdateUserGroupRequest,
 } from "../../domain/entities/UserGroupRequests";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { resolveBilingualLabel } from "@core/common/utils";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { useSessionAuthorizationSync } from "@core/hooks/use-session-authorization-sync";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useCallback, useState } from "react";
 
@@ -56,8 +58,9 @@ export function useUserGroupsViewModel(options?: { useMyTenant?: boolean; tenant
   const repo = identityContainer.userGroupRepository;
   const { useMyTenant, tenantId } = options || {};
   const queryClient = useQueryClient();
+  const syncSessionAuthorization = useSessionAuthorizationSync();
   const { success, error: toastError } = useEnhancedToast();
-  const { t } = useI18n();
+  const { t, language } = useI18n();
 
   // deferSuccessEffects: true -- this screen sets entityTypeKey (see
   // getConfigBase below), so GenericCrudView also saves custom-field values
@@ -114,10 +117,12 @@ export function useUserGroupsViewModel(options?: { useMyTenant?: boolean; tenant
       },
       update: async (id: string, data: UpdateUserGroupRequest) => {
         await repo.update(id, data);
+        await syncSessionAuthorization(tenantId ?? null);
         return { id } as any;
       },
       delete: async (id: string) => {
         await repo.delete(id);
+        await syncSessionAuthorization(tenantId ?? null);
       },
     },
     { deferSuccessEffects: true }
@@ -164,10 +169,19 @@ export function useUserGroupsViewModel(options?: { useMyTenant?: boolean; tenant
             pageSize: 20,
             tenantId,
           });
-      return (result.items || []).map((r) => ({
-        value: r.id,
-        label: r.nameEn || r.code,
-      }));
+      return [...(result.items || [])]
+        .sort((a, b) => {
+          const priorityDiff =
+            (a.priority ?? Number.MAX_SAFE_INTEGER) - (b.priority ?? Number.MAX_SAFE_INTEGER);
+          if (priorityDiff !== 0) return priorityDiff;
+          const labelA = resolveBilingualLabel(a.nameEn, a.nameAr, language || "en");
+          const labelB = resolveBilingualLabel(b.nameEn, b.nameAr, language || "en");
+          return labelA.localeCompare(labelB) || a.code.localeCompare(b.code);
+        })
+        .map((r) => ({
+          value: r.id,
+          label: resolveBilingualLabel(r.nameEn, r.nameAr, language || "en"),
+        }));
     } catch {
       return [];
     }
@@ -301,6 +315,7 @@ export function useUserGroupsViewModel(options?: { useMyTenant?: boolean; tenant
           await repo.bulkDeactivate([id]);
         }
         queryClient.invalidateQueries({ queryKey: userGroupKeys.all });
+        await syncSessionAuthorization(tenantId ?? null);
         success({
           title: isActive
             ? t("userGroups.toggleActivatedTitle")
@@ -313,14 +328,15 @@ export function useUserGroupsViewModel(options?: { useMyTenant?: boolean; tenant
         toastError({ title: t("common.error"), description: err.message });
       }
     },
-    [repo, queryClient, success, toastError, t]
+    [repo, queryClient, syncSessionAuthorization, tenantId, success, toastError, t]
   );
 
   const bulkActivateMutation = useMutation({
     mutationFn: ({ ids, cascadeAdmins }: { ids: string[]; cascadeAdmins: boolean }) =>
       repo.bulkActivate(ids, cascadeAdmins),
-    onSuccess: (count) => {
+    onSuccess: async (count) => {
       queryClient.invalidateQueries({ queryKey: userGroupKeys.all });
+      await syncSessionAuthorization(tenantId ?? null);
       success({
         title: t("userGroups.bulkActivatedTitle"),
         description: t("userGroups.bulkActivatedDesc", { count }),
@@ -331,8 +347,9 @@ export function useUserGroupsViewModel(options?: { useMyTenant?: boolean; tenant
   const bulkDeactivateMutation = useMutation({
     mutationFn: ({ ids, cascadeAdmins }: { ids: string[]; cascadeAdmins: boolean }) =>
       repo.bulkDeactivate(ids, cascadeAdmins),
-    onSuccess: (count) => {
+    onSuccess: async (count) => {
       queryClient.invalidateQueries({ queryKey: userGroupKeys.all });
+      await syncSessionAuthorization(tenantId ?? null);
       success({
         title: t("userGroups.bulkDeactivatedTitle"),
         description: t("userGroups.bulkDeactivatedDesc", { count }),
@@ -343,8 +360,9 @@ export function useUserGroupsViewModel(options?: { useMyTenant?: boolean; tenant
   const bulkDeleteMutation = useMutation({
     mutationFn: ({ ids, cascadeAdmins }: { ids: string[]; cascadeAdmins: boolean }) =>
       repo.bulkDelete(ids, cascadeAdmins),
-    onSuccess: (count) => {
+    onSuccess: async (count) => {
       queryClient.invalidateQueries({ queryKey: userGroupKeys.all });
+      await syncSessionAuthorization(tenantId ?? null);
       success({
         title: t("userGroups.bulkDeletedTitle"),
         description: t("userGroups.bulkDeletedDesc", { count }),
