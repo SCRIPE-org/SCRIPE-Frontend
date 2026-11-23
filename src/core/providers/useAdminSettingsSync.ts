@@ -90,6 +90,7 @@ export function useAdminSettingsSync() {
   // syncing preferences while mcp=true is a guaranteed rejection (confirmed live).
   // The admin is about to be logged out and redirected anyway once they change it.
   const mustChangePassword = useAppStore((s) => s.mustChangePassword);
+  const requireMfaEnrollment = useAppStore((s) => s.requireMfaEnrollment);
 
   const [hasToken, setHasToken] = useState(() => secureTokenService.hasToken());
 
@@ -125,7 +126,7 @@ export function useAdminSettingsSync() {
 
   // ── Load admin settings from server (with deferred flush check) ──
   const loadAdminSettings = useCallback(async () => {
-    if (!isAuthenticated || !hasToken || mustChangePassword) return;
+    if (!isAuthenticated || !hasToken || mustChangePassword || requireMfaEnrollment) return;
 
     // Pre-flight: if there are NO cached settings (first login or post-logout),
     // show the transition shimmer BEFORE the API call starts. This prevents the
@@ -187,12 +188,12 @@ export function useAdminSettingsSync() {
         setIsTransitioning(false);
       }
     }
-  }, [isAuthenticated, mustChangePassword]);
+  }, [isAuthenticated, mustChangePassword, requireMfaEnrollment]);
 
   // ── Save settings to server (debounced) ──
   const saveToServer = useCallback(
     async (payload: string) => {
-      if (!isAuthenticated || mustChangePassword) return;
+      if (!isAuthenticated || mustChangePassword || requireMfaEnrollment) return;
 
       // Edge Case 4: Payload size guard
       const payloadSize = new Blob([payload]).size;

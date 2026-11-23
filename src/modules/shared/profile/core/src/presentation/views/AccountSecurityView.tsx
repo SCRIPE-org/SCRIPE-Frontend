@@ -133,6 +133,19 @@ export function AccountSecurityView() {
         <p className="text-xs text-nx-ink-3 mt-1">{t("profile.security.subtitle")}</p>
       </div>
 
+      {vm.requireMfaEnrollment && (
+        <Alert
+          data-testid="mfa-enrollment-required-banner"
+          className="border-nx-warning/40 bg-nx-warning/10"
+        >
+          <AlertCircle className="h-4 w-4 text-nx-warning-strong" aria-hidden="true" />
+          <AlertDescription className="space-y-0.5 text-xs text-nx-ink">
+            <p className="font-semibold">{t("profile.security.mfaEnrollRequiredTitle")}</p>
+            <p className="text-nx-ink-2">{t("profile.security.mfaEnrollRequiredDesc")}</p>
+          </AlertDescription>
+        </Alert>
+      )}
+
       {vm.passkeysError && vm.passkeys.length === 0 && (
         <Alert variant="destructive" data-testid="passkeys-load-error-alert">
           <AlertCircle className="h-4 w-4" aria-hidden="true" />
@@ -205,7 +218,7 @@ export function AccountSecurityView() {
         </CardHeader>
         <CardContent>
           <PasswordChangeForm
-            policy={security?.passwordPolicy ?? vm.passwordPolicy ?? null}
+            policy={vm.passwordPolicy ?? null}
             policyLoading={vm.isLoadingPasswordPolicy}
             policyError={vm.passwordPolicyError}
             onRetryPolicy={() => void vm.refetchPasswordPolicy?.()}

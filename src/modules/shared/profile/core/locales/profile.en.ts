@@ -75,8 +75,11 @@ export const en = {
       passwordExpiringSoon: "Your password expires in {{days}} days.",
       lastChanged: "Last changed",
       twoFactorCode: "Two-Factor Code",
-      twoFactorCodeHint: "Enter the code from your authenticator app",
-      twoFactorCodePlaceholder: "Enter 6-digit code",
+      twoFactorCodeHint: "Enter an authenticator code or backup code",
+      twoFactorCodePlaceholder: "Enter verification or backup code",
+      mfaEnrollRequiredTitle: "Two-Factor Authentication Required",
+      mfaEnrollRequiredDesc:
+        "Your workspace security policy requires enabling 2FA or registering a passkey before accessing other pages.",
       showPassword: "Show password",
       hidePassword: "Hide password",
       twoFaStep: "Two-Factor Auth",

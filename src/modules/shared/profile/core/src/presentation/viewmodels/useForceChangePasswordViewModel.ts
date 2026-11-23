@@ -34,6 +34,7 @@ export function useForceChangePasswordViewModel() {
   const setAuth = useAppStore((state) => state.setAuth);
   const setSubscriptionInfo = useAppStore((state) => state.setSubscriptionInfo);
   const setMustChangePassword = useAppStore((state) => state.setMustChangePassword);
+  const setRequireMfaEnrollment = useAppStore((state) => state.setRequireMfaEnrollment);
   const setDefaultRedirectPath = useAppStore((state) => state.setDefaultRedirectPath);
   const logout = useAppStore((state) => state.logout);
 
@@ -96,11 +97,14 @@ export function useForceChangePasswordViewModel() {
         let resolvedUser = user;
         let resolvedSubStatus: string | null =
           result?.subscriptionStatus ?? currentSubscriptionStatus ?? null;
+        let resolvedRequireMfaEnrollment: boolean = Boolean(result?.requireMfaEnrollment);
 
         try {
           const refreshRes = await authRepository.refreshToken();
           if (refreshRes.kind === "ok") {
             resolvedSubStatus = refreshRes.value.subscriptionStatus ?? resolvedSubStatus;
+            resolvedRequireMfaEnrollment =
+              refreshRes.value.requireMfaEnrollment ?? resolvedRequireMfaEnrollment;
             setSubscriptionInfo(
               refreshRes.value.subscriptionStatus ?? null,
               refreshRes.value.gracePhase ?? null,
@@ -141,6 +145,7 @@ export function useForceChangePasswordViewModel() {
             : null;
         const targetUrl = buildPostAuthEntryUrl({
           mustChangePassword: false,
+          requireMfaEnrollment: resolvedRequireMfaEnrollment,
           subscriptionStatus: resolvedSubStatus,
           redirect: queryRedirect,
         });
@@ -148,6 +153,7 @@ export function useForceChangePasswordViewModel() {
         useNavigationStore.getState().reset();
         setDefaultRedirectPath("/");
         setMustChangePassword(false);
+        setRequireMfaEnrollment?.(resolvedRequireMfaEnrollment);
 
         await queryClient.invalidateQueries();
         operationSuccess(t("profile.security.passwordChanged"));
@@ -175,6 +181,7 @@ export function useForceChangePasswordViewModel() {
       setAuth,
       setSubscriptionInfo,
       setMustChangePassword,
+      setRequireMfaEnrollment,
       setDefaultRedirectPath,
       queryClient,
       operationSuccess,

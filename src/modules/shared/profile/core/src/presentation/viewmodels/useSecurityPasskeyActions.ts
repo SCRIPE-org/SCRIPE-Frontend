@@ -14,7 +14,10 @@ import { sovereignAccountKeys } from "./useSovereignAccountSlicesViewModel";
  * Internal hook isolating passkey enrollment, deletion, and rename mutations
  * for {@link useSecurityVaultViewModel}.
  */
-export function useSecurityPasskeyActions(passkeysQueryKey: readonly string[]) {
+export function useSecurityPasskeyActions(
+  passkeysQueryKey: readonly string[],
+  onMfaEnrollmentComplete?: () => Promise<void>
+) {
   const securityRepo = container.securityRepository;
   const queryClient = useQueryClient();
 
@@ -55,7 +58,12 @@ export function useSecurityPasskeyActions(passkeysQueryKey: readonly string[]) {
         sudoToken
       );
     },
-    onSuccess: invalidatePasskeyCaches,
+    onSuccess: async () => {
+      invalidatePasskeyCaches();
+      if (onMfaEnrollmentComplete) {
+        await onMfaEnrollmentComplete();
+      }
+    },
   });
 
   const removePasskeyMutation = useMutation({

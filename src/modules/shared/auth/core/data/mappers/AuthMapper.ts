@@ -26,6 +26,7 @@ interface LoginResponseLike {
   isSuccessful: boolean;
   accessToken: string;
   mustChangePassword?: boolean;
+  requireMfaEnrollment?: boolean;
   subscriptionStatus?: string | null;
   gracePhase?: string | null;
   editionName?: string | null;
@@ -76,6 +77,8 @@ export class AuthMapper {
     return new LoginResponse({
       success: json.success || false,
       accessToken: json.accessToken || "",
+      mustChangePassword: json.mustChangePassword,
+      requireMfaEnrollment: json.requireMfaEnrollment,
     });
   }
 
@@ -87,6 +90,7 @@ export class AuthMapper {
       success: model.isSuccessful,
       accessToken: model.accessToken,
       mustChangePassword: model.mustChangePassword,
+      requireMfaEnrollment: model.requireMfaEnrollment,
       subscriptionStatus: model.subscriptionStatus,
       gracePhase: model.gracePhase,
       editionName: model.editionName,

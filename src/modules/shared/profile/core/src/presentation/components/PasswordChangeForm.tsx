@@ -183,7 +183,7 @@ export function PasswordChangeForm({
                 <FormControl>
                   <Input
                     placeholder={t("profile.security.twoFactorCodePlaceholder")}
-                    maxLength={6}
+                    maxLength={20}
                     className="font-mono tracking-widest"
                     disabled={isSubmitting}
                     {...field}

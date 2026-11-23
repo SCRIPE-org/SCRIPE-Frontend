@@ -75,8 +75,11 @@ export const ar = {
       passwordExpiringSoon: "تنتهي صلاحية كلمة المرور خلال {{days}} يوم.",
       lastChanged: "آخر تغيير",
       twoFactorCode: "رمز التحقق الثنائي",
-      twoFactorCodeHint: "أدخل الرمز من تطبيق المصادقة",
-      twoFactorCodePlaceholder: "أدخل الرمز المكون من 6 أرقام",
+      twoFactorCodeHint: "أدخل رمز تطبيق المصادقة أو رمزاً احتياطياً",
+      twoFactorCodePlaceholder: "أدخل رمز التحقق أو الرمز الاحتياطي",
+      mfaEnrollRequiredTitle: "المصادقة الثنائية مطلوبة",
+      mfaEnrollRequiredDesc:
+        "تتطلب سياسة أمان مساحة العمل تفعيل المصادقة الثنائية أو تسجيل مفتاح مرور قبل الوصول إلى الصفحات الأخرى.",
       showPassword: "إظهار كلمة المرور",
       hidePassword: "إخفاء كلمة المرور",
       twoFaStep: "المصادقة الثنائية",

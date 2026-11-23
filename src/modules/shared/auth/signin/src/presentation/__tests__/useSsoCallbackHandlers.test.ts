@@ -6,7 +6,7 @@ import {
   handleSamlCallback,
   type SsoCallbackDeps,
   type SsoCallbackSetters,
-} from "../viewmodels/useSsoCallbackHandlers";
+} from "../utils/ssoCallbackHandlers";
 import { useTokenLogin } from "../viewmodels/useTokenLogin";
 import { useQrSignInViewModel } from "../viewmodels/useQrSignInViewModel";
 import { getSafeRedirectPath } from "../utils/redirect-safety";
@@ -76,6 +76,16 @@ vi.mock("@core/store/useAppStore", () => {
 vi.mock("@tanstack/react-query", () => ({
   useQueryClient: () => ({
     invalidateQueries: mockInvalidateQueries,
+  }),
+}));
+
+vi.mock("@core/providers/service-provider", () => ({
+  useServices: () => ({
+    authRepository: {
+      getCurrentPrincipal: (...args: unknown[]) => mockGetCurrentPrincipal(...args),
+      beginQrSignIn: (...args: unknown[]) => mockBeginQrSignIn(...args),
+      checkQrSignIn: (...args: unknown[]) => mockCheckQrSignIn(...args),
+    },
   }),
 }));
 
@@ -346,6 +356,7 @@ describe("useSsoCallbackHandlers, useTokenLogin & useQrSignInViewModel (BAM-01, 
       gracePhase: null,
       editionName: "Pro",
       mustChangePassword: true,
+      requireMfaEnrollment: false,
     });
     vi.useRealTimers();
   });

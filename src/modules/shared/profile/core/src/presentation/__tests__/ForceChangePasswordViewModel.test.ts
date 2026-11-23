@@ -19,6 +19,7 @@ const mocks = vi.hoisted(() => ({
   setAuth: vi.fn(),
   setSubscriptionInfo: vi.fn(),
   setMustChangePassword: vi.fn(),
+  setRequireMfaEnrollment: vi.fn(),
   setDefaultRedirectPath: vi.fn(),
   logout: vi.fn(),
   clearRouteData: vi.fn(),
@@ -75,6 +76,7 @@ vi.mock("@core/store/useAppStore", () => {
     setAuth: mocks.setAuth,
     setSubscriptionInfo: mocks.setSubscriptionInfo,
     setMustChangePassword: mocks.setMustChangePassword,
+    setRequireMfaEnrollment: mocks.setRequireMfaEnrollment,
     setDefaultRedirectPath: mocks.setDefaultRedirectPath,
     logout: mocks.logout,
   };
@@ -276,5 +278,42 @@ describe("ForceChangePasswordViewModel (Dynamic PasswordPolicy & Session Rotatio
     expect(mocks.logout).toHaveBeenCalledTimes(1);
     expect(clearSpy).toHaveBeenCalledTimes(1);
     expect(mocks.replace).toHaveBeenCalledWith("/login");
+  });
+
+  it("chains into /account/security?mfa_enroll=true when rotated session requires mandatory 2FA enrollment", async () => {
+    mocks.refreshToken.mockResolvedValueOnce({
+      kind: "ok",
+      value: {
+        user: {
+          id: "adm-1",
+          username: "platform.admin",
+          permissions: ["Identity.Users.Read"],
+          roles: ["SuperAdmin"],
+        },
+        defaultRedirectPath: "/",
+        subscriptionStatus: "Active",
+        gracePhase: null,
+        editionName: "Enterprise",
+        mustChangePassword: false,
+        requireMfaEnrollment: true,
+      },
+    });
+
+    const { wrapper } = createTestWrapper();
+    const { result } = renderHook(() => useForceChangePasswordViewModel(), { wrapper });
+    await waitFor(() => expect(result.current.policy).toEqual(STRICT_POLICY));
+
+    act(() => {
+      result.current.setNewPassword("StrongPass#2026");
+      result.current.setConfirmPassword("StrongPass#2026");
+    });
+
+    await act(async () => {
+      await result.current.handleSubmit();
+    });
+
+    expect(mocks.setMustChangePassword).toHaveBeenCalledWith(false);
+    expect(mocks.setRequireMfaEnrollment).toHaveBeenCalledWith(true);
+    expect(mocks.replace).toHaveBeenCalledWith("/account/security?mfa_enroll=true");
   });
 });

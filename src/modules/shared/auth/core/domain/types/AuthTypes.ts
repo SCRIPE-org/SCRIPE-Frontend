@@ -42,6 +42,7 @@ export interface LoginResponseJson {
     lockedUntil?: string | null;
   }> | null;
   mustChangePassword?: boolean;
+  requireMfaEnrollment?: boolean;
   subscriptionStatus?: string | null;
   gracePhase?: string | null;
   editionName?: string | null;
@@ -73,6 +74,7 @@ export interface LoginResponseModel extends LoginResponseJson {
     lockedUntil?: string | null;
   }> | null;
   mustChangePassword: boolean;
+  requireMfaEnrollment?: boolean;
   subscriptionStatus: string | null;
   gracePhase: string | null;
   editionName: string | null;
@@ -99,6 +101,7 @@ export interface Verify2FAResponseJson {
   accessToken: string;
   expiresAt: string;
   mustChangePassword?: boolean;
+  requireMfaEnrollment?: boolean;
   subscriptionStatus?: string | null;
   gracePhase?: string | null;
   editionName?: string | null;
@@ -108,6 +111,7 @@ export interface Verify2FAResponseJson {
 
 export interface Verify2FAResponseModel extends Verify2FAResponseJson {
   mustChangePassword: boolean;
+  requireMfaEnrollment?: boolean;
   subscriptionStatus: string | null;
   gracePhase: string | null;
   editionName: string | null;
@@ -162,6 +166,7 @@ export interface PasskeyAuthVerifyResult {
   refreshToken: string;
   expiresAt?: string;
   mustChangePassword?: boolean;
+  requireMfaEnrollment?: boolean;
   requires2FA?: boolean;
   subscriptionStatus?: string | null;
   gracePhase?: string | null;

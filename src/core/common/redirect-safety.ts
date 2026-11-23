@@ -197,11 +197,15 @@ export function extractEligibleDeepLink(path: string | null | undefined): string
  */
 export function buildPostAuthEntryUrl(params: {
   mustChangePassword?: boolean | null;
+  requireMfaEnrollment?: boolean | null;
   subscriptionStatus?: string | null;
   redirect?: string | null;
 }): string {
   if (params.mustChangePassword) {
     return "/change-password";
+  }
+  if (params.requireMfaEnrollment) {
+    return "/account/security?mfa_enroll=true";
   }
   if (params.subscriptionStatus === "PendingPayment") {
     return "/activate-workspace";

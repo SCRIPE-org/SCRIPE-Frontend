@@ -37,6 +37,7 @@ export class SsoMapper {
       twoFactorPendingToken: dto.twoFactorPendingToken ?? null,
       staySignedIn: Boolean(dto.staySignedIn),
       mustChangePassword: Boolean(dto.mustChangePassword),
+      requireMfaEnrollment: Boolean(dto.requireMfaEnrollment),
       requiresWorkspaceSelection: dto.requiresWorkspaceSelection,
       availableWorkspaces: dto.availableWorkspaces,
       token: dto.token,

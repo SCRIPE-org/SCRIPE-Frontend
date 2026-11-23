@@ -93,10 +93,12 @@ export function use2FAHandler(opts: Use2FAHandlerOptions) {
       const store = useAppStore.getState();
       store.setSubscriptionInfo(result.subscriptionStatus, result.gracePhase, result.editionName);
       const mustChange = result.mustChangePassword ?? false;
+      const requireMfa = result.requireMfaEnrollment ?? false;
       store.setMustChangePassword(mustChange);
+      store.setRequireMfaEnrollment?.(requireMfa);
       store.setDefaultRedirectPath("/");
 
-      if (!mustChange) {
+      if (!mustChange && !requireMfa) {
         // v2: NavigationProvider auto-fetches when isAuthenticated changes
         queryClient.invalidateQueries();
       }
@@ -104,6 +106,7 @@ export function use2FAHandler(opts: Use2FAHandlerOptions) {
       onRedirectTriggered();
       const targetPath = buildPostAuthEntryUrl({
         mustChangePassword: mustChange,
+        requireMfaEnrollment: requireMfa,
         subscriptionStatus: result.subscriptionStatus,
         redirect: redirectPath,
       });

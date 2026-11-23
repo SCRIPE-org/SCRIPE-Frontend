@@ -96,6 +96,7 @@ export interface IAuthService {
       lockedUntil?: string | null;
     }> | null;
     mustChangePassword?: boolean;
+    requireMfaEnrollment?: boolean;
     subscriptionStatus?: string | null;
     gracePhase?: string | null;
     editionName?: string | null;
@@ -122,6 +123,7 @@ export interface IAuthService {
     gracePhase?: string | null;
     editionName?: string | null;
     mustChangePassword?: boolean;
+    requireMfaEnrollment?: boolean;
   }>;
 
   /** Fetch the effective password policy for an optional tenantId/tenantCode or the signed-in admin's tenant. */

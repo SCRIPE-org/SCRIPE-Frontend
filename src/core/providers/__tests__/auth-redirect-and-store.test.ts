@@ -164,4 +164,51 @@ describe("redirect-safety identity microservice origin & auth-state hint cookie 
     expect(cookieWrites.some((c) => c.includes("scr_auth_state=true") && c.includes("; Secure"))).toBe(true);
     expect(cookieWrites.some((c) => c.includes("max-age=0") && c.includes("; Secure"))).toBe(true);
   });
+
+  it("orders buildPostAuthEntryUrl walls as mcp -> mfa_enroll -> PendingPayment -> redirect and clears requireMfaEnrollment on logout", () => {
+    expect(
+      buildPostAuthEntryUrl({
+        mustChangePassword: true,
+        requireMfaEnrollment: true,
+        subscriptionStatus: "PendingPayment",
+        redirect: "/crm",
+      })
+    ).toBe("/change-password");
+
+    expect(
+      buildPostAuthEntryUrl({
+        mustChangePassword: false,
+        requireMfaEnrollment: true,
+        subscriptionStatus: "PendingPayment",
+        redirect: "/crm",
+      })
+    ).toBe("/account/security?mfa_enroll=true");
+
+    expect(
+      buildPostAuthEntryUrl({
+        mustChangePassword: false,
+        requireMfaEnrollment: false,
+        subscriptionStatus: "PendingPayment",
+        redirect: "/crm",
+      })
+    ).toBe("/activate-workspace");
+
+    expect(
+      buildPostAuthEntryUrl({
+        mustChangePassword: false,
+        requireMfaEnrollment: false,
+        subscriptionStatus: "Active",
+        redirect: "/crm?view=board",
+      })
+    ).toBe("/?redirect=%2Fcrm%3Fview%3Dboard");
+
+    useAppStore.getState().setRequireMfaEnrollment(true);
+    expect(useAppStore.getState().requireMfaEnrollment).toBe(true);
+    useAppStore.getState().beginSessionTransition();
+    expect(useAppStore.getState().requireMfaEnrollment).toBe(false);
+
+    useAppStore.getState().setRequireMfaEnrollment(true);
+    useAppStore.getState().logout();
+    expect(useAppStore.getState().requireMfaEnrollment).toBe(false);
+  });
 });

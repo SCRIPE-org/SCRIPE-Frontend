@@ -14,6 +14,7 @@ import type {
 export interface LoginResult {
   user: User;
   mustChangePassword: boolean;
+  requireMfaEnrollment?: boolean;
   subscriptionStatus: string | null;
   gracePhase: string | null;
   editionName: string | null;
@@ -99,6 +100,7 @@ export interface IAuthRepository {
     gracePhase?: string | null;
     editionName?: string | null;
     mustChangePassword?: boolean;
+    requireMfaEnrollment?: boolean;
   }>;
   /** Approve QR sign-in from mobile */
   approveQrSignIn(sessionToken: string, deviceInfo?: string): Promise<void>;
@@ -126,6 +128,7 @@ export interface IAuthRepository {
     requiresWorkspaceSelection: boolean;
     availableWorkspaces: LoginResponseModel["availableWorkspaces"];
     mustChangePassword: boolean;
+    requireMfaEnrollment?: boolean;
     subscriptionStatus: string | null;
     gracePhase: string | null;
     editionName: string | null;

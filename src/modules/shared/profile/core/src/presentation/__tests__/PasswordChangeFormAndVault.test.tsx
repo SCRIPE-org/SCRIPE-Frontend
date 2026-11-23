@@ -4,15 +4,23 @@ import { render, screen, fireEvent, waitFor, renderHook, act } from "@testing-li
 import "@testing-library/jest-dom/vitest";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { secureTokenService } from "@core/common/secure-token-service";
+import { useAppStore } from "@core/store/useAppStore";
 import type { PasswordPolicyModel } from "@core/common/password-policy";
 import { PasswordChangeForm } from "../components/PasswordChangeForm";
 import { useSecurityVaultViewModel } from "../viewmodels/useSecurityVaultViewModel";
 
 const mocks = vi.hoisted(() => ({
+  replace: vi.fn(),
   getPasswordPolicy: vi.fn(),
   changePassword: vi.fn(),
+  confirm2FA: vi.fn(),
+  refreshToken: vi.fn(),
   listPasskeys: vi.fn().mockResolvedValue([]),
   getProfile: vi.fn().mockResolvedValue({ isTwoFactorEnabled: false, backupCodesRemaining: 0 }),
+}));
+
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ replace: mocks.replace, push: vi.fn() }),
 }));
 
 vi.mock("@core/providers/i18n-provider", () => ({
@@ -27,6 +35,7 @@ vi.mock("@core/providers/service-provider", () => ({
   useServices: () => ({
     authRepository: {
       logout: vi.fn(),
+      refreshToken: () => mocks.refreshToken(),
     },
   }),
 }));
@@ -43,6 +52,7 @@ vi.mock("@modules/profile/di", () => ({
       listPasskeys: () => mocks.listPasskeys(),
       getPasswordPolicy: () => mocks.getPasswordPolicy(),
       changePassword: (data: unknown) => mocks.changePassword(data),
+      confirm2FA: (code: string) => mocks.confirm2FA(code),
     },
     profileRepository: {
       getProfile: () => mocks.getProfile(),
@@ -129,5 +139,49 @@ describe("PasswordChangeForm & SecurityVault rotated token handling", () => {
     expect(screen.getByTestId("password-change-success")).toHaveTextContent(
       "profile.security.passwordChangedSessionsRevoked"
     );
+  });
+
+  it("refreshes session, clears requireMfaEnrollment, and navigates to / after confirming mandatory 2FA", async () => {
+    useAppStore.getState().setRequireMfaEnrollment(true);
+    mocks.confirm2FA.mockResolvedValueOnce(undefined);
+    mocks.refreshToken.mockResolvedValueOnce({
+      kind: "ok",
+      value: { requireMfaEnrollment: false },
+    });
+
+    const wrapper = createWrapper();
+    const { result } = renderHook(() => useSecurityVaultViewModel(), { wrapper });
+
+    await waitFor(() => expect(result.current.passwordPolicy).toEqual(POLICY));
+
+    await act(async () => {
+      await result.current.confirm2Fa("123456");
+    });
+
+    expect(mocks.confirm2FA).toHaveBeenCalledWith("123456");
+    expect(mocks.refreshToken).toHaveBeenCalledTimes(1);
+    expect(useAppStore.getState().requireMfaEnrollment).toBe(false);
+    expect(mocks.replace).toHaveBeenCalledWith("/");
+  });
+
+  it("accepts 8+ char backup codes (maxLength=20) on PasswordChangeForm when 2FA is enabled", () => {
+    const onSubmit = vi.fn().mockResolvedValue(undefined);
+    render(
+      <PasswordChangeForm
+        policy={POLICY}
+        isTwoFactorEnabled={true}
+        onSubmit={onSubmit}
+        isSubmitting={false}
+        submitError={null}
+        success={false}
+      />
+    );
+
+    const codeInput = screen.getByPlaceholderText(
+      "profile.security.twoFactorCodePlaceholder"
+    ) as HTMLInputElement;
+    expect(codeInput.maxLength).toBe(20);
+    fireEvent.change(codeInput, { target: { value: "ABCD-1234-EF" } });
+    expect(codeInput.value).toBe("ABCD-1234-EF");
   });
 });

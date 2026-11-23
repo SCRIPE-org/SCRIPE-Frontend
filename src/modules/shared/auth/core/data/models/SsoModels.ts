@@ -42,6 +42,7 @@ export interface SsoCallbackResultDto {
   twoFactorPendingToken?: string | null;
   staySignedIn?: boolean;
   mustChangePassword?: boolean;
+  requireMfaEnrollment?: boolean;
   requiresWorkspaceSelection?: boolean;
   availableWorkspaces?: {
     tenantId: string;

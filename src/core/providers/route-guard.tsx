@@ -76,6 +76,7 @@ type RedirectReason =
   | "login"
   | "pending_payment"
   | "must_change_password"
+  | "require_mfa_enrollment"
   | "shell_pbac_denied"
   | "menu_pbac_denied"
   | "nav_denied";
@@ -100,6 +101,7 @@ interface ResolveRouteAccessParams {
   hasToken: boolean;
   subscriptionStatus: string | null;
   mustChangePassword: boolean;
+  requireMfaEnrollment?: boolean;
   routesError: string | null;
   canAccessPage: (path: string) => boolean;
   isNavSyncedForContext: (expectedKey?: string | null) => boolean;
@@ -107,15 +109,14 @@ interface ResolveRouteAccessParams {
   hasRouteAccess: (path: string) => boolean;
 }
 
-const STANDARD_AUTH_PAGES = new Set([
-  "/login",
-  "/signup",
-  "/forgot-password",
-  "/reset-password",
-]);
+const STANDARD_AUTH_PAGES = new Set(["/login", "/signup"]);
+
+const MFA_ENROLL_ALLOWED_ROUTES = new Set(["/account/security", "/logout", "/change-password"]);
 
 const ALL_AUTH_PAGES = new Set([
   ...STANDARD_AUTH_PAGES,
+  "/forgot-password",
+  "/reset-password",
   "/magic-link",
   "/qr-approve",
   "/sso/callback",
@@ -334,6 +335,7 @@ function resolveRouteAccessSync({
   hasToken,
   subscriptionStatus,
   mustChangePassword,
+  requireMfaEnrollment = false,
   routesError,
   canAccessPage,
   isNavSyncedForContext,
@@ -401,6 +403,11 @@ function resolveRouteAccessSync({
   // 7b. Forced password change wall
   if (mustChangePassword && normalizedPath !== "/change-password") {
     return { kind: "redirect", reason: "must_change_password" };
+  }
+
+  // 7b2. Mandatory MFA enrollment wall (runs after mcp=true so forced rotation completes first)
+  if (requireMfaEnrollment && !MFA_ENROLL_ALLOWED_ROUTES.has(normalizedPath)) {
+    return { kind: "redirect", reason: "require_mfa_enrollment" };
   }
 
   // 7c. Shell-authenticated routes (non-module & Account World routes)
@@ -497,6 +504,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
   const setSubscriptionInfo = useAppStore((state) => state.setSubscriptionInfo);
   const subscriptionStatus = useAppStore((state) => state.subscriptionStatus);
   const mustChangePassword = useAppStore((state) => state.mustChangePassword);
+  const requireMfaEnrollment = useAppStore((state) => state.requireMfaEnrollment);
   const username = useAppStore((state) => state.user?.username ?? "");
 
   const { activeTenantId } = useAdminContext();
@@ -551,6 +559,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
     isAuthenticated ? "1" : "0",
     subscriptionStatus ?? "",
     mustChangePassword ? "1" : "0",
+    requireMfaEnrollment ? "1" : "0",
     routesLoaded ? "1" : "0",
     routesContextKey ?? "",
     routesError ?? "",
@@ -627,6 +636,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
           hasToken,
           subscriptionStatus,
           mustChangePassword,
+          requireMfaEnrollment,
           routesError,
           canAccessPage,
           isNavSyncedForContext,
@@ -680,6 +690,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
                 : null;
             const targetPath = buildPostAuthEntryUrl({
               mustChangePassword: appState.mustChangePassword,
+              requireMfaEnrollment: appState.requireMfaEnrollment,
               subscriptionStatus: appState.subscriptionStatus,
               redirect: redirectParam,
             });
@@ -703,6 +714,10 @@ export function RouteGuard({ children }: RouteGuardProps) {
           case "must_change_password":
             appLogger.debug("[RouteGuard] Must change password → /change-password");
             navRouter.replace("/change-password");
+            return;
+          case "require_mfa_enrollment":
+            appLogger.debug("[RouteGuard] Mandatory MFA enrollment → /account/security");
+            navRouter.replace("/account/security?mfa_enroll=true");
             return;
           case "shell_pbac_denied":
             navRouter.push("/not-authorized");
@@ -746,9 +761,9 @@ export function RouteGuard({ children }: RouteGuardProps) {
               refreshData.gracePhase ?? null,
               refreshData.editionName ?? null
             );
-            useAppStore
-              .getState()
-              .setMustChangePassword(refreshData.mustChangePassword ?? false);
+            const appStoreState = useAppStore.getState();
+            appStoreState.setMustChangePassword(refreshData.mustChangePassword ?? false);
+            appStoreState.setRequireMfaEnrollment?.(refreshData.requireMfaEnrollment ?? false);
 
             const user = await authRepo.getCurrentPrincipal();
             if (user && user.id) {

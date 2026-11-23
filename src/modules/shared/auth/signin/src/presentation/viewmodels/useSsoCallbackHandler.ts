@@ -7,13 +7,13 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useNavigation } from "@core/providers/navigation-provider";
 import { useAppStore } from "@core/store/useAppStore";
-import { getAuthContainer } from "@modules/auth/di";
+import { useServices } from "@core/providers/service-provider";
 import {
   handleOidcCallback,
   handleSamlCallback,
   completeAdminLogin,
   type SsoTwoFactorPendingData,
-} from "./useSsoCallbackHandlers";
+} from "../utils/ssoCallbackHandlers";
 import type { WorkspaceChoice } from "@modules/auth/core/domain/errors/AuthErrors";
 import type { AdminRole, PermissionCode } from "@core/common/types/permissions";
 import { buildPostAuthEntryUrl } from "../utils/redirect-safety";
@@ -47,7 +47,11 @@ export function useSsoCallbackHandler(kind: SsoCallbackKind) {
   const setAuth = useAppStore((state) => state.setAuth);
   const setSubscriptionInfo = useAppStore((state) => state.setSubscriptionInfo);
   const setMustChangePassword = useAppStore((state) => state.setMustChangePassword);
+  const setRequireMfaEnrollment = useAppStore((state) => state.setRequireMfaEnrollment);
   const setDefaultRedirectPath = useAppStore((state) => state.setDefaultRedirectPath);
+  const { authRepository, ssoRepository } = useServices();
+  const servicesRef = useRef({ authRepository, ssoRepository });
+  servicesRef.current = { authRepository, ssoRepository };
   const { refreshNavigation } = useNavigation();
   const queryClient = useQueryClient();
   const { success: operationSuccess } = useEnhancedToast();
@@ -87,9 +91,9 @@ export function useSsoCallbackHandler(kind: SsoCallbackKind) {
     setIsSelectingWorkspace(true);
     setSelectionError(undefined);
     try {
-      const { ssoRepository, authRepository } = getAuthContainer();
+      const { ssoRepository: ssoRepo, authRepository: authRepo } = servicesRef.current;
       const targetTenantId = workspace.isPlatformAdmin ? "" : workspace.tenantId;
-      const result = await ssoRepository.completeWorkspaceSelection(
+      const result = await ssoRepo.completeWorkspaceSelection(
         workspaceData.token,
         targetTenantId
       );
@@ -109,11 +113,12 @@ export function useSsoCallbackHandler(kind: SsoCallbackKind) {
 
       if (result.type === "admin" && result.accessToken) {
         const deps = {
-          authRepository,
-          ssoRepository,
+          authRepository: authRepo,
+          ssoRepository: ssoRepo,
           setAuth,
           setSubscriptionInfo,
           setMustChangePassword,
+          setRequireMfaEnrollment,
           refreshNavigation,
           invalidateQueries: () => queryClient.invalidateQueries(),
           operationSuccess,
@@ -131,6 +136,7 @@ export function useSsoCallbackHandler(kind: SsoCallbackKind) {
             gracePhase: result.gracePhase,
             editionName: result.editionName,
             mustChangePassword: result.mustChangePassword,
+            requireMfaEnrollment: result.requireMfaEnrollment,
           },
           deps,
           setters
@@ -159,8 +165,8 @@ export function useSsoCallbackHandler(kind: SsoCallbackKind) {
     setTwoFactorError("");
     setIsVerifying2FA(true);
     try {
-      const { authRepository } = getAuthContainer();
-      const result = await authRepository.verify2FA(
+      const { authRepository: authRepo } = servicesRef.current;
+      const result = await authRepo.verify2FA(
         "",
         null,
         twoFactorCode.trim(),
@@ -178,15 +184,18 @@ export function useSsoCallbackHandler(kind: SsoCallbackKind) {
       );
       setSubscriptionInfo(result.subscriptionStatus, result.gracePhase, result.editionName);
       const mustChange = Boolean(result.mustChangePassword);
+      const requireMfa = Boolean(result.requireMfaEnrollment);
       setMustChangePassword(mustChange);
+      setRequireMfaEnrollment?.(requireMfa);
       setDefaultRedirectPath("/");
 
-      if (!mustChange && result.subscriptionStatus !== "PendingPayment") {
+      if (!mustChange && !requireMfa && result.subscriptionStatus !== "PendingPayment") {
         queryClient.invalidateQueries();
       }
 
       const targetPath = buildPostAuthEntryUrl({
         mustChangePassword: mustChange,
+        requireMfaEnrollment: requireMfa,
         subscriptionStatus: result.subscriptionStatus,
         redirect: searchParams?.get("redirect"),
       });
@@ -217,14 +226,15 @@ export function useSsoCallbackHandler(kind: SsoCallbackKind) {
     if (hasProcessed.current) return;
     hasProcessed.current = true;
 
-    const { authRepository, ssoRepository } = getAuthContainer();
+    const { authRepository: authRepo, ssoRepository: ssoRepo } = servicesRef.current;
 
     const deps = {
-      authRepository,
-      ssoRepository,
+      authRepository: authRepo,
+      ssoRepository: ssoRepo,
       setAuth,
       setSubscriptionInfo,
       setMustChangePassword,
+      setRequireMfaEnrollment,
       refreshNavigation,
       invalidateQueries: () => queryClient.invalidateQueries(),
       operationSuccess,
@@ -266,25 +276,14 @@ export function useSsoCallbackHandler(kind: SsoCallbackKind) {
     searchParams,
     setAuth,
     setMustChangePassword,
+    setRequireMfaEnrollment,
     setSubscriptionInfo,
     t,
   ]);
 
   return {
-    state,
-    errorInfo,
-    workspaceData,
-    workspaceEmail,
-    isSelectingWorkspace,
-    selectionError,
-    handleSelectWorkspace,
-    handleBack,
-    twoFactorCode,
-    setTwoFactorCode,
-    useBackupCode,
-    isVerifying2FA,
-    twoFactorError,
-    handleVerify2FA,
-    toggleBackupCode,
+    state, errorInfo, workspaceData, workspaceEmail, isSelectingWorkspace, selectionError,
+    handleSelectWorkspace, handleBack, twoFactorCode, setTwoFactorCode,
+    useBackupCode, isVerifying2FA, twoFactorError, handleVerify2FA, toggleBackupCode,
   };
 }

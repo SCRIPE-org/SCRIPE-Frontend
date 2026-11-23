@@ -29,6 +29,7 @@ export interface LoginResponseData {
   success: boolean;
   accessToken: string;
   mustChangePassword?: boolean;
+  requireMfaEnrollment?: boolean;
   subscriptionStatus?: string | null;
   gracePhase?: string | null;
   editionName?: string | null;
@@ -72,6 +73,7 @@ export class LoginResponse {
   public readonly success: boolean;
   public readonly accessToken: string;
   public readonly mustChangePassword: boolean;
+  public readonly requireMfaEnrollment: boolean;
   public readonly subscriptionStatus: string | null;
   public readonly gracePhase: string | null;
   public readonly editionName: string | null;
@@ -84,6 +86,7 @@ export class LoginResponse {
     this.success = data.success;
     this.accessToken = data.accessToken;
     this.mustChangePassword = data.mustChangePassword ?? false;
+    this.requireMfaEnrollment = data.requireMfaEnrollment ?? false;
     this.subscriptionStatus = data.subscriptionStatus ?? null;
     this.gracePhase = data.gracePhase ?? null;
     this.editionName = data.editionName ?? null;

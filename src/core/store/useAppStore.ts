@@ -48,6 +48,10 @@ interface AppState {
   mustChangePassword: boolean;
   setMustChangePassword: (must: boolean) => void;
 
+  // Mandatory MFA enrollment (mfa_enroll=true enforced after MustChangePassword)
+  requireMfaEnrollment: boolean;
+  setRequireMfaEnrollment: (require: boolean) => void;
+
   // Post-login redirect path from backend
   defaultRedirectPath: string;
   setDefaultRedirectPath: (path: string) => void;
@@ -149,6 +153,7 @@ export const useAppStore = create<AppState>()(
           gracePhase: null,
           editionName: null,
           mustChangePassword: false,
+          requireMfaEnrollment: false,
           defaultRedirectPath: "/",
         });
       },
@@ -170,6 +175,7 @@ export const useAppStore = create<AppState>()(
           gracePhase: null,
           editionName: null,
           mustChangePassword: false,
+          requireMfaEnrollment: false,
           defaultRedirectPath: "/",
         });
       },
@@ -184,6 +190,10 @@ export const useAppStore = create<AppState>()(
       // Must Change Password
       mustChangePassword: false,
       setMustChangePassword: (must) => set({ mustChangePassword: must }),
+
+      // Mandatory MFA enrollment
+      requireMfaEnrollment: false,
+      setRequireMfaEnrollment: (require) => set({ requireMfaEnrollment: require }),
 
       // Ephemeral in-memory redirect fallback (never persisted to localStorage)
       defaultRedirectPath: "/",
@@ -213,6 +223,7 @@ export const useAppStore = create<AppState>()(
         gracePhase: state.gracePhase,
         editionName: state.editionName,
         mustChangePassword: state.mustChangePassword,
+        requireMfaEnrollment: state.requireMfaEnrollment,
       }),
       merge: (persistedState, currentState) => {
         const persisted = { ...((persistedState as Partial<AppState> | null) ?? {}) };

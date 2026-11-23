@@ -332,6 +332,7 @@ export class AuthService implements IAuthService {
       lockedUntil?: string | null;
     }> | null;
     mustChangePassword?: boolean;
+    requireMfaEnrollment?: boolean;
     subscriptionStatus?: string | null;
     gracePhase?: string | null;
     editionName?: string | null;
@@ -383,6 +384,7 @@ export class AuthService implements IAuthService {
     gracePhase?: string | null;
     editionName?: string | null;
     mustChangePassword?: boolean;
+    requireMfaEnrollment?: boolean;
   }> {
     return this.api.getPublic<{
       status: "pending" | "scanned" | "approved" | "rejected" | "expired" | "consumed";

@@ -8,8 +8,11 @@
  * Password Rotation, and Emergency Lockdown.
  */
 import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useAppStore } from "@core/store/useAppStore";
 import { useSudoStore } from "@core/store/useSudoStore";
+import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { useServices } from "@core/providers/service-provider";
 import { secureTokenService } from "@core/common/secure-token-service";
 import { container } from "@modules/profile/di";
@@ -37,6 +40,26 @@ export function useSecurityVaultViewModel() {
   const profileRepo = container.profileRepository;
   const { authRepository } = useServices();
   const queryClient = useQueryClient();
+  const router = useRouter();
+  const requireMfaEnrollment = useAppStore((s) => s.requireMfaEnrollment);
+
+  const finalizeMfaEnrollmentIfRequired = useCallback(async () => {
+    if (!useAppStore.getState().requireMfaEnrollment) return;
+    try {
+      const refreshRes = await authRepository.refreshToken();
+      const stillRequired =
+        refreshRes.kind === "ok" ? Boolean(refreshRes.value.requireMfaEnrollment) : false;
+      useAppStore.getState().setRequireMfaEnrollment(stillRequired);
+      if (!stillRequired) {
+        useNavigationStore.getState().clearRouteData();
+        useNavigationStore.getState().reset();
+        await queryClient.invalidateQueries();
+        router.replace("/");
+      }
+    } catch {
+      // Retain /account/security so user can retry refresh or re-authenticate cleanly
+    }
+  }, [authRepository, queryClient, router]);
 
   const [webAuthnSupported, setWebAuthnSupported] = useState(false);
   const [platformSupported, setPlatformSupported] = useState(false);
@@ -89,7 +112,7 @@ export function useSecurityVaultViewModel() {
   });
 
   const { enrollPasskeyMutation, removePasskeyMutation, renamePasskeyMutation } =
-    useSecurityPasskeyActions(securityVaultKeys.passkeys());
+    useSecurityPasskeyActions(securityVaultKeys.passkeys(), finalizeMfaEnrollmentIfRequired);
 
   const verifySudoMutation = useMutation({
     mutationFn: async () => {
@@ -119,9 +142,10 @@ export function useSecurityVaultViewModel() {
 
   const confirm2FaMutation = useMutation({
     mutationFn: (code: string) => securityRepo.confirm2FA(code),
-    onSuccess: () => {
+    onSuccess: async () => {
       setTwoFaSetupData(null);
       invalidateContextAndSecurity();
+      await finalizeMfaEnrollmentIfRequired();
     },
   });
 
@@ -219,6 +243,7 @@ export function useSecurityVaultViewModel() {
     refetchPasswordPolicy,
     isPasswordExpired: !!profile?.isPasswordExpired,
     passwordLastChanged: profile?.passwordLastChanged ?? null,
+    requireMfaEnrollment,
     emergencyLockdown: emergencyLockdownMutation.mutateAsync,
     isLockingDown: emergencyLockdownMutation.isPending,
   };

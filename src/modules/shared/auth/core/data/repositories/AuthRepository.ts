@@ -124,6 +124,7 @@ export class AuthRepository implements IAuthRepository {
       return {
         user,
         mustChangePassword: responseModel.mustChangePassword ?? false,
+        requireMfaEnrollment: responseModel.requireMfaEnrollment ?? false,
         subscriptionStatus: responseModel.subscriptionStatus ?? null,
         gracePhase: responseModel.gracePhase ?? null,
         editionName: responseModel.editionName ?? null,
@@ -170,6 +171,7 @@ export class AuthRepository implements IAuthRepository {
       return {
         user,
         mustChangePassword: responseModel.mustChangePassword ?? false,
+        requireMfaEnrollment: responseModel.requireMfaEnrollment ?? false,
         subscriptionStatus: responseModel.subscriptionStatus ?? null,
         gracePhase: responseModel.gracePhase ?? null,
         editionName: responseModel.editionName ?? null,
@@ -366,6 +368,7 @@ export class AuthRepository implements IAuthRepository {
         (raw.availableWorkspaces as import("../../domain/types/AuthTypes").LoginResponseModel["availableWorkspaces"]) ??
         null,
       mustChangePassword: raw.mustChangePassword ?? false,
+      requireMfaEnrollment: raw.requireMfaEnrollment ?? false,
       subscriptionStatus: raw.subscriptionStatus ?? null,
       gracePhase: raw.gracePhase ?? null,
       editionName: raw.editionName ?? null,
@@ -488,6 +491,7 @@ export class AuthRepository implements IAuthRepository {
         requiresWorkspaceSelection: false,
         availableWorkspaces: null,
         mustChangePassword: responseModel.mustChangePassword ?? false,
+        requireMfaEnrollment: responseModel.requireMfaEnrollment ?? false,
         subscriptionStatus: responseModel.subscriptionStatus ?? null,
         gracePhase: responseModel.gracePhase ?? null,
         editionName: responseModel.editionName ?? null,
