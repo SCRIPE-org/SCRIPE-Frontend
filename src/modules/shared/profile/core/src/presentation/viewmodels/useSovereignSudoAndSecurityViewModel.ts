@@ -12,6 +12,7 @@ import { assertPasskey } from "@core/services/webauthn.service";
 import { container } from "@modules/profile/di";
 import { invalidateOnConcurrencyConflict } from "../utils/concurrency";
 import { sovereignAccountKeys } from "../utils/sovereignAccountKeys";
+import { isSudoCancelledError } from "../utils/sudoElevation";
 
 /** ViewModel hook coordinating WebAuthn passkey, TOTP, and password Sudo step-up elevation. */
 export function useSudoViewModel() {
@@ -153,7 +154,10 @@ export function useAccountSecuritySliceViewModel() {
         rowVersion: payload.rowVersion ?? data?.rowVersion,
       }),
     isUpdatingPolicy: updateMutation.isPending,
-    updatePolicyError: updateMutation.error,
+    updatePolicyError:
+      updateMutation.error && !isSudoCancelledError(updateMutation.error)
+        ? updateMutation.error
+        : null,
   };
 }
 

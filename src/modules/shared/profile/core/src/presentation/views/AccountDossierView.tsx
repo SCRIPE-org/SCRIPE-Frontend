@@ -184,7 +184,7 @@ export function AccountDossierView() {
             : (profile.clubAffiliation ?? "")
         }
         onExportData={exportAccountData}
-        onDeactivateAccount={(sudoCode) => deactivateAccount(sudoCode)}
+        onDeactivateAccount={() => deactivateAccount()}
       />
 
       <IdentityChangeVerificationModal

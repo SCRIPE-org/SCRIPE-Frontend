@@ -43,7 +43,10 @@ export interface ISovereignAccountRepository {
     payload?: SendEmailVerificationPayload
   ): Promise<SendEmailVerificationResponse>;
   exportAccountData(): Promise<Record<string, unknown>>;
-  deactivateAccount(data?: { sudoCode?: string }): Promise<{ deactivated?: boolean; message?: string }>;
+  deactivateAccount(data?: {
+    sudoCode?: string;
+    sudoToken?: string;
+  }): Promise<{ deactivated?: boolean; message?: string }>;
   getSecurity(): Promise<SovereignSecuritySlice>;
   updateSecurityPosture(data: {
     trustedCidrs?: string[];
@@ -76,7 +79,12 @@ export interface ISovereignAccountRepository {
   markAllNotificationsAsRead(): Promise<void>;
   deleteNotification(id: string): Promise<void>;
   getPlan(): Promise<SovereignPlanSlice>;
-  submitPlanRequest(requestType: string, targetCode: string, notes?: string): Promise<void>;
+  submitPlanRequest(
+    requestType: string,
+    targetCode: string,
+    notes?: string,
+    sudoToken?: string
+  ): Promise<void>;
   getIntegrations(): Promise<SovereignIntegrationsSlice>;
   createIntegrationItem(data: {
     itemKind: "pat" | "sso";

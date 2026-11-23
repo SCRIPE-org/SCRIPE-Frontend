@@ -50,11 +50,22 @@ export class ProfileService implements IProfileService {
    * the current admin's own id, which this service doesn't otherwise hold. Resolve it via
    * GET /v1/account/dossier (`AccountDossierDto` returns `adminId`; legacy DTOs return `id`).
    */
-  async changePassword(data: ChangePasswordRequest): Promise<ChangePasswordSessionResult | void> {
+  async changePassword(
+    data: ChangePasswordRequest,
+    sudoToken?: string
+  ): Promise<ChangePasswordSessionResult | void> {
     const me = await this.api.get<{ adminId?: string; id?: string }>(PROFILE_ENDPOINTS.DOSSIER);
     const adminId = (me?.adminId ?? me?.id ?? "").trim();
     if (!adminId) {
       throw new Error("Unable to resolve administrator identifier for password change.");
+    }
+    if (sudoToken) {
+      return this.api.post<ChangePasswordSessionResult | void>(
+        PROFILE_ENDPOINTS.CHANGE_PASSWORD(adminId),
+        data,
+        undefined,
+        { headers: { "X-Sudo-Token": sudoToken } }
+      );
     }
     return this.api.post<ChangePasswordSessionResult | void>(
       PROFILE_ENDPOINTS.CHANGE_PASSWORD(adminId),
@@ -66,7 +77,12 @@ export class ProfileService implements IProfileService {
     return this.api.get<ActiveSession[]>(PROFILE_ENDPOINTS.SESSIONS);
   }
 
-  async revokeSession(tokenId: string): Promise<void> {
+  async revokeSession(tokenId: string, sudoToken?: string): Promise<void> {
+    if (sudoToken) {
+      return this.api.delete<void>(PROFILE_ENDPOINTS.REVOKE_SESSION(tokenId), undefined, {
+        headers: { "X-Sudo-Token": sudoToken },
+      });
+    }
     return this.api.delete<void>(PROFILE_ENDPOINTS.REVOKE_SESSION(tokenId));
   }
 
@@ -75,7 +91,15 @@ export class ProfileService implements IProfileService {
    * httpOnly refresh-token cookie via CookieAuthMiddleware — same pattern as
    * AuthService.logout()/refreshToken(), which also POST an empty body.
    */
-  async revokeAllSessions(): Promise<{ revokedCount: number }> {
+  async revokeAllSessions(sudoToken?: string): Promise<{ revokedCount: number }> {
+    if (sudoToken) {
+      return this.api.post<{ revokedCount: number }>(
+        PROFILE_ENDPOINTS.REVOKE_ALL_SESSIONS,
+        {},
+        undefined,
+        { headers: { "X-Sudo-Token": sudoToken } }
+      );
+    }
     return this.api.post<{ revokedCount: number }>(PROFILE_ENDPOINTS.REVOKE_ALL_SESSIONS, {});
   }
 

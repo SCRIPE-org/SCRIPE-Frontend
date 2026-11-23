@@ -22,10 +22,13 @@ export interface IProfileService {
   uploadAvatar(file: File): Promise<{ profileImageUrl: string }>;
   removeAvatar(): Promise<void>;
   getPasswordPolicy(): Promise<PasswordPolicyDto>;
-  changePassword(data: ChangePasswordRequest): Promise<ChangePasswordSessionResult | void>;
+  changePassword(
+    data: ChangePasswordRequest,
+    sudoToken?: string
+  ): Promise<ChangePasswordSessionResult | void>;
   getSessions(): Promise<ActiveSession[]>;
-  revokeSession(tokenId: string): Promise<void>;
-  revokeAllSessions(): Promise<{ revokedCount: number }>;
+  revokeSession(tokenId: string, sudoToken?: string): Promise<void>;
+  revokeAllSessions(sudoToken?: string): Promise<{ revokedCount: number }>;
   enable2FA(): Promise<Enable2FAResult>;
   confirm2FA(code: string): Promise<void>;
   disable2FA(password: string, twoFactorCode: string): Promise<void>;

@@ -18,6 +18,9 @@ import { PROVIDER_TEMPLATES } from "../components/WellKnownProviderGallery";
 import { IdentityProviderMapper } from "../../data/mappers/IdentityProviderMapper";
 import { IdentityProvider, IdentityProviderListItem } from "../../domain/entities/IdentityProvider";
 import { useAppStore } from "@core/store/useAppStore";
+import { useIdentityProvidersViewModel } from "../viewmodels/useIdentityProvidersViewModel";
+import { TenantIdentityProviderDialog } from "../../../../tenants/src/presentation/components/dialogs/TenantIdentityProviderDialog";
+import type { TenantIdentityProviderDetail } from "../../../../tenants/src/domain/entities/TenantIdentityProvider";
 
 const mockGetAll = vi.fn();
 const mockGetById = vi.fn();
@@ -183,7 +186,7 @@ describe("Identity Providers Admin CRUD, Diagnostics & Callback URLs", () => {
     });
   });
 
-  it("CallbackUrlCard shows informative Create note without {providerId}, and uses http://localhost:5035/api fallback in Edit mode", () => {
+  it("CallbackUrlCard renders canonical central OIDC/SAML callbacks (falling back to https://api.scripe.org/api when unset or relative) and respects explicit API override", () => {
     const prevApiUrl = process.env.NEXT_PUBLIC_API_URL;
     delete process.env.NEXT_PUBLIC_API_URL;
 
@@ -192,16 +195,29 @@ describe("Identity Providers Admin CRUD, Diagnostics & Callback URLs", () => {
     expect(screen.getByText("identityProviders.saveProviderFirstAcsNote")).toBeInTheDocument();
     expect(screen.queryByTestId("saml-acs-url-input")).not.toBeInTheDocument();
 
+    // OIDC Create mode shows canonical central callback immediately without awaiting providerId
+    rerender(<CallbackUrlCard protocol="oidc" />);
+    const createOidcInput = screen.getByTestId("standard-callback-url-input") as HTMLInputElement;
+    expect(createOidcInput.value).toBe("https://api.scripe.org/api/v1/auth/oidc/callback");
+    expect(createOidcInput).toHaveAttribute("dir", "ltr");
+
+    // Relative NEXT_PUBLIC_API_URL must still resolve to canonical central host, never window.location.origin
+    process.env.NEXT_PUBLIC_API_URL = "/api";
     rerender(<CallbackUrlCard protocol="saml" providerId="enc-idp-99" />);
     const acsInput = screen.getByTestId("saml-acs-url-input") as HTMLInputElement;
-    expect(acsInput.value).toBe("http://localhost:5035/api/v1/auth/saml/acs/enc-idp-99");
+    expect(acsInput.value).toBe("https://api.scripe.org/api/v1/auth/saml/acs/enc-idp-99");
+    expect(acsInput).toHaveAttribute("dir", "ltr");
 
+    // Explicit local dev API override is honored cleanly
+    process.env.NEXT_PUBLIC_API_URL = "http://localhost:5035/api/";
     rerender(<CallbackUrlCard protocol="oidc" providerId="enc-idp-99" />);
-    const oidcInput = screen.getByTestId("standard-callback-url-input") as HTMLInputElement;
-    expect(oidcInput.value).toMatch(/\/sso\/callback$/);
+    const devOidcInput = screen.getByTestId("standard-callback-url-input") as HTMLInputElement;
+    expect(devOidcInput.value).toBe("http://localhost:5035/api/v1/auth/oidc/callback");
 
     if (prevApiUrl !== undefined) {
       process.env.NEXT_PUBLIC_API_URL = prevApiUrl;
+    } else {
+      delete process.env.NEXT_PUBLIC_API_URL;
     }
   });
 
@@ -553,5 +569,192 @@ describe("Identity Providers Admin CRUD, Diagnostics & Callback URLs", () => {
     const { container: detailContainer } = renderWithQuery(<IdentityProviderDetailView />);
     const backArrow = detailContainer.querySelector("svg.lucide-arrow-left");
     expect(backArrow).toHaveClass("rtl:rotate-180");
+  });
+
+  it("suppresses spurious error toasts when Sudo verification is cancelled across IdentityProvider ViewModels while rolling back optimistic toggle", async () => {
+    const providerItem = new IdentityProviderListItem({
+      id: "idp-1",
+      name: "Okta Corp",
+      slug: "okta-corp",
+      protocol: "oidc",
+      enabledForAdmins: true,
+      enabledForUsers: true,
+      isActive: true,
+      trustIdpMfa: false,
+      displayOrder: 1,
+      iconUrl: null,
+      buttonColor: "#007DC1",
+      createdAt: "2026-01-01T00:00:00Z",
+    });
+    mockGetAll.mockResolvedValue({ items: [providerItem], totalCount: 1 });
+    mockGetById.mockResolvedValue(
+      IdentityProviderMapper.fromJsonToEntity({
+        id: "idp-1",
+        name: "Okta Corp",
+        slug: "okta-corp",
+        protocol: "oidc",
+        tenantId: null,
+        authority: "https://okta.example.com",
+        authorizationEndpoint: null,
+        tokenEndpoint: null,
+        userInformationEndpoint: null,
+        clientId: "cid",
+        hasClientSecret: true,
+        scopes: "openid",
+        redirectUri: null,
+        samlIdpEntityId: null,
+        samlSsoUrl: null,
+        samlCertificate: null,
+        claimMappingJson: "{}",
+        enabledForAdmins: true,
+        enabledForUsers: true,
+        iconUrl: null,
+        buttonColor: "#007DC1",
+        buttonLabel: "Okta",
+        displayOrder: 1,
+        isActive: true,
+        trustIdpMfa: false,
+        createdAt: "2026-01-01T00:00:00Z",
+        modifiedAt: null,
+        rowVersion: "AAAA==",
+      })
+    );
+    mockUpdate.mockRejectedValue(new Error("Sudo verification was cancelled."));
+    mockRemove.mockRejectedValue(new Error("Sudo verification was cancelled."));
+
+    renderWithQuery(<IdentityProvidersView />);
+    await waitFor(() => {
+      expect(screen.getByTestId("toggle-active-switch-okta-corp")).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByTestId("toggle-active-switch-okta-corp"));
+    await waitFor(() => {
+      expect(mockUpdate).toHaveBeenCalledTimes(1);
+      expect(screen.getByTestId("toggle-active-switch-okta-corp")).toHaveAttribute(
+        "aria-checked",
+        "true"
+      );
+    });
+    expect(mockToastError).not.toHaveBeenCalled();
+
+    const detailClient = new QueryClient({
+      defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
+    });
+    const detailWrapper = ({ children }: { children: React.ReactNode }) => (
+      <QueryClientProvider client={detailClient}>{children}</QueryClientProvider>
+    );
+    const { result } = renderHook(() => useIdentityProviderDetailViewModel("idp-1"), {
+      wrapper: detailWrapper,
+    });
+    await waitFor(() => expect(result.current.provider?.id).toBe("idp-1"));
+
+    await act(async () => {
+      result.current.save();
+    });
+    await waitFor(() => expect(mockUpdate).toHaveBeenCalledTimes(2));
+
+    await act(async () => {
+      result.current.deleteProvider();
+    });
+    await waitFor(() => expect(mockRemove).toHaveBeenCalledTimes(1));
+
+    expect(mockToastError).not.toHaveBeenCalled();
+  });
+
+  it("TenantIdentityProviderDialog renders canonical central OIDC/SAML callbacks with copy button", async () => {
+    const prevApiUrl = process.env.NEXT_PUBLIC_API_URL;
+    process.env.NEXT_PUBLIC_API_URL = "/api";
+    const writeTextMock = vi.fn().mockResolvedValue(undefined);
+    const originalClipboard = navigator.clipboard;
+    Object.defineProperty(navigator, "clipboard", {
+      value: { writeText: writeTextMock },
+      configurable: true,
+    });
+
+    const samlDetail: TenantIdentityProviderDetail = {
+      id: "idp-ahly-saml",
+      name: "Al-Ahly SAML",
+      slug: "ahly-saml",
+      protocol: "saml",
+      tenantId: "enc_ahly",
+      authority: null,
+      authorizationEndpoint: null,
+      tokenEndpoint: null,
+      userInformationEndpoint: null,
+      clientId: null,
+      hasClientSecret: false,
+      scopes: null,
+      redirectUri: null,
+      samlIdpEntityId: "https://ahly.okta.com/idp",
+      samlSsoUrl: "https://ahly.okta.com/sso/saml",
+      samlCertificate: "MIIC",
+      claimMappingJson: null,
+      enabledForAdmins: true,
+      enabledForUsers: false,
+      isActive: true,
+      trustIdpMfa: false,
+      displayOrder: 1,
+      iconUrl: null,
+      buttonColor: "#c6ff00",
+      buttonLabel: "Sign in",
+      createdAt: "2026-11-01T00:00:00Z",
+      modifiedAt: null,
+      rowVersion: "AAAAAQ==",
+    };
+
+    try {
+      const { rerender } = render(
+        <TenantIdentityProviderDialog
+          open={true}
+          onOpenChange={vi.fn()}
+          editingProvider={null}
+          onSave={vi.fn()}
+          isSaving={false}
+        />
+      );
+
+      const oidcInput = screen.getByTestId("tenant-idp-callback-url-input") as HTMLInputElement;
+      expect(oidcInput.value).toBe("https://api.scripe.org/api/v1/auth/oidc/callback");
+      expect(oidcInput).toHaveAttribute("dir", "ltr");
+
+      fireEvent.click(screen.getByTestId("tenant-idp-callback-copy-btn"));
+      await waitFor(() => {
+        expect(writeTextMock).toHaveBeenCalledWith(
+          "https://api.scripe.org/api/v1/auth/oidc/callback"
+        );
+      });
+
+      rerender(
+        <TenantIdentityProviderDialog
+          open={true}
+          onOpenChange={vi.fn()}
+          editingProvider={samlDetail}
+          onSave={vi.fn()}
+          isSaving={false}
+        />
+      );
+
+      const samlInput = screen.getByTestId("tenant-idp-callback-url-input") as HTMLInputElement;
+      expect(samlInput.value).toBe(
+        "https://api.scripe.org/api/v1/auth/saml/acs/idp-ahly-saml"
+      );
+
+      fireEvent.click(screen.getByTestId("tenant-idp-callback-copy-btn"));
+      await waitFor(() => {
+        expect(writeTextMock).toHaveBeenCalledWith(
+          "https://api.scripe.org/api/v1/auth/saml/acs/idp-ahly-saml"
+        );
+      });
+    } finally {
+      Object.defineProperty(navigator, "clipboard", {
+        value: originalClipboard,
+        configurable: true,
+      });
+      if (prevApiUrl !== undefined) {
+        process.env.NEXT_PUBLIC_API_URL = prevApiUrl;
+      } else {
+        delete process.env.NEXT_PUBLIC_API_URL;
+      }
+    }
   });
 });

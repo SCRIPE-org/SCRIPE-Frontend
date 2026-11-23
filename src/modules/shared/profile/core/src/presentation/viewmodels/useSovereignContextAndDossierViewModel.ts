@@ -9,6 +9,7 @@ import { useSudoStore } from "@core/store/useSudoStore";
 import { container } from "@modules/profile/di";
 import type { SendEmailVerificationPayload } from "../../domain/interfaces/ISovereignAccountRepository";
 import { sovereignAccountKeys } from "../utils/sovereignAccountKeys";
+import { ensureSudoElevation } from "../utils/sudoElevation";
 
 /** Queries and exposes dossier mutations for email verification, export, and deactivation. */
 export function useSovereignDossierSlice() {
@@ -30,6 +31,7 @@ export function useSovereignDossierSlice() {
   const deactivateMutation = useMutation({
     mutationFn: async (sudoCode?: string) => {
       const trimmedCode = sudoCode?.trim();
+      const sudoToken = trimmedCode ? undefined : await ensureSudoElevation();
       if (trimmedCode && !useSudoStore.getState().isSessionElevated()) {
         const verified = await container.securityRepository.verifySudoStepUp({
           method: "totp",
@@ -38,7 +40,12 @@ export function useSovereignDossierSlice() {
         useSudoStore.getState().markVerified(verified);
       }
       return container.sovereignAccountRepository.deactivateAccount(
-        trimmedCode ? { sudoCode: trimmedCode } : undefined
+        trimmedCode || sudoToken
+          ? {
+              ...(trimmedCode ? { sudoCode: trimmedCode } : {}),
+              ...(sudoToken ? { sudoToken } : {}),
+            }
+          : undefined
       );
     },
     onSuccess: () => {

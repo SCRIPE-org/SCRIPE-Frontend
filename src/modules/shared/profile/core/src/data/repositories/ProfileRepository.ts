@@ -79,12 +79,18 @@ export class ProfileRepository implements IProfileRepository {
 
   // ── Password ─────────────────────────────────────────
 
-  async changePassword(data: ChangePasswordRequest): Promise<ChangePasswordSessionResult | void> {
-    return this.profileService.changePassword({
-      currentPassword: data.currentPassword,
-      newPassword: data.newPassword,
-      twoFactorCode: data.twoFactorCode,
-    });
+  async changePassword(
+    data: ChangePasswordRequest,
+    sudoToken?: string
+  ): Promise<ChangePasswordSessionResult | void> {
+    return this.profileService.changePassword(
+      {
+        currentPassword: data.currentPassword,
+        newPassword: data.newPassword,
+        twoFactorCode: data.twoFactorCode,
+      },
+      sudoToken
+    );
   }
 
   // ── Sessions ─────────────────────────────────────────
@@ -94,11 +100,25 @@ export class ProfileRepository implements IProfileRepository {
     return ProfileMapper.toActiveSessions(dtos);
   }
 
-  async revokeSession(tokenId: string): Promise<void> {
+  async revokeSession(tokenId: string, sudoToken?: string): Promise<void> {
+    if (sudoToken) {
+      await this.api.delete(PROFILE_ENDPOINTS.REVOKE_SESSION(tokenId), undefined, {
+        headers: { "X-Sudo-Token": sudoToken },
+      });
+      return;
+    }
     await this.api.delete(PROFILE_ENDPOINTS.REVOKE_SESSION(tokenId));
   }
 
-  async revokeAllSessions(): Promise<{ revokedCount: number }> {
+  async revokeAllSessions(sudoToken?: string): Promise<{ revokedCount: number }> {
+    if (sudoToken) {
+      return await this.api.post<{ revokedCount: number }>(
+        PROFILE_ENDPOINTS.REVOKE_ALL_SESSIONS,
+        {},
+        undefined,
+        { headers: { "X-Sudo-Token": sudoToken } }
+      );
+    }
     return await this.api.post<{ revokedCount: number }>(PROFILE_ENDPOINTS.REVOKE_ALL_SESSIONS);
   }
 

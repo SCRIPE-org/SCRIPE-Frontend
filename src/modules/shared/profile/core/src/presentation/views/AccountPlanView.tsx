@@ -16,6 +16,7 @@ import { AccountSliceErrorState } from "../components/AccountSliceErrorState";
 import { PlanEditionBannerSection } from "../sections/plan/PlanEditionBannerSection";
 import { PlanQuotasSection } from "../sections/plan/PlanQuotasSection";
 import { PlanFeaturesMatrixSection } from "../sections/plan/PlanFeaturesMatrixSection";
+import { isSudoCancelledError } from "../utils/sudoElevation";
 import { AlertCircle, CheckCircle2 } from "lucide-react";
 
 /**
@@ -70,6 +71,7 @@ export function AccountPlanView() {
       setRequestNotice(true);
       setTimeout(() => setRequestNotice(false), 2500);
     } catch (err: unknown) {
+      if (isSudoCancelledError(err)) return;
       const msg = err instanceof Error && err.message ? err.message : t("profile.common.error");
       setRequestError(msg);
       toast.error(msg);

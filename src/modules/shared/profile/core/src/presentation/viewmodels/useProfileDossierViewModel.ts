@@ -18,6 +18,7 @@ import {
   invalidateOnConcurrencyConflict,
   resolveProfileSaveErrorMessage,
 } from "../utils/concurrency";
+import { isSudoCancelledError } from "../utils/sudoElevation";
 
 /** React Query key factory for executive profile dossier queries. */
 export const dossierKeys = {
@@ -135,27 +136,41 @@ export function useProfileDossierViewModel() {
 
   // Toggle operational availability & persist to DB
   const toggleAvailability = (available: boolean) => {
-    const current = queryClient.getQueryData<any>(dossierKeys.profile()) ?? profile;
+    const previous = queryClient.getQueryData<any>(dossierKeys.profile());
+    const current = previous ?? profile;
     queryClient.setQueryData(dossierKeys.profile(), (prev: any) => {
       if (!prev) return prev;
       return { ...prev, isAvailableForOperations: available };
     });
     if (current) {
-      updateMutation.mutate({
-        firstName: current.firstName || "",
-        lastName: current.lastName || "",
-        phoneNumber: current.phoneNumber || "",
-        bio: current.bio,
-        activeBranchName: current.activeBranchName,
-        isAvailableForOperations: available,
-        rowVersion: current.rowVersion,
-      });
+      updateMutation.mutate(
+        {
+          firstName: current.firstName || "",
+          lastName: current.lastName || "",
+          phoneNumber: current.phoneNumber || "",
+          bio: current.bio,
+          activeBranchName: current.activeBranchName,
+          isAvailableForOperations: available,
+          rowVersion: current.rowVersion,
+        },
+        {
+          onError: () => {
+            if (previous !== undefined) {
+              queryClient.setQueryData(dossierKeys.profile(), previous);
+            } else {
+              void queryClient.invalidateQueries({ queryKey: dossierKeys.profile() });
+            }
+          },
+        }
+      );
     }
   };
 
   // Switch active branch/workspace & persist to DB
   const switchAcademy = (academyId: string) => {
-    const current = queryClient.getQueryData<any>(dossierKeys.profile()) ?? profile;
+    const previous = queryClient.getQueryData<any>(dossierKeys.profile());
+    const previousAcademyId = selectedAcademyId;
+    const current = previous ?? profile;
     const academies = (current?.availableAcademies || []).map((a: any) => ({
       ...a,
       isCurrent: a.id === academyId,
@@ -176,15 +191,29 @@ export function useProfileDossierViewModel() {
     });
 
     if (current && nextBranchName) {
-      updateMutation.mutate({
-        firstName: current.firstName || "",
-        lastName: current.lastName || "",
-        phoneNumber: current.phoneNumber || "",
-        bio: current.bio,
-        activeBranchName: nextBranchName,
-        isAvailableForOperations: current.isAvailableForOperations,
-        rowVersion: current.rowVersion,
-      });
+      updateMutation.mutate(
+        {
+          firstName: current.firstName || "",
+          lastName: current.lastName || "",
+          phoneNumber: current.phoneNumber || "",
+          bio: current.bio,
+          activeBranchName: nextBranchName,
+          isAvailableForOperations: current.isAvailableForOperations,
+          rowVersion: current.rowVersion,
+        },
+        {
+          onError: () => {
+            startTransition(() => {
+              setSelectedAcademyId(previousAcademyId);
+              if (previous !== undefined) {
+                queryClient.setQueryData(dossierKeys.profile(), previous);
+              } else {
+                void queryClient.invalidateQueries({ queryKey: dossierKeys.profile() });
+              }
+            });
+          },
+        }
+      );
     }
   };
 
@@ -197,9 +226,10 @@ export function useProfileDossierViewModel() {
     // Profile updates
     updateProfile: updateMutation.mutateAsync,
     isUpdating: updateMutation.isPending,
-    updateError: updateMutation.error
-      ? resolveProfileSaveErrorMessage(updateMutation.error, t)
-      : null,
+    updateError:
+      updateMutation.error && !isSudoCancelledError(updateMutation.error)
+        ? resolveProfileSaveErrorMessage(updateMutation.error, t)
+        : null,
     profileSuccess,
 
     // Avatar

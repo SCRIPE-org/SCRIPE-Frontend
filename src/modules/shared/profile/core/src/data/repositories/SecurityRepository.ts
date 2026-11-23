@@ -178,11 +178,25 @@ export class SecurityRepository implements ISecurityRepository {
     return mapWorkstationSessions(dtos);
   }
 
-  async revokeSession(tokenId: string): Promise<void> {
+  async revokeSession(tokenId: string, sudoToken?: string): Promise<void> {
+    if (sudoToken) {
+      await this.api.delete(PROFILE_ENDPOINTS.REVOKE_SESSION(tokenId), undefined, {
+        headers: { "X-Sudo-Token": sudoToken },
+      });
+      return;
+    }
     await this.api.delete(PROFILE_ENDPOINTS.REVOKE_SESSION(tokenId));
   }
 
-  async revokeAllOtherSessions(): Promise<{ revokedCount: number }> {
+  async revokeAllOtherSessions(sudoToken?: string): Promise<{ revokedCount: number }> {
+    if (sudoToken) {
+      return this.api.post<{ revokedCount: number }>(
+        PROFILE_ENDPOINTS.REVOKE_ALL_SESSIONS,
+        {},
+        undefined,
+        { headers: { "X-Sudo-Token": sudoToken } }
+      );
+    }
     return this.api.post<{ revokedCount: number }>(PROFILE_ENDPOINTS.REVOKE_ALL_SESSIONS, {});
   }
 
@@ -218,12 +232,18 @@ export class SecurityRepository implements ISecurityRepository {
     return mapPasswordPolicyDto(dto);
   }
 
-  async changePassword(data: ChangePasswordRequest): Promise<ChangePasswordSessionResult | void> {
-    return this.profileService.changePassword({
-      currentPassword: data.currentPassword,
-      newPassword: data.newPassword,
-      twoFactorCode: data.twoFactorCode,
-    });
+  async changePassword(
+    data: ChangePasswordRequest,
+    sudoToken?: string
+  ): Promise<ChangePasswordSessionResult | void> {
+    return this.profileService.changePassword(
+      {
+        currentPassword: data.currentPassword,
+        newPassword: data.newPassword,
+        twoFactorCode: data.twoFactorCode,
+      },
+      sudoToken
+    );
   }
 
   async getAuditTrail(page: number = 1, pageSize: number = 50): Promise<SecurityAuditEntry[]> {

@@ -26,6 +26,7 @@ import type { ChangePasswordRequest } from "../../domain/interfaces/IProfileRepo
 import type { PasskeyCredential } from "../../domain/entities/PasskeyCredential";
 import { sovereignAccountKeys } from "./useSovereignAccountSlicesViewModel";
 import { useSecurityPasskeyActions } from "./useSecurityPasskeyActions";
+import { isSudoCancelledError } from "../utils/sudoElevation";
 
 /** React Query key factory for security vault queries (passkeys & 2FA status). */
 export const securityVaultKeys = {
@@ -227,14 +228,23 @@ export function useSecurityVaultViewModel() {
     platformSupported,
     enrollPasskey: enrollPasskeyMutation.mutateAsync,
     isEnrollingPasskey: enrollPasskeyMutation.isPending,
-    enrollError: enrollPasskeyMutation.error?.message ?? null,
+    enrollError:
+      enrollPasskeyMutation.error && !isSudoCancelledError(enrollPasskeyMutation.error)
+        ? enrollPasskeyMutation.error.message
+        : null,
     resetEnrollError: enrollPasskeyMutation.reset,
     removePasskey: removePasskeyMutation.mutateAsync,
     isRemovingPasskey: removePasskeyMutation.isPending,
-    removePasskeyError: removePasskeyMutation.error ?? null,
+    removePasskeyError:
+      removePasskeyMutation.error && !isSudoCancelledError(removePasskeyMutation.error)
+        ? removePasskeyMutation.error
+        : null,
     renamePasskey: renamePasskeyMutation.mutateAsync,
     isRenamingPasskey: renamePasskeyMutation.isPending,
-    renamePasskeyError: renamePasskeyMutation.error?.message ?? null,
+    renamePasskeyError:
+      renamePasskeyMutation.error && !isSudoCancelledError(renamePasskeyMutation.error)
+        ? renamePasskeyMutation.error.message
+        : null,
     isSudoActive,
     sudoToken,
     sudoExpiresAt,
@@ -254,13 +264,23 @@ export function useSecurityVaultViewModel() {
     isConfirming2Fa: confirm2FaMutation.isPending,
     disable2Fa: disable2FaMutation.mutateAsync,
     isDisabling2Fa: disable2FaMutation.isPending,
-    disable2FaError: disable2FaMutation.error?.message ?? null,
+    disable2FaError:
+      disable2FaMutation.error && !isSudoCancelledError(disable2FaMutation.error)
+        ? disable2FaMutation.error.message
+        : null,
     regenerateBackupCodes: regenerateBackupCodesMutation.mutateAsync,
     isRegeneratingCodes: regenerateBackupCodesMutation.isPending,
-    regenerateCodesError: regenerateBackupCodesMutation.error?.message ?? null,
+    regenerateCodesError:
+      regenerateBackupCodesMutation.error &&
+      !isSudoCancelledError(regenerateBackupCodesMutation.error)
+        ? regenerateBackupCodesMutation.error.message
+        : null,
     changePassword: changePasswordMutation.mutateAsync,
     isChangingPassword: changePasswordMutation.isPending,
-    changePasswordError: changePasswordMutation.error?.message ?? null,
+    changePasswordError:
+      changePasswordMutation.error && !isSudoCancelledError(changePasswordMutation.error)
+        ? changePasswordMutation.error.message
+        : null,
     passwordPolicy,
     isLoadingPasswordPolicy,
     passwordPolicyError: passwordPolicyErrorObj?.message ?? null,

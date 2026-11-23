@@ -7,6 +7,7 @@ import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { Download, AlertTriangle, CheckCircle2, FileJson } from "lucide-react";
 import { AccountDeactivateDialog } from "./AccountDeactivateDialog";
+import { isSudoCancelledError } from "../utils/sudoElevation";
 import type { AdminProfile, AdminCustomFieldItem } from "../../domain/entities/AdminProfile";
 
 /** Props for {@link AccountLifecycleCard}. */
@@ -21,8 +22,8 @@ export interface AccountLifecycleCardProps {
   primaryOrgName?: string;
   /** Fetches additional backend account export archive payload. */
   onExportData?: () => Promise<Record<string, unknown>>;
-  /** Executes account deactivation once confirmed with 6-digit step-up sudo code. */
-  onDeactivateAccount?: (sudoCode: string) => Promise<unknown>;
+  /** Executes account deactivation protected by policy-aware step-up Sudo verification. */
+  onDeactivateAccount?: () => Promise<unknown>;
 }
 
 /**
@@ -41,7 +42,6 @@ export function AccountLifecycleCard({
   const [exportStatus, setExportStatus] = useState<"idle" | "exporting" | "done">("idle");
   const [deactivateOpen, setDeactivateOpen] = useState(false);
   const [confirmUsername, setConfirmUsername] = useState("");
-  const [sudoCode, setSudoCode] = useState("");
   const [isDeactivating, setIsDeactivating] = useState(false);
   const [deactivateError, setDeactivateError] = useState<string | null>(null);
 
@@ -99,22 +99,23 @@ export function AccountLifecycleCard({
     setDeactivateOpen(nextOpen);
     if (!nextOpen) {
       setConfirmUsername("");
-      setSudoCode("");
       setDeactivateError(null);
     }
   };
 
   const handleConfirmDeactivate = async () => {
-    const trimmedCode = sudoCode.trim();
-    if (isSolePrimaryOwner || confirmUsername !== profile.username || trimmedCode.length < 6) {
+    if (isSolePrimaryOwner || confirmUsername !== profile.username) {
       return;
     }
     setDeactivateError(null);
     setIsDeactivating(true);
     try {
-      await onDeactivateAccount?.(trimmedCode);
+      await onDeactivateAccount?.();
       handleDeactivateOpenChange(false);
     } catch (err: unknown) {
+      if (isSudoCancelledError(err)) {
+        return;
+      }
       setDeactivateError(
         err instanceof Error && err.message ? err.message : t("profile.common.error")
       );
@@ -234,15 +235,10 @@ export function AccountLifecycleCard({
         isSolePrimaryOwner={isSolePrimaryOwner}
         primaryOrgName={primaryOrgName}
         confirmUsername={confirmUsername}
-        sudoCode={sudoCode}
         isSubmitting={isDeactivating}
         error={deactivateError}
         onConfirmUsernameChange={(val) => {
           setConfirmUsername(val);
-          if (deactivateError) setDeactivateError(null);
-        }}
-        onSudoCodeChange={(val) => {
-          setSudoCode(val);
           if (deactivateError) setDeactivateError(null);
         }}
         onConfirmDeactivate={handleConfirmDeactivate}

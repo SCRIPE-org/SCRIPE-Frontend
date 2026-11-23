@@ -149,8 +149,8 @@ export interface ISecurityRepository {
 
   // Workstations & Session Fleet
   getSessions(): Promise<WorkstationSession[]>;
-  revokeSession(tokenId: string): Promise<void>;
-  revokeAllOtherSessions(): Promise<{ revokedCount: number }>;
+  revokeSession(tokenId: string, sudoToken?: string): Promise<void>;
+  revokeAllOtherSessions(sudoToken?: string): Promise<{ revokedCount: number }>;
   emergencyLockdown(): Promise<void>;
 
   // 2FA Management
@@ -161,7 +161,10 @@ export interface ISecurityRepository {
 
   // Password Management
   getPasswordPolicy(): Promise<PasswordPolicyModel>;
-  changePassword(data: ChangePasswordRequest): Promise<ChangePasswordSessionResult | void>;
+  changePassword(
+    data: ChangePasswordRequest,
+    sudoToken?: string
+  ): Promise<ChangePasswordSessionResult | void>;
 
   // SOC2 Audit Trail
   getAuditTrail(page?: number, pageSize?: number): Promise<SecurityAuditEntry[]>;

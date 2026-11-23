@@ -8,6 +8,7 @@ import { CheckCircle2, Pencil, Check, X } from "lucide-react";
 import { ProfileIdentityIdentifiersBar } from "./ProfileIdentityIdentifiersBar";
 import { ProfileInfoReadonlyGrid } from "./ProfileInfoReadonlyGrid";
 import { ProfileInfoEditForm } from "./ProfileInfoEditForm";
+import { isSudoCancelledError } from "../utils/sudoElevation";
 import type { AdminProfile, AdminCustomFieldItem } from "../../domain/entities/AdminProfile";
 import type { UpdateProfileRequest } from "../../domain/interfaces/IProfileRepository";
 
@@ -90,6 +91,7 @@ export function ProfileInfoForm({
       setSavedSuccess(true);
       setIsEditing(false);
     } catch (err: unknown) {
+      if (isSudoCancelledError(err)) return;
       setLocalError(
         err instanceof Error && err.message ? err.message : t("profile.common.saveFailed")
       );

@@ -19,6 +19,7 @@ import { Mail, AtSign, CheckCircle2, ArrowRight, AlertCircle } from "lucide-reac
 import { useSudoViewModel } from "../viewmodels/useSovereignAccountSlicesViewModel";
 import { computeAllowedFactors, resolveSudoErrorMessage } from "../utils/sudo-factors.utils";
 import { resolveProfileSaveErrorMessage } from "../utils/concurrency";
+import { isSudoCancelledError } from "../utils/sudoElevation";
 import type {
   SendEmailVerificationPayload,
   SendEmailVerificationResponse,
@@ -181,6 +182,7 @@ export function IdentityChangeVerificationModal({
       }
       setStep(3);
     } catch (err: unknown) {
+      if (isSudoCancelledError(err)) return;
       setStepError(resolveProfileSaveErrorMessage(err, t));
     } finally {
       setIsSubmitting(false);
@@ -199,6 +201,7 @@ export function IdentityChangeVerificationModal({
       await onCommitChange(mode, cleanValue, cleanOtp);
       handleClose(false);
     } catch (err: unknown) {
+      if (isSudoCancelledError(err)) return;
       setStepError(resolveProfileSaveErrorMessage(err, t));
     } finally {
       setIsSubmitting(false);
