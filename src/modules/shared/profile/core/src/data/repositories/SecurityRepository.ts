@@ -6,8 +6,10 @@
  */
 import type { IApiService } from "@core/interfaces/api.interface";
 import { buildUrl } from "@/core/config/api-endpoints/_shared";
-import { useAppStore } from "@core/store/useAppStore";
+import { mapPasswordPolicyDto, type PasswordPolicyModel } from "@core/common/password-policy";
 import { PROFILE_ENDPOINTS } from "../services/profile.endpoints";
+import { ProfileService } from "../services/ProfileService";
+import type { IProfileService } from "../../domain/interfaces/IProfileService";
 import type {
   ISecurityRepository,
   PasskeyRegistrationBeginResponse,
@@ -24,6 +26,7 @@ import type { WorkstationSession } from "../../domain/entities/WorkstationSessio
 import type { SecurityAuditEntry } from "../../domain/entities/SecurityAuditEntry";
 import type {
   ChangePasswordRequest,
+  ChangePasswordSessionResult,
   Enable2FAResult,
 } from "../../domain/interfaces/IProfileRepository";
 import {
@@ -43,7 +46,14 @@ import {
  * HTTP-backed repository implementing passkey vault, Sudo elevation, sessions, 2FA, and audit trail operations.
  */
 export class SecurityRepository implements ISecurityRepository {
-  constructor(private readonly api: IApiService) {}
+  private readonly profileService: IProfileService;
+
+  constructor(
+    private readonly api: IApiService,
+    profileService?: IProfileService
+  ) {
+    this.profileService = profileService ?? new ProfileService(api);
+  }
 
   async listPasskeys(): Promise<PasskeyCredential[]> {
     const dtos = await this.api.get<PasskeyListDto[]>(PROFILE_ENDPOINTS.PASSKEYS.LIST);
@@ -203,10 +213,13 @@ export class SecurityRepository implements ISecurityRepository {
     return res.backupCodes;
   }
 
-  async changePassword(data: ChangePasswordRequest): Promise<void> {
-    const adminId = useAppStore.getState().user?.id;
-    if (!adminId) throw new Error("User not authenticated");
-    await this.api.post(PROFILE_ENDPOINTS.CHANGE_PASSWORD(adminId), {
+  async getPasswordPolicy(): Promise<PasswordPolicyModel> {
+    const dto = await this.profileService.getPasswordPolicy();
+    return mapPasswordPolicyDto(dto);
+  }
+
+  async changePassword(data: ChangePasswordRequest): Promise<ChangePasswordSessionResult | void> {
+    return this.profileService.changePassword({
       currentPassword: data.currentPassword,
       newPassword: data.newPassword,
       twoFactorCode: data.twoFactorCode,

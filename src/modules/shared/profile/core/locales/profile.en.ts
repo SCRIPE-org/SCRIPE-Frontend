@@ -67,6 +67,8 @@ export const en = {
       wrongAccount: "Wrong account? Sign out",
       updatePassword: "Update Password",
       passwordChanged: "Password changed successfully!",
+      passwordChangedSessionsRevoked:
+        "Password updated! Your current session remains active and all other sessions were signed out.",
       passwordMismatch: "Passwords do not match",
       currentPasswordRequired: "Please enter your current password",
       passwordExpired: "Your password has expired. Please change it immediately.",

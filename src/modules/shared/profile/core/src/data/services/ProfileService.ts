@@ -1,4 +1,5 @@
 import { buildUrl } from "@/core/config/api-endpoints/_shared";
+import type { PasswordPolicyDto } from "@core/common/password-policy";
 import type { IApiService } from "@core/interfaces/api.interface";
 import type { IProfileService } from "../../domain/interfaces/IProfileService";
 import type { AdminProfile } from "../../domain/entities/AdminProfile";
@@ -8,6 +9,7 @@ import type { ExternalLogin } from "../../domain/entities/ExternalLogin";
 import type {
   UpdateProfileRequest,
   ChangePasswordRequest,
+  ChangePasswordSessionResult,
   Enable2FAResult,
   InitiateExternalLoginLinkRequest,
   InitiateExternalLoginLinkResponse,
@@ -39,14 +41,21 @@ export class ProfileService implements IProfileService {
     return this.api.delete<void>(PROFILE_ENDPOINTS.AVATAR);
   }
 
+  async getPasswordPolicy(): Promise<PasswordPolicyDto> {
+    return this.api.get<PasswordPolicyDto>(PROFILE_ENDPOINTS.PASSWORD_POLICY);
+  }
+
   /**
    * AdminsController.ChangePassword is `POST /v1/admins/{id}/change-password` — it needs
    * the current admin's own id, which this service doesn't otherwise hold. Resolve it via
    * GET /v1/account/dossier (AdminProfileDto always carries `id`) before posting.
    */
-  async changePassword(data: ChangePasswordRequest): Promise<void> {
+  async changePassword(data: ChangePasswordRequest): Promise<ChangePasswordSessionResult | void> {
     const me = await this.api.get<{ id: string }>(PROFILE_ENDPOINTS.DOSSIER);
-    return this.api.post<void>(PROFILE_ENDPOINTS.CHANGE_PASSWORD(me.id), data);
+    return this.api.post<ChangePasswordSessionResult | void>(
+      PROFILE_ENDPOINTS.CHANGE_PASSWORD(me.id),
+      data
+    );
   }
 
   async getSessions(): Promise<ActiveSession[]> {

@@ -11,6 +11,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSudoStore } from "@core/store/useSudoStore";
 import { useServices } from "@core/providers/service-provider";
+import { secureTokenService } from "@core/common/secure-token-service";
 import { container } from "@modules/profile/di";
 import { finalizeEmergencyLockdownCleanup } from "../utils/emergency-lockdown";
 import {
@@ -76,6 +77,17 @@ export function useSecurityVaultViewModel() {
     staleTime: 60 * 1000,
   });
 
+  const {
+    data: passwordPolicy = null,
+    isLoading: isLoadingPasswordPolicy,
+    error: passwordPolicyErrorObj,
+    refetch: refetchPasswordPolicy,
+  } = useQuery({
+    queryKey: [...securityVaultKeys.all, "password-policy"],
+    queryFn: () => securityRepo.getPasswordPolicy(),
+    staleTime: 5 * 60 * 1000,
+  });
+
   const { enrollPasskeyMutation, removePasskeyMutation, renamePasskeyMutation } =
     useSecurityPasskeyActions(securityVaultKeys.passkeys());
 
@@ -129,6 +141,20 @@ export function useSecurityVaultViewModel() {
 
   const changePasswordMutation = useMutation({
     mutationFn: (data: ChangePasswordRequest) => securityRepo.changePassword(data),
+    onSuccess: (result) => {
+      if (result && typeof result === "object" && "accessToken" in result && result.accessToken) {
+        secureTokenService.setAccessToken(result.accessToken);
+        if (result.expiresAt) {
+          const parsedExpiry = Date.parse(result.expiresAt);
+          if (!Number.isNaN(parsedExpiry)) {
+            secureTokenService.setTokenExpiry(parsedExpiry);
+          }
+        }
+      }
+      refetchProfile();
+      queryClient.invalidateQueries({ queryKey: sovereignAccountKeys.security() });
+      queryClient.invalidateQueries({ queryKey: sovereignAccountKeys.sessions() });
+    },
   });
 
   const emergencyLockdownMutation = useMutation({
@@ -187,6 +213,10 @@ export function useSecurityVaultViewModel() {
     changePassword: changePasswordMutation.mutateAsync,
     isChangingPassword: changePasswordMutation.isPending,
     changePasswordError: changePasswordMutation.error?.message ?? null,
+    passwordPolicy,
+    isLoadingPasswordPolicy,
+    passwordPolicyError: passwordPolicyErrorObj?.message ?? null,
+    refetchPasswordPolicy,
     isPasswordExpired: !!profile?.isPasswordExpired,
     passwordLastChanged: profile?.passwordLastChanged ?? null,
     emergencyLockdown: emergencyLockdownMutation.mutateAsync,

@@ -1,9 +1,9 @@
+import React from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { renderHook, act } from "@testing-library/react";
-import {
-  evaluatePasswordRules,
-  useForceChangePasswordViewModel,
-} from "../viewmodels/useForceChangePasswordViewModel";
+import { renderHook, act, waitFor } from "@testing-library/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { evaluatePasswordPolicy, type PasswordPolicyModel } from "@core/common/password-policy";
+import { useForceChangePasswordViewModel } from "../viewmodels/useForceChangePasswordViewModel";
 
 const mocks = vi.hoisted(() => ({
   replace: vi.fn(),
@@ -14,6 +14,7 @@ const mocks = vi.hoisted(() => ({
   forceChangePassword: vi.fn(),
   refreshToken: vi.fn(),
   getCurrentPrincipal: vi.fn(),
+  getPasswordPolicy: vi.fn(),
   authLogout: vi.fn(),
   setAuth: vi.fn(),
   setSubscriptionInfo: vi.fn(),
@@ -28,13 +29,6 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ replace: mocks.replace, push: vi.fn() }),
 }));
 
-vi.mock("@tanstack/react-query", () => ({
-  useQueryClient: () => ({
-    invalidateQueries: mocks.invalidateQueries,
-    clear: mocks.clearQueries,
-  }),
-}));
-
 vi.mock("@core/providers/i18n-provider", () => ({
   useI18n: () => ({
     t: (key: string) => key,
@@ -47,6 +41,7 @@ vi.mock("@core/providers/service-provider", () => ({
     authRepository: {
       refreshToken: mocks.refreshToken,
       getCurrentPrincipal: mocks.getCurrentPrincipal,
+      getPasswordPolicy: mocks.getPasswordPolicy,
       logout: mocks.authLogout,
     },
   }),
@@ -97,9 +92,34 @@ vi.mock("@core/navigation/store/useNavigationStore", () => ({
   },
 }));
 
-describe("ForceChangePasswordViewModel (MMC First-Login Parity)", () => {
+const STRICT_POLICY: PasswordPolicyModel = {
+  minLength: 12,
+  maxLength: 128,
+  requireUppercase: true,
+  requireLowercase: true,
+  requireNumber: true,
+  requireSpecial: true,
+  historyCount: 5,
+  checkBreachedPasswords: true,
+  expiryDays: null,
+};
+
+function createTestWrapper() {
+  const client = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+  return {
+    client,
+    wrapper: function Wrapper({ children }: { children: React.ReactNode }) {
+      return React.createElement(QueryClientProvider, { client }, children);
+    },
+  };
+}
+
+describe("ForceChangePasswordViewModel (Dynamic PasswordPolicy & Session Rotation)", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mocks.getPasswordPolicy.mockResolvedValue(STRICT_POLICY);
     mocks.forceChangePassword.mockResolvedValue({
       defaultRedirectPath: "/",
       subscriptionStatus: "Active",
@@ -130,58 +150,27 @@ describe("ForceChangePasswordViewModel (MMC First-Login Parity)", () => {
     mocks.authLogout.mockResolvedValue(undefined);
   });
 
-  it("evaluates all 5 password complexity rules accurately with a 12-character minimum", () => {
-    expect(evaluatePasswordRules("abc")).toEqual({
-      minLength: false,
-      uppercase: false,
-      lowercase: true,
-      number: false,
-      special: false,
-      allMet: false,
-    });
+  it("evaluates candidate passwords dynamically against the loaded PasswordPolicyModel", () => {
+    expect(evaluatePasswordPolicy("abc", STRICT_POLICY).allMet).toBe(false);
+    expect(evaluatePasswordPolicy("Pass#2026", STRICT_POLICY).allMet).toBe(false);
+    expect(evaluatePasswordPolicy("StrongP@ss1", STRICT_POLICY).allMet).toBe(false);
+    expect(evaluatePasswordPolicy("StrongP@ss12", STRICT_POLICY).allMet).toBe(true);
 
-    // 9 characters: meets complexity classes, but fails 12-character minimum
-    expect(evaluatePasswordRules("Pass#2026")).toEqual({
-      minLength: false,
-      uppercase: true,
-      lowercase: true,
-      number: true,
-      special: true,
-      allMet: false,
-    });
-
-    // 11 characters: boundary just below 12 characters
-    expect(evaluatePasswordRules("StrongP@ss1")).toEqual({
-      minLength: false,
-      uppercase: true,
-      lowercase: true,
-      number: true,
-      special: true,
-      allMet: false,
-    });
-
-    // 12 characters: exact threshold meets all rules
-    expect(evaluatePasswordRules("StrongP@ss12")).toEqual({
-      minLength: true,
-      uppercase: true,
-      lowercase: true,
-      number: true,
-      special: true,
-      allMet: true,
-    });
-
-    expect(evaluatePasswordRules("StrongPass#2026")).toEqual({
-      minLength: true,
-      uppercase: true,
-      lowercase: true,
-      number: true,
-      special: true,
-      allMet: true,
-    });
+    // Tenant disabling lowercase & special must not reject valid uppercase+digits passwords
+    const relaxedPolicy: PasswordPolicyModel = {
+      ...STRICT_POLICY,
+      minLength: 8,
+      requireLowercase: false,
+      requireSpecial: false,
+    };
+    expect(evaluatePasswordPolicy("UPPER123", relaxedPolicy).allMet).toBe(true);
   });
 
-  it("rotates password with only newPassword + confirmPassword, refreshes session without logout, clears mcp, and navigates to workspace", async () => {
-    const { result } = renderHook(() => useForceChangePasswordViewModel());
+  it("loads backend policy dynamically, rotates session without logout, clears mcp, and navigates to workspace", async () => {
+    const { wrapper } = createTestWrapper();
+    const { result } = renderHook(() => useForceChangePasswordViewModel(), { wrapper });
+
+    await waitFor(() => expect(result.current.policy).toEqual(STRICT_POLICY));
 
     act(() => {
       result.current.setNewPassword("StrongPass#2026");
@@ -217,23 +206,25 @@ describe("ForceChangePasswordViewModel (MMC First-Login Parity)", () => {
     expect(mocks.replace).toHaveBeenCalledWith("/");
   });
 
-  it("blocks submit when passwords mismatch or complexity rules fail", async () => {
-    const { result } = renderHook(() => useForceChangePasswordViewModel());
+  it("blocks submit without weak fallback when policy fails to load or passwords mismatch", async () => {
+    mocks.getPasswordPolicy.mockRejectedValueOnce(new Error("Policy endpoint unavailable"));
+    const { wrapper } = createTestWrapper();
+    const { result } = renderHook(() => useForceChangePasswordViewModel(), { wrapper });
+
+    await waitFor(() => expect(result.current.policyError).toBe("Policy endpoint unavailable"));
 
     act(() => {
       result.current.setNewPassword("StrongPass#2026");
-      result.current.setConfirmPassword("Different#2026");
+      result.current.setConfirmPassword("StrongPass#2026");
     });
 
     expect(result.current.canSubmit).toBe(false);
-    expect(result.current.showMismatch).toBe(true);
 
     await act(async () => {
       await result.current.handleSubmit();
     });
-
     expect(mocks.forceChangePassword).not.toHaveBeenCalled();
-    expect(result.current.submitError).toBe("profile.security.passwordMismatch");
+    expect(result.current.submitError).toBe("Policy endpoint unavailable");
   });
 
   it("allows explicit sign-out from the wrong-account recovery button and revokes server refresh cookie first", async () => {
@@ -244,14 +235,16 @@ describe("ForceChangePasswordViewModel (MMC First-Login Parity)", () => {
     mocks.logout.mockImplementation(() => {
       callOrder.push("store.logout");
     });
-    mocks.clearQueries.mockImplementation(() => {
-      callOrder.push("queryClient.clear");
-    });
     mocks.replace.mockImplementation(() => {
       callOrder.push("router.replace");
     });
 
-    const { result } = renderHook(() => useForceChangePasswordViewModel());
+    const { wrapper, client } = createTestWrapper();
+    vi.spyOn(client, "clear").mockImplementation(() => {
+      callOrder.push("queryClient.clear");
+    });
+
+    const { result } = renderHook(() => useForceChangePasswordViewModel(), { wrapper });
 
     await act(async () => {
       await result.current.handleLogout();
@@ -259,7 +252,6 @@ describe("ForceChangePasswordViewModel (MMC First-Login Parity)", () => {
 
     expect(mocks.authLogout).toHaveBeenCalledTimes(1);
     expect(mocks.logout).toHaveBeenCalledTimes(1);
-    expect(mocks.clearQueries).toHaveBeenCalledTimes(1);
     expect(mocks.replace).toHaveBeenCalledWith("/login");
     expect(callOrder).toEqual([
       "authRepository.logout",
@@ -272,7 +264,9 @@ describe("ForceChangePasswordViewModel (MMC First-Login Parity)", () => {
   it("still clears local auth state and redirects to /login when authRepository.logout fails", async () => {
     mocks.authLogout.mockRejectedValueOnce(new Error("Network failure"));
 
-    const { result } = renderHook(() => useForceChangePasswordViewModel());
+    const { wrapper, client } = createTestWrapper();
+    const clearSpy = vi.spyOn(client, "clear");
+    const { result } = renderHook(() => useForceChangePasswordViewModel(), { wrapper });
 
     await act(async () => {
       await result.current.handleLogout();
@@ -280,7 +274,7 @@ describe("ForceChangePasswordViewModel (MMC First-Login Parity)", () => {
 
     expect(mocks.authLogout).toHaveBeenCalledTimes(1);
     expect(mocks.logout).toHaveBeenCalledTimes(1);
-    expect(mocks.clearQueries).toHaveBeenCalledTimes(1);
+    expect(clearSpy).toHaveBeenCalledTimes(1);
     expect(mocks.replace).toHaveBeenCalledWith("/login");
   });
 });

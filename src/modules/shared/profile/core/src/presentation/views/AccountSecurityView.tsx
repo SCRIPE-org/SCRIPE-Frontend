@@ -205,6 +205,10 @@ export function AccountSecurityView() {
         </CardHeader>
         <CardContent>
           <PasswordChangeForm
+            policy={security?.passwordPolicy ?? vm.passwordPolicy ?? null}
+            policyLoading={vm.isLoadingPasswordPolicy}
+            policyError={vm.passwordPolicyError}
+            onRetryPolicy={() => void vm.refetchPasswordPolicy?.()}
             isTwoFactorEnabled={vm.isTwoFactorEnabled}
             onSubmit={handlePasswordSubmit}
             isSubmitting={vm.isChangingPassword}

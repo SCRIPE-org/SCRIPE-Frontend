@@ -1,13 +1,19 @@
 "use client";
 
 /**
- * PasswordChangeForm — Password change with optional 2FA code
+ * PasswordChangeForm — Policy-driven password change with optional 2FA verification.
  */
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import {
+  createPolicyPasswordSchema,
+  DEFAULT_PASSWORD_MAX_LENGTH,
+  type PasswordPolicyModel,
+} from "@core/common/password-policy";
 import { Input } from "@core/ui/input";
 import { PasswordInput } from "@core/ui/password-input";
+import { PasswordWithPolicyField } from "@core/ui/password-policy-field";
 import { Button } from "@core/ui/button";
 import {
   Form,
@@ -20,10 +26,13 @@ import {
 } from "@core/ui/form";
 import { useI18n } from "@core/providers/i18n-provider";
 import { CheckCircle2 } from "lucide-react";
-import { cn } from "@core/common/utils";
 import type { ChangePasswordRequest } from "../../../src/domain/interfaces/IProfileRepository";
 
 interface PasswordChangeFormProps {
+  policy: PasswordPolicyModel | null | undefined;
+  policyLoading?: boolean;
+  policyError?: string | null;
+  onRetryPolicy?: () => void;
   isTwoFactorEnabled: boolean;
   onSubmit: (data: ChangePasswordRequest) => Promise<unknown>;
   isSubmitting: boolean;
@@ -31,10 +40,6 @@ interface PasswordChangeFormProps {
   success: boolean;
 }
 
-// react-hook-form owns every field as a plain string; confirmPassword only
-// ever lives here (it never reaches ChangePasswordRequest) and twoFactorCode
-// maps to `undefined` when 2FA isn't enabled — same shape the hand-rolled
-// version submitted.
 interface PasswordChangeFormValues {
   currentPassword: string;
   newPassword: string;
@@ -49,27 +54,14 @@ const EMPTY_VALUES: PasswordChangeFormValues = {
   twoFactorCode: "",
 };
 
-const UPPERCASE = /[A-Z]/;
-const NUMBER = /[0-9]/;
-const SPECIAL = /[!@#$%^&*(),.?":{}|<>]/;
-
-// Built once per render with the live t() so every message re-localizes on a
-// language switch, same shape as the CreateLeadDialog / CommissionRateConfig
-// schemas already do. Validity rules are identical to the previous
-// hand-rolled checks: currentPassword only has to be present (the server
-// judges correctness), newPassword must clear all four strength rules, and
-// confirmPassword must match it. twoFactorCode was never part of the
-// original validity gate even when 2FA is enabled — that stays unchanged.
-function buildSchema(t: (key: string) => string) {
+function buildSchema(
+  t: (key: string, params?: Record<string, string | number>) => string,
+  policy: PasswordPolicyModel | null | undefined
+) {
   return z
     .object({
       currentPassword: z.string().min(1, t("profile.security.currentPasswordRequired")),
-      newPassword: z
-        .string()
-        .min(12, t("profile.security.strength.minLength"))
-        .regex(UPPERCASE, t("profile.security.strength.uppercase"))
-        .regex(NUMBER, t("profile.security.strength.number"))
-        .regex(SPECIAL, t("profile.security.strength.special")),
+      newPassword: createPolicyPasswordSchema(policy, t),
       confirmPassword: z.string(),
       twoFactorCode: z.string(),
     })
@@ -80,10 +72,13 @@ function buildSchema(t: (key: string) => string) {
 }
 
 /**
- * Presentation UI component rendering the password change form.
- * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ * Presentation UI component rendering the password change form driven by backend `PasswordPolicyDto`.
  */
 export function PasswordChangeForm({
+  policy,
+  policyLoading = false,
+  policyError = null,
+  onRetryPolicy,
   isTwoFactorEnabled,
   onSubmit,
   isSubmitting,
@@ -91,7 +86,7 @@ export function PasswordChangeForm({
   success,
 }: PasswordChangeFormProps) {
   const { t } = useI18n();
-  const schema = buildSchema(t);
+  const schema = buildSchema(t, policy);
 
   const form = useForm<PasswordChangeFormValues>({
     resolver: zodResolver(schema),
@@ -99,21 +94,14 @@ export function PasswordChangeForm({
     mode: "onChange",
   });
 
-  // useWatch rather than form.watch: watch() returns a function that React
-  // Compiler cannot memoize safely (react-hooks/incompatible-library).
   const newPassword = useWatch({
     control: form.control,
     name: "newPassword",
     defaultValue: "",
   });
-  const strengthItems = [
-    { met: newPassword.length >= 12, label: t("profile.security.strength.minLength") },
-    { met: UPPERCASE.test(newPassword), label: t("profile.security.strength.uppercase") },
-    { met: NUMBER.test(newPassword), label: t("profile.security.strength.number") },
-    { met: SPECIAL.test(newPassword), label: t("profile.security.strength.special") },
-  ];
 
   const handleValid = async (values: PasswordChangeFormValues) => {
+    if (!policy) return;
     try {
       await onSubmit({
         currentPassword: values.currentPassword,
@@ -136,8 +124,9 @@ export function PasswordChangeForm({
             <FormItem>
               <FormLabel>{t("profile.security.currentPassword")}</FormLabel>
               <FormControl>
-                <PasswordInput disabled={isSubmitting} {...field} />
+                <PasswordInput disabled={isSubmitting} autoComplete="current-password" {...field} />
               </FormControl>
+              <FormMessage />
             </FormItem>
           )}
         />
@@ -147,26 +136,20 @@ export function PasswordChangeForm({
           name="newPassword"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t("profile.security.newPassword")}</FormLabel>
-              <FormControl>
-                <PasswordInput disabled={isSubmitting} {...field} />
-              </FormControl>
-              {newPassword.length > 0 && (
-                <div className="flex flex-wrap gap-x-4 gap-y-1 pt-0.5">
-                  {strengthItems.map((item) => (
-                    <span
-                      key={item.label}
-                      className={cn(
-                        "flex items-center gap-1 text-xs transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-                        item.met ? "text-success" : "text-nx-ink-3"
-                      )}
-                    >
-                      <span aria-hidden="true">{item.met ? "✓" : "○"}</span>
-                      {item.label}
-                    </span>
-                  ))}
-                </div>
-              )}
+              <PasswordWithPolicyField
+                id="account-security-new-password"
+                data-testid="account-security-new-password"
+                label={t("profile.security.newPassword")}
+                policy={policy}
+                policyLoading={policyLoading}
+                policyError={policyError}
+                onRetryPolicy={onRetryPolicy}
+                alwaysShowChecklist={newPassword.length > 0 || !policy || Boolean(policyError)}
+                disabled={isSubmitting}
+                autoComplete="new-password"
+                t={t}
+                {...field}
+              />
             </FormItem>
           )}
         />
@@ -178,7 +161,12 @@ export function PasswordChangeForm({
             <FormItem>
               <FormLabel>{t("profile.security.confirmPassword")}</FormLabel>
               <FormControl>
-                <PasswordInput disabled={isSubmitting} {...field} />
+                <PasswordInput
+                  disabled={isSubmitting}
+                  autoComplete="new-password"
+                  maxLength={policy?.maxLength ?? DEFAULT_PASSWORD_MAX_LENGTH}
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -210,16 +198,20 @@ export function PasswordChangeForm({
         {submitError && <p className="text-sm text-nx-danger">{submitError}</p>}
 
         {success && (
-          <div className="flex items-center gap-2 text-sm text-success">
-            <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
-            {t("profile.security.passwordChanged")}
+          <div
+            role="status"
+            data-testid="password-change-success"
+            className="flex items-start gap-2 rounded-nx-md border border-success/30 bg-success/10 px-3 py-2 text-xs text-success"
+          >
+            <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+            <span>{t("profile.security.passwordChangedSessionsRevoked")}</span>
           </div>
         )}
 
         <Button
           type="submit"
           loading={isSubmitting}
-          disabled={isSubmitting}
+          disabled={isSubmitting || !policy}
           className="w-full sm:w-auto"
         >
           {t("profile.security.updatePassword")}

@@ -67,6 +67,8 @@ export const ar = {
       wrongAccount: "حساب مختلف؟ تسجيل الخروج",
       updatePassword: "تحديث كلمة المرور",
       passwordChanged: "تم تغيير كلمة المرور بنجاح!",
+      passwordChangedSessionsRevoked:
+        "تم تحديث كلمة المرور! تظل جلستك الحالية نشطة وتم تسجيل الخروج من جميع الجلسات الأخرى.",
       passwordMismatch: "كلمات المرور غير متطابقة",
       currentPasswordRequired: "يرجى إدخال كلمة المرور الحالية",
       passwordExpired: "انتهت صلاحية كلمة المرور. يرجى تغييرها فوراً.",

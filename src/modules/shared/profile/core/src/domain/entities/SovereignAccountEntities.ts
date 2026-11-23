@@ -165,6 +165,7 @@ export interface SovereignSecuritySlice {
   currentClientIp?: string | null;
   isCurrentIpAllowed: boolean;
   availableSsoProviders: AvailableSsoProvider[];
+  passwordPolicy?: import("@core/common/password-policy").PasswordPolicyModel | null;
   rowVersion?: string;
 }
 

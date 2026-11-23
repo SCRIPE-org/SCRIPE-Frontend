@@ -6,13 +6,15 @@
  */
 import type { IApiService } from "@core/interfaces/api.interface";
 import { buildUrl } from "@/core/config/api-endpoints/_shared";
-import { useAppStore } from "@core/store/useAppStore";
 import { secureTokenService } from "@core/common/secure-token-service";
 import { PROFILE_ENDPOINTS } from "../services/profile.endpoints";
+import { ProfileService } from "../services/ProfileService";
+import type { IProfileService } from "../../domain/interfaces/IProfileService";
 import type {
   IProfileRepository,
   UpdateProfileRequest,
   ChangePasswordRequest,
+  ChangePasswordSessionResult,
   InitiateExternalLoginLinkRequest,
   InitiateExternalLoginLinkResponse,
   ForceChangePasswordRequest,
@@ -37,7 +39,14 @@ import type { ExternalLogin } from "../../domain/entities/ExternalLogin";
  * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export class ProfileRepository implements IProfileRepository {
-  constructor(private readonly api: IApiService) {}
+  private readonly profileService: IProfileService;
+
+  constructor(
+    private readonly api: IApiService,
+    profileService?: IProfileService
+  ) {
+    this.profileService = profileService ?? new ProfileService(api);
+  }
 
   // ── Profile ──────────────────────────────────────────
 
@@ -70,13 +79,8 @@ export class ProfileRepository implements IProfileRepository {
 
   // ── Password ─────────────────────────────────────────
 
-  async changePassword(data: ChangePasswordRequest): Promise<void> {
-    // Get the current admin's ID from the store — the backend endpoint requires it.
-    // POST /v1/admins/{id}/change-password is the correct route.
-    const adminId = useAppStore.getState().user?.id;
-    if (!adminId) throw new Error("User not authenticated");
-
-    await this.api.post(PROFILE_ENDPOINTS.CHANGE_PASSWORD(adminId), {
+  async changePassword(data: ChangePasswordRequest): Promise<ChangePasswordSessionResult | void> {
+    return this.profileService.changePassword({
       currentPassword: data.currentPassword,
       newPassword: data.newPassword,
       twoFactorCode: data.twoFactorCode,

@@ -4,10 +4,15 @@
  * Contract for Passkeys, Multi-Factor Authentication, Session Management,
  * Biometric Sudo Mode, and Security Compliance Auditing.
  */
+import type { PasswordPolicyModel } from "@core/common/password-policy";
 import type { PasskeyCredential } from "../entities/PasskeyCredential";
 import type { WorkstationSession } from "../entities/WorkstationSession";
 import type { SecurityAuditEntry } from "../entities/SecurityAuditEntry";
-import type { Enable2FAResult, ChangePasswordRequest } from "./IProfileRepository";
+import type {
+  Enable2FAResult,
+  ChangePasswordRequest,
+  ChangePasswordSessionResult,
+} from "./IProfileRepository";
 
 /** Supported FIDO2/WebAuthn registration mode sent during passkey enrollment. */
 export type PasskeyRegistrationMode = "platform" | "hybrid" | "cross-platform";
@@ -155,7 +160,8 @@ export interface ISecurityRepository {
   regenerateBackupCodes(twoFactorCode: string): Promise<string[]>;
 
   // Password Management
-  changePassword(data: ChangePasswordRequest): Promise<void>;
+  getPasswordPolicy(): Promise<PasswordPolicyModel>;
+  changePassword(data: ChangePasswordRequest): Promise<ChangePasswordSessionResult | void>;
 
   // SOC2 Audit Trail
   getAuditTrail(page?: number, pageSize?: number): Promise<SecurityAuditEntry[]>;
