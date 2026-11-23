@@ -24,6 +24,7 @@ export interface SsoTwoFactorPendingData {
   email?: string;
   returnOrigin?: string | null;
   returnPath?: string | null;
+  principalType?: "admin" | "user";
 }
 
 /** Injected dependencies for SSO callback handlers. */
@@ -44,6 +45,7 @@ export interface SsoCallbackDeps {
 export interface SsoCallbackSetters {
   setState: (s: SsoCallbackState) => void;
   setErrorInfo: (e: SsoCallbackError | null) => void;
+  setErrorCode?: (code: string | null) => void;
   redirectTo: (path: string) => void;
   setWorkspaceSelectionData?: (data: {
     workspaces: WorkspaceChoice[];
@@ -60,29 +62,25 @@ export function setSsoCallbackFailure(
   setters: SsoCallbackSetters,
   title: string,
   message: string,
-  state: "error" | "no_linked_account" = "error"
+  state: "error" | "no_linked_account" = "error",
+  code?: string | null
 ): void {
   setters.setState(state);
   setters.setErrorInfo({ title, message });
+  if (code !== undefined) setters.setErrorCode?.(code);
 }
 
 function resolveCurrentTenantCode(): string | null {
   try {
     const storeRef = useAppStore as unknown as { getState?: () => { tenantCode?: string | null } };
-    if (typeof storeRef?.getState === "function") {
-      return storeRef.getState().tenantCode ?? null;
-    }
+    return typeof storeRef?.getState === "function" ? (storeRef.getState().tenantCode ?? null) : null;
   } catch {
-    // Store may be mocked as selector-only in unit tests
+    return null;
   }
-  return null;
 }
 
 /** Syncs the per-tab principal identity key and emits a scoped LOGIN_SUCCESS broadcast. */
-export function emitSsoLoginBroadcast(
-  user: User,
-  principalType: "admin" | "user" = "admin"
-): void {
+export function emitSsoLoginBroadcast(user: User, principalType: "admin" | "user" = "admin"): void {
   const principalId = user?.id ? String(user.id) : null;
   const tenantId = user?.tenantId ?? null;
   syncActivePrincipalKey({ principalType, tenantId, principalId });
@@ -227,6 +225,21 @@ export async function dispatchCallbackResult(
     return;
   }
 
+  // Hybrid-2FA MUST resolve centrally on auth.scripe.org BEFORE forwarding any cross-origin
+  // handoff ticket back to a verified custom domain or tenant workspace (#227/#228).
+  if (result.requires2FA && result.twoFactorPendingToken && setters.setTwoFactorPending) {
+    setters.setTwoFactorPending({
+      token: result.twoFactorPendingToken,
+      staySignedIn: Boolean(result.staySignedIn),
+      email: result.email,
+      principalType: result.type === "user" ? "user" : "admin",
+      ...(result.returnOrigin ? { returnOrigin: result.returnOrigin } : {}),
+      ...(result.returnPath ? { returnPath: result.returnPath } : {}),
+    });
+    setters.setState("two_factor");
+    return;
+  }
+
   const crossOriginTarget = buildVerifiedCrossOriginCallbackUrl(
     result.returnOrigin,
     result.handoffCode,
@@ -237,18 +250,6 @@ export async function dispatchCallbackResult(
   if (crossOriginTarget) {
     setters.setState("success");
     setters.redirectTo(crossOriginTarget);
-    return;
-  }
-
-  if (result.requires2FA && result.twoFactorPendingToken && setters.setTwoFactorPending) {
-    setters.setTwoFactorPending({
-      token: result.twoFactorPendingToken,
-      staySignedIn: Boolean(result.staySignedIn),
-      email: result.email,
-      ...(result.returnOrigin ? { returnOrigin: result.returnOrigin } : {}),
-      ...(result.returnPath ? { returnPath: result.returnPath } : {}),
-    });
-    setters.setState("two_factor");
     return;
   }
 

@@ -37,7 +37,11 @@ import { LoginRequestModel, type UserProfileJson } from "../models/AuthModel";
 import { getBrowserDeviceInfo } from "../utils/browser-device-info";
 import { Verify2FARequestModel } from "../models/TwoFactorModels";
 import type { IAuthService } from "../../domain/interfaces/IAuthService";
-import type { IAuthRepository, LoginResult } from "../../domain/interfaces/IAuthRepository";
+import type {
+  IAuthRepository,
+  LoginResult,
+  Verify2FAOptions,
+} from "../../domain/interfaces/IAuthRepository";
 import { WorkspaceInfo } from "../../domain/entities/WorkspaceInfo";
 import { Result } from "@core/common/types/result";
 import {
@@ -137,7 +141,8 @@ export class AuthRepository implements IAuthRepository {
   }
 
   /**
-   * Verify 2FA code during login (supports both password-based and passwordless pending-token flows).
+   * Verify 2FA code during login (supports both password-based and passwordless pending-token flows,
+   * including post-MFA cross-origin handoff bridging back to verified custom domains).
    */
   async verify2FA(
     identifier: string,
@@ -145,7 +150,8 @@ export class AuthRepository implements IAuthRepository {
     code: string,
     tenantId?: string,
     twoFactorPendingToken?: string | null,
-    staySignedIn: boolean = false
+    staySignedIn: boolean = false,
+    options?: Verify2FAOptions
   ): Promise<LoginResult> {
     const requestModel = new Verify2FARequestModel(
       identifier,
@@ -153,11 +159,32 @@ export class AuthRepository implements IAuthRepository {
       code,
       tenantId,
       twoFactorPendingToken ?? null,
-      staySignedIn
+      staySignedIn,
+      options?.returnOrigin ?? null,
+      options?.returnPath ?? null,
+      options?.principalType ?? "admin"
     );
     const responseModel = await this.service.verify2FA(requestModel);
 
     appLogger.auth("2FA verification successful");
+
+    if (responseModel.handoffCode && responseModel.handoffState && responseModel.returnOrigin) {
+      return {
+        user: AuthMapper.userFromUnknown(responseModel.userProfile) ?? (null as unknown as User),
+        mustChangePassword: responseModel.mustChangePassword ?? false,
+        requireMfaEnrollment: responseModel.requireMfaEnrollment ?? false,
+        subscriptionStatus: responseModel.subscriptionStatus ?? null,
+        gracePhase: responseModel.gracePhase ?? null,
+        editionName: responseModel.editionName ?? null,
+        defaultRedirectPath: responseModel.returnPath ?? responseModel.defaultRedirectPath ?? "/",
+        handoff: {
+          code: responseModel.handoffCode,
+          state: responseModel.handoffState,
+          returnOrigin: responseModel.returnOrigin,
+          returnPath: responseModel.returnPath ?? null,
+        },
+      };
+    }
 
     if (responseModel.accessToken) {
       secureTokenService.setAccessToken(responseModel.accessToken);

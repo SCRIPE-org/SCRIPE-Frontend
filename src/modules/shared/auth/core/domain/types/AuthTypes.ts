@@ -91,9 +91,12 @@ export interface Verify2FARequestJson {
   tenantId?: string;
   twoFactorPendingToken?: string | null;
   staySignedIn?: boolean;
+  returnOrigin?: string | null;
+  returnPath?: string | null;
 }
 
 export interface Verify2FARequestModel {
+  principalType?: "admin" | "user";
   toJson(): Verify2FARequestJson;
 }
 
@@ -107,6 +110,10 @@ export interface Verify2FAResponseJson {
   editionName?: string | null;
   userProfile?: unknown;
   defaultRedirectPath?: string | null;
+  handoffCode?: string | null;
+  handoffState?: string | null;
+  returnOrigin?: string | null;
+  returnPath?: string | null;
 }
 
 export interface Verify2FAResponseModel extends Verify2FAResponseJson {
@@ -116,6 +123,10 @@ export interface Verify2FAResponseModel extends Verify2FAResponseJson {
   gracePhase: string | null;
   editionName: string | null;
   defaultRedirectPath: string;
+  handoffCode?: string | null;
+  handoffState?: string | null;
+  returnOrigin?: string | null;
+  returnPath?: string | null;
 }
 
 export interface WorkspaceInfoDto {

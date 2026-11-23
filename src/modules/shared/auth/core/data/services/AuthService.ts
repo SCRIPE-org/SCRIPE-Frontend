@@ -46,10 +46,11 @@ export class AuthService implements IAuthService {
   }
 
   async verify2FA(request: Verify2FARequestModel): Promise<Verify2FAResponseModel> {
-    const json = await this.api.postPublic<Verify2FAResponseJson>(
-      AUTH_CORE_ENDPOINTS.TWO_FA.VERIFY,
-      request.toJson()
-    );
+    const endpoint =
+      request.principalType === "user"
+        ? AUTH_CORE_ENDPOINTS.TWO_FA.USER_VERIFY
+        : AUTH_CORE_ENDPOINTS.TWO_FA.VERIFY;
+    const json = await this.api.postPublic<Verify2FAResponseJson>(endpoint, request.toJson());
     return Verify2FAResponseModel.fromJson(json);
   }
 

@@ -18,6 +18,7 @@ export const AUTH_CORE_ENDPOINTS = {
   DISCOVER_WORKSPACES: `${V1}/auth/admin/discover-workspaces`,
   TWO_FA: {
     VERIFY: `${V1}/auth/admin/2fa/verify`,
+    USER_VERIFY: `${V1}/auth/user/2fa/verify`,
   },
   // ── Passwordless magic-link login ─────────────────────────────
   MAGIC_LINK: {

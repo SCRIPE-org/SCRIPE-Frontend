@@ -181,6 +181,7 @@ describe("useSsoCallbackHandlers, useTokenLogin & useQrSignInViewModel (BAM-01, 
       token: "pending-oidc-2fa-ticket",
       staySignedIn: true,
       email: "admin@ahly.club",
+      principalType: "admin",
     });
     expect(ctx.setState).toHaveBeenCalledWith("two_factor");
     expect(mockSetAccessToken).not.toHaveBeenCalled();
@@ -208,6 +209,7 @@ describe("useSsoCallbackHandlers, useTokenLogin & useQrSignInViewModel (BAM-01, 
       token: "pending-saml-2fa-ticket",
       staySignedIn: false,
       email: "saml@ahly.club",
+      principalType: "admin",
     });
     expect(ctx.setState).toHaveBeenCalledWith("two_factor");
     expect(mockSetAccessToken).not.toHaveBeenCalled();

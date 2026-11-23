@@ -638,4 +638,208 @@ describe("CentralFederationRoutingAndRelay (Stage 3B-4)", () => {
     await new Promise((r) => setTimeout(r, 350));
     expect(window.location.href).toBe("https://ahly.admin.scripe.org/?redirect=%2Fportal%2Fbookings");
   });
+
+  it("resolves central hybrid-2FA BEFORE custom-domain handoff after workspace selection and bridges post-MFA back to verified custom domain (#227/#228)", async () => {
+    vi.stubEnv("NEXT_PUBLIC_APP_URL", "https://admin.scripe.org");
+    vi.stubEnv("NEXT_PUBLIC_AUTH_URL", "https://auth.scripe.org");
+    setBrowserUrl("https://auth.scripe.org/sso/continue?code=c-cd&state=s-cd");
+    mockSearchParams = new URLSearchParams("code=c-cd&state=s-cd");
+
+    mockRedeemCallback.mockResolvedValueOnce({
+      purpose: "login",
+      requiresWorkspaceSelection: true,
+      token: "ws-cd-tok",
+      email: "admin@cluba.com",
+      returnOrigin: "https://portal.cluba.com",
+      returnPath: "/billing?tab=invoices",
+      availableWorkspaces: [
+        {
+          tenantId: "t-cluba",
+          tenantCode: "CLUBA",
+          tenantName: "Club A",
+          logoUrl: null,
+          isPlatformAdmin: false,
+          isActivated: true,
+          isDisabled: false,
+          isPasswordVerified: true,
+        },
+      ],
+    });
+
+    // Even if a legacy payload included handoffCode alongside requires2FA, 2FA MUST win centrally on auth.scripe.org
+    mockCompleteWorkspaceSelection.mockResolvedValueOnce({
+      type: "admin",
+      requires2FA: true,
+      twoFactorPendingToken: "pending-mfa-cd",
+      staySignedIn: true,
+      handoffCode: "stale-should-not-redirect-yet",
+      handoffState: "stale-state",
+      returnOrigin: "https://portal.cluba.com",
+      returnPath: "/billing?tab=invoices",
+    });
+
+    mockVerify2FA.mockResolvedValueOnce({
+      user: null,
+      mustChangePassword: false,
+      requireMfaEnrollment: false,
+      subscriptionStatus: "Active",
+      gracePhase: null,
+      editionName: "Enterprise",
+      defaultRedirectPath: "/billing?tab=invoices",
+      handoff: {
+        code: "post-mfa-code-1",
+        state: "post-mfa-state-1",
+        returnOrigin: "https://portal.cluba.com",
+        returnPath: "/billing?tab=invoices",
+      },
+    });
+
+    const { result } = renderHook(() => useSsoCallbackHandler("continue"), {
+      wrapper: createQueryWrapper(),
+    });
+
+    await waitFor(() => expect(result.current.state).toBe("workspace_selection"));
+
+    await act(async () => {
+      await result.current.handleSelectWorkspace(result.current.workspaceData!.workspaces[0]);
+    });
+
+    // Must transition to central 2FA step on auth.scripe.org (NOT jump to portal.cluba.com yet)
+    await waitFor(() => expect(result.current.state).toBe("two_factor"));
+    expect(window.location.href).toBe("https://auth.scripe.org/sso/continue?code=c-cd&state=s-cd");
+
+    act(() => result.current.setTwoFactorCode("123456"));
+    await act(async () => {
+      await result.current.handleVerify2FA();
+    });
+
+    expect(mockVerify2FA).toHaveBeenCalledWith(
+      "",
+      null,
+      "123456",
+      undefined,
+      "pending-mfa-cd",
+      true,
+      {
+        returnOrigin: "https://portal.cluba.com",
+        returnPath: "/billing?tab=invoices",
+        principalType: "admin",
+      }
+    );
+    await waitFor(() => expect(result.current.state).toBe("success"));
+    await new Promise((r) => setTimeout(r, 200));
+    expect(window.location.href).toBe(
+      "https://portal.cluba.com/sso/callback?code=post-mfa-code-1&state=post-mfa-state-1&redirect=%2Fbilling%3Ftab%3Dinvoices"
+    );
+    // Must not establish an admin session on auth.scripe.org when bridging to custom domain
+    expect(useAppStore.getState().isAuthenticated).toBe(false);
+  });
+
+  it("AuthRepository.verify2FA forwards returnOrigin/returnPath and returns post-MFA handoff without throwing on empty accessToken", async () => {
+    const svcVerify2FA = vi.fn().mockResolvedValue({
+      accessToken: "",
+      expiresAt: "2026-11-24T00:00:00Z",
+      mustChangePassword: false,
+      requireMfaEnrollment: false,
+      subscriptionStatus: "Active",
+      gracePhase: null,
+      editionName: "Enterprise",
+      userProfile: null,
+      defaultRedirectPath: "/billing",
+      handoffCode: "hf-code-99",
+      handoffState: "hf-state-99",
+      returnOrigin: "https://portal.cluba.com",
+      returnPath: "/billing",
+    });
+
+    const repo = new AuthRepository({
+      verify2FA: svcVerify2FA,
+    } as unknown as IAuthService);
+
+    const res = await repo.verify2FA("", null, "654321", undefined, "pending-tok", true, {
+      returnOrigin: "https://portal.cluba.com",
+      returnPath: "/billing",
+      principalType: "user",
+    });
+
+    expect(svcVerify2FA).toHaveBeenCalledWith(
+      expect.objectContaining({
+        twoFactorPendingToken: "pending-tok",
+        returnOrigin: "https://portal.cluba.com",
+        returnPath: "/billing",
+        principalType: "user",
+      })
+    );
+    expect(res.handoff).toEqual({
+      code: "hf-code-99",
+      state: "hf-state-99",
+      returnOrigin: "https://portal.cluba.com",
+      returnPath: "/billing",
+    });
+  });
+
+  it("bridges direct user-principal hybrid-2FA (/api/v1/auth/user/2fa/verify) back to custom domain without setting central session (#227/#228)", async () => {
+    vi.stubEnv("NEXT_PUBLIC_APP_URL", "https://admin.scripe.org");
+    vi.stubEnv("NEXT_PUBLIC_AUTH_URL", "https://auth.scripe.org");
+    setBrowserUrl("https://auth.scripe.org/sso/continue?code=c-usr&state=s-usr");
+    mockSearchParams = new URLSearchParams("code=c-usr&state=s-usr");
+
+    mockRedeemCallback.mockResolvedValueOnce({
+      purpose: "login",
+      type: "user",
+      requires2FA: true,
+      twoFactorPendingToken: "user-pending-tok",
+      staySignedIn: false,
+      email: "member@cluba.com",
+      returnOrigin: "https://portal.cluba.com",
+      returnPath: "/portal/passes",
+    });
+
+    mockVerify2FA.mockResolvedValueOnce({
+      user: null,
+      mustChangePassword: false,
+      requireMfaEnrollment: false,
+      subscriptionStatus: null,
+      gracePhase: null,
+      editionName: null,
+      defaultRedirectPath: "/portal/passes",
+      handoff: {
+        code: "user-post-mfa-code",
+        state: "user-post-mfa-state",
+        returnOrigin: "https://portal.cluba.com",
+        returnPath: "/portal/passes",
+      },
+    });
+
+    const { result } = renderHook(() => useSsoCallbackHandler("continue"), {
+      wrapper: createQueryWrapper(),
+    });
+
+    await waitFor(() => expect(result.current.state).toBe("two_factor"));
+
+    act(() => result.current.setTwoFactorCode("654321"));
+    await act(async () => {
+      await result.current.handleVerify2FA();
+    });
+
+    expect(mockVerify2FA).toHaveBeenCalledWith(
+      "",
+      null,
+      "654321",
+      undefined,
+      "user-pending-tok",
+      false,
+      {
+        returnOrigin: "https://portal.cluba.com",
+        returnPath: "/portal/passes",
+        principalType: "user",
+      }
+    );
+    await waitFor(() => expect(result.current.state).toBe("success"));
+    await new Promise((r) => setTimeout(r, 200));
+    expect(window.location.href).toBe(
+      "https://portal.cluba.com/sso/callback?code=user-post-mfa-code&state=user-post-mfa-state&redirect=%2Fportal%2Fpasses"
+    );
+    expect(useAppStore.getState().isAuthenticated).toBe(false);
+  });
 });

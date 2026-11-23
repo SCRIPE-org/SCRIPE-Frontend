@@ -10,6 +10,21 @@ import type {
   VerifyPasskeyAuthRequestData,
 } from "../types/AuthTypes";
 
+/** Post-MFA cross-origin handoff handle minted by backend for custom-domain/workspace session establishment. */
+export interface PostMfaHandoffResult {
+  code: string;
+  state: string;
+  returnOrigin: string;
+  returnPath?: string | null;
+}
+
+/** Optional cross-origin bridging parameters for `verify2FA`. */
+export interface Verify2FAOptions {
+  returnOrigin?: string | null;
+  returnPath?: string | null;
+  principalType?: "admin" | "user";
+}
+
 /** Result of a successful login, carrying subscription metadata alongside the User */
 export interface LoginResult {
   user: User;
@@ -20,6 +35,8 @@ export interface LoginResult {
   editionName: string | null;
   /** Backend-authoritative redirect path: "/" for dashboard, "/hub" for workspace hub */
   defaultRedirectPath: string;
+  /** Present when hybrid-2FA completed centrally and issued a single-use handoff back to a custom domain. */
+  handoff?: PostMfaHandoffResult | null;
 }
 
 export interface IAuthRepository {
@@ -30,7 +47,8 @@ export interface IAuthRepository {
     code: string,
     tenantId?: string,
     twoFactorPendingToken?: string | null,
-    staySignedIn?: boolean
+    staySignedIn?: boolean,
+    options?: Verify2FAOptions
   ): Promise<LoginResult>;
   logout(logoutScope?: "app" | "central"): Promise<void>;
   getCurrentPrincipal(): Promise<User>;

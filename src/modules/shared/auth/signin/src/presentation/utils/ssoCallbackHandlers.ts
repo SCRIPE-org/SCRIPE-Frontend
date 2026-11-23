@@ -145,7 +145,7 @@ function handleCallbackQueryError(
     setters.redirectTo(`/account/security?error=${encodeURIComponent(outcome.safeCode)}`);
     return;
   }
-  setSsoCallbackFailure(setters, outcome.title, outcome.message, outcome.state);
+  setSsoCallbackFailure(setters, outcome.title, outcome.message, outcome.state, outcome.safeCode);
 }
 
 function mapApiErrorToSsoOutcome(
@@ -210,7 +210,7 @@ export async function handleOidcCallback(
       setters.redirectTo(`/account/security?error=${encodeURIComponent(outcome.safeCode)}`);
       return;
     }
-    setSsoCallbackFailure(setters, outcome.title, outcome.message, outcome.state);
+    setSsoCallbackFailure(setters, outcome.title, outcome.message, outcome.state, outcome.safeCode);
   }
 }
 
@@ -260,6 +260,6 @@ export async function handleSamlCallback(
       setters.redirectTo(`/account/security?error=${encodeURIComponent(outcome.safeCode)}`);
       return;
     }
-    setSsoCallbackFailure(setters, outcome.title, outcome.message, outcome.state);
+    setSsoCallbackFailure(setters, outcome.title, outcome.message, outcome.state, outcome.safeCode);
   }
 }

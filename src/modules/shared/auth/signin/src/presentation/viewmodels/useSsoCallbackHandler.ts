@@ -11,15 +11,13 @@ import { useServices } from "@core/providers/service-provider";
 import {
   buildVerifiedCrossOriginCallbackUrl,
   completePrincipalLogin,
-  emitSsoLoginBroadcast,
   handleOidcCallback,
   handleSamlCallback,
-  resolvePostAuthTargetForOrigin,
+  resolveSsoErrorOutcome,
   type SsoTwoFactorPendingData,
 } from "../utils/ssoCallbackHandlers";
+import { executeSsoTwoFactorVerification } from "../utils/ssoTwoFactorBridge";
 import type { WorkspaceChoice } from "@modules/auth/core/domain/errors/AuthErrors";
-import type { AdminRole, PermissionCode } from "@core/common/types/permissions";
-import { buildPostAuthEntryUrl } from "../utils/redirect-safety";
 
 /** Supported SSO callback protocol types. */
 export type SsoCallbackKind = "oidc" | "saml" | "continue";
@@ -75,6 +73,7 @@ export function useSsoCallbackHandler(kind: SsoCallbackKind) {
 
   const [state, setState] = useState<SsoCallbackState>("processing");
   const [errorInfo, setErrorInfo] = useState<SsoCallbackError | null>(null);
+  const [errorCode, setErrorCode] = useState<string | null>(null);
   const [handoffContext, setHandoffContext] = useState<{
     returnOrigin?: string | null;
     returnPath?: string | null;
@@ -131,6 +130,21 @@ export function useSsoCallbackHandler(kind: SsoCallbackKind) {
       );
       const returnOrigin = result.returnOrigin ?? handoffContext.returnOrigin ?? null;
       const returnPath = result.returnPath ?? handoffContext.returnPath ?? null;
+      // Resolve central hybrid-2FA BEFORE forwarding to any cross-origin custom domain (#227/#228).
+      if (result.requires2FA && result.twoFactorPendingToken) {
+        setTwoFactorPending({
+          token: result.twoFactorPendingToken,
+          staySignedIn: Boolean(result.staySignedIn),
+          email: result.email,
+          principalType: result.type === "user" ? "user" : "admin",
+          returnOrigin,
+          returnPath,
+        });
+        setTwoFactorCode("");
+        setTwoFactorError("");
+        setState("two_factor");
+        return;
+      }
       const crossOrigin = buildVerifiedCrossOriginCallbackUrl(
         returnOrigin,
         result.handoffCode,
@@ -141,19 +155,6 @@ export function useSsoCallbackHandler(kind: SsoCallbackKind) {
       if (crossOrigin) {
         setState("success");
         setTimeout(() => navigateToTarget(crossOrigin), 150);
-        return;
-      }
-      if (result.requires2FA && result.twoFactorPendingToken) {
-        setTwoFactorPending({
-          token: result.twoFactorPendingToken,
-          staySignedIn: Boolean(result.staySignedIn),
-          email: result.email,
-          returnOrigin,
-          returnPath,
-        });
-        setTwoFactorCode("");
-        setTwoFactorError("");
-        setState("two_factor");
         return;
       }
       if ((result.type === "admin" || result.type === "user") && result.accessToken) {
@@ -192,41 +193,24 @@ export function useSsoCallbackHandler(kind: SsoCallbackKind) {
     setTwoFactorError("");
     setIsVerifying2FA(true);
     try {
-      const result = await servicesRef.current.authRepository.verify2FA(
-        "",
-        null,
-        twoFactorCode.trim(),
-        undefined,
-        twoFactorPending.token,
-        twoFactorPending.staySignedIn
-      );
-      const { user } = result;
-      setAuth(user, (user.permissions || []) as PermissionCode[], (user.roles || []) as AdminRole[], true);
-      emitSsoLoginBroadcast(user, "admin");
-      setSubscriptionInfo(result.subscriptionStatus, result.gracePhase, result.editionName);
-      const mustChange = Boolean(result.mustChangePassword);
-      const requireMfa = Boolean(result.requireMfaEnrollment);
-      setMustChangePassword(mustChange);
-      setRequireMfaEnrollment?.(requireMfa);
-      setDefaultRedirectPath("/");
-      if (!mustChange && !requireMfa && result.subscriptionStatus !== "PendingPayment") {
-        queryClient.invalidateQueries();
-      }
-      const resolvedOrigin = twoFactorPending.returnOrigin ?? handoffContext.returnOrigin ?? null;
-      const targetPath = resolvePostAuthTargetForOrigin(
-        buildPostAuthEntryUrl({
-          mustChangePassword: mustChange,
-          requireMfaEnrollment: requireMfa,
-          subscriptionStatus: result.subscriptionStatus,
-          redirect:
-            twoFactorPending.returnPath ?? handoffContext.returnPath ?? searchParams?.get("redirect"),
-          allowedOrigins: resolvedOrigin ? [resolvedOrigin] : undefined,
-        }),
-        resolvedOrigin
-      );
-      operationSuccess(t("auth.welcomeBack"));
-      setState("success");
-      setTimeout(() => navigateToTarget(targetPath), 200);
+      await executeSsoTwoFactorVerification({
+        authRepository: servicesRef.current.authRepository,
+        twoFactorPending,
+        twoFactorCode,
+        handoffContext,
+        queryRedirect: searchParams?.get("redirect") ?? null,
+        setAuth,
+        setSubscriptionInfo,
+        setMustChangePassword,
+        setRequireMfaEnrollment,
+        setDefaultRedirectPath,
+        invalidateQueries: () => queryClient.invalidateQueries(),
+        operationSuccess,
+        setState: (s) => setState(s),
+        setTwoFactorError,
+        navigateToTarget,
+        t,
+      });
     } catch (err: unknown) {
       setTwoFactorError(err instanceof Error ? err.message : t("auth.twoFactor.invalidCode"));
     } finally {
@@ -250,6 +234,7 @@ export function useSsoCallbackHandler(kind: SsoCallbackKind) {
     const setters = {
       setState,
       setErrorInfo,
+      setErrorCode,
       redirectTo: navigateToTarget,
       setWorkspaceSelectionData: (data: {
         workspaces: WorkspaceChoice[];
@@ -276,9 +261,14 @@ export function useSsoCallbackHandler(kind: SsoCallbackKind) {
     }, 0);
   }, [buildDeps, kind, navigateToTarget, searchParams]);
 
+  const rawQueryError = searchParams?.get("error") ?? searchParams?.get("error_code");
+  const resolvedErrorCode =
+    errorCode ?? (rawQueryError ? resolveSsoErrorOutcome(rawQueryError, t).safeCode : null);
+
   return {
     state,
     errorInfo,
+    errorCode: resolvedErrorCode,
     workspaceData,
     workspaceEmail,
     isSelectingWorkspace,
