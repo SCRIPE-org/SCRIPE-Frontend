@@ -23,6 +23,8 @@ export interface RoleProps {
   nameAr: string;
   code: string;
   isSystem: boolean;
+  isTenantSuperAdmin?: boolean;
+  isPermissionLocked?: boolean;
   priority: number;
   isActive: boolean;
   permissions: RolePermission[];
@@ -85,6 +87,14 @@ export class Role {
 
   get isSystem(): boolean {
     return this.props.isSystem;
+  }
+
+  get isTenantSuperAdmin(): boolean {
+    return Boolean(this.props.isTenantSuperAdmin);
+  }
+
+  get isPermissionLocked(): boolean {
+    return Boolean(this.props.isPermissionLocked);
   }
 
   get priority(): number {

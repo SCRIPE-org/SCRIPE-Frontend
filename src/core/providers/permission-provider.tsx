@@ -8,6 +8,8 @@ import {
   hasPermission as checkPermission,
   hasAnyPermission as checkAnyPermission,
   hasAllPermissions as checkAllPermissions,
+  isPlatformSuperAdminUser,
+  isTenantSuperAdminUser,
   PAGE_PERMISSIONS,
 } from "@core/common/types/permissions";
 import { matchesManifestPattern, normalizeRoutePath } from "@core/config/app-route-manifest";
@@ -140,32 +142,15 @@ export function PermissionProvider({ children }: PermissionProviderProps) {
     return roles.map((r) => r.roleName);
   }, [roles]);
 
-  const isPlatformSuperAdmin = useMemo(() => {
-    // A user is a PLATFORM Super Admin ONLY if they belong to NO tenant (system-level)
-    // and hold platform-wide superadmin privileges.
-    if (user?.tenantId) {
-      return false;
-    }
-    return (
-      permissions.includes("*") ||
-      roles.some(
-        (r) => r.roleCode === "SYSTEM_SUPER_ADMIN" || r.roleName === "System Super Admin"
-      ) ||
-      user?.isProtected === true ||
-      (user as any)?.isSuperAdmin === true ||
-      user?.adminTypeName?.toLowerCase() === "system super admin"
+  const isPlatformSuperAdmin = useMemo(
+    () => isPlatformSuperAdminUser(user, permissions, roles),
+    [permissions, roles, user]
+  );
 
-    );
-  }, [permissions, roles, user]);
-
-  const isTenantSuperAdmin = useMemo(() => {
-    if (!user?.tenantId) return false;
-    return (
-      roles.some(
-        (r) => r.roleCode?.endsWith("_SUPER_ADMIN") || r.roleName?.toLowerCase().includes("super")
-      ) || Boolean(user?.adminTypeName?.toLowerCase().includes("super"))
-    );
-  }, [roles, user]);
+  const isTenantSuperAdmin = useMemo(
+    () => isTenantSuperAdminUser(user, roles),
+    [roles, user]
+  );
 
   // Backward-compatibility: isSuperAdmin aliases isPlatformSuperAdmin
   const isSuperAdmin = isPlatformSuperAdmin;

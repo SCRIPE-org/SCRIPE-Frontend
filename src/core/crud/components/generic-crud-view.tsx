@@ -837,7 +837,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
     }
 
     return [...baseFields, ...injectedFields, ...mappedCustomConfigs].filter(
-      (field) => !isFieldRestricted(field.name)
+      (field) => !isFieldRestricted(decodeCustomFieldName(field.name) ?? field.name)
     );
   }, [createFields, rawCustomConfigs, isFieldRestricted, t]);
 
@@ -894,7 +894,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
   const editFieldsWithCustom = useMemo(
     () =>
       [...editFieldsOwn, ...editCustomFieldConfigs].filter(
-        (field) => !isFieldRestricted(field.name)
+        (field) => !isFieldRestricted(decodeCustomFieldName(field.name) ?? field.name)
       ),
     [editFieldsOwn, editCustomFieldConfigs, isFieldRestricted]
   );
@@ -905,7 +905,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
   const viewFieldsWithCustom = useMemo(
     () =>
       [...editFieldsOwn, ...viewCustomFieldConfigs].filter(
-        (field) => !isFieldRestricted(field.name)
+        (field) => !isFieldRestricted(decodeCustomFieldName(field.name) ?? field.name)
       ),
     [editFieldsOwn, viewCustomFieldConfigs, isFieldRestricted]
   );
@@ -1842,10 +1842,15 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
           initialValues={config?.createInitialValues || {}}
           onSubmit={async (data) => {
             const { entityData, customFieldValues } = splitCustomFieldValues(data);
-            // Sanitize: never submit restricted fields to the server
+            // Sanitize: never submit restricted fields or masked sentinel placeholders to the server
             for (const key of Object.keys(entityData)) {
-              if (isFieldRestricted(key)) {
+              if (isFieldRestricted(key) || entityData[key] === "***") {
                 delete entityData[key];
+              }
+            }
+            for (const cfKey of Object.keys(customFieldValues)) {
+              if (isFieldRestricted(cfKey) || customFieldValues[cfKey] === "***") {
+                delete customFieldValues[cfKey];
               }
             }
             const shouldSaveCustomFields = !entityData.deferCustomFieldsToSetup;
@@ -1943,10 +1948,15 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
           onSubmit={async (data) => {
             if (!viewModel.editingItem) return;
             const { entityData, customFieldValues } = splitCustomFieldValues(data);
-            // Sanitize: never submit restricted fields to the server
+            // Sanitize: never submit restricted fields or masked sentinel placeholders to the server
             for (const key of Object.keys(entityData)) {
-              if (isFieldRestricted(key)) {
+              if (isFieldRestricted(key) || entityData[key] === "***") {
                 delete entityData[key];
+              }
+            }
+            for (const cfKey of Object.keys(customFieldValues)) {
+              if (isFieldRestricted(cfKey) || customFieldValues[cfKey] === "***") {
+                delete customFieldValues[cfKey];
               }
             }
             await viewModel.updateItem(viewModel.editingItem.id, entityData);

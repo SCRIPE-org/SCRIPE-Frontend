@@ -1,7 +1,7 @@
 /**
  * Customization Module Permissions
  *
- * Covers: Menus, Themes, Bundles, Dashboard Builder
+ * Covers: Menus, Themes, Bundles
  */
 export const CUSTOMIZATION_PERMISSIONS = {
   // ── Menus ───────────────────────────────────────────────
@@ -25,13 +25,4 @@ export const CUSTOMIZATION_PERMISSIONS = {
   BUNDLES_CREATE: "bundles.create",
   BUNDLES_UPDATE: "bundles.update",
   BUNDLES_DELETE: "bundles.delete",
-
-  // ── Dashboard Builder ──────────────────────────────────
-  DASHBOARD_BUILDER_VIEW: "settings.dashboard_builder.view",
-  DASHBOARD_BUILDER_UPDATE: "settings.dashboard_builder.update",
-  DASHBOARD_BUILDER_PUBLISH: "settings.dashboard_builder.publish",
-  DASHBOARD_BUILDER_ADMIN_OVERRIDE: "settings.dashboard_builder.admin_override",
-  DASHBOARD_BUILDER_PRESETS: "settings.dashboard_builder.presets",
-  DASHBOARD_BUILDER_SAVE_PRESETS: "settings.dashboard_builder.save_presets",
-  DASHBOARD_BUILDER_EXPORT: "settings.dashboard_builder.export",
 } as const;

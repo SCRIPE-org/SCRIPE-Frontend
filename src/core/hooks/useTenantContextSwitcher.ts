@@ -16,6 +16,7 @@ import { broadcastTenantContext } from "@core/services/api-factory";
 import { clearAllDataExchangeCaches } from "@core/data-exchange/data/repositories/DataExchangeRepository";
 import { useDataExchangeJobsStore } from "@core/data-exchange/presentation/store/useDataExchangeJobsStore";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
+import { invalidateAuthorizationCaches } from "@core/hooks/use-authorization-sync";
 import { clearNavigationCaches } from "@modules/auth/core/data/utils/auth-storage-cleanup";
 import { appLogger } from "@core/common/logger";
 
@@ -318,10 +319,17 @@ export function useTenantContextSwitcher(options?: UseTenantContextSwitcherOptio
           }
           apiService.setTenantContext(tenantInfo.id);
           broadcastTenantContext(tenantInfo.id);
+          if (typeof window !== "undefined") {
+            sessionStorage.removeItem(STORAGE_KEYS.lastAuthRefresh);
+          }
           clearNavigationCaches();
           useNavigationStore.getState().reset();
           clearAllDataExchangeCaches();
           useDataExchangeJobsStore.getState().reset();
+          invalidateAuthorizationCaches(queryClient, {
+            tenantId: tenantInfo.id,
+            purgeSensitiveCaches: true,
+          });
           queryClient.invalidateQueries();
           if (redirectTo !== null && typeof window !== "undefined") {
             try {
@@ -370,10 +378,17 @@ export function useTenantContextSwitcher(options?: UseTenantContextSwitcherOptio
         }
         apiService.setTenantContext(null);
         broadcastTenantContext(null);
+        if (typeof window !== "undefined") {
+          sessionStorage.removeItem(STORAGE_KEYS.lastAuthRefresh);
+        }
         clearNavigationCaches();
         useNavigationStore.getState().reset();
         clearAllDataExchangeCaches();
         useDataExchangeJobsStore.getState().reset();
+        invalidateAuthorizationCaches(queryClient, {
+          tenantId: null,
+          purgeSensitiveCaches: true,
+        });
         queryClient.invalidateQueries();
         if (redirectTo !== null && typeof window !== "undefined") {
           try {

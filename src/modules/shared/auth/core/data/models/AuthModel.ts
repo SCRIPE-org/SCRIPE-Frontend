@@ -50,11 +50,14 @@ export interface UserProfileJson {
     tenantName?: string | null;
     inheritToChildren?: boolean;
     expiresAt?: string | null;
+    isTenantSuperAdmin?: boolean;
+    priority?: number;
   }[];
   permissions: string[];
   tenantId?: string | null;
   tenantName?: string | null;
   isSuperAdmin: boolean;
+  isTenantSuperAdmin?: boolean;
   isProtected: boolean;
   isAccountActivated: boolean;
   mustChangePassword: boolean;

@@ -35,6 +35,8 @@ const RoleModelSchema = z.object({
   nameAr: z.string().optional().default(""),
   code: z.string().optional().nullable(),
   isSystem: z.boolean().optional().default(false),
+  isTenantSuperAdmin: z.boolean().optional().default(false),
+  isPermissionLocked: z.boolean().optional().default(false),
   priority: z.number().int().optional().default(0),
   isActive: z.boolean(),
   permissions: z.array(RolePermissionModelSchema).optional().default([]),
@@ -87,6 +89,8 @@ export class RoleMapper {
       nameAr: validated.nameAr ?? "",
       code: validated.code ?? "",
       isSystem: validated.isSystem,
+      isTenantSuperAdmin: Boolean(validated.isTenantSuperAdmin),
+      isPermissionLocked: Boolean(validated.isPermissionLocked),
       priority: validated.priority,
       isActive: validated.isActive,
       permissions,
@@ -133,7 +137,9 @@ export class RoleMapper {
       entity.toProps().groupNamesAr,
       entity.defaultLandingTarget,
       entity.isLandingEnforced,
-      entity.rowVersion
+      entity.rowVersion,
+      entity.isTenantSuperAdmin,
+      entity.isPermissionLocked
     );
   }
 

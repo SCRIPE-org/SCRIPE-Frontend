@@ -21,6 +21,7 @@ import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { broadcastTenantContext } from "@core/services/api-factory";
 import { clearAllDataExchangeCaches } from "@core/data-exchange/data/repositories/DataExchangeRepository";
 import { useDataExchangeJobsStore } from "@core/data-exchange/presentation/store/useDataExchangeJobsStore";
+import { invalidateAuthorizationCaches } from "@core/hooks/use-authorization-sync";
 import { appLogger } from "../common/logger";
 import { clearNavigationCaches } from "@modules/auth/core/data/utils/auth-storage-cleanup";
 
@@ -225,10 +226,17 @@ export function TenantContextProvider({ children }: TenantContextProviderProps) 
       }
       apiService.setTenantContext(null);
       broadcastTenantContext(null);
+      if (typeof window !== "undefined") {
+        sessionStorage.removeItem(STORAGE_KEYS.lastAuthRefresh);
+      }
       clearNavigationCaches();
       useNavigationStore.getState().reset();
       clearAllDataExchangeCaches();
       useDataExchangeJobsStore.getState().reset();
+      invalidateAuthorizationCaches(queryClient, {
+        tenantId: null,
+        purgeSensitiveCaches: true,
+      });
       queryClient.invalidateQueries();
 
       let cancelled = false;
@@ -280,10 +288,17 @@ export function TenantContextProvider({ children }: TenantContextProviderProps) 
       apiService.setTenantContext(nextId);
       broadcastTenantContext(nextId);
 
+      if (typeof window !== "undefined") {
+        sessionStorage.removeItem(STORAGE_KEYS.lastAuthRefresh);
+      }
       clearNavigationCaches();
       useNavigationStore.getState().reset();
       clearAllDataExchangeCaches();
       useDataExchangeJobsStore.getState().reset();
+      invalidateAuthorizationCaches(queryClient, {
+        tenantId: nextId,
+        purgeSensitiveCaches: true,
+      });
       queryClient.invalidateQueries();
 
       navigateAfterSwitch(options?.redirectTo, options?.defaultRedirect ?? "/");

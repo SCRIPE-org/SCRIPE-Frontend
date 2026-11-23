@@ -86,6 +86,7 @@ export const ENTITLEMENTS_PERMISSIONS = {
   // ── Tenant Payment Gateways (Tier 2 self-service) ─────
   TENANT_PAYMENT_GATEWAYS_VIEW: "tenant_payment_gateways.view",
   TENANT_PAYMENT_GATEWAYS_CONFIGURE: "tenant_payment_gateways.configure",
+  TENANT_PAYMENT_GATEWAYS_UPDATE: "tenant_payment_gateways.update",
   TENANT_PAYMENT_GATEWAYS_VERIFY: "tenant_payment_gateways.verify",
   TENANT_PAYMENT_GATEWAYS_REMOVE: "tenant_payment_gateways.remove",
 

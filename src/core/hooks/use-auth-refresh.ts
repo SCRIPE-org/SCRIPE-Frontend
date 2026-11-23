@@ -11,12 +11,19 @@
  * useAuthRefresh({ intervalMs: 5 * 60 * 1000 }); // Refresh every 5 minutes
  */
 
-import { useEffect, useCallback, useRef } from "react";
+import { useEffect, useCallback, useRef, useContext } from "react";
 import { usePathname } from "next/navigation";
+import { QueryClientContext } from "@tanstack/react-query";
 import { useAppStore } from "@core/store/useAppStore";
+import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { useServices } from "@core/providers/service-provider";
 import { appLogger } from "@core/common/logger";
 import { STORAGE_KEYS } from "../config/storage-keys";
+import {
+  applyRefreshedPrincipal,
+  invalidateAuthorizationCaches,
+  isAuthRevocationError,
+} from "./use-authorization-sync";
 
 interface UseAuthRefreshOptions {
   /**
@@ -40,7 +47,7 @@ export function useAuthRefresh(options: UseAuthRefreshOptions = {}) {
   const { intervalMs = 1000 * 60 * 5, enabled = true } = options;
 
   const isAuthenticated = useAppStore((state) => state.isAuthenticated);
-  const setAuth = useAppStore((state) => state.setAuth);
+  const queryClient = useContext(QueryClientContext);
   const { authRepository } = useServices();
   const pathname = usePathname();
   const isDocsRoute = pathname?.startsWith("/docs") || pathname?.startsWith("/commercial");
@@ -60,25 +67,25 @@ export function useAuthRefresh(options: UseAuthRefreshOptions = {}) {
       const user = await authRepository.getCurrentPrincipal();
 
       if (user && user.id) {
-        const state = useAppStore.getState();
-        const resolvedRoles = user.roles && user.roles.length > 0 ? user.roles : state.roles;
-        const resolvedPermissions =
-          user.permissions && user.permissions.length > 0
-            ? (user.permissions as any[])
-            : state.permissions;
-
-        // Update store with fresh data, preserving roles & permissions
-        setAuth(user, resolvedPermissions, resolvedRoles);
+        const changed = applyRefreshedPrincipal(user);
+        if (changed) {
+          invalidateAuthorizationCaches(queryClient, { tenantId: user.tenantId ?? null });
+        }
         appLogger.debug("[AuthRefresh] User data refreshed successfully");
       }
     } catch (error) {
-      // Don't log as error - this is expected if token expired
-      // The API interceptor will handle token refresh
+      if (isAuthRevocationError(error)) {
+        useAppStore.getState().logout();
+        useNavigationStore.getState().reset();
+        queryClient?.clear();
+        return;
+      }
+      // Transient/network error: keep existing auth snapshot while API interceptor retries
       appLogger.debug("[AuthRefresh] Failed to refresh user data:", error);
     } finally {
       isRefreshing.current = false;
     }
-  }, [isAuthenticated, authRepository, setAuth]);
+  }, [isAuthenticated, authRepository, queryClient]);
 
   // Set up periodic refresh
   useEffect(() => {

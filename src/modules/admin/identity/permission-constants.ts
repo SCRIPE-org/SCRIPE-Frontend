@@ -22,6 +22,12 @@ export const IDENTITY_PERMISSIONS = {
   ADMINS_BULK_DELETE: "admins.bulk_delete",
   ADMINS_IMPERSONATE: "admins.impersonate",
   ADMINS_TRANSFER: "admins.transfer",
+  ADMINS_IMPORT: "admins.import",
+  ADMINS_EXPORT: "admins.export",
+
+  // ── Profile ───────────────────────────────────────────────
+  PROFILE_VIEW: "profile.view",
+  PROFILE_UPDATE: "profile.update",
 
   // ── Roles ───────────────────────────────────────────────
   ROLES_VIEW: "roles.view",
@@ -39,9 +45,15 @@ export const IDENTITY_PERMISSIONS = {
 
   // ── Users (Client Users) ────────────────────────────────
   USERS_VIEW: "users.view",
+  USERS_CREATE: "users.create",
   USERS_UPDATE: "users.update",
   USERS_DELETE: "users.delete",
   USERS_UNLOCK: "users.unlock",
+  USERS_IMPORT: "users.import",
+  USERS_EXPORT: "users.export",
+  USERS_RESET_PASSWORD: "users.reset_password",
+  USERS_IMPERSONATE: "users.impersonate",
+  USERS_ASSIGN_GROUP: "users.assign_group",
 
   // ── Permissions ─────────────────────────────────────────
   PERMISSIONS_VIEW: "permissions.view",
@@ -80,6 +92,9 @@ export const IDENTITY_PERMISSIONS = {
   // ── System ──────────────────────────────────────────────
   SYSTEM_IMPERSONATE: "system.impersonate",
   SYSTEM_MANAGE_SETTINGS: "system.manage_settings",
+  SYSTEM_SECURITY_MANAGE: "system.security.manage",
+  SYSTEM_SETTINGS_VIEW: "system_settings.view",
+  SYSTEM_SETTINGS_UPDATE: "system_settings.update",
 
   // ── Identity Context (tenant-switch / scoped access / device sessions) ──
   IDENTITY_CONTEXT_SWITCH: "identity_context.switch",

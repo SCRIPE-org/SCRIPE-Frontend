@@ -42,6 +42,8 @@ export interface RoleJson {
   tenantId?: string;
   tenantName?: string;
   isSystem: boolean;
+  isTenantSuperAdmin?: boolean;
+  isPermissionLocked?: boolean;
   priority: number;
   isActive: boolean;
   permissions?: RolePermissionJson[]; // Optional for list responses
@@ -130,7 +132,9 @@ export class RoleModel {
     public readonly groupNamesAr?: string[],
     public readonly defaultLandingTarget?: string | null,
     public readonly isLandingEnforced?: boolean,
-    public readonly rowVersion?: string | null
+    public readonly rowVersion?: string | null,
+    public readonly isTenantSuperAdmin?: boolean,
+    public readonly isPermissionLocked?: boolean
   ) {}
 
   static fromJson(json: RoleJson): RoleModel {
@@ -153,7 +157,9 @@ export class RoleModel {
       json.groupNamesAr,
       json.defaultLandingTarget ?? null,
       Boolean(json.isLandingEnforced),
-      json.rowVersion ?? null
+      json.rowVersion ?? null,
+      Boolean(json.isTenantSuperAdmin),
+      Boolean(json.isPermissionLocked)
     );
   }
   toJson(): RoleJson {
@@ -167,6 +173,8 @@ export class RoleModel {
       tenantId: this.tenantId,
       tenantName: this.tenantName,
       isSystem: this.isSystem,
+      isTenantSuperAdmin: Boolean(this.isTenantSuperAdmin),
+      isPermissionLocked: Boolean(this.isPermissionLocked),
       priority: this.priority,
       isActive: this.isActive,
       permissions: this.permissions.map((p) => p.toJson()),

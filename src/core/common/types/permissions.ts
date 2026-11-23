@@ -112,7 +112,93 @@ export interface AdminRole {
   tenantId?: string;
   tenantName?: string;
   expiresAt?: string;
+  isTenantSuperAdmin?: boolean;
+  priority?: number;
   inheritedPermissions: PermissionCode[];
+}
+
+/** Minimal user shape needed for super-admin privilege evaluation. */
+export interface SuperAdminPrincipalLike {
+  tenantId?: string | null;
+  isProtected?: boolean | null;
+  isSuperAdmin?: boolean | null;
+  isTenantSuperAdmin?: boolean | null;
+  adminTypeName?: string | null;
+}
+
+/**
+ * Evaluates whether the session principal is a platform-level super admin.
+ * Strictly requires NO tenantId (tenant-scoped admins can never elevate to platform SA),
+ * and never trusts username heuristics.
+ */
+export function isPlatformSuperAdminUser(
+  user: SuperAdminPrincipalLike | null | undefined,
+  permissions: readonly PermissionCode[] = [],
+  roles: readonly AdminRole[] = []
+): boolean {
+  if (user?.tenantId) {
+    return false;
+  }
+
+  return (
+    permissions.includes("*") ||
+    roles.some(
+      (r) => r.roleCode === "SYSTEM_SUPER_ADMIN" || r.roleName === "System Super Admin"
+    ) ||
+    user?.isProtected === true ||
+    user?.isSuperAdmin === true ||
+    user?.adminTypeName?.toLowerCase() === "system super admin"
+  );
+}
+
+/**
+ * Evaluates whether the session principal is a tenant-scoped super admin.
+ * Uses authoritative backend flags (`isTenantSuperAdmin`) and exact super-admin role codes
+ * rather than brittle `"super"` substring checks that falsely match `"Supervisor"` or `"Support"`.
+ */
+export function isTenantSuperAdminUser(
+  user: SuperAdminPrincipalLike | null | undefined,
+  roles: readonly AdminRole[] = []
+): boolean {
+  if (!user?.tenantId) {
+    return false;
+  }
+
+  if (user?.isTenantSuperAdmin === true) {
+    return true;
+  }
+
+  return roles.some(
+    (r) =>
+      r.isTenantSuperAdmin === true ||
+      r.roleCode === "TENANT_SUPER_ADMIN" ||
+      r.roleCode === "T_SCRIPE_SA" ||
+      Boolean(r.roleCode?.endsWith("_SUPER_ADMIN"))
+  );
+}
+
+/**
+ * Resolves the canonical `Permission.Resource` from an explicit `resource` property
+ * or a permission `code` (supporting dotted resources like `"crm.opportunities.read"`
+ * and multi-segment actions like `"crm.opportunities.stage.override"`).
+ */
+export function extractPermissionResource(code: string, explicitResource?: string | null): string {
+  const trimmedExplicit = explicitResource?.trim();
+  if (trimmedExplicit) {
+    return trimmedExplicit;
+  }
+
+  const trimmedCode = code.trim();
+  if (!trimmedCode) {
+    return "";
+  }
+
+  if (trimmedCode.toLowerCase().endsWith(".stage.override")) {
+    return trimmedCode.slice(0, trimmedCode.length - ".stage.override".length);
+  }
+
+  const lastDot = trimmedCode.lastIndexOf(".");
+  return lastDot > 0 ? trimmedCode.slice(0, lastDot) : trimmedCode;
 }
 
 // ── Permission helpers ────────────────────────────────────────────────────────
@@ -209,8 +295,32 @@ export const DATA_TRANSFER_PERMISSIONS = {
   MIGRATIONS_EXECUTE: "datatransfer.migrations.execute",
 } as const;
 
+export const ORGANIZATION_CORE_PERMISSIONS = {
+  LEGAL_ENTITY_VIEW: "legal-entities.view",
+  LEGAL_ENTITY_CREATE: "legal-entities.create",
+  LEGAL_ENTITY_UPDATE: "legal-entities.update",
+  LEGAL_ENTITY_DELETE: "legal-entities.delete",
+  BUSINESS_UNIT_VIEW: "business-units.view",
+  BUSINESS_UNIT_CREATE: "business-units.create",
+  BUSINESS_UNIT_UPDATE: "business-units.update",
+  BUSINESS_UNIT_DELETE: "business-units.delete",
+  BRANCH_VIEW: "branches.view",
+  BRANCH_CREATE: "branches.create",
+  BRANCH_UPDATE: "branches.update",
+  BRANCH_DELETE: "branches.delete",
+  DEPARTMENT_VIEW: "departments.view",
+  DEPARTMENT_CREATE: "departments.create",
+  DEPARTMENT_UPDATE: "departments.update",
+  DEPARTMENT_DELETE: "departments.delete",
+  TEAM_VIEW: "teams.view",
+  TEAM_CREATE: "teams.create",
+  TEAM_UPDATE: "teams.update",
+  TEAM_DELETE: "teams.delete",
+} as const;
+
 export const SYSTEM_PERMISSIONS = {
   ...IDENTITY_PERMISSIONS,
+  ...ORGANIZATION_CORE_PERMISSIONS,
   ...ENTITLEMENTS_PERMISSIONS,
   ...COMMUNICATION_PERMISSIONS,
   ...INTEGRATIONS_PERMISSIONS,
