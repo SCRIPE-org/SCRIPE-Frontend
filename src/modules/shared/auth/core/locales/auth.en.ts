@@ -85,7 +85,7 @@ export const en = {
       unsupportedAccountType: "This account type is not supported for admin login.",
       noLinkedAccount: "Account Not Linked",
       noLinkedAccountDesc:
-        "No admin account is linked to this external identity. Please sign in with your credentials first, then link your external account in Profile †’ Security settings.",
+        "No admin account is linked to this external identity. Please sign in with your credentials first, then link your external account in Profile → Security settings.",
       loginSuccess: "Sign-In Successful",
       redirecting: "Redirecting to dashboard...",
       backToLogin: "Back to Sign In",

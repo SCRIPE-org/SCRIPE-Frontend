@@ -57,6 +57,7 @@ function clearLegacySsoStorage(): boolean {
 
 const SSO_ERROR_LOCALE_KEYS: Record<string, string> = {
   account_locked: "auth.sso.errors.accountLocked",
+  auth_account_locked: "auth.sso.errors.accountLocked",
   account_deactivated: "auth.sso.errors.accountDeactivated",
   sso_subject_mismatch: "auth.sso.errors.subjectMismatch",
   sso_identity_linked_elsewhere: "auth.sso.errors.linkedElsewhere",
@@ -64,8 +65,13 @@ const SSO_ERROR_LOCALE_KEYS: Record<string, string> = {
   invalid_credentials: "auth.sso.errors.invalidCredentials",
   invalid_provider: "auth.sso.errors.invalidProvider",
   provider_disabled: "auth.sso.errors.invalidProvider",
+  unauthorized_client: "auth.sso.errors.invalidProvider",
+  unsupported_response_type: "auth.sso.errors.invalidProvider",
+  invalid_scope: "auth.sso.errors.invalidProvider",
   invalid_state: "auth.sso.errors.stateExpired",
   state_expired: "auth.sso.errors.stateExpired",
+  sso_handoff_invalid: "auth.sso.errors.stateExpired",
+  sso_handoff_state_mismatch: "auth.sso.errors.stateExpired",
   login_required: "auth.sso.errors.stateExpired",
   consent_required: "auth.sso.errors.stateExpired",
   interaction_required: "auth.sso.errors.stateExpired",
@@ -142,6 +148,25 @@ function handleCallbackQueryError(
   setSsoCallbackFailure(setters, outcome.title, outcome.message, outcome.state);
 }
 
+function mapApiErrorToSsoOutcome(
+  error: unknown,
+  t: (key: string) => string
+): { state: "error" | "no_linked_account"; title: string; message: string; safeCode: string } {
+  if (isNoLinkedAccountError(error)) {
+    return resolveSsoErrorOutcome("no_linked_account", t);
+  }
+  const details = (error as { details?: { error?: unknown; code?: unknown } } | null)?.details;
+  const candidate =
+    typeof details?.code === "string"
+      ? details.code
+      : typeof details?.error === "string"
+        ? details.error
+        : error instanceof Error
+          ? error.message
+          : null;
+  return resolveSsoErrorOutcome(candidate, t);
+}
+
 /**
  * Processes an OIDC/OAuth 2.0 callback (`code` + `state`), supporting server-authoritative linking,
  * hybrid IdP MFA step-up (`requires2FA + twoFactorPendingToken`), workspace selection, and login.
@@ -171,30 +196,21 @@ export async function handleOidcCallback(
     return;
   }
 
+  const hadLegacyLink =
+    typeof window !== "undefined" && window.sessionStorage.getItem("sso_linking") === "true";
+
   try {
     const result = await deps.ssoRepository.completeCallback(code, stateParam);
     clearLegacySsoStorage();
     await dispatchCallbackResult(result, deps, setters);
   } catch (error) {
     clearLegacySsoStorage();
-    if (isQueryLink) {
-      const outcome = resolveSsoErrorOutcome(
-        error instanceof Error ? error.message : null,
-        deps.t
-      );
+    const outcome = mapApiErrorToSsoOutcome(error, deps.t);
+    if (isQueryLink || hadLegacyLink) {
       setters.redirectTo(`/account/security?error=${encodeURIComponent(outcome.safeCode)}`);
       return;
     }
-    if (isNoLinkedAccountError(error)) {
-      setSsoCallbackFailure(
-        setters,
-        deps.t("auth.sso.noLinkedAccount"),
-        deps.t("auth.sso.noLinkedAccountDesc"),
-        "no_linked_account"
-      );
-      return;
-    }
-    setSsoCallbackFailure(setters, deps.t("auth.sso.callbackError"), deps.t("auth.sso.callbackErrorGeneric"));
+    setSsoCallbackFailure(setters, outcome.title, outcome.message, outcome.state);
   }
 }
 
@@ -223,10 +239,14 @@ export async function handleSamlCallback(
     return;
   }
 
-  clearLegacySsoStorage();
+  const hadLegacyLink = clearLegacySsoStorage();
   const code = searchParams.get("code");
   const state = searchParams.get("state");
   if (!code || !state) {
+    if (isQueryLink || hadLegacyLink) {
+      setters.redirectTo("/account/security?error=sso_missing_params");
+      return;
+    }
     setSsoCallbackFailure(setters, deps.t("auth.sso.callbackError"), deps.t("auth.sso.missingParams"));
     return;
   }
@@ -235,15 +255,11 @@ export async function handleSamlCallback(
     const result = await deps.ssoRepository.completeSamlCallback(code, state);
     await dispatchCallbackResult(result, deps, setters);
   } catch (error) {
-    if (isNoLinkedAccountError(error)) {
-      setSsoCallbackFailure(
-        setters,
-        deps.t("auth.sso.noLinkedAccount"),
-        deps.t("auth.sso.noLinkedAccountDesc"),
-        "no_linked_account"
-      );
+    const outcome = mapApiErrorToSsoOutcome(error, deps.t);
+    if (isQueryLink || hadLegacyLink) {
+      setters.redirectTo(`/account/security?error=${encodeURIComponent(outcome.safeCode)}`);
       return;
     }
-    setSsoCallbackFailure(setters, deps.t("auth.sso.callbackError"), deps.t("auth.sso.callbackErrorGeneric"));
+    setSsoCallbackFailure(setters, outcome.title, outcome.message, outcome.state);
   }
 }

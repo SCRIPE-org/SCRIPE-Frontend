@@ -1,7 +1,9 @@
 import React from "react";
-import { act, renderHook, waitFor } from "@testing-library/react";
+import { act, render, renderHook, screen, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { en as authEn } from "@modules/auth/core/locales/auth.en";
+import { SsoCallbackContent } from "../components/SsoCallbackContent";
 import {
   handleOidcCallback,
   handleSamlCallback,
@@ -300,5 +302,68 @@ describe("Signin & SSO Hardening (FE-HIGH-04, FE-HIGH-05, FE-MED-04)", () => {
     const pendingReq = result.current.requestOtp();
     unmount();
     await expect(pendingReq).resolves.toBeUndefined();
+  });
+
+  it("never misclassifies generic SAML/OIDC errors as lockout, maps API handoff/lockout codes, exposes role=alert, and avoids mojibake in auth.en.ts", async () => {
+    expect(authEn.auth.sso.noLinkedAccountDesc).toContain("Profile → Security settings");
+    expect(authEn.auth.sso.noLinkedAccountDesc).not.toContain("†");
+
+    // Non-lockout SAML/OIDC errors must stay generic or provider-specific (never accountLocked)
+    expect(resolveSsoErrorOutcome("saml_callback_failed", (k) => k).message).toBe(
+      "auth.sso.callbackErrorGeneric"
+    );
+    expect(resolveSsoErrorOutcome("saml_missing_claims", (k) => k).message).toBe(
+      "auth.sso.callbackErrorGeneric"
+    );
+    expect(resolveSsoErrorOutcome("unauthorized_client", (k) => k).message).toBe(
+      "auth.sso.errors.invalidProvider"
+    );
+
+    const { deps, setters, setState, setErrorInfo, redirectTo } = buildCallbackCtx();
+    mockRedeemCallback.mockRejectedValueOnce(
+      Object.assign(new Error("Ticket invalid"), { details: { code: "SSO_HANDOFF_INVALID" } })
+    );
+    await handleOidcCallback(new URLSearchParams("code=c1&state=s1"), deps, setters);
+    expect(setState).toHaveBeenCalledWith("error");
+    expect(setErrorInfo).toHaveBeenCalledWith({
+      title: "auth.sso.callbackError",
+      message: "auth.sso.errors.stateExpired",
+    });
+
+    // SAML API error during linking redirects safely to /account/security?error=...
+    (deps.ssoRepository.completeSamlCallback as ReturnType<typeof vi.fn>).mockRejectedValueOnce(
+      Object.assign(new Error("Locked"), { details: { code: "AUTH_ACCOUNT_LOCKED" } })
+    );
+    await handleSamlCallback(
+      new URLSearchParams("code=c2&state=s2&purpose=link"),
+      deps,
+      setters
+    );
+    expect(redirectTo).toHaveBeenCalledWith("/account/security?error=auth_account_locked");
+
+    // SsoCallbackContent exposes enterprise framed shell, role="alert", errorCode badge, and Back to Sign In
+    render(
+      <SsoCallbackContent
+        state="error"
+        errorInfo={{
+          title: authEn.auth.sso.callbackError,
+          message: authEn.auth.sso.errors.accountLocked,
+        }}
+        errorCode="account_locked"
+      />
+    );
+    const alert = screen.getByRole("alert");
+    expect(alert).toHaveTextContent("Sign-In Failed");
+    expect(alert).toHaveTextContent(authEn.auth.sso.errors.accountLocked);
+    expect(alert).toHaveTextContent("account_locked");
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Sign-In Failed");
+    expect(screen.getByRole("link", { name: "auth.sso.backToLogin" })).toHaveAttribute(
+      "href",
+      "/login"
+    );
+    expect(screen.getByRole("link", { name: "auth.forgotPassword" })).toHaveAttribute(
+      "href",
+      "/forgot-password"
+    );
   });
 });

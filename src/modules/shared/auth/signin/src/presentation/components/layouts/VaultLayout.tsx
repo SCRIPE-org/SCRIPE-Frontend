@@ -90,22 +90,14 @@ export function VaultLayout({
               }}
             >
               {tenantHeadline ? (
-                <span className="scripe-line-mask">
-                  <span className="scripe-line-rise">{tenantHeadline}</span>
-                </span>
+                <span className="block">{tenantHeadline}</span>
               ) : (
                 <>
-                  <span className="scripe-line-mask">
-                    <span className="scripe-line-rise" data-line="1">
-                      {t("auth.branding.headlineL1")}
-                    </span>
-                  </span>
-                  <span className="scripe-line-mask">
-                    <span className="scripe-line-rise" data-line="2">
-                      {t("auth.branding.headlineL2Pre")}
-                      <span style={{ color: "var(--sx-accent-text)" }}>
-                        {t("auth.branding.headlineL2Accent")}
-                      </span>
+                  <span className="block">{t("auth.branding.headlineL1")}</span>
+                  <span className="block">
+                    {t("auth.branding.headlineL2Pre")}
+                    <span style={{ color: "var(--sx-accent-text)" }}>
+                      {t("auth.branding.headlineL2Accent")}
                     </span>
                   </span>
                 </>
@@ -113,7 +105,7 @@ export function VaultLayout({
             </h1>
 
             <p
-              className="scripe-fade-in m-0 mt-5 max-w-[46ch] text-center text-[16px] leading-relaxed"
+              className="m-0 mt-5 max-w-[46ch] text-center text-[16px] leading-relaxed"
               style={{ color: "var(--sx-text-mute)" }}
             >
               {subtitle}
@@ -124,7 +116,7 @@ export function VaultLayout({
 
           {/* Stage footer */}
           <div
-            className="scripe-fade-in flex flex-col gap-3 pt-5"
+            className="flex flex-col gap-3 pt-5"
             style={{ borderTop: "1px solid var(--sx-divider)" }}
           >
             <div
