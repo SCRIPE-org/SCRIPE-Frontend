@@ -128,6 +128,8 @@ export function LoginFormRouter({
             accountNotActivatedMessage={vm.accountNotActivatedMessage}
             cooldownSeconds={vm.cooldownSeconds}
             onResendSetupEmail={vm.resendSetupEmail}
+            isPasswordResetSuccess={vm.isPasswordResetSuccess}
+            forgotPasswordHref={vm.forgotPasswordHref}
           />
           <SsoProviderButtons
             providers={sso.providers}

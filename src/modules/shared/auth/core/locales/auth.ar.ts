@@ -172,6 +172,22 @@ export const ar = {
     magicLinkSentSubtitle: "أرسلنا رابط الاستعادة إلى {{email}}. انقر عليه لتعيين كلمة مرور جديدة.",
     resetSuccessTitle: "تم تحديث كلمة المرور!",
     resetSuccessSubtitle: "تم إعادة تعيين كلمة مرورك. يمكنك الآن تسجيل الدخول ببياناتك الجديدة.",
+    resetPasswordBannerTitle: "تم تحديث كلمة المرور",
+    resetPasswordBannerDesc: "سجّل الدخول بكلمة المرور الجديدة للمتابعة.",
+    rateLimitedRetryAfter: "عدد كبير جداً من المحاولات. يرجى الانتظار {{seconds}}ث ثم المحاولة مجدداً.",
+    rateLimited: "عدد كبير جداً من المحاولات. يرجى الانتظار لحظة ثم المحاولة مجدداً.",
+    recoveryNetworkError: "تعذّر الاتصال بالخادم. يرجى التحقق من الاتصال والمحاولة مرة أخرى.",
+    recoveryPolicyLoadError: "تعذّر تحميل متطلبات كلمة المرور لمساحة العمل.",
+    recoveryActiveSessionTitle: "تم اكتشاف جلسة نشطة",
+    recoveryActiveSessionDesc:
+      "أنت مسجل الدخول حالياً باسم {{email}}. لإعادة تعيين كلمة المرور بأمان، يرجى تسجيل الخروج من جلستك الحالية أولاً.",
+    recoveryActiveSessionDescAnonymous:
+      "أنت مسجل الدخول حالياً. لإعادة تعيين كلمة المرور بأمان، يرجى تسجيل الخروج من جلستك الحالية أولاً.",
+    recoverySignOutAndContinue: "تسجيل الخروج والمتابعة",
+    recoverySigningOut: "جارٍ تسجيل الخروج…",
+    recoveryReturnToDashboard: "العودة إلى لوحة التحكم",
+    recoverySigningOutNotice:
+      "سيؤدي إكمال إعادة تعيين كلمة المرور إلى تسجيل خروج جلستك الحالية في هذا المتصفح.",
     signInHeading: "تسجيل الدخول",
     signInSubheading: "أهلاً بعودتك. سجّل دخولك للمتابعة.",
     signingIn: "جارٍ تسجيل الدخول…",
@@ -238,9 +254,12 @@ export const ar = {
       availableWorkspaces: "مساحات العمل المتاحة",
     },
     accountSetup: {
-      activationRequiredTitle: "إعداد الحساب مطلوب",
+      activationRequiredTitle: "أكمل إعداد حسابك",
       activationRequiredDesc:
-        "حسابك غير نشط بعد. تم إرسال رابط الإعداد تلقائياً إلى بريدك الإلكتروني.",
+        "تحقق من بريدك الإلكتروني للحصول على رابط الإعداد لإكمال تجهيز حسابك.",
+      resendAvailableIn: "إعادة الإرسال متاحة خلال {{seconds}}ث",
+      didNotReceiveEmail: "لم تستلم البريد الإلكتروني؟",
+      resendEmailAction: "إعادة إرسال البريد",
       missingToken: "لم يتم توفير رمز الإعداد. يرجى استخدام الرابط الموجود في بريدك الإلكتروني.",
       invalidToken: "رابط الإعداد غير صالح أو انتهت صلاحيته.",
       validationFailed: "تعذر التحقق من رابط الإعداد. قد تكون صلاحيته انتهت.",

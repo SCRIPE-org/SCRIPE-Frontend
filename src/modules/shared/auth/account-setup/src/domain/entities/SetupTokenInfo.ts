@@ -8,6 +8,7 @@
 
 import { mapLegacySetupPolicy, type PasswordPolicyModel } from "@core/common/password-policy";
 
+/** Raw hydrated account-setup invitation payload returned by the backend validation endpoint. */
 export interface SetupTokenInfoData {
   adminUsername: string;
   tenantName: string;

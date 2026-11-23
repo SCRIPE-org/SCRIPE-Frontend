@@ -11,8 +11,8 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useServices } from "@core/providers/service-provider";
 import { useAppStore } from "@core/store/useAppStore";
-import { authContainer } from "@modules/auth/di";
 import type { User } from "@modules/auth/core/domain/entities/User";
 import type { WorkspaceChoice } from "@modules/auth/core/domain/errors/AuthErrors";
 import type { AdminRole, PermissionCode } from "@core/common/types/permissions";
@@ -66,12 +66,16 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
   const setSubscriptionInfo = useAppStore((state) => state.setSubscriptionInfo);
   const setMustChangePassword = useAppStore((state) => state.setMustChangePassword);
   const setDefaultRedirectPath = useAppStore((state) => state.setDefaultRedirectPath);
+  const { authRepository } = useServices();
+  const authRepositoryRef = useRef(authRepository);
+  authRepositoryRef.current = authRepository;
 
-  const token = searchParams?.get("token") ?? "";
-  const tenantId = searchParams?.get("tenantId") ?? undefined;
+  const queryToken = (searchParams?.get("token") ?? "").trim();
+  const [token, setToken] = useState<string>(queryToken);
+  const tenantId = searchParams?.get("tenantId") ?? searchParams?.get("_tenant") ?? undefined;
   const queryRedirect = searchParams?.get("redirect") ?? null;
 
-  const [state, setState] = useState<MagicLinkVerifyState>(token ? "verifying" : "error");
+  const [state, setState] = useState<MagicLinkVerifyState>("verifying");
   const [availableWorkspaces, setAvailableWorkspaces] = useState<WorkspaceChoice[]>([]);
   const [isSelectingWorkspace, setIsSelectingWorkspace] = useState(false);
   const [workspaceSelectionError, setWorkspaceSelectionError] = useState<string | undefined>(
@@ -86,7 +90,7 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
   const [isVerifying2FA, setIsVerifying2FA] = useState(false);
   const [twoFactorError, setTwoFactorError] = useState("");
 
-  // Guard against React StrictMode double-invoking single-use magic-link verification
+  // Guard against React StrictMode / re-render re-invoking single-use magic-link verification
   const verifiedTokenRef = useRef<string | null>(null);
 
   const enterTwoFactorStep = useCallback((pendingToken: string, staySignedIn: boolean) => {
@@ -145,18 +149,63 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
     ]
   );
 
+  const enterTwoFactorStepRef = useRef(enterTwoFactorStep);
+  enterTwoFactorStepRef.current = enterTwoFactorStep;
+  const hydrateAndRedirectRef = useRef(hydrateAndRedirect);
+  hydrateAndRedirectRef.current = hydrateAndRedirect;
+
   useEffect(() => {
-    if (!token || verifiedTokenRef.current === token) return;
-    verifiedTokenRef.current = token;
+    let resolvedToken = queryToken;
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      let mutated = false;
+      if (url.searchParams.has("token")) {
+        url.searchParams.delete("token");
+        mutated = true;
+      }
+      if (url.hash) {
+        const hashParams = new URLSearchParams(
+          url.hash.startsWith("#") ? url.hash.slice(1) : url.hash
+        );
+        const hashToken = (hashParams.get("token") || "").trim();
+        if (!resolvedToken && hashToken) {
+          resolvedToken = hashToken;
+        }
+        if (hashParams.has("token")) {
+          hashParams.delete("token");
+          const remainingHash = hashParams.toString();
+          url.hash = remainingHash ? `#${remainingHash}` : "";
+          mutated = true;
+        }
+      }
+      if (mutated) {
+        window.history.replaceState({}, document.title, `${url.pathname}${url.search}${url.hash}`);
+      }
+    }
+
+    if (resolvedToken) {
+      setToken(resolvedToken);
+    }
+
+    const activeToken = resolvedToken || verifiedTokenRef.current || "";
+    if (!activeToken) {
+      setState("error");
+      return;
+    }
+    if (verifiedTokenRef.current === activeToken) return;
+    verifiedTokenRef.current = activeToken;
     let cancelled = false;
 
     (async () => {
       try {
-        const response = await authContainer.authRepository.verifyMagicLink(token, tenantId);
+        const response = await authRepositoryRef.current.verifyMagicLink(activeToken, tenantId);
         if (cancelled) return;
 
         if (response.requires2FA && response.twoFactorPendingToken) {
-          enterTwoFactorStep(response.twoFactorPendingToken, Boolean(response.staySignedIn));
+          enterTwoFactorStepRef.current(
+            response.twoFactorPendingToken,
+            Boolean(response.staySignedIn)
+          );
           return;
         }
         if (response.requiresWorkspaceSelection && response.availableWorkspaces?.length) {
@@ -165,7 +214,7 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
           return;
         }
         if (response.user) {
-          hydrateAndRedirect(
+          hydrateAndRedirectRef.current(
             { ...response, user: response.user },
             1200,
             () => cancelled
@@ -181,18 +230,19 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
     return () => {
       cancelled = true;
     };
-  }, [token, tenantId, enterTwoFactorStep, hydrateAndRedirect]);
+  }, [queryToken, tenantId]);
 
   const selectWorkspace = useCallback(
     async (workspace: WorkspaceChoice) => {
-      if (!token) return;
+      const activeToken = token || verifiedTokenRef.current || "";
+      if (!activeToken) return;
       setWorkspaceSelectionError(undefined);
       setIsSelectingWorkspace(true);
 
       try {
         const targetTenantId = workspace.isPlatformAdmin ? undefined : workspace.tenantId;
-        const response = await authContainer.authRepository.verifyMagicLink(
-          token,
+        const response = await authRepositoryRef.current.verifyMagicLink(
+          activeToken,
           targetTenantId,
           false,
           workspace.isPlatformAdmin
@@ -226,7 +276,7 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
     setTwoFactorError("");
     setIsVerifying2FA(true);
     try {
-      const result = await authContainer.authRepository.verify2FA(
+      const result = await authRepositoryRef.current.verify2FA(
         "",
         null,
         twoFactorCode.trim(),

@@ -405,4 +405,37 @@ describe("useSsoCallbackHandlers, useTokenLogin & useQrSignInViewModel (BAM-01, 
     expect(getSafeRedirectPath("/\\evil.example")).toBe("/overview");
     expect(getSafeRedirectPath("http://localhost:5035/evil-path")).toBe("/overview");
   });
+
+  it("handleOidcCallback routes user SSO logins through buildPostAuthEntryUrl and preserves safe ?redirect=", async () => {
+    vi.useFakeTimers();
+    const originalUrl = window.location.href;
+    window.history.replaceState({}, "", "/sso/callback?redirect=%2Fportal%2Fbookings");
+
+    const ctx = buildDeps();
+    ctx.getCurrentPrincipal.mockResolvedValueOnce({
+      id: "member-1",
+      permissions: ["portal.view"],
+      roles: ["Member"],
+    } as unknown as User);
+    ctx.completeCallback.mockResolvedValueOnce({
+      type: "user",
+      accessToken: "user-sso-jwt",
+      mustChangePassword: false,
+      subscriptionStatus: "Active",
+    });
+
+    await handleOidcCallback(
+      new URLSearchParams("code=user-code&state=user-state"),
+      ctx.deps,
+      ctx.setters
+    );
+    await vi.advanceTimersByTimeAsync(350);
+
+    expect(ctx.redirectTo).toHaveBeenCalledWith(
+      `/?redirect=${encodeURIComponent("/portal/bookings")}`
+    );
+
+    window.history.replaceState({}, "", originalUrl);
+    vi.useRealTimers();
+  });
 });

@@ -2,11 +2,8 @@ import React from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import { SignupThemeProvider } from "@core/providers/signup-theme";
 import { TwoFactorForm } from "../components/TwoFactorForm";
 import { PhoneOtpForm } from "../components/PhoneOtpForm";
-import { VerificationStep } from "@modules/auth/signup/src/presentation/components/verify/VerificationStep";
-import type { SignupWizardViewModel } from "@modules/auth/signup/src/presentation/viewmodels/useSignupWizard";
 
 vi.mock("@core/providers/i18n-provider", () => ({
   useI18n: () => ({
@@ -101,31 +98,5 @@ describe("OTP input standardization onto @core/ui/otp-input-field", () => {
     expect(input).toHaveAttribute("data-variant", "vault");
     fireEvent.change(input, { target: { value: "654321" } });
     expect(mockSetCode).toHaveBeenCalledWith("654321");
-  });
-
-  it("renders Signup VerificationStep OTP input via OtpInputField variant=nexus", () => {
-    const setOtpCode = vi.fn();
-    const mockWizard = {
-      otpCode: "",
-      setOtpCode,
-      isSubmitting: false,
-      otpResendCooldown: 0,
-      error: "",
-      wizardData: { email: "founder@scripe.test" },
-      verifyOtp: vi.fn(),
-      resendOtp: vi.fn(),
-      changeEmail: vi.fn(),
-    } as unknown as SignupWizardViewModel;
-
-    render(
-      <SignupThemeProvider>
-        <VerificationStep wizard={mockWizard} />
-      </SignupThemeProvider>
-    );
-
-    const input = screen.getByTestId("otp-field-signup-otp");
-    expect(input).toHaveAttribute("data-variant", "nexus");
-    fireEvent.change(input, { target: { value: "111222" } });
-    expect(setOtpCode).toHaveBeenCalledWith("111222");
   });
 });

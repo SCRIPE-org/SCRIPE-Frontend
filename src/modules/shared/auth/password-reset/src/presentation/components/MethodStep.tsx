@@ -5,16 +5,16 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { ShieldCheck, Smartphone, Inbox, ChevronRight } from "lucide-react";
 import { StepDots } from "./StepDots";
-import type { useForgotPasswordViewModel } from "../viewmodels/useForgotPasswordViewModel";
+import type { UsePasswordRecoveryViewModelReturn } from "../viewmodels/usePasswordRecoveryViewModel";
 
 interface MethodStepProps {
-  vm: ReturnType<typeof useForgotPasswordViewModel>;
+  vm: UsePasswordRecoveryViewModelReturn;
   totalSteps: number;
 }
 
 /**
- * Presentation UI component rendering the method step.
- * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ * Presentation UI component rendering Step 2 (delivery channel choice: OTP vs Magic Link).
+ * Surfaces HTTP 429 rate-limit and network failures cleanly when present.
  */
 export function MethodStep({ vm, totalSteps }: MethodStepProps) {
   const { t } = useI18n();
@@ -50,11 +50,10 @@ export function MethodStep({ vm, totalSteps }: MethodStepProps) {
       <StepDots current={2} total={totalSteps} />
 
       <div className="flex flex-col gap-3">
-        {/* OTP option */}
         <Button
           type="button"
           variant="ghost"
-          onClick={() => vm.chooseMethod("otp")}
+          onClick={() => void vm.chooseMethod("otp")}
           disabled={vm.isLoading}
           className="group flex h-auto items-center justify-start gap-4 whitespace-normal rounded-2xl border p-4 text-start transition-all hover:scale-[1.02] hover:bg-transparent active:scale-[0.99] disabled:opacity-50"
           style={{
@@ -88,16 +87,15 @@ export function MethodStep({ vm, totalSteps }: MethodStepProps) {
             </p>
           </div>
           <ChevronRight
-            className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5"
+            className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5 rtl:rotate-180"
             style={{ color: "var(--sx-text-mute)" }}
           />
         </Button>
 
-        {/* Magic Link option */}
         <Button
           type="button"
           variant="ghost"
-          onClick={() => vm.chooseMethod("magic-link")}
+          onClick={() => void vm.chooseMethod("magic-link")}
           disabled={vm.isLoading}
           className="group flex h-auto items-center justify-start gap-4 whitespace-normal rounded-2xl border p-4 text-start transition-all hover:scale-[1.02] hover:bg-transparent active:scale-[0.99] disabled:opacity-50"
           style={{
@@ -131,11 +129,21 @@ export function MethodStep({ vm, totalSteps }: MethodStepProps) {
             </p>
           </div>
           <ChevronRight
-            className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5"
+            className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5 rtl:rotate-180"
             style={{ color: "var(--sx-text-mute)" }}
           />
         </Button>
       </div>
+
+      {vm.error && (
+        <div
+          className="sx-shake rounded-xl border border-destructive/20 bg-destructive/10 px-4 py-3"
+          role="alert"
+          aria-live="assertive"
+        >
+          <p className="text-[13px] font-medium text-destructive">{vm.error}</p>
+        </div>
+      )}
 
       {vm.isLoading && (
         <div className="flex justify-center">

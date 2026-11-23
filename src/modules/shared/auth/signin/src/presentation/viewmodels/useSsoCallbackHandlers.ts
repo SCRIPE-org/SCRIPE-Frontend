@@ -150,10 +150,17 @@ async function dispatchCallbackResult(
       (user.roles || []) as AdminRole[],
       true
     );
+    const queryRedirect =
+      typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("redirect") : null;
+    const targetPath = buildPostAuthEntryUrl({
+      mustChangePassword: Boolean(result.mustChangePassword),
+      subscriptionStatus: result.subscriptionStatus,
+      redirect: queryRedirect,
+    });
     deps.operationSuccess(deps.t("auth.welcomeBack"));
     deps.invalidateQueries();
     setters.setState("success");
-    setTimeout(() => setters.redirectTo("/"), 300);
+    setTimeout(() => setters.redirectTo(targetPath), 300);
     return;
   }
 

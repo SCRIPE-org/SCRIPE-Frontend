@@ -5,29 +5,28 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
 import { PasswordInput } from "@core/ui/password-input";
+import { PasswordWithPolicyField } from "@core/ui/password-policy-field";
+import { DEFAULT_PASSWORD_MAX_LENGTH } from "@core/common/password-policy";
 import { Lock } from "lucide-react";
 import { StepDots } from "./StepDots";
-import { StrengthBar } from "./StrengthBar";
-import type { useForgotPasswordViewModel } from "../viewmodels/useForgotPasswordViewModel";
+import type { UsePasswordRecoveryViewModelReturn } from "../viewmodels/usePasswordRecoveryViewModel";
 
 interface NewPasswordStepProps {
-  vm: ReturnType<typeof useForgotPasswordViewModel>;
-  totalSteps: number;
+  vm: UsePasswordRecoveryViewModelReturn;
+  totalSteps?: number;
+  showStepDots?: boolean;
 }
 
 /**
- * Presentation UI component rendering the new password step.
- * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ * Unified new-password creation step backed by `<PasswordWithPolicyField>` and
+ * server-driven `PasswordPolicyModel` (never hardcoded length rules).
  */
-export function NewPasswordStep({ vm, totalSteps }: NewPasswordStepProps) {
+export function NewPasswordStep({
+  vm,
+  totalSteps = 5,
+  showStepDots = true,
+}: NewPasswordStepProps) {
   const { t } = useI18n();
-
-  const strengthLabels = [
-    t("auth.passwordStrengthWeak"),
-    t("auth.passwordStrengthFair"),
-    t("auth.passwordStrengthGood"),
-    t("auth.passwordStrengthStrong"),
-  ];
 
   const resolveError = (err: string) => {
     if (!err) return "";
@@ -41,6 +40,8 @@ export function NewPasswordStep({ vm, totalSteps }: NewPasswordStepProps) {
     }
     return err;
   };
+
+  const maxLength = vm.effectivePolicy?.maxLength ?? DEFAULT_PASSWORD_MAX_LENGTH;
 
   return (
     <div className="flex flex-col gap-6">
@@ -78,31 +79,28 @@ export function NewPasswordStep({ vm, totalSteps }: NewPasswordStepProps) {
         )}
       </div>
 
-      <StepDots current={5} total={totalSteps} />
+      {showStepDots && <StepDots current={5} total={totalSteps} />}
 
       <form onSubmit={vm.submitNewPassword} className="flex flex-col gap-4">
-        <div className="space-y-2">
-          <Label
-            htmlFor="fp-new-password"
-            className="block text-[11px] font-semibold uppercase tracking-wider"
-            style={{ color: "var(--sx-text-mute)" }}
-          >
-            {t("auth.newPassword")}
-          </Label>
-          <PasswordInput
-            id="fp-new-password"
-            value={vm.newPassword}
-            onChange={(e) => vm.setNewPassword(e.target.value)}
-            placeholder={t("auth.newPasswordPlaceholder")}
-            required
-            autoFocus
-            minLength={8}
-            className="h-12 w-full rounded-xl border px-4 text-[15px] shadow-none transition-all focus-visible:ring-0"
-          />
-          {vm.newPassword.length > 0 && (
-            <StrengthBar strength={vm.passwordStrength} labels={strengthLabels} />
-          )}
-        </div>
+        <PasswordWithPolicyField
+          id="fp-new-password"
+          label={t("auth.newPassword")}
+          value={vm.newPassword}
+          onValueChange={vm.setNewPassword}
+          policy={vm.effectivePolicy}
+          policyLoading={vm.isPolicyLoading}
+          policyError={vm.policyError}
+          onRetryPolicy={vm.retryPolicy}
+          placeholder={t("auth.newPasswordPlaceholder")}
+          autoFocus
+          required
+          autoComplete="new-password"
+          surface="vault"
+          showChecklist
+          alwaysShowChecklist
+          showStrengthBar
+          t={t}
+        />
 
         <div className="space-y-2">
           <Label
@@ -118,7 +116,8 @@ export function NewPasswordStep({ vm, totalSteps }: NewPasswordStepProps) {
             onChange={(e) => vm.setConfirmPassword(e.target.value)}
             placeholder={t("auth.confirmPasswordPlaceholder")}
             required
-            minLength={8}
+            maxLength={maxLength}
+            autoComplete="new-password"
             className="h-12 w-full rounded-xl border px-4 text-[15px] shadow-none transition-all focus-visible:ring-0"
           />
           {vm.confirmPassword.length > 0 && (
@@ -149,7 +148,7 @@ export function NewPasswordStep({ vm, totalSteps }: NewPasswordStepProps) {
           loading={vm.isLoading}
           className="mt-2 flex h-12 w-full items-center justify-center rounded-xl text-[15px] font-semibold text-nx-on-fill transition-all active:scale-[0.985] disabled:pointer-events-none disabled:opacity-50"
         >
-          {t("auth.changePassword")}
+          {t("auth.resetPasswordAction")}
         </Button>
       </form>
     </div>

@@ -1,11 +1,13 @@
 "use client";
 
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useRef, useEffect, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import { useAuthLogin } from "@modules/auth/core/src/presentation/viewmodels/useAuthLogin";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useServices } from "@core/providers/service-provider";
+import { buildAuthContextUrl } from "@core/common/redirect-safety";
 import { validateForm, VALIDATION_SETS, isFormValid } from "@core/common/validation";
 import { secureTokenService } from "@core/common/secure-token-service";
-import { getAuthContainer } from "@modules/auth/di";
 import { use2FAHandler } from "./use2FAHandler";
 import { useWorkspaceSelector } from "./useWorkspaceSelector";
 import { useMagicLinkHandler } from "./useMagicLinkHandler";
@@ -21,11 +23,17 @@ export type { LoginFormData, LoginStep };
  * Handles active states updates, form fields validations, and browser navigation controllers.
  */
 export function useLoginViewModel() {
-  const [formData, setFormData] = useState<LoginFormData>({
-    identifier: "",
+  const searchParams = useSearchParams();
+  const queryEmail = searchParams?.get("email")?.trim() || "";
+  const queryResetSuccess = searchParams?.get("reset") === "success";
+  const queryTenant = searchParams?.get("_tenant")?.trim() || undefined;
+  const queryRedirect = searchParams?.get("redirect") || null;
+
+  const [formData, setFormData] = useState<LoginFormData>(() => ({
+    identifier: queryEmail,
     password: "",
     staySignedIn: false,
-  });
+  }));
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [shakeKey, setShakeKey] = useState(0);
@@ -34,10 +42,14 @@ export function useLoginViewModel() {
   const [isAccountNotActivated, setIsAccountNotActivated] = useState(false);
   const [accountNotActivatedMessage, setAccountNotActivatedMessage] = useState("");
   const [cooldownSeconds, setCooldownSeconds] = useState(0);
+  const [isPasswordResetSuccess, setIsPasswordResetSuccess] = useState(queryResetSuccess);
 
   const tenantIdRef = useRef<string | undefined>(undefined);
   const loginMutation = useAuthLogin();
   const { t } = useI18n();
+  const { authRepository } = useServices();
+  const authRepositoryRef = useRef(authRepository);
+  authRepositoryRef.current = authRepository;
   const redirect = useLoginRedirect();
 
   const setErrorWithShake = useCallback((msg: string) => {
@@ -54,8 +66,14 @@ export function useLoginViewModel() {
   }, [cooldownSeconds]);
 
   useEffect(() => {
-    getAuthContainer().authRepository.clearSessionOnLoginMount();
+    authRepositoryRef.current?.clearSessionOnLoginMount?.();
   }, []);
+
+  useEffect(() => {
+    if (queryResetSuccess) {
+      setIsPasswordResetSuccess(true);
+    }
+  }, [queryResetSuccess]);
 
   const setTenantId = useCallback((id: string | undefined) => {
     tenantIdRef.current = id;
@@ -106,6 +124,7 @@ export function useLoginViewModel() {
       }
 
       setError("");
+      setIsPasswordResetSuccess(false);
       const resolvedTenantId = tenantIdOverride ?? tenantIdRef.current ?? tenantId;
 
       try {
@@ -180,6 +199,16 @@ export function useLoginViewModel() {
   const isLoading = loginMutation.isPending || redirect.isRedirecting || twoFA.isVerifying2FA;
   const isTrulyAuthenticated =
     redirect.hasHydrated && redirect.isAuthenticated && secureTokenService.hasToken();
+  const resolvedTenantQuery = resolveDevTenantCode() ?? queryTenant;
+  const forgotPasswordHref = useMemo(
+    () =>
+      buildAuthContextUrl("/forgot-password", {
+        email: formData.identifier || undefined,
+        tenantCode: resolvedTenantQuery,
+        redirect: queryRedirect,
+      }),
+    [formData.identifier, resolvedTenantQuery, queryRedirect]
+  );
 
   return {
     formData,
@@ -190,6 +219,8 @@ export function useLoginViewModel() {
     isAccountNotActivated,
     accountNotActivatedMessage,
     cooldownSeconds,
+    isPasswordResetSuccess,
+    forgotPasswordHref,
     resendSetupEmail: () => handleLogin(tenantId ?? undefined),
     isAuthenticated: isTrulyAuthenticated,
     hasHydrated: redirect.hasHydrated,

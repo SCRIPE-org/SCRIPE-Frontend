@@ -6,18 +6,18 @@ import { Button } from "@core/ui/button";
 import { Building2 } from "lucide-react";
 import { StepDots } from "./StepDots";
 import { WorkspaceCheckCard } from "./WorkspaceCheckCard";
-import type { useForgotPasswordViewModel } from "../viewmodels/useForgotPasswordViewModel";
+import type { UsePasswordRecoveryViewModelReturn } from "../viewmodels/usePasswordRecoveryViewModel";
 
 interface WorkspacesStepProps {
-  vm: ReturnType<typeof useForgotPasswordViewModel>;
-  totalSteps: number;
+  vm: UsePasswordRecoveryViewModelReturn;
+  totalSteps?: number;
+  showStepDots?: boolean;
 }
 
 /**
- * Presentation UI component rendering the workspaces step.
- * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ * Shared multi-tenant workspace picker for both `/forgot-password` and `/reset-password`.
  */
-export function WorkspacesStep({ vm, totalSteps }: WorkspacesStepProps) {
+export function WorkspacesStep({ vm, totalSteps = 5, showStepDots = true }: WorkspacesStepProps) {
   const { t } = useI18n();
 
   return (
@@ -47,9 +47,8 @@ export function WorkspacesStep({ vm, totalSteps }: WorkspacesStepProps) {
         </p>
       </div>
 
-      <StepDots current={4} total={totalSteps} />
+      {showStepDots && <StepDots current={4} total={totalSteps} />}
 
-      {/* Select All toggle */}
       <div className="flex items-center justify-between">
         <span className="text-[12px]" style={{ color: "var(--sx-text-mute)" }}>
           {vm.selectedWorkspaces.length} / {vm.workspaces.length} {t("auth.workspacesSelected")}
@@ -65,7 +64,6 @@ export function WorkspacesStep({ vm, totalSteps }: WorkspacesStepProps) {
         </Button>
       </div>
 
-      {/* Workspace checklist */}
       <div className="flex max-h-64 flex-col gap-2 overflow-y-auto">
         {vm.workspaces.map((w) => (
           <WorkspaceCheckCard
@@ -77,7 +75,6 @@ export function WorkspacesStep({ vm, totalSteps }: WorkspacesStepProps) {
         ))}
       </div>
 
-      {/* Continue button */}
       <Button
         type="button"
         onClick={vm.confirmWorkspaceSelection}

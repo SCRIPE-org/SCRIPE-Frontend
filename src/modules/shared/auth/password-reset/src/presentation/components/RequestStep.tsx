@@ -7,23 +7,21 @@ import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { KeyRound } from "lucide-react";
 import { StepDots } from "./StepDots";
-import type { useForgotPasswordViewModel } from "../viewmodels/useForgotPasswordViewModel";
+import type { UsePasswordRecoveryViewModelReturn } from "../viewmodels/usePasswordRecoveryViewModel";
 
 interface RequestStepProps {
-  vm: ReturnType<typeof useForgotPasswordViewModel>;
+  vm: UsePasswordRecoveryViewModelReturn;
   totalSteps: number;
 }
 
 /**
- * Presentation UI component rendering the request step.
- * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ * Presentation UI component rendering Step 1 (email capture) of password recovery.
  */
 export function RequestStep({ vm, totalSteps }: RequestStepProps) {
   const { t } = useI18n();
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Icon + heading */}
       <div className="text-center">
         <div
           className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl"
@@ -49,7 +47,6 @@ export function RequestStep({ vm, totalSteps }: RequestStepProps) {
         </p>
       </div>
 
-      {/* Step dots */}
       <StepDots current={1} total={totalSteps} />
 
       <form onSubmit={vm.submitEmail} className="flex flex-col gap-4">

@@ -37,25 +37,26 @@ import { useAccountSetupViewModel } from "../viewmodels/useAccountSetupViewModel
 export function SetupAccountView() {
   const { t } = useI18n();
   const searchParams = useSearchParams();
-  const [token] = useState(() => {
-    const queryToken = searchParams.get("token") || "";
-    if (queryToken) return queryToken;
-    if (typeof window === "undefined") return "";
-    const hash = window.location.hash.startsWith("#") ? window.location.hash.slice(1) : "";
-    const hashParams = new URLSearchParams(hash);
-    return hashParams.get("token") || "";
-  });
+  const queryToken = searchParams.get("token") || "";
+  const [token, setToken] = useState(queryToken);
+  const [isResolvingToken, setIsResolvingToken] = useState(!queryToken);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
     const url = new URL(window.location.href);
+    let resolved = queryToken;
     let mutated = false;
     if (url.searchParams.has("token")) {
       url.searchParams.delete("token");
       mutated = true;
     }
     if (url.hash) {
-      const hashParams = new URLSearchParams(url.hash.slice(1));
+      const hashStr = url.hash.startsWith("#") ? url.hash.slice(1) : url.hash;
+      const hashParams = new URLSearchParams(hashStr);
+      const hashToken = hashParams.get("token") || "";
+      if (!resolved && hashToken) {
+        resolved = hashToken;
+      }
       if (hashParams.has("token")) {
         hashParams.delete("token");
         const remainingHash = hashParams.toString();
@@ -66,10 +67,13 @@ export function SetupAccountView() {
     if (mutated) {
       window.history.replaceState({}, document.title, `${url.pathname}${url.search}${url.hash}`);
     }
-  }, []);
+    setToken(resolved);
+    setIsResolvingToken(false);
+  }, [queryToken]);
 
   const vm = useAccountSetupViewModel({
     token,
+    isResolvingToken,
     missingTokenMessage: t("auth.accountSetup.missingToken"),
     invalidTokenMessage: t("auth.accountSetup.invalidToken"),
     validationFailedMessage: t("auth.accountSetup.validationFailed"),

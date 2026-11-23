@@ -42,6 +42,7 @@ export type SetupStep = 1 | 2 | 3 | 4;
  */
 export function useAccountSetupViewModel(params: {
   token: string;
+  isResolvingToken?: boolean;
   missingTokenMessage: string;
   invalidTokenMessage: string;
   validationFailedMessage: string;
@@ -62,6 +63,7 @@ export function useAccountSetupViewModel(params: {
 }) {
   const {
     token,
+    isResolvingToken = false,
     missingTokenMessage,
     invalidTokenMessage,
     validationFailedMessage,
@@ -95,6 +97,7 @@ export function useAccountSetupViewModel(params: {
 
   const loader = useAccountSetupTokenLoader({
     token,
+    isResolvingToken,
     missingTokenMessage,
     invalidTokenMessage,
     validationFailedMessage,

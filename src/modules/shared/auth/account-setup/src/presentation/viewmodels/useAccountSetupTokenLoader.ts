@@ -16,6 +16,7 @@ import { extractAccountSetupApiError } from "../utils/account-setup-validation.u
 /** Parameters accepted by `useAccountSetupTokenLoader`. */
 export interface UseAccountSetupTokenLoaderParams {
   token: string;
+  isResolvingToken?: boolean;
   missingTokenMessage: string;
   invalidTokenMessage: string;
   validationFailedMessage: string;
@@ -28,15 +29,20 @@ export interface UseAccountSetupTokenLoaderParams {
  */
 export function useAccountSetupTokenLoader({
   token,
+  isResolvingToken = false,
   missingTokenMessage,
   invalidTokenMessage,
   validationFailedMessage,
   onProfileHydrated,
 }: UseAccountSetupTokenLoaderParams) {
   const { accountSetupRepository } = useServices();
-  const [pageState, setPageState] = useState<PageState>(!token ? "invalid" : "loading");
+  const [pageState, setPageState] = useState<PageState>(
+    !token && !isResolvingToken ? "invalid" : "loading"
+  );
   const [tokenData, setTokenData] = useState<SetupTokenInfo | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string>(!token ? missingTokenMessage : "");
+  const [errorMessage, setErrorMessage] = useState<string>(
+    !token && !isResolvingToken ? missingTokenMessage : ""
+  );
   const [customFields, setCustomFields] = useState<SetupCustomField[]>([]);
   const [isLoadingCustomFields, setIsLoadingCustomFields] = useState(false);
   const [customFieldValues, setCustomFieldValues] = useState<Record<string, unknown>>({});
@@ -54,7 +60,16 @@ export function useAccountSetupTokenLoader({
   }, []);
 
   useEffect(() => {
-    if (!token) return;
+    if (isResolvingToken) {
+      setPageState("loading");
+      setErrorMessage("");
+      return;
+    }
+    if (!token) {
+      setPageState("invalid");
+      setErrorMessage(missingTokenMessage);
+      return;
+    }
     void reloadNonce;
 
     let cancelled = false;
@@ -101,7 +116,7 @@ export function useAccountSetupTokenLoader({
     return () => {
       cancelled = true;
     };
-  }, [accountSetupRepository, invalidTokenMessage, onProfileHydrated, reloadNonce, token, validationFailedMessage]);
+  }, [accountSetupRepository, invalidTokenMessage, isResolvingToken, missingTokenMessage, onProfileHydrated, reloadNonce, token, validationFailedMessage]);
 
   return {
     pageState,

@@ -4,7 +4,7 @@
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
-import { Mail, Fingerprint, Smartphone, QrCode } from "lucide-react";
+import { Mail, Fingerprint, Smartphone, QrCode, CheckCircle2 } from "lucide-react";
 import type { LoginFormData } from "../viewmodels/use-login-viewmodel";
 import { CredentialsFormHeader } from "./CredentialsFormHeader";
 import { MethodChipsSection } from "./MethodChipsSection";
@@ -35,6 +35,8 @@ interface CredentialsFormProps {
   accountNotActivatedMessage?: string;
   cooldownSeconds?: number;
   onResendSetupEmail?: () => void;
+  isPasswordResetSuccess?: boolean;
+  forgotPasswordHref?: string;
 }
 
 /**
@@ -61,6 +63,8 @@ export function CredentialsForm({
   accountNotActivatedMessage = "",
   cooldownSeconds = 0,
   onResendSetupEmail,
+  isPasswordResetSuccess = false,
+  forgotPasswordHref,
 }: CredentialsFormProps) {
   const { t } = useI18n();
   const arrow = isRTL ? "←" : "→";
@@ -115,6 +119,24 @@ export function CredentialsForm({
       <CredentialsFormHeader t={t} />
 
       {/* ── Alerts ───────── */}
+      {isPasswordResetSuccess && !error && !isAccountNotActivated && (
+        <div
+          data-testid="login-reset-success-banner"
+          role="status"
+          aria-live="polite"
+          className="flex items-start gap-2.5 rounded-xl border border-success/30 bg-success/10 px-4 py-3 text-start"
+        >
+          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-nx-success" aria-hidden="true" />
+          <div className="space-y-0.5">
+            <p className="text-[13px] font-semibold" style={{ color: "var(--sx-text)" }}>
+              {t("auth.resetPasswordBannerTitle")}
+            </p>
+            <p className="text-[12px]" style={{ color: "var(--sx-text-mute)" }}>
+              {t("auth.resetPasswordBannerDesc")}
+            </p>
+          </div>
+        </div>
+      )}
       {isAccountNotActivated ? (
         <UnactivatedAccountAlert
           t={t}
@@ -157,6 +179,7 @@ export function CredentialsForm({
         staySignedIn={formData.staySignedIn}
         onStaySignedInChange={(val) => updateField("staySignedIn", val)}
         disabled={isLoading}
+        forgotPasswordHref={forgotPasswordHref}
         t={t}
       />
 

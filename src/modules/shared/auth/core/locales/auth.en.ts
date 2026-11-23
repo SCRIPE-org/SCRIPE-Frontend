@@ -175,6 +175,23 @@ export const en = {
     resetSuccessTitle: "Password updated!",
     resetSuccessSubtitle:
       "Your password has been reset. You can now sign in with your new credentials.",
+    resetPasswordBannerTitle: "Password updated",
+    resetPasswordBannerDesc: "Sign in with your new password to continue.",
+    rateLimitedRetryAfter: "Too many requests. Please wait {{seconds}}s and try again.",
+    rateLimited: "Too many requests. Please wait a moment and try again.",
+    recoveryNetworkError:
+      "Unable to reach the server. Please check your connection and try again.",
+    recoveryPolicyLoadError: "Unable to load workspace password requirements.",
+    recoveryActiveSessionTitle: "Active session detected",
+    recoveryActiveSessionDesc:
+      "You are currently signed in as {{email}}. To reset your password safely, sign out of your current session first.",
+    recoveryActiveSessionDescAnonymous:
+      "You are currently signed in. To reset your password safely, sign out of your current session first.",
+    recoverySignOutAndContinue: "Sign out and continue",
+    recoverySigningOut: "Signing out…",
+    recoveryReturnToDashboard: "Return to dashboard",
+    recoverySigningOutNotice:
+      "Completing this password reset will sign out your current session on this browser.",
     signInHeading: "Sign In",
     signInSubheading: "Welcome back. Sign in to continue.",
     signingIn: "Signing in…",
@@ -242,9 +259,12 @@ export const en = {
       availableWorkspaces: "Available workspaces",
     },
     accountSetup: {
-      activationRequiredTitle: "Account Setup Required",
+      activationRequiredTitle: "Complete Your Account Setup",
       activationRequiredDesc:
-        "Your account is not active yet. A setup link was automatically sent to your email address.",
+        "Check your inbox for your setup link to finish setting up your account.",
+      resendAvailableIn: "Resend available in {{seconds}}s",
+      didNotReceiveEmail: "Didn't receive the email?",
+      resendEmailAction: "Resend email",
       missingToken: "No setup token provided. Please use the link from your email.",
       invalidToken: "This setup link is invalid or has expired.",
       validationFailed: "Failed to validate setup token. The link may have expired.",

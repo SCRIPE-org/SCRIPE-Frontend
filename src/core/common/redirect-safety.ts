@@ -217,3 +217,33 @@ export function buildPostAuthEntryUrl(params: {
 
   return `/?redirect=${encodeURIComponent(eligible)}`;
 }
+
+/**
+ * Builds an authentication route href preserving validated context parameters
+ * (`email`, `_tenant`, safe `redirect`, and optional `reset=success`).
+ */
+export function buildAuthContextUrl(
+  basePath: "/login" | "/forgot-password" | "/reset-password",
+  params: {
+    email?: string | null;
+    tenantCode?: string | null;
+    redirect?: string | null;
+    resetSuccess?: boolean;
+  }
+): string {
+  const qs = new URLSearchParams();
+  if (params.resetSuccess) {
+    qs.set("reset", "success");
+  }
+  if (params.email?.trim()) {
+    qs.set("email", params.email.trim());
+  }
+  if (params.tenantCode?.trim()) {
+    qs.set("_tenant", params.tenantCode.trim().toUpperCase());
+  }
+  if (params.redirect && isSafeRedirectTarget(params.redirect)) {
+    qs.set("redirect", params.redirect.trim());
+  }
+  const query = qs.toString();
+  return query ? `${basePath}?${query}` : basePath;
+}
