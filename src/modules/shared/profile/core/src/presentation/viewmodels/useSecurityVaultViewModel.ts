@@ -47,8 +47,8 @@ export function useSecurityVaultViewModel() {
     if (!useAppStore.getState().requireMfaEnrollment) return;
     try {
       const refreshRes = await authRepository.refreshToken();
-      const stillRequired =
-        refreshRes.kind === "ok" ? Boolean(refreshRes.value.requireMfaEnrollment) : false;
+      if (refreshRes.kind !== "ok") return;
+      const stillRequired = Boolean(refreshRes.value.requireMfaEnrollment);
       useAppStore.getState().setRequireMfaEnrollment(stillRequired);
       if (!stillRequired) {
         useNavigationStore.getState().clearRouteData();

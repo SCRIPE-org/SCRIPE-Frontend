@@ -301,7 +301,7 @@ export function useAdminSettingsSync() {
         }
       }
     },
-    [isAuthenticated, mustChangePassword]
+    [isAuthenticated, mustChangePassword, requireMfaEnrollment]
   );
 
   // ── Listen for SettingsProvider changes ──

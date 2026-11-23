@@ -4,6 +4,7 @@
  * ViewModel hooks for Sovereign Account identity context and dossier operations.
  */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useAppStore } from "@core/store/useAppStore";
 import { useSudoStore } from "@core/store/useSudoStore";
 import { container } from "@modules/profile/di";
 import type { SendEmailVerificationPayload } from "../../domain/interfaces/ISovereignAccountRepository";
@@ -12,9 +13,11 @@ import { sovereignAccountKeys } from "../utils/sovereignAccountKeys";
 /** Queries and exposes dossier mutations for email verification, export, and deactivation. */
 export function useSovereignDossierSlice() {
   const qc = useQueryClient();
+  const requireMfaEnrollment = useAppStore((s) => s.requireMfaEnrollment);
   const query = useQuery({
     queryKey: sovereignAccountKeys.dossier(),
     queryFn: () => container.sovereignAccountRepository.getDossier(),
+    enabled: !requireMfaEnrollment,
   });
   const sendVerificationMutation = useMutation({
     mutationFn: (payload?: SendEmailVerificationPayload) =>
@@ -48,9 +51,11 @@ export function useSovereignDossierSlice() {
 
 /** Queries the shared telemetry HUD and principal context slice. */
 export function useSovereignAccountContextSlice() {
+  const requireMfaEnrollment = useAppStore((s) => s.requireMfaEnrollment);
   return useQuery({
     queryKey: sovereignAccountKeys.context(),
     queryFn: () => container.sovereignAccountRepository.getContext(),
+    enabled: !requireMfaEnrollment,
   });
 }
 

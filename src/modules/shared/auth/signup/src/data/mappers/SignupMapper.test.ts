@@ -10,7 +10,12 @@
 
 import { describe, it, expect } from "vitest";
 import { SignupMapper } from "./SignupMapper";
-import type { SignupWelcomeContentDto, OnboardingRecommendationDto } from "../models/SignupModels";
+import type {
+  SignupWelcomeContentDto,
+  OnboardingRecommendationDto,
+  RegisterDto,
+  CompleteSessionDto,
+} from "../models/SignupModels";
 
 describe("SignupMapper.toWelcomeContent", () => {
   it("maps the full welcome-content wire shape to a domain entity", () => {
@@ -113,5 +118,34 @@ describe("SignupMapper.toOnboardingRecommendation", () => {
 
     expect(entity).not.toHaveProperty("legacyTier");
     expect(entity.tierKey).toBe("ultra");
+  });
+
+  it("propagates requireMfaEnrollment across toRegisterResult and toCompleteResult", () => {
+    const reg = SignupMapper.toRegisterResult({
+      mode: "active",
+      accessToken: "jwt-1",
+      expiresAt: "2026-12-01T00:00:00Z",
+      tenantId: "t1",
+      tenantCode: "CLUB",
+      tenantName: "Club",
+      redirectUrl: "/",
+      userProfile: null,
+      checkoutUrl: null,
+      signupRef: null,
+      requireMfaEnrollment: true,
+    } as RegisterDto);
+    expect(reg.requireMfaEnrollment).toBe(true);
+
+    const comp = SignupMapper.toCompleteResult({
+      accessToken: "jwt-2",
+      expiresAt: "2026-12-01T00:00:00Z",
+      tenantId: "t1",
+      tenantCode: "CLUB",
+      tenantName: "Club",
+      redirectUrl: "/overview",
+      userProfile: null,
+      requireMfaEnrollment: true,
+    } as CompleteSessionDto);
+    expect(comp.requireMfaEnrollment).toBe(true);
   });
 });

@@ -8,6 +8,7 @@ import { useAppStore } from "@core/store/useAppStore";
 import type { PasswordPolicyModel } from "@core/common/password-policy";
 import { PasswordChangeForm } from "../components/PasswordChangeForm";
 import { useSecurityVaultViewModel } from "../viewmodels/useSecurityVaultViewModel";
+import { useSovereignAccountContextSlice } from "../viewmodels/useSovereignContextAndDossierViewModel";
 
 const mocks = vi.hoisted(() => ({
   replace: vi.fn(),
@@ -17,6 +18,7 @@ const mocks = vi.hoisted(() => ({
   refreshToken: vi.fn(),
   listPasskeys: vi.fn().mockResolvedValue([]),
   getProfile: vi.fn().mockResolvedValue({ isTwoFactorEnabled: false, backupCodesRemaining: 0 }),
+  getContext: vi.fn().mockResolvedValue({ principalContext: { email: "a@b.c" }, featureFlags: {} }),
 }));
 
 vi.mock("next/navigation", () => ({
@@ -56,6 +58,9 @@ vi.mock("@modules/profile/di", () => ({
     },
     profileRepository: {
       getProfile: () => mocks.getProfile(),
+    },
+    sovereignAccountRepository: {
+      getContext: () => mocks.getContext(),
     },
   },
 }));
@@ -183,5 +188,41 @@ describe("PasswordChangeForm & SecurityVault rotated token handling", () => {
     expect(codeInput.maxLength).toBe(20);
     fireEvent.change(codeInput, { target: { value: "ABCD-1234-EF" } });
     expect(codeInput.value).toBe("ABCD-1234-EF");
+  });
+
+  it("fails closed when refreshToken returns Result.err during mandatory 2FA enrollment completion", async () => {
+    useAppStore.getState().setRequireMfaEnrollment(true);
+    mocks.confirm2FA.mockResolvedValueOnce(undefined);
+    mocks.refreshToken.mockResolvedValueOnce({
+      kind: "err",
+      error: new Error("Refresh failed"),
+    });
+
+    const wrapper = createWrapper();
+    const { result } = renderHook(() => useSecurityVaultViewModel(), { wrapper });
+
+    await waitFor(() => expect(result.current.passwordPolicy).toEqual(POLICY));
+
+    await act(async () => {
+      await result.current.confirm2Fa("123456");
+    });
+
+    expect(mocks.refreshToken).toHaveBeenCalledTimes(1);
+    expect(useAppStore.getState().requireMfaEnrollment).toBe(true);
+    expect(mocks.replace).not.toHaveBeenCalled();
+  });
+
+  it("disables /account/context fetching while requireMfaEnrollment is active to prevent 403 retry stalls", async () => {
+    useAppStore.getState().setRequireMfaEnrollment(true);
+    const wrapper = createWrapper();
+    const { result, unmount } = renderHook(() => useSovereignAccountContextSlice(), { wrapper });
+
+    expect(result.current.isLoading).toBe(false);
+    expect(mocks.getContext).not.toHaveBeenCalled();
+    unmount();
+
+    useAppStore.getState().setRequireMfaEnrollment(false);
+    renderHook(() => useSovereignAccountContextSlice(), { wrapper: createWrapper() });
+    await waitFor(() => expect(mocks.getContext).toHaveBeenCalledTimes(1));
   });
 });

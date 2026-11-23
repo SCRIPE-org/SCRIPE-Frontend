@@ -28,6 +28,7 @@ export interface Verify2FAResponseJson {
   accessToken: string;
   expiresAt: string;
   mustChangePassword?: boolean;
+  requireMfaEnrollment?: boolean;
   subscriptionStatus?: string | null;
   gracePhase?: string | null;
   editionName?: string | null;
@@ -76,7 +77,8 @@ export class Verify2FAResponseModel {
     public readonly gracePhase: string | null = null,
     public readonly editionName: string | null = null,
     public readonly userProfile: UserProfileJson | null = null,
-    public readonly defaultRedirectPath: string = "/"
+    public readonly defaultRedirectPath: string = "/",
+    public readonly requireMfaEnrollment: boolean = false
   ) {}
 
   static fromJson(json: Verify2FAResponseJson): Verify2FAResponseModel {
@@ -88,7 +90,8 @@ export class Verify2FAResponseModel {
       json.gracePhase ?? null,
       json.editionName ?? null,
       json.userProfile ?? null,
-      json.defaultRedirectPath ?? "/"
+      json.defaultRedirectPath ?? "/",
+      json.requireMfaEnrollment ?? false
     );
   }
 }

@@ -397,6 +397,7 @@ export class AuthService implements IAuthService {
       gracePhase?: string | null;
       editionName?: string | null;
       mustChangePassword?: boolean;
+      requireMfaEnrollment?: boolean;
     }>(AUTH_CORE_ENDPOINTS.QR_LOGIN.SESSION_STATUS(sessionId));
   }
 

@@ -283,19 +283,8 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
   }, [router]);
 
   return {
-    state,
-    direction,
-    availableWorkspaces,
-    isSelectingWorkspace,
-    workspaceSelectionError,
-    selectWorkspace,
-    twoFactorCode,
-    setTwoFactorCode,
-    useBackupCode,
-    isVerifying2FA,
-    twoFactorError,
-    handleVerify2FA,
-    toggleBackupCode,
-    goBackToLogin,
+    state, direction, availableWorkspaces, isSelectingWorkspace, workspaceSelectionError,
+    selectWorkspace, twoFactorCode, setTwoFactorCode, useBackupCode, isVerifying2FA,
+    twoFactorError, handleVerify2FA, toggleBackupCode, goBackToLogin,
   };
 }

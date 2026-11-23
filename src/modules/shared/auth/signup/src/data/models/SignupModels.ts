@@ -111,6 +111,7 @@ export interface RegisterDto {
   userProfile: Record<string, unknown> | null;
   checkoutUrl: string | null;
   signupRef: string | null;
+  requireMfaEnrollment?: boolean;
 }
 
 // ─── Status / finalize DTOs ───────────────────────────────────────────────────
@@ -143,6 +144,7 @@ export interface CompleteSessionDto {
   tenantName: string;
   redirectUrl: string;
   userProfile: Record<string, unknown> | null;
+  requireMfaEnrollment?: boolean;
 }
 // ─── Pricing context DTOs ─────────────────────────────────────────────────────
 /**

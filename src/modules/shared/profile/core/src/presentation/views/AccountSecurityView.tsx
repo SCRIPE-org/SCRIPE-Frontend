@@ -84,7 +84,8 @@ export function AccountSecurityView() {
   const passkeysPending =
     vm.isLoadingPasskeys && vm.passkeys.length === 0 && !vm.passkeysError;
   const securityPending = isLoadingSecurity && !security && !isSecurityError;
-  const contextPending = Boolean(isLoadingContext) && !principalContext && !isContextError;
+  const contextPending =
+    !vm.requireMfaEnrollment && Boolean(isLoadingContext) && !principalContext && !isContextError;
 
   if (passkeysPending || securityPending || contextPending) {
     return <SecurityPageSkeleton />;

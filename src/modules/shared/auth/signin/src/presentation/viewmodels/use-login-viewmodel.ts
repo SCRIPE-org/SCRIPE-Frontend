@@ -200,14 +200,15 @@ export function useLoginViewModel() {
   const isTrulyAuthenticated =
     redirect.hasHydrated && redirect.isAuthenticated && secureTokenService.hasToken();
   const resolvedTenantQuery = resolveDevTenantCode() ?? queryTenant;
+  const { identifier } = formData;
   const forgotPasswordHref = useMemo(
     () =>
       buildAuthContextUrl("/forgot-password", {
-        email: formData.identifier || undefined,
+        email: identifier || undefined,
         tenantCode: resolvedTenantQuery,
         redirect: queryRedirect,
       }),
-    [formData.identifier, resolvedTenantQuery, queryRedirect]
+    [identifier, resolvedTenantQuery, queryRedirect]
   );
 
   return {

@@ -449,4 +449,31 @@ describe("useSsoCallbackHandlers, useTokenLogin & useQrSignInViewModel (BAM-01, 
     window.history.replaceState({}, "", originalUrl);
     vi.useRealTimers();
   });
+
+  it("handleOidcCallback enforces /account/security?mfa_enroll=true when requireMfaEnrollment=true", async () => {
+    vi.useFakeTimers();
+    const ctx = buildDeps();
+    ctx.getCurrentPrincipal.mockResolvedValueOnce({
+      id: "admin-1",
+      permissions: ["Identity.Users.Read"],
+      roles: ["TenantAdmin"],
+    } as unknown as User);
+    ctx.completeCallback.mockResolvedValueOnce({
+      type: "admin",
+      accessToken: "admin-sso-jwt",
+      mustChangePassword: false,
+      requireMfaEnrollment: true,
+      subscriptionStatus: "PendingPayment",
+    });
+
+    await handleOidcCallback(
+      new URLSearchParams("code=adm-code&state=adm-state"),
+      ctx.deps,
+      ctx.setters
+    );
+    await vi.advanceTimersByTimeAsync(350);
+
+    expect(ctx.redirectTo).toHaveBeenCalledWith("/account/security?mfa_enroll=true");
+    vi.useRealTimers();
+  });
 });

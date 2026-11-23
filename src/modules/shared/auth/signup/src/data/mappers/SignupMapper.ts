@@ -195,6 +195,7 @@ export class SignupMapper {
       user: AuthMapper.userFromUnknown(dto.userProfile),
       checkoutUrl: dto.checkoutUrl ?? null,
       signupRef: dto.signupRef ?? null,
+      requireMfaEnrollment: Boolean(dto.requireMfaEnrollment),
     };
   }
 
@@ -227,6 +228,7 @@ export class SignupMapper {
       tenantName: dto.tenantName,
       redirectUrl: dto.redirectUrl,
       user: AuthMapper.userFromUnknown(dto.userProfile),
+      requireMfaEnrollment: Boolean(dto.requireMfaEnrollment),
     };
   }
 

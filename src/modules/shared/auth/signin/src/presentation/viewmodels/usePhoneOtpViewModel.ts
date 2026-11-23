@@ -135,6 +135,7 @@ export function usePhoneOtpViewModel(
         accessToken: result.accessToken,
         refreshToken: result.refreshToken ?? "",
         mustChangePassword: result.mustChangePassword,
+        requireMfaEnrollment: result.requireMfaEnrollment,
         subscriptionStatus: result.subscriptionStatus,
         gracePhase: result.gracePhase,
         editionName: result.editionName,
