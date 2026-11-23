@@ -88,7 +88,7 @@ export default function SovereignAccountSectionLayout({ children }: { children: 
           featureFlags={accountContext?.featureFlags}
           selectedAcademyId={selectedAcademyId}
           onSwitchAcademy={switchAcademy}
-          isLoading={isLoadingContext && !profile}
+          isLoading={isLoadingContext && !profile && !security}
         >
           <Suspense fallback={<AccountSectionSuspenseFallback />}>{children}</Suspense>
         </ProfileRailLayout>

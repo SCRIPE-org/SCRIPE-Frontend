@@ -24,6 +24,8 @@ import { sovereignAccountKeys } from "@modules/profile/core/src/presentation/uti
 import { AccountSecurityView } from "@modules/profile/core/src/presentation/views/AccountSecurityView";
 import { ProfileRailLayout } from "@modules/profile/core/src/presentation/components/ProfileRailLayout";
 import { ProfileTelemetryHud } from "@modules/profile/core/src/presentation/components/ProfileTelemetryHud";
+import { buildPostureChecklistItems } from "@modules/profile/core/src/presentation/components/ProfilePostureChecklistDialog";
+import type { AdminProfile } from "@modules/profile/core/src/domain/entities/AdminProfile";
 import type { PasswordPolicyModel } from "@core/common/password-policy";
 
 const mocks = vi.hoisted(() => ({
@@ -451,8 +453,19 @@ describe("Account security vault contracts, wizard recovery step, and MFA wall",
 
     await waitFor(() => {
       expect(screen.getByTestId("mfa-enrollment-required-banner")).toBeInTheDocument();
-      expect(screen.getByTestId("mfa-enroll-locked-controls-notice")).toBeInTheDocument();
+      const lockedNotice = screen.getByTestId("mfa-enroll-locked-controls-notice");
+      expect(lockedNotice).toBeInTheDocument();
+      expect(lockedNotice.className).not.toContain("bg-nx-surface-2");
     });
+
+    // Security slice 2FA status overrides stale profile.isTwoFactorEnabled=false in posture checklist fallback
+    const checklistWithStaleProfile = buildPostureChecklistItems(
+      null,
+      { isTwoFactorEnabled: false, email: "karim@ahly.test", phoneNumber: "+201000000000" } as AdminProfile,
+      (key) => key,
+      { isTwoFactorEnabled: true, postureChecklist: [], isPasswordExpired: false }
+    );
+    expect(checklistWithStaleProfile.find((item) => item.key === "totp")?.done).toBe(true);
 
     // Rail renders authentic fallback identity without stuck skeletons
     expect(screen.getByText("Karim Hassan")).toBeInTheDocument();

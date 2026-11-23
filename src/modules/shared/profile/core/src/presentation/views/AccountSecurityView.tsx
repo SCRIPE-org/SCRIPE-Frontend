@@ -22,12 +22,16 @@ import { PasskeyVaultSection } from "../sections/security/PasskeyVaultSection";
 import { SudoSessionCardSection } from "../sections/security/SudoSessionCardSection";
 import { StandaloneTotpSection } from "../sections/security/StandaloneTotpSection";
 import { PasswordRotationSection } from "../sections/security/PasswordRotationSection";
+import {
+  MfaEnrollmentRequiredBanner,
+  MfaLockedControlsNotice,
+} from "../sections/security/MfaEnrollmentNotices";
 import { PasskeyRenameDeleteModals } from "../sections/security/PasskeyRenameDeleteModals";
 import { DisableTwoFactorModal } from "../sections/security/DisableTwoFactorModal";
 import { RegenerateBackupCodesModal } from "../sections/security/RegenerateBackupCodesModal";
 import type { PasskeyCredential } from "../../domain/entities/PasskeyCredential";
 import type { ChangePasswordRequest } from "../../domain/interfaces/IProfileRepository";
-import { AlertCircle, Lock, RefreshCw } from "lucide-react";
+import { AlertCircle, RefreshCw } from "lucide-react";
 
 /**
  * Security vault view (/account/security) composing Passkey Vault, Enterprise SSO,
@@ -134,18 +138,7 @@ export function AccountSecurityView() {
         <p className="text-xs text-nx-ink-3 mt-1">{t("profile.security.subtitle")}</p>
       </div>
 
-      {vm.requireMfaEnrollment && (
-        <Alert
-          variant="warning"
-          data-testid="mfa-enrollment-required-banner"
-        >
-          <AlertCircle className="h-4 w-4" aria-hidden="true" />
-          <AlertDescription className="space-y-0.5 text-xs text-nx-ink">
-            <p className="font-semibold">{t("profile.security.mfaEnrollRequiredTitle")}</p>
-            <p className="text-nx-ink-2">{t("profile.security.mfaEnrollRequiredDesc")}</p>
-          </AlertDescription>
-        </Alert>
-      )}
+      {vm.requireMfaEnrollment && <MfaEnrollmentRequiredBanner t={t} />}
 
       {vm.passkeysError && vm.passkeys.length === 0 && (
         <Alert variant="destructive" data-testid="passkeys-load-error-alert">
@@ -237,17 +230,7 @@ export function AccountSecurityView() {
           />
         </>
       ) : (
-        <Alert
-          variant="info"
-          data-testid="mfa-enroll-locked-controls-notice"
-          className="border-nx-line bg-nx-surface-2"
-        >
-          <Lock className="h-4 w-4 text-nx-ink-2" aria-hidden="true" />
-          <AlertDescription className="space-y-1 text-xs">
-            <p className="font-semibold text-nx-ink">{t("profile.security.mfaEnrollLockedControlsTitle")}</p>
-            <p className="text-nx-ink-2">{t("profile.security.mfaEnrollLockedControlsDesc")}</p>
-          </AlertDescription>
-        </Alert>
+        <MfaLockedControlsNotice t={t} />
       )}
       <EnrollPasskeyModal
         isOpen={isEnrollModalOpen}

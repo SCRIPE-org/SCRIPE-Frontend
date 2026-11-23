@@ -69,7 +69,7 @@ export function buildPostureChecklistItems(
       key: "totp",
       label: t("profile.posture.totp"),
       weight: "+30%",
-      done: Boolean(profile?.isTwoFactorEnabled ?? security?.isTwoFactorEnabled),
+      done: Boolean(security?.isTwoFactorEnabled ?? profile?.isTwoFactorEnabled),
       href: "/account/security",
     },
     {
