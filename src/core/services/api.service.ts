@@ -404,7 +404,10 @@ export class ApiService implements IApiService {
           if (
             (data.errorCode === "Identity.SudoRequired" ||
               data.errorCode === "Identity.SudoExpired" ||
-              data.errorCode === "Identity.SudoSessionMismatch") &&
+              data.errorCode === "Identity.SudoSessionMismatch" ||
+              data.errorCode === "Identity.SudoRevokedOrExpired" ||
+              data.errorCode === "Identity.SudoPolicyDowngradeRefused" ||
+              data.errorCode === "Identity.SudoTokenInvalid") &&
             requestConfig &&
             !requestConfig._sudoRetry &&
             !String(requestConfig.url ?? "").includes("/auth/sudo/")
