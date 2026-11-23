@@ -25,6 +25,13 @@ import { formatUtc } from "@core/common/utils";
 import type { CrudAction } from "@core/crud/components/generic-crud-view";
 import Image from "next/image";
 
+function isSudoCancelledError(error: unknown): boolean {
+  return (
+    error instanceof Error &&
+    /sudo verification was cancelled|sudo session (locked|reset)/i.test(error.message)
+  );
+}
+
 /**
  * Exported constant defining parameters and fields for oauth app keys configurations.
  */
@@ -116,6 +123,7 @@ export function useOAuthAppsViewModel() {
       });
     },
     onError: (err: Error) => {
+      if (isSudoCancelledError(err)) return;
       toastError({
         title: t("common.error"),
         description: err.message,

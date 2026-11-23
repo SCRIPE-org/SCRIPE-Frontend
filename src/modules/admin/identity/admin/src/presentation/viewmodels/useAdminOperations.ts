@@ -20,6 +20,13 @@ import type { AssignRoleRequest, TransferAdminRequest } from "../../domain/entit
 import type { Admin } from "../../domain/entities/Admin";
 import { resolveBilingualLabel } from "@core/common/utils";
 
+function isSudoCancelledError(error: unknown): boolean {
+  return (
+    error instanceof Error &&
+    /sudo verification was cancelled|sudo session (locked|reset)/i.test(error.message)
+  );
+}
+
 /**
  * Parameters for the useAdminOperations hook.
  */
@@ -70,6 +77,7 @@ export function useAdminOperations(params: AdminOperationsParams) {
       if (context?.previous !== undefined) {
         queryClient.setQueryData(queryKey, context.previous);
       }
+      if (isSudoCancelledError(err)) return;
       toastError({ title: t("common.error"), description: err.message });
     },
     onSuccess: (_, { isActive }) => {
@@ -95,6 +103,7 @@ export function useAdminOperations(params: AdminOperationsParams) {
       });
     },
     onError: (err: Error) => {
+      if (isSudoCancelledError(err)) return;
       toastError({ title: t("common.error"), description: err.message });
     },
   });
@@ -118,6 +127,7 @@ export function useAdminOperations(params: AdminOperationsParams) {
       });
     },
     onError: (err: Error) => {
+      if (isSudoCancelledError(err)) return;
       toastError({ title: t("common.error"), description: err.message });
     },
   });
@@ -134,6 +144,7 @@ export function useAdminOperations(params: AdminOperationsParams) {
       });
     },
     onError: (err: Error) => {
+      if (isSudoCancelledError(err)) return;
       toastError({ title: t("common.error"), description: err.message });
     },
   });
@@ -160,6 +171,7 @@ export function useAdminOperations(params: AdminOperationsParams) {
       });
     },
     onError: (err: Error) => {
+      if (isSudoCancelledError(err)) return;
       toastError({ title: t("common.error"), description: err.message });
     },
   });
@@ -181,6 +193,7 @@ export function useAdminOperations(params: AdminOperationsParams) {
       });
     },
     onError: (err: Error) => {
+      if (isSudoCancelledError(err)) return;
       toastError({ title: t("common.error"), description: err.message });
     },
   });
@@ -205,6 +218,7 @@ export function useAdminOperations(params: AdminOperationsParams) {
       });
     },
     onError: (err: Error) => {
+      if (isSudoCancelledError(err)) return;
       toastError({ title: t("common.error"), description: err.message });
     },
   });
@@ -220,6 +234,7 @@ export function useAdminOperations(params: AdminOperationsParams) {
       });
     },
     onError: (err: Error) => {
+      if (isSudoCancelledError(err)) return;
       toastError({ title: t("common.error"), description: err.message });
     },
   });

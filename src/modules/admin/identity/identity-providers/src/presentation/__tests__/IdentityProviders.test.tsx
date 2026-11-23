@@ -21,6 +21,10 @@ import { useAppStore } from "@core/store/useAppStore";
 import { useIdentityProvidersViewModel } from "../viewmodels/useIdentityProvidersViewModel";
 import { TenantIdentityProviderDialog } from "../../../../tenants/src/presentation/components/dialogs/TenantIdentityProviderDialog";
 import type { TenantIdentityProviderDetail } from "../../../../tenants/src/domain/entities/TenantIdentityProvider";
+import { useAdminOperations } from "../../../../admin/src/presentation/viewmodels/useAdminOperations";
+import { useTenantIdentityProvidersViewModel } from "../../../../tenants/src/presentation/viewmodels/useTenantIdentityProvidersViewModel";
+import { useOAuthAppsViewModel } from "../../../../oauth-apps/src/presentation/viewmodels/useOAuthAppsViewModel";
+import { useOAuthAppDetailViewModel } from "../../../../oauth-apps/src/presentation/viewmodels/useOAuthAppDetailViewModel";
 
 const mockGetAll = vi.fn();
 const mockGetById = vi.fn();
@@ -28,8 +32,19 @@ const mockCreate = vi.fn();
 const mockUpdate = vi.fn();
 const mockRemove = vi.fn();
 const mockTestConnection = vi.fn();
+const mockAdminTransferProtection = vi.fn();
+const mockAdminSetActive = vi.fn();
+const mockTenantIdpGetAll = vi.fn();
+const mockTenantIdpGetById = vi.fn();
+const mockTenantIdpCreate = vi.fn();
+const mockTenantIdpUpdate = vi.fn();
+const mockTenantIdpDelete = vi.fn();
+const mockOAuthCreate = vi.fn();
+const mockOAuthRegenSecret = vi.fn();
+const mockOAuthGetAll = vi.fn();
 const mockToastSuccess = vi.fn();
 const mockToastError = vi.fn();
+const mockToast = vi.fn();
 
 vi.mock("@modules/identity/di", () => ({
   identityContainer: {
@@ -41,7 +56,35 @@ vi.mock("@modules/identity/di", () => ({
       remove: (id: string) => mockRemove(id),
       testConnection: (id: string) => mockTestConnection(id),
     },
+    adminRepository: {
+      transferProtection: (payload: unknown) => mockAdminTransferProtection(payload),
+      setActive: (id: string, isActive: boolean) => mockAdminSetActive(id, isActive),
+    },
+    roleRepository: { getAll: vi.fn(), getCurrentTenantRoles: vi.fn() },
+    userGroupRepository: { getAll: vi.fn(), getCurrentTenantGroups: vi.fn() },
+    tenantRepository: {
+      getIdentityProviders: (...args: unknown[]) => mockTenantIdpGetAll(...args),
+      getIdentityProviderById: (...args: unknown[]) => mockTenantIdpGetById(...args),
+      createIdentityProvider: (...args: unknown[]) => mockTenantIdpCreate(...args),
+      updateIdentityProvider: (...args: unknown[]) => mockTenantIdpUpdate(...args),
+      deleteIdentityProvider: (...args: unknown[]) => mockTenantIdpDelete(...args),
+    },
+    oauthAppRepository: {
+      getAll: (...args: unknown[]) => mockOAuthGetAll(...args),
+      create: (...args: unknown[]) => mockOAuthCreate(...args),
+      regenerateSecret: (...args: unknown[]) => mockOAuthRegenSecret(...args),
+    },
   },
+}));
+
+vi.mock("@core/providers/service-provider", () => ({
+  useServices: () => ({
+    authRepository: { getCurrentPrincipal: vi.fn() },
+  }),
+}));
+
+vi.mock("@core/hooks/use-auth-bridge", () => ({
+  useCoreImpersonation: () => ({ startImpersonation: vi.fn(), isImpersonationLoading: false }),
 }));
 
 vi.mock("@core/providers/i18n-provider", () => ({
@@ -63,7 +106,7 @@ vi.mock("@core/hooks/use-enhanced-toast", () => ({
   useEnhancedToast: () => ({
     success: mockToastSuccess,
     error: mockToastError,
-    toast: vi.fn(),
+    toast: mockToast,
   }),
 }));
 
@@ -756,5 +799,93 @@ describe("Identity Providers Admin CRUD, Diagnostics & Callback URLs", () => {
         delete process.env.NEXT_PUBLIC_API_URL;
       }
     }
+  });
+
+  it("suppresses false error toasts on Sudo cancellation across useAdminOperations, useTenantIdentityProvidersViewModel, and OAuth App ViewModels", async () => {
+    const cancelErr = new Error("Sudo verification was cancelled.");
+    mockAdminTransferProtection.mockRejectedValue(cancelErr);
+    mockAdminSetActive.mockRejectedValue(cancelErr);
+    mockTenantIdpGetAll.mockResolvedValue({
+      items: [{ id: "idp-t1", name: "Tenant Okta", isActive: true }],
+      totalCount: 1,
+    });
+    mockTenantIdpCreate.mockRejectedValue(cancelErr);
+    mockTenantIdpGetById.mockResolvedValue({
+      id: "idp-t1",
+      name: "Tenant Okta",
+      slug: "tenant-okta",
+      protocol: "oidc",
+      enabledForAdmins: true,
+      enabledForUsers: false,
+      trustIdpMfa: false,
+      displayOrder: 1,
+      rowVersion: "v1",
+    });
+    mockTenantIdpUpdate.mockRejectedValue(cancelErr);
+    mockTenantIdpDelete.mockRejectedValue(cancelErr);
+    mockOAuthGetAll.mockResolvedValue({ items: [], totalCount: 0 });
+    mockOAuthCreate.mockRejectedValue(cancelErr);
+    mockOAuthRegenSecret.mockRejectedValue(cancelErr);
+
+    const client = new QueryClient({
+      defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
+    });
+    const adminListKey = ["admins", "list"];
+    client.setQueryData(adminListKey, { items: [{ id: "adm-2", isActive: true }] });
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <QueryClientProvider client={client}>{children}</QueryClientProvider>
+    );
+
+    const { result: adminOps } = renderHook(
+      () =>
+        useAdminOperations({
+          queryKey: adminListKey,
+          refreshItems: vi.fn().mockResolvedValue(undefined),
+        }),
+      { wrapper }
+    );
+    const { result: tenantIdpVm } = renderHook(
+      () => useTenantIdentityProvidersViewModel("tenant-1"),
+      { wrapper }
+    );
+    const { result: oauthListVm } = renderHook(() => useOAuthAppsViewModel(), { wrapper });
+    const { result: oauthDetailVm } = renderHook(() => useOAuthAppDetailViewModel(), { wrapper });
+
+    await waitFor(() => expect(tenantIdpVm.current.providers).toHaveLength(1));
+
+    act(() => {
+      adminOps.current.handleTransferProtection("adm-2");
+    });
+    await expect(adminOps.current.handleToggleActive("adm-2", false)).rejects.toThrow(
+      "Sudo verification was cancelled."
+    );
+    await waitFor(() => expect(mockAdminTransferProtection).toHaveBeenCalledTimes(1));
+    expect(client.getQueryData<{ items: Array<{ isActive: boolean }> }>(adminListKey)?.items[0]?.isActive).toBe(true);
+
+    await expect(
+      tenantIdpVm.current.saveProvider({ name: "X", slug: "x", protocol: "oidc" } as never)
+    ).rejects.toThrow("Sudo verification was cancelled.");
+    await act(async () => {
+      await tenantIdpVm.current.toggleActive(tenantIdpVm.current.providers[0], false);
+    });
+    expect(tenantIdpVm.current.providers[0].isActive).toBe(true);
+    act(() => {
+      tenantIdpVm.current.setDeleteTarget(tenantIdpVm.current.providers[0]);
+    });
+    await expect(tenantIdpVm.current.confirmDelete()).rejects.toThrow(
+      "Sudo verification was cancelled."
+    );
+
+    act(() => {
+      oauthListVm.current.handleRegenerateSecret("app-1");
+      oauthDetailVm.current.save();
+    });
+
+    await waitFor(() => {
+      expect(mockOAuthRegenSecret).toHaveBeenCalledWith("app-1");
+      expect(mockOAuthCreate).toHaveBeenCalledTimes(1);
+    });
+    expect(mockToastError).not.toHaveBeenCalled();
+    expect(mockToast).not.toHaveBeenCalled();
   });
 });
