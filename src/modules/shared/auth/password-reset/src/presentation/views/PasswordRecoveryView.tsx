@@ -58,7 +58,6 @@ export function PasswordRecoveryView({ mode }: PasswordRecoveryViewProps) {
   const vm = usePasswordRecoveryViewModel({
     mode,
     tenantId,
-    tenantCode: branding?.code ?? null,
     brandingPolicy: branding?.passwordPolicy ?? null,
     fallbackErrorMessage: mode === "reset" ? t("auth.resetFailed") : t("auth.resetPasswordFailedError"),
   });

@@ -58,6 +58,9 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
   const { isPlatformSuperAdmin } = usePermissions();
   const currentUser = useAppStore((state) => state.user);
 
+  // Role/Password dialog state (declared prior to ViewModel so dialog password policy scopes to the selected admin's tenant)
+  const [selectedAdminForAction, setSelectedAdminForAction] = useState<Admin | null>(null);
+
   // Use current-tenant admins if not platform super admin (Tenant Admin mode)
   // Platform Super Admins outside drill-down use the standard endpoint
   const {
@@ -84,16 +87,18 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
     isResendingSetupEmail,
     handleManualSetup,
     isManualSettingUp,
-    passwordPolicy,
-    isPasswordPolicyLoading,
-    passwordPolicyError,
-    retryPasswordPolicy,
-  } = useAdminsViewModel({ useMyTenant: !isPlatformSuperAdmin, tenantId });
+    dialogPasswordPolicy,
+    isDialogPasswordPolicyLoading,
+    dialogPasswordPolicyError,
+    retryDialogPasswordPolicy,
+  } = useAdminsViewModel({
+    useMyTenant: !isPlatformSuperAdmin,
+    tenantId,
+    actionTenantId: selectedAdminForAction?.tenantId ?? tenantId,
+  });
 
   const configBase = getConfigBase();
 
-  // Role/Password dialog state
-  const [selectedAdminForAction, setSelectedAdminForAction] = useState<Admin | null>(null);
   const [manageRolesDialogOpen, setManageRolesDialogOpen] = useState(false);
   const [resetPasswordDialogOpen, setResetPasswordDialogOpen] = useState(false);
   const [manualSetupDialogOpen, setManualSetupDialogOpen] = useState(false);
@@ -506,10 +511,10 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
         admin={selectedAdminForAction}
         onResetPassword={onResetPasswordSubmit}
         isLoading={isResettingPassword}
-        passwordPolicy={passwordPolicy}
-        isPasswordPolicyLoading={isPasswordPolicyLoading}
-        passwordPolicyError={passwordPolicyError}
-        onRetryPasswordPolicy={retryPasswordPolicy}
+        passwordPolicy={dialogPasswordPolicy}
+        isPasswordPolicyLoading={isDialogPasswordPolicyLoading}
+        passwordPolicyError={dialogPasswordPolicyError}
+        onRetryPasswordPolicy={retryDialogPasswordPolicy}
       />
 
       <ManualSetupDialog
@@ -518,10 +523,10 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
         admin={selectedAdminForAction}
         onManualSetup={onManualSetupSubmit}
         isLoading={isManualSettingUp}
-        passwordPolicy={passwordPolicy}
-        isPasswordPolicyLoading={isPasswordPolicyLoading}
-        passwordPolicyError={passwordPolicyError}
-        onRetryPasswordPolicy={retryPasswordPolicy}
+        passwordPolicy={dialogPasswordPolicy}
+        isPasswordPolicyLoading={isDialogPasswordPolicyLoading}
+        passwordPolicyError={dialogPasswordPolicyError}
+        onRetryPasswordPolicy={retryDialogPasswordPolicy}
       />
 
       <AdminTransferDialog

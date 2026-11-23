@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useServices } from "@core/providers/service-provider";
 import { useAppStore } from "@core/store/useAppStore";
 import { secureTokenService } from "@core/common/secure-token-service";
 import { authContainer } from "@modules/auth/di";
@@ -295,6 +296,7 @@ export function useSignupWizard(args?: UseSignupWizardArgs): SignupWizardViewMod
   const { language, t } = useI18n();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { authRepository } = useServices();
 
   const [phase, setPhase] = useState<SignupPhase>("welcome");
   const [navigationDirection, setNavigationDirection] = useState<NavigationDirection>(1);
@@ -379,7 +381,7 @@ export function useSignupWizard(args?: UseSignupWizardArgs): SignupWizardViewMod
     refetch: refetchPasswordPolicy,
   } = useQuery({
     queryKey: ["signup-password-policy"],
-    queryFn: () => authContainer.authRepository.getPasswordPolicy({ isPublic: true }),
+    queryFn: () => authRepository.getPasswordPolicy({ isPublic: true }),
     staleTime: 10 * 60 * 1000,
     retry: false,
   });

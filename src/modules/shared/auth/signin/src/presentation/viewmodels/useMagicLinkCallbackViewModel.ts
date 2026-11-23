@@ -13,6 +13,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useServices } from "@core/providers/service-provider";
 import { useAppStore } from "@core/store/useAppStore";
+import { extractAndScrubMagicLinkToken } from "../utils/magicLinkUrl";
 import type { User } from "@modules/auth/core/domain/entities/User";
 import type { WorkspaceChoice } from "@modules/auth/core/domain/errors/AuthErrors";
 import type { AdminRole, PermissionCode } from "@core/common/types/permissions";
@@ -47,6 +48,7 @@ export interface UseMagicLinkCallbackViewModelReturn {
 interface SessionPayload {
   user: User;
   mustChangePassword?: boolean;
+  requireMfaEnrollment?: boolean;
   subscriptionStatus?: string | null;
   gracePhase?: string | null;
   editionName?: string | null;
@@ -65,6 +67,7 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
   const setAuth = useAppStore((state) => state.setAuth);
   const setSubscriptionInfo = useAppStore((state) => state.setSubscriptionInfo);
   const setMustChangePassword = useAppStore((state) => state.setMustChangePassword);
+  const setRequireMfaEnrollment = useAppStore((state) => state.setRequireMfaEnrollment);
   const setDefaultRedirectPath = useAppStore((state) => state.setDefaultRedirectPath);
   const { authRepository } = useServices();
   const authRepositoryRef = useRef(authRepository);
@@ -104,8 +107,10 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
   const hydrateAndRedirect = useCallback(
     (payload: SessionPayload, delayMs: number, isCancelled?: () => boolean) => {
       const mustChange = Boolean(payload.mustChangePassword);
+      const requireMfa = Boolean(payload.requireMfaEnrollment);
       const targetPath = buildPostAuthEntryUrl({
         mustChangePassword: mustChange,
+        requireMfaEnrollment: requireMfa,
         subscriptionStatus: payload.subscriptionStatus,
         redirect: queryRedirect,
       });
@@ -125,8 +130,9 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
           payload.editionName ?? null
         );
         setMustChangePassword(mustChange);
+        setRequireMfaEnrollment?.(requireMfa);
         setDefaultRedirectPath("/");
-        if (!mustChange && payload.subscriptionStatus !== "PendingPayment") {
+        if (!mustChange && !requireMfa && payload.subscriptionStatus !== "PendingPayment") {
           queryClient.invalidateQueries();
         }
         if (targetPath.startsWith("http://") || targetPath.startsWith("https://")) {
@@ -143,6 +149,7 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
       setAuth,
       setSubscriptionInfo,
       setMustChangePassword,
+      setRequireMfaEnrollment,
       setDefaultRedirectPath,
       queryClient,
       router,
@@ -155,34 +162,7 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
   hydrateAndRedirectRef.current = hydrateAndRedirect;
 
   useEffect(() => {
-    let resolvedToken = queryToken;
-    if (typeof window !== "undefined") {
-      const url = new URL(window.location.href);
-      let mutated = false;
-      if (url.searchParams.has("token")) {
-        url.searchParams.delete("token");
-        mutated = true;
-      }
-      if (url.hash) {
-        const hashParams = new URLSearchParams(
-          url.hash.startsWith("#") ? url.hash.slice(1) : url.hash
-        );
-        const hashToken = (hashParams.get("token") || "").trim();
-        if (!resolvedToken && hashToken) {
-          resolvedToken = hashToken;
-        }
-        if (hashParams.has("token")) {
-          hashParams.delete("token");
-          const remainingHash = hashParams.toString();
-          url.hash = remainingHash ? `#${remainingHash}` : "";
-          mutated = true;
-        }
-      }
-      if (mutated) {
-        window.history.replaceState({}, document.title, `${url.pathname}${url.search}${url.hash}`);
-      }
-    }
-
+    const resolvedToken = extractAndScrubMagicLinkToken(queryToken);
     if (resolvedToken) {
       setToken(resolvedToken);
     }

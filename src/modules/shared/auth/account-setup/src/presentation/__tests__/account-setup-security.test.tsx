@@ -55,7 +55,7 @@ describe("Account setup security, mapper policy & URL hygiene", () => {
   it("maps legacy setup DTO without forcing passwordRequireSpecial or lowercase when omitted", () => {
     const entity = AccountSetupMapper.toTokenInfoEntity({
       isValid: true,
-      adminEmail: "ops@club.test",
+      email: "ops@club.test",
       adminUsername: "ops",
       tenantName: "Club",
       tenantCode: "club",
@@ -84,7 +84,7 @@ describe("Account setup security, mapper policy & URL hygiene", () => {
     mockValidateToken.mockResolvedValue(
       new SetupTokenInfo({
         isValid: true,
-        adminEmail: "ops@club.test",
+        email: "ops@club.test",
         adminUsername: "ops",
         tenantName: "Club",
         tenantCode: "club",

@@ -2,9 +2,8 @@
  * usePasswordRecoveryViewModel — Consolidated state machine for `/forgot-password`
  * and `/reset-password` recovery flows.
  *
- * SSR-safe (`#token=` fragments extracted & scrubbed after hydration), React 19 compiler-safe,
- * fail-closed on PasswordPolicy, anti-enumeration on request while surfacing 429/network errors,
- * and guarantees full client+server session purge on active-session sign-out and reset completion.
+ * Delegates policy/cooldown/session-purge to `useRecoveryPolicyAndSession` and
+ * pure URL/error utilities to `recovery-helpers`.
  *
  * @module auth/password-reset/presentation/viewmodels
  */
@@ -13,12 +12,10 @@
 import type { FormEvent } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useQueryClient } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useServices } from "@core/providers/service-provider";
 import { useAppStore } from "@core/store/useAppStore";
 import { secureTokenService } from "@core/common/secure-token-service";
-import { authBroadcast } from "@core/common/broadcast-auth";
 import { isSafeRedirectTarget } from "@core/common/redirect-safety";
 import {
   DEFAULT_PASSWORD_MAX_LENGTH,
@@ -38,6 +35,7 @@ import {
   type RecoveryUrlContext,
   type ResetMethod,
 } from "../utils/recovery-helpers";
+import { useRecoveryPolicyAndSession } from "./useRecoveryPolicyAndSession";
 
 export {
   buildRecoveryNavigationUrl,
@@ -134,28 +132,30 @@ export interface UsePasswordRecoveryViewModelReturn {
 export function usePasswordRecoveryViewModel(
   options: UsePasswordRecoveryOptions
 ): UsePasswordRecoveryViewModelReturn {
-  const { mode, tenantId, brandingPolicy, fallbackErrorMessage } = options;
+  const {
+    mode,
+    tenantId,
+    tenantCode: optionTenantCode,
+    brandingPolicy,
+    initialEmail,
+    initialOtp,
+    initialMethod,
+    fallbackErrorMessage,
+  } = options;
   const router = useRouter();
   const searchParams = useSearchParams();
-  const queryClient = useQueryClient();
   const { t } = useI18n();
-  const { passwordResetRepository, authRepository } = useServices();
+  const { passwordResetRepository } = useServices();
 
   const repoRef = useRef(passwordResetRepository);
   repoRef.current = passwordResetRepository;
-  const authRepoRef = useRef(authRepository);
-  authRepoRef.current = authRepository;
   const tRef = useRef(t);
   tRef.current = t;
-
-  const isAuthenticated = useAppStore((s) => s.isAuthenticated);
-  const hasHydrated = useAppStore((s) => s._hasHydrated);
-  const storeUser = useAppStore((s) => s.user);
   const storeTenantCode = useAppStore((s) => s.tenantCode);
 
-  const queryEmail = (options.initialEmail || searchParams?.get("email") || "").trim();
+  const queryEmail = (initialEmail || searchParams?.get("email") || "").trim();
   const queryOtp = (
-    options.initialOtp ||
+    initialOtp ||
     searchParams?.get("otp") ||
     searchParams?.get("code") ||
     searchParams?.get("token") ||
@@ -163,10 +163,8 @@ export function usePasswordRecoveryViewModel(
   ).trim();
   const queryMethodRaw = searchParams?.get("method")?.trim();
   const queryMethod: ResetMethod =
-    options.initialMethod ??
-    (queryMethodRaw === "magic-link" ? "magic-link" : "otp");
+    initialMethod ?? (queryMethodRaw === "magic-link" ? "magic-link" : "otp");
 
-  // Deterministic SSR + initial client render (hash fragments resolved post-mount to avoid hydration mismatch)
   const [step, setStep] = useState<PasswordRecoveryStep>(
     mode === "reset" ? "verifying-link" : "request"
   );
@@ -181,20 +179,9 @@ export function usePasswordRecoveryViewModel(
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [cooldown, setCooldown] = useState(0);
   const [workspaces, setWorkspaces] = useState<WorkspaceOption[]>([]);
   const [selectedWorkspaces, setSelectedWorkspaces] = useState<WorkspaceOption[]>([]);
   const [verifyPolicy, setVerifyPolicy] = useState<PasswordPolicyModel | null>(null);
-  const [fetchedPolicy, setFetchedPolicy] = useState<PasswordPolicyModel | null>(null);
-  const [isPolicyLoading, setIsPolicyLoading] = useState(false);
-  const [policyError, setPolicyError] = useState<string | null>(null);
-  const [policyRetrySeed, setPolicyRetrySeed] = useState(0);
-  const [sessionDismissed, setSessionDismissed] = useState(false);
-  const [isSigningOutSession, setIsSigningOutSession] = useState(false);
-
-  const cooldownRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const mountedRecoveryRef = useRef(false);
-  const resetCredentialMethodRef = useRef<ResetMethod>(queryMethod);
 
   const rawQueryTenant = searchParams?.get("_tenant")?.trim();
   const [urlTenantCode, setUrlTenantCode] = useState<string | undefined>(
@@ -207,111 +194,24 @@ export function usePasswordRecoveryViewModel(
 
   const effectiveTenantCode =
     urlTenantCode ||
-    (options.tenantCode ? options.tenantCode.toUpperCase() : undefined) ||
+    (optionTenantCode ? optionTenantCode.toUpperCase() : undefined) ||
     storeTenantCode ||
     undefined;
 
-  const hasActiveSession =
-    !sessionDismissed && hasHydrated && isAuthenticated && secureTokenService.hasToken();
-  const activeSessionEmail = storeUser?.email || storeUser?.username || "";
+  const mountedRecoveryRef = useRef(false);
+  const resetCredentialMethodRef = useRef<ResetMethod>(queryMethod);
 
-  useEffect(() => {
-    return () => {
-      if (cooldownRef.current) {
-        clearInterval(cooldownRef.current);
-        cooldownRef.current = null;
-      }
-    };
-  }, []);
+  const policySession = useRecoveryPolicyAndSession({
+    step,
+    selectedWorkspaces,
+    verifyPolicy,
+    brandingPolicy,
+    tenantId,
+    effectiveTenantCode,
+  });
+  const { startCooldown, clearCooldown, effectivePolicy, purgeClientAndServerSession } =
+    policySession;
 
-  const startCooldown = useCallback((seconds: number) => {
-    const safeSeconds = Math.max(1, Math.ceil(seconds));
-    setCooldown(safeSeconds);
-    if (cooldownRef.current) clearInterval(cooldownRef.current);
-    cooldownRef.current = setInterval(() => {
-      setCooldown((c) => {
-        if (c <= 1) {
-          if (cooldownRef.current) {
-            clearInterval(cooldownRef.current);
-            cooldownRef.current = null;
-          }
-          return 0;
-        }
-        return c - 1;
-      });
-    }, 1000);
-  }, []);
-
-  const purgeClientAndServerSession = useCallback(
-    async (callServerLogout: boolean) => {
-      if (callServerLogout || secureTokenService.hasToken() || useAppStore.getState().isAuthenticated) {
-        try {
-          await authRepoRef.current.logout();
-        } catch {
-          // Local cleanup still runs deterministically below.
-        }
-      }
-      authRepoRef.current.clearSessionOnLoginMount();
-      useAppStore.getState().logout();
-      queryClient.clear();
-      authBroadcast.broadcastLogout();
-      setSessionDismissed(true);
-    },
-    [queryClient]
-  );
-
-  const signOutActiveSession = useCallback(async () => {
-    setIsSigningOutSession(true);
-    try {
-      await purgeClientAndServerSession(true);
-    } finally {
-      setIsSigningOutSession(false);
-    }
-  }, [purgeClientAndServerSession]);
-
-  const returnToDashboard = useCallback(() => {
-    router.replace("/");
-  }, [router]);
-
-  const effectivePolicy =
-    mergePasswordPolicies(selectedWorkspaces.map((w) => w.passwordPolicy)) ??
-    verifyPolicy ??
-    normalizePolicyInput(brandingPolicy) ??
-    fetchedPolicy;
-
-  const targetPolicyTenantId =
-    selectedWorkspaces.length === 1 ? selectedWorkspaces[0].tenantId : tenantId ?? undefined;
-
-  useEffect(() => {
-    if (step !== "new-password" || effectivePolicy) return;
-    let cancelled = false;
-    (async () => {
-      setIsPolicyLoading(true);
-      setPolicyError(null);
-      try {
-        const fetched = await authRepoRef.current.getPasswordPolicy({
-          isPublic: true,
-          tenantId: targetPolicyTenantId,
-          tenantCode: effectiveTenantCode,
-        });
-        if (!cancelled) setFetchedPolicy(fetched);
-      } catch {
-        if (!cancelled) setPolicyError(tRef.current("auth.recoveryPolicyLoadError"));
-      } finally {
-        if (!cancelled) setIsPolicyLoading(false);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [step, effectivePolicy, targetPolicyTenantId, effectiveTenantCode, policyRetrySeed]);
-
-  const retryPolicy = useCallback(() => {
-    setPolicyError(null);
-    setPolicyRetrySeed((n) => n + 1);
-  }, []);
-
-  // Client mount: extract `#token=` fragment + query fallbacks, scrub URL immediately, and verify link in reset mode
   useEffect(() => {
     if (mountedRecoveryRef.current) return;
     mountedRecoveryRef.current = true;
@@ -327,17 +227,17 @@ export function usePasswordRecoveryViewModel(
     if (urlCtx?.tenantCode) setUrlTenantCode(urlCtx.tenantCode);
     if (urlCtx?.redirect) setSafeRedirectState(urlCtx.redirect);
 
-    const resolvedEmail = (options.initialEmail || urlCtx?.email || queryEmail).trim();
-    const resolvedCredential = (options.initialOtp || urlCtx?.otp || queryOtp).trim();
+    const resolvedEmail = (initialEmail || urlCtx?.email || queryEmail).trim();
+    const resolvedCredential = (initialOtp || urlCtx?.otp || queryOtp).trim();
     const detectedMethod: ResetMethod =
-      options.initialMethod ??
+      initialMethod ??
       urlCtx?.method ??
       (urlCtx?.token && urlCtx.token === resolvedCredential ? "magic-link" : "otp");
 
     resetCredentialMethodRef.current = detectedMethod;
     if (resolvedEmail) setEmail(resolvedEmail);
     if (resolvedCredential) setOtp(resolvedCredential);
-    if (detectedMethod) setMethod(detectedMethod);
+    setMethod(detectedMethod);
 
     if (mode !== "reset") return;
     if (!resolvedCredential || !resolvedEmail) {
@@ -359,7 +259,6 @@ export function usePasswordRecoveryViewModel(
         }
         if (result.resetGrantToken) setResetGrantToken(result.resetGrantToken);
         if (result.passwordPolicy) setVerifyPolicy(normalizePolicyInput(result.passwordPolicy));
-
         if (result.workspaces && result.workspaces.length > 1) {
           setWorkspaces(result.workspaces);
           setSelectedWorkspaces(result.workspaces);
@@ -379,7 +278,7 @@ export function usePasswordRecoveryViewModel(
     return () => {
       cancelled = true;
     };
-  }, [mode, options.initialEmail, options.initialOtp, options.initialMethod, queryEmail, queryOtp, tenantId]);
+  }, [mode, initialEmail, initialOtp, initialMethod, queryEmail, queryOtp, tenantId]);
 
   const submitEmail = useCallback(
     async (e?: FormEvent) => {
@@ -445,18 +344,14 @@ export function usePasswordRecoveryViewModel(
         }
         if (result.resetGrantToken) setResetGrantToken(result.resetGrantToken);
         if (result.passwordPolicy) setVerifyPolicy(normalizePolicyInput(result.passwordPolicy));
-
         if (result.workspaces && result.workspaces.length > 1) {
           setWorkspaces(result.workspaces);
           setSelectedWorkspaces(result.workspaces);
           setStep("workspaces");
-        } else if (result.workspaces && result.workspaces.length === 1) {
-          setWorkspaces(result.workspaces);
-          setSelectedWorkspaces(result.workspaces);
-          setStep("new-password");
         } else {
-          setWorkspaces([]);
-          setSelectedWorkspaces([]);
+          const single = result.workspaces?.length === 1 ? result.workspaces : [];
+          setWorkspaces(single);
+          setSelectedWorkspaces(single);
           setStep("new-password");
         }
       } catch (err) {
@@ -490,11 +385,12 @@ export function usePasswordRecoveryViewModel(
     setSelectedWorkspaces([]);
   }, []);
 
+  const selectedWorkspacesCount = selectedWorkspaces.length;
   const confirmWorkspaceSelection = useCallback(() => {
-    if (selectedWorkspaces.length === 0) return;
+    if (selectedWorkspacesCount === 0) return;
     setError("");
     setStep("new-password");
-  }, [selectedWorkspaces.length]);
+  }, [selectedWorkspacesCount]);
 
   const passwordsMatch = newPassword === confirmPassword && confirmPassword.length > 0;
   const policyEvaluation = effectivePolicy
@@ -506,7 +402,7 @@ export function usePasswordRecoveryViewModel(
       newPassword.length <= (effectivePolicy.maxLength || DEFAULT_PASSWORD_MAX_LENGTH) &&
       passwordsMatch &&
       !isLoading &&
-      !isPolicyLoading
+      !policySession.isPolicyLoading
   );
 
   const submitNewPassword = useCallback(
@@ -555,7 +451,7 @@ export function usePasswordRecoveryViewModel(
   );
 
   const resendCode = useCallback(async () => {
-    if (cooldown > 0 || isLoading) return;
+    if (policySession.cooldown > 0 || isLoading) return;
     setIsLoading(true);
     setError("");
     try {
@@ -574,7 +470,7 @@ export function usePasswordRecoveryViewModel(
     } finally {
       setIsLoading(false);
     }
-  }, [cooldown, isLoading, email, tenantId, startCooldown]);
+  }, [policySession.cooldown, isLoading, email, tenantId, startCooldown]);
 
   const loginHref = buildRecoveryNavigationUrl("/login", {
     email: step === "success" && successReason === "password-reset" ? email : undefined,
@@ -599,30 +495,17 @@ export function usePasswordRecoveryViewModel(
   const workspaceCount = workspaces.length;
   const goBack = useCallback(() => {
     setError("");
-    switch (step) {
-      case "method":
-        setStep("request");
-        break;
-      case "otp":
-        setStep("method");
-        break;
-      case "workspaces":
-        setStep("otp");
-        break;
-      case "new-password":
-        if (workspaceCount > 1) setStep("workspaces");
-        else if (mode === "forgot") setStep("otp");
-        break;
-      default:
-        setStep("request");
-    }
+    if (step === "method") setStep("request");
+    else if (step === "otp") setStep("method");
+    else if (step === "workspaces") setStep("otp");
+    else if (step === "new-password") {
+      if (workspaceCount > 1) setStep("workspaces");
+      else if (mode === "forgot") setStep("otp");
+    } else setStep("request");
   }, [step, workspaceCount, mode]);
 
   const restart = useCallback(() => {
-    if (cooldownRef.current) {
-      clearInterval(cooldownRef.current);
-      cooldownRef.current = null;
-    }
+    clearCooldown();
     setStep("request");
     setEmail("");
     setOtp("");
@@ -630,12 +513,11 @@ export function usePasswordRecoveryViewModel(
     setNewPassword("");
     setConfirmPassword("");
     setError("");
-    setCooldown(0);
     setWorkspaces([]);
     setSelectedWorkspaces([]);
     setVerifyPolicy(null);
-    setPolicyError(null);
-  }, []);
+    policySession.setPolicyError(null);
+  }, [clearCooldown, policySession]);
 
   return {
     mode,
@@ -649,24 +531,24 @@ export function usePasswordRecoveryViewModel(
     confirmPassword,
     isLoading,
     error,
-    cooldown,
+    cooldown: policySession.cooldown,
     workspaces,
     selectedWorkspaces,
     selectedWorkspace: selectedWorkspaces[0] ?? null,
-    allSelected: workspaceCount > 0 && selectedWorkspaces.length === workspaceCount,
+    allSelected: workspaceCount > 0 && selectedWorkspacesCount === workspaceCount,
     effectivePolicy,
-    isPolicyLoading,
-    policyError,
-    retryPolicy,
+    isPolicyLoading: policySession.isPolicyLoading,
+    policyError: policySession.policyError,
+    retryPolicy: policySession.retryPolicy,
     tenantCode: effectiveTenantCode,
     safeRedirect: safeRedirectState,
     loginHref,
     forgotPasswordHref,
-    hasActiveSession,
-    activeSessionEmail,
-    isSigningOutSession,
-    signOutActiveSession,
-    returnToDashboard,
+    hasActiveSession: policySession.hasActiveSession,
+    activeSessionEmail: policySession.activeSessionEmail,
+    isSigningOutSession: policySession.isSigningOutSession,
+    signOutActiveSession: policySession.signOutActiveSession,
+    returnToDashboard: policySession.returnToDashboard,
     goToLogin,
     setEmail,
     setOtp,
@@ -686,7 +568,7 @@ export function usePasswordRecoveryViewModel(
     canSubmitEmail: email.trim().length > 3 && email.includes("@"),
     canSubmitOtp: otp.length === 6,
     canSubmitNewPassword,
-    canConfirmWorkspaces: selectedWorkspaces.length > 0,
+    canConfirmWorkspaces: selectedWorkspacesCount > 0,
     passwordsMatch,
   };
 }

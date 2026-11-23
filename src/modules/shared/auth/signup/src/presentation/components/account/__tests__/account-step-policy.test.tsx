@@ -5,6 +5,7 @@ import "@testing-library/jest-dom";
 import { SignupThemeProvider } from "@core/providers/signup-theme";
 import type { PasswordPolicyModel } from "@core/common/password-policy";
 import { AccountStep } from "../AccountStep";
+import { INITIAL_WIZARD_DATA } from "../../../../domain/constants/signupConstants";
 import type { SignupWizardViewModel } from "../../../viewmodels/useSignupWizard";
 
 vi.mock("@core/providers/i18n-provider", () => ({
@@ -46,14 +47,15 @@ function buildMockWizard(overrides?: Partial<SignupWizardViewModel>): SignupWiza
     selectedPlan: null,
     selectedBillingCycle: "annual",
     wizardData: {
+      ...INITIAL_WIZARD_DATA,
       fullName: "Jane Doe",
       email: "jane@acme.test",
       password: "",
       acceptTerms: true,
       marketingOptIn: false,
-      organizationName: "",
+      workspaceName: "",
       subdomain: "",
-      adminUsername: "",
+      username: "",
       defaultLocale: "en",
       currency: "USD",
       region: "US",

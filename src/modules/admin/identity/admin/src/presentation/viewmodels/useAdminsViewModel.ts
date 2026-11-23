@@ -30,6 +30,8 @@ interface AdminsViewModelOptions {
   tenantId?: string;
   /** If true, uses /admins/current-tenant endpoint */
   useMyTenant?: boolean;
+  /** Optional target admin tenant ID for scoped reset/setup password policy resolution */
+  actionTenantId?: string | null;
 }
 
 /**
@@ -41,7 +43,7 @@ interface AdminsViewModelOptions {
  * @returns State properties, mutation handles, and dialog configurations.
  */
 export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
-  const { tenantId: propTenantId, useMyTenant } = options;
+  const { tenantId: propTenantId, useMyTenant, actionTenantId } = options;
   const contextTenantId = useCurrentTenantId();
 
   // Use prop tenantId if provided (Priority 1)
@@ -165,6 +167,41 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
     void refetchPasswordPolicy();
   }, [refetchPasswordPolicy]);
 
+  const resolvedActionTenantId = actionTenantId ?? tenantId;
+  const needsDistinctActionPolicy = Boolean(
+    resolvedActionTenantId && resolvedActionTenantId !== tenantId
+  );
+
+  const {
+    data: distinctActionPolicy = null,
+    isLoading: isDistinctActionPolicyLoading,
+    isError: isDistinctActionPolicyError,
+    refetch: refetchDistinctActionPolicy,
+  } = useQuery({
+    queryKey: ["admins", "password-policy", resolvedActionTenantId ?? "system"],
+    queryFn: () => adminRepository.getPasswordPolicy(resolvedActionTenantId),
+    enabled: needsDistinctActionPolicy,
+    staleTime: 5 * 60 * 1000,
+    retry: false,
+  });
+
+  const dialogPasswordPolicy = needsDistinctActionPolicy ? distinctActionPolicy : passwordPolicy;
+  const isDialogPasswordPolicyLoading = needsDistinctActionPolicy
+    ? isDistinctActionPolicyLoading
+    : isPasswordPolicyLoading;
+  const dialogPasswordPolicyError = needsDistinctActionPolicy
+    ? isDistinctActionPolicyError
+      ? t("common.passwordPolicy.loadFailed")
+      : null
+    : passwordPolicyError;
+  const retryDialogPasswordPolicy = useCallback(() => {
+    if (needsDistinctActionPolicy) {
+      void refetchDistinctActionPolicy();
+      return;
+    }
+    void refetchPasswordPolicy();
+  }, [needsDistinctActionPolicy, refetchDistinctActionPolicy, refetchPasswordPolicy]);
+
   // ============ Config Fields & Values ============
   const fieldsConfig = useAdminFieldsConfig(
     t,
@@ -206,6 +243,10 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
     isPasswordPolicyLoading,
     passwordPolicyError,
     retryPasswordPolicy,
+    dialogPasswordPolicy,
+    isDialogPasswordPolicyLoading,
+    dialogPasswordPolicyError,
+    retryDialogPasswordPolicy,
     ...operations,
   };
 }

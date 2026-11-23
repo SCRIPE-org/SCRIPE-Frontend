@@ -76,12 +76,11 @@ describe("OTP input standardization onto @core/ui/otp-input-field", () => {
         setTwoFactorCode={setTwoFactorCode}
         isVerifying2FA={false}
         useBackupCode={false}
-        setUseBackupCode={vi.fn()}
+        toggleBackupCode={vi.fn()}
         error=""
-        shakeKey={0}
         isRTL={false}
         handleVerify2FA={vi.fn()}
-        handleBack={vi.fn()}
+        goBackToCredentials={vi.fn()}
       />
     );
 
