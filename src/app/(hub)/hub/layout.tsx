@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { AuthenticatedShellFrame } from "@core/ui/layout/shared";
+import { SudoVerificationModal } from "@modules/profile/core/src/presentation/components/SudoVerificationModal";
 import { HubLaunchpadFallback } from "./hub-launchpad-fallback";
 
 /**
@@ -9,6 +10,7 @@ export default function HubLaunchpadLayout({ children }: { children: React.React
   return (
     <AuthenticatedShellFrame>
       <Suspense fallback={<HubLaunchpadFallback />}>{children}</Suspense>
+      <SudoVerificationModal />
     </AuthenticatedShellFrame>
   );
 }

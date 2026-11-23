@@ -10,7 +10,13 @@
  * when the studio loads directly (e.g. via bookmark to /customizer).
  */
 import { TenantBrandingProvider } from "@core/providers/tenant-branding-provider";
+import { SudoVerificationModal } from "@modules/profile/core/src/presentation/components/SudoVerificationModal";
 
 export default function StudioLayout({ children }: { children: React.ReactNode }) {
-  return <TenantBrandingProvider>{children}</TenantBrandingProvider>;
+  return (
+    <TenantBrandingProvider>
+      {children}
+      <SudoVerificationModal />
+    </TenantBrandingProvider>
+  );
 }

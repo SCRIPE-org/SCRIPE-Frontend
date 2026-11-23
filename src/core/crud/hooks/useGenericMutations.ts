@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { QueryKey } from "@core/common/query-keys";
+import { isSudoCancelledError } from "@core/store/useSudoStore";
 
 interface MutationOptions<T> {
   /** Additional query keys to invalidate on any success */
@@ -89,7 +90,9 @@ export function useGenericMutations<T extends { id: string }, TCreate = unknown,
       options?.onSuccess?.(data);
     },
     onError: (error: Error) => {
-      operationError("Create", undefined, error.message || t("common.messages.createFailed"));
+      if (!isSudoCancelledError(error)) {
+        operationError("Create", undefined, error.message || t("common.messages.createFailed"));
+      }
       options?.onError?.(error);
     },
   });
@@ -109,7 +112,9 @@ export function useGenericMutations<T extends { id: string }, TCreate = unknown,
       options?.onSuccess?.(data);
     },
     onError: (error: Error) => {
-      operationError("Update", undefined, error.message || t("common.messages.updateFailed"));
+      if (!isSudoCancelledError(error)) {
+        operationError("Update", undefined, error.message || t("common.messages.updateFailed"));
+      }
       options?.onError?.(error);
     },
   });
@@ -142,19 +147,23 @@ export function useGenericMutations<T extends { id: string }, TCreate = unknown,
         }
       : undefined,
     onError: options?.optimisticDelete
-      ? (_, __, context?: { previous: unknown }) => {
+      ? (error: Error, __, context?: { previous: unknown }) => {
           if (context?.previous !== undefined) {
             queryClient.setQueryData(baseKey as readonly unknown[], context.previous);
           }
-          operationError(
-            "Delete",
-            undefined,
-            (_ as Error)?.message || t("common.messages.deleteFailed")
-          );
-          options?.onError?.(_ as Error);
+          if (!isSudoCancelledError(error)) {
+            operationError(
+              "Delete",
+              undefined,
+              error?.message || t("common.messages.deleteFailed")
+            );
+          }
+          options?.onError?.(error);
         }
       : (error: Error) => {
-          operationError("Delete", undefined, error.message || t("common.messages.deleteFailed"));
+          if (!isSudoCancelledError(error)) {
+            operationError("Delete", undefined, error.message || t("common.messages.deleteFailed"));
+          }
           options?.onError?.(error);
         },
     onSuccess: () => {
