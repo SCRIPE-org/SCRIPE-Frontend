@@ -225,12 +225,12 @@ export function PasswordRecoveryView({ mode }: PasswordRecoveryViewProps) {
                 <AlertTriangle className="h-7 w-7 text-nx-warning-strong" aria-hidden="true" />
               </div>
               <div className="space-y-1.5">
-                <h2
+                <h1
                   className="text-xl font-semibold tracking-tight"
                   style={{ color: "var(--sx-text)" }}
                 >
                   {t("auth.invalidResetLink")}
-                </h2>
+                </h1>
                 <p className="text-[13px] leading-relaxed" style={{ color: "var(--sx-text-mute)" }}>
                   {t("auth.invalidResetLinkDesc")}
                 </p>

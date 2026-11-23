@@ -136,10 +136,10 @@ export function AccountSecurityView() {
 
       {vm.requireMfaEnrollment && (
         <Alert
+          variant="warning"
           data-testid="mfa-enrollment-required-banner"
-          className="border-nx-warning/40 bg-nx-warning/10"
         >
-          <AlertCircle className="h-4 w-4 text-nx-warning-strong" aria-hidden="true" />
+          <AlertCircle className="h-4 w-4" aria-hidden="true" />
           <AlertDescription className="space-y-0.5 text-xs text-nx-ink">
             <p className="font-semibold">{t("profile.security.mfaEnrollRequiredTitle")}</p>
             <p className="text-nx-ink-2">{t("profile.security.mfaEnrollRequiredDesc")}</p>

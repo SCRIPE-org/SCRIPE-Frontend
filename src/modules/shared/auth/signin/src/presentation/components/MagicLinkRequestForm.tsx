@@ -83,10 +83,11 @@ export function MagicLinkRequestForm({
             autoComplete="email"
             required
             disabled={isLoading}
-            className="h-11 rounded-lg"
+            className="h-11 rounded-lg border shadow-none"
             style={{
-              background: "rgba(255,255,255,0.04)",
-              border: "1px solid rgba(255,255,255,0.1)",
+              background: "var(--sx-field-bg, transparent)",
+              borderColor: "var(--sx-field-border, hsl(var(--border)))",
+              boxShadow: "var(--sx-field-inner-hi, none)",
               color: "var(--sx-text)",
             }}
           />
