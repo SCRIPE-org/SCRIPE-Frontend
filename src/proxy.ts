@@ -5,16 +5,22 @@ import { isManifestPublicRoute, matchAppRoute } from "./core/config/app-route-ma
 import { isSafeRedirectTarget } from "./modules/shared/auth/signin/src/presentation/utils/redirect-safety";
 
 /**
- * Next.js Server-Side Route Guard Proxy
+ * Next.js Pre-Hydration UX Hint Proxy
  *
- * Runs BEFORE any page renders.
- * Prevents unauthenticated users from accessing protected routes
- * at the server level — no HTML/JS leakage.
+ * Runs BEFORE page rendering to avoid flashing protected shells to unauthenticated
+ * visitors before client-side hydration completes.
+ *
+ * SECURITY BOUNDARY NOTE:
+ * `scr_auth_state` is strictly a client-managed UX optimization hint — NEVER an
+ * authoritative authentication or authorization boundary. All protected API data,
+ * tenant resolution, and session mutations are enforced by the backend via
+ * short-lived in-memory JWT Bearer tokens and httpOnly refresh cookies, plus
+ * client-side RouteGuard token validation.
  *
  * Strategy:
  * - Unknown routes (not in APP_ROUTE_MANIFEST) → pass through so Next renders clean 404
  * - Public routes (from APP_ROUTE_MANIFEST, excluding prod-disabled devOnly) → allow
- * - Protected routes (all remaining manifest routes) → require scr_auth_state cookie
+ * - Protected routes (all remaining manifest routes) → redirect early if hint cookie absent
  * - Static assets (_next, favicons, etc.) → skip entirely via matcher
  */
 

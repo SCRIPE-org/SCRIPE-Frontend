@@ -39,7 +39,7 @@ describe("sanitizeHttpUrl", () => {
   });
 });
 
-describe("secureTokenService dev_access_token NODE_ENV gate", () => {
+describe("secureTokenService memory-only isolation", () => {
   beforeEach(() => {
     secureTokenService.clearTokens();
     sessionStorage.clear();
@@ -51,7 +51,7 @@ describe("secureTokenService dev_access_token NODE_ENV gate", () => {
     sessionStorage.clear();
   });
 
-  it("never mirrors or reads dev_access_token in sessionStorage outside NODE_ENV === 'development'", () => {
+  it("never mirrors or reads dev_access_token in sessionStorage in production", () => {
     vi.stubEnv("NODE_ENV", "production");
     secureTokenService.setAccessToken("prod-token-123");
     expect(sessionStorage.getItem("dev_access_token")).toBeNull();
@@ -61,10 +61,14 @@ describe("secureTokenService dev_access_token NODE_ENV gate", () => {
     expect(secureTokenService.getAccessToken()).toBeNull();
   });
 
-  it("mirrors access token in sessionStorage only when NODE_ENV === 'development'", () => {
+  it("never mirrors or reads dev_access_token in sessionStorage in development either", () => {
     vi.stubEnv("NODE_ENV", "development");
     secureTokenService.setAccessToken("dev-token-abc");
-    expect(sessionStorage.getItem("dev_access_token")).toBe("dev-token-abc");
+    expect(sessionStorage.getItem("dev_access_token")).toBeNull();
+
+    secureTokenService.clearTokens();
+    sessionStorage.setItem("dev_access_token", "header.payload.signature");
+    expect(secureTokenService.getAccessToken()).toBeNull();
   });
 });
 

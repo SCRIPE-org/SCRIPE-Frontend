@@ -56,11 +56,6 @@ export class SecureTokenService {
       }
 
       this._accessToken = token;
-      if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
-        try {
-          sessionStorage.setItem("dev_access_token", token);
-        } catch {}
-      }
       appLogger.auth("Access token stored in memory");
       this.notifyListeners();
       return true;
@@ -112,19 +107,6 @@ export class SecureTokenService {
    */
   static getAccessToken(): string | null {
     try {
-      if (
-        !this._accessToken &&
-        typeof window !== "undefined" &&
-        process.env.NODE_ENV === "development"
-      ) {
-        try {
-          const devToken = sessionStorage.getItem("dev_access_token");
-          if (devToken && this.validateTokenFormat(devToken)) {
-            this._accessToken = devToken;
-          }
-        } catch {}
-      }
-
       if (!this._accessToken) {
         return null;
       }

@@ -61,6 +61,20 @@ interface AppState {
   setHasHydrated: (state: boolean) => void;
 }
 
+/**
+ * Writes or clears the `scr_auth_state` pre-hydration UX hint cookie.
+ * This cookie is NOT a security credential; when the page runs over HTTPS,
+ * the `Secure` attribute is included so it is never sent over cleartext HTTP.
+ */
+function writeAuthStateHintCookie(active: boolean): void {
+  if (typeof document === "undefined") return;
+  const isHttps = typeof window !== "undefined" && window.location?.protocol === "https:";
+  const secureAttr = isHttps ? "; Secure" : "";
+  document.cookie = active
+    ? `${STORAGE_KEYS.scr_auth_state}=true; path=/; max-age=2592000; samesite=Lax${secureAttr}`
+    : `${STORAGE_KEYS.scr_auth_state}=; path=/; max-age=0; samesite=Lax${secureAttr}`;
+}
+
 export const useAppStore = create<AppState>()(
   persist(
     (set) => ({
@@ -81,9 +95,7 @@ export const useAppStore = create<AppState>()(
       setUser: (user) => set({ user, isAuthenticated: !!user, isAuthTransitioning: false }),
       // ... existing code in setAuth ...
       setAuth: (user, permissions, roles, isFreshLogin = false) => {
-        if (typeof document !== "undefined") {
-          document.cookie = `${STORAGE_KEYS.scr_auth_state}=true; path=/; max-age=2592000; samesite=Lax`;
-        }
+        writeAuthStateHintCookie(true);
         // Mark this as a fresh login session — DashboardLayout uses this to
         // show the welcome loader instead of a plain shimmer. sessionStorage
         // survives the redirect to /dashboard but resets on browser close.
@@ -122,9 +134,7 @@ export const useAppStore = create<AppState>()(
         });
       },
       beginSessionTransition: () => {
-        if (typeof document !== "undefined") {
-          document.cookie = `${STORAGE_KEYS.scr_auth_state}=true; path=/; max-age=2592000; samesite=Lax`;
-        }
+        writeAuthStateHintCookie(true);
         useSudoStore.getState().reset();
         usePatOneTimeSecretStore.getState().clearPendingReceipt();
         set({
@@ -143,9 +153,7 @@ export const useAppStore = create<AppState>()(
         });
       },
       logout: () => {
-        if (typeof document !== "undefined") {
-          document.cookie = `${STORAGE_KEYS.scr_auth_state}=; path=/; max-age=0; samesite=Lax`;
-        }
+        writeAuthStateHintCookie(false);
         // Also clear tokens, sudo elevation, and ephemeral PAT secrets when logging out from store
         secureTokenService.clearTokens();
         useSudoStore.getState().reset();

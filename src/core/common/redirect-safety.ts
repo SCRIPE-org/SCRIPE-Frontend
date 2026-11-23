@@ -48,15 +48,26 @@ function hasControlChar(value: string): boolean {
   return false;
 }
 
-function getConfiguredBackendOrigin(): string | null {
-  const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:5035/api").trim();
+function tryExtractOrigin(rawUrl: string | undefined): string | null {
+  if (!rawUrl) return null;
   try {
-    const parsed = new URL(apiUrl);
+    const parsed = new URL(rawUrl.trim());
     if (parsed.protocol !== "http:" && parsed.protocol !== "https:") return null;
     return parsed.origin;
   } catch {
     return null;
   }
+}
+
+function getConfiguredBackendOrigins(): Set<string> {
+  const origins = new Set<string>();
+  const apiOrigin = tryExtractOrigin(process.env.NEXT_PUBLIC_API_URL || "http://localhost:5035/api");
+  if (apiOrigin) origins.add(apiOrigin);
+
+  const identityOrigin = tryExtractOrigin(process.env.NEXT_PUBLIC_IDENTITY_API_URL);
+  if (identityOrigin) origins.add(identityOrigin);
+
+  return origins;
 }
 
 /**
@@ -108,11 +119,10 @@ export function isSafeRedirectTarget(path: string | null | undefined): boolean {
       return true;
     }
 
-    // Permit validated backend OIDC/SAML resume flows on the configured API origin only.
-    const backendOrigin = getConfiguredBackendOrigin();
+    // Permit validated backend OIDC/SAML resume flows on configured API/Identity origins only.
+    const backendOrigins = getConfiguredBackendOrigins();
     if (
-      backendOrigin &&
-      target.origin === backendOrigin &&
+      backendOrigins.has(target.origin) &&
       ALLOWED_BACKEND_RESUME_PATHS.has(target.pathname)
     ) {
       return true;
