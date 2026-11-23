@@ -131,8 +131,8 @@ export interface ISecurityRepository {
     attestationMode?: string;
     credentialIdBase64?: string;
   }, sudoToken?: string): Promise<{ id: string; deviceName: string; createdAt: Date }>;
-  removePasskey(id: string): Promise<void>;
-  renamePasskey(id: string, newName: string): Promise<void>;
+  removePasskey(id: string, sudoToken?: string): Promise<void>;
+  renamePasskey(id: string, newName: string, sudoToken?: string): Promise<void>;
 
   // Unified Sudo Step-Up Lifecycle
   getSudoStatus(): Promise<SudoStatus>;

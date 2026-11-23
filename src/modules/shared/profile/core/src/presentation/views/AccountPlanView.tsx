@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useAppStore } from "@core/store/useAppStore";
 import { Alert, AlertDescription } from "@core/ui/alert";
 import { Badge } from "@core/ui/badge";
 import { startRoutingProgress } from "@core/ui/routing-progress-bar";
@@ -26,7 +27,10 @@ import { AlertCircle, CheckCircle2 } from "lucide-react";
 export function AccountPlanView() {
   const { t } = useI18n();
   const router = useRouter();
+  const requireMfaEnrollment = useAppStore((s) => s.requireMfaEnrollment);
   const { principalContext, isLoadingContext } = useAccountContextSliceViewModel();
+  const isPlatformAdmin = principalContext?.principalKind === "PlatformAdmin";
+  const canQueryPlan = !requireMfaEnrollment && Boolean(principalContext) && !isPlatformAdmin;
   const {
     plan,
     isLoadingPlan,
@@ -35,20 +39,28 @@ export function AccountPlanView() {
     refetchPlan,
     submitPlanRequest,
     isSubmittingRequest,
-  } = useAccountPlanSliceViewModel();
+  } = useAccountPlanSliceViewModel({ enabled: canQueryPlan });
   const [requestNotice, setRequestNotice] = useState(false);
   const [requestError, setRequestError] = useState<string | null>(null);
 
-  const isPlatformAdmin = principalContext?.principalKind === "PlatformAdmin";
-
   useEffect(() => {
+    if (requireMfaEnrollment) {
+      startRoutingProgress();
+      router.replace("/account/security?mfa_enroll=1");
+      return;
+    }
     if (isPlatformAdmin) {
       startRoutingProgress();
       router.replace("/account/dossier");
     }
-  }, [isPlatformAdmin, router]);
+  }, [requireMfaEnrollment, isPlatformAdmin, router]);
 
-  if (isLoadingContext || isPlatformAdmin || (isLoadingPlan && !plan && !isPlanError)) {
+  if (
+    requireMfaEnrollment ||
+    isLoadingContext ||
+    isPlatformAdmin ||
+    (isLoadingPlan && !plan && !isPlanError)
+  ) {
     return <PlanPageSkeleton />;
   }
 

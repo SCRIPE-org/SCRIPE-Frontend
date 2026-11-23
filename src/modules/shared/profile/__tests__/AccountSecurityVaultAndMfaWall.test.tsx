@@ -25,7 +25,18 @@ import { AccountSecurityView } from "@modules/profile/core/src/presentation/view
 import { ProfileRailLayout } from "@modules/profile/core/src/presentation/components/ProfileRailLayout";
 import { ProfileTelemetryHud } from "@modules/profile/core/src/presentation/components/ProfileTelemetryHud";
 import { buildPostureChecklistItems } from "@modules/profile/core/src/presentation/components/ProfilePostureChecklistDialog";
+import { EmergencyLockdownDialog } from "@modules/profile/core/src/presentation/components/EmergencyLockdownDialog";
+import { EmergencyLockdownShieldCard } from "@modules/profile/core/src/presentation/components/EmergencyLockdownShieldCard";
+import { PasskeyRenameDeleteModals } from "@modules/profile/core/src/presentation/sections/security/PasskeyRenameDeleteModals";
+import { TrustedCidrSubnetRow } from "@modules/profile/core/src/presentation/components/TrustedCidrSubnetRow";
+import { TwoFactorScanStep, TwoFactorVerifyStep } from "@modules/profile/core/src/presentation/components/TwoFactorWizardStepPanels";
+import { TwoFactorBackupStep } from "@modules/profile/core/src/presentation/components/TwoFactorBackupStepPanel";
+import { EnrollPasskeyNameStep } from "@modules/profile/core/src/presentation/components/EnrollPasskeyStepPanels";
+import { EnterpriseSsoProviderTile } from "@modules/profile/core/src/presentation/components/EnterpriseSsoProviderTile";
+import { ProfileInfoEditForm } from "@modules/profile/core/src/presentation/components/ProfileInfoEditForm";
+import { Dialog, DialogContent } from "@core/ui/dialog";
 import type { AdminProfile } from "@modules/profile/core/src/domain/entities/AdminProfile";
+import type { PasskeyCredential } from "@modules/profile/core/src/domain/entities/PasskeyCredential";
 import type { PasswordPolicyModel } from "@core/common/password-policy";
 
 const mocks = vi.hoisted(() => ({
@@ -43,6 +54,8 @@ const mocks = vi.hoisted(() => ({
   revokeAllOtherSessions: vi.fn(),
   getPasswordPolicy: vi.fn(),
   listPasskeys: vi.fn(),
+  removePasskey: vi.fn(),
+  renamePasskey: vi.fn(),
   enable2FA: vi.fn(),
   confirm2FA: vi.fn(),
   refreshToken: vi.fn(),
@@ -134,6 +147,9 @@ vi.mock("@modules/profile/di", () => ({
       revokeAllOtherSessions: () => mocks.revokeAllOtherSessions(),
       enable2FA: () => mocks.enable2FA(),
       confirm2FA: (code: string) => mocks.confirm2FA(code),
+      removePasskey: (id: string, sudoToken?: string) => mocks.removePasskey(id, sudoToken),
+      renamePasskey: (id: string, newName: string, sudoToken?: string) =>
+        mocks.renamePasskey(id, newName, sudoToken),
       disable2FA: vi.fn(),
       regenerateBackupCodes: vi.fn(),
       changePassword: vi.fn(),
@@ -480,5 +496,205 @@ describe("Account security vault contracts, wizard recovery step, and MFA wall",
     expect(screen.queryByTestId("connected-enterprise-sso-card")).not.toBeInTheDocument();
     expect(screen.queryByText("profile.security.changePassword")).not.toBeInTheDocument();
     expect(screen.queryByTestId("trusted-cidr-shield-card")).not.toBeInTheDocument();
+  });
+
+  it("enforces EmergencyLockdownDialog error alerts & lock guard, proactive Sudo on passkey delete/rename without cancel alerts, BiDi/390px/a11y polish, and localized role fallback", async () => {
+    // 1. EmergencyLockdownDialog: blocks Escape close during isLockingDown, surfaces real errors, ignores Sudo cancel
+    const onCloseLockdown = vi.fn();
+    const onConfirmLockdown = vi
+      .fn()
+      .mockRejectedValueOnce(new Error("Sudo verification was cancelled."))
+      .mockRejectedValueOnce(new Error("Too many lockdown attempts (429)"));
+
+    const { rerender } = render(
+      <EmergencyLockdownDialog
+        isOpen={true}
+        onClose={onCloseLockdown}
+        onConfirmLockdown={onConfirmLockdown}
+        isLockingDown={true}
+      />
+    );
+    fireEvent.keyDown(screen.getByRole("dialog"), { key: "Escape" });
+    expect(onCloseLockdown).not.toHaveBeenCalled();
+
+    rerender(
+      <EmergencyLockdownDialog
+        isOpen={true}
+        onClose={onCloseLockdown}
+        onConfirmLockdown={onConfirmLockdown}
+        isLockingDown={false}
+      />
+    );
+    fireEvent.change(screen.getByLabelText(/profile\.lockdown\.typePrompt/i), {
+      target: { value: "LOCKDOWN" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "profile.lockdown.executeBtn" }));
+    await waitFor(() => expect(onConfirmLockdown).toHaveBeenCalledTimes(1));
+    expect(screen.queryByTestId("lockdown-error-alert")).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "profile.lockdown.executeBtn" }));
+    await waitFor(() => {
+      expect(screen.getByTestId("lockdown-error-alert")).toHaveTextContent(
+        "Too many lockdown attempts (429)"
+      );
+    });
+
+    // 2. Proactive Sudo elevation on passkey delete/rename + zero Sudo-cancel alert in PasskeyRenameDeleteModals
+    useSudoStore.getState().reset();
+    mocks.removePasskey.mockResolvedValue(undefined);
+    mocks.renamePasskey.mockResolvedValue(undefined);
+    const qc = createTestClient();
+    const wrapper = createWrapper(qc);
+    const { result: vault } = renderHook(() => useSecurityVaultViewModel(), { wrapper });
+
+    const renamePromise = vault.current.renamePasskey({ id: "pk-1", newName: "Work YubiKey" });
+    await waitFor(() => expect(useSudoStore.getState().modalOpen).toBe(true));
+    act(() => {
+      useSudoStore.getState().markVerified({
+        sudoToken: "sudo-pk-tok",
+        expiresAtUtc: new Date(Date.now() + 600_000).toISOString(),
+        methodUsed: "passkey",
+        mandatoryFactorPolicy: "PasskeyRequired",
+      });
+    });
+    await renamePromise;
+    expect(mocks.renamePasskey).toHaveBeenCalledWith("pk-1", "Work YubiKey", "sudo-pk-tok");
+
+    await act(async () => {
+      await vault.current.removePasskey("pk-1");
+    });
+    expect(mocks.removePasskey).toHaveBeenCalledWith("pk-1", "sudo-pk-tok");
+
+    const pk = { id: "pk-1", deviceName: "YubiKey" } as unknown as PasskeyCredential;
+    const cancelDelete = vi.fn().mockRejectedValue(new Error("Sudo verification was cancelled."));
+    render(
+      <PasskeyRenameDeleteModals
+        t={(k) => k}
+        totalPasskeysCount={2}
+        renameTarget={null}
+        isRenamingPasskey={false}
+        deleteTarget={pk}
+        isRemovingPasskey={false}
+        onRenameClose={vi.fn()}
+        onRenameSubmit={vi.fn()}
+        onDeleteClose={vi.fn()}
+        onConfirmDelete={cancelDelete}
+      />
+    );
+    fireEvent.click(screen.getByTestId("confirm-delete-passkey-btn"));
+    await waitFor(() => expect(cancelDelete).toHaveBeenCalledTimes(1));
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+
+    // 3. BiDi dir="ltr" on CIDR/2FA/Email, <form onSubmit> + maxLength={200}, 390px flex-col wrap, safe unlink
+    render(
+      <TrustedCidrSubnetRow
+        subnet={{ cidr: "192.168.10.0/24", label: "HQ" }}
+        index={0}
+        isCopied={false}
+        onCopy={vi.fn()}
+        onRemove={vi.fn()}
+      />
+    );
+    expect(screen.getByText("192.168.10.0/24").closest("bdi")).toHaveAttribute("dir", "ltr");
+
+    render(
+      <Dialog open={true} onOpenChange={vi.fn()}>
+        <DialogContent>
+          <TwoFactorVerifyStep
+            totpCode="123456"
+            confirmError={null}
+            isConfirming={false}
+            onCodeChange={vi.fn()}
+            onBack={vi.fn()}
+            onVerify={vi.fn()}
+          />
+          <TwoFactorScanStep
+            setupData={{ qrCodeDataUri: "", manualEntryKey: "JBSWY3DPEHPK3PXP", backupCodes: [] }}
+            copiedKey={false}
+            onCopyKey={vi.fn()}
+            onClose={vi.fn()}
+            onContinue={vi.fn()}
+          />
+          <TwoFactorBackupStep
+            backupCodes={["AAAA-BBBB-CCCC-DDDD"]}
+            copiedBackupCodes={false}
+            onCopyCodes={vi.fn()}
+            onDownloadCodes={vi.fn()}
+            onDone={vi.fn()}
+          />
+          <EnrollPasskeyNameStep
+            selectedMode="platform"
+            deviceName="MacBook Touch ID"
+            isEnrolling={false}
+            enrollError={null}
+            onDeviceNameChange={vi.fn()}
+            onBack={vi.fn()}
+            onActivate={vi.fn()}
+          />
+        </DialogContent>
+      </Dialog>
+    );
+    render(
+      <>
+        <EmergencyLockdownShieldCard onOpenLockdown={vi.fn()} />
+        <ProfileInfoEditForm
+          firstName="Tariq"
+          lastName="Nabil"
+          phoneNumber=""
+          adminTypeName=""
+          bio=""
+          isSubmitting={false}
+          customFields={[]}
+          customFieldValues={{}}
+          onFirstNameChange={vi.fn()}
+          onLastNameChange={vi.fn()}
+          onPhoneNumberChange={vi.fn()}
+          onBioChange={vi.fn()}
+          onCancel={vi.fn()}
+          onSubmit={vi.fn()}
+        />
+      </>
+    );
+
+    const totpInput = document.getElementById("totp-input") as HTMLInputElement;
+    expect(totpInput).toHaveAttribute("inputmode", "numeric");
+    expect(totpInput).toHaveAttribute("dir", "ltr");
+    expect(totpInput.closest("form")).not.toBeNull();
+    expect(screen.getByText("JBSWY3DPEHPK3PXP").closest("div[dir='ltr']")).not.toBeNull();
+    expect(screen.getByText("AAAA-BBBB-CCCC-DDDD").closest("div[dir='ltr']")).not.toBeNull();
+    const passkeyInput = screen.getByTestId("passkey-name-input") as HTMLInputElement;
+    expect(passkeyInput).toHaveAttribute("maxlength", "200");
+    expect(passkeyInput.closest("form")).not.toBeNull();
+    expect(screen.getByTestId("trigger-lockdown-btn").parentElement?.className).toContain("flex-col");
+    expect(screen.getByText("profile.roleDefault")).toBeInTheDocument();
+    expect(screen.queryByText("SuperAdmin")).not.toBeInTheDocument();
+
+    // 4. EnterpriseSsoProviderTile safe async unlink without unhandled rejection + BiDi email
+    const failingUnlink = vi.fn().mockRejectedValue(new Error("Sudo verification was cancelled."));
+    render(
+      <EnterpriseSsoProviderTile
+        provider={{
+          encryptedId: "idp-1",
+          name: "Okta",
+          slug: "okta",
+          protocol: "oidc",
+          scope: "Global",
+          isLinked: true,
+          externalLoginId: "ext-1",
+          linkedEmail: "sec@club.com",
+          linkedAtUtc: null,
+          iconUrl: null,
+          buttonColor: null,
+          displayOrder: 1,
+        }}
+        isUnlinking={false}
+        onConnect={vi.fn()}
+        onDisconnect={failingUnlink}
+      />
+    );
+    expect(screen.getByText("sec@club.com").closest("bdi")).toHaveAttribute("dir", "ltr");
+    fireEvent.click(screen.getByTestId("disconnect-sso-okta"));
+    fireEvent.click(screen.getByTestId("confirm-unlink-okta"));
+    await waitFor(() => expect(failingUnlink).toHaveBeenCalledWith("ext-1"));
   });
 });

@@ -3,7 +3,10 @@
  *
  * ViewModel hooks for Sovereign Account identity context and dossier operations.
  */
+import { useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { authBroadcast } from "@core/common/broadcast-auth";
+import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { useAppStore } from "@core/store/useAppStore";
 import { useSudoStore } from "@core/store/useSudoStore";
 import { container } from "@modules/profile/di";
@@ -14,6 +17,7 @@ import { ensureSudoElevation } from "../utils/sudoElevation";
 /** Queries and exposes dossier mutations for email verification, export, and deactivation. */
 export function useSovereignDossierSlice() {
   const qc = useQueryClient();
+  const router = useRouter();
   const requireMfaEnrollment = useAppStore((s) => s.requireMfaEnrollment);
   const query = useQuery({
     queryKey: sovereignAccountKeys.dossier(),
@@ -49,8 +53,20 @@ export function useSovereignDossierSlice() {
       );
     },
     onSuccess: () => {
-      useSudoStore.getState().markLocked();
-      void qc.invalidateQueries({ queryKey: sovereignAccountKeys.dossier() });
+      const { user, tenantCode } = useAppStore.getState();
+      useSudoStore.getState().reset();
+      useNavigationStore.getState().clearRouteData();
+      useNavigationStore.getState().reset();
+      useAppStore.getState().logout();
+      authBroadcast.broadcastLogout({
+        principalId: user?.id ?? null,
+        tenantId: user?.tenantId ?? null,
+        tenantCode,
+        principalType: "admin",
+        logoutScope: "app",
+      });
+      qc.clear();
+      router.replace("/login");
     },
   });
   return { ...query, sendVerificationMutation, exportDataMutation, deactivateMutation };

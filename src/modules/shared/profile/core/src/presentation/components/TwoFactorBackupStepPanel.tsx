@@ -48,13 +48,13 @@ export function TwoFactorBackupStep({
           <p>{t("profile.security.twoFactor.setup.backupWarning")}</p>
         </div>
 
-        <div className="grid grid-cols-2 gap-2 p-3 rounded-xl bg-nx-raised border border-nx-line">
+        <div dir="ltr" className="grid grid-cols-2 gap-2 p-3 rounded-xl bg-nx-raised border border-nx-line">
           {backupCodes.map((code, idx) => (
             <div
               key={idx}
               className="font-mono text-xs font-semibold text-center py-1.5 px-2 rounded bg-nx-surface border border-nx-line text-nx-ink"
             >
-              {code}
+              <bdi>{code}</bdi>
             </div>
           ))}
         </div>

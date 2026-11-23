@@ -127,11 +127,23 @@ export class SecurityRepository implements ISecurityRepository {
     };
   }
 
-  async removePasskey(id: string): Promise<void> {
+  async removePasskey(id: string, sudoToken?: string): Promise<void> {
+    if (sudoToken) {
+      await this.api.delete(PROFILE_ENDPOINTS.PASSKEYS.DELETE(id), undefined, {
+        headers: { "X-Sudo-Token": sudoToken },
+      });
+      return;
+    }
     await this.api.delete(PROFILE_ENDPOINTS.PASSKEYS.DELETE(id));
   }
 
-  async renamePasskey(id: string, newName: string): Promise<void> {
+  async renamePasskey(id: string, newName: string, sudoToken?: string): Promise<void> {
+    if (sudoToken) {
+      await this.api.patch(PROFILE_ENDPOINTS.PASSKEYS.RENAME(id), { newName }, undefined, {
+        headers: { "X-Sudo-Token": sudoToken },
+      });
+      return;
+    }
     await this.api.patch(PROFILE_ENDPOINTS.PASSKEYS.RENAME(id), { newName });
   }
 

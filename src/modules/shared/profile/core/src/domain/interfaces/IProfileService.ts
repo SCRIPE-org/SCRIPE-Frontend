@@ -19,7 +19,6 @@ import type {
 export interface IProfileService {
   getProfile(): Promise<AdminProfile>;
   updateProfile(data: UpdateProfileRequest): Promise<AdminProfile>;
-  uploadAvatar(file: File): Promise<{ profileImageUrl: string }>;
   removeAvatar(): Promise<void>;
   getPasswordPolicy(): Promise<PasswordPolicyDto>;
   changePassword(

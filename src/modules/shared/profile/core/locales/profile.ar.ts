@@ -960,6 +960,7 @@ export const ar = {
     phone: "رقم الهاتف",
     phonePlaceholder: "+20 100 000 0000",
     role: "الدور الإداري",
+    roleDefault: "مسؤول",
     personalInfo: "المعلومات الشخصية وخصائص المؤسسة",
     personalInfoDescription: "بيانات الهوية الأساسية والخصائص المعتمدة من المؤسسة. انقر على تعديل الملف الشخصي للتحديث.",
     changeEmailBtn: "تغيير البريد الإلكتروني",

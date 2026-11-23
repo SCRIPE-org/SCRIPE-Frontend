@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core
 import { Input } from "@core/ui/input";
 import { Badge } from "@core/ui/badge";
 import { Switch } from "@core/ui/switch";
-import { Monitor, Moon, ShieldAlert } from "lucide-react";
+import { Moon, ShieldAlert } from "lucide-react";
 
 function parseUtcHmToMinutes(value: string): number | null {
   const match = /^([01]?\d|2[0-3]):([0-5]\d)$/.exec(value.trim());
@@ -42,15 +42,13 @@ export interface QuietHoursAndDesktopSectionProps {
   quietStart: string;
   quietEnd: string;
   resolvedTimezone: string;
-  desktopEnabled: boolean;
   onQuietHoursChange: (enabled: boolean) => void;
   onQuietStartChange: (value: string) => void;
   onQuietEndChange: (value: string) => void;
-  onDesktopToggle: (enabled: boolean) => void;
 }
 
 /**
- * Quiet Hours UTC scheduling (with live local timezone preview) and desktop alert permissions card.
+ * Quiet Hours UTC scheduling (with live local timezone preview) card.
  */
 export function QuietHoursAndDesktopSection({
   t,
@@ -58,17 +56,15 @@ export function QuietHoursAndDesktopSection({
   quietStart,
   quietEnd,
   resolvedTimezone,
-  desktopEnabled,
   onQuietHoursChange,
   onQuietStartChange,
   onQuietEndChange,
-  onDesktopToggle,
 }: QuietHoursAndDesktopSectionProps) {
   const localStartPreview = formatUtcHmInTimezone(quietStart, resolvedTimezone);
   const localEndPreview = formatUtcHmInTimezone(quietEnd, resolvedTimezone);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 gap-4">
       <Card className="border border-nx-line bg-nx-surface hover:border-nx-line-hi transition-colors">
         <CardHeader className="pb-3 flex flex-row items-center justify-between">
           <div>
@@ -134,36 +130,6 @@ export function QuietHoursAndDesktopSection({
           >
             <ShieldAlert className="h-3 w-3" />
             <span>{t("profile.notifications.securityBypassLawBadge")}</span>
-          </Badge>
-        </CardContent>
-      </Card>
-
-      <Card className="border border-nx-line bg-nx-surface hover:border-nx-line-hi transition-colors">
-        <CardHeader className="pb-3 flex flex-row items-center justify-between">
-          <div>
-            <div className="flex items-center gap-2">
-              <Monitor className="h-4 w-4 text-nx-accent shrink-0" />
-              <CardTitle className="text-sm font-bold text-nx-ink">
-                {t("profile.notifications.desktopAlertsTitle")}
-              </CardTitle>
-            </div>
-            <CardDescription className="text-xs text-nx-ink-3 mt-1">
-              {t("profile.notifications.desktopAlertsDesc")}
-            </CardDescription>
-          </div>
-          <Switch
-            checked={desktopEnabled}
-            onCheckedChange={onDesktopToggle}
-            aria-label={t("profile.notifications.desktopAlertsTitle")}
-          />
-        </CardHeader>
-        <CardContent className="pt-0">
-          <Badge
-            variant="outline"
-            className="text-[10px] font-mono border-nx-line bg-nx-raised text-nx-ink-2"
-          >
-            {t("profile.notifications.realtimeSignalRBadge")} &bull;{" "}
-            {t("profile.notifications.emailQueueActiveBadge")}
           </Badge>
         </CardContent>
       </Card>

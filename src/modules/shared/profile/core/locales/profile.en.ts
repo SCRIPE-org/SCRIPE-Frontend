@@ -962,6 +962,7 @@ export const en = {
     phone: "Phone Number",
     phonePlaceholder: "+20 100 000 0000",
     role: "Administrative Role",
+    roleDefault: "Admin",
     personalInfo: "Personal & Enterprise Profile Information",
     personalInfoDescription: "Core identity details and organization-mandated profile attributes. Click Edit Profile to update.",
     changeEmailBtn: "Change Email",

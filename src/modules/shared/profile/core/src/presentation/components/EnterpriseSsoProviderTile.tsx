@@ -134,9 +134,9 @@ export function EnterpriseSsoProviderTile({
 
           <p className="text-[11px] text-nx-ink-2 truncate">
             {provider.isLinked ? (
-              <span className="font-mono text-nx-ink">
+              <bdi dir="ltr" className="font-mono text-nx-ink">
                 {provider.linkedEmail || t("profile.security.ssoVerifiedClaimLabel")}
-              </span>
+              </bdi>
             ) : (
               t("profile.security.ssoNotConnectedProtocolHint", {
                 protocol: protocolLabel,
@@ -166,8 +166,12 @@ export function EnterpriseSsoProviderTile({
                 disabled={isUnlinking}
                 data-testid={`confirm-unlink-${provider.slug || provider.encryptedId}`}
                 onClick={async () => {
-                  await onDisconnect(provider.externalLoginId!);
-                  setConfirmUnlink(false);
+                  try {
+                    await onDisconnect(provider.externalLoginId!);
+                    setConfirmUnlink(false);
+                  } catch {
+                    // Errors & Sudo cancellations handled safely by ViewModel mutation callbacks
+                  }
                 }}
                 className="h-7 text-[10px] px-2 font-semibold"
               >

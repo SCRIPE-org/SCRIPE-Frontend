@@ -14,6 +14,7 @@ import {
 } from "@core/ui/dialog";
 import { toast } from "@core/ui/sileo-toast";
 import type { PasskeyCredential } from "../../../domain/entities/PasskeyCredential";
+import { isSudoCancelledError } from "../../utils/sudoElevation";
 import { AlertTriangle, Loader2, Trash2 } from "lucide-react";
 
 function isLastCredentialLockError(err: unknown): boolean {
@@ -93,6 +94,7 @@ export function PasskeyRenameDeleteModals({
       setRenameDraft(null);
       onRenameClose();
     } catch (err) {
+      if (isSudoCancelledError(err)) return;
       setRenameErrorState({
         id: renameTarget.id,
         value: err instanceof Error ? err.message : t("profile.common.error"),
@@ -108,6 +110,7 @@ export function PasskeyRenameDeleteModals({
       toast.success(t("profile.passkeys.deleteSuccess"));
       onDeleteClose();
     } catch (err) {
+      if (isSudoCancelledError(err)) return;
       setDeleteErrorState({
         id: deleteTarget.id,
         value: isLastCredentialLockError(err)

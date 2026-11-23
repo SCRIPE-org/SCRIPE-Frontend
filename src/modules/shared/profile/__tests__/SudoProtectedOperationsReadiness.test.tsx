@@ -14,6 +14,7 @@ import { AxiosError } from "axios";
 import { ApiService } from "@core/services/api.service";
 import { useSudoStore } from "@core/store/useSudoStore";
 import { useAppStore } from "@core/store/useAppStore";
+import { authBroadcast } from "@core/common/broadcast-auth";
 import { secureTokenService } from "@core/common/secure-token-service";
 import { ProfileService } from "../core/src/data/services/ProfileService";
 import { ProfileRepository } from "../core/src/data/repositories/ProfileRepository";
@@ -30,9 +31,10 @@ import {
 } from "../core/src/presentation/viewmodels/useProfileDossierViewModel";
 import { useSovereignPlanSlice } from "../core/src/presentation/viewmodels/useSovereignWorkstationSlicesViewModel";
 
-const { mockToastError, mockAssertPasskey } = vi.hoisted(() => ({
+const { mockToastError, mockAssertPasskey, mockReplace } = vi.hoisted(() => ({
   mockToastError: vi.fn(),
   mockAssertPasskey: vi.fn(),
+  mockReplace: vi.fn(),
 }));
 
 const liveHarness: {
@@ -60,7 +62,7 @@ vi.mock("@modules/profile/di", () => ({
 }));
 
 vi.mock("next/navigation", () => ({
-  useRouter: () => ({ replace: vi.fn(), push: vi.fn() }),
+  useRouter: () => ({ replace: mockReplace, push: vi.fn() }),
   usePathname: () => "/account/security",
   useSearchParams: () => new URLSearchParams(),
 }));
@@ -582,6 +584,10 @@ describe("SUDO-02 Lockstep FE Readiness & 403 Step-Up Replay Suite", () => {
       clientExtensionResults: {},
     });
 
+    secureTokenService.setAccessToken("active.jwt.before.deactivate");
+    useAppStore.setState({ isAuthenticated: true });
+    const broadcastLogoutSpy = vi.spyOn(authBroadcast, "broadcastLogout");
+
     const profileService = new ProfileService(api);
     liveHarness.profileRepository = new ProfileRepository(api, profileService);
     liveHarness.securityRepository = new SecurityRepository(api, profileService);
@@ -619,5 +625,67 @@ describe("SUDO-02 Lockstep FE Readiness & 403 Step-Up Replay Suite", () => {
       sudoToken: "sudo-jwt-passkey-deactivate",
       body: {},
     });
+
+    await waitFor(() => {
+      expect(useAppStore.getState().isAuthenticated).toBe(false);
+      expect(secureTokenService.getAccessToken()).toBeNull();
+      expect(broadcastLogoutSpy).toHaveBeenCalledWith(
+        expect.objectContaining({ principalType: "admin", logoutScope: "app" })
+      );
+      expect(mockReplace).toHaveBeenCalledWith("/login");
+    });
+  });
+
+  it("AccountPlanView guards mfa_enroll=true and PlatformAdmin without firing wasted /v1/account/plan requests", async () => {
+    const requestedUrls: string[] = [];
+    const { api } = createRealApiWithAdapter((req) => {
+      requestedUrls.push(req.url);
+      if (req.url === "/v1/account/context") {
+        return {
+          status: 200,
+          data: {
+            adminId: "plat-1",
+            principalContext: {
+              principalKind: "PlatformAdmin",
+              isSuperAdmin: true,
+              isSolePrimaryOwner: false,
+            },
+          },
+        };
+      }
+      return { status: 200, data: {} };
+    });
+
+    const profileService = new ProfileService(api);
+    liveHarness.profileRepository = new ProfileRepository(api, profileService);
+    liveHarness.securityRepository = new SecurityRepository(api, profileService);
+    liveHarness.sovereignAccountRepository = new SovereignAccountRepository(api);
+
+    // 1. mfa_enroll=true redirects immediately to /account/security?mfa_enroll=1 without hitting /plan
+    useAppStore.setState({ requireMfaEnrollment: true });
+    const { Wrapper } = createWrapper();
+    render(
+      <Wrapper>
+        <AccountPlanView />
+      </Wrapper>
+    );
+    await waitFor(() => {
+      expect(mockReplace).toHaveBeenCalledWith("/account/security?mfa_enroll=1");
+    });
+    expect(requestedUrls).not.toContain("/v1/account/plan");
+
+    // 2. PlatformAdmin redirects to /account/dossier cleanly without 403 /v1/account/plan
+    mockReplace.mockClear();
+    useAppStore.setState({ requireMfaEnrollment: false });
+    const { Wrapper: PlatformWrapper } = createWrapper();
+    render(
+      <PlatformWrapper>
+        <AccountPlanView />
+      </PlatformWrapper>
+    );
+    await waitFor(() => {
+      expect(mockReplace).toHaveBeenCalledWith("/account/dossier");
+    });
+    expect(requestedUrls).not.toContain("/v1/account/plan");
   });
 });

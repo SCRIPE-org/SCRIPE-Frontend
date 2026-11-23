@@ -43,7 +43,7 @@ export function TrustedCidrSubnetRow({
         <div className="min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-xs font-mono font-bold text-nx-ink select-all">
-              {subnet.cidr}
+              <bdi dir="ltr">{subnet.cidr}</bdi>
             </span>
             <Badge
               variant="outline"

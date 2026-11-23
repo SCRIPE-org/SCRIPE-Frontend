@@ -138,13 +138,13 @@ export function useAccountNotificationsSliceViewModel() {
 }
 
 /** Queries tenant edition entitlements and submits upgrade or role-access requests. */
-export function useSovereignPlanSlice() {
+export function useSovereignPlanSlice(options?: { enabled?: boolean }) {
   const qc = useQueryClient();
   const requireMfaEnrollment = useAppStore((s) => s.requireMfaEnrollment);
   const query = useQuery({
     queryKey: sovereignAccountKeys.plan(),
     queryFn: () => container.sovereignAccountRepository.getPlan(),
-    enabled: !requireMfaEnrollment,
+    enabled: !requireMfaEnrollment && (options?.enabled ?? true),
   });
   const requestMutation = useMutation({
     mutationFn: ({ type, code, notes }: { type: string; code: string; notes?: string }) =>
@@ -155,8 +155,9 @@ export function useSovereignPlanSlice() {
 }
 
 /** Presentation ViewModel exposing active plan quotas and feature upgrade requests. */
-export function useAccountPlanSliceViewModel() {
-  const { data, isLoading, isError, error, refetch, requestMutation } = useSovereignPlanSlice();
+export function useAccountPlanSliceViewModel(options?: { enabled?: boolean }) {
+  const { data, isLoading, isError, error, refetch, requestMutation } =
+    useSovereignPlanSlice(options);
   return {
     plan: data,
     isLoadingPlan: isLoading,

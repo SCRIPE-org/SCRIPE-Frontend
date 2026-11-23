@@ -87,8 +87,11 @@ export function TwoFactorScanStep({
             {t("profile.security.twoFactor.setup.manualEntry")}
           </Label>
           <div className="flex items-center gap-2">
-            <div className="flex-1 font-mono text-xs font-semibold px-3 py-2 rounded-lg bg-nx-raised border border-nx-line text-nx-ink truncate select-all">
-              {setupData.manualEntryKey}
+            <div
+              dir="ltr"
+              className="flex-1 font-mono text-xs font-semibold px-3 py-2 rounded-lg bg-nx-raised border border-nx-line text-nx-ink truncate select-all"
+            >
+              <bdi>{setupData.manualEntryKey}</bdi>
             </div>
             <Button
               type="button"
@@ -135,7 +138,14 @@ export function TwoFactorVerifyStep({
   const { t } = useI18n();
 
   return (
-    <>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (!isConfirming && totpCode.length >= 6) {
+          onVerify();
+        }
+      }}
+    >
       <DialogHeader>
         <DialogTitle className="text-base font-bold text-nx-ink">
           {t("profile.security.twoFactor.setup.verifyTitle")}
@@ -152,6 +162,9 @@ export function TwoFactorVerifyStep({
           </Label>
           <Input
             id="totp-input"
+            dir="ltr"
+            inputMode="numeric"
+            autoComplete="one-time-code"
             value={totpCode}
             onChange={(e) => onCodeChange(e.target.value.replace(/\D/g, "").slice(0, 6))}
             placeholder="000000"
@@ -171,12 +184,12 @@ export function TwoFactorVerifyStep({
       </div>
 
       <DialogFooter className="gap-2 sm:gap-0">
-        <Button variant="outline" size="sm" onClick={onBack} disabled={isConfirming} className="text-xs">
+        <Button type="button" variant="outline" size="sm" onClick={onBack} disabled={isConfirming} className="text-xs">
           {t("profile.common.back")}
         </Button>
         <Button
+          type="submit"
           size="sm"
-          onClick={onVerify}
           disabled={isConfirming || totpCode.length < 6}
           className="text-xs font-semibold gap-1.5"
         >
@@ -184,6 +197,6 @@ export function TwoFactorVerifyStep({
           {t("profile.security.twoFactor.setup.verifyButton")}
         </Button>
       </DialogFooter>
-    </>
+    </form>
   );
 }

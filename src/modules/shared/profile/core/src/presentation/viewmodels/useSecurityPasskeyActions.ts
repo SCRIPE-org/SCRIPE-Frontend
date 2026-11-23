@@ -67,13 +67,18 @@ export function useSecurityPasskeyActions(
   });
 
   const removePasskeyMutation = useMutation({
-    mutationFn: (id: string) => securityRepo.removePasskey(id),
+    mutationFn: async (id: string) => {
+      const sudoToken = await ensureSudoElevation();
+      return securityRepo.removePasskey(id, sudoToken);
+    },
     onSuccess: invalidatePasskeyCaches,
   });
 
   const renamePasskeyMutation = useMutation({
-    mutationFn: ({ id, newName }: { id: string; newName: string }) =>
-      securityRepo.renamePasskey(id, newName),
+    mutationFn: async ({ id, newName }: { id: string; newName: string }) => {
+      const sudoToken = await ensureSudoElevation();
+      return securityRepo.renamePasskey(id, newName, sudoToken);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: passkeysQueryKey });
     },

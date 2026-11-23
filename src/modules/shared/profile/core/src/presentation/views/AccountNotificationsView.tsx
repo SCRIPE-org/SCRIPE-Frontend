@@ -49,7 +49,6 @@ export function AccountNotificationsView() {
   const [quietHoursDraft, setQuietHoursDraft] = useState<boolean | null>(null);
   const [quietStartDraft, setQuietStartDraft] = useState<string | null>(null);
   const [quietEndDraft, setQuietEndDraft] = useState<string | null>(null);
-  const [desktopEnabled, setDesktopEnabled] = useState(false);
   const [savedNotice, setSavedNotice] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
 
@@ -83,18 +82,6 @@ export function AccountNotificationsView() {
         return { ...r, [channel]: !r[channel] };
       })
     );
-  };
-
-  const handleRequestDesktopPermission = async (checked: boolean) => {
-    if (checked && typeof window !== "undefined" && "Notification" in window) {
-      try {
-        setDesktopEnabled((await window.Notification.requestPermission()) === "granted");
-        return;
-      } catch {
-        // Fallback below preserves user intent when Notification API rejects
-      }
-    }
-    setDesktopEnabled(checked);
   };
 
   const runNotificationAction = async (action: () => Promise<unknown>) => {
@@ -189,11 +176,9 @@ export function AccountNotificationsView() {
         quietStart={quietStart}
         quietEnd={quietEnd}
         resolvedTimezone={resolveOperatingTimezone(preferences?.operatingTimezone)}
-        desktopEnabled={desktopEnabled}
         onQuietHoursChange={setQuietHoursDraft}
         onQuietStartChange={setQuietStartDraft}
         onQuietEndChange={setQuietEndDraft}
-        onDesktopToggle={(checked) => void handleRequestDesktopPermission(checked)}
       />
 
       <RecentNotificationFeedSection

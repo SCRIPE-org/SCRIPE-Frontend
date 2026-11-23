@@ -31,12 +31,6 @@ export class ProfileService implements IProfileService {
     return this.api.put<AdminProfile>(PROFILE_ENDPOINTS.UPDATE_DOSSIER, data);
   }
 
-  async uploadAvatar(file: File): Promise<{ profileImageUrl: string }> {
-    const formData = new FormData();
-    formData.append("file", file);
-    return this.api.post<{ profileImageUrl: string }>(PROFILE_ENDPOINTS.AVATAR, formData);
-  }
-
   async removeAvatar(): Promise<void> {
     return this.api.delete<void>(PROFILE_ENDPOINTS.AVATAR);
   }

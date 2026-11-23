@@ -13,6 +13,7 @@ import {
   DialogTitle,
 } from "@core/ui/dialog";
 import { toast } from "@core/ui/sileo-toast";
+import { isSudoCancelledError } from "../../utils/sudoElevation";
 import { Copy, Download, Loader2 } from "lucide-react";
 
 /**
@@ -63,14 +64,19 @@ export function RegenerateBackupCodesModal({
       setGeneratedCodes(Array.isArray(codes) ? codes : []);
       setCode("");
     } catch (err) {
+      if (isSudoCancelledError(err)) return;
       setLocalError(err instanceof Error ? err.message : t("profile.common.error"));
     }
   };
 
   const handleCopyBackupCodes = async () => {
     if (!generatedCodes || generatedCodes.length === 0) return;
-    await navigator.clipboard.writeText(generatedCodes.join("\n"));
-    toast.success(t("profile.common.copied"));
+    try {
+      await navigator.clipboard?.writeText(generatedCodes.join("\n"));
+      toast.success(t("profile.common.copied"));
+    } catch {
+      // Clipboard API unavailable in restricted contexts
+    }
   };
 
   const handleDownloadBackupCodes = () => {
@@ -106,7 +112,9 @@ export function RegenerateBackupCodesModal({
                 </Label>
                 <Input
                   id="regen-codes-totp"
+                  dir="ltr"
                   inputMode="numeric"
+                  autoComplete="one-time-code"
                   value={code}
                   onChange={(e) => setCode(e.target.value)}
                   placeholder="000000"
@@ -152,13 +160,13 @@ export function RegenerateBackupCodesModal({
                 {t("profile.security.backupCodes.regenerateSuccessDesc")}
               </DialogDescription>
             </DialogHeader>
-            <div className="grid grid-cols-2 gap-2 p-3 rounded-xl border border-nx-line bg-nx-raised font-mono text-xs text-nx-ink">
+            <div dir="ltr" className="grid grid-cols-2 gap-2 p-3 rounded-xl border border-nx-line bg-nx-raised font-mono text-xs text-nx-ink">
               {generatedCodes.map((entry) => (
                 <div
                   key={entry}
                   className="px-2 py-1 rounded bg-nx-surface border border-nx-line text-center"
                 >
-                  {entry}
+                  <bdi>{entry}</bdi>
                 </div>
               ))}
             </div>

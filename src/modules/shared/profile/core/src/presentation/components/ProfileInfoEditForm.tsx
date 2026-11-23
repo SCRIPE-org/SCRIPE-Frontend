@@ -119,7 +119,7 @@ export function ProfileInfoEditForm({
           <Label>{t("profile.role")}</Label>
           <div className="flex h-10 items-center">
             <Badge variant="secondary" className="text-xs font-semibold">
-              {adminTypeName || "SuperAdmin"}
+              {adminTypeName || t("profile.roleDefault")}
             </Badge>
           </div>
         </div>
