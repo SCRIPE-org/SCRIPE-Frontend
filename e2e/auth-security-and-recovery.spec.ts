@@ -573,14 +573,20 @@ test.describe.serial("Identity Authentication, Recovery & Security Policy Certif
       );
       expect(activeTokensAfterLogout[0]?.cnt ?? -1).toBe(0);
 
-      // 1B. Failed-attempt lockout on Pro tenant test admin (`apex.booking@scripe-dev.local`, threshold = 5; 6th probe renders locked minutes)
+      // 1B. Failed-attempt lockout on Pro tenant test admin (`apex.booking@scripe-dev.local`, threshold = 5)
+      // Pre-seed 2 prior failed attempts so 3 live UI failures cross threshold=5 and 4th probe renders locked minutes
+      // while staying within the production RateLimiting__LoginLimit=10 budget across all 5 tests (9/10 Login calls).
+      execPg(
+        cfg,
+        `UPDATE identity.admins SET failed_login_attempts = 2, lockout_end = NULL WHERE lower(email) = ${sqlLiteral(LOCKOUT_ADMIN_EMAIL)};`
+      );
       await resetBrowserSession(page, "en");
       await page.goto("/login", { waitUntil: "domcontentloaded" });
       await waitForAppSettled(page, true);
       await expect(page.locator("#identifier")).toBeVisible({ timeout: 20_000 });
 
       const wrongCandidate = `WrongPass!${Date.now()}#0`;
-      for (let attempt = 1; attempt <= 6; attempt++) {
+      for (let attempt = 1; attempt <= 4; attempt++) {
         await page.locator("#identifier").fill(LOCKOUT_ADMIN_EMAIL);
         await page.locator("#password").fill(wrongCandidate);
         const failResPromise = page.waitForResponse(

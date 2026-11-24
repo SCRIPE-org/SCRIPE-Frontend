@@ -979,9 +979,22 @@ test.describe.serial(
         expect(page.url()).toContain("/account/sessions");
         await expect(revokeAllBtn).toBeHidden({ timeout: 10_000 });
 
+        // Cookie-bearing /refresh without Origin header must fail closed with 403 (#256 #5 CSRF guard)
+        const originlessRefreshAttempt = await secondaryContext.request.post(
+          `${API_BASE_URL}/api/v1/auth/admin/refresh`,
+          {
+            data: { refreshToken: secondaryRefreshCookie!.value },
+          }
+        );
+        expect(originlessRefreshAttempt.status()).toBe(403);
+
+        // With valid Origin header, the revoked secondary refresh token must return 401 Unauthorized
         const secondaryRefreshAttempt = await secondaryContext.request.post(
           `${API_BASE_URL}/api/v1/auth/admin/refresh`,
           {
+            headers: {
+              Origin: "http://localhost:3000",
+            },
             data: { refreshToken: secondaryRefreshCookie!.value },
           }
         );
@@ -1065,6 +1078,7 @@ test.describe.serial(
         await expect(page.getByTestId("mfa-enroll-locked-controls-notice")).toBeVisible({
           timeout: 15_000,
         });
+        await expect(page.getByText(/^0 Sessions$|^0 جلسات$/i)).toHaveCount(0);
         expect(
           monitor.getForbiddenResponses(),
           "Expected zero 403 API failures when loading mandatory mfa_enroll=true security vault"
@@ -1129,6 +1143,9 @@ test.describe.serial(
         await confirmDialog.getByRole("button", { name: /^Confirm$|^تأكيد$/i }).click();
 
         await expect(page.getByTestId("sudo-verification-modal")).toBeVisible({ timeout: 15_000 });
+        await expect(page.getByTestId("sudo-verification-modal")).toContainText(
+          /Confirm Identity \(Step-Up Sudo\)/i
+        );
         await capturePng(page, "track2-06-global-sudo-admins-cancel-en-desktop.png");
         await cancelSudoModal(page);
         await assertNoSpuriousErrorToasts(page, "/admins Transfer Protection Sudo cancel");
@@ -1204,19 +1221,29 @@ test.describe.serial(
         await expect(page.getByText(/Sign-In Failed/i)).toBeVisible({ timeout: 15_000 });
 
         await page.goto("/sso/saml/callback?error=account_locked", { waitUntil: "domcontentloaded" });
-        await expect(page.getByText(/Sign-In Failed/i)).toBeVisible({ timeout: 15_000 });
+        await expect(
+          page.getByRole("heading", { level: 1, name: /Sign-In Failed/i })
+        ).toBeVisible({ timeout: 15_000 });
         await expect(
           page.getByText(/Your account is temporarily locked/i)
         ).toBeVisible({ timeout: 15_000 });
+        await expect(page.getByText("account_locked", { exact: true })).toBeVisible({
+          timeout: 10_000,
+        });
+        await expect(page.locator('a[href="/forgot-password"]')).toBeVisible({
+          timeout: 10_000,
+        });
         await capturePng(page, "track2-08-saml-error-localized-en-desktop.png");
 
         await page.goto("/sso/saml/callback?error=%E0%A4%A", { waitUntil: "domcontentloaded" });
-        await expect(page.getByText(/Sign-In Failed/i)).toBeVisible({ timeout: 15_000 });
+        await expect(
+          page.getByRole("heading", { level: 1, name: /Sign-In Failed/i })
+        ).toBeVisible({ timeout: 15_000 });
         await expect(
           page.getByText(/An unexpected error occurred during SSO login/i)
         ).toBeVisible({ timeout: 15_000 });
 
-        // Part B: Custom-domain first-party session relay negative security checks (GET -> 405, cross-site -> 403)
+        // Part B: Custom-domain first-party session relay negative security checks (GET -> 405, cross-site -> 403, tampered -> 400, headers)
         for (const relayPath of [
           "/api/auth/session/establish",
           "/api/auth/session/refresh",
@@ -1225,6 +1252,7 @@ test.describe.serial(
           const getRes = await page.request.get(relayPath);
           expect(getRes.status(), `GET ${relayPath} must return 405`).toBe(405);
           expect(getRes.headers()["allow"]).toBe("POST");
+          expect(getRes.headers()["x-content-type-options"]).toBe("nosniff");
 
           const crossSiteRes = await page.request.post(relayPath, {
             headers: {
@@ -1234,14 +1262,66 @@ test.describe.serial(
             data: {},
           });
           expect(crossSiteRes.status(), `Cross-site POST ${relayPath} must return 403`).toBe(403);
+          expect(crossSiteRes.headers()["x-content-type-options"]).toBe("nosniff");
+          expect(crossSiteRes.headers()["vary"]).toContain("Origin");
           const body = (await crossSiteRes.json()) as { error?: string };
           expect(body.error).toBe("cross_site_request_forbidden");
         }
 
-        // Part C & D: Cross-tab localStorage/BroadcastChannel isolation + Split Logout (GAP-05)
+        const tamperedRelayRes = await page.request.post("/api/auth/session/establish", {
+          headers: {
+            Origin: "http://localhost:3000",
+            "Sec-Fetch-Site": "same-origin",
+          },
+          data: { accessToken: "", refreshToken: "" },
+        });
+        expect([400, 401]).toContain(tamperedRelayRes.status());
+        expect(tamperedRelayRes.headers()["x-content-type-options"]).toBe("nosniff");
+
+        // #227/#228 guardrail: POST /2fa/verify with cross-origin returnOrigin without pending ticket must fail closed (400/422/403)
+        const unboundHandoff2FaRes = await page.request.post(
+          `${API_BASE_URL}/api/v1/auth/admin/2fa/verify`,
+          {
+            data: {
+              identifier: PRO_ADMIN_EMAIL,
+              password: devPassword,
+              twoFactorCode: "000000",
+              returnOrigin: "https://portal.cluba.com",
+              returnPath: "/dashboard",
+            },
+          }
+        );
+        expect(
+          [400, 403, 422],
+          "POST /2fa/verify with returnOrigin and no TwoFactorPendingToken must fail closed"
+        ).toContain(unboundHandoff2FaRes.status());
+
+        // Part C & D: Cross-tab localStorage/BroadcastChannel isolation + Cookie/CSRF checks + Split Logout (GAP-05)
         await loginViaUi(page, PRO_ADMIN_EMAIL, devPassword);
         await page.goto("/account/security", { waitUntil: "domcontentloaded" });
         await waitForAppSettled(page);
+
+        const activeAuthCookies = await page.context().cookies();
+        const activeRefreshCookie = getRefreshCookie(activeAuthCookies, cfg);
+        expect(activeRefreshCookie).toBeTruthy();
+        expect(activeRefreshCookie?.httpOnly).toBe(true);
+        expect(activeRefreshCookie?.sameSite).toBe("Lax");
+        expect(activeRefreshCookie?.path).toBe("/");
+
+        const evilOriginCsrfRes = await page.request.post(
+          `${API_BASE_URL}/api/v1/auth/admin/refresh`,
+          {
+            headers: {
+              Origin: "https://evil.example.com",
+              Cookie: `${cfg.refreshCookieName}=${activeRefreshCookie!.value}`,
+            },
+            data: {},
+          }
+        );
+        expect(
+          evilOriginCsrfRes.status(),
+          "Untrusted cross-origin POST with cookie must be rejected with 403 by CSRF/Origin guard"
+        ).toBe(403);
 
         const tabAPrincipalKey = await page.evaluate(() =>
           window.sessionStorage.getItem("scr_active_principal_key")
@@ -1309,6 +1389,7 @@ test.describe.serial(
           `${API_BASE_URL}/api/v1/auth/admin/logout`,
           {
             headers: {
+              Origin: "http://localhost:3000",
               Cookie: `${cfg.oidcSessionCookieName}=e2e-central-oidc-session`,
             },
             data: { logoutScope: "central" },
@@ -1321,6 +1402,25 @@ test.describe.serial(
           .map((h) => h.value)
           .join("\n");
         expect(setCookieJoined).toContain(`${cfg.oidcSessionCookieName}=;`);
+
+        // Part E: Production Rate-Limiting Enforcement Proof (RateLimiting__Enabled=true, PasskeyAuthLimit=12 per RateLimitingSettings.cs:45)
+        let observed429 = false;
+        for (let burst = 1; burst <= 14; burst++) {
+          const rlRes = await page.request.post(
+            `${API_BASE_URL}/api/v1/auth/passkeys/authentication/begin`,
+            {
+              data: { identifier: PRO_ADMIN_EMAIL },
+            }
+          );
+          if (rlRes.status() === 429) {
+            observed429 = true;
+            break;
+          }
+        }
+        expect(
+          observed429,
+          "Expected HTTP 429 Too Many Requests on passkey-auth rate-limited endpoint under production-like RateLimiting__Enabled=true"
+        ).toBe(true);
 
         monitor.assertClean("Test 4 Central SSO, Relay Negative Checks, Split Logout & Cross-Tab Isolation");
       } finally {
