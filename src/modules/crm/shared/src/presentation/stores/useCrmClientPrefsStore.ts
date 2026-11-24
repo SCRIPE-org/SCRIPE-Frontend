@@ -60,11 +60,18 @@ function resolveActiveScopeKey(): string {
   return activeExplicitScope ?? appScope;
 }
 
+function isAnonymousCrmScope(scopeKey: string): boolean {
+  return !scopeKey || scopeKey === "anon" || scopeKey.endsWith(":anon");
+}
+
 const tenantScopedStorage: StateStorage = {
   getItem: (name: string): string | null => {
     if (typeof window === "undefined") return null;
     try {
-      return window.localStorage.getItem(`${name}:${resolveActiveScopeKey()}`);
+      window.localStorage.removeItem(`${name}:platform:anon`);
+      const scopeKey = resolveActiveScopeKey();
+      if (isAnonymousCrmScope(scopeKey)) return null;
+      return window.localStorage.getItem(`${name}:${scopeKey}`);
     } catch {
       return null;
     }
@@ -72,7 +79,10 @@ const tenantScopedStorage: StateStorage = {
   setItem: (name: string, value: string): void => {
     if (typeof window === "undefined") return;
     try {
-      window.localStorage.setItem(`${name}:${resolveActiveScopeKey()}`, value);
+      window.localStorage.removeItem(`${name}:platform:anon`);
+      const scopeKey = resolveActiveScopeKey();
+      if (isAnonymousCrmScope(scopeKey)) return;
+      window.localStorage.setItem(`${name}:${scopeKey}`, value);
     } catch {
       // Ignore quota / private-mode storage errors
     }
@@ -80,6 +90,7 @@ const tenantScopedStorage: StateStorage = {
   removeItem: (name: string): void => {
     if (typeof window === "undefined") return;
     try {
+      window.localStorage.removeItem(`${name}:platform:anon`);
       window.localStorage.removeItem(`${name}:${resolveActiveScopeKey()}`);
     } catch {
       // Ignore storage access errors
