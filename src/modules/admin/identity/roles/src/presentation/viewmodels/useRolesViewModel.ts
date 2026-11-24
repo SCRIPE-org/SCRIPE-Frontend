@@ -18,6 +18,7 @@ import type {
   CloneRoleRequest,
 } from "../../domain/entities/RoleRequests";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { isSudoCancelledError } from "@core/store/useSudoStore";
 import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
 import { useOptionalNavigation } from "@core/providers/navigation-provider";
 import { syncCurrentSessionAuthorization } from "@core/hooks/use-authorization-sync";
@@ -173,6 +174,7 @@ export function useRolesViewModel(params: UseRolesViewModelParams = {}) {
       });
     },
     onError: (err: Error) => {
+      if (isSudoCancelledError(err)) return;
       toastError({
         title: "Permission Assignment Failed",
         description: err.message || "Failed to update permissions.",

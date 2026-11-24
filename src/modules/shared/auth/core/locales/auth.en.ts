@@ -107,6 +107,10 @@ export const en = {
         invalidCredentials: "Your external credentials could not be verified. Please try again.",
         invalidProvider: "This sign-in provider is unavailable or misconfigured.",
         stateExpired: "Your sign-in session expired. Please start signing in again.",
+        csrfMismatch:
+          "Your sign-in session could not be verified for this browser tab. Please start signing in again.",
+        originMismatch:
+          "Sign-in handoff origin verification failed. Please start signing in again from your workspace.",
         temporarilyUnavailable:
           "Your identity provider is temporarily unavailable. Please try again shortly.",
       },

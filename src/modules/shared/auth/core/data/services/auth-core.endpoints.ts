@@ -27,6 +27,7 @@ export const AUTH_CORE_ENDPOINTS = {
   },
   OIDC: {
     ADMIN_PROVIDERS: `${V1}/auth/oidc/providers/admin`,
+    START: `${V1}/auth/oidc/start`,
     CHALLENGE: `${V1}/auth/oidc/challenge`,
     CALLBACK: `${V1}/auth/oidc/callback`,
     AUTHORIZE: `/connect/authorize`,

@@ -1,6 +1,8 @@
 import { buildUrl } from "@/core/config/api-endpoints/_shared";
+import { isExternalCustomDomain } from "@core/common/origin-routing";
 import type { PasswordPolicyDto } from "@core/common/password-policy";
 import type { IApiService } from "@core/interfaces/api.interface";
+import { postCustomDomainSessionRelay } from "@core/services/custom-domain-relay-client";
 import type { IProfileService } from "../../domain/interfaces/IProfileService";
 import type { AdminProfile } from "../../domain/entities/AdminProfile";
 import type { ActiveSession } from "../../domain/entities/ActiveSession";
@@ -53,6 +55,18 @@ export class ProfileService implements IProfileService {
     if (!adminId) {
       throw new Error("Unable to resolve administrator identifier for password change.");
     }
+    if (isExternalCustomDomain()) {
+      return postCustomDomainSessionRelay<ChangePasswordSessionResult | void>(
+        "/api/auth/session/establish",
+        {
+          mode: "change-password",
+          adminId,
+          id: adminId,
+          ...data,
+        },
+        { includeAuth: true, sudoToken }
+      );
+    }
     if (sudoToken) {
       return this.api.post<ChangePasswordSessionResult | void>(
         PROFILE_ENDPOINTS.CHANGE_PASSWORD(adminId),
@@ -86,6 +100,15 @@ export class ProfileService implements IProfileService {
    * AuthService.logout()/refreshToken(), which also POST an empty body.
    */
   async revokeAllSessions(sudoToken?: string): Promise<{ revokedCount: number }> {
+    if (isExternalCustomDomain()) {
+      return postCustomDomainSessionRelay<{ revokedCount: number }>(
+        "/api/auth/session/establish",
+        {
+          mode: "revoke-other-sessions",
+        },
+        { includeAuth: true, sudoToken }
+      );
+    }
     if (sudoToken) {
       return this.api.post<{ revokedCount: number }>(
         PROFILE_ENDPOINTS.REVOKE_ALL_SESSIONS,

@@ -6,7 +6,9 @@
  */
 import type { IApiService } from "@core/interfaces/api.interface";
 import { buildUrl } from "@/core/config/api-endpoints/_shared";
+import { isExternalCustomDomain } from "@core/common/origin-routing";
 import { mapPasswordPolicyDto, type PasswordPolicyModel } from "@core/common/password-policy";
+import { postCustomDomainSessionRelay } from "@core/services/custom-domain-relay-client";
 import { PROFILE_ENDPOINTS } from "../services/profile.endpoints";
 import { ProfileService } from "../services/ProfileService";
 import type { IProfileService } from "../../domain/interfaces/IProfileService";
@@ -201,6 +203,15 @@ export class SecurityRepository implements ISecurityRepository {
   }
 
   async revokeAllOtherSessions(sudoToken?: string): Promise<{ revokedCount: number }> {
+    if (isExternalCustomDomain()) {
+      return postCustomDomainSessionRelay<{ revokedCount: number }>(
+        "/api/auth/session/establish",
+        {
+          mode: "revoke-other-sessions",
+        },
+        { includeAuth: true, sudoToken }
+      );
+    }
     if (sudoToken) {
       return this.api.post<{ revokedCount: number }>(
         PROFILE_ENDPOINTS.REVOKE_ALL_SESSIONS,

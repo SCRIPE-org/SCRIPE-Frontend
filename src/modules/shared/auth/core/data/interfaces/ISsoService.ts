@@ -8,6 +8,7 @@ export interface OidcChallengeParams {
   targetTenantId?: string;
   targetTenantCode?: string;
   staySignedIn?: boolean;
+  browserBindingHash?: string;
 }
 
 export interface SamlLoginUrlParams {
@@ -18,6 +19,7 @@ export interface SamlLoginUrlParams {
   targetTenantId?: string;
   targetTenantCode?: string;
   staySignedIn?: boolean;
+  browserBindingHash?: string;
 }
 
 export interface ISsoService {
@@ -26,7 +28,12 @@ export interface ISsoService {
     mode?: string | null;
   }): Promise<SsoProviderDto[]>;
   initiateOidcChallenge(params: OidcChallengeParams): Promise<SsoChallengeDto>;
-  redeemHandoff?(params: { code: string; state: string }): Promise<SsoCallbackResultDto>;
+  buildOidcStartUrl?(params: OidcChallengeParams): string;
+  redeemHandoff?(params: {
+    code: string;
+    state: string;
+    browserBindingNonce?: string | null;
+  }): Promise<SsoCallbackResultDto>;
   completeOidcCallback(params: {
     providerId: string;
     code: string;

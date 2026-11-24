@@ -24,6 +24,7 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermission } from "@core/hooks/use-permission";
 import { useAppStore } from "@core/store/useAppStore";
+import { isSudoCancelledError } from "@core/store/useSudoStore";
 import { useOptionalNavigation } from "@core/providers/navigation-provider";
 import { syncCurrentSessionAuthorization } from "@core/hooks/use-authorization-sync";
 import { SYSTEM_PERMISSIONS, isPlatformSuperAdminUser } from "@core/common/types/permissions";
@@ -323,6 +324,7 @@ export function useRolePermissionsDialog({
       onOpenChange(false);
     },
     onError: (error: Error) => {
+      if (isSudoCancelledError(error)) return;
       toast({
         title: t("role.permissionsSaveError"),
         description: error.message,

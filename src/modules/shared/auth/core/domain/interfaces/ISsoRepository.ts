@@ -6,6 +6,7 @@ export interface SsoInitiateLoginOptions {
   targetTenantId?: string | null;
   targetTenantCode?: string | null;
   staySignedIn?: boolean;
+  useTopLevelOidcStart?: boolean;
 }
 
 export interface ISsoRepository {

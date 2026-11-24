@@ -1,6 +1,7 @@
 import { isPlatformDomain } from "@core/common/origin-routing";
 import { getSafeRedirectPath, isSafeRedirectTarget } from "@core/common/redirect-safety";
 import { sanitizeHttpUrl } from "@core/common/sanitize";
+import * as customDomainRelayClient from "@core/services/custom-domain-relay-client";
 import type { SsoCallbackResult, SsoProvider } from "../../domain/entities/SsoProvider";
 import type {
   ISsoRepository,
@@ -8,6 +9,30 @@ import type {
 } from "../../domain/interfaces/ISsoRepository";
 import type { ISsoService } from "../interfaces/ISsoService";
 import { SsoMapper } from "../mappers/SsoMapper";
+
+async function resolveBoundSsoBrowserHash(): Promise<string | undefined> {
+  const relayMod = customDomainRelayClient as unknown as {
+    bindSsoBrowserNonce?: () => Promise<string | null | undefined>;
+  };
+  try {
+    if (typeof relayMod.bindSsoBrowserNonce === "function") {
+      const hash = await relayMod.bindSsoBrowserNonce();
+      return typeof hash === "string" && hash.trim().length > 0 ? hash.trim() : undefined;
+    }
+    const res = await fetch("/api/auth/sso/bind", {
+      method: "POST",
+      credentials: "same-origin",
+      headers: { Accept: "application/json" },
+    });
+    if (!res.ok) return undefined;
+    const json = (await res.json()) as { browserBindingHash?: unknown };
+    return typeof json?.browserBindingHash === "string" && json.browserBindingHash.trim().length > 0
+      ? json.browserBindingHash.trim()
+      : undefined;
+  } catch {
+    return undefined;
+  }
+}
 
 const SSO_KEYS = {
   CODE_VERIFIER: "sso_code_verifier",
@@ -76,6 +101,7 @@ export class SsoRepository implements ISsoRepository {
     const targetTenantId = options?.targetTenantId ?? undefined;
     const targetTenantCode = options?.targetTenantCode ?? devTenantCode;
     const staySignedIn = options?.staySignedIn;
+    const browserBindingHash = await resolveBoundSsoBrowserHash();
 
     if (protocol?.toLowerCase().includes("saml")) {
       const samlRedirectUri = browserOrigin ? `${browserOrigin}/sso/saml/callback` : undefined;
@@ -88,6 +114,7 @@ export class SsoRepository implements ISsoRepository {
           targetTenantId,
           targetTenantCode,
           staySignedIn,
+          ...(browserBindingHash ? { browserBindingHash } : {}),
         })
       );
       if (!samlLoginUrl) {
@@ -98,7 +125,7 @@ export class SsoRepository implements ISsoRepository {
     }
 
     const redirectUri = browserOrigin ? `${browserOrigin}/sso/callback` : undefined;
-    const challenge = await this.service.initiateOidcChallenge({
+    const oidcParams = {
       providerId,
       redirectUri,
       returnOrigin,
@@ -106,7 +133,25 @@ export class SsoRepository implements ISsoRepository {
       targetTenantId,
       targetTenantCode,
       staySignedIn,
-    });
+      ...(browserBindingHash ? { browserBindingHash } : {}),
+    };
+
+    const shouldUseTopLevelOidcStart =
+      typeof this.service.buildOidcStartUrl === "function" &&
+      (options?.useTopLevelOidcStart === true ||
+        (options?.useTopLevelOidcStart !== false &&
+          (Boolean(browserBindingHash) || typeof this.service.initiateOidcChallenge !== "function")));
+
+    if (shouldUseTopLevelOidcStart) {
+      const safeStartUrl = sanitizeHttpUrl(this.service.buildOidcStartUrl!(oidcParams));
+      if (!safeStartUrl) {
+        throw new Error("Invalid SSO authorization redirect URL.");
+      }
+      window.location.href = safeStartUrl;
+      return;
+    }
+
+    const challenge = await this.service.initiateOidcChallenge(oidcParams);
     const safeAuthorizationUrl = sanitizeHttpUrl(challenge.authorizationUrl);
     if (!safeAuthorizationUrl) {
       throw new Error("Invalid SSO authorization redirect URL.");

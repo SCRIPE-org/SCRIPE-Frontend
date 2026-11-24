@@ -72,6 +72,10 @@ const SSO_ERROR_LOCALE_KEYS: Record<string, string> = {
   state_expired: "auth.sso.errors.stateExpired",
   sso_handoff_invalid: "auth.sso.errors.stateExpired",
   sso_handoff_state_mismatch: "auth.sso.errors.stateExpired",
+  sso_login_csrf_mismatch: "auth.sso.errors.csrfMismatch",
+  sso_csrf_failed: "auth.sso.errors.csrfMismatch",
+  missing_caller_origin: "auth.sso.errors.originMismatch",
+  cross_tenant_origin_forbidden: "auth.sso.errors.originMismatch",
   login_required: "auth.sso.errors.stateExpired",
   consent_required: "auth.sso.errors.stateExpired",
   interaction_required: "auth.sso.errors.stateExpired",
@@ -155,15 +159,19 @@ function mapApiErrorToSsoOutcome(
   if (isNoLinkedAccountError(error)) {
     return resolveSsoErrorOutcome("no_linked_account", t);
   }
-  const details = (error as { details?: { error?: unknown; code?: unknown } } | null)?.details;
+  const details = (
+    error as { details?: { error?: unknown; code?: unknown; errorCode?: unknown } } | null
+  )?.details;
   const candidate =
-    typeof details?.code === "string"
-      ? details.code
-      : typeof details?.error === "string"
-        ? details.error
-        : error instanceof Error
-          ? error.message
-          : null;
+    typeof details?.errorCode === "string"
+      ? details.errorCode
+      : typeof details?.code === "string"
+        ? details.code
+        : typeof details?.error === "string"
+          ? details.error
+          : error instanceof Error
+            ? error.message
+            : null;
   return resolveSsoErrorOutcome(candidate, t);
 }
 
