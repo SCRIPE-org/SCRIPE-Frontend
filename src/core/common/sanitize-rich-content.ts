@@ -13,11 +13,11 @@ import {
   sanitizeHttpUrl,
   stripAsciiControlChars,
 } from "./sanitize-css";
+import { isSafeInlineIconSvg } from "./sanitize-svg";
 
 const SAFE_RASTER_DATA_IMAGE_RE =
   /^data:image\/(png|jpeg|jpg|webp|gif|avif);base64,[A-Za-z0-9+/=]+$/i;
 const SAFE_INLINE_SVG_ICON_RE = /^data:image\/svg\+xml,/i;
-const UNSAFE_SVG_TOKEN_RE = /<script|foreignobject|\bon[a-z]+\s*=|javascript:|vbscript:|xlink:href/i;
 
 const RICH_HTML_ALLOWED_TAGS = [
   "a",
@@ -170,19 +170,9 @@ function sanitizeImageSrc(rawSrc: string, allowInlineIconSvg: boolean): string |
   const cleaned = stripAsciiControlChars(rawSrc).trim();
   if (!cleaned) return null;
   if (SAFE_RASTER_DATA_IMAGE_RE.test(cleaned)) return cleaned;
-
   if (allowInlineIconSvg && SAFE_INLINE_SVG_ICON_RE.test(cleaned)) {
-    try {
-      const decoded = decodeURIComponent(cleaned.slice("data:image/svg+xml,".length));
-      if (!UNSAFE_SVG_TOKEN_RE.test(decoded)) {
-        return cleaned;
-      }
-    } catch {
-      return null;
-    }
-    return null;
+    return isSafeInlineIconSvg(cleaned) ? cleaned : null;
   }
-
   return sanitizeHttpUrl(cleaned, { allowRelative: true });
 }
 

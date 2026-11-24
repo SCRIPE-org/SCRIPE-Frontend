@@ -11,7 +11,7 @@ function buildNextHeaderRules() {
   return [
     // Baseline security headers for all non-preview routes (CSP itself is issued per-request by src/proxy.ts)
     {
-      source: "/((?!studio-preview|dashboard-preview).*)",
+      source: "/((?!studio-preview(?:/|$)|dashboard-preview(?:/|$)).*)",
       headers: buildCommonSecurityHeaders({ isDev, frameAncestorsMode: "DENY" }),
     },
     // Allow Customization Studio to embed same-origin preview routes while keeping baseline hardening

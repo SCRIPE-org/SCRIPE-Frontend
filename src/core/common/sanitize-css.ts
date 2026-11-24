@@ -142,9 +142,9 @@ export function sanitizeCssDeclarationValue(raw: unknown): string {
 }
 
 /**
- * Sanitize author-supplied CSS fragments using a fixed-point pass that strips comments,
- * decodes CSS hex escapes, removes `<` / `>`, strips `@import` / legacy script triggers,
- * and validates every `url(...)` target.
+ * Sanitize author-supplied CSS fragments using a fixed-point pass that strips comments
+ * and control characters, decodes CSS hex and non-hex L3 escapes, removes `<` / `>`,
+ * strips `@import` / legacy script triggers, and validates every `url(...)` / `image-set`.
  */
 export function sanitizeCss(input: string): string {
   if (!input || typeof input !== "string") return "";
@@ -152,14 +152,19 @@ export function sanitizeCss(input: string): string {
   let current = stripAsciiControlChars(input);
   let prev = "";
 
-  for (let pass = 0; pass < 5 && current !== prev; pass += 1) {
+  for (let pass = 0; pass < 6 && current !== prev; pass += 1) {
     prev = current;
-    current = current
+    current = stripAsciiControlChars(current)
       .replace(/\/\*[\s\S]*?\*\//g, "")
       .replace(/\\([0-9a-fA-F]{1,6})\s?/g, (_match, hex: string) => {
         const cp = Number.parseInt(hex, 16);
         return cp > 0 && cp <= 0x10ffff ? String.fromCodePoint(cp) : "";
       })
+      .replace(/\\([^\r\n\f0-9a-fA-F])/g, "$1")
+      .replace(/\\/g, "");
+
+    current = stripAsciiControlChars(current)
+      .replace(/\/\*[\s\S]*?\*\//g, "")
       .replace(/[<>]/g, "")
       .replace(/@import[^;]*;?/gi, "")
       .replace(/@charset[^;]*;?/gi, "")
@@ -172,10 +177,12 @@ export function sanitizeCss(input: string): string {
       .replace(/data\s*:\s*text\/html/gi, "");
   }
 
-  return current.replace(/url\(\s*(['"]?)([\s\S]*?)\1\s*\)/gi, (_m, _q, rawUrl: string) => {
-    const safeUrl = sanitizeCssAssetUrl(rawUrl);
-    return safeUrl ? `url('${safeUrl}')` : "none";
-  });
+  return current
+    .replace(/(?:-webkit-)?image-set\s*\([^)]*\)/gi, "none")
+    .replace(/url\(\s*(['"]?)([\s\S]*?)\1\s*\)/gi, (_m, _q, rawUrl: string) => {
+      const safeUrl = sanitizeCssAssetUrl(rawUrl);
+      return safeUrl ? `url('${safeUrl}')` : "none";
+    });
 }
 
 /**

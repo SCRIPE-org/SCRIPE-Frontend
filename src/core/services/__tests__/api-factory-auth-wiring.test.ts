@@ -97,7 +97,9 @@ describe("next.config.ts TypeScript & HTTP security header hardening", () => {
     expect(typeof nextConfig.headers).toBe("function");
 
     const rules = await nextConfig.headers!();
-    const globalRule = rules.find((r) => r.source === "/((?!studio-preview|dashboard-preview).*)");
+    const globalRule = rules.find(
+      (r) => r.source === "/((?!studio-preview(?:/|$)|dashboard-preview(?:/|$)).*)"
+    );
     expect(globalRule).toBeDefined();
 
     const headerMap = new Map(globalRule!.headers.map((h) => [h.key, h.value]));

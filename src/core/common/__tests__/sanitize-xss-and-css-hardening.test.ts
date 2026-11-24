@@ -32,13 +32,20 @@ describe("Area B — CSS, HTML, URI & CSV XSS/injection hardening", () => {
 
     const obfuscated =
       "@\\69 mport url('https://evil.example/x.css'); " +
-      "p{width:expre/**/ssion(alert(1));behavior:url(#default#time2);background:url(javascript:alert(1));}";
+      "@\\i\\m\\p\\o\\r\\t \"https://attacker.example/exfil.css\"; " +
+      "p{width:expre/**/ssion(alert(1));behavior:url(#default#time2);" +
+      "background:\\u\\r\\l(javascript:alert(1));" +
+      "list-style-image:u\\r\\l(javascript:alert(2));" +
+      "content:'expre\\0a ssion(alert(3))';" +
+      "color:expre\\09 ssion(alert(4));}";
     const cleanObfuscated = sanitizeCss(obfuscated);
     expect(cleanObfuscated.toLowerCase()).not.toContain("@import");
     expect(cleanObfuscated.toLowerCase()).not.toContain("expression(");
     expect(cleanObfuscated.toLowerCase()).not.toContain("behavior:");
     expect(cleanObfuscated.toLowerCase()).not.toContain("javascript:");
+    expect(cleanObfuscated).not.toContain("\\");
     expect(cleanObfuscated).toContain("background:none");
+    expect(cleanObfuscated).toContain("list-style-image:none");
 
     const valid = "body { color: #111827; background-image: url('/brand/hero.png'); }";
     expect(sanitizeCss(valid)).toContain("url('/brand/hero.png')");
@@ -53,6 +60,9 @@ describe("Area B — CSS, HTML, URI & CSV XSS/injection hardening", () => {
       '<img src="https://cdn.scripe.org/logo.png" onerror="alert(1)">' +
       '<img src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M0%200%22%2F%3E%3C%2Fsvg%3E" alt="Icon">' +
       '<img src="data:image/svg+xml,%3Csvg%20onload%3D%22alert(1)%22%3E%3C%2Fsvg%3E" alt="EvilSvg">' +
+      '<img src="data:image/svg+xml,%3Csvg%3E%3Cuse%20href%3D%22javascript%3Aalert(1)%22%2F%3E%3C%2Fsvg%3E" alt="UseSvg">' +
+      '<img src="data:image/svg+xml,%3Csvg%3E%3Ca%20xlink%3Ahref%3D%22%26%23x6a%3Bavascript%3Aalert(1)%22%3E%3Ccircle%20r%3D%2210%22%2F%3E%3C%2Fa%3E%3C%2Fsvg%3E" alt="EntitySvg">' +
+      '<img src="data:image/svg+xml,%3Csvg%3E%3Canimate%20attributeName%3D%22href%22%20to%3D%22javascript%3Aalert(1)%22%2F%3E%3C%2Fsvg%3E" alt="AnimSvg">' +
       "<iframe src='https://evil.example'></iframe>" +
       "</div>";
 
@@ -71,6 +81,9 @@ describe("Area B — CSS, HTML, URI & CSV XSS/injection hardening", () => {
     expect(imgs[0]?.hasAttribute("onerror")).toBe(false);
     expect(imgs[1]?.getAttribute("src")).toContain("data:image/svg+xml,");
     expect(imgs[2]?.hasAttribute("src")).toBe(false);
+    expect(imgs[3]?.hasAttribute("src")).toBe(false);
+    expect(imgs[4]?.hasAttribute("src")).toBe(false);
+    expect(imgs[5]?.hasAttribute("src")).toBe(false);
     expect(container.querySelector("iframe")).toBeNull();
     expect(emailClean.toLowerCase()).not.toContain("javascript:");
 
