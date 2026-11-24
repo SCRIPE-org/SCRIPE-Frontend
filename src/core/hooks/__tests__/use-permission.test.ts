@@ -27,9 +27,12 @@ const { mockUseAppStore, mockAppState } = vi.hoisted(() => {
     roles: [] as AdminRole[],
     user: null as {
       id: string;
+      username?: string;
       tenantId?: string | null;
+      isProtected?: boolean;
       isSuperAdmin?: boolean;
       isTenantSuperAdmin?: boolean;
+      adminTypeName?: string;
     } | null,
   };
 
@@ -188,5 +191,86 @@ describe("usePermission & usePermissions — tenant vs platform superadmin isola
     expect(helpers.current.isPlatformSuperAdmin).toBe(true);
     expect(helpers.current.isTenantSuperAdmin).toBe(false);
     expect(canManageGroups.current).toBe(true);
+  });
+
+  it("never trusts a 'superadmin' username heuristic on a tenant-scoped principal (no platform bypass, no tenant-SA elevation)", () => {
+    mockAppState.user = {
+      id: "tenant-user-superadmin-name",
+      username: "superadmin",
+      tenantId: "tenant-1",
+      isSuperAdmin: false,
+      isTenantSuperAdmin: false,
+    };
+    mockAppState.roles = [];
+    mockAppState.permissions = ["admins.view"];
+
+    const { result: canCreateTenant } = renderHook(() => usePermission("tenants.create"));
+    const { result: canViewAdmins } = renderHook(() => usePermission("admins.view"));
+    const { result: helpers } = renderHook(() => usePermissions());
+
+    expect(helpers.current.isPlatformSuperAdmin).toBe(false);
+    expect(helpers.current.isTenantSuperAdmin).toBe(false);
+    expect(canCreateTenant.current).toBe(false);
+    expect(canViewAdmins.current).toBe(true);
+  });
+
+  it("does not let isProtected: true bypass permission checks when the principal carries a tenantId", () => {
+    mockAppState.user = {
+      id: "tenant-protected-1",
+      username: "superadmin",
+      tenantId: "tenant-1",
+      isProtected: true,
+      isSuperAdmin: false,
+      isTenantSuperAdmin: false,
+    };
+    mockAppState.roles = [];
+    mockAppState.permissions = ["user_groups.view"];
+
+    const { result: canUpdateGroups } = renderHook(() => usePermission("user_groups.update"));
+    const { result: canViewGroups } = renderHook(() => usePermission("user_groups.view"));
+    const { result: helpers } = renderHook(() => usePermissions());
+
+    expect(helpers.current.isPlatformSuperAdmin).toBe(false);
+    expect(helpers.current.isTenantSuperAdmin).toBe(false);
+    expect(helpers.current.has("user_groups.update")).toBe(false);
+    expect(canUpdateGroups.current).toBe(false);
+    expect(canViewGroups.current).toBe(true);
+  });
+
+  it("keeps platform bypass for isProtected: true only when the principal has NO tenantId, and never reports it as tenant superadmin", () => {
+    mockAppState.user = {
+      id: "platform-protected-1",
+      username: "superadmin",
+      tenantId: null,
+      isProtected: true,
+      isSuperAdmin: false,
+    };
+    mockAppState.roles = [];
+    mockAppState.permissions = [];
+
+    const { result: canManageGroups } = renderHook(() => usePermission("user_groups.update"));
+    const { result: helpers } = renderHook(() => usePermissions());
+
+    expect(helpers.current.isPlatformSuperAdmin).toBe(true);
+    expect(helpers.current.isTenantSuperAdmin).toBe(false);
+    expect(canManageGroups.current).toBe(true);
+  });
+
+  it("does not elevate a tenant-scoped principal that merely holds the SYSTEM_SUPER_ADMIN role code", () => {
+    mockAppState.user = {
+      id: "tenant-system-role-1",
+      username: "superadmin",
+      tenantId: "tenant-1",
+      isProtected: true,
+    };
+    mockAppState.roles = [makeRole("SYSTEM_SUPER_ADMIN", "System Super Admin", false)];
+    mockAppState.permissions = [];
+
+    const { result: canCreateTenant } = renderHook(() => usePermission("tenants.create"));
+    const { result: helpers } = renderHook(() => usePermissions());
+
+    expect(helpers.current.isPlatformSuperAdmin).toBe(false);
+    expect(helpers.current.isTenantSuperAdmin).toBe(false);
+    expect(canCreateTenant.current).toBe(false);
   });
 });

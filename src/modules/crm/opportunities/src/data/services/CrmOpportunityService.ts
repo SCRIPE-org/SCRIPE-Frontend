@@ -66,11 +66,21 @@ export class CrmOpportunityService implements ICrmOpportunityService {
     return this.unwrap(response);
   }
 
-  /** Updates core commercial fields on an existing Opportunity via idempotent PUT. */
+  /**
+   * Updates core commercial fields on an existing Opportunity via idempotent PUT.
+   *
+   * The backend treats this as a partial update: any field that is omitted is left untouched,
+   * while any field that is SENT is checked against the caller's restricted-field policy
+   * (`crm.opportunities`). Defaults must therefore never be injected for `currencyCode` or
+   * `dealKind` — silently sending `"SAR"` / `"NewBusiness"` would both overwrite stored values
+   * and be refused with `FieldRestricted` for users who cannot write those fields.
+   */
   async updateOpportunity(input: UpdateOpportunityInput): Promise<CrmOpportunity> {
     const payload = {
-      title: input.title, estimatedAmount: input.estimatedAmount, currencyCode: input.currencyCode ?? "SAR",
-      targetCloseDate: input.targetCloseDate, dealKind: input.dealKind ?? "NewBusiness",
+      title: input.title, estimatedAmount: input.estimatedAmount,
+      ...(input.currencyCode !== undefined ? { currencyCode: input.currencyCode } : {}),
+      targetCloseDate: input.targetCloseDate,
+      ...(input.dealKind !== undefined ? { dealKind: input.dealKind } : {}),
       accountId: input.accountId, partyId: input.partyId, expectedRowVersion: input.expectedRowVersion ?? "",
     };
     const response = await this.api.put<ApiSuccessResponse<CrmOpportunity> | CrmOpportunity>(
