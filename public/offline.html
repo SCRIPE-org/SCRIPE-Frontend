@@ -208,44 +208,10 @@
       </p>
       <p class="ar-text">أنت غير متصل بالإنترنت. تحقق من اتصالك وحاول مرة أخرى.</p>
 
-      <button class="retry-btn" id="retryBtn" onclick="retryConnection()">↻ Try Again</button>
+      <button class="retry-btn" id="retryBtn">↻ Try Again</button>
       <span class="timer" id="timer"></span>
     </div>
 
-    <script>
-      let countdown = 30;
-      let interval;
-
-      function startAutoRetry() {
-        countdown = 30;
-        clearInterval(interval);
-        interval = setInterval(() => {
-          countdown--;
-          document.getElementById("timer").textContent = `Auto-retry in ${countdown}s`;
-          if (countdown <= 0) {
-            retryConnection();
-          }
-        }, 1000);
-      }
-
-      function retryConnection() {
-        const btn = document.getElementById("retryBtn");
-        btn.disabled = true;
-        btn.textContent = "⟳ Checking...";
-        clearInterval(interval);
-
-        fetch("/", { method: "HEAD", cache: "no-store" })
-          .then(() => {
-            window.location.reload();
-          })
-          .catch(() => {
-            btn.disabled = false;
-            btn.innerHTML = "↻ Try Again";
-            startAutoRetry();
-          });
-      }
-
-      startAutoRetry();
-    </script>
+    <script src="/offline.js"></script>
   </body>
 </html>

@@ -1,12 +1,7 @@
 import type React from "react";
 import type { Metadata, Viewport } from "next";
-import Script from "next/script";
-import { cookies } from "next/headers";
-import { Analytics } from "@vercel/analytics/next";
-import { SpeedInsights } from "@vercel/speed-insights/next";
-
-const enableVercelAnalytics =
-  process.env.NEXT_PUBLIC_ENABLE_VERCEL_ANALYTICS === "true" || process.env.VERCEL === "1";
+import { cookies, headers } from "next/headers";
+import { TelemetryGate } from "@core/components/TelemetryGate";
 import "./globals.css";
 import { AppProvider } from "@core/providers/app-provider";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
@@ -267,6 +262,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   // correct on first paint AND keeps I18nProvider's initial render identical to
   // SSR, eliminating React hydration mismatches.
   const cookieStore = await cookies();
+  const headerList = await headers();
+  const nonce = headerList.get("x-nonce") ?? undefined;
   const cookieLanguage = cookieStore.get(STORAGE_KEYS.LANGUAGE)?.value;
   const language = cookieLanguage === "ar" ? "ar" : "en";
   const direction = language === "ar" ? "rtl" : "ltr";
@@ -279,6 +276,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <head>
         <script
           id="scripe-pre-paint"
+          nonce={nonce}
           suppressHydrationWarning
           dangerouslySetInnerHTML={{ __html: PRE_PAINT_INIT_SCRIPT }}
         />
@@ -287,25 +285,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <link rel="preconnect" href={process.env.NEXT_PUBLIC_API_URL} crossOrigin="anonymous" />
       </head>
       <body className={`${fontClass} font-sans antialiased`} suppressHydrationWarning>
-        <AppProvider initialLanguage={language}>{children}</AppProvider>
-        {/* P5.1: Service Worker — deferred to afterInteractive (no longer render-blocking) */}
-        <Script
-          id="sw-register"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
-              if ('serviceWorker' in navigator && window.location.protocol === 'https:') {
-                navigator.serviceWorker.register('/sw.js');
-              }
-            `,
-          }}
-        />
-        {enableVercelAnalytics && (
-          <>
-            <Analytics />
-            <SpeedInsights />
-          </>
-        )}
+        <AppProvider initialLanguage={language} nonce={nonce}>
+          {children}
+        </AppProvider>
+        <TelemetryGate />
       </body>
     </html>
   );

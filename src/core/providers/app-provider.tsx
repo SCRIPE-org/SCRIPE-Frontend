@@ -2,6 +2,7 @@
 "use client";
 
 import type React from "react";
+import { useEffect } from "react";
 import dynamic from "next/dynamic";
 import { ThemeProvider } from "@core/providers/theme-provider";
 import { I18nProvider, type Language } from "@core/providers/i18n-provider";
@@ -86,14 +87,28 @@ import { queryClient } from "@core/query-client";
 export function AppProvider({
   children,
   initialLanguage = "en",
+  nonce,
 }: {
   children: React.ReactNode;
   initialLanguage?: Language;
+  nonce?: string;
 }) {
+  useEffect(() => {
+    if (
+      typeof window !== "undefined" &&
+      "serviceWorker" in navigator &&
+      window.location.protocol === "https:"
+    ) {
+      navigator.serviceWorker.register("/sw.js").catch(() => {
+        // Non-fatal in unsupported/private browsing contexts
+      });
+    }
+  }, []);
+
   return (
     <>
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider attribute="class" disableTransitionOnChange={true}>
+        <ThemeProvider attribute="class" disableTransitionOnChange={true} nonce={nonce}>
           <TooltipProvider>
             <RoutingProgressBar />
             <ServiceProvider>

@@ -97,11 +97,11 @@ export function buildA11yTypographyCss(
     css.push(`.login-page, .login-page * { word-spacing: ${wordSpacing}px !important; }`);
   }
 
-  // 15. Dyslexic Font
+  // 15. Dyslexic Font (self-hosted WOFF assets to avoid external font CDNs)
   if (tokens["a11y.dyslexicFont"] === "true") {
     css.push(`/* ═══ Accessibility: Dyslexia-Friendly Font ═══ */
-@font-face { font-family: 'OpenDyslexic'; src: url('https://cdn.jsdelivr.net/npm/open-dyslexic@1.0.3/woff/OpenDyslexic-Regular.woff') format('woff'); font-weight: normal; font-display: swap; }
-@font-face { font-family: 'OpenDyslexic'; src: url('https://cdn.jsdelivr.net/npm/open-dyslexic@1.0.3/woff/OpenDyslexic-Bold.woff') format('woff'); font-weight: bold; font-display: swap; }
+@font-face { font-family: 'OpenDyslexic'; src: url('/fonts/open-dyslexic/OpenDyslexic-Regular.woff') format('woff'); font-weight: normal; font-display: swap; }
+@font-face { font-family: 'OpenDyslexic'; src: url('/fonts/open-dyslexic/OpenDyslexic-Bold.woff') format('woff'); font-weight: bold; font-display: swap; }
 .login-page, .login-page * { font-family: 'OpenDyslexic', sans-serif !important; }`);
   }
 

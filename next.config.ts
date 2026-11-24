@@ -1,68 +1,61 @@
 import path from "path";
 import type { NextConfig } from "next";
+import {
+  buildCommonSecurityHeaders,
+  buildStaticResourceCsp,
+} from "./src/core/config/security-headers";
 
-function extractOrigin(rawUrl: string | undefined): string | null {
-  if (!rawUrl) return null;
-  try {
-    const parsed = new URL(rawUrl.trim());
-    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") return null;
-    return parsed.origin;
-  } catch {
-    return null;
-  }
-}
-
-function buildSecurityHeaders() {
+function buildNextHeaderRules() {
   const isDev = process.env.NODE_ENV !== "production";
-  const httpOrigins = new Set<string>();
-  const wsOrigins = new Set<string>();
-
-  for (const candidate of [
-    process.env.NEXT_PUBLIC_API_URL || (isDev ? "http://localhost:5035/api" : undefined),
-    process.env.NEXT_PUBLIC_IDENTITY_API_URL,
-  ]) {
-    const origin = extractOrigin(candidate);
-    if (origin) {
-      httpOrigins.add(origin);
-      wsOrigins.add(origin.replace(/^http:/i, "ws:").replace(/^https:/i, "wss:"));
-    }
-  }
-
-  if (isDev) {
-    httpOrigins.add("http://localhost:*");
-    httpOrigins.add("http://127.0.0.1:*");
-    wsOrigins.add("ws://localhost:*");
-    wsOrigins.add("wss://localhost:*");
-    wsOrigins.add("ws://127.0.0.1:*");
-  }
-
-  const extraHttp = httpOrigins.size > 0 ? ` ${Array.from(httpOrigins).join(" ")}` : "";
-  const extraWs = wsOrigins.size > 0 ? ` ${Array.from(wsOrigins).join(" ")}` : "";
-
-  const csp = [
-    "default-src 'self'",
-    `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-    "font-src 'self' data: https://fonts.gstatic.com",
-    `img-src 'self' data: blob: https:${extraHttp}`,
-    `connect-src 'self'${extraHttp}${extraWs}`,
-    "frame-ancestors 'none'",
-    "object-src 'none'",
-    "base-uri 'self'",
-    `form-action 'self'${extraHttp}`,
-  ].join("; ");
 
   return [
-    { key: "X-Frame-Options", value: "DENY" },
-    { key: "X-Content-Type-Options", value: "nosniff" },
-    { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-    { key: "X-DNS-Prefetch-Control", value: "off" },
+    // Baseline security headers for all non-preview routes (CSP itself is issued per-request by src/proxy.ts)
     {
-      key: "Permissions-Policy",
-      value:
-        "camera=(self), microphone=(), geolocation=(), interest-cohort=(), publickey-credentials-get=(self), publickey-credentials-create=(self)",
+      source: "/((?!studio-preview|dashboard-preview).*)",
+      headers: buildCommonSecurityHeaders({ isDev, frameAncestorsMode: "DENY" }),
     },
-    { key: "Content-Security-Policy", value: csp },
+    // Allow Customization Studio to embed same-origin preview routes while keeping baseline hardening
+    {
+      source: "/studio-preview",
+      headers: buildCommonSecurityHeaders({ isDev, frameAncestorsMode: "SAMEORIGIN" }),
+    },
+    {
+      source: "/studio-preview/:path*",
+      headers: buildCommonSecurityHeaders({ isDev, frameAncestorsMode: "SAMEORIGIN" }),
+    },
+    {
+      source: "/dashboard-preview",
+      headers: buildCommonSecurityHeaders({ isDev, frameAncestorsMode: "SAMEORIGIN" }),
+    },
+    {
+      source: "/dashboard-preview/:path*",
+      headers: buildCommonSecurityHeaders({ isDev, frameAncestorsMode: "SAMEORIGIN" }),
+    },
+    // Static /offline.html bypasses proxy.ts and receives strict script-src 'self' CSP
+    {
+      source: "/offline.html",
+      headers: [
+        { key: "Content-Security-Policy", value: buildStaticResourceCsp("offline") },
+        { key: "Cache-Control", value: "no-cache" },
+      ],
+    },
+    // First-party BFF / API routes bypass proxy.ts: lock down CSP and bind CORP same-origin
+    {
+      source: "/api/(.*)",
+      headers: [
+        { key: "Content-Security-Policy", value: buildStaticResourceCsp("api") },
+        { key: "Cross-Origin-Resource-Policy", value: "same-origin" },
+      ],
+    },
+    // Static public branding/font/JS assets stay readable across verified tenant custom domains
+    {
+      source: "/(fonts|brand)/:path*",
+      headers: [{ key: "Cross-Origin-Resource-Policy", value: "cross-origin" }],
+    },
+    {
+      source: "/_next/static/:path*",
+      headers: [{ key: "Cross-Origin-Resource-Policy", value: "cross-origin" }],
+    },
   ];
 }
 
@@ -120,15 +113,11 @@ const nextConfig: NextConfig = {
     formats: ["image/avif", "image/webp"],
   },
 
-  // Security: Hide X-Powered-By header & enforce strict security headers
+  // Security: Disable production browser source maps, hide X-Powered-By, & apply security headers
+  productionBrowserSourceMaps: false,
   poweredByHeader: false,
   async headers() {
-    return [
-      {
-        source: "/(.*)",
-        headers: buildSecurityHeaders(),
-      },
-    ];
+    return buildNextHeaderRules();
   },
 };
 export default nextConfig;

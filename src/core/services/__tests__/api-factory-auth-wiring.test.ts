@@ -90,21 +90,46 @@ describe("proxy pre-hydration auth-state UX hint routing", () => {
 });
 
 describe("next.config.ts TypeScript & HTTP security header hardening", () => {
-  it("removes typescript.ignoreBuildErrors and sets baseline security headers including CSP and WebAuthn Permissions-Policy", async () => {
+  it("disables ignoreBuildErrors/sourceMaps and configures non-conflicting headers with preview framing overrides", async () => {
     expect(nextConfig.typescript?.ignoreBuildErrors).not.toBe(true);
+    expect(nextConfig.productionBrowserSourceMaps).toBe(false);
+    expect(nextConfig.poweredByHeader).toBe(false);
     expect(typeof nextConfig.headers).toBe("function");
 
     const rules = await nextConfig.headers!();
-    const globalRule = rules.find((r) => r.source === "/(.*)");
+    const globalRule = rules.find((r) => r.source === "/((?!studio-preview|dashboard-preview).*)");
     expect(globalRule).toBeDefined();
 
     const headerMap = new Map(globalRule!.headers.map((h) => [h.key, h.value]));
     expect(headerMap.get("X-Frame-Options")).toBe("DENY");
     expect(headerMap.get("X-Content-Type-Options")).toBe("nosniff");
     expect(headerMap.get("Referrer-Policy")).toBe("strict-origin-when-cross-origin");
+    expect(headerMap.get("Cross-Origin-Opener-Policy")).toBe("same-origin-allow-popups");
     expect(headerMap.get("Permissions-Policy")).toContain("publickey-credentials-get=(self)");
     expect(headerMap.get("Permissions-Policy")).toContain("publickey-credentials-create=(self)");
-    expect(headerMap.get("Content-Security-Policy")).toContain("frame-ancestors 'none'");
-    expect(headerMap.get("Content-Security-Policy")).toContain("object-src 'none'");
+    // Page CSP is issued solely by src/proxy.ts to avoid dual-header CSP intersection
+    expect(headerMap.get("Content-Security-Policy")).toBeUndefined();
+
+    const studioRule = rules.find((r) => r.source === "/studio-preview");
+    expect(studioRule?.headers.find((h) => h.key === "X-Frame-Options")?.value).toBe("SAMEORIGIN");
+
+    const dashboardRule = rules.find((r) => r.source === "/dashboard-preview");
+    expect(dashboardRule?.headers.find((h) => h.key === "X-Frame-Options")?.value).toBe(
+      "SAMEORIGIN"
+    );
+
+    const apiRule = rules.find((r) => r.source === "/api/(.*)");
+    expect(apiRule?.headers.find((h) => h.key === "Content-Security-Policy")?.value).toContain(
+      "default-src 'none'"
+    );
+    expect(
+      apiRule?.headers.find((h) => h.key === "Cross-Origin-Resource-Policy")?.value
+    ).toBe("same-origin");
+
+    const offlineRule = rules.find((r) => r.source === "/offline.html");
+    const offlineCsp =
+      offlineRule?.headers.find((h) => h.key === "Content-Security-Policy")?.value ?? "";
+    const offlineScriptSrc = offlineCsp.split("; ").find((d) => d.startsWith("script-src ")) ?? "";
+    expect(offlineScriptSrc).toBe("script-src 'self'");
   });
 });
