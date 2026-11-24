@@ -391,6 +391,7 @@ export const en = {
     permissionsLimitedByParent: "Permissions limited by parent tenant",
     permissionsSaved: "Permissions saved successfully",
     permissionsSaveError: "Failed to save permissions",
+    permissionsLoadError: "Unable to load permissions. Please retry before saving.",
     editSettings: "Edit Tenant Settings",
     editSettingsDesc: "Update configuration for this tenant.",
     quotas: "Quotas",

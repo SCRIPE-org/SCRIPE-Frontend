@@ -3,6 +3,8 @@
 
 import { useState } from "react";
 import { useEnhancedToast } from "./use-enhanced-toast";
+import { useI18n } from "@core/providers/i18n-provider";
+import { isSudoCancelledError } from "@core/store/useSudoStore";
 
 export interface DeleteOptions {
   itemName?: string;
@@ -24,7 +26,8 @@ export function useEnhancedDelete() {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [deleteAction, setDeleteAction] = useState<(() => Promise<void>) | null>(null);
   const [deleteOptions, setDeleteOptions] = useState<DeleteOptions>({});
-  const { operationSuccess, operationError } = useEnhancedToast();
+  const { t } = useI18n();
+  const { operationSuccess, operationError, info: toastInfo } = useEnhancedToast();
 
   const confirmDelete = async (
     deleteFunction: () => Promise<void>,
@@ -39,25 +42,31 @@ export function useEnhancedDelete() {
     if (!deleteAction) return;
 
     setIsDeleting(true);
-    setShowConfirmation(false);
+    let preserveForRetry = false;
 
     try {
       await deleteAction();
+      setShowConfirmation(false);
 
       // Show success toast
-      const successMsg =
-        deleteOptions.successMessage || `${deleteOptions.itemType || "Item"} deleted successfully`;
-
       operationSuccess("Delete", deleteOptions.itemName);
 
       // Call success callback
       deleteOptions.onSuccess?.();
     } catch (error) {
+      if (isSudoCancelledError(error)) {
+        preserveForRetry = true;
+        toastInfo?.({
+          title: t("profile.sudo.cancelledTitle"),
+          description: t("profile.sudo.cancelledDescription"),
+        });
+        deleteOptions.onError?.(error);
+        return;
+      }
+
+      setShowConfirmation(false);
+
       // F2: surface the real backend/caught error instead of discarding it.
-      // Same bug class and same fix shape as F-78/F-98/F-99 in
-      // useGenericMutations.ts — read the real message off the caught error
-      // first, and only fall back to a caller override / generic string when
-      // the error carries nothing usable.
       const err = error as {
         message?: string;
         response?: { data?: { message?: string; error?: string } };
@@ -75,8 +84,10 @@ export function useEnhancedDelete() {
       deleteOptions.onError?.(error);
     } finally {
       setIsDeleting(false);
-      setDeleteAction(null);
-      setDeleteOptions({});
+      if (!preserveForRetry) {
+        setDeleteAction(null);
+        setDeleteOptions({});
+      }
     }
   };
 

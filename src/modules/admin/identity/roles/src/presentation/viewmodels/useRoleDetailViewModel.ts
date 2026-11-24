@@ -106,7 +106,7 @@ export interface PermissionTreeProps {
  * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
  */
 export function useRoleDetailViewModel(roleIdOverride?: string) {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const params = useParams();
   // The route passes the id explicitly where it can; reading the dynamic
   // segment stays the fallback so a bare `<RoleDetailView/>` under `roles/[id]`
@@ -114,7 +114,7 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
   const roleId = roleIdOverride ?? (params.id as string);
   const queryClient = useQueryClient();
   const nav = useOptionalNavigation();
-  const { success, error: toastError } = useEnhancedToast();
+  const { success, error: toastError, info: toastInfo } = useEnhancedToast();
   const { roleRepository } = identityContainer;
 
   const user = useAppStore((s) => s.user);
@@ -132,12 +132,21 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
   // banner reflect real state instead of just the in-flight save request —
   // mirrors useOAuthAppDetailViewModel's isDirty flag.
   const [isDirty, setIsDirty] = useState(false);
-  // Tracks which role we've already initialized `assignments` for — mirrors
-  // useRolePermissionsDialog's initializedRoleId guard. Without it, the
-  // staleTime: 0 query below refetches on every refocus/reconnect and hands
-  // back a new array reference for the SAME role, which would silently
-  // overwrite any in-progress unsaved permission edits.
+  // Tracks which role and save revision we've hydrated `assignments` for.
+  // Background/refocus refetches of `rolePermissions` do not clobber unsaved edits;
+  // explicit post-save invalidation bumps `saveRevision` so assignments re-sync once.
   const [initializedRoleId, setInitializedRoleId] = useState<string | null>(null);
+  const [saveRevision, setSaveRevision] = useState(0);
+  const hydratedRevisionRef = useRef<number>(0);
+  const permissionIdByCodeRef = useRef<Map<string, string>>(new Map());
+  const activeRoleIdRef = useRef<string>(roleId);
+  const editEpochRef = useRef<number>(0);
+  const rolePermissionsUpdatedAtRef = useRef<number>(0);
+  const postSaveSyncRef = useRef<{
+    roleId: string;
+    floorUpdatedAt: number;
+    refetchSettled: boolean;
+  } | null>(null);
 
   // === QUERIES ===
   const { data: role, isLoading: roleLoading } = useQuery<Role>({
@@ -148,13 +157,24 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
     gcTime: 0,
   });
 
-  const { data: rolePermissions, isLoading: rolePermissionsLoading } = useQuery<any[]>({
+  const {
+    data: rolePermissions,
+    isLoading: rolePermissionsLoading,
+    isFetching: rolePermissionsFetching,
+    isError: rolePermissionsError,
+    dataUpdatedAt: rolePermissionsUpdatedAt,
+  } = useQuery<any[]>({
     queryKey: ["rolePermissions", roleId],
     queryFn: () => roleRepository.getRolePermissions(roleId),
     enabled: !!roleId,
     staleTime: 0,
     gcTime: 0,
   });
+
+  useEffect(() => {
+    activeRoleIdRef.current = roleId;
+    rolePermissionsUpdatedAtRef.current = rolePermissionsUpdatedAt;
+  }, [roleId, rolePermissionsUpdatedAt]);
 
   // ── Backend-driven grouped permissions (Module → Category → Permissions) ──
   // ZERO client-side grouping: backend sends the tree, frontend renders it.
@@ -174,22 +194,18 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
     queryKey: [
       "roleAvailablePermissionsGrouped",
       useCrossTenantEndpoint ? targetTenantId : (userTenantId ?? "platform"),
-      searchQuery,
     ],
     queryFn: () => {
       if (useCrossTenantEndpoint && targetTenantId) {
-        return roleRepository.getTenantAvailablePermissionsGrouped(
-          targetTenantId,
-          searchQuery || undefined
-        );
+        return roleRepository.getTenantAvailablePermissionsGrouped(targetTenantId);
       }
-      return roleRepository.getCurrentTenantAvailablePermissionsGrouped(searchQuery || undefined);
+      return roleRepository.getCurrentTenantAvailablePermissionsGrouped();
     },
     enabled: !roleLoading,
   });
 
-  // Defensive tenant guard: exclude any platform-only permissions when managing a tenant role
-  const moduleGroups = useMemo(() => {
+  // Defensive tenant guard over the full unfiltered catalog (used for totals, ID resolution, and workspace eligibility)
+  const allModuleGroups = useMemo(() => {
     if (!isTenantRole) return rawModuleGroups;
     return rawModuleGroups
       .map((mg) => ({
@@ -206,6 +222,43 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
       .filter((mg) => mg.categories.length > 0);
   }, [isTenantRole, rawModuleGroups]);
 
+  useEffect(() => {
+    const map = new Map<string, string>();
+    allModuleGroups.forEach((mg) =>
+      mg.categories.forEach((cat) =>
+        cat.permissions.forEach((p) => {
+          map.set(p.code, p.id);
+        })
+      )
+    );
+    permissionIdByCodeRef.current = map;
+  }, [allModuleGroups]);
+
+  // Client-side search filter for PermissionTreeCard so search never shrinks totalPermCount or drops hidden IDs on save
+  const filteredModuleGroups = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return allModuleGroups;
+    return allModuleGroups
+      .map((mg) => ({
+        ...mg,
+        categories: mg.categories
+          .map((cat) => ({
+            ...cat,
+            permissions: cat.permissions.filter((p) => {
+              const localized = p.getLocalizedName(language);
+              return (
+                localized.toLowerCase().includes(q) ||
+                p.code.toLowerCase().includes(q) ||
+                (p.nameEn && p.nameEn.toLowerCase().includes(q)) ||
+                (p.nameAr && p.nameAr.toLowerCase().includes(q))
+              );
+            }),
+          }))
+          .filter((cat) => cat.permissions.length > 0),
+      }))
+      .filter((mg) => mg.categories.length > 0);
+  }, [allModuleGroups, searchQuery, language]);
+
   // ── Blast Radius: Count of Admins holding this role ──
   const { data: adminCount = 0 } = useQuery({
     queryKey: ["role-admin-count", roleId],
@@ -218,40 +271,43 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
     roleId,
     role,
     roleLoading,
-    moduleGroups,
+    moduleGroups: allModuleGroups,
     selectedPermissionCodes,
   });
 
   // ── Auto-expand all modules when data first loads ──
-  // This replaces the broken `expandedKeys.size === 0 ? true` fallback.
-  // When moduleGroups loads, populate expandedKeys with all module keys
-  // so every module starts expanded. Users can then collapse individually.
   const hasInitializedExpand = useRef<string | null>(null);
   useEffect(() => {
     const expandScopeKey = roleId ?? "__loaded__";
-    if (moduleGroups.length > 0 && hasInitializedExpand.current !== expandScopeKey) {
+    if (allModuleGroups.length > 0 && hasInitializedExpand.current !== expandScopeKey) {
       hasInitializedExpand.current = expandScopeKey;
       const keys = new Set<string>();
-      moduleGroups.forEach((mg) => {
+      allModuleGroups.forEach((mg) => {
         keys.add(`module:${mg.module}`);
       });
       queueMicrotask(() => {
         setExpandedKeys(keys);
       });
     }
-  }, [moduleGroups, roleId]);
+  }, [allModuleGroups, roleId]);
 
-  // === INITIALIZE ASSIGNMENTS WHEN DATA LOADS (once per role) ===
-  // Guarded on roleId, not on rolePermissions' array reference: staleTime: 0
-  // means a window refocus can refetch and hand back a new (content-identical
-  // or server-normalized) array for the SAME role at any time, including
-  // mid-edit. Only a genuine role switch — or the first load — should reset
-  // the editor; a background refetch of the role you're already editing must
-  // not. The post-save refetch doesn't need to re-sync either: local
-  // `assignments` already holds exactly what was just saved, and
-  // saveMutation's onSuccess already clears isDirty directly.
+  // === INITIALIZE ASSIGNMENTS WHEN DATA LOADS (once per role or settled post-save refetch) ===
   useEffect(() => {
-    if (!roleId || rolePermissionsLoading || initializedRoleId === roleId) return;
+    if (!roleId) return;
+    if (initializedRoleId !== roleId) {
+      postSaveSyncRef.current = null;
+    }
+    if (rolePermissionsLoading || rolePermissionsFetching || rolePermissionsError) return;
+    const pendingSync = postSaveSyncRef.current;
+    if (
+      pendingSync &&
+      pendingSync.roleId === roleId &&
+      !pendingSync.refetchSettled &&
+      rolePermissionsUpdatedAt <= pendingSync.floorUpdatedAt
+    ) {
+      return;
+    }
+    if (initializedRoleId === roleId && hydratedRevisionRef.current === saveRevision) return;
     if (!rolePermissions) return;
 
     appLogger.debug("rolePermissions raw:", rolePermissions);
@@ -266,79 +322,142 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
     });
 
     appLogger.debug("Initialized assignments map size:", newAssignments.size);
+    postSaveSyncRef.current = null;
+    hydratedRevisionRef.current = saveRevision;
     queueMicrotask(() => {
       setAssignments(newAssignments);
       setIsDirty(false);
       setInitializedRoleId(roleId);
     });
-  }, [roleId, rolePermissions, rolePermissionsLoading, initializedRoleId]);
-
-  // Helper: flatten all permissions from module groups (for save payload)
-  const getAllPermissionsFlat = (): Permission[] => {
-    return moduleGroups.flatMap((mg) => mg.categories.flatMap((cat) => cat.permissions));
-  };
+  }, [
+    roleId,
+    rolePermissions,
+    rolePermissionsLoading,
+    rolePermissionsFetching,
+    rolePermissionsError,
+    rolePermissionsUpdatedAt,
+    initializedRoleId,
+    saveRevision,
+  ]);
 
   // === MUTATION ===
   const saveMutation = useMutation({
     mutationFn: async () => {
+      const savedRoleId = roleId;
+      const mutationEpoch = editEpochRef.current;
+
       if (workspaceEntriesVm.isEntriesDirty && workspaceEntriesVm.hasIncompleteDraftRule) {
         throw new Error(t("roleDetail.workspaceEntriesMissingTargetError"));
       }
 
-      if (isDirty && !permissionsReadOnly) {
-        const allPermissions = getAllPermissionsFlat();
-        const codeToIdMap = new Map<string, string>();
-        allPermissions.forEach((p) => {
-          codeToIdMap.set(p.code, p.id);
-        });
+      let latestRowVersion = role?.rowVersion ?? null;
 
-        const permissionsPayload = Array.from(assignments.entries())
-          .map(([code, assignment]) => {
-            let id = assignment.permissionId;
-            if (!id) {
-              id = codeToIdMap.get(code) || "";
-            }
-            const normalizedScope =
-              normalizeRolePermissionScope(assignment.scopeOverride, allowAllTenants) ?? null;
-            return {
-              permissionId: id,
-              scopeOverride: normalizedScope,
-              restrictedFields: assignment.restrictedFields ?? [],
-            };
-          })
-          .filter((p) => !!p.permissionId);
+      if (isDirty && !permissionsReadOnly) {
+        const missingCodes: string[] = [];
+        const permissionsPayload: Array<{
+          permissionId: string;
+          scopeOverride: string | null;
+          restrictedFields: string[];
+        }> = [];
+
+        for (const [code, assignment] of assignments.entries()) {
+          const id = assignment.permissionId || permissionIdByCodeRef.current.get(code) || "";
+          if (!id) {
+            missingCodes.push(code);
+            continue;
+          }
+          const normalizedScope =
+            normalizeRolePermissionScope(assignment.scopeOverride, allowAllTenants) ?? null;
+          permissionsPayload.push({
+            permissionId: id,
+            scopeOverride: normalizedScope,
+            restrictedFields: assignment.restrictedFields ?? [],
+          });
+        }
+
+        if (missingCodes.length > 0) {
+          throw new Error(
+            t("roles.permissionsMissingIdsError", { codes: missingCodes.join(", ") })
+          );
+        }
 
         appLogger.debug("Saving permissions payload:", permissionsPayload);
 
-        await roleRepository.assignPermissions(roleId, {
+        await roleRepository.assignPermissions(savedRoleId, {
           permissions: permissionsPayload,
         });
-        setIsDirty(false);
+
+        // Assigning permissions bumps Role.RowVersion server-side; refresh before saving workspace entries.
+        if (workspaceEntriesVm.isEntriesDirty) {
+          const refreshedRole = await roleRepository.getById(savedRoleId);
+          latestRowVersion = refreshedRole.rowVersion ?? latestRowVersion;
+        }
       }
 
       if (workspaceEntriesVm.isEntriesDirty) {
-        await workspaceEntriesVm.saveWorkspaceEntries();
+        await workspaceEntriesVm.saveWorkspaceEntries(latestRowVersion);
       }
+
+      return { savedRoleId, mutationEpoch };
     },
-    onSuccess: async () => {
-      queryClient.invalidateQueries({ queryKey: ["rolePermissions", roleId] });
-      queryClient.invalidateQueries({ queryKey: ["role", roleId] });
-      queryClient.invalidateQueries({ queryKey: qk.roles.workspaceEntries(roleId) });
-      await syncCurrentSessionAuthorization({
-        queryClient,
-        refreshNavigation: nav?.refreshNavigation,
-        targetTenantId,
+    onSuccess: async (result) => {
+      const savedRoleId = result?.savedRoleId ?? roleId;
+      const mutationEpoch = result?.mutationEpoch ?? editEpochRef.current;
+      const syncToken = {
+        roleId: savedRoleId,
+        floorUpdatedAt: rolePermissionsUpdatedAtRef.current,
+        refetchSettled: false,
+      };
+      postSaveSyncRef.current = syncToken;
+
+      // Only bump saveRevision after rolePermissions finishes refetching fresh server data;
+      // bumping earlier causes useEffect to briefly revert assignments to stale cache.
+      const refetchPromise = Promise.resolve(
+        queryClient.invalidateQueries({ queryKey: ["rolePermissions", savedRoleId] })
+      );
+      queryClient.invalidateQueries({ queryKey: ["role-permissions", savedRoleId] });
+      queryClient.invalidateQueries({ queryKey: ["role", savedRoleId] });
+      queryClient.invalidateQueries({ queryKey: qk.roles.all });
+      queryClient.invalidateQueries({ queryKey: qk.roles.workspaceEntries(savedRoleId) });
+
+      void refetchPromise.then(() => {
+        if (postSaveSyncRef.current === syncToken) {
+          syncToken.refetchSettled = true;
+        }
+        if (
+          activeRoleIdRef.current === savedRoleId &&
+          editEpochRef.current === mutationEpoch
+        ) {
+          setSaveRevision((prev) => prev + 1);
+        }
       });
-      // Reset immediately rather than waiting on the invalidated refetch, so
-      // the Save button/banner clear the instant the save resolves.
-      setIsDirty(false);
+
+      if (editEpochRef.current === mutationEpoch) {
+        setIsDirty(false);
+      }
+
+      try {
+        await syncCurrentSessionAuthorization({
+          queryClient,
+          refreshNavigation: nav?.refreshNavigation,
+          targetTenantId,
+        });
+      } catch {
+        // Non-fatal: role permission save succeeded even if background auth sync fails
+      }
       success({
         title: t("common.success"),
         description: t("roleDetail.permissionsSaved"),
       });
     },
     onError: (err: Error) => {
-      if (isSudoCancelledError(err)) return;
+      if (isSudoCancelledError(err)) {
+        toastInfo?.({
+          title: t("profile.sudo.cancelledTitle"),
+          description: t("profile.sudo.cancelledDescription"),
+        });
+        return;
+      }
       toastError({
         title: t("common.error"),
         description: err.message,
@@ -358,32 +477,30 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
   const togglePermission = useCallback(
     (permissionCode: string) => {
       if (permissionsReadOnly) return;
+      editEpochRef.current += 1;
       setIsDirty(true);
       setAssignments((prev) => {
         const next = new Map(prev);
         if (next.has(permissionCode)) {
           next.delete(permissionCode);
         } else {
-          // Find permission ID from module groups
-          const allPerms = moduleGroups.flatMap((mg) =>
-            mg.categories.flatMap((cat) => cat.permissions)
-          );
-          const permission = allPerms.find((p) => p.code === permissionCode);
+          const id = permissionIdByCodeRef.current.get(permissionCode) || "";
           next.set(permissionCode, {
-            permissionId: permission?.id || "",
-            scopeOverride: PermissionScopes.OwnTenant,
+            permissionId: id,
+            scopeOverride: undefined,
             restrictedFields: [],
           });
         }
         return next;
       });
     },
-    [moduleGroups, permissionsReadOnly]
+    [permissionsReadOnly]
   );
 
   const updateAssignment = useCallback(
     (code: string, assignment: PermissionAssignmentJson) => {
       if (permissionsReadOnly) return;
+      editEpochRef.current += 1;
       setIsDirty(true);
       setAssignments((prev) => {
         const next = new Map(prev);
@@ -403,6 +520,7 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
       const categoryCodes = permissions.map((p) => p.code);
       const allSelected = categoryCodes.every((code) => assignments.has(code));
 
+      editEpochRef.current += 1;
       setIsDirty(true);
       setAssignments((prev) => {
         const next = new Map(prev);
@@ -413,8 +531,8 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
             if (!next.has(code)) {
               const permission = permissions.find((p) => p.code === code);
               next.set(code, {
-                permissionId: permission?.id || "",
-                scopeOverride: PermissionScopes.OwnTenant,
+                permissionId: permission?.id || permissionIdByCodeRef.current.get(code) || "",
+                scopeOverride: undefined,
                 restrictedFields: [],
               });
             }
@@ -429,14 +547,14 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
   const expandAll = useCallback(() => {
     // Expand both module and category keys
     const keys = new Set<string>();
-    moduleGroups.forEach((mg) => {
+    allModuleGroups.forEach((mg) => {
       keys.add(`module:${mg.module}`);
       mg.categories.forEach((cat) => {
         keys.add(`cat:${mg.module}:${cat.category}`);
       });
     });
     setExpandedKeys(keys);
-  }, [moduleGroups]);
+  }, [allModuleGroups]);
 
   const collapseAll = useCallback(() => {
     setExpandedKeys(new Set());
@@ -454,6 +572,7 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
       }
       const scopeValue = normalizeRolePermissionScope(scope, allowAllTenants);
 
+      editEpochRef.current += 1;
       setIsDirty(true);
       setAssignments((prev) => {
         const next = new Map(prev);
@@ -469,7 +588,7 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
 
   // === DERIVED STATE ===
   const isLoading = roleLoading || permissionsLoading || rolePermissionsLoading;
-  const totalPermCount = moduleGroups.reduce(
+  const totalPermCount = allModuleGroups.reduce(
     (sum, mg) => sum + mg.categories.reduce((s, cat) => s + cat.permissions.length, 0),
     0
   );
@@ -499,7 +618,7 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
     } as RoleInfoCardProps,
 
     permissions: {
-      moduleGroups,
+      moduleGroups: filteredModuleGroups,
       isLoading,
       expandedKeys,
       selectedPermissionCodes,

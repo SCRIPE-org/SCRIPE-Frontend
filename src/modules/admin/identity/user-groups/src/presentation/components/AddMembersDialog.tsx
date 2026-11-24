@@ -8,6 +8,7 @@
 "use client";
 
 import { useId, useState, useMemo } from "react";
+import { useSudoStore } from "@core/store/useSudoStore";
 import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
 import { GenericModal } from "@core/crud/components/generic-modal";
@@ -21,7 +22,7 @@ interface AddMembersDialogProps {
   onOpenChange: (open: boolean) => void;
   groupId: string;
   existingMemberIds: string[];
-  onSubmit: (adminIds: string[]) => void;
+  onSubmit: (adminIds: string[]) => Promise<unknown> | void;
   isSubmitting?: boolean;
   tenantId?: string;
 }
@@ -46,6 +47,14 @@ export function AddMembersDialog({
   });
   const selectMembersLabelId = useId();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [prevOpen, setPrevOpen] = useState(open);
+
+  if (open !== prevOpen) {
+    setPrevOpen(open);
+    if (!open) {
+      setSelectedIds([]);
+    }
+  }
 
   // Filter out existing members
   const adminOptions: GenericSelectOption[] = useMemo(() => {
@@ -59,14 +68,20 @@ export function AddMembersDialog({
       }));
   }, [adminsData, existingMemberIds]);
 
-  const handleSave = () => {
-    if (selectedIds.length > 0) {
-      onSubmit(selectedIds);
+  const handleSave = async () => {
+    if (selectedIds.length === 0) return;
+    try {
+      await onSubmit(selectedIds);
       setSelectedIds([]);
+    } catch {
+      // ViewModel surfaces error or Sudo cancellation feedback; keep dialog and selection open.
     }
   };
 
   const handleClose = (v: boolean) => {
+    if (!v && useSudoStore.getState().modalOpen) {
+      return;
+    }
     if (!v) setSelectedIds([]);
     onOpenChange(v);
   };

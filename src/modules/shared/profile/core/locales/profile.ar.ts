@@ -634,6 +634,8 @@ export const ar = {
       noPasskeyEnrolledHint: "تتطلب السياسة مفتاح مرور مسجلاً، لكن لا يوجد مفتاح مرور مسجل لهذا الحساب حالياً.",
       noTwoFactorEnrolledHint: "تتطلب السياسة مفتاح مرور مسجلاً أو تطبيق مصادقة (TOTP)، لكن لا يوجد أي منهما مسجلاً لهذا الحساب حالياً.",
       idleStatus: "Sudo مقفل",
+      cancelledTitle: "تم إلغاء التحقق",
+      cancelledDescription: "تم إلغاء التحقق الأمني الإضافي (Sudo). ما زالت تعديلاتك غير المحفوظة محفوظة كما هي.",
     },
     lockdown: {
       sectionTitle: "درع الطوارئ للحساب",

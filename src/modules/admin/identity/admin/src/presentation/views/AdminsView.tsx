@@ -162,8 +162,12 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
       adminId: string,
       request: import("../../domain/entities/AdminRequests").TransferAdminRequest
     ) => {
-      await handleTransfer(adminId, request);
-      setTransferDialogOpen(false);
+      try {
+        await handleTransfer(adminId, request);
+        setTransferDialogOpen(false);
+      } catch {
+        // Toast / Sudo cancellation handled by transferMutation.onError
+      }
     },
     [handleTransfer]
   );
@@ -493,7 +497,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
           adminIds={selectedBulkAdminIds}
           mode="admin"
           tenantId={tenantId}
-          useMyTenant={true}
+          useMyTenant={!isPlatformSuperAdmin && !tenantId}
         />
       )}
 
@@ -545,7 +549,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
         adminId={selectedAdminForAction?.id}
         adminName={selectedAdminForAction?.displayName}
         tenantId={selectedAdminForAction?.tenantId || tenantId}
-        useMyTenant={true}
+        useMyTenant={!isPlatformSuperAdmin && !tenantId}
       />
     </>
   );

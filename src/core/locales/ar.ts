@@ -230,7 +230,7 @@ export const ar = {
     scopeGlobal: "عام (جميع المستأجرين)",
     scopeHint: "تجاوز نطاق الوصول الافتراضي للبيانات لهذه الصلاحية.",
     restrictedFields: "الحقول المقيدة",
-    enterField: "مثال: الراتب، رقم الضمان الاجتماعي",
+    enterField: "مثال: الراتب، الهوية",
     noRestrictions: "لا توجد قيود على الحقول",
     restrictionHint: "حقول API محددة لإخفائها عن المستخدم.",
     restrictedFieldRequiredWarning: "إلزامي — لا يمكن تقييده",

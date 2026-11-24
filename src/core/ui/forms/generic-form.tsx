@@ -70,6 +70,7 @@ import { usePermissions } from "@core/providers/permission-provider";
 import type { PermissionCode } from "@core/common/types/permissions";
 import { AlertCircle } from "lucide-react";
 import { parseApiValidationError } from "@core/common/api-validation-error";
+import { isSudoCancelledError } from "@core/store/useSudoStore";
 // Type-only for the props contract, plus the registry READ. Not a cycle: this
 // module is `core`, and customFieldsExtension.tsx's own import of `FieldConfig`
 // from this file is `import type`, erased at build — its only runtime imports
@@ -1206,6 +1207,10 @@ export function GenericForm({
       });
       await onSubmit(submitData);
     } catch (error) {
+      // Sudo cancellation aborts elevation cleanly via info toast without showing a destructive form banner.
+      if (isSudoCancelledError(error)) {
+        return;
+      }
       // Parse ASP.NET RFC 7807/9110 and standard API validation errors into field-level errors
       const parsed = parseApiValidationError(
         error,

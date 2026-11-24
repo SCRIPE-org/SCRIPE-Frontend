@@ -434,6 +434,34 @@ describe("PermissionConfigDialog — dotted resources and scope boundaries", () 
     });
   });
 
+  it("commits comma-separated restricted fields, auto-commits uncommitted draft on Save, and blocks Save if a required draft is typed", async () => {
+    setupContainer([definition("salary", false), definition("email", true)]);
+    const { onSave } = renderDialog({ permissionId: "perm-1", restrictedFields: ["salary"] });
+
+    const input = screen.getByLabelText(translate("role.restrictedFields"));
+    // Typing a required key in the draft input triggers warning AND disables Save immediately
+    fireEvent.change(input, { target: { value: "phone, Email" } });
+
+    const alert = await screen.findByRole("alert");
+    expect(alert).toHaveTextContent("Email");
+    const saveButton = screen.getByRole("button", { name: translate("common.save") });
+    expect(saveButton).toBeDisabled();
+
+    // Switching to optional comma-separated draft commits everything synchronously on Save without pressing +
+    fireEvent.change(input, { target: { value: "phone, Salary, taxId" } });
+    await waitFor(() => {
+      expect(screen.queryByRole("alert")).toBeNull();
+    });
+    expect(saveButton).toBeEnabled();
+
+    fireEvent.click(saveButton);
+    expect(onSave).toHaveBeenCalledWith({
+      permissionId: "perm-1",
+      scopeOverride: undefined,
+      restrictedFields: ["salary", "phone", "taxId"],
+    });
+  });
+
   it("hides All Tenants option automatically when authenticated user belongs to a tenant", async () => {
     setupContainer([]);
     useAppStore.setState({

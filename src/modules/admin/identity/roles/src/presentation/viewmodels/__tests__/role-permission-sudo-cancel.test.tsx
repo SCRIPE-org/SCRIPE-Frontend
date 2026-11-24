@@ -8,7 +8,7 @@ import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { Permission } from "@modules/identity/permissions";
 import { Role } from "../../../domain/entities/Role";
 
-const { mockRoleRepository, mockToast, mockErrorToast } = vi.hoisted(() => ({
+const { mockRoleRepository, mockToast, mockErrorToast, mockInfoToast } = vi.hoisted(() => ({
   mockRoleRepository: {
     getById: vi.fn(),
     getRolePermissions: vi.fn(),
@@ -19,6 +19,7 @@ const { mockRoleRepository, mockToast, mockErrorToast } = vi.hoisted(() => ({
   },
   mockToast: vi.fn(),
   mockErrorToast: vi.fn(),
+  mockInfoToast: vi.fn(),
 }));
 
 vi.mock("next/navigation", () => ({
@@ -49,6 +50,7 @@ vi.mock("@core/hooks/use-enhanced-toast", () => ({
     toast: mockToast,
     success: vi.fn(),
     error: mockErrorToast,
+    info: mockInfoToast,
   }),
 }));
 
@@ -119,8 +121,9 @@ describe("Role permission assignment Sudo cancellation toast suppression (#508)"
     );
   });
 
-  it("suppresses error toasts in useRoleDetailViewModel and useRolePermissionsDialog when Sudo verification is cancelled", async () => {
+  it("suppresses destructive error toasts and shows non-destructive info toast in useRoleDetailViewModel and useRolePermissionsDialog when Sudo verification is cancelled", async () => {
     mockRoleRepository.assignPermissions.mockRejectedValue(new SudoCancelledError());
+    const onDialogOpenChange = vi.fn();
     const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
     const wrapper = ({ children }: { children: React.ReactNode }) => (
       <QueryClientProvider client={client}>{children}</QueryClientProvider>
@@ -134,10 +137,14 @@ describe("Role permission assignment Sudo cancellation toast suppression (#508)"
 
     await waitFor(() => expect(mockRoleRepository.assignPermissions).toHaveBeenCalledTimes(1));
     expect(mockErrorToast).not.toHaveBeenCalled();
+    expect(mockInfoToast).toHaveBeenCalledWith({
+      title: "profile.sudo.cancelledTitle",
+      description: "profile.sudo.cancelledDescription",
+    });
 
     const role = await mockRoleRepository.getById("role-a");
     const { result: dialogVm } = renderHook(
-      () => useRolePermissionsDialog({ open: true, onOpenChange: vi.fn(), role, tenantId: "t-1" }),
+      () => useRolePermissionsDialog({ open: true, onOpenChange: onDialogOpenChange, role, tenantId: "t-1" }),
       { wrapper }
     );
     await waitFor(() => expect(dialogVm.current.totalCount).toBe(1));
@@ -147,5 +154,8 @@ describe("Role permission assignment Sudo cancellation toast suppression (#508)"
 
     await waitFor(() => expect(mockRoleRepository.assignPermissions).toHaveBeenCalledTimes(2));
     expect(mockToast).not.toHaveBeenCalled();
+    expect(onDialogOpenChange).not.toHaveBeenCalledWith(false);
+    expect(mockInfoToast).toHaveBeenCalledTimes(2);
+    expect(dialogVm.current.assignments.has("crm.opportunities.read")).toBe(true);
   });
 });

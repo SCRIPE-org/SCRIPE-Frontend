@@ -27,6 +27,7 @@ const RolePermissionModelSchema = z.object({
   permissionId: uuidField(),
   permissionCode: z.string().min(1),
   scope: z.string().optional().nullable(),
+  restrictedFields: z.array(z.string()).nullish(),
 });
 
 const RoleModelSchema = z.object({
@@ -81,6 +82,7 @@ export class RoleMapper {
       permissionId: p.permissionId,
       permissionCode: p.permissionCode,
       scope: p.scope ?? undefined,
+      restrictedFields: p.restrictedFields ?? undefined,
     }));
 
     const props: RoleProps = {
@@ -115,7 +117,13 @@ export class RoleMapper {
    */
   static toModel(entity: Role): RoleModel.RoleModel {
     const permissions = entity.permissions.map(
-      (p) => new RoleModel.RolePermissionModel(p.permissionId, p.permissionCode, p.scope)
+      (p) =>
+        new RoleModel.RolePermissionModel(
+          p.permissionId,
+          p.permissionCode,
+          p.scope,
+          p.restrictedFields
+        )
     );
 
     return new RoleModel.RoleModel(
@@ -164,11 +172,11 @@ export class RoleMapper {
       request.nameEn,
       request.nameAr,
       request.code,
-      request.priority ?? 0,
+      request.priority ?? 100,
       request.descriptionEn,
       request.descriptionAr,
       request.tenantId,
-      undefined,
+      request.permissionIds?.length ? request.permissionIds : undefined,
       normalizedLanding?.defaultLandingTarget,
       normalizedLanding?.isLandingEnforced
     );
@@ -190,7 +198,7 @@ export class RoleMapper {
       request.priority,
       request.descriptionEn,
       request.descriptionAr,
-      undefined,
+      request.isActive,
       normalizedLanding?.defaultLandingTarget,
       normalizedLanding?.isLandingEnforced,
       request.rowVersion

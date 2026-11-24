@@ -17,6 +17,7 @@ import type { CreateAdminRequest, UpdateAdminRequest } from "../../domain/entiti
 import type { CrudConfig } from "@core/crud/components/generic-crud-view";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
+import { isSudoCancelledError } from "@core/store/useSudoStore";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { qk } from "@core/common/query-keys";
 import { useAdminFieldsConfig } from "./useAdminFieldsConfig";
@@ -54,7 +55,7 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
 
   const { adminRepository } = identityContainer;
   const { t } = useI18n();
-  const { success } = useEnhancedToast();
+  const { info: toastInfo } = useEnhancedToast();
 
   // Build query key using the factory — memoized for reference stability
   const queryKey: string[] = useMemo(() => {
@@ -109,30 +110,57 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
         };
       },
       create: async (data) => {
-        let id: string;
-        if (tenantId) {
-          id = await adminRepository.create({ ...data, tenantId });
-        } else if (useMyTenant) {
-          id = await adminRepository.createInCurrentTenant(data);
-        } else {
-          id = await adminRepository.create(data);
+        try {
+          let id: string;
+          if (tenantId) {
+            id = await adminRepository.create({ ...data, tenantId });
+          } else if (useMyTenant) {
+            id = await adminRepository.createInCurrentTenant(data);
+          } else {
+            id = await adminRepository.create(data);
+          }
+          // No manual success() here on purpose -- deferSuccessEffects (above)
+          // holds the toast until GenericCrudView confirms the custom-field
+          // save (if any) also succeeded; firing it here unconditionally would
+          // defeat that (same reasoning as useUsersViewModel's update).
+          return { id } as unknown as Admin;
+        } catch (err) {
+          if (isSudoCancelledError(err)) {
+            toastInfo?.({
+              title: t("profile.sudo.cancelledTitle"),
+              description: t("profile.sudo.cancelledDescription"),
+            });
+          }
+          throw err;
         }
-        // No manual success() here on purpose -- deferSuccessEffects (above)
-        // holds the toast until GenericCrudView confirms the custom-field
-        // save (if any) also succeeded; firing it here unconditionally would
-        // defeat that (same reasoning as useUsersViewModel's update).
-        return { id } as unknown as Admin;
       },
       update: async (id, data) => {
-        await adminRepository.update(id, data);
-        return { id } as unknown as Admin;
+        try {
+          await adminRepository.update(id, data);
+          return { id } as unknown as Admin;
+        } catch (err) {
+          if (isSudoCancelledError(err)) {
+            toastInfo?.({
+              title: t("profile.sudo.cancelledTitle"),
+              description: t("profile.sudo.cancelledDescription"),
+            });
+          }
+          throw err;
+        }
       },
       delete: async (id) => {
-        await adminRepository.delete(id);
-        success({
-          title: t("admin.deleted"),
-          description: t("admin.deletedDesc"),
-        });
+        try {
+          await adminRepository.delete(id);
+          // useCrudViewModel/useGenericMutations handles the single localized delete toast.
+        } catch (err) {
+          if (isSudoCancelledError(err)) {
+            toastInfo?.({
+              title: t("profile.sudo.cancelledTitle"),
+              description: t("profile.sudo.cancelledDescription"),
+            });
+          }
+          throw err;
+        }
       },
     },
     { deferSuccessEffects: true }

@@ -208,3 +208,75 @@ export function formatRestrictableResourceLabel(
 
   return segments.map(formatSegmentFallback).join(" · ");
 }
+
+/**
+ * Splits a raw restricted-field draft string on commas, trims whitespace,
+ * omits empty segments, and deduplicates case-insensitively in insertion order.
+ */
+export function splitDraftFieldTokens(rawDraft: string): string[] {
+  const seen = new Set<string>();
+  const tokens: string[] = [];
+  for (const part of rawDraft.split(",")) {
+    const trimmed = part.trim();
+    if (!trimmed) continue;
+    const normalized = trimmed.toLowerCase();
+    if (seen.has(normalized)) continue;
+    seen.add(normalized);
+    tokens.push(trimmed);
+  }
+  return tokens;
+}
+
+/**
+ * Immutably merges comma-separated field draft tokens into an existing
+ * restrictedFields array using case-insensitive deduplication.
+ */
+export function mergeRestrictedFields(
+  existingFields: ReadonlyArray<string>,
+  rawDraft: string
+): {
+  nextFields: string[];
+  added: string[];
+  duplicates: string[];
+} {
+  const existingSet = new Set(existingFields.map((field) => field.trim().toLowerCase()));
+  const nextFields = [...existingFields];
+  const added: string[] = [];
+  const duplicates: string[] = [];
+
+  for (const token of splitDraftFieldTokens(rawDraft)) {
+    const normalized = token.toLowerCase();
+    if (existingSet.has(normalized)) {
+      duplicates.push(token);
+      continue;
+    }
+    existingSet.add(normalized);
+    nextFields.push(token);
+    added.push(token);
+  }
+
+  return { nextFields, added, duplicates };
+}
+
+/**
+ * Flushes all non-empty uncommitted field drafts across restriction rows before
+ * Save, clearing draft entries whose tokens promoted cleanly to committed chips.
+ */
+export function commitRestrictionDrafts<
+  T extends { permissionCode: string; restrictedFields: string[] },
+>(
+  items: ReadonlyArray<T>,
+  draftFieldsByCode: Record<string, string>
+): { committedRestrictions: T[]; nextDrafts: Record<string, string> } {
+  const nextDrafts = { ...draftFieldsByCode };
+  const committedRestrictions = items.map((item) => {
+    const rawDraft = draftFieldsByCode[item.permissionCode] ?? "";
+    if (!rawDraft.trim()) return item;
+    const { nextFields, added } = mergeRestrictedFields(item.restrictedFields, rawDraft);
+    if (added.length > 0) {
+      delete nextDrafts[item.permissionCode];
+    }
+    return { ...item, restrictedFields: nextFields };
+  });
+  return { committedRestrictions, nextDrafts };
+}

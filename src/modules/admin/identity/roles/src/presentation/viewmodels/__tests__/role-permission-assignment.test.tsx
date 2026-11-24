@@ -236,21 +236,22 @@ describe("Role permission assignment ViewModels", () => {
     const { result: saResult } = renderHook(() => useRoleDetailViewModel("role-a"), { wrapper });
     await waitFor(() => {
       expect(mockRoleRepository.getTenantAvailablePermissionsGrouped).toHaveBeenCalledWith(
-        "tenant-1",
-        undefined
+        "tenant-1"
       );
     });
+    expect(saResult.current.info.totalCount).toBe(2);
 
+    // Search filters client-side WITHOUT shrinking unfiltered info.totalCount or re-fetching backend
     act(() => {
-      saResult.current.permissions.onSearchChange("opportunities");
+      saResult.current.permissions.onSearchChange("create");
     });
 
-    await waitFor(() => {
-      expect(mockRoleRepository.getTenantAvailablePermissionsGrouped).toHaveBeenCalledWith(
-        "tenant-1",
-        "opportunities"
-      );
-    });
+    expect(mockRoleRepository.getTenantAvailablePermissionsGrouped).toHaveBeenCalledTimes(1);
+    expect(saResult.current.info.totalCount).toBe(2);
+    const visibleAfterSearch = saResult.current.permissions.moduleGroups.flatMap((m) =>
+      m.categories.flatMap((c) => c.permissions.map((p) => p.code))
+    );
+    expect(visibleAfterSearch).toEqual(["crm.opportunities.create"]);
   });
 
   it("resets assignments cleanly when switching to a role with zero permissions", async () => {
@@ -282,7 +283,7 @@ describe("Role permission assignment ViewModels", () => {
     });
   });
 
-  it("parses restrictedFieldsJson, assigns OwnTenant on toggle, preserves own_tenant in bulk scope, and syncs authorization caches on save", async () => {
+  it("parses restrictedFieldsJson, defaults toggled scopeOverride to undefined, tracks modified diff & unfiltered save IDs, and syncs authorization caches on save", async () => {
     const invalidateSpy = vi.spyOn(queryClient, "invalidateQueries");
     mockRoleRepository.getById.mockResolvedValue(makeRole({ id: "role-a", tenantId: "tenant-1" }));
     mockRoleRepository.getRolePermissions.mockResolvedValue([
@@ -305,15 +306,15 @@ describe("Role permission assignment ViewModels", () => {
       });
     });
 
-    // Toggling assigns canonical OwnTenant ("own_tenant"), never legacy "Tenant"
+    // Toggling defaults scopeOverride to undefined ("Default / Inherited") instead of own_tenant
     act(() => {
       result.current.permissions.onTogglePermission("crm.opportunities.create");
     });
     expect(
       result.current.permissions.assignments.get("crm.opportunities.create")?.scopeOverride
-    ).toBe(PermissionScopes.OwnTenant);
+    ).toBeUndefined();
 
-    // Bulk updating to OwnTenant keeps "own_tenant" (no longer collapsed to undefined)
+    // Bulk updating to OwnTenant sets canonical "own_tenant"
     act(() => {
       result.current.permissions.onBulkScopeUpdate(PermissionScopes.OwnTenant);
     });
@@ -353,6 +354,8 @@ describe("Role permission assignment ViewModels", () => {
     await waitFor(() => {
       expect(mockRefreshNavigation).toHaveBeenCalledTimes(1);
     });
+    expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ["rolePermissions", "role-a"] });
+    expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ["role-permissions", "role-a"] });
     expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ["entitlements"] });
     expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ["navigation"] });
     expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ["roleAvailablePermissionsGrouped"] });
@@ -418,9 +421,18 @@ describe("Role permission assignment ViewModels", () => {
     expect(mockRoleRepository.assignPermissions).not.toHaveBeenCalled();
   });
 
-  it("useRolePermissionsDialog isolates tenant endpoint, rejects all_tenants on tenant role, and syncs session caches on save", async () => {
+  it("useRolePermissionsDialog isolates tenant endpoint, rejects all_tenants on tenant role, tracks modified scope/fields, and syncs session caches safely on save", async () => {
     const onOpenChange = vi.fn();
-    mockRoleRepository.getRolePermissions.mockResolvedValue([]);
+    mockRoleRepository.getRolePermissions.mockResolvedValue([
+      {
+        permissionCode: "crm.opportunities.create",
+        permissionId: "perm-create",
+        scope: undefined,
+        restrictedFields: [],
+      },
+    ]);
+    // Background session refresh error must remain non-fatal after 200 OK save
+    mockGetCurrentPrincipal.mockRejectedValueOnce(new Error("transient principal timeout"));
 
     const role = makeRole({ id: "role-dlg", tenantId: "tenant-1" });
     const wrapper = createWrapper(queryClient);
@@ -442,15 +454,28 @@ describe("Role permission assignment ViewModels", () => {
     expect(mockRoleRepository.getTenantAvailablePermissionsGrouped).not.toHaveBeenCalled();
     expect(result.current.allowAllTenants).toBe(false);
     expect(result.current.isReadOnly).toBe(false);
+    expect(result.current.isDirty).toBe(false);
 
     act(() => {
       result.current.toggle("crm.opportunities.read");
     });
+    expect(result.current.assignments.get("crm.opportunities.read")?.scopeOverride).toBeUndefined();
+
+    act(() => {
+      result.current.updateAssignment("crm.opportunities.create", {
+        permissionId: "perm-create",
+        scopeOverride: PermissionScopes.Own,
+        restrictedFields: ["secretNote"],
+      });
+    });
+    expect(result.current.changesCount).toEqual({ added: 1, removed: 0, modified: 1 });
+    expect(result.current.isDirty).toBe(true);
+
     act(() => {
       result.current.bulkUpdateScope(PermissionScopes.AllTenants);
     });
-    expect(result.current.assignments.get("crm.opportunities.read")?.scopeOverride).toBe(
-      PermissionScopes.OwnTenant
+    expect(result.current.assignments.get("crm.opportunities.create")?.scopeOverride).toBe(
+      PermissionScopes.Own
     );
 
     act(() => {
@@ -461,8 +486,13 @@ describe("Role permission assignment ViewModels", () => {
       expect(mockRoleRepository.assignPermissions).toHaveBeenCalledWith("role-dlg", {
         permissions: [
           {
+            permissionId: "perm-create",
+            scopeOverride: "own",
+            restrictedFields: ["secretNote"],
+          },
+          {
             permissionId: "perm-read",
-            scopeOverride: "own_tenant",
+            scopeOverride: null,
             restrictedFields: [],
           },
         ],
@@ -471,6 +501,105 @@ describe("Role permission assignment ViewModels", () => {
     await waitFor(() => {
       expect(onOpenChange).toHaveBeenCalledWith(false);
     });
-    expect(mockRefreshNavigation).toHaveBeenCalledTimes(1);
+  });
+
+  it("fails loudly without calling assignPermissions when any selected permission lacks a resolvable ID", async () => {
+    mockRoleRepository.getById.mockResolvedValue(makeRole({ id: "role-missing", tenantId: "tenant-1" }));
+    mockRoleRepository.getRolePermissions.mockResolvedValue([
+      {
+        permissionCode: "legacy.orphaned.read",
+        permissionId: "",
+      },
+    ]);
+
+    const wrapper = createWrapper(queryClient);
+    const { result } = renderHook(() => useRoleDetailViewModel("role-missing"), { wrapper });
+
+    await waitFor(() => {
+      expect(result.current.permissions.selectedPermissionCodes.has("legacy.orphaned.read")).toBe(
+        true
+      );
+    });
+
+    act(() => {
+      result.current.permissions.onBulkScopeUpdate(PermissionScopes.Own);
+    });
+    act(() => {
+      result.current.header.onSave();
+    });
+
+    await waitFor(() => {
+      expect(mockErrorToast).toHaveBeenCalledWith({
+        title: "common.error",
+        description: "roles.permissionsMissingIdsError",
+      });
+    });
+    expect(mockRoleRepository.assignPermissions).not.toHaveBeenCalled();
+  });
+
+  it("never briefly reverts assignments to stale cache while delayed post-save getRolePermissions refetch is in flight", async () => {
+    let resolveDelayedRefetch!: (rows: Array<Record<string, unknown>>) => void;
+    const delayedRefetchPromise = new Promise<Array<Record<string, unknown>>>((resolve) => {
+      resolveDelayedRefetch = resolve;
+    });
+
+    mockRoleRepository.getById.mockResolvedValue(makeRole({ id: "role-a", tenantId: "tenant-1" }));
+    mockRoleRepository.getRolePermissions
+      .mockResolvedValueOnce([{ permissionCode: "crm.opportunities.read", permissionId: "perm-read" }])
+      .mockImplementationOnce(() => delayedRefetchPromise);
+
+    const wrapper = createWrapper(queryClient);
+    const { result } = renderHook(() => useRoleDetailViewModel("role-a"), { wrapper });
+
+    await waitFor(() => {
+      expect(result.current.permissions.selectedPermissionCodes.has("crm.opportunities.read")).toBe(
+        true
+      );
+    });
+    expect(result.current.permissions.selectedPermissionCodes.has("crm.opportunities.create")).toBe(
+      false
+    );
+
+    act(() => {
+      result.current.permissions.onTogglePermission("crm.opportunities.create");
+    });
+    expect(result.current.permissions.selectedPermissionCodes.has("crm.opportunities.create")).toBe(
+      true
+    );
+
+    await act(async () => {
+      result.current.header.onSave();
+    });
+
+    await waitFor(() => {
+      expect(mockRoleRepository.assignPermissions).toHaveBeenCalledTimes(1);
+      expect(mockRoleRepository.getRolePermissions).toHaveBeenCalledTimes(2);
+    });
+
+    // While delayed refetch is STILL in flight, assignments MUST retain the saved selection (never revert to read-only pre-save cache)
+    expect(result.current.permissions.selectedPermissionCodes.has("crm.opportunities.create")).toBe(
+      true
+    );
+    expect(result.current.header.isDirty).toBe(false);
+
+    // Resolve delayed refetch with server-normalized scopeOverride
+    await act(async () => {
+      resolveDelayedRefetch([
+        { permissionCode: "crm.opportunities.read", permissionId: "perm-read" },
+        {
+          permissionCode: "crm.opportunities.create",
+          permissionId: "perm-create",
+          scopeOverride: "own",
+        },
+      ]);
+      await delayedRefetchPromise;
+    });
+
+    await waitFor(() => {
+      expect(
+        result.current.permissions.assignments.get("crm.opportunities.create")?.scopeOverride
+      ).toBe(PermissionScopes.Own);
+    });
+    expect(result.current.header.isDirty).toBe(false);
   });
 });

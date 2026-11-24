@@ -15,6 +15,8 @@ import { useAuditRealtime } from "../viewmodels/useAuditRealtime";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useAdminContext } from "@core/hooks/useAdminContext";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
+import { usePermission } from "@core/hooks/use-permission";
+import { MONITORING_PERMISSIONS } from "../../../../permission-constants";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import { AuditHeader } from "../components/AuditHeader";
 import { AuditKpiSummary } from "../components/AuditKpiSummary";
@@ -38,6 +40,9 @@ export function AuditView() {
   const realtime = useAuditRealtime();
   const { t } = useI18n();
   const { isPlatform, activeTenantName } = useAdminContext();
+  const canExportAudit = usePermission(
+    `${MONITORING_PERMISSIONS.AUDIT_EXPORT}|${MONITORING_PERMISSIONS.AUDIT_EXPORT_PDF}`
+  );
   const [exportOpen, setExportOpen] = useState(false);
 
   return (
@@ -49,6 +54,7 @@ export function AuditView() {
         connectionState={realtime.connectionState}
         realtimeEventCount={realtime.realtimeEventCount}
         isRefetching={vm.isRefetching}
+        canExport={canExportAudit}
         onRefresh={vm.refetchAll}
         onExport={() => setExportOpen(true)}
       />
@@ -121,11 +127,13 @@ export function AuditView() {
       />
 
       {/* 6. Export Dialog */}
-      <AuditExportDialog
-        open={exportOpen}
-        onClose={() => setExportOpen(false)}
-        filters={vm.filters}
-      />
+      {canExportAudit && (
+        <AuditExportDialog
+          open={exportOpen}
+          onClose={() => setExportOpen(false)}
+          filters={vm.filters}
+        />
+      )}
     </div>
   );
 }

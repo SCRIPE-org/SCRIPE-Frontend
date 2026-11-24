@@ -219,10 +219,15 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
         confirmText={tenant.isActive ? t("common.deactivate") : t("common.activate")}
         cancelText={t("common.cancel")}
         onConfirm={async () => {
-          await handleToggleStatus();
-          setStatusConfirmOpen(false);
+          try {
+            await handleToggleStatus();
+            setStatusConfirmOpen(false);
+          } catch {
+            // Toast / Sudo cancellation handled in useTenantHeaderViewModel
+          }
         }}
         isLoading={isUpdating}
+        preventAutoClose={true}
       />
     </>
   );

@@ -19,6 +19,10 @@ import { useState, useMemo, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
+import { isSudoCancelledError } from "@core/store/useSudoStore";
+import { useOptionalNavigation } from "@core/providers/navigation-provider";
+import { syncCurrentSessionAuthorization } from "@core/hooks/use-authorization-sync";
+import { qk } from "@core/common/query-keys";
 import { appLogger } from "@core/common/logger";
 import { identityContainer } from "@modules/identity/di";
 import type { Permission, PermissionModuleGroup } from "@modules/identity/core";
@@ -55,6 +59,8 @@ export interface UseTenantPermissionsDialogResult {
   totalCount: number;
   selectedCount: number;
   isLoading: boolean;
+  hasQueryError: boolean;
+  queryErrorMessage?: string;
   hasParent: boolean;
 
   // Actions
@@ -62,6 +68,7 @@ export interface UseTenantPermissionsDialogResult {
   toggleGroup: (codes: string[]) => void;
   expandAll: () => void;
   collapseAll: () => void;
+  retryQueries: () => void;
   save: () => void;
   isSaving: boolean;
 
@@ -88,8 +95,9 @@ export function useTenantPermissionsDialog({
   parentTenantId,
 }: UseTenantPermissionsDialogProps): UseTenantPermissionsDialogResult {
   const { t, language } = useI18n();
-  const { success: toastSuccess, error: toastError } = useEnhancedToast();
+  const { success: toastSuccess, error: toastError, info: toastInfo } = useEnhancedToast();
   const queryClient = useQueryClient();
+  const nav = useOptionalNavigation();
 
   const [search, setSearch] = useState("");
   const [selectedCodes, setSelectedCodes] = useState<Set<string>>(new Set());
@@ -129,49 +137,58 @@ export function useTenantPermissionsDialog({
   // ── Fetch PARENT's available permissions GROUPED from backend ──
   // Uses Repository (Clean Architecture), NOT direct service calls.
   // Returns PermissionModuleGroup[] (Module → Category → Permissions)
-  const { data: parentPermissionGroups = [], isLoading: loadingParent } = useQuery({
+  const {
+    data: parentPermissionGroups = [],
+    isLoading: loadingParent,
+    isError: isParentError,
+    error: parentError,
+    refetch: refetchParent,
+  } = useQuery({
     queryKey: ["parent-permissions-grouped", parentTenantId],
     queryFn: async () => {
-      try {
-        appLogger.debug(
-          "[ViewModel] Fetching grouped permissions via Repository, parentTenantId:",
-          parentTenantId
-        );
+      appLogger.debug(
+        "[ViewModel] Fetching grouped permissions via Repository, parentTenantId:",
+        parentTenantId
+      );
 
-        if (parentTenantId) {
-          // Child tenant: get parent's permissions grouped from repository
-          return identityContainer.tenantRepository.getTenantPermissionsGrouped(parentTenantId);
-        } else {
-          // Root tenant fallback: get creation permissions (flat), wrap as grouped
-          const flatPermissions = await identityContainer.tenantRepository.getCreationPermissions();
-          return groupFlatPermissions(flatPermissions);
-        }
-      } catch (error) {
-        appLogger.error("Failed to fetch available permissions", error);
-        return [];
+      if (parentTenantId) {
+        // Child tenant: get parent's permissions grouped from repository
+        return identityContainer.tenantRepository.getTenantPermissionsGrouped(parentTenantId);
       }
+      // Root tenant fallback: get creation permissions (flat), wrap as grouped
+      const flatPermissions = await identityContainer.tenantRepository.getCreationPermissions();
+      return groupFlatPermissions(flatPermissions);
     },
     enabled: open && !!tenantId,
   });
 
   // ── Fetch TENANT's current permissions (flat, for selection init) ──
   // Uses Repository (Clean Architecture) — mapper is in the repo layer.
-  const { data: tenantPermissions = [], isLoading: loadingTenant } = useQuery({
+  const {
+    data: tenantPermissions = [],
+    isLoading: loadingTenant,
+    isError: isTenantError,
+    error: tenantError,
+    refetch: refetchTenant,
+  } = useQuery({
     queryKey: ["tenant-current-permissions-service", tenantId],
     queryFn: async () => {
-      try {
-        appLogger.debug(
-          "[ViewModel] Fetching tenant's current permissions via Repository:",
-          tenantId
-        );
-        return identityContainer.tenantRepository.getTenantPermissions(tenantId);
-      } catch (error) {
-        appLogger.error("Failed to fetch tenant permissions", error);
-        return [];
-      }
+      appLogger.debug(
+        "[ViewModel] Fetching tenant's current permissions via Repository:",
+        tenantId
+      );
+      return identityContainer.tenantRepository.getTenantPermissions(tenantId);
     },
     enabled: open && !!tenantId,
   });
+
+  const hasQueryError = isParentError || isTenantError;
+  const queryErrorMessage =
+    (parentError as Error | null)?.message || (tenantError as Error | null)?.message;
+  const retryQueries = () => {
+    void refetchParent();
+    void refetchTenant();
+  };
 
   // Flat permission list derived from groups (for toggle/lookup logic only)
   const allPermissions = useMemo((): Permission[] => {
@@ -226,18 +243,38 @@ export function useTenantPermissionsDialog({
   // Save mutation — uses repository for write operations
   const saveMutation = useMutation({
     mutationFn: async () => {
+      if (hasQueryError) {
+        throw new Error(queryErrorMessage || t("tenant.permissionsLoadError"));
+      }
       const selectedIds = allPermissions.filter((p) => selectedCodes.has(p.code)).map((p) => p.id);
       await identityContainer.tenantRepository.updateTenantPermissions(tenantId, selectedIds);
     },
-    onSuccess: () => {
-      toastSuccess({ title: t("tenant.permissionsSaved") });
+    onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ["tenant-current-permissions-service", tenantId] });
       queryClient.invalidateQueries({ queryKey: ["parent-permissions-grouped"] });
       queryClient.invalidateQueries({ queryKey: ["tenant-stats", tenantId] });
       queryClient.invalidateQueries({ queryKey: ["tenants"] });
+      queryClient.invalidateQueries({ queryKey: qk.roles.all });
+      try {
+        await syncCurrentSessionAuthorization({
+          queryClient,
+          refreshNavigation: nav?.refreshNavigation,
+          targetTenantId: tenantId,
+        });
+      } catch {
+        // Non-fatal: tenant permission update succeeded even if background auth sync fails
+      }
+      toastSuccess({ title: t("tenant.permissionsSaved") });
       onOpenChange(false);
     },
     onError: (error: Error) => {
+      if (isSudoCancelledError(error)) {
+        toastInfo?.({
+          title: t("profile.sudo.cancelledTitle"),
+          description: t("profile.sudo.cancelledDescription"),
+        });
+        return;
+      }
       toastError({
         title: t("tenant.permissionsSaveError"),
         description: error.message,
@@ -350,6 +387,8 @@ export function useTenantPermissionsDialog({
     totalCount: allPermissions.length,
     selectedCount: selectedCodes.size,
     isLoading: loadingParent || loadingTenant,
+    hasQueryError,
+    queryErrorMessage,
     hasParent: !!parentTenantId,
 
     // Actions
@@ -357,6 +396,7 @@ export function useTenantPermissionsDialog({
     toggleGroup,
     expandAll,
     collapseAll,
+    retryQueries,
     save: () => saveMutation.mutate(),
     isSaving: saveMutation.isPending,
 

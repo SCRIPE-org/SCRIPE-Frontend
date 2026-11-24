@@ -14,6 +14,7 @@ import { Label } from "@core/ui/label";
 import type { Admin } from "../../domain/entities/Admin";
 import { GenericSelect } from "@core/crud/components/generic-select";
 import { appLogger } from "@/core/common/logger";
+import { useSudoStore } from "@core/store/useSudoStore";
 import { useAdminTransferViewModel } from "../viewmodels/useAdminTransferViewModel";
 
 // Special value to represent "System" tenant (null ID = Super Admin)
@@ -82,12 +83,16 @@ export function AdminTransferDialog({
       isSystemTenant: isSystemTenantSelected,
     });
 
-    await onTransfer(admin.id, {
-      // null = System tenant = Super Admin
-      targetTenantId: isSystemTenantSelected ? null : targetTenantId,
-      targetRoleId,
-    });
-    onOpenChange(false);
+    try {
+      await onTransfer(admin.id, {
+        // null = System tenant = Super Admin
+        targetTenantId: isSystemTenantSelected ? null : targetTenantId,
+        targetRoleId,
+      });
+      onOpenChange(false);
+    } catch {
+      // Error / Sudo cancellation handled by useAdminOperations
+    }
   };
 
   const handleTenantSearchLocal = useCallback(
@@ -111,9 +116,22 @@ export function AdminTransferDialog({
 
   if (!admin) return null;
 
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen && useSudoStore.getState().modalOpen) return;
+    onOpenChange(nextOpen);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogContent
+        className="sm:max-w-[425px]"
+        onInteractOutside={(e) => {
+          if (useSudoStore.getState().modalOpen) e.preventDefault();
+        }}
+        onPointerDownOutside={(e) => {
+          if (useSudoStore.getState().modalOpen) e.preventDefault();
+        }}
+      >
         <DialogHeader>
           <DialogTitle>{t("admin.transferTitle")}</DialogTitle>
           <DialogDescription>{t("admin.transferDesc")}</DialogDescription>

@@ -10,6 +10,7 @@
 
 import { useState } from "react";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
+import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { usePermission } from "@core/hooks/use-permission";
 import { useUserGroupDetailViewModel } from "../viewmodels/useUserGroupDetailViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -40,6 +41,7 @@ interface Props {
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function UserGroupDetailView({ groupId }: Props) {
+  useModuleLocales(() => import("../../../locales"), "user-groups");
   const { t, language } = useI18n();
   const router = useRouter();
   const canUpdateGroup = usePermission(SYSTEM_PERMISSIONS.USER_GROUPS_UPDATE);
@@ -206,7 +208,9 @@ export function UserGroupDetailView({ groupId }: Props) {
                           size="sm"
                           className="text-destructive hover:text-destructive/90"
                           disabled={isRemovingMember}
-                          onClick={() => removeMember(member.adminId)}
+                          onClick={() => {
+                            void removeMember(member.adminId).catch(() => undefined);
+                          }}
                           aria-label={`${t("userGroups.membersTab.removeMember")}: ${member.firstName} ${member.lastName}`}
                         >
                           <Trash2 className="h-4 w-4" aria-hidden="true" />
@@ -363,8 +367,8 @@ export function UserGroupDetailView({ groupId }: Props) {
         onOpenChange={setShowAddMembers}
         groupId={groupId}
         existingMemberIds={group.members.map((m) => m.adminId)}
-        onSubmit={(ids) => {
-          addMembers(ids);
+        onSubmit={async (ids) => {
+          await addMembers(ids);
           setShowAddMembers(false);
         }}
         isSubmitting={isAddingMembers}
@@ -374,8 +378,8 @@ export function UserGroupDetailView({ groupId }: Props) {
         open={showSetRoles}
         onOpenChange={setShowSetRoles}
         currentRoles={group.roles}
-        onSubmit={(ids) => {
-          setRoles(ids);
+        onSubmit={async (ids) => {
+          await setRoles(ids);
           setShowSetRoles(false);
         }}
         isSubmitting={isSettingRoles}
@@ -385,8 +389,8 @@ export function UserGroupDetailView({ groupId }: Props) {
         open={showSetRestrictions}
         onOpenChange={setShowSetRestrictions}
         currentRestrictions={group.restrictions}
-        onSubmit={(restrictions) => {
-          setRestrictions(restrictions);
+        onSubmit={async (restrictions) => {
+          await setRestrictions(restrictions);
           setShowSetRestrictions(false);
         }}
         isSubmitting={isSettingRestrictions}

@@ -55,6 +55,7 @@ export interface UserGroupProps {
   roleCount: number;
   createdAt: string;
   modifiedAt?: string;
+  rowVersion?: string | null;
   members?: UserGroupMember[];
   roles?: UserGroupRole[];
   restrictions?: UserGroupRestriction[];
@@ -109,6 +110,9 @@ export class UserGroup {
   }
   get modifiedAt(): string | undefined {
     return this.props.modifiedAt;
+  }
+  get rowVersion(): string | null | undefined {
+    return this.props.rowVersion;
   }
   get members(): UserGroupMember[] {
     return this.props.members ?? [];

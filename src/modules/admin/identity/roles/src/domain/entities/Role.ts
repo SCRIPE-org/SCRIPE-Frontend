@@ -11,6 +11,7 @@ export interface RolePermission {
   permissionId: string;
   permissionCode: string;
   scope?: string;
+  restrictedFields?: string[];
 }
 
 /**

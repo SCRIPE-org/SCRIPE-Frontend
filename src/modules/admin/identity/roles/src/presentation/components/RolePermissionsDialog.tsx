@@ -27,6 +27,8 @@ import { Progress } from "@core/ui/progress";
 import { ScrollArea } from "@core/ui/scroll-area";
 import { EmptyState } from "@core/ui/empty-state";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useModuleLocales } from "@core/hooks/use-module-locales";
+import { useSudoStore } from "@core/store/useSudoStore";
 import { resolveBilingualLabel } from "@core/common/utils";
 import { Search, SearchX, Shield, KeyRound, Lock, Users } from "lucide-react";
 import type { Role } from "../../domain/entities/Role";
@@ -56,27 +58,32 @@ export interface RolePermissionsDialogProps {
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function RolePermissionsDialog(props: RolePermissionsDialogProps) {
+  useModuleLocales(() => import("../../../locales"), "roles");
   const { open, onOpenChange, role } = props;
   const { t, language } = useI18n();
   const vm = useRolePermissionsDialog(props);
-
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen && useSudoStore.getState().modalOpen) return;
+    onOpenChange(nextOpen);
+  };
   const moduleCount = vm.groupedModules.length;
   const hasSearch = vm.search.trim().length > 0;
   const controlsDisabled = vm.isLoading || moduleCount === 0;
-  const pct = vm.totalCount > 0 ? (vm.selectedCount / vm.totalCount) * 100 : 0;
-
-  // The matrix reads a Set of codes; the ViewModel owns a Map of assignments.
-  // Derive, never duplicate.
+  const pct = Math.min(100, Math.max(0, vm.totalCount > 0 ? (vm.selectedCount / vm.totalCount) * 100 : 0));
   const assignments = vm.assignments;
   const selectedCodes = useMemo(() => new Set(assignments.keys()), [assignments]);
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      {/* The subject line is a row of elements, not a paragraph, so it cannot be
-          a DialogDescription — point the description association at it instead. */}
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
         className="flex h-[90dvh] w-[calc(100%-1.5rem)] max-w-3xl flex-col gap-0 p-0 sm:h-[85dvh]"
         aria-describedby="role-permissions-subject"
+        onInteractOutside={(e) => {
+          if (useSudoStore.getState().modalOpen) e.preventDefault();
+        }}
+        onPointerDownOutside={(e) => {
+          if (useSudoStore.getState().modalOpen) e.preventDefault();
+        }}
       >
         {/* ── Header: who this is about. The inline-end padding reserves the
              lane the DialogContent close button occupies (end-4, 16px). ── */}
@@ -90,7 +97,7 @@ export function RolePermissionsDialog(props: RolePermissionsDialogProps) {
             </span>
             <div className="min-w-0 flex-1">
               <DialogTitle className="truncate text-base">
-                {t("role.managePermissions")}
+                {t("roles.managePermissions")}
               </DialogTitle>
               {/* A div, not DialogDescription — a <p> cannot legally hold this row. */}
               <div

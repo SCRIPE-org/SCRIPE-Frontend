@@ -8,6 +8,7 @@
 "use client";
 
 import { useId, useState, useMemo } from "react";
+import { useSudoStore } from "@core/store/useSudoStore";
 import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
 import { GenericModal } from "@core/crud/components/generic-modal";
@@ -21,7 +22,7 @@ interface SetRolesDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   currentRoles: Array<{ roleId: string; nameEn: string; nameAr: string; code: string }>;
-  onSubmit: (roleIds: string[]) => void;
+  onSubmit: (roleIds: string[]) => Promise<unknown> | void;
   isSubmitting?: boolean;
   tenantId?: string;
 }
@@ -38,7 +39,11 @@ export function SetRolesDialog({
   isSubmitting,
   tenantId,
 }: SetRolesDialogProps) {
-  const { t, language, rolesData, isLoading } = useSetRolesViewModel({ tenantId, open });
+  const { t, language, rolesData, isLoading, searchRoles } = useSetRolesViewModel({
+    tenantId,
+    open,
+    currentRoles,
+  });
   const selectRolesLabelId = useId();
   const [selectedRoleIds, setSelectedRoleIds] = useState<string[]>([]);
 
@@ -53,27 +58,38 @@ export function SetRolesDialog({
     [rolesData, language]
   );
 
-  // Pre-select current roles by matching code
+  // Pre-select current roles by matching code once per open transition
   const [prevOpen, setPrevOpen] = useState(open);
-  const [prevRolesData, setPrevRolesData] = useState(rolesData);
+  const [initializedForOpen, setInitializedForOpen] = useState(false);
 
-  if (open !== prevOpen || rolesData !== prevRolesData) {
+  if (open !== prevOpen) {
     setPrevOpen(open);
-    setPrevRolesData(rolesData);
-    if (open && currentRoles && rolesData?.items) {
-      const currentCodes = new Set(currentRoles.map((r) => r.code));
-      const matchedIds = rolesData.items.filter((r) => currentCodes.has(r.code)).map((r) => r.id);
-      setSelectedRoleIds(matchedIds);
-    } else if (open && !rolesData) {
-      setSelectedRoleIds([]);
+    if (!open) {
+      setInitializedForOpen(false);
     }
   }
 
-  const handleSave = () => {
-    onSubmit(selectedRoleIds);
+  if (open && !initializedForOpen && !isLoading && rolesData?.items) {
+    setInitializedForOpen(true);
+    const currentCodes = new Set(currentRoles.map((r) => r.code));
+    const matchedIds = rolesData.items.filter((r) => currentCodes.has(r.code)).map((r) => r.id);
+    setSelectedRoleIds(matchedIds);
+  } else if (open && !initializedForOpen && !rolesData && selectedRoleIds.length > 0) {
+    setSelectedRoleIds([]);
+  }
+
+  const handleSave = async () => {
+    try {
+      await onSubmit(selectedRoleIds);
+    } catch {
+      // ViewModel surfaces error or Sudo cancellation feedback; keep dialog & selections open.
+    }
   };
 
   const handleClose = (v: boolean) => {
+    if (!v && useSudoStore.getState().modalOpen) {
+      return;
+    }
     onOpenChange(v);
   };
 
@@ -103,6 +119,7 @@ export function SetRolesDialog({
               }
               placeholder={t("userGroups.rolesTab.selectRolesPlaceholder")}
               type="multi"
+              {...(searchRoles ? { searchType: "server" as const, onServerSearch: searchRoles } : {})}
             />
             <p className="text-xs text-nx-ink-3">{t("userGroups.rolesTab.rolesHelp")}</p>
           </div>

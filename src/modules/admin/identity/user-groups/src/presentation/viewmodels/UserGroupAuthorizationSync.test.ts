@@ -2,13 +2,20 @@ import { createElement, type ReactNode } from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, waitFor, act } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { SudoCancelledError } from "@core/store/useSudoStore";
+import { UserGroupMapper } from "../../data/mappers/UserGroupMapper";
+import { UserGroupModel } from "../../data/models/UserGroupModel";
 import { useUserGroupDetailViewModel } from "./useUserGroupDetailViewModel";
+import { userGroupKeys } from "./useUserGroupsViewModel";
 
 const {
   mockGroupRepo,
   mockAuthRepo,
   mockSyncCurrentSessionAuthorization,
   mockRefreshNavigation,
+  mockToastSuccess,
+  mockToastError,
+  mockToastInfo,
 } = vi.hoisted(() => ({
   mockGroupRepo: {
     getById: vi.fn(),
@@ -22,6 +29,9 @@ const {
   },
   mockSyncCurrentSessionAuthorization: vi.fn(),
   mockRefreshNavigation: vi.fn(),
+  mockToastSuccess: vi.fn(),
+  mockToastError: vi.fn(),
+  mockToastInfo: vi.fn(),
 }));
 
 vi.mock("@modules/identity/di", () => ({
@@ -46,8 +56,9 @@ vi.mock("@core/providers/navigation-provider", () => ({
 
 vi.mock("@core/hooks/use-enhanced-toast", () => ({
   useEnhancedToast: () => ({
-    success: vi.fn(),
-    error: vi.fn(),
+    success: mockToastSuccess,
+    error: mockToastError,
+    info: mockToastInfo,
   }),
 }));
 
@@ -55,12 +66,14 @@ vi.mock("@core/providers/i18n-provider", () => ({
   useI18n: () => ({ t: (k: string) => k, language: "en" }),
 }));
 
-function makeWrapper() {
-  const client = new QueryClient({
-    defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
-  });
+function makeWrapper(client?: QueryClient) {
+  const queryClient =
+    client ??
+    new QueryClient({
+      defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
+    });
   return function Wrapper({ children }: { children: ReactNode }) {
-    return createElement(QueryClientProvider, { client }, children);
+    return createElement(QueryClientProvider, { client: queryClient }, children);
   };
 }
 
@@ -70,6 +83,7 @@ describe("useUserGroupDetailViewModel — authorization cache sync", () => {
     mockGroupRepo.getById.mockResolvedValue({
       id: "group-1",
       tenantId: "tenant-42",
+      rowVersion: "AAAAAQ==",
       members: [],
       roles: [],
       restrictions: [],
@@ -79,18 +93,28 @@ describe("useUserGroupDetailViewModel — authorization cache sync", () => {
     mockSyncCurrentSessionAuthorization.mockResolvedValue(undefined);
   });
 
-  it("synchronizes current session authorization with the group's tenantId after setRoles and setRestrictions", async () => {
+  it("synchronizes current session authorization, forwards rowVersion, and invalidates detail + list caches", async () => {
+    const client = new QueryClient({
+      defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
+    });
+    const invalidateSpy = vi.spyOn(client, "invalidateQueries");
     const { result } = renderHook(() => useUserGroupDetailViewModel("group-1"), {
-      wrapper: makeWrapper(),
+      wrapper: makeWrapper(client),
     });
 
     await waitFor(() => {
       expect(result.current.group?.id).toBe("group-1");
     });
 
-    act(() => {
-      result.current.setRoles(["role-1"]);
+    await act(async () => {
+      await result.current.setRoles(["role-1"]);
     });
+    expect(mockGroupRepo.setRoles).toHaveBeenCalledWith("group-1", {
+      roleIds: ["role-1"],
+      rowVersion: "AAAAAQ==",
+    });
+    expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: userGroupKeys.detail("group-1") });
+    expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: userGroupKeys.lists() });
     await waitFor(() => {
       expect(mockSyncCurrentSessionAuthorization).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -103,10 +127,14 @@ describe("useUserGroupDetailViewModel — authorization cache sync", () => {
 
     mockSyncCurrentSessionAuthorization.mockClear();
 
-    act(() => {
-      result.current.setRestrictions([
+    await act(async () => {
+      await result.current.setRestrictions([
         { permissionCode: "crm.opportunities", restrictedFields: ["estimatedAmount"] },
       ]);
+    });
+    expect(mockGroupRepo.setRestrictions).toHaveBeenCalledWith("group-1", {
+      restrictions: [{ permissionCode: "crm.opportunities", restrictedFields: ["estimatedAmount"] }],
+      rowVersion: "AAAAAQ==",
     });
     await waitFor(() => {
       expect(mockSyncCurrentSessionAuthorization).toHaveBeenCalledWith(
@@ -117,5 +145,54 @@ describe("useUserGroupDetailViewModel — authorization cache sync", () => {
         })
       );
     });
+  });
+
+  it("treats session sync failure as non-fatal after committed mutations and handles Sudo cancellation with an info toast", async () => {
+    mockSyncCurrentSessionAuthorization.mockRejectedValueOnce(new Error("Auth refresh timeout"));
+    const { result } = renderHook(() => useUserGroupDetailViewModel("group-1"), {
+      wrapper: makeWrapper(),
+    });
+
+    await waitFor(() => {
+      expect(result.current.group?.id).toBe("group-1");
+    });
+
+    await expect(
+      act(async () => {
+        await result.current.setRoles(["role-1"]);
+      })
+    ).resolves.toBeUndefined();
+    expect(mockToastSuccess).toHaveBeenCalled();
+    expect(mockToastError).not.toHaveBeenCalled();
+
+    mockGroupRepo.setRestrictions.mockRejectedValueOnce(new SudoCancelledError());
+    await expect(
+      act(async () => {
+        await result.current.setRestrictions([]);
+      })
+    ).rejects.toThrow(SudoCancelledError);
+    expect(mockToastInfo).toHaveBeenCalledWith({
+      title: "profile.sudo.cancelledTitle",
+      description: "profile.sudo.cancelledDescription",
+    });
+    expect(mockToastError).not.toHaveBeenCalled();
+  });
+
+  it("maps optional rowVersion through UserGroupMapper cleanly", () => {
+    const entity = UserGroupMapper.toEntity(
+      UserGroupModel.fromJson({
+        id: "group-1",
+        nameEn: "Restricted",
+        nameAr: "مقيدة",
+        code: "GRP_1",
+        tenantId: "tenant-42",
+        isActive: true,
+        memberCount: 0,
+        roleCount: 0,
+        rowVersion: "AAAABw==",
+        createdAt: "2026-11-24T00:00:00Z",
+      })
+    );
+    expect(entity.rowVersion).toBe("AAAABw==");
   });
 });

@@ -16,6 +16,7 @@ import { Trash2, AlertTriangle, Info, HelpCircle } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { appLogger } from "@core/common/logger";
 import { useI18n } from "@core/providers/i18n-provider";
+import { isSudoCancelledError, useSudoStore } from "@core/store/useSudoStore";
 
 export interface ConfirmationDialogProps {
   open: boolean;
@@ -29,6 +30,11 @@ export interface ConfirmationDialogProps {
   variant?: "destructive" | "warning" | "info" | "default";
   icon?: React.ReactNode;
   isLoading?: boolean;
+  /**
+   * Prevent Radix AlertDialogAction from firing onOpenChange(false) synchronously on Confirm click.
+   * Use for async or Sudo-protected confirmations so failures and Sudo cancellations keep the dialog open.
+   */
+  preventAutoClose?: boolean;
   /** Custom content to render in the dialog body */
   children?: React.ReactNode;
   /** Disable confirm button externally (e.g., validation not met) */
@@ -100,6 +106,7 @@ export function ConfirmationDialog(props: ConfirmationDialogProps) {
     variant = "default",
     icon,
     isLoading = false,
+    preventAutoClose = false,
     children,
     disableConfirm = false,
     className,
@@ -108,6 +115,15 @@ export function ConfirmationDialog(props: ConfirmationDialogProps) {
     cancelButtonProps,
   } = props;
   const { t } = useI18n();
+  const [isConfirming, setIsConfirming] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!open) {
+      setIsConfirming(false);
+    }
+  }, [open]);
+
+  const effectiveLoading = isLoading || isConfirming;
   const tr = (key: string, defaultValue: string) => {
     const resolved = t(key, { defaultValue });
     return resolved === key ? defaultValue : resolved;
@@ -120,31 +136,59 @@ export function ConfirmationDialog(props: ConfirmationDialogProps) {
   const resolvedCancelText = cancelText ?? tr("common.cancel", "Cancel");
 
   const handleConfirm = async () => {
+    if (effectiveLoading) return;
+    setIsConfirming(true);
     try {
       await onConfirm();
     } catch (error) {
-      appLogger.error("Confirmation action failed:", error);
+      if (!isSudoCancelledError(error)) {
+        appLogger.error("Confirmation action failed:", error);
+      }
+    } finally {
+      setIsConfirming(false);
     }
   };
 
+  const handleConfirmClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    confirmButtonProps?.onClick?.(event);
+    if (event.defaultPrevented) {
+      return;
+    }
+    if (preventAutoClose) {
+      // Stop Radix AlertDialogAction (DialogPrimitive.Close) from closing synchronously before onConfirm resolves.
+      event.preventDefault();
+    }
+    void handleConfirm();
+  };
+
   const handleCancel = () => {
+    if (effectiveLoading || useSudoStore.getState().modalOpen) {
+      return;
+    }
     onCancel?.();
     onOpenChange(false);
   };
 
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen && (effectiveLoading || useSudoStore.getState().modalOpen)) {
+      return;
+    }
+    onOpenChange(nextOpen);
+  };
+
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
+    <AlertDialog open={open} onOpenChange={handleOpenChange}>
       <AlertDialogContent
         dir={dir}
         className={cn("sm:max-w-md", className)}
-        aria-busy={isLoading || undefined}
+        aria-busy={effectiveLoading || undefined}
         data-testid={props["data-testid"]}
         // The loading state is a real state, not a spinner bolted onto the
         // happy path: while the confirmed action is in flight the panel stops
         // being dismissable, so Escape can no longer orphan a half-finished
         // delete with no UI left to report its outcome.
         onEscapeKeyDown={(event) => {
-          if (isLoading) event.preventDefault();
+          if (effectiveLoading || useSudoStore.getState().modalOpen) event.preventDefault();
         }}
       >
         <AlertDialogHeader>
@@ -184,7 +228,7 @@ export function ConfirmationDialog(props: ConfirmationDialogProps) {
               {...cancelButtonProps}
               variant="outline"
               onClick={handleCancel}
-              disabled={isLoading}
+              disabled={effectiveLoading}
               className={cancelButtonProps?.className}
             >
               {resolvedCancelText}
@@ -194,8 +238,8 @@ export function ConfirmationDialog(props: ConfirmationDialogProps) {
             <Button
               {...confirmButtonProps}
               variant={config.confirmVariant}
-              onClick={handleConfirm}
-              loading={isLoading}
+              onClick={handleConfirmClick}
+              loading={effectiveLoading}
               disabled={disableConfirm}
               // Holds the button's width steady when the label swaps for a
               // spinner, so the footer does not reflow mid-request.

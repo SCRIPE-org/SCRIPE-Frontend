@@ -16,6 +16,7 @@ export const en = {
     badges: {
       admin: "Admin",
       platformScope: "Global Scope",
+      tenantFallback: "this organization",
     },
     kpis: {
       totalEvents: "Total Events",

@@ -53,7 +53,8 @@ export function RoleInfoCard({
     role?.defaultLandingTarget && role.defaultLandingTarget.trim().toLowerCase().startsWith("menu:")
   );
   const { catalog } = useRoleLandingCatalogViewModel(scopeMode, resolvedContextKey, isMenuTarget);
-  const pct = totalCount > 0 ? (selectedCount / totalCount) * 100 : 0;
+  const rawPct = totalCount > 0 ? (selectedCount / totalCount) * 100 : 0;
+  const pct = Math.min(100, Math.max(0, rawPct));
   const landingTargetLabel = formatLandingTargetLabel({
     target: role?.defaultLandingTarget,
     language,

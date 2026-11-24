@@ -410,6 +410,7 @@ export const ar = {
     managePermissions: "إدارة الصلاحيات",
     permissionsSaved: "تم حفظ الصلاحيات بنجاح",
     permissionsSaveError: "فشل في حفظ الصلاحيات",
+    permissionsLoadError: "تعذّر تحميل الصلاحيات. يرجى المحاولة مجدداً قبل الحفظ.",
     editSettings: "تعديل إعدادات المستأجر",
     editSettingsDesc: "تحديث تكوين هذا المستأجر.",
     quotas: "الحصص",

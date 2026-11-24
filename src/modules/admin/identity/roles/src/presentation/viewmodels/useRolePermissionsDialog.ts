@@ -33,9 +33,13 @@ import type { Role } from "../../domain/entities/Role";
 import type { Permission, PermissionModuleGroup } from "@modules/identity/core";
 import type { PermissionAssignmentJson } from "../../domain/types/PermissionTypes";
 import { PermissionScopes } from "../../domain/types/PermissionTypes";
+import { qk } from "@core/common/query-keys";
 import {
+  diffPermissionAssignmentSnapshots,
   extractRolePermissionAssignment,
   normalizeRolePermissionScope,
+  snapshotPermissionAssignments,
+  type PermissionAssignmentSnapshot,
 } from "../../domain/utils/permission-assignment-utils";
 
 // ── Props & Result interfaces ──
@@ -74,7 +78,7 @@ export interface UseRolePermissionsDialogResult {
   selectedCount: number;
   isLoading: boolean;
   adminCount: number;
-  changesCount: { added: number; removed: number };
+  changesCount: { added: number; removed: number; modified: number };
   isDirty: boolean;
   allowAllTenants: boolean;
   isPermissionLocked: boolean;
@@ -115,7 +119,7 @@ export function useRolePermissionsDialog({
   tenantId,
 }: UseRolePermissionsDialogProps): UseRolePermissionsDialogResult {
   const { t, language } = useI18n();
-  const { toast } = useEnhancedToast();
+  const { toast, info: toastInfo } = useEnhancedToast();
   const queryClient = useQueryClient();
   const nav = useOptionalNavigation();
   const user = useAppStore((s) => s.user);
@@ -136,7 +140,9 @@ export function useRolePermissionsDialog({
 
   const [search, setSearch] = useState("");
   const [assignments, setAssignments] = useState<Map<string, PermissionAssignmentJson>>(new Map());
-  const [initialKeys, setInitialKeys] = useState<Set<string>>(new Set());
+  const [initialSnapshot, setInitialSnapshot] = useState<
+    Map<string, PermissionAssignmentSnapshot>
+  >(new Map());
   const [expandedModules, setExpandedModules] = useState<Set<string>>(new Set());
   const [expandedGroups, setExpandedGroups] = useState<Record<string, string[]>>({});
   const [bulkScopeValue, setBulkScopeValue] = useState<string>("");
@@ -150,7 +156,7 @@ export function useRolePermissionsDialog({
       queueMicrotask(() => {
         setSearch("");
         setAssignments(new Map());
-        setInitialKeys(new Set());
+        setInitialSnapshot(new Map());
         setExpandedModules(new Set());
         setExpandedGroups({});
         setBulkScopeValue("");
@@ -266,7 +272,7 @@ export function useRolePermissionsDialog({
 
     queueMicrotask(() => {
       setAssignments(newAssignments);
-      setInitialKeys(new Set(newAssignments.keys()));
+      setInitialSnapshot(snapshotPermissionAssignments(newAssignments));
       setExpandedModules(new Set(modulesWithSelection));
       setExpandedGroups(perModuleExpanded);
       setInitializedRoleId(roleId);
@@ -287,44 +293,65 @@ export function useRolePermissionsDialog({
       if (!roleId) throw new Error("No role selected");
       if (isReadOnly) throw new Error(lockReason || t("roles.readOnlyPermissionsHint"));
 
-      const permissions = Array.from(assignments.entries())
-        .map(([code, a]) => {
-          const permId = a.permissionId || allPermissions.find((p) => p.code === code)?.id;
-          return {
-            permissionId: permId,
-            scopeOverride:
-              normalizeRolePermissionScope(a.scopeOverride, allowAllTenants) ?? null,
-            restrictedFields: a.restrictedFields ?? [],
-          };
-        })
-        .filter(
-          (
-            a
-          ): a is {
-            permissionId: string;
-            scopeOverride: string | null;
-            restrictedFields: string[];
-          } => !!a.permissionId
+      const idByCode = new Map(allPermissions.map((p) => [p.code, p.id]));
+      const missingCodes: string[] = [];
+      const permissions: Array<{
+        permissionId: string;
+        scopeOverride: string | null;
+        restrictedFields: string[];
+      }> = [];
+
+      for (const [code, a] of assignments.entries()) {
+        const permId = a.permissionId || idByCode.get(code) || "";
+        if (!permId) {
+          missingCodes.push(code);
+          continue;
+        }
+        permissions.push({
+          permissionId: permId,
+          scopeOverride: normalizeRolePermissionScope(a.scopeOverride, allowAllTenants) ?? null,
+          restrictedFields: a.restrictedFields ?? [],
+        });
+      }
+
+      if (missingCodes.length > 0) {
+        throw new Error(
+          t("roles.permissionsMissingIdsError", { codes: missingCodes.join(", ") })
         );
+      }
 
       await identityContainer.roleRepository.assignPermissions(roleId, {
-        permissions: permissions,
+        permissions,
       });
     },
     onSuccess: async () => {
-      toast({ title: t("role.permissionsSaved") });
       queryClient.invalidateQueries({ queryKey: ["role-permissions", roleId] });
       queryClient.invalidateQueries({ queryKey: ["rolePermissions", roleId] });
-      queryClient.invalidateQueries({ queryKey: ["roles"] });
-      await syncCurrentSessionAuthorization({
-        queryClient,
-        refreshNavigation: nav?.refreshNavigation,
-        targetTenantId: effectiveTenantId,
-      });
+      queryClient.invalidateQueries({ queryKey: ["role", roleId] });
+      queryClient.invalidateQueries({ queryKey: qk.roles.all });
+      if (roleId) {
+        queryClient.invalidateQueries({ queryKey: qk.roles.workspaceEntries(roleId) });
+      }
+      try {
+        await syncCurrentSessionAuthorization({
+          queryClient,
+          refreshNavigation: nav?.refreshNavigation,
+          targetTenantId: effectiveTenantId,
+        });
+      } catch {
+        // Non-fatal: permission assignment succeeded even if background auth sync fails
+      }
+      toast({ title: t("role.permissionsSaved") });
       onOpenChange(false);
     },
     onError: (error: Error) => {
-      if (isSudoCancelledError(error)) return;
+      if (isSudoCancelledError(error)) {
+        toastInfo?.({
+          title: t("profile.sudo.cancelledTitle"),
+          description: t("profile.sudo.cancelledDescription"),
+        });
+        return;
+      }
       toast({
         title: t("role.permissionsSaveError"),
         description: error.message,
@@ -345,7 +372,7 @@ export function useRolePermissionsDialog({
         if (permission) {
           next.set(code, {
             permissionId: permission.id,
-            scopeOverride: PermissionScopes.OwnTenant,
+            scopeOverride: undefined,
             restrictedFields: [],
           });
         }
@@ -380,7 +407,7 @@ export function useRolePermissionsDialog({
             if (permission) {
               next.set(c, {
                 permissionId: permission.id,
-                scopeOverride: PermissionScopes.OwnTenant,
+                scopeOverride: undefined,
                 restrictedFields: [],
               });
             }
@@ -480,19 +507,12 @@ export function useRolePermissionsDialog({
     };
   };
 
-  const changesCount = useMemo(() => {
-    let added = 0;
-    let removed = 0;
-    for (const key of assignments.keys()) {
-      if (!initialKeys.has(key)) added++;
-    }
-    for (const key of initialKeys) {
-      if (!assignments.has(key)) removed++;
-    }
-    return { added, removed };
-  }, [assignments, initialKeys]);
+  const changesCount = useMemo(
+    () => diffPermissionAssignmentSnapshots(assignments, initialSnapshot),
+    [assignments, initialSnapshot]
+  );
 
-  const isDirty = changesCount.added > 0 || changesCount.removed > 0;
+  const isDirty = changesCount.added > 0 || changesCount.removed > 0 || changesCount.modified > 0;
 
   return {
     // State

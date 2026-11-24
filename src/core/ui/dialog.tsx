@@ -36,9 +36,12 @@ const DialogClose = DialogPrimitive.Close;
  *  it outranks a bare utility). */
 export const overlayScrimSurfaceClasses = "fixed inset-0 z-overlay bg-scrim";
 
+export const overlayScrimMotionClasses =
+  "duration-nx-standard ease-nx-enter data-[state=closed]:duration-nx-micro data-[state=closed]:ease-nx-exit data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0";
+
 /** The scrim plus its fade on the token pair — 200ms in, ~2/3 out. A fade is
  *  the one movement reduced motion keeps, so no motion-safe split is needed. */
-export const overlayScrimClasses = `${overlayScrimSurfaceClasses} duration-nx-standard ease-nx-enter data-[state=closed]:duration-nx-micro data-[state=closed]:ease-nx-exit data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0`;
+export const overlayScrimClasses = `${overlayScrimSurfaceClasses} ${overlayScrimMotionClasses}`;
 
 /** The floating panel itself: nx popover surface behind a hairline, the modal
  *  step of the shadow ladder (these genuinely float, so a shadow is earned),
@@ -133,18 +136,27 @@ export function NonModalScrim({ open }: { open: boolean }) {
 const DialogOverlay = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Overlay>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
->(({ className, ...props }, ref) => (
-  <DialogPrimitive.Overlay
-    ref={ref}
-    // The scrim pushes the page back by taking light away, not by blurring it.
-    // This previously applied backdrop-blur twice — once through Tailwind and
-    // once through an inline style added to survive purging — which is the
-    // single most expensive thing to put under a modal on a low-end device,
-    // and an explicit ban in DESIGN.md ("no glassmorphism as default").
-    className={cn(overlayScrimClasses, className)}
-    {...props}
-  />
-));
+>(({ className, ...props }, ref) => {
+  // twMerge does not know custom Tailwind zIndex keys (z-overlay, z-sudo-overlay),
+  // so omit z-overlay whenever an explicit z-* token is supplied.
+  const hasCustomZ = typeof className === "string" && /(?:^|\s)!?z-/.test(className);
+  return (
+    <DialogPrimitive.Overlay
+      ref={ref}
+      // The scrim pushes the page back by taking light away, not by blurring it.
+      // This previously applied backdrop-blur twice — once through Tailwind and
+      // once through an inline style added to survive purging — which is the
+      // single most expensive thing to put under a modal on a low-end device,
+      // and an explicit ban in DESIGN.md ("no glassmorphism as default").
+      className={cn(
+        hasCustomZ ? "fixed inset-0 bg-scrim" : overlayScrimSurfaceClasses,
+        overlayScrimMotionClasses,
+        className
+      )}
+      {...props}
+    />
+  );
+});
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 
 interface DialogContentProps extends React.ComponentPropsWithoutRef<
@@ -159,53 +171,72 @@ interface DialogContentProps extends React.ComponentPropsWithoutRef<
    * right edge.
    */
   variant?: "default" | "drawer";
+  /** Optional class override for the accompanying DialogOverlay scrim (e.g. z-sudo-overlay). */
+  overlayClassName?: string;
 }
 
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   DialogContentProps
->(({ className, children, dir, variant = "default", onFocusOutside, ...props }, ref) => {
-  const { t, direction } = useI18n();
-  const isRtl = (dir || direction) === "rtl";
+>(
+  (
+    {
+      className,
+      overlayClassName,
+      children,
+      dir,
+      variant = "default",
+      onFocusOutside,
+      onInteractOutside,
+      onPointerDownOutside,
+      ...props
+    },
+    ref
+  ) => {
+    const { t, direction } = useI18n();
+    const isRtl = (dir || direction) === "rtl";
+    const hasCustomZ = typeof className === "string" && /(?:^|\s)!?z-/.test(className);
 
-  const positionClasses =
-    variant === "drawer"
-      ? cn(
-          "fixed inset-y-0 end-0 z-modal grid max-h-[100dvh] w-full max-w-lg overflow-y-auto overscroll-contain rounded-s-nx-lg border-s",
-          modalSurfaceClasses,
-          modalMotionClasses,
-          // tailwindcss-animate slides are physical, so the logical end edge
-          // resolves against the live direction here. motion-safe keeps only
-          // the crossfade under reduced motion.
-          isRtl
-            ? "motion-safe:data-[state=open]:slide-in-from-left motion-safe:data-[state=closed]:slide-out-to-left"
-            : "motion-safe:data-[state=open]:slide-in-from-right motion-safe:data-[state=closed]:slide-out-to-right"
-        )
-      : cn(
-          // The gutter is deliberate: `w-full` let the panel butt against both
-          // viewport edges on a phone, which is also why the corners had to be
-          // square below sm. With 16px of air on each side the large radius
-          // token applies at every width and the panel reads as an object.
-          "fixed left-[50%] top-[50%] z-modal grid max-h-[90dvh] w-[calc(100%-2rem)] max-w-lg translate-x-[-50%] translate-y-[-50%] overflow-y-auto overscroll-contain rounded-nx-lg border",
-          modalSurfaceClasses,
-          modalMotionClasses,
-          // The 1/2 and 48% "slides" are the centering, not decoration: while
-          // a tailwindcss-animate animation runs, its keyframe transform
-          // replaces the translate utilities above, so the counter-translate
-          // must ride inside the animation vars. They stay outside motion-safe
-          // on purpose — dropping them under reduced motion would make the
-          // panel jump to the corner, not calm down. Only the zoom is motion.
-          "motion-safe:data-[state=open]:zoom-in-95 motion-safe:data-[state=closed]:zoom-out-95 data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%]"
-        );
+    const positionClasses =
+      variant === "drawer"
+        ? cn(
+            "fixed inset-y-0 end-0 grid max-h-[100dvh] w-full max-w-lg overflow-y-auto overscroll-contain rounded-s-nx-lg border-s",
+            !hasCustomZ && "z-modal",
+            modalSurfaceClasses,
+            modalMotionClasses,
+            // tailwindcss-animate slides are physical, so the logical end edge
+            // resolves against the live direction here. motion-safe keeps only
+            // the crossfade under reduced motion.
+            isRtl
+              ? "motion-safe:data-[state=open]:slide-in-from-left motion-safe:data-[state=closed]:slide-out-to-left"
+              : "motion-safe:data-[state=open]:slide-in-from-right motion-safe:data-[state=closed]:slide-out-to-right"
+          )
+        : cn(
+            // The gutter is deliberate: `w-full` let the panel butt against both
+            // viewport edges on a phone, which is also why the corners had to be
+            // square below sm. With 16px of air on each side the large radius
+            // token applies at every width and the panel reads as an object.
+            "fixed left-[50%] top-[50%] grid max-h-[90dvh] w-[calc(100%-2rem)] max-w-lg translate-x-[-50%] translate-y-[-50%] overflow-y-auto overscroll-contain rounded-nx-lg border",
+            !hasCustomZ && "z-modal",
+            modalSurfaceClasses,
+            modalMotionClasses,
+            // The 1/2 and 48% "slides" are the centering, not decoration: while
+            // a tailwindcss-animate animation runs, its keyframe transform
+            // replaces the translate utilities above, so the counter-translate
+            // must ride inside the animation vars. They stay outside motion-safe
+            // on purpose — dropping them under reduced motion would make the
+            // panel jump to the corner, not calm down. Only the zoom is motion.
+            "motion-safe:data-[state=open]:zoom-in-95 motion-safe:data-[state=closed]:zoom-out-95 data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%]"
+          );
 
-  return (
-    <DialogPortal>
-      <DialogOverlay />
-      <DialogPrimitive.Content
-        ref={ref}
-        dir={dir ?? direction}
-        aria-describedby={props["aria-describedby"] ?? undefined}
-        className={cn(positionClasses, className)}
+    return (
+      <DialogPortal>
+        <DialogOverlay className={overlayClassName} />
+        <DialogPrimitive.Content
+          ref={ref}
+          dir={dir ?? direction}
+          aria-describedby={props["aria-describedby"] ?? undefined}
+          className={cn(positionClasses, className)}
         /* ── Focus is NOT suppressed here, and that is deliberate ────────────
          *
          * This file used to prevent BOTH `onOpenAutoFocus` and
@@ -269,21 +300,24 @@ const DialogContent = React.forwardRef<
          * A consumer that genuinely needs different behaviour still overrides
          * both handlers through {...props} below (DocsSearch does).
          */
+        {...props}
         onInteractOutside={(e) => {
+          onInteractOutside?.(e);
           // Allow interaction with dropdown portals (Select, DatePicker, etc.)
-          const target = e.target as Element;
+          const target = e.target as Element | null;
           if (
-            target.closest("[data-dropdown-portal]") ||
-            target.closest("[data-searchable-select]") ||
-            target.closest("[data-date-picker]") ||
-            target.closest("[data-radix-popper-content-wrapper]") ||
-            target.closest("[role='listbox']") ||
-            target.closest("[role='option']")
+            target?.closest?.("[data-dropdown-portal]") ||
+            target?.closest?.("[data-searchable-select]") ||
+            target?.closest?.("[data-date-picker]") ||
+            target?.closest?.("[data-radix-popper-content-wrapper]") ||
+            target?.closest?.("[role='listbox']") ||
+            target?.closest?.("[role='option']")
           ) {
             e.preventDefault();
           }
         }}
         onPointerDownOutside={(e) => {
+          onPointerDownOutside?.(e);
           // Block closing for non-left clicks (e.g., right-click)
           const orig = (e as any).detail?.originalEvent as PointerEvent | MouseEvent | undefined;
           const button = (orig && "button" in orig ? (orig as any).button : 0) as number;
@@ -291,19 +325,18 @@ const DialogContent = React.forwardRef<
             e.preventDefault();
           }
           // Allow interaction with dropdown portals (Select, DatePicker, etc.)
-          const target = e.target as Element;
+          const target = e.target as Element | null;
           if (
-            target.closest("[data-dropdown-portal]") ||
-            target.closest("[data-searchable-select]") ||
-            target.closest("[data-date-picker]") ||
-            target.closest("[data-radix-popper-content-wrapper]") ||
-            target.closest("[role='listbox']") ||
-            target.closest("[role='option']")
+            target?.closest?.("[data-dropdown-portal]") ||
+            target?.closest?.("[data-searchable-select]") ||
+            target?.closest?.("[data-date-picker]") ||
+            target?.closest?.("[data-radix-popper-content-wrapper]") ||
+            target?.closest?.("[role='listbox']") ||
+            target?.closest?.("[role='option']")
           ) {
             e.preventDefault();
           }
         }}
-        {...props}
         // A dialog is NEVER dismissed by focus movement — only by pointer-down
         // on the scrim, Escape, or an explicit Close.
         //

@@ -22,9 +22,15 @@ import { Button } from "@core/ui/button";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermission } from "@core/hooks/use-permission";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
+import { useSudoStore } from "@core/store/useSudoStore";
 
 // Role imports
-import { Role, RolePermissionsDialog, AssignToGroupDialog } from "@modules/identity/core";
+import {
+  Role,
+  RolePermissionsDialog,
+  RoleDeleteDialog,
+  AssignToGroupDialog,
+} from "@modules/identity/core";
 import { useTenantRolesViewModel } from "../../viewmodels/useTenantRolesViewModel";
 
 // ViewModel - all logic lives here
@@ -55,9 +61,18 @@ export function TenantRolesTab({ tenantId, tenantName }: TenantRolesTabProps) {
   const [selectedBulkRoleIds, setSelectedBulkRoleIds] = useState<string[]>([]);
   const [bulkAssignToGroupOpen, setBulkAssignToGroupOpen] = useState(false);
 
+  // Delete dialog state — mirrors RolesView's admin-count-aware RoleDeleteDialog
+  const [roleToDelete, setRoleToDelete] = useState<Role | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
   const handleOpenAssignToGroup = useCallback((role: Role) => {
     setSelectedRoleForGroup(role);
     setAssignToGroupOpen(true);
+  }, []);
+
+  const handleOpenDelete = useCallback((role: Role) => {
+    setRoleToDelete(role);
+    setDeleteDialogOpen(true);
   }, []);
 
   // Build CrudConfig from ViewModel data
@@ -146,7 +161,7 @@ export function TenantRolesTab({ tenantId, tenantName }: TenantRolesTabProps) {
         requiredPermission: SYSTEM_PERMISSIONS.USER_GROUPS_UPDATE,
       },
     ],
-    getActions: (vmInstance, tFn, handleDeleteFn): CrudAction<Role>[] => [
+    getActions: (vmInstance, tFn): CrudAction<Role>[] => [
       {
         label: tFn("common.view"),
         onClick: (item: Role) => vmInstance.openViewModal(item),
@@ -176,7 +191,7 @@ export function TenantRolesTab({ tenantId, tenantName }: TenantRolesTabProps) {
       },
       {
         label: tFn("common.delete"),
-        onClick: (item: Role) => handleDeleteFn?.(item),
+        onClick: (item: Role) => handleOpenDelete(item),
         variant: "ghost",
         className: "text-destructive hover:text-destructive/90",
         icon: <Trash2 className="h-4 w-4" aria-hidden="true" />,
@@ -214,7 +229,10 @@ export function TenantRolesTab({ tenantId, tenantName }: TenantRolesTabProps) {
       {/* Permissions Dialog */}
       <RolePermissionsDialog
         open={vm.permissionsDialogOpen}
-        onOpenChange={(open) => !open && vm.closePermissionsDialog()}
+        onOpenChange={(open) => {
+          if (!open && useSudoStore.getState().modalOpen) return;
+          if (!open) vm.closePermissionsDialog();
+        }}
         role={vm.selectedRoleForPermissions}
         tenantId={vm.tenantId}
       />
@@ -224,6 +242,7 @@ export function TenantRolesTab({ tenantId, tenantName }: TenantRolesTabProps) {
         <AssignToGroupDialog
           open={bulkAssignToGroupOpen}
           onOpenChange={(open) => {
+            if (!open && useSudoStore.getState().modalOpen) return;
             if (!open) {
               setBulkAssignToGroupOpen(false);
               setSelectedBulkRoleIds([]);
@@ -238,11 +257,35 @@ export function TenantRolesTab({ tenantId, tenantName }: TenantRolesTabProps) {
       {/* Single Assign to Group Dialog */}
       <AssignToGroupDialog
         open={assignToGroupOpen}
-        onOpenChange={setAssignToGroupOpen}
+        onOpenChange={(open) => {
+          if (!open && useSudoStore.getState().modalOpen) return;
+          setAssignToGroupOpen(open);
+        }}
         mode="role"
         roleId={selectedRoleForGroup?.id}
         roleName={selectedRoleForGroup?.getLocalizedName(language)}
         tenantId={tenantId}
+      />
+
+      {/* Delete Dialog — admin-count-aware fallback role selector */}
+      <RoleDeleteDialog
+        open={deleteDialogOpen}
+        onOpenChange={(open) => {
+          if (!open && useSudoStore.getState().modalOpen) return;
+          setDeleteDialogOpen(open);
+          if (!open) setRoleToDelete(null);
+        }}
+        role={roleToDelete}
+        tenantId={roleToDelete?.tenantId ?? tenantId}
+        onConfirm={async (fallbackRoleId) => {
+          if (!roleToDelete) return;
+          // Propagate rejection so RoleDeleteDialog stays open with roleToDelete intact on failure/Sudo cancel;
+          // deleteRoleMutation.onError already surfaces localized feedback.
+          await vm.rolesVm.deleteRole(roleToDelete.id, fallbackRoleId);
+          setDeleteDialogOpen(false);
+          setRoleToDelete(null);
+        }}
+        isDeleting={vm.rolesVm.isDeletingRole}
       />
     </div>
   );

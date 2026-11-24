@@ -15,6 +15,7 @@ export interface CreateRoleRequest {
   descriptionAr?: string;
   tenantId?: string;
   priority?: number;
+  permissionIds?: string[];
   defaultLandingTarget?: string | null;
   isLandingEnforced?: boolean;
 }
@@ -28,6 +29,7 @@ export interface UpdateRoleRequest {
   descriptionEn?: string;
   descriptionAr?: string;
   priority: number;
+  isActive?: boolean;
   defaultLandingTarget?: string | null;
   isLandingEnforced?: boolean;
   rowVersion?: string | null;

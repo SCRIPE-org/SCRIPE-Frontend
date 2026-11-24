@@ -91,7 +91,7 @@ export const en = {
       manageRestrictionsDesc: "Configure field-level restrictions for this group.",
       addPermission: "Add Resource",
       permissionPlaceholder: "e.g. crm.opportunities",
-      fieldPlaceholder: "Add field name...",
+      fieldPlaceholder: "Add field name (or comma-separated keys)...",
       permissionRule: "Permission Rule",
       selectPermission: "Select Permission",
       fieldsPlaceholder: "Fields Placeholder",
@@ -107,10 +107,13 @@ export const en = {
         "Showing the first set of custom field keys for this resource. You can still type any exact field key.",
       suggestionsUnavailable:
         "Custom field suggestions are unavailable with your current permissions. Type an exact field key directly.",
+      suggestionsNotConfigured:
+        "No custom-field schema is registered for this resource yet. Type any exact API field key directly.",
       loadingSuggestions: "Loading custom field keys...",
       noFieldsYet: "No restricted fields added yet.",
       requiredBadge: "Required",
-      customFieldHint: "Type a field key or pick a custom field suggestion below.",
+      customFieldHint:
+        "Type field keys (comma-separated, committed on Enter, blur, or Save) or pick a suggestion below.",
       addField: "Add Field",
       removeField: "Remove {{field}}",
       removeRestriction: "Remove Restriction",

@@ -10,6 +10,7 @@ import { useRestrictableCustomFieldKeys } from "@core/hooks/use-restrictable-cus
 import {
   formatRestrictableResourceLabel,
   resolveRestrictableResource,
+  splitDraftFieldTokens,
   type PermissionResourceCandidate,
 } from "./restriction-resource-label";
 
@@ -25,9 +26,11 @@ interface RestrictionRowCardProps {
   open: boolean;
   canReadCustomFields: boolean;
   availablePermissions: ReadonlyArray<PermissionResourceCandidate>;
+  draftField: string;
   t: (key: string, params?: Record<string, string | number>) => string;
+  onDraftFieldChange: (index: number, value: string) => void;
   onRemoveRestriction: (index: number) => void;
-  onAddField: (index: number, field: string) => boolean;
+  onAddField: (index: number, rawField: string) => { added: string[]; duplicates: string[] };
   onRemoveField: (index: number, field: string) => void;
 }
 
@@ -42,13 +45,14 @@ export function RestrictionRowCard({
   open,
   canReadCustomFields,
   availablePermissions,
+  draftField,
   t,
+  onDraftFieldChange,
   onRemoveRestriction,
   onAddField,
   onRemoveField,
 }: RestrictionRowCardProps) {
   const datalistId = useId();
-  const [newField, setNewField] = useState("");
   const [duplicateNotice, setDuplicateNotice] = useState<string | null>(null);
 
   const canonicalResource = resolveRestrictableResource(
@@ -78,28 +82,38 @@ export function RestrictionRowCard({
     requiredKeyMap.has(field.toLowerCase())
   );
 
-  const draftTrimmed = newField.trim();
-  const isDraftRequired =
-    draftTrimmed.length > 0 && requiredKeyMap.has(draftTrimmed.toLowerCase());
-
+  const draftTokens = splitDraftFieldTokens(draftField);
+  const draftRequiredToken = draftTokens.find((tok) => requiredKeyMap.has(tok.toLowerCase()));
   const existingFieldSet = new Set(restriction.restrictedFields.map((f) => f.toLowerCase()));
+  const liveDuplicateToken = draftTokens.find((tok) => existingFieldSet.has(tok.toLowerCase()));
   const unselectedSuggestions = suggestionKeys.filter(
     (item) => !existingFieldSet.has(item.key.toLowerCase())
   );
 
-  const tryAddField = (rawField: string) => {
-    const trimmed = rawField.trim();
-    if (!trimmed) return;
-    const added = onAddField(index, trimmed);
-    if (!added) {
-      setDuplicateNotice(t("userGroups.restrictionsTab.duplicateField", { field: trimmed }));
-      return;
+  const tryAddField = (rawField: string, fromSuggestion = false) => {
+    if (!rawField.trim()) return;
+    const { added, duplicates } = onAddField(index, rawField);
+    if (duplicates.length > 0) {
+      setDuplicateNotice(t("userGroups.restrictionsTab.duplicateField", { field: duplicates[0] }));
+    } else {
+      setDuplicateNotice(null);
     }
-    setDuplicateNotice(null);
-    if (trimmed === newField.trim()) {
-      setNewField("");
+    if (!fromSuggestion && added.length > 0) {
+      onDraftFieldChange(index, "");
     }
   };
+
+  const activeDuplicateMessage =
+    duplicateNotice ??
+    (liveDuplicateToken
+      ? t("userGroups.restrictionsTab.duplicateField", { field: liveDuplicateToken })
+      : null);
+
+  const fallbackHintKey = !canReadCustomFields
+    ? "userGroups.restrictionsTab.suggestionsUnavailable"
+    : !isLoadingSuggestions && !isAvailable
+      ? "userGroups.restrictionsTab.suggestionsNotConfigured"
+      : null;
 
   return (
     <div
@@ -127,6 +141,7 @@ export function RestrictionRowCard({
           variant="ghost"
           size="sm"
           className="h-7 w-7 p-0 text-destructive hover:text-destructive/90"
+          data-skip-blur-commit="true"
           onClick={() => onRemoveRestriction(index)}
           aria-label={`${t("userGroups.restrictionsTab.removeRestriction")}: ${restriction.permissionCode}`}
         >
@@ -172,22 +187,22 @@ export function RestrictionRowCard({
       </div>
 
       {/* Required-field warning */}
-      {(selectedRequiredFields.length > 0 || isDraftRequired) && (
-        <Alert variant="warning" className="py-2">
+      {(selectedRequiredFields.length > 0 || Boolean(draftRequiredToken)) && (
+        <Alert variant="warning" role="alert" className="py-2">
           <AlertTriangle className="h-4 w-4" aria-hidden="true" />
           <AlertDescription className="text-xs">
             {t("userGroups.restrictionsTab.requiredFieldAlert", {
-              field: selectedRequiredFields[0] ?? draftTrimmed,
+              field: selectedRequiredFields[0] ?? draftRequiredToken ?? "",
             })}
           </AlertDescription>
         </Alert>
       )}
 
       {/* Duplicate field inline notice */}
-      {duplicateNotice && (
-        <Alert variant="warning" className="py-2">
+      {activeDuplicateMessage && (
+        <Alert variant="warning" role="alert" className="py-2">
           <AlertTriangle className="h-4 w-4" aria-hidden="true" />
-          <AlertDescription className="text-xs">{duplicateNotice}</AlertDescription>
+          <AlertDescription className="text-xs">{activeDuplicateMessage}</AlertDescription>
         </Alert>
       )}
 
@@ -195,15 +210,21 @@ export function RestrictionRowCard({
       <div className="flex gap-2">
         <Input
           list={datalistId}
-          value={newField}
+          value={draftField}
           onChange={(e) => {
-            setNewField(e.target.value);
+            onDraftFieldChange(index, e.target.value);
             if (duplicateNotice) setDuplicateNotice(null);
+          }}
+          onBlur={(e) => {
+            const nextFocus = e.relatedTarget as HTMLElement | null;
+            if (!nextFocus?.closest('[data-skip-blur-commit="true"]') && draftField.trim()) {
+              tryAddField(draftField);
+            }
           }}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               e.preventDefault();
-              tryAddField(newField);
+              tryAddField(draftField);
             }
           }}
           placeholder={t("userGroups.restrictionsTab.fieldPlaceholder")}
@@ -213,74 +234,42 @@ export function RestrictionRowCard({
         />
         <datalist id={datalistId}>
           {suggestionKeys.map((item) => {
-            const optionLabel = item.isRequired
-              ? `${item.labelEn} (${t("userGroups.restrictionsTab.requiredBadge")})`
-              : item.labelEn;
-            return (
-              <option key={item.key} value={item.key} aria-label={optionLabel}>
-                {optionLabel}
-              </option>
-            );
+            const label = item.isRequired ? `${item.labelEn} (${t("userGroups.restrictionsTab.requiredBadge")})` : item.labelEn;
+            return <option key={item.key} value={item.key} aria-label={label}>{label}</option>;
           })}
         </datalist>
         <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          className="h-8"
-          onClick={() => tryAddField(newField)}
-          disabled={!draftTrimmed}
+          type="button" variant="outline" size="sm" className="h-8"
+          data-skip-blur-commit="true" onClick={() => tryAddField(draftField)} disabled={!draftField.trim()}
           aria-label={t("userGroups.restrictionsTab.addField")}
           data-testid={`restriction-field-add-${canonicalResource || restriction.permissionCode}`}
         >
           <Plus className="h-3 w-3" aria-hidden="true" />
         </Button>
       </div>
-
-      {/* Clickable custom-field suggestions & state hints */}
       {canReadCustomFields && isLoadingSuggestions && (
-        <p className="text-[11px] text-nx-ink-3">
-          {t("userGroups.restrictionsTab.loadingSuggestions")}
-        </p>
+        <p className="text-[11px] text-nx-ink-3">{t("userGroups.restrictionsTab.loadingSuggestions")}</p>
       )}
       {canReadCustomFields && !isLoadingSuggestions && unselectedSuggestions.length > 0 && (
         <div className="space-y-1">
-          <p className="text-[11px] text-nx-ink-3">
-            {t("userGroups.restrictionsTab.customFieldHint")}
-          </p>
+          <p className="text-[11px] text-nx-ink-3">{t("userGroups.restrictionsTab.customFieldHint")}</p>
           <div className="flex flex-wrap gap-1">
             {unselectedSuggestions.slice(0, 12).map((item) => (
               <Button
-                key={item.key}
-                type="button"
-                variant="outline"
-                size="sm"
-                className="h-6 gap-1 px-2 text-[11px]"
-                onClick={() => tryAddField(item.key)}
+                key={item.key} type="button" variant="outline" size="sm" className="h-6 gap-1 px-2 text-[11px]"
+                onClick={() => tryAddField(item.key, true)}
                 data-testid={`restriction-suggestion-${canonicalResource || restriction.permissionCode}-${item.key}`}
               >
                 <Plus className="h-2.5 w-2.5" aria-hidden="true" />
                 <bdi dir="ltr">{item.key}</bdi>
-                {item.isRequired && (
-                  <span className="text-nx-warning-strong">
-                    ({t("userGroups.restrictionsTab.requiredBadge")})
-                  </span>
-                )}
+                {item.isRequired && <span className="text-nx-warning-strong">({t("userGroups.restrictionsTab.requiredBadge")})</span>}
               </Button>
             ))}
           </div>
-          {isTruncated && (
-            <p className="text-[11px] text-nx-ink-3">
-              {t("userGroups.restrictionsTab.suggestionsTruncated")}
-            </p>
-          )}
+          {isTruncated && <p className="text-[11px] text-nx-ink-3">{t("userGroups.restrictionsTab.suggestionsTruncated")}</p>}
         </div>
       )}
-      {(!canReadCustomFields || (!isLoadingSuggestions && !isAvailable)) && (
-        <p className="text-[11px] text-nx-ink-3">
-          {t("userGroups.restrictionsTab.suggestionsUnavailable")}
-        </p>
-      )}
+      {fallbackHintKey && <p className="text-[11px] text-nx-ink-3">{t(fallbackHintKey)}</p>}
     </div>
   );
 }

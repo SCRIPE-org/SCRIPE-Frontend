@@ -636,6 +636,8 @@ export const en = {
       noPasskeyEnrolledHint: "Your policy requires a registered Passkey, but none is enrolled on this account yet.",
       noTwoFactorEnrolledHint: "Your policy requires a registered Passkey or Authenticator App (TOTP), but neither is enrolled on this account yet.",
       idleStatus: "Sudo Locked",
+      cancelledTitle: "Verification Cancelled",
+      cancelledDescription: "Sudo verification was cancelled. Your unsaved edits remain intact.",
     },
     lockdown: {
       sectionTitle: "Emergency Account Shield",

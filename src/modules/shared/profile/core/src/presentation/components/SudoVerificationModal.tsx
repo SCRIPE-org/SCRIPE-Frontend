@@ -133,7 +133,8 @@ export function SudoVerificationModal() {
     <Dialog open={modalOpen} onOpenChange={(nextOpen) => (!nextOpen ? closeModal() : undefined)}>
       <DialogContent
         data-testid="sudo-verification-modal"
-        className="sm:max-w-[460px] border-nx-line bg-nx-surface text-nx-ink p-6"
+        overlayClassName="z-sudo-overlay"
+        className="z-sudo-modal sm:max-w-[460px] border-nx-line bg-nx-surface text-nx-ink p-6"
       >
         <DialogHeader className="space-y-2">
           <div className="flex items-start justify-between gap-2">
@@ -146,7 +147,10 @@ export function SudoVerificationModal() {
                   <DialogTitle className="text-base font-bold text-nx-ink truncate">
                     {t("profile.sudo.modalTitle")}
                   </DialogTitle>
-                  <SectionInfoPopover i18nPrefix="profile.infoPopover.biometricSudo" />
+                  <SectionInfoPopover
+                    i18nPrefix="profile.infoPopover.biometricSudo"
+                    contentClassName="z-sudo-popover"
+                  />
                 </div>
                 <Badge
                   variant="outline"

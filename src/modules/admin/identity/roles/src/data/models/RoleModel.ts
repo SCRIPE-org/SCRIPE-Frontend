@@ -27,6 +27,7 @@ export interface RolePermissionJson {
   permissionId: string;
   permissionCode: string;
   scope?: string;
+  restrictedFields?: string[];
 }
 
 /**
@@ -196,11 +197,12 @@ export class RolePermissionModel {
   constructor(
     public readonly permissionId: string,
     public readonly permissionCode: string,
-    public readonly scope?: string
+    public readonly scope?: string,
+    public readonly restrictedFields?: string[]
   ) {}
 
   static fromJson(json: RolePermissionJson): RolePermissionModel {
-    return new RolePermissionModel(json.permissionId, json.permissionCode, json.scope);
+    return new RolePermissionModel(json.permissionId, json.permissionCode, json.scope, json.restrictedFields);
   }
 
   toJson(): RolePermissionJson {
@@ -208,13 +210,12 @@ export class RolePermissionModel {
       permissionId: this.permissionId,
       permissionCode: this.permissionCode,
       scope: this.scope,
+      ...(this.restrictedFields !== undefined ? { restrictedFields: this.restrictedFields } : {}),
     };
   }
 }
 
-/**
- * Exported class defining parameters and fields for create role model configurations.
- */
+/** CreateRoleModel API DTO. */
 export class CreateRoleModel {
   constructor(
     public readonly nameEn: string,
@@ -239,19 +240,13 @@ export class CreateRoleModel {
       descriptionAr: this.descriptionAr,
       tenantId: this.tenantId,
       permissionIds: this.permissionIds,
-      ...(this.defaultLandingTarget !== undefined
-        ? { defaultLandingTarget: this.defaultLandingTarget }
-        : {}),
-      ...(this.isLandingEnforced !== undefined
-        ? { isLandingEnforced: this.isLandingEnforced }
-        : {}),
+      ...(this.defaultLandingTarget !== undefined ? { defaultLandingTarget: this.defaultLandingTarget } : {}),
+      ...(this.isLandingEnforced !== undefined ? { isLandingEnforced: this.isLandingEnforced } : {}),
     };
   }
 }
 
-/**
- * Exported class defining parameters and fields for update role model configurations.
- */
+/** UpdateRoleModel API DTO. */
 export class UpdateRoleModel {
   constructor(
     public readonly nameEn: string,
@@ -273,27 +268,18 @@ export class UpdateRoleModel {
       descriptionAr: this.descriptionAr,
       priority: this.priority,
       isActive: this.isActive,
-      ...(this.defaultLandingTarget !== undefined
-        ? { defaultLandingTarget: this.defaultLandingTarget }
-        : {}),
-      ...(this.isLandingEnforced !== undefined
-        ? { isLandingEnforced: this.isLandingEnforced }
-        : {}),
+      ...(this.defaultLandingTarget !== undefined ? { defaultLandingTarget: this.defaultLandingTarget } : {}),
+      ...(this.isLandingEnforced !== undefined ? { isLandingEnforced: this.isLandingEnforced } : {}),
       ...(this.rowVersion !== undefined ? { rowVersion: this.rowVersion } : {}),
     };
   }
 }
 
-/**
- * Exported class defining parameters and fields for assign permissions model configurations.
- */
+/** AssignPermissionsModel API DTO. */
 export class AssignPermissionsModel {
   constructor(public readonly permissions: PermissionAssignmentJson[]) {}
-
   toJson(): AssignPermissionsJson {
-    return {
-      permissions: this.permissions,
-    };
+    return { permissions: this.permissions };
   }
 }
 // PermissionScopes and PermissionScopeType re-exported from domain/types/PermissionTypes.ts

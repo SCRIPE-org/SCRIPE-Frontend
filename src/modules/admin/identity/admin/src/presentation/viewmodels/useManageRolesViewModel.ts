@@ -7,6 +7,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { usePermission } from "@core/hooks/use-permission";
 import { useAppStore } from "@core/store/useAppStore";
+import { isSudoCancelledError } from "@core/store/useSudoStore";
 import { useOptionalNavigation } from "@core/providers/navigation-provider";
 import { syncCurrentSessionAuthorization } from "@core/hooks/use-authorization-sync";
 import { SYSTEM_PERMISSIONS, isPlatformSuperAdminUser } from "@core/common/types/permissions";
@@ -215,13 +216,24 @@ export function useManageRolesViewModel({
         toast.success({ title: t("admin.role.syncSuccess") });
         queryClient.invalidateQueries({ queryKey: ["admin-roles", adminId] });
         queryClient.invalidateQueries({ queryKey: ["admins"] });
-        await syncCurrentSessionAuthorization({
-          queryClient,
-          refreshNavigation: nav?.refreshNavigation,
-          targetTenantId: scopeTenantId || null,
-        });
+        try {
+          await syncCurrentSessionAuthorization({
+            queryClient,
+            refreshNavigation: nav?.refreshNavigation,
+            targetTenantId: scopeTenantId || null,
+          });
+        } catch {
+          // Non-fatal: role assignment succeeded even if background auth refresh fails
+        }
         onOpenChange(false);
       } catch (error: any) {
+        if (isSudoCancelledError(error)) {
+          toast.info?.({
+            title: t("profile.sudo.cancelledTitle"),
+            description: t("profile.sudo.cancelledDescription"),
+          });
+          return;
+        }
         toast.error({ title: error?.message || t("common.error") });
       }
     },

@@ -27,6 +27,7 @@ import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
 import { GenericSelect } from "@core/crud/components/generic-select";
 import { Badge } from "@core/ui/badge";
+import { useSudoStore } from "@core/store/useSudoStore";
 import { PermissionRestrictedFieldsEditor } from "./PermissionRestrictedFieldsEditor";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermission } from "@core/hooks/use-permission";
@@ -37,6 +38,10 @@ import {
   PermissionScopes,
   type PermissionAssignmentJson,
 } from "../../domain/types/PermissionTypes";
+import {
+  findRequiredRestrictedFields,
+  parseRestrictedFieldDraft,
+} from "../../domain/utils/permission-assignment-utils";
 
 /**
  * Interface defining property specifications, keys types, and structural contract rules for permission config dialog props.
@@ -119,37 +124,32 @@ export function PermissionConfigDialog({
     }
   }
 
-  const trimmedField = newField.trim();
-  /**
-   * Duplicate detection is case-INSENSITIVE, matching the server: it compares these
-   * hand-typed names with `OrdinalIgnoreCase` on every enforcement surface. The old
-   * exact-case check let an admin add both `Salary` and `salary`, which are one
-   * restriction wearing two tags — and now that the picker offers canonical keys, a
-   * mixed-case pair is easy to produce by typing one and clicking the other.
-   */
-  const isAlreadyRestricted = (field: string) =>
-    restrictedFields.some((existing) => existing.toLowerCase() === field.toLowerCase());
-  const canAddField = trimmedField.length > 0 && !isAlreadyRestricted(trimmedField);
+  const draftParse = parseRestrictedFieldDraft(newField, restrictedFields);
+  const restrictedLower = new Set(restrictedFields.map((field) => field.toLowerCase()));
+  const canAddField = draftParse.added.length > 0;
 
   /** Suggestions not already chosen — the list the datalist actually offers. */
-  const availableSuggestions = suggestions.keys.filter((entry) => !isAlreadyRestricted(entry.key));
+  const availableSuggestions = suggestions.keys.filter(
+    (entry) => !restrictedLower.has(entry.key.toLowerCase())
+  );
 
   /**
-   * Required custom fields among the chosen tags. Restricting one is refused
-   * server-side and takes the WHOLE save down, not just that tag, so this is warned
-   * about before the admin presses save rather than discovered after every other edit
-   * in the dialog is discarded. Advisory only: the flag is a snapshot, and a field
-   * flipped to required afterwards still fails.
+   * Required custom fields among the chosen tags AND any uncommitted draft tokens.
+   * Restricting one is refused server-side and takes the WHOLE save down, so
+   * block Save whenever a required key appears in either committed tags or draft input.
    */
-  const chosenRequiredFields = restrictedFields.filter((field) =>
-    suggestions.keys.some(
-      (entry) => entry.isRequired && entry.key.toLowerCase() === field.toLowerCase()
-    )
+  const requiredKeysLower = new Set(
+    suggestions.keys.filter((entry) => entry.isRequired).map((entry) => entry.key.toLowerCase())
+  );
+  const chosenRequiredFields = findRequiredRestrictedFields(
+    restrictedFields,
+    newField,
+    requiredKeysLower
   );
 
   const handleAddField = () => {
     if (!canAddField) return;
-    setRestrictedFields([...restrictedFields, trimmedField]);
+    setRestrictedFields(draftParse.nextFields);
     setNewField("");
   };
 
@@ -158,11 +158,12 @@ export function PermissionConfigDialog({
   };
 
   const handleSave = () => {
-    if (isReadOnly || hasInvalidAllTenantsSelection) return;
+    if (isReadOnly || hasInvalidAllTenantsSelection || chosenRequiredFields.length > 0) return;
+    const finalFields = newField.trim() ? draftParse.nextFields : restrictedFields;
     const assignment: PermissionAssignmentJson = {
       permissionId: permission.id,
       scopeOverride: scope === PermissionScopes.Default ? undefined : scope,
-      restrictedFields: restrictedFields.length > 0 ? restrictedFields : undefined,
+      restrictedFields: finalFields.length > 0 ? finalFields : undefined,
     };
     onSave(assignment);
     onOpenChange(false);
@@ -181,11 +182,22 @@ export function PermissionConfigDialog({
   const hasInvalidAllTenantsSelection =
     !canUseAllTenants && scope.toLowerCase() === PermissionScopes.AllTenants;
 
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen && useSudoStore.getState().modalOpen) return;
+    onOpenChange(nextOpen);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
         className="sm:max-w-[26rem]"
         data-testid="permission-config-dialog"
+        onInteractOutside={(e) => {
+          if (useSudoStore.getState().modalOpen) e.preventDefault();
+        }}
+        onPointerDownOutside={(e) => {
+          if (useSudoStore.getState().modalOpen) e.preventDefault();
+        }}
       >
         <DialogHeader>
           <DialogTitle>{t("permission.configure")}</DialogTitle>
@@ -250,7 +262,10 @@ export function PermissionConfigDialog({
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             {t("common.cancel")}
           </Button>
-          <Button onClick={handleSave} disabled={isReadOnly || hasInvalidAllTenantsSelection}>
+          <Button
+            onClick={handleSave}
+            disabled={isReadOnly || hasInvalidAllTenantsSelection || chosenRequiredFields.length > 0}
+          >
             {t("common.save")}
           </Button>
         </DialogFooter>

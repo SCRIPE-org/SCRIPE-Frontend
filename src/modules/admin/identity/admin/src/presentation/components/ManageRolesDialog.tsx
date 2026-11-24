@@ -64,46 +64,26 @@ export function ManageRolesDialog({ open, onOpenChange, admin, tenantId }: Manag
       .map((role) => vm.mapRoleOption(role));
   }, [rolesData, resolvedExtraRoles, scopeTenantId, vm]);
 
-  // Logic: Map Current Roles to Available Options using ROLE CODE
-  const rolesLen = rolesData?.items?.length ?? 0;
-  const currentLen = currentRoles?.length ?? -1;
+  // Logic: Map Current Roles to Available Options using ROLE CODE — hydrate once per open + target scope so background refetches never wipe unsaved role picks.
+  const targetHydrationKey =
+    open && currentRoles && rolesData?.items ? `${admin?.id ?? ""}:${scopeTenantId}` : null;
+  const [hydratedScopeKey, setHydratedScopeKey] = useState<string | null>(null);
 
-  const [prevOpen, setPrevOpen] = useState(open);
-  const [prevCurrentRoles, setPrevCurrentRoles] = useState(currentRoles);
-  const [prevRolesData, setPrevRolesData] = useState(rolesData);
-  const [prevResolvedExtraRoles, setPrevResolvedExtraRoles] = useState(resolvedExtraRoles);
-  const [prevScopeTenantId, setPrevScopeTenantId] = useState(scopeTenantId);
-
-  if (
-    open !== prevOpen ||
-    currentRoles !== prevCurrentRoles ||
-    rolesData !== prevRolesData ||
-    resolvedExtraRoles !== prevResolvedExtraRoles ||
-    scopeTenantId !== prevScopeTenantId
-  ) {
-    setPrevOpen(open);
-    setPrevCurrentRoles(currentRoles);
-    setPrevRolesData(rolesData);
-    setPrevResolvedExtraRoles(resolvedExtraRoles);
-    setPrevScopeTenantId(scopeTenantId);
-
-    if (open && currentRoles && rolesData?.items) {
-      const scopedCurrentRoles = currentRoles.filter((r) => (r.tenantId || "") === scopeTenantId);
-      const matchedIds: string[] = [];
-      scopedCurrentRoles.forEach((cr) => {
-        const match = rolesData.items.find((ar) => ar.code === cr.roleCode);
-        if (match) matchedIds.push(match.id);
-      });
-      // Fold in roles resolved by code because the first fetched page didn't
-      // contain them — without this, Save (nuke & pave) would silently drop
-      // any role the admin has beyond page 1.
-      resolvedExtraRoles.forEach((role) => matchedIds.push(role.id));
-      setSelectedRoleIds(matchedIds);
-      setInheritToChildren(scopedCurrentRoles.some((r) => r.inheritToChildren));
-    } else if (open && !currentRoles && !rolesData) {
-      setSelectedRoleIds([]);
-      setInheritToChildren(false);
-    }
+  if (!open && hydratedScopeKey !== null) {
+    setHydratedScopeKey(null);
+    setSelectedRoleIds([]);
+    setInheritToChildren(false);
+  } else if (open && targetHydrationKey && hydratedScopeKey !== targetHydrationKey && !isLoading) {
+    setHydratedScopeKey(targetHydrationKey);
+    const scopedCurrentRoles = (currentRoles ?? []).filter((r) => (r.tenantId || "") === scopeTenantId);
+    const matchedIds: string[] = [];
+    scopedCurrentRoles.forEach((cr) => {
+      const match = rolesData?.items.find((ar) => ar.code === cr.roleCode);
+      if (match) matchedIds.push(match.id);
+    });
+    resolvedExtraRoles.forEach((role) => matchedIds.push(role.id));
+    setSelectedRoleIds(matchedIds);
+    setInheritToChildren(scopedCurrentRoles.some((r) => r.inheritToChildren));
   }
 
   const handleSave = () => {
@@ -111,8 +91,11 @@ export function ManageRolesDialog({ open, onOpenChange, admin, tenantId }: Manag
   };
 
   const handleConfirmSave = async () => {
-    await vm.syncRoles(selectedRoleIds, inheritToChildren, onOpenChange);
-    setConfirmOpen(false);
+    try {
+      await vm.syncRoles(selectedRoleIds, inheritToChildren, onOpenChange);
+    } finally {
+      setConfirmOpen(false);
+    }
   };
 
   return (
@@ -200,6 +183,7 @@ export function ManageRolesDialog({ open, onOpenChange, admin, tenantId }: Manag
         cancelText={t("common.cancel")}
         onConfirm={handleConfirmSave}
         isLoading={isSubmitting}
+        preventAutoClose={true}
       />
     </GenericModal>
   );

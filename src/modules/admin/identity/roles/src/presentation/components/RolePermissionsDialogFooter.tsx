@@ -18,7 +18,7 @@ import { ShieldCheck } from "lucide-react";
 export interface RolePermissionsDialogFooterProps {
   selectedCount: number;
   isDirty: boolean;
-  changesCount: { added: number; removed: number };
+  changesCount: { added: number; removed: number; modified?: number };
   isSaving: boolean;
   isReadOnly: boolean;
   onCancel: () => void;
@@ -58,6 +58,11 @@ export function RolePermissionsDialogFooter({
                   -{changesCount.removed} {t("common.delete") || "removed"}
                 </Badge>
               )}
+              {(changesCount.modified ?? 0) > 0 && (
+                <Badge variant="outline">
+                  {t("roles.modifiedCountBadge", { count: changesCount.modified ?? 0 })}
+                </Badge>
+              )}
             </div>
           )}
         </div>
@@ -67,7 +72,7 @@ export function RolePermissionsDialogFooter({
           </Button>
           <Button
             onClick={onSave}
-            disabled={isReadOnly}
+            disabled={isReadOnly || !isDirty || isSaving}
             loading={isSaving}
             className="min-w-[7rem]"
           >

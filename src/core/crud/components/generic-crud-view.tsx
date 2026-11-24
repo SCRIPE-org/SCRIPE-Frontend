@@ -622,7 +622,11 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
             }),
         });
       } else {
-        await execute();
+        try {
+          await execute();
+        } catch {
+          // Mutation error / Sudo cancellation handled by action caller
+        }
       }
     },
     [deleteSystem, viewModel, config, t]
@@ -646,7 +650,11 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
             t("crud.confirm.globalAction", { action: action.label.toLowerCase() }),
         });
       } else {
-        await execute();
+        try {
+          await execute();
+        } catch {
+          // Error / Sudo cancellation handled by action caller
+        }
       }
     },
     [deleteSystem, viewModel, config, t]
@@ -680,9 +688,13 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
           }
         );
       } else {
-        // No confirmation needed, just execute and refresh
-        await action.onClick(item);
-        await viewModel.refreshItems();
+        // No confirmation needed, execute and refresh if successful
+        try {
+          await action.onClick(item);
+          await viewModel.refreshItems();
+        } catch {
+          // Error / Sudo cancellation handled by action caller
+        }
       }
     },
     [deleteSystem, viewModel, config, t]
@@ -2033,7 +2045,11 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
       {/* Professional confirmation dialog for delete and action operations */}
       <ConfirmationDialog
         open={deleteSystem.showConfirmation}
-        onOpenChange={deleteSystem.cancelDelete}
+        onOpenChange={(nextOpen) => {
+          if (!nextOpen) {
+            deleteSystem.cancelDelete();
+          }
+        }}
         title={deleteSystem.deleteOptions.confirmTitle || t("common.confirmDelete")}
         description={deleteSystem.deleteOptions.confirmDescription || t("common.deleteWarning")}
         confirmText={
@@ -2048,6 +2064,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
         onCancel={deleteSystem.cancelDelete}
         variant={deleteSystem.deleteOptions.variant || "destructive"}
         isLoading={deleteSystem.isDeleting}
+        preventAutoClose={true}
       />
     </div>
   );

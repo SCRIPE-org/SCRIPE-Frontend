@@ -185,6 +185,8 @@ export class TenantService implements ITenantService {
       name: current.name,
       description: current.description,
       address: current.address,
+      countryCode: current.countryCode,
+      timeZone: current.timeZone,
       isActive: isActive,
     };
 

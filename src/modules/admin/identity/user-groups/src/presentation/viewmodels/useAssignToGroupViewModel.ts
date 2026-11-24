@@ -6,6 +6,7 @@ import { identityContainer } from "@modules/identity/di";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useSessionAuthorizationSync } from "@core/hooks/use-session-authorization-sync";
+import { isSudoCancelledError } from "@core/store/useSudoStore";
 import { userGroupKeys } from "./useUserGroupsViewModel";
 import { appLogger } from "@/core/common/logger";
 import { resolveBilingualLabel } from "@core/common/utils";
@@ -31,7 +32,7 @@ export function useAssignToGroupViewModel({
   // operationError wrapper: the wrapper rebuilds "{itemName} has been
   // {operation} successfully" around whatever itemName it is given, which
   // would double up on the already-complete multiAssignSuccess sentence below.
-  const { success, error } = useEnhancedToast();
+  const { success, error, info } = useEnhancedToast();
   const queryClient = useQueryClient();
   const syncSessionAuthorization = useSessionAuthorizationSync();
 
@@ -71,14 +72,17 @@ export function useAssignToGroupViewModel({
     mutationFn: async ({
       adminIds,
       selectedGroupIds,
+      progress,
     }: {
       adminIds: string[];
       selectedGroupIds: string[];
+      progress: { committedCount: number };
     }) => {
       for (const groupId of selectedGroupIds) {
         await identityContainer.userGroupRepository.addMembers(groupId, {
           adminIds,
         });
+        progress.committedCount += 1;
       }
     },
   });
@@ -87,9 +91,11 @@ export function useAssignToGroupViewModel({
     mutationFn: async ({
       roleIds,
       selectedGroupIds,
+      progress,
     }: {
       roleIds: string[];
       selectedGroupIds: string[];
+      progress: { committedCount: number };
     }) => {
       for (const groupId of selectedGroupIds) {
         const group = await identityContainer.userGroupRepository.getById(groupId);
@@ -99,18 +105,49 @@ export function useAssignToGroupViewModel({
             currentRoleIds.push(tId);
           }
         }
-        await identityContainer.userGroupRepository.setRoles(groupId, { roleIds: currentRoleIds });
+        await identityContainer.userGroupRepository.setRoles(groupId, {
+          roleIds: currentRoleIds,
+          ...(group.rowVersion != null ? { rowVersion: group.rowVersion } : {}),
+        });
+        progress.committedCount += 1;
       }
     },
   });
+
+  const handleAssignError = (err: unknown) => {
+    if (isSudoCancelledError(err)) {
+      info({
+        title: t("profile.sudo.cancelledTitle"),
+        description: t("profile.sudo.cancelledDescription"),
+      });
+      return;
+    }
+    const message = err instanceof Error ? err.message : t("common.error");
+    error({ title: t("userGroups.assignToGroups"), description: message });
+  };
+
+  const finalizePartialOrFullCommit = async (
+    committedCount: number,
+    secondaryQueryKey: readonly string[]
+  ) => {
+    if (committedCount <= 0) return;
+    queryClient.invalidateQueries({ queryKey: userGroupKeys.lists() });
+    queryClient.invalidateQueries({ queryKey: secondaryQueryKey });
+    try {
+      await syncSessionAuthorization(tenantId ?? null);
+    } catch {
+      // Best-effort authorization sync must not mask an already-committed assignment.
+    }
+  };
 
   return {
     t,
     language,
     fetchGroups,
-    addMembers: async (adminIds: string[], selectedGroupIds: string[]) => {
+    addMembers: async (adminIds: string[], selectedGroupIds: string[]): Promise<boolean> => {
+      const progress = { committedCount: 0 };
       try {
-        await addMembers.mutateAsync({ adminIds, selectedGroupIds });
+        await addMembers.mutateAsync({ adminIds, selectedGroupIds, progress });
         success({
           title: t("userGroups.assignAction"),
           description: t("userGroups.multiAssignSuccess", {
@@ -118,17 +155,19 @@ export function useAssignToGroupViewModel({
             groups: selectedGroupIds.length,
           }),
         });
-        queryClient.invalidateQueries({ queryKey: userGroupKeys.all });
-        queryClient.invalidateQueries({ queryKey: ["admins"] });
-        await syncSessionAuthorization(tenantId ?? null);
         onOpenChange(false);
-      } catch (err: any) {
-        error({ title: t("userGroups.assignToGroups"), description: err.message });
+        return true;
+      } catch (err: unknown) {
+        handleAssignError(err);
+        return false;
+      } finally {
+        await finalizePartialOrFullCommit(progress.committedCount, ["admins"]);
       }
     },
-    addRoles: async (roleIds: string[], selectedGroupIds: string[]) => {
+    addRoles: async (roleIds: string[], selectedGroupIds: string[]): Promise<boolean> => {
+      const progress = { committedCount: 0 };
       try {
-        await addRoles.mutateAsync({ roleIds, selectedGroupIds });
+        await addRoles.mutateAsync({ roleIds, selectedGroupIds, progress });
         success({
           title: t("userGroups.assignAction"),
           description: t("userGroups.multiAssignSuccess", {
@@ -136,12 +175,13 @@ export function useAssignToGroupViewModel({
             groups: selectedGroupIds.length,
           }),
         });
-        queryClient.invalidateQueries({ queryKey: userGroupKeys.all });
-        queryClient.invalidateQueries({ queryKey: ["roles"] });
-        await syncSessionAuthorization(tenantId ?? null);
         onOpenChange(false);
-      } catch (err: any) {
-        error({ title: t("userGroups.assignToGroups"), description: err.message });
+        return true;
+      } catch (err: unknown) {
+        handleAssignError(err);
+        return false;
+      } finally {
+        await finalizePartialOrFullCommit(progress.committedCount, ["roles"]);
       }
     },
     isPending: addMembers.isPending || addRoles.isPending,

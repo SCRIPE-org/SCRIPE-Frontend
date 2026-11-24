@@ -16,6 +16,7 @@ import { useOptionalNavigation } from "@core/providers/navigation-provider";
 import { syncCurrentSessionAuthorization } from "@core/hooks/use-authorization-sync";
 import { SYSTEM_PERMISSIONS, isPlatformSuperAdminUser } from "@core/common/types/permissions";
 import { useAppStore } from "@core/store/useAppStore";
+import { isSudoCancelledError } from "@core/store/useSudoStore";
 import { identityContainer } from "@modules/identity/di";
 import { qk } from "@core/common/query-keys";
 import { useCoreImpersonation } from "@core/hooks/use-auth-bridge";
@@ -23,13 +24,6 @@ import type { FieldOption } from "@core/ui/forms/generic-form";
 import type { AssignRoleRequest, TransferAdminRequest } from "../../domain/entities/AdminRequests";
 import type { Admin } from "../../domain/entities/Admin";
 import { resolveBilingualLabel } from "@core/common/utils";
-
-function isSudoCancelledError(error: unknown): boolean {
-  return (
-    error instanceof Error &&
-    /sudo verification was cancelled|sudo session (locked|reset)/i.test(error.message)
-  );
-}
 
 /**
  * Parameters for the useAdminOperations hook.
@@ -55,7 +49,7 @@ export function useAdminOperations(params: AdminOperationsParams) {
   const { adminRepository, roleRepository, userGroupRepository } = identityContainer;
   const { t, language } = useI18n();
   const queryClient = useQueryClient();
-  const { success, error: toastError } = useEnhancedToast();
+  const { success, error: toastError, info: toastInfo } = useEnhancedToast();
   const { authRepository } = useServices();
   const nav = useOptionalNavigation();
   const user = useAppStore((state) => state.user);
@@ -63,6 +57,37 @@ export function useAdminOperations(params: AdminOperationsParams) {
   const isPlatformSuperAdmin = isPlatformSuperAdminUser(user);
   const canViewTenants = usePermission(SYSTEM_PERMISSIONS.TENANTS_VIEW);
   const targetTenantId = tenantId ?? contextTenantId ?? null;
+
+  const handleMutationError = useCallback(
+    (err: Error) => {
+      if (isSudoCancelledError(err)) {
+        toastInfo?.({
+          title: t("profile.sudo.cancelledTitle"),
+          description: t("profile.sudo.cancelledDescription"),
+        });
+        return;
+      }
+      toastError({ title: t("common.error"), description: err.message });
+    },
+    [toastInfo, toastError, t]
+  );
+
+  const syncSessionSafely = useCallback(
+    async (forcePrincipalFetch = false) => {
+      try {
+        await syncCurrentSessionAuthorization({
+          queryClient,
+          authRepository,
+          refreshNavigation: nav?.refreshNavigation,
+          targetTenantId,
+          ...(forcePrincipalFetch ? { forcePrincipalFetch: true } : {}),
+        });
+      } catch {
+        // Non-fatal: admin operation succeeded even if background session refresh fails
+      }
+    },
+    [queryClient, authRepository, nav, targetTenantId]
+  );
 
   // Toggle active status mutation — optimistic update
   const toggleActiveMutation = useMutation({
@@ -86,8 +111,7 @@ export function useAdminOperations(params: AdminOperationsParams) {
       if (context?.previous !== undefined) {
         queryClient.setQueryData(queryKey, context.previous);
       }
-      if (isSudoCancelledError(err)) return;
-      toastError({ title: t("common.error"), description: err.message });
+      handleMutationError(err);
     },
     onSuccess: (_, { isActive }) => {
       success({
@@ -106,21 +130,13 @@ export function useAdminOperations(params: AdminOperationsParams) {
       adminRepository.assignRole(adminId, request),
     onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: qk.admins.all });
-      await syncCurrentSessionAuthorization({
-        queryClient,
-        authRepository,
-        refreshNavigation: nav?.refreshNavigation,
-        targetTenantId,
-      });
+      await syncSessionSafely();
       success({
         title: t("admin.role.assigned"),
         description: t("admin.role.assignedDesc"),
       });
     },
-    onError: (err: Error) => {
-      if (isSudoCancelledError(err)) return;
-      toastError({ title: t("common.error"), description: err.message });
-    },
+    onError: handleMutationError,
   });
 
   // Remove role mutation
@@ -136,21 +152,13 @@ export function useAdminOperations(params: AdminOperationsParams) {
     }) => adminRepository.removeRole(adminId, roleId, rTenantId),
     onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: qk.admins.all });
-      await syncCurrentSessionAuthorization({
-        queryClient,
-        authRepository,
-        refreshNavigation: nav?.refreshNavigation,
-        targetTenantId,
-      });
+      await syncSessionSafely();
       success({
         title: t("admin.role.removed"),
         description: t("admin.role.removedDesc"),
       });
     },
-    onError: (err: Error) => {
-      if (isSudoCancelledError(err)) return;
-      toastError({ title: t("common.error"), description: err.message });
-    },
+    onError: handleMutationError,
   });
 
   // Reset password mutation
@@ -164,10 +172,7 @@ export function useAdminOperations(params: AdminOperationsParams) {
         description: t("admin.passwordResetDesc"),
       });
     },
-    onError: (err: Error) => {
-      if (isSudoCancelledError(err)) return;
-      toastError({ title: t("common.error"), description: err.message });
-    },
+    onError: handleMutationError,
   });
 
   // Manual account setup mutation — sets a password directly for an email-invited admin
@@ -191,10 +196,7 @@ export function useAdminOperations(params: AdminOperationsParams) {
         description: t("admin.manualSetupSuccessDesc"),
       });
     },
-    onError: (err: Error) => {
-      if (isSudoCancelledError(err)) return;
-      toastError({ title: t("common.error"), description: err.message });
-    },
+    onError: handleMutationError,
   });
 
   // Impersonation — resolved through the core auth bridge. The previous registry lookup fell back
@@ -206,17 +208,15 @@ export function useAdminOperations(params: AdminOperationsParams) {
   const transferMutation = useMutation({
     mutationFn: ({ id, request }: { id: string; request: TransferAdminRequest }) =>
       adminRepository.transfer(id, request),
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: qk.admins.all });
+      await syncSessionSafely();
       success({
         title: t("admin.transferred"),
         description: t("admin.transferredDesc"),
       });
     },
-    onError: (err: Error) => {
-      if (isSudoCancelledError(err)) return;
-      toastError({ title: t("common.error"), description: err.message });
-    },
+    onError: handleMutationError,
   });
 
   // Transfer Protection mutation
@@ -225,22 +225,13 @@ export function useAdminOperations(params: AdminOperationsParams) {
       adminRepository.transferProtection({ targetAdminId }),
     onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: qk.admins.all });
-      await syncCurrentSessionAuthorization({
-        queryClient,
-        authRepository,
-        refreshNavigation: nav?.refreshNavigation,
-        targetTenantId,
-        forcePrincipalFetch: true,
-      });
+      await syncSessionSafely(true);
       success({
         title: t("admin.protectionTransferred"),
         description: t("admin.protectionTransferredDesc"),
       });
     },
-    onError: (err: Error) => {
-      if (isSudoCancelledError(err)) return;
-      toastError({ title: t("common.error"), description: err.message });
-    },
+    onError: handleMutationError,
   });
 
   // Resend Setup Email mutation
@@ -253,10 +244,7 @@ export function useAdminOperations(params: AdminOperationsParams) {
         description: t("admin.setupEmailResentDesc"),
       });
     },
-    onError: (err: Error) => {
-      if (isSudoCancelledError(err)) return;
-      toastError({ title: t("common.error"), description: err.message });
-    },
+    onError: handleMutationError,
   });
 
   // Bulk mutations
@@ -269,6 +257,7 @@ export function useAdminOperations(params: AdminOperationsParams) {
         description: t("admin.bulk.activatedDesc", { count }),
       });
     },
+    onError: handleMutationError,
   });
 
   const bulkDeactivateMutation = useMutation({
@@ -280,26 +269,31 @@ export function useAdminOperations(params: AdminOperationsParams) {
         description: t("admin.bulk.deactivatedDesc", { count }),
       });
     },
+    onError: handleMutationError,
   });
 
   const bulkDeleteMutation = useMutation({
     mutationFn: (ids: string[]) => adminRepository.bulkDelete(ids),
-    onSuccess: (count) => {
+    onSuccess: async (count) => {
       queryClient.invalidateQueries({ queryKey: qk.admins.all });
+      await syncSessionSafely();
       success({
         title: t("admin.bulk.deleted"),
         description: t("admin.bulk.deletedDesc", { count }),
       });
     },
+    onError: handleMutationError,
   });
 
   // Handlers
   const handleDelete = useCallback(
     async (admin: Admin) => {
       await adminRepository.delete(admin.id);
+      queryClient.invalidateQueries({ queryKey: qk.admins.all });
+      await syncSessionSafely();
       await refreshItems();
     },
-    [adminRepository, refreshItems]
+    [adminRepository, queryClient, syncSessionSafely, refreshItems]
   );
 
   const handleToggleActive = useCallback(
@@ -425,10 +419,10 @@ export function useAdminOperations(params: AdminOperationsParams) {
     handleResetPassword,
     handleImpersonate: (id: string) => startImpersonation(id),
     handleTransfer: (id: string, request: TransferAdminRequest) =>
-      transferMutation.mutate({ id, request }),
+      transferMutation.mutateAsync({ id, request }),
     handleTransferProtection: (targetAdminId: string) =>
-      transferProtectionMutation.mutate({ targetAdminId }),
-    handleResendSetupEmail: (adminId: string) => resendSetupEmailMutation.mutate({ adminId }),
+      transferProtectionMutation.mutateAsync({ targetAdminId }),
+    handleResendSetupEmail: (adminId: string) => resendSetupEmailMutation.mutateAsync({ adminId }),
     handleManualSetup: (
       adminId: string,
       newPassword: string,
@@ -441,9 +435,9 @@ export function useAdminOperations(params: AdminOperationsParams) {
         confirmPassword,
         mustChangePassword,
       }),
-    handleBulkActivate: (ids: string[]) => bulkActivateMutation.mutate(ids),
-    handleBulkDeactivate: (ids: string[]) => bulkDeactivateMutation.mutate(ids),
-    handleBulkDelete: (ids: string[]) => bulkDeleteMutation.mutate(ids),
+    handleBulkActivate: (ids: string[]) => bulkActivateMutation.mutateAsync(ids),
+    handleBulkDeactivate: (ids: string[]) => bulkDeactivateMutation.mutateAsync(ids),
+    handleBulkDelete: (ids: string[]) => bulkDeleteMutation.mutateAsync(ids),
 
     isTogglingActive: toggleActiveMutation.isPending,
     isAssigningRole: assignRoleMutation.isPending,

@@ -58,12 +58,14 @@ export function AssignRoleDialog({
   // Use the new ViewModel to handle all logic
   const vm = useAdminRolesViewModel(admin, onAssign, async () => {}, tenantId);
 
-  // Reset form when opening
+  const { resetAssignForm } = vm;
+
+  // Reset form only when transitioning to open (avoids resetting on every render because `vm` is a new literal)
   useEffect(() => {
     if (open) {
-      vm.resetAssignForm();
+      resetAssignForm();
     }
-  }, [open, vm]);
+  }, [open, resetAssignForm]);
 
   // Assigning a role takes effect immediately — same as ManageRolesDialog and
   // ViewRolesDialog's removal, this now goes through a confirmation step
@@ -72,9 +74,13 @@ export function AssignRoleDialog({
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   const handleConfirmAssign = async () => {
-    await vm.handleAssignSubmit();
-    setConfirmOpen(false);
-    onOpenChange(false);
+    try {
+      await vm.handleAssignSubmit();
+      setConfirmOpen(false);
+      onOpenChange(false);
+    } catch {
+      setConfirmOpen(false);
+    }
   };
 
   return (
@@ -159,6 +165,7 @@ export function AssignRoleDialog({
         cancelText={vm.t("common.cancel")}
         onConfirm={handleConfirmAssign}
         isLoading={isLoading}
+        preventAutoClose={true}
       />
     </GenericModal>
   );
@@ -195,16 +202,20 @@ export function ViewRolesDialog({
 
   const handleRemove = async (role: AdminRoleData) => {
     setRemovingId(role.roleId);
-    await onRemoveRole(role.roleId, role.tenantId);
-    await vm.refetchRoles();
-    setRemovingId(null);
+    try {
+      await onRemoveRole(role.roleId, role.tenantId);
+      await vm.refetchRoles();
+      setRoleToRemove(null);
+    } catch {
+      // Error / Sudo cancellation handled by caller mutation
+    } finally {
+      setRemovingId(null);
+    }
   };
 
   const handleConfirmRemove = async () => {
     if (!roleToRemove) return;
-    const role = roleToRemove;
-    setRoleToRemove(null);
-    await handleRemove(role);
+    await handleRemove(roleToRemove);
   };
 
   return (
@@ -293,6 +304,7 @@ export function ViewRolesDialog({
         cancelText={vm.t("common.cancel")}
         onConfirm={handleConfirmRemove}
         isLoading={isRemoving}
+        preventAutoClose={true}
       />
     </GenericModal>
   );

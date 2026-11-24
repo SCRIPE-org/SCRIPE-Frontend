@@ -118,9 +118,10 @@ export class AdminRepository implements IAdminRepository {
 
   async syncRoles(
     adminId: string,
-    assignments: import("../../domain/interfaces/IAdminRepository").SyncRoleAssignment[]
+    assignments: import("../../domain/interfaces/IAdminRepository").SyncRoleAssignment[],
+    scopeTenantId?: string
   ): Promise<void> {
-    await this.service.syncRoles(adminId, assignments);
+    await this.service.syncRoles(adminId, assignments, scopeTenantId);
   }
 
   async getRoles(adminId: string): Promise<AdminRoleData[]> {

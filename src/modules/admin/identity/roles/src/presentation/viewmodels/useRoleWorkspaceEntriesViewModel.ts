@@ -211,17 +211,20 @@ export function useRoleWorkspaceEntriesViewModel({
       !rule.target.trim().toLowerCase().startsWith("menu:"),
   );
 
-  const saveWorkspaceEntries = useCallback(async () => {
-    if (!roleId || !isEntriesDirty || isSystemRole) return;
-    const saved = await roleRepository.upsertRoleWorkspaceEntries(
-      roleId,
-      draftRules.map((rule) => ({
-        workspaceKey: rule.workspaceKey,
-        target: rule.target,
-        isEnforced: rule.isEnforced,
-      })),
-      roleRowVersion,
-    );
+  const saveWorkspaceEntries = useCallback(
+    async (rowVersionOverride?: string | null) => {
+      if (!roleId || !isEntriesDirty || isSystemRole) return;
+      const effectiveRowVersion =
+        rowVersionOverride !== undefined ? rowVersionOverride : roleRowVersion;
+      const saved = await roleRepository.upsertRoleWorkspaceEntries(
+        roleId,
+        draftRules.map((rule) => ({
+          workspaceKey: rule.workspaceKey,
+          target: rule.target,
+          isEnforced: rule.isEnforced,
+        })),
+        effectiveRowVersion
+      );
     setDraftRules(
       saved.map((policy) => ({
         workspaceKey: policy.workspaceKey,

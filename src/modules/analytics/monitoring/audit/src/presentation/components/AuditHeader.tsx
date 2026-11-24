@@ -13,6 +13,7 @@ interface AuditHeaderProps {
   connectionState: SignalRConnectionState;
   realtimeEventCount: number;
   isRefetching: boolean;
+  canExport?: boolean;
   onRefresh: () => void;
   onExport: () => void;
 }
@@ -52,10 +53,12 @@ export function AuditHeader({
   connectionState,
   realtimeEventCount,
   isRefetching,
+  canExport = true,
   onRefresh,
   onExport,
 }: AuditHeaderProps) {
   const { t } = useI18n();
+  const resolvedTenantName = activeTenantName || t("audit.badges.tenantFallback") || "this organization";
 
   const title = isPlatform
     ? t("audit.header.platformTitle") || "Platform Audit Console"
@@ -64,10 +67,8 @@ export function AuditHeader({
   const subtitle = isPlatform
     ? t("audit.header.platformSubtitle") ||
       "Comprehensive platform event stream, access verification, and cross-tenant compliance records."
-    : t("audit.header.tenantSubtitle") ||
-      `Recorded administrative mutations, security authentications, and governance records for ${
-        activeTenantName || "this organization"
-      }.`;
+    : t("audit.header.tenantSubtitle", { tenant: resolvedTenantName }) ||
+      `Recorded administrative mutations, security authentications, and governance records for ${resolvedTenantName}.`;
 
   const conn = connectionStyles[connectionState];
 
@@ -143,15 +144,17 @@ export function AuditHeader({
         </Button>
 
         {/* Export Button (Primary Lime Accent with INK ON LIME contrast) */}
-        <Button
-          type="button"
-          size="sm"
-          onClick={onExport}
-          className="h-8.5 cursor-pointer gap-1.5 bg-nx-accent-fill px-3.5 text-xs font-bold text-nx-on-fill hover:bg-nx-accent-fill/90"
-        >
-          <Download className="h-3.5 w-3.5" />
-          <span>{t("audit.export.button") || "Export"}</span>
-        </Button>
+        {canExport && (
+          <Button
+            type="button"
+            size="sm"
+            onClick={onExport}
+            className="h-8.5 cursor-pointer gap-1.5 bg-nx-accent-fill px-3.5 text-xs font-bold text-nx-on-fill hover:bg-nx-accent-fill/90"
+          >
+            <Download className="h-3.5 w-3.5" />
+            <span>{t("audit.export.button") || "Export"}</span>
+          </Button>
+        )}
       </div>
     </header>
   );

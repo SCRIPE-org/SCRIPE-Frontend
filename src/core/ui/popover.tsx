@@ -46,6 +46,9 @@ const PopoverContent = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Content>
 >(({ className, align = "center", sideOffset = 4, collisionPadding = 8, dir, ...props }, ref) => {
   const { direction } = useI18n();
+  // twMerge does not know custom Tailwind zIndex keys (z-popover, z-sudo-popover),
+  // so omit z-popover whenever the caller provides an explicit z-* layer token.
+  const hasCustomZ = typeof className === "string" && /(?:^|\s)!?z-/.test(className);
 
   return (
     <PopoverPrimitive.Portal>
@@ -62,7 +65,8 @@ const PopoverContent = React.forwardRef<
           // Popovers sit one ladder step above dropdowns (filter builders open
           // popovers from inside menus, never the reverse); the old hardcoded
           // z-index predated the ladder.
-          "z-popover w-72 rounded-nx-md p-4 outline-none",
+          !hasCustomZ && "z-popover",
+          "w-72 rounded-nx-md p-4 outline-none",
           floatingSurfaceClasses,
           "max-h-[var(--radix-popover-content-available-height)]",
           floatingScrollClasses,

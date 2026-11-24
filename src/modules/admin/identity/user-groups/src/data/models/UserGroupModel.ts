@@ -51,6 +51,7 @@ export interface UserGroupJson {
   roleCount: number;
   createdAt: string;
   modifiedAt?: string;
+  rowVersion?: string | null;
   members?: UserGroupMemberJson[];
   roles?: UserGroupRoleJson[];
   restrictions?: UserGroupRestrictionJson[];
@@ -121,6 +122,9 @@ export class UserGroupModel {
   }
   get modifiedAt() {
     return this.json.modifiedAt;
+  }
+  get rowVersion() {
+    return this.json.rowVersion;
   }
   get members() {
     return this.json.members;

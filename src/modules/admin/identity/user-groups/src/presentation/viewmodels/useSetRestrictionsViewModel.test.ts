@@ -127,6 +127,8 @@ describe("useSetRestrictionsViewModel — permission gating & platformOnly defen
 describe("useSetRolesViewModel — ascending priority sort", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockAuthState.user = { id: "admin-1", tenantId: "tenant-1" };
+    mockAuthState.isPlatformSuperAdmin = false;
   });
 
   it("sorts returned roles ascending by priority (0 highest) with label tie-breaker", async () => {

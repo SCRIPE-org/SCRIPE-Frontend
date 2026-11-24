@@ -853,9 +853,9 @@ describe("Identity Providers Admin CRUD, Diagnostics & Callback URLs", () => {
 
     await waitFor(() => expect(tenantIdpVm.current.providers).toHaveLength(1));
 
-    act(() => {
-      adminOps.current.handleTransferProtection("adm-2");
-    });
+    await expect(adminOps.current.handleTransferProtection("adm-2")).rejects.toThrow(
+      "Sudo verification was cancelled."
+    );
     await expect(adminOps.current.handleToggleActive("adm-2", false)).rejects.toThrow(
       "Sudo verification was cancelled."
     );

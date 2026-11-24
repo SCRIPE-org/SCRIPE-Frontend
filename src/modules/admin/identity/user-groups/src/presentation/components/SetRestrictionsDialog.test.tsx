@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { ReactNode } from "react";
+import { SudoCancelledError, useSudoStore } from "@core/store/useSudoStore";
 import { SetRestrictionsDialog } from "./SetRestrictionsDialog";
 import {
   formatRestrictableResourceLabel,
@@ -50,6 +51,8 @@ const translations: Record<string, string> = {
     "Field \"{{field}}\" is already restricted for this resource.",
   "userGroups.restrictionsTab.suggestionsTruncated": "Showing first set of suggestions.",
   "userGroups.restrictionsTab.suggestionsUnavailable": "Suggestions unavailable.",
+  "userGroups.restrictionsTab.suggestionsNotConfigured":
+    "No custom-field schema is registered for this resource yet. Type any exact API field key directly.",
   "userGroups.restrictionsTab.loadingSuggestions": "Loading custom field keys...",
   "userGroups.restrictionsTab.noFieldsYet": "No restricted fields added yet.",
   "userGroups.restrictionsTab.customFieldHint": "Pick a custom field suggestion below.",
@@ -95,16 +98,21 @@ vi.mock("@core/hooks/use-restrictable-custom-field-keys", () => ({
 vi.mock("@core/crud/components/generic-modal", () => ({
   GenericModal: ({
     open,
+    onOpenChange,
     title,
     children,
   }: {
     open: boolean;
+    onOpenChange?: (open: boolean) => void;
     title: string;
     children: ReactNode;
   }) =>
     open ? (
       <dialog open aria-label={title}>
         <h2>{title}</h2>
+        <button type="button" data-testid="modal-dismiss-trigger" onClick={() => onOpenChange?.(false)}>
+          Dismiss
+        </button>
         {children}
       </dialog>
     ) : null,
@@ -270,5 +278,87 @@ describe("restriction-resource-label & SetRestrictionsDialog", () => {
     fireEvent.click(screen.getByTestId("add-restriction-button"));
 
     expect(screen.getByText("This resource already has a restriction entry.")).toBeTruthy();
+  });
+
+  it("commits comma-separated field drafts on blur and synchronously before Save without losing chips on Sudo rejection", async () => {
+    useSudoStore.setState({ modalOpen: false });
+    const onSubmit = vi.fn().mockRejectedValueOnce(new SudoCancelledError());
+    const onOpenChange = vi.fn();
+
+    renderWithQuery(
+      <SetRestrictionsDialog
+        open
+        onOpenChange={onOpenChange}
+        currentRestrictions={[{ permissionCode: "crm.opportunities", restrictedFields: ["internalNotes"] }]}
+        onSubmit={onSubmit}
+      />
+    );
+
+    // Bounded scroll container + pinned footer exist for viewport overflow protection
+    expect(screen.getByTestId("restrictions-list-scroll")).toBeTruthy();
+    expect(screen.getByTestId("set-restrictions-footer")).toBeTruthy();
+
+    const oppInput = screen.getByTestId("restriction-field-input-crm.opportunities") as HTMLInputElement;
+    fireEvent.change(oppInput, { target: { value: "phone, email, INTERNALNOTES" } });
+    fireEvent.blur(oppInput);
+    expect(oppInput.value).toBe("");
+
+    // Live role="alert" triggers for uncommitted required field in comma-separated draft
+    fireEvent.change(oppInput, { target: { value: "estimatedAmount, ssn" } });
+    const alerts = screen.getAllByRole("alert");
+    expect(alerts.some((el) => el.textContent?.includes('Field "estimatedAmount" is required'))).toBe(true);
+
+    // Save flushes uncommitted draft before calling async onSubmit; Sudo rejection keeps dialog open
+    fireEvent.click(screen.getByTestId("save-restrictions-button"));
+    await Promise.resolve();
+
+    expect(onSubmit).toHaveBeenCalledWith([
+      {
+        permissionCode: "crm.opportunities",
+        restrictedFields: ["internalNotes", "phone", "email", "estimatedAmount", "ssn"],
+      },
+    ]);
+    expect(onOpenChange).not.toHaveBeenCalledWith(false);
+    expect(screen.getByText("ssn")).toBeTruthy();
+
+    // Backdrop/escape close is ignored while Sudo step-up modal is open
+    useSudoStore.setState({ modalOpen: true });
+    fireEvent.click(screen.getByTestId("modal-dismiss-trigger"));
+    expect(onOpenChange).not.toHaveBeenCalled();
+    useSudoStore.setState({ modalOpen: false });
+  });
+
+  it("distinguishes missing custom-field permissions from resources with no configured schema", () => {
+    mockVmState.canReadCustomFields = true;
+    mockCustomFieldKeys.isAvailable = false;
+    mockCustomFieldKeys.keys = [];
+
+    const { rerender } = renderWithQuery(
+      <SetRestrictionsDialog
+        open
+        onOpenChange={vi.fn()}
+        currentRestrictions={[{ permissionCode: "finance.payments", restrictedFields: [] }]}
+        onSubmit={vi.fn()}
+      />
+    );
+
+    expect(
+      screen.getByText("No custom-field schema is registered for this resource yet. Type any exact API field key directly.")
+    ).toBeTruthy();
+    expect(screen.queryByText("Suggestions unavailable.")).toBeNull();
+
+    mockVmState.canReadCustomFields = false;
+    rerender(
+      <QueryClientProvider client={new QueryClient()}>
+        <SetRestrictionsDialog
+          open
+          onOpenChange={vi.fn()}
+          currentRestrictions={[{ permissionCode: "finance.payments", restrictedFields: [] }]}
+          onSubmit={vi.fn()}
+        />
+      </QueryClientProvider>
+    );
+
+    expect(screen.getByText("Suggestions unavailable.")).toBeTruthy();
   });
 });

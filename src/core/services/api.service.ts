@@ -1016,7 +1016,7 @@ export class ApiService implements IApiService {
     const response = await this.put<T>(endpoint, data, signal);
 
     // If 204 No Content, fetch updated data
-    if (response === null) {
+    if (response == null || response === "") {
       appLogger.api("204 response, fetching updated data...");
       const refreshUrl = refreshEndpoint || endpoint;
       return this.get<T>(refreshUrl, undefined, signal);

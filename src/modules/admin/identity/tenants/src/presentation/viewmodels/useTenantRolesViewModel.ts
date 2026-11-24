@@ -18,6 +18,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { usePermission } from "@core/hooks/use-permission";
 import { useAppStore } from "@core/store/useAppStore";
+import { isSudoCancelledError } from "@core/store/useSudoStore";
+import { qk } from "@core/common/query-keys";
 import { useOptionalNavigation } from "@core/providers/navigation-provider";
 import { syncCurrentSessionAuthorization } from "@core/hooks/use-authorization-sync";
 import { SYSTEM_PERMISSIONS, isPlatformSuperAdminUser } from "@core/common/types/permissions";
@@ -347,9 +349,11 @@ export function useTenantRolesViewModel({
   // ─────────────────────────────────────────────────────────────────
   const createInitialValues = useMemo(
     () => ({
-      name: "",
+      nameEn: "",
+      nameAr: "",
       code: "",
-      description: "",
+      descriptionEn: "",
+      descriptionAr: "",
       priority: 100,
       permissionIds: [] as string[],
     }),
@@ -371,22 +375,34 @@ export function useTenantRolesViewModel({
   // Resync permissions mutation
   // ─────────────────────────────────────────────────────────────────
   const queryClient = useQueryClient();
-  const { success: toastSuccess, error: toastError } = useEnhancedToast();
+  const { success: toastSuccess, error: toastError, info: toastInfo } = useEnhancedToast();
   const resyncMutation = useMutation({
     mutationFn: () => identityContainer.tenantRepository.resyncPermissions(tenantId),
     onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ["tenant-permissions-raw", tenantId] });
       queryClient.invalidateQueries({ queryKey: ["tenant-current-permissions-service", tenantId] });
-      await syncCurrentSessionAuthorization({
-        queryClient,
-        refreshNavigation: nav?.refreshNavigation,
-        targetTenantId: tenantId,
-      });
+      queryClient.invalidateQueries({ queryKey: qk.roles.all });
+      try {
+        await syncCurrentSessionAuthorization({
+          queryClient,
+          refreshNavigation: nav?.refreshNavigation,
+          targetTenantId: tenantId,
+        });
+      } catch {
+        // Non-fatal: permission resync succeeded even if background auth sync fails
+      }
       toastSuccess({
         title: t("tenant.permissionsResynced"),
       });
     },
     onError: (err: Error) => {
+      if (isSudoCancelledError(err)) {
+        toastInfo?.({
+          title: t("profile.sudo.cancelledTitle"),
+          description: t("profile.sudo.cancelledDescription"),
+        });
+        return;
+      }
       toastError({ title: t("common.error"), description: err.message });
     },
   });
