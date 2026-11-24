@@ -69,8 +69,21 @@ export async function POST(request: NextRequest) {
     }
 
     const sanitized = sanitizeRelayJsonPayload(rawJson);
+    const bodyObj =
+      rawJson && typeof rawJson === "object" && !Array.isArray(rawJson)
+        ? (rawJson as Record<string, unknown>)
+        : null;
+    const unwrapped =
+      bodyObj?.data && typeof bodyObj.data === "object" && !Array.isArray(bodyObj.data)
+        ? (bodyObj.data as Record<string, unknown>)
+        : bodyObj;
+    const isPendingContinuation =
+      Boolean(unwrapped?.requires2FA) ||
+      Boolean(unwrapped?.requiresWorkspaceSelection) ||
+      (plan.mode === "qr-status" && unwrapped?.status !== "approved");
+
     const response = noStoreJson(sanitized, upstreamResponse.status);
-    if (plan.consumeSsoNonce) {
+    if (plan.consumeSsoNonce && !(upstreamResponse.ok && isPendingContinuation)) {
       clearSsoBindingCookie(response, validation.ctx.isSecureTransport);
     }
 
@@ -79,18 +92,6 @@ export async function POST(request: NextRequest) {
         upstreamResponse,
         rawJson
       );
-      const bodyObj =
-        rawJson && typeof rawJson === "object" && !Array.isArray(rawJson)
-          ? (rawJson as Record<string, unknown>)
-          : null;
-      const unwrapped =
-        bodyObj?.data && typeof bodyObj.data === "object" && !Array.isArray(bodyObj.data)
-          ? (bodyObj.data as Record<string, unknown>)
-          : bodyObj;
-      const isPendingContinuation =
-        Boolean(unwrapped?.requires2FA) ||
-        Boolean(unwrapped?.requiresWorkspaceSelection) ||
-        (plan.mode === "qr-status" && unwrapped?.status !== "approved");
       const hasAccessToken =
         typeof unwrapped?.accessToken === "string" && unwrapped.accessToken.trim().length > 0;
 

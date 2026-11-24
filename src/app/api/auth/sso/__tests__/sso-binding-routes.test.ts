@@ -21,18 +21,21 @@ import {
   postCustomDomainSessionRelay,
 } from "@core/services/custom-domain-relay-client";
 import { secureTokenService } from "@core/common/secure-token-service";
+import { SudoCancelledError, isSudoCancelledError, useSudoStore } from "@core/store/useSudoStore";
 
 describe("First-party SSO Login CSRF binding routes (/api/auth/sso/*)", () => {
   beforeEach(() => {
     vi.restoreAllMocks();
     vi.unstubAllEnvs();
     secureTokenService.clearTokens();
+    useSudoStore.getState().reset();
   });
 
   afterEach(() => {
     vi.unstubAllEnvs();
     vi.unstubAllGlobals();
     secureTokenService.clearTokens();
+    useSudoStore.getState().reset();
   });
 
   it("rejects non-POST methods with 405 Method Not Allowed and no-store headers", () => {
@@ -208,5 +211,105 @@ describe("First-party SSO Login CSRF binding routes (/api/auth/sso/*)", () => {
     );
     expect(calls[2].headers.Authorization).toBe("Bearer active-bearer-jwt");
     expect(calls[2].headers["X-Sudo-Token"]).toBe("sudo-ticket-xyz");
+  });
+
+  it("supports { clear: false } on consume-binding for canonical 2-hop continuations and handles Sudo auto-attach + 403 step-up replay/cancel (FE-RELAY-SUDO-02)", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    const nonce = "c".repeat(43);
+
+    const peekReq = new NextRequest("https://admin.scripe.org/api/auth/sso/consume-binding", {
+      method: "POST",
+      headers: {
+        host: "admin.scripe.org",
+        origin: "https://admin.scripe.org",
+        "sec-fetch-site": "same-origin",
+        "content-type": "application/json",
+        cookie: `${SSO_BINDING_COOKIE_PROD}=${nonce}`,
+      },
+      body: JSON.stringify({ clear: false }),
+    });
+    const peekRes = await consumePost(peekReq);
+    expect(peekRes.status).toBe(200);
+    expect(await peekRes.json()).toEqual({ browserBindingNonce: nonce });
+    expect(peekRes.cookies.get(SSO_BINDING_COOKIE_PROD)).toBeUndefined();
+
+    const clearReq = new NextRequest("https://admin.scripe.org/api/auth/sso/consume-binding", {
+      method: "POST",
+      headers: {
+        host: "admin.scripe.org",
+        origin: "https://admin.scripe.org",
+        "sec-fetch-site": "same-origin",
+        "content-type": "application/json",
+        cookie: `${SSO_BINDING_COOKIE_PROD}=${nonce}`,
+      },
+      body: JSON.stringify({ clear: true }),
+    });
+    const clearRes = await consumePost(clearReq);
+    expect(clearRes.status).toBe(200);
+    expect(await clearRes.json()).toEqual({ browserBindingNonce: nonce });
+    expect(clearRes.cookies.get(SSO_BINDING_COOKIE_PROD)?.maxAge).toBe(0);
+
+    // FE-RELAY-SUDO-02: auto-attaches active sudo token from useSudoStore, challenges once on 403 Identity.SudoRequired, and propagates SudoCancelledError
+    secureTokenService.setAccessToken("active-bearer-jwt");
+    useSudoStore.getState().markVerified({
+      sudoToken: "stored-sudo-1",
+      expiresAtUtc: new Date(Date.now() + 60_000).toISOString(),
+      methodUsed: "password",
+    });
+
+    const sentHeaders: Array<Record<string, string>> = [];
+    let attempt = 0;
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (_url: string | URL | Request, init?: RequestInit) => {
+        attempt += 1;
+        sentHeaders.push((init?.headers ?? {}) as Record<string, string>);
+        if (attempt === 1) {
+          return new Response(JSON.stringify({ revokedCount: 1 }), { status: 200 });
+        }
+        if (attempt === 2) {
+          return new Response(
+            JSON.stringify({ statusCode: 403, errorCode: "Identity.SudoRequired", message: "Sudo required" }),
+            { status: 403 }
+          );
+        }
+        if (attempt === 3) {
+          return new Response(JSON.stringify({ revokedCount: 2 }), { status: 200 });
+        }
+        return new Response(
+          JSON.stringify({ statusCode: 403, errorCode: "Identity.SudoExpired", message: "Sudo expired" }),
+          { status: 403 }
+        );
+      })
+    );
+
+    await postCustomDomainSessionRelay("/api/auth/session/establish", {
+      mode: "revoke-other-sessions",
+    });
+    expect(sentHeaders[0]["X-Sudo-Token"]).toBe("stored-sudo-1");
+
+    const elevationSpy = vi
+      .spyOn(useSudoStore.getState(), "requestElevation")
+      .mockResolvedValueOnce("fresh-sudo-2")
+      .mockRejectedValueOnce(new SudoCancelledError());
+
+    const replayed = await postCustomDomainSessionRelay<{ revokedCount: number }>(
+      "/api/auth/session/establish",
+      { mode: "revoke-other-sessions" }
+    );
+    expect(replayed.revokedCount).toBe(2);
+    expect(elevationSpy).toHaveBeenCalledWith({ forceChallenge: true });
+    expect(sentHeaders[2]["X-Sudo-Token"]).toBe("fresh-sudo-2");
+
+    await expect(
+      postCustomDomainSessionRelay("/api/auth/session/establish", {
+        mode: "revoke-other-sessions",
+      })
+    ).rejects.toSatisfy(
+      (err: unknown) =>
+        isSudoCancelledError(err) &&
+        (err as { status?: number; details?: { errorCode?: string } }).status === 403 &&
+        (err as { details?: { errorCode?: string } }).details?.errorCode === "Identity.SudoExpired"
+    );
   });
 });

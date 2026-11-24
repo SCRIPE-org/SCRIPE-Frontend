@@ -92,6 +92,7 @@ const STATIC_MODES: Partial<Record<SessionEstablishMode, StaticModeConfig>> = {
     defaultPrincipalType: "admin",
     requiresRefreshInjection: true,
     forwardAuth: true,
+    forwardSudo: true,
   },
 };
 

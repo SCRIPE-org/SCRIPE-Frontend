@@ -389,6 +389,67 @@ describe("Custom-domain 3-route session micro-relay (/api/auth/session/*)", () =
     expect(ephemeralRes.headers.get("set-cookie") ?? "").not.toMatch(/Max-Age=/i);
   });
 
+  it("preserves __Host-scripe_sso_nonce when sso-handoff returns requires2FA/requiresWorkspaceSelection and clears it once finalized", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    const bodies: string[] = [];
+    let callIdx = 0;
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (_url: string | URL | Request, init?: RequestInit) => {
+        callIdx += 1;
+        bodies.push(String(init?.body ?? ""));
+        if (callIdx === 1) {
+          return new Response(
+            JSON.stringify({ requires2FA: true, twoFactorPendingToken: "tfa-1" }),
+            { status: 200, headers: { "content-type": "application/json" } }
+          );
+        }
+        return new Response(JSON.stringify({ accessToken: "jwt-final", type: "admin" }), {
+          status: 200,
+          headers: {
+            "content-type": "application/json",
+            "x-scripe-relay-refresh-token": "srv-rtok-final",
+            "x-scripe-relay-principal-type": "admin",
+          },
+        });
+      })
+    );
+
+    const nonceVal = "P".repeat(43);
+    const pendingRes = await establishPost(
+      buildJsonPostRequest(
+        "https://portal.club.com/api/auth/session/establish",
+        { code: "code-pending", state: "state-pending" },
+        {
+          host: "portal.club.com",
+          origin: "https://portal.club.com",
+          cookie: `${SSO_BINDING_COOKIE_PROD}=${nonceVal}`,
+        }
+      )
+    );
+    expect(pendingRes.status).toBe(200);
+    expect(pendingRes.cookies.get(SSO_BINDING_COOKIE_PROD)).toBeUndefined();
+
+    const finalRes = await establishPost(
+      buildJsonPostRequest(
+        "https://portal.club.com/api/auth/session/establish",
+        { code: "code-final", state: "state-final" },
+        {
+          host: "portal.club.com",
+          origin: "https://portal.club.com",
+          cookie: `${SSO_BINDING_COOKIE_PROD}=${nonceVal}`,
+        }
+      )
+    );
+    expect(finalRes.status).toBe(200);
+    expect(JSON.parse(bodies[1])).toEqual({
+      code: "code-final",
+      state: "state-final",
+      browserBindingNonce: nonceVal,
+    });
+    expect(finalRes.cookies.get(SSO_BINDING_COOKIE_PROD)?.maxAge).toBe(0);
+  });
+
   it("consumes and forwards __Host-scripe_sso_nonce on sso-handoff and expires the binding cookie", async () => {
     vi.stubEnv("NODE_ENV", "production");
     let capturedBody = "";
@@ -556,7 +617,7 @@ describe("Custom-domain 3-route session micro-relay (/api/auth/session/*)", () =
     });
     expect(chgRes.cookies.get(RELAY_COOKIE_PROD)?.value).toBe("admin|rotated-rtok-1");
 
-    // 4. revoke-other-sessions injects refreshToken & returns 200 without requiring rotated refresh cookie
+    // 4. revoke-other-sessions injects refreshToken, forwards X-Sudo-Token (FE-RELAY-SUDO-01), & returns 200 without requiring rotated refresh cookie
     const revokeRes = await establishPost(
       buildJsonPostRequest(
         "https://portal.club.com/api/auth/session/establish",
@@ -565,12 +626,14 @@ describe("Custom-domain 3-route session micro-relay (/api/auth/session/*)", () =
           host: "portal.club.com",
           origin: "https://portal.club.com",
           authorization: "Bearer current-jwt-1",
+          "x-sudo-token": "sudo-tok-revoke",
           cookie: `${RELAY_COOKIE_PROD}=admin|cookie-rtok-1`,
         }
       )
     );
     expect(revokeRes.status).toBe(200);
     expect(requests[3].url).toBe("https://api.scripe.org/api/v1/auth/admin/sessions/revoke-all");
+    expect(requests[3].headers["X-Sudo-Token"]).toBe("sudo-tok-revoke");
     expect(JSON.parse(requests[3].body!)).toEqual({ refreshToken: "cookie-rtok-1" });
 
     // 5. /logout forwards Authorization header for JTI blacklisting & Sudo eviction

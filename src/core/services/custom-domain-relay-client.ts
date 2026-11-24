@@ -3,6 +3,7 @@
 import { appLogger } from "@core/common/logger";
 import { secureTokenService } from "@core/common/secure-token-service";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
+import { useSudoStore } from "@core/store/useSudoStore";
 
 /** Optional authentication & step-up sudo headers for custom-domain session relay calls. */
 export interface CustomDomainRelayOptions {
@@ -10,6 +11,8 @@ export interface CustomDomainRelayOptions {
   includeAuth?: boolean;
   /** Optional step-up Sudo ticket (`X-Sudo-Token`) for sudo-gated mutations. */
   sudoToken?: string | null;
+  /** Internal retry guard preventing infinite step-up Sudo loops. */
+  _sudoRetry?: boolean;
 }
 
 const AUTHENTICATED_ESTABLISH_MODES = new Set<string>([
@@ -19,6 +22,26 @@ const AUTHENTICATED_ESTABLISH_MODES = new Set<string>([
   "stop-impersonation",
   "revoke-other-sessions",
 ]);
+
+const SUDO_STEP_UP_ERROR_CODES = new Set<string>([
+  "Identity.SudoRequired",
+  "Identity.SudoExpired",
+  "Identity.SudoSessionMismatch",
+  "Identity.SudoRevokedOrExpired",
+  "Identity.SudoPolicyDowngradeRefused",
+  "Identity.SudoTokenInvalid",
+]);
+
+function readErrorCode(parsed: unknown): string | null {
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return null;
+  const obj = parsed as Record<string, unknown>;
+  if (typeof obj.errorCode === "string" && obj.errorCode.trim()) return obj.errorCode.trim();
+  if (obj.data && typeof obj.data === "object" && !Array.isArray(obj.data)) {
+    const nested = (obj.data as Record<string, unknown>).errorCode;
+    if (typeof nested === "string" && nested.trim()) return nested.trim();
+  }
+  return null;
+}
 
 function readTenantContextId(): string | null {
   if (typeof window === "undefined") return null;
@@ -68,15 +91,22 @@ export async function bindSsoBrowserNonce(): Promise<string> {
 }
 
 /**
- * Consumes and expires the first-party SSO browser-binding nonce for canonical origin
- * callers before submitting `POST /api/v1/auth/sso/handoff`.
+ * Reads (and by default expires) the first-party SSO browser-binding nonce for canonical
+ * origin callers before submitting `POST /api/v1/auth/sso/handoff`.
  */
-export async function consumeSsoBrowserNonce(): Promise<string | null> {
+export async function consumeSsoBrowserNonce(
+  options: { clear?: boolean } = {}
+): Promise<string | null> {
   try {
+    const clear = options.clear !== false;
     const response = await fetch("/api/auth/sso/consume-binding", {
       method: "POST",
       credentials: "same-origin",
-      headers: { Accept: "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({ clear }),
     });
     if (!response.ok) {
       appLogger.warn(`Failed to consume SSO browser binding nonce (${response.status})`);
@@ -94,7 +124,8 @@ export async function consumeSsoBrowserNonce(): Promise<string | null> {
 
 /**
  * Sends a same-origin session relay call through the Next.js first-party BFF micro-relay
- * (`/api/auth/session/{establish,refresh,logout}`) on verified external custom domains.
+ * (`/api/auth/session/{establish,refresh,logout}`) on verified external custom domains,
+ * including automatic active Bearer/Sudo forwarding and one-shot `Identity.Sudo*` modal elevation.
  */
 export async function postCustomDomainSessionRelay<T>(
   relayEndpoint:
@@ -125,8 +156,11 @@ export async function postCustomDomainSessionRelay<T>(
     }
   }
 
-  if (typeof options.sudoToken === "string" && options.sudoToken.trim()) {
-    headers["X-Sudo-Token"] = options.sudoToken.trim();
+  const effectiveSudo =
+    (typeof options.sudoToken === "string" && options.sudoToken.trim()) ||
+    (shouldAttachAuth ? useSudoStore.getState().getValidSudoToken() : null);
+  if (effectiveSudo) {
+    headers["X-Sudo-Token"] = effectiveSudo;
   }
 
   const response = await fetch(relayEndpoint, {
@@ -154,6 +188,31 @@ export async function postCustomDomainSessionRelay<T>(
       (typeof errRecord.title === "string" && errRecord.title) ||
       (typeof errRecord.error === "string" && errRecord.error) ||
       `Session relay request failed (${response.status})`;
+
+    const errorCode = readErrorCode(parsed);
+    if (
+      response.status === 403 &&
+      errorCode &&
+      SUDO_STEP_UP_ERROR_CODES.has(errorCode) &&
+      !options._sudoRetry
+    ) {
+      try {
+        const freshSudoToken = await useSudoStore
+          .getState()
+          .requestElevation({ forceChallenge: true });
+        return postCustomDomainSessionRelay<T>(relayEndpoint, body, {
+          ...options,
+          sudoToken: freshSudoToken,
+          _sudoRetry: true,
+        });
+      } catch (sudoErr) {
+        const cancelError = sudoErr instanceof Error ? sudoErr : new Error(message);
+        (cancelError as Error & { details?: unknown; status?: number }).details = parsed;
+        (cancelError as Error & { details?: unknown; status?: number }).status = 403;
+        throw cancelError;
+      }
+    }
+
     appLogger.warn(`Session relay error on ${relayEndpoint}: ${message}`);
     const err = new Error(message) as Error & { status?: number; details?: unknown };
     err.status = response.status;
