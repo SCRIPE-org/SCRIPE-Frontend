@@ -29,7 +29,7 @@ const envSchema = z.object({
   NEXT_PUBLIC_ENABLE_DEVTOOLS: z
     .string()
     .optional()
-    .default("true")
+    .default(process.env.NODE_ENV === "development" ? "true" : "false")
     .transform((v) => v === "true"),
 
   // Optional: External Services
@@ -55,8 +55,8 @@ function validateEnv() {
   const result = envSchema.safeParse(env);
 
   if (!result.success) {
-    appLogger.error("❌ Invalid environment variables:");
-    appLogger.error(`❌ Invalid environment variables: ${result.error.flatten().fieldErrors}`);
+    const invalidFields = Object.keys(result.error.flatten().fieldErrors).join(", ");
+    appLogger.error(`Invalid environment variable keys: ${invalidFields || "unknown"}`);
     // In development, throw to catch issues early
     if (process.env.NODE_ENV === "development") {
       throw new Error("Invalid environment configuration");
