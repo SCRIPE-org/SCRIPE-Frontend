@@ -133,10 +133,18 @@ export class CrmOpportunityService implements ICrmOpportunityService {
     return this.unwrap(response);
   }
 
-  /** Closes an Opportunity as Won or Lost with rationale and approval metadata. */
+  /**
+   * Closes an Opportunity as Won or Lost with rationale and approval metadata.
+   *
+   * Matches `updateOpportunity` FLS partial-update semantics: `dealKind` is omitted when
+   * not supplied so restricted callers do not hit `FieldRestricted` refusals and stored
+   * `Expansion`/`Renewal`/`Services` classifications are preserved on close.
+   */
   async closeOpportunity(input: CloseOpportunityInput): Promise<CrmOpportunity> {
     const payload = {
-      outcome: input.outcome, dealKind: input.dealKind ?? "NewBusiness", hqOutcomeKind: input.hqOutcomeKind,
+      outcome: input.outcome,
+      ...(input.dealKind !== undefined ? { dealKind: input.dealKind } : {}),
+      hqOutcomeKind: input.hqOutcomeKind,
       targetExistingTenantId: input.targetExistingTenantId, lossReasonCode: input.lossReasonCode,
       competitorName: input.competitorName, closeNotes: input.closeNotes,
       approvalEvidenceRef: input.approvalEvidenceRef, expectedRowVersion: input.expectedRowVersion ?? "",
