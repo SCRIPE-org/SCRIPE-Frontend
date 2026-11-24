@@ -21,7 +21,8 @@ export interface ValidatedRelayContext {
   hmacSecret: string;
 }
 
-const SECURITY_RESPONSE_HEADERS = {
+/** Standard no-store security headers attached to all BFF session and SSO binding responses. */
+export const SECURITY_RESPONSE_HEADERS = {
   "Cache-Control": "private, no-store, no-cache, max-age=0",
   Pragma: "no-cache",
   "X-Content-Type-Options": "nosniff",
@@ -97,7 +98,11 @@ function resolveClientIp(request: NextRequest): string {
   return "127.0.0.1";
 }
 
-function resolveRequestAuthority(request: NextRequest): {
+/**
+ * Resolves the authoritative origin and HTTPS transport flag for an incoming Next.js BFF request,
+ * giving strict precedence to the `Host` header over `X-Forwarded-Host` (`#256` #1).
+ */
+export function resolveRequestAuthority(request: NextRequest): {
   authorityOrigin: string;
   isHttps: boolean;
 } | null {
@@ -202,12 +207,29 @@ export function resolveUpstreamUrl(canonicalPath: string): string {
   return `${origin}${canonicalPath}`;
 }
 
+function sanitizeHeaderValue(value: string | null | undefined): string | null {
+  if (!value) return null;
+  const trimmed = value.trim();
+  if (!trimmed || /[\r\n\0]/.test(trimmed)) {
+    return null;
+  }
+  return trimmed;
+}
+
+/**
+ * Builds canonical HMAC-SHA256 signed headers for server-to-server custom-domain relay requests,
+ * optionally forwarding caller `Authorization` and `X-Sudo-Token` headers on authenticated routes.
+ */
 export function buildSignedRelayHeaders(params: {
   request: NextRequest;
   ctx: ValidatedRelayContext;
   canonicalPath: string;
   bodyJson: string;
-  method?: string;
+  method?: "POST" | "GET";
+  forwardAuth?: boolean;
+  forwardSudo?: boolean;
+  authorization?: string | null;
+  sudoToken?: string | null;
 }): Record<string, string> {
   const method = (params.method ?? "POST").toUpperCase();
   const bodySha256 = createHash("sha256").update(params.bodyJson, "utf8").digest("hex");
@@ -219,7 +241,9 @@ export function buildSignedRelayHeaders(params: {
     .digest("hex");
 
   const headers: Record<string, string> = {
-    "Content-Type": "application/json",
+    ...(method !== "GET" || params.bodyJson.length > 0
+      ? { "Content-Type": "application/json" }
+      : {}),
     Accept: "application/json",
     Origin: params.ctx.clientOrigin,
     "X-Forwarded-For": params.ctx.clientIp,
@@ -229,14 +253,28 @@ export function buildSignedRelayHeaders(params: {
     "X-Scripe-Session-Relay-Sig": sig,
   };
 
-  const acceptLang = params.request.headers.get("accept-language");
+  const acceptLang = sanitizeHeaderValue(params.request.headers.get("accept-language"));
   if (acceptLang) headers["Accept-Language"] = acceptLang;
 
-  const userAgent = params.request.headers.get("user-agent");
+  const userAgent = sanitizeHeaderValue(params.request.headers.get("user-agent"));
   if (userAgent) headers["User-Agent"] = userAgent;
 
-  const tenantContext = params.request.headers.get("x-tenant-context");
+  const tenantContext = sanitizeHeaderValue(params.request.headers.get("x-tenant-context"));
   if (tenantContext) headers["X-Tenant-Context"] = tenantContext;
+
+  if (params.forwardAuth || params.authorization) {
+    const auth = sanitizeHeaderValue(
+      params.authorization ?? params.request.headers.get("authorization")
+    );
+    if (auth) headers.Authorization = auth;
+  }
+
+  if (params.forwardSudo || params.sudoToken) {
+    const sudo = sanitizeHeaderValue(
+      params.sudoToken ?? params.request.headers.get("x-sudo-token")
+    );
+    if (sudo) headers["X-Sudo-Token"] = sudo;
+  }
 
   return headers;
 }

@@ -1,7 +1,24 @@
 "use client";
 
 import { appLogger } from "@core/common/logger";
+import { secureTokenService } from "@core/common/secure-token-service";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
+
+/** Optional authentication & step-up sudo headers for custom-domain session relay calls. */
+export interface CustomDomainRelayOptions {
+  /** Forward active in-memory Bearer token (`Authorization`) on authenticated relay requests. */
+  includeAuth?: boolean;
+  /** Optional step-up Sudo ticket (`X-Sudo-Token`) for sudo-gated mutations. */
+  sudoToken?: string | null;
+}
+
+const AUTHENTICATED_ESTABLISH_MODES = new Set<string>([
+  "force-change-password",
+  "change-password",
+  "impersonate",
+  "stop-impersonation",
+  "revoke-other-sessions",
+]);
 
 function readTenantContextId(): string | null {
   if (typeof window === "undefined") return null;
@@ -28,9 +45,64 @@ function unwrapRelayPayload<T>(payload: unknown): T {
   return payload as T;
 }
 
+/**
+ * Generates and binds a first-party `HttpOnly` SSO login CSRF nonce (`__Host-scripe_sso_nonce`)
+ * on the active browser origin and returns its 43-char SHA-256 `browserBindingHash`.
+ */
+export async function bindSsoBrowserNonce(): Promise<string> {
+  const response = await fetch("/api/auth/sso/bind", {
+    method: "POST",
+    credentials: "same-origin",
+    headers: { Accept: "application/json" },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to bind SSO login browser nonce (${response.status})`);
+  }
+
+  const data = (await response.json()) as { browserBindingHash?: unknown };
+  if (typeof data?.browserBindingHash !== "string" || !data.browserBindingHash.trim()) {
+    throw new Error("Invalid browserBindingHash returned from /api/auth/sso/bind");
+  }
+  return data.browserBindingHash.trim();
+}
+
+/**
+ * Consumes and expires the first-party SSO browser-binding nonce for canonical origin
+ * callers before submitting `POST /api/v1/auth/sso/handoff`.
+ */
+export async function consumeSsoBrowserNonce(): Promise<string | null> {
+  try {
+    const response = await fetch("/api/auth/sso/consume-binding", {
+      method: "POST",
+      credentials: "same-origin",
+      headers: { Accept: "application/json" },
+    });
+    if (!response.ok) {
+      appLogger.warn(`Failed to consume SSO browser binding nonce (${response.status})`);
+      return null;
+    }
+    const data = (await response.json()) as { browserBindingNonce?: unknown };
+    return typeof data?.browserBindingNonce === "string" && data.browserBindingNonce.trim()
+      ? data.browserBindingNonce.trim()
+      : null;
+  } catch (err) {
+    appLogger.warn("Error consuming SSO browser binding nonce", err);
+    return null;
+  }
+}
+
+/**
+ * Sends a same-origin session relay call through the Next.js first-party BFF micro-relay
+ * (`/api/auth/session/{establish,refresh,logout}`) on verified external custom domains.
+ */
 export async function postCustomDomainSessionRelay<T>(
-  relayEndpoint: "/api/auth/session/establish" | "/api/auth/session/refresh" | "/api/auth/session/logout",
-  body: Record<string, unknown> = {}
+  relayEndpoint:
+    | "/api/auth/session/establish"
+    | "/api/auth/session/refresh"
+    | "/api/auth/session/logout",
+  body: Record<string, unknown> = {},
+  options: CustomDomainRelayOptions = {}
 ): Promise<T> {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
@@ -39,6 +111,22 @@ export async function postCustomDomainSessionRelay<T>(
   const tenantId = readTenantContextId();
   if (tenantId) {
     headers["X-Tenant-Context"] = tenantId;
+  }
+
+  const mode = typeof body.mode === "string" ? body.mode : "";
+  const shouldAttachAuth =
+    options.includeAuth === true ||
+    (options.includeAuth !== false &&
+      (relayEndpoint === "/api/auth/session/logout" || AUTHENTICATED_ESTABLISH_MODES.has(mode)));
+  if (shouldAttachAuth) {
+    const accessToken = secureTokenService.getAccessToken();
+    if (accessToken) {
+      headers.Authorization = `Bearer ${accessToken}`;
+    }
+  }
+
+  if (typeof options.sudoToken === "string" && options.sudoToken.trim()) {
+    headers["X-Sudo-Token"] = options.sudoToken.trim();
   }
 
   const response = await fetch(relayEndpoint, {

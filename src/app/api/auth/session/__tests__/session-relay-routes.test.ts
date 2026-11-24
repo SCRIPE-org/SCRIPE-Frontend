@@ -11,6 +11,7 @@ import {
 import { GET as refreshGet, POST as refreshPost } from "../refresh/route";
 import { GET as logoutGet, POST as logoutPost } from "../logout/route";
 import { RELAY_COOKIE_DEV_HTTP, RELAY_COOKIE_PROD } from "@core/services/session-relay-hmac";
+import { SSO_BINDING_COOKIE_PROD } from "@core/services/session-relay-sso-binding";
 
 const TEST_RELAY_SECRET = "test-relay-hmac-secret-at-least-32-characters-long-1234";
 
@@ -386,5 +387,206 @@ describe("Custom-domain 3-route session micro-relay (/api/auth/session/*)", () =
     expect(hasSignal).toBe(true);
     expect(ephemeralRes.cookies.get(RELAY_COOKIE_PROD)?.maxAge).toBeUndefined();
     expect(ephemeralRes.headers.get("set-cookie") ?? "").not.toMatch(/Max-Age=/i);
+  });
+
+  it("consumes and forwards __Host-scripe_sso_nonce on sso-handoff and expires the binding cookie", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    let capturedBody = "";
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (_url: string | URL | Request, init?: RequestInit) => {
+        capturedBody = String(init?.body ?? "");
+        return new Response(JSON.stringify({ accessToken: "jwt-sso", type: "admin" }), {
+          status: 200,
+          headers: {
+            "content-type": "application/json",
+            "x-scripe-relay-refresh-token": "srv-rtok",
+            "x-scripe-relay-principal-type": "admin",
+          },
+        });
+      })
+    );
+
+    const nonceVal = "N".repeat(43);
+    const res = await establishPost(
+      buildJsonPostRequest(
+        "https://portal.club.com/api/auth/session/establish",
+        { code: "code-1", state: "state-1" },
+        {
+          host: "portal.club.com",
+          origin: "https://portal.club.com",
+          cookie: `${SSO_BINDING_COOKIE_PROD}=${nonceVal}`,
+        }
+      )
+    );
+    expect(res.status).toBe(200);
+    expect(JSON.parse(capturedBody)).toEqual({
+      code: "code-1",
+      state: "state-1",
+      browserBindingNonce: nonceVal,
+    });
+    expect(res.cookies.get(SSO_BINDING_COOKIE_PROD)?.maxAge).toBe(0);
+  });
+
+  it("validates allowlisted establish modes, GET HMAC for qr-status, cookie injection, and Authorization/X-Sudo-Token forwarding", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+
+    const invalidModeRes = await establishPost(
+      buildJsonPostRequest(
+        "https://portal.club.com/api/auth/session/establish",
+        { mode: "arbitrary-upstream-path" },
+        { host: "portal.club.com", origin: "https://portal.club.com" }
+      )
+    );
+    expect(invalidModeRes.status).toBe(400);
+
+    const badTargetIdRes = await establishPost(
+      buildJsonPostRequest(
+        "https://portal.club.com/api/auth/session/establish",
+        { mode: "impersonate", adminId: "../etc/passwd" },
+        { host: "portal.club.com", origin: "https://portal.club.com" }
+      )
+    );
+    expect(badTargetIdRes.status).toBe(400);
+
+    const missingCookieForRotate = await establishPost(
+      buildJsonPostRequest(
+        "https://portal.club.com/api/auth/session/establish",
+        { mode: "revoke-other-sessions" },
+        { host: "portal.club.com", origin: "https://portal.club.com" }
+      )
+    );
+    expect(missingCookieForRotate.status).toBe(401);
+
+    const requests: Array<{
+      url: string;
+      method: string;
+      headers: Record<string, string>;
+      body: string | undefined;
+    }> = [];
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
+        const method = init?.method ?? "POST";
+        const body = init?.body ? String(init.body) : undefined;
+        requests.push({
+          url: String(url),
+          method,
+          headers: (init?.headers ?? {}) as Record<string, string>,
+          body,
+        });
+        if (String(url).includes("/qr-login/session/")) {
+          return new Response(JSON.stringify({ status: "pending" }), { status: 200 });
+        }
+        if (String(url).includes("/user/2fa/verify")) {
+          return new Response(JSON.stringify({ accessToken: "user-jwt-1" }), {
+            status: 200,
+            headers: { "x-scripe-relay-refresh-token": "user-rtok-1" },
+          });
+        }
+        if (String(url).includes("/sessions/revoke-all")) {
+          return new Response(JSON.stringify({ revokedCount: 2 }), { status: 200 });
+        }
+        return new Response(JSON.stringify({ accessToken: "rotated-jwt-1" }), {
+          status: 200,
+          headers: { "x-scripe-relay-refresh-token": "rotated-rtok-1" },
+        });
+      })
+    );
+
+    // 1. qr-status pending uses signed GET with empty body hash & does not require refresh token
+    const qrRes = await establishPost(
+      buildJsonPostRequest(
+        "https://portal.club.com/api/auth/session/establish",
+        { mode: "qr-status", sessionId: "qr_session_123456" },
+        { host: "portal.club.com", origin: "https://portal.club.com" }
+      )
+    );
+    expect(qrRes.status).toBe(200);
+    expect(requests[0].method).toBe("GET");
+    expect(requests[0].url).toBe("https://api.scripe.org/api/v1/auth/qr-login/session/qr_session_123456/status");
+    const emptyBodyHash = createHash("sha256").update("", "utf8").digest("hex");
+    const expectedQrSig = createHmac("sha256", TEST_RELAY_SECRET)
+      .update(
+        `GET\n/api/v1/auth/qr-login/session/qr_session_123456/status\n${emptyBodyHash}\n${requests[0].headers["X-Scripe-Session-Relay-Nonce"]}\n${requests[0].headers["X-Scripe-Session-Relay-Ts"]}\n${requests[0].headers["X-Scripe-Session-Relay-Client-Ip"]}`,
+        "utf8"
+      )
+      .digest("hex");
+    expect(requests[0].headers["X-Scripe-Session-Relay-Sig"]).toBe(expectedQrSig);
+
+    // 2. user-2fa resolves deterministic "user" principal even without X-Scripe-Relay-Principal-Type header
+    const user2faRes = await establishPost(
+      buildJsonPostRequest(
+        "https://portal.club.com/api/auth/session/establish",
+        { mode: "user-2fa", twoFactorPendingToken: "tfa-tok", code: "123456" },
+        { host: "portal.club.com", origin: "https://portal.club.com" }
+      )
+    );
+    expect(user2faRes.status).toBe(200);
+    expect(user2faRes.cookies.get(RELAY_COOKIE_PROD)?.value).toBe("user|user-rtok-1");
+
+    // 3. change-password injects __Host-scripe_refresh_token (overriding client refreshToken) and forwards Authorization + X-Sudo-Token
+    const chgRes = await establishPost(
+      buildJsonPostRequest(
+        "https://portal.club.com/api/auth/session/establish",
+        {
+          mode: "change-password",
+          adminId: "enc_admin_12345",
+          currentPassword: "old",
+          newPassword: "new",
+          refreshToken: "attacker-spoofed",
+        },
+        {
+          host: "portal.club.com",
+          origin: "https://portal.club.com",
+          authorization: "Bearer current-jwt-1",
+          "x-sudo-token": "sudo-tok-1",
+          cookie: `${RELAY_COOKIE_PROD}=admin|cookie-rtok-1`,
+        }
+      )
+    );
+    expect(chgRes.status).toBe(200);
+    expect(requests[2].url).toBe("https://api.scripe.org/api/v1/admins/enc_admin_12345/change-password");
+    expect(requests[2].headers.Authorization).toBe("Bearer current-jwt-1");
+    expect(requests[2].headers["X-Sudo-Token"]).toBe("sudo-tok-1");
+    expect(JSON.parse(requests[2].body!)).toEqual({
+      currentPassword: "old",
+      newPassword: "new",
+      refreshToken: "cookie-rtok-1",
+    });
+    expect(chgRes.cookies.get(RELAY_COOKIE_PROD)?.value).toBe("admin|rotated-rtok-1");
+
+    // 4. revoke-other-sessions injects refreshToken & returns 200 without requiring rotated refresh cookie
+    const revokeRes = await establishPost(
+      buildJsonPostRequest(
+        "https://portal.club.com/api/auth/session/establish",
+        { mode: "revoke-other-sessions" },
+        {
+          host: "portal.club.com",
+          origin: "https://portal.club.com",
+          authorization: "Bearer current-jwt-1",
+          cookie: `${RELAY_COOKIE_PROD}=admin|cookie-rtok-1`,
+        }
+      )
+    );
+    expect(revokeRes.status).toBe(200);
+    expect(requests[3].url).toBe("https://api.scripe.org/api/v1/auth/admin/sessions/revoke-all");
+    expect(JSON.parse(requests[3].body!)).toEqual({ refreshToken: "cookie-rtok-1" });
+
+    // 5. /logout forwards Authorization header for JTI blacklisting & Sudo eviction
+    const logoutRes = await logoutPost(
+      buildJsonPostRequest(
+        "https://portal.club.com/api/auth/session/logout",
+        { logoutScope: "app" },
+        {
+          host: "portal.club.com",
+          origin: "https://portal.club.com",
+          authorization: "Bearer current-jwt-1",
+          cookie: `${RELAY_COOKIE_PROD}=admin|cookie-rtok-1`,
+        }
+      )
+    );
+    expect(logoutRes.status).toBe(200);
+    expect(requests[4].headers.Authorization).toBe("Bearer current-jwt-1");
   });
 });

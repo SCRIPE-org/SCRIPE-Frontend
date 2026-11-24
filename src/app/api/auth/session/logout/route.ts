@@ -9,6 +9,11 @@ import {
   validateRelayRequest,
 } from "@core/services/session-relay-hmac";
 
+/**
+ * First-party custom-domain logout relay. Revokes the stored server refresh token,
+ * forwards any supplied Bearer `Authorization` header for immediate JTI blacklisting & Sudo
+ * eviction, and clears `__Host-scripe_refresh_token` / dev cookies.
+ */
 export async function POST(request: NextRequest) {
   const validation = validateRelayRequest(request);
   if (!validation.ok) return validation.response;
@@ -27,18 +32,19 @@ export async function POST(request: NextRequest) {
   }
 
   const parsedCookie = readRelayCookie(request, validation.ctx.isSecureTransport);
-  if (!parsedCookie) {
+  const hasAuthHeader = Boolean(request.headers.get("authorization")?.trim());
+  if (!parsedCookie && !hasAuthHeader) {
     const response = noStoreJson({ success: true }, 200);
     clearRelayCookies(response, validation.ctx.isSecureTransport);
     return response;
   }
 
   const canonicalPath =
-    parsedCookie.principalType === "user"
+    parsedCookie?.principalType === "user"
       ? "/api/v1/auth/user/logout"
       : "/api/v1/auth/admin/logout";
   const forwardBody = JSON.stringify({
-    refreshToken: parsedCookie.refreshToken,
+    ...(parsedCookie ? { refreshToken: parsedCookie.refreshToken } : {}),
     logoutScope,
   });
   const headers = buildSignedRelayHeaders({
@@ -46,6 +52,7 @@ export async function POST(request: NextRequest) {
     ctx: validation.ctx,
     canonicalPath,
     bodyJson: forwardBody,
+    forwardAuth: true,
   });
 
   try {

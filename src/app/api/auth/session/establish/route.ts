@@ -4,14 +4,20 @@ import {
   extractRelaySessionTokens,
   methodNotAllowedResponse,
   noStoreJson,
+  readRelayCookie,
   resolveUpstreamUrl,
   sanitizeRelayJsonPayload,
   setRelayCookie,
   validateRelayRequest,
 } from "@core/services/session-relay-hmac";
+import { resolveSessionEstablishPlan } from "@core/services/session-establish-modes";
+import { clearSsoBindingCookie } from "@core/services/session-relay-sso-binding";
 
-const CANONICAL_HANDOFF_PATH = "/api/v1/auth/sso/handoff";
-
+/**
+ * First-party custom-domain session establishment & authenticated session mutation relay.
+ * Routes allowlisted login, 2FA, SSO handoff, passkey, magic-link, phone-OTP, QR status,
+ * password rotation, impersonation, and session revocation modes through HMAC-SHA256 S2S auth.
+ */
 export async function POST(request: NextRequest) {
   const validation = validateRelayRequest(request);
   if (!validation.ok) return validation.response;
@@ -27,25 +33,26 @@ export async function POST(request: NextRequest) {
     body && typeof body === "object" && !Array.isArray(body)
       ? (body as Record<string, unknown>)
       : null;
-  const code = typeof payload?.code === "string" ? payload.code.trim() : "";
-  const state = typeof payload?.state === "string" ? payload.state.trim() : "";
-  if (!code || !state) {
-    return noStoreJson({ error: "missing_handoff_credentials" }, 400);
-  }
 
-  const forwardBody = JSON.stringify({ code, state });
+  const resolvedPlan = resolveSessionEstablishPlan(payload, request, validation.ctx);
+  if (!resolvedPlan.ok) return resolvedPlan.response;
+  const { plan } = resolvedPlan;
+
   const headers = buildSignedRelayHeaders({
     request,
     ctx: validation.ctx,
-    canonicalPath: CANONICAL_HANDOFF_PATH,
-    bodyJson: forwardBody,
+    canonicalPath: plan.canonicalPath,
+    bodyJson: plan.bodyJson,
+    method: plan.method,
+    forwardAuth: plan.forwardAuth,
+    forwardSudo: plan.forwardSudo,
   });
 
   try {
-    const upstreamResponse = await fetch(resolveUpstreamUrl(CANONICAL_HANDOFF_PATH), {
-      method: "POST",
+    const upstreamResponse = await fetch(resolveUpstreamUrl(plan.canonicalPath), {
+      method: plan.method,
       headers,
-      body: forwardBody,
+      ...(plan.method === "POST" ? { body: plan.bodyJson } : {}),
       cache: "no-store",
       redirect: "manual",
       signal: AbortSignal.timeout(10_000),
@@ -63,6 +70,9 @@ export async function POST(request: NextRequest) {
 
     const sanitized = sanitizeRelayJsonPayload(rawJson);
     const response = noStoreJson(sanitized, upstreamResponse.status);
+    if (plan.consumeSsoNonce) {
+      clearSsoBindingCookie(response, validation.ctx.isSecureTransport);
+    }
 
     if (upstreamResponse.ok) {
       const { refreshToken, principalType, maxAgeSeconds } = extractRelaySessionTokens(
@@ -78,20 +88,33 @@ export async function POST(request: NextRequest) {
           ? (bodyObj.data as Record<string, unknown>)
           : bodyObj;
       const isPendingContinuation =
-        Boolean(unwrapped?.requires2FA) || Boolean(unwrapped?.requiresWorkspaceSelection);
+        Boolean(unwrapped?.requires2FA) ||
+        Boolean(unwrapped?.requiresWorkspaceSelection) ||
+        (plan.mode === "qr-status" && unwrapped?.status !== "approved");
       const hasAccessToken =
         typeof unwrapped?.accessToken === "string" && unwrapped.accessToken.trim().length > 0;
 
       if (!refreshToken && hasAccessToken && !isPendingContinuation) {
-        return noStoreJson({ error: "missing_relay_refresh_token" }, 502);
+        const failRes = noStoreJson({ error: "missing_relay_refresh_token" }, 502);
+        if (plan.consumeSsoNonce) {
+          clearSsoBindingCookie(failRes, validation.ctx.isSecureTransport);
+        }
+        return failRes;
       }
 
       if (refreshToken) {
-        if (!principalType) {
-          return noStoreJson({ error: "invalid_principal_type" }, 502);
+        const existingCookie = readRelayCookie(request, validation.ctx.isSecureTransport);
+        const resolvedPrincipalType =
+          principalType ?? plan.defaultPrincipalType ?? existingCookie?.principalType ?? null;
+        if (!resolvedPrincipalType) {
+          const failRes = noStoreJson({ error: "invalid_principal_type" }, 502);
+          if (plan.consumeSsoNonce) {
+            clearSsoBindingCookie(failRes, validation.ctx.isSecureTransport);
+          }
+          return failRes;
         }
         setRelayCookie(response, {
-          principalType,
+          principalType: resolvedPrincipalType,
           refreshToken,
           isSecureTransport: validation.ctx.isSecureTransport,
           maxAgeSeconds,
