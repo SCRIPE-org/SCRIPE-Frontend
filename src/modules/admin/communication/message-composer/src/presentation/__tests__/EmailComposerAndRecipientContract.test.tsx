@@ -157,6 +157,74 @@ describe("Email Composer recipient contract, CC/BCC deduplication, and template 
     );
   });
 
+  it("confirmSend attaches CC and BCC only to the first To recipient (index === 0) when sending to 2+ To recipients", async () => {
+    mockEmailRepo.send.mockResolvedValue(undefined);
+    const wrapper = createWrapper();
+    const { result } = renderHook(() => useEmailComposerViewModel(), { wrapper });
+
+    act(() => {
+      result.current.addRecipient(
+        new EmailRecipient({
+          id: "enc-admin-1",
+          email: "to1@ahly.com",
+          name: "First To Admin",
+          type: "admin",
+        })
+      );
+      result.current.addRecipient(
+        new EmailRecipient({
+          id: "enc-admin-2",
+          email: "to2@ahly.com",
+          name: "Second To Admin",
+          type: "admin",
+        })
+      );
+      result.current.addCcRecipient(
+        new EmailRecipient({
+          id: "enc-cc-1",
+          email: "cc@ahly.com",
+          name: "CC Admin",
+          type: "admin",
+        })
+      );
+      result.current.addBccRecipient(
+        new EmailRecipient({
+          id: "custom-bcc@ahly.com",
+          email: "bcc@ahly.com",
+          name: "bcc@ahly.com",
+          type: "custom",
+        })
+      );
+      result.current.setSubject("Multi-To Announcement");
+      result.current.setBody("<p>Multi-recipient message</p>");
+    });
+
+    act(() => {
+      result.current.confirmSend();
+    });
+
+    await waitFor(() => {
+      expect(mockEmailRepo.send).toHaveBeenCalledTimes(2);
+    });
+
+    expect(mockEmailRepo.send).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        recipientEmail: "to1@ahly.com",
+        cc: ["cc@ahly.com"],
+        bcc: ["bcc@ahly.com"],
+      })
+    );
+    expect(mockEmailRepo.send).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        recipientEmail: "to2@ahly.com",
+        cc: undefined,
+        bcc: undefined,
+      })
+    );
+  });
+
   it("onUseAsTemplate navigates to /communication/templates/new with subject and body query parameters", () => {
     const wrapper = createWrapper();
     const { result } = renderHook(() => useEmailComposerViewModel(), { wrapper });

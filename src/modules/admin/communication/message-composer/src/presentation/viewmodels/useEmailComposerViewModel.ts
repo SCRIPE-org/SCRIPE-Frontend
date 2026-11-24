@@ -355,8 +355,10 @@ export function useEmailComposerViewModel() {
         if (uploaded.length > 0) attachmentUrls = uploaded;
       }
 
-      // Backend handles one recipient per request, so batch them
-      for (const r of allRecipients) {
+      // Backend handles one recipient per request, so batch them.
+      // Attach CC and BCC only on the first To request (index === 0) so multiple To recipients
+      // do not trigger duplicate CC/BCC copies.
+      for (const [index, r] of allRecipients.entries()) {
         // Build templatePlaceholders for backend Scriban rendering
         // When templateKey is set, the backend re-renders the template from DB
         // using these placeholders — without them, all variables are empty!
@@ -380,14 +382,15 @@ export function useEmailComposerViewModel() {
           }
         }
 
+        const includeCcBcc = index === 0;
         const payload: SendManualEmailPayload = {
           recipientType: toBackendRecipientType(r.type),
           recipientId: r.type === "custom" ? null : r.id,
           recipientEmail: r.email,
           subject: resolvedSubject,
           body: resolvedBody,
-          cc: currentCc.length > 0 ? currentCc.map((c) => c.email) : undefined,
-          bcc: currentBcc.length > 0 ? currentBcc.map((b) => b.email) : undefined,
+          cc: includeCcBcc && currentCc.length > 0 ? currentCc.map((c) => c.email) : undefined,
+          bcc: includeCcBcc && currentBcc.length > 0 ? currentBcc.map((b) => b.email) : undefined,
           scheduledAt:
             currentSchedule.mode === "scheduled" && currentSchedule.scheduledDate
               ? `${currentSchedule.scheduledDate}T${currentSchedule.scheduledTime || "00:00"}:00Z`

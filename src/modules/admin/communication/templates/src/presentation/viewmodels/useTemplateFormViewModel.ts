@@ -21,11 +21,11 @@ import type {
 } from "../../domain/entities/MessageTemplateRequests";
 import type { PlaceholderField } from "../components/PlaceholderSchemaBuilder";
 import type { DesignVariables } from "../components/DesignVariablesPanel";
-import { DEFAULT_DESIGN } from "../components/DesignVariablesPanel";
 import {
   MESSAGE_TEMPLATE_ENTITY_TYPE_KEY,
   type TemplateFormMode,
   type TemplateFormValues,
+  buildInitialTemplateFormValues,
   mergeDesignForSave,
   parseTemplateSchema,
   parseTemplateDesign,
@@ -57,7 +57,6 @@ export function useTemplateFormViewModel() {
   const templateId = params?.id as string | undefined;
   const mode: TemplateFormMode = templateId ? "edit" : "create";
 
-  // ─── Custom Fields ───────────────────────────────────────
   const {
     customFieldValues,
     updateCustomFieldValue,
@@ -67,23 +66,9 @@ export function useTemplateFormViewModel() {
     refetchCustomFields,
   } = useTemplateCustomFields(mode, templateId, t);
 
-  const channelParam = searchParams?.get("channel");
-  const initialChannel: TemplateFormValues["channel"] =
-    channelParam === "SMS" || channelParam === "Push" || channelParam === "Email"
-      ? channelParam
-      : "Email";
-  const [form, setForm] = useState<TemplateFormValues>(() => ({
-    key: mode === "create" ? (searchParams?.get("key") ?? "") : "",
-    channel: mode === "create" ? initialChannel : "Email",
-    language: mode === "create" ? searchParams?.get("language") || "en" : "en",
-    subject: mode === "create" ? (searchParams?.get("subject") ?? "") : "",
-    body: mode === "create" ? (searchParams?.get("body") ?? "") : "",
-    description: mode === "create" ? (searchParams?.get("description") ?? "") : "",
-    isActive: true,
-    category: mode === "create" ? ((searchParams?.get("category") ?? "") as TemplateCategory | "") : "",
-    placeholderSchema: [],
-    designVariables: { ...DEFAULT_DESIGN },
-  }));
+  const [form, setForm] = useState<TemplateFormValues>(() =>
+    buildInitialTemplateFormValues(mode, searchParams)
+  );
 
   // ─── Fetch template for edit mode ────────────────────────
   const {
