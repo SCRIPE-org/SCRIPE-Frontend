@@ -256,43 +256,27 @@ function sanitizeDomWithPurify(
   return (cleanedBody as Element).innerHTML;
 }
 
-/**
- * Sanitize author-supplied HTML blocks (`dangerouslySetInnerHTML`) with fail-closed SSR behavior,
- * strict URI validation, sanitized inline CSS, and mandatory `rel="noopener noreferrer"` on `_blank`.
- */
+/** Sanitize author-supplied HTML blocks for `dangerouslySetInnerHTML`. */
 export function sanitizeRichHtml(input: string): string {
   return sanitizeDomWithPurify(input, RICH_HTML_ALLOWED_TAGS, RICH_HTML_ALLOWED_ATTR, false);
 }
 
-/**
- * Sanitize email template / composer HTML for preview iframes and stored markup, permitting
- * email table attributes and safe inline social glyph SVGs while stripping scripts/forms/unsafe URIs.
- */
+/** Sanitize email template/composer HTML for preview iframes and stored markup. */
 export function sanitizeEmailHtml(input: string): string {
   return sanitizeDomWithPurify(input, EMAIL_HTML_ALLOWED_TAGS, EMAIL_HTML_ALLOWED_ATTR, true);
 }
 
-/**
- * Replace TipTap `div[data-email-html-block="true"]` placeholder nodes with sanitized email HTML
- * inside an isolated inert `DOMParser` document (never using `createContextualFragment`).
- */
+/** Replace TipTap `div[data-email-html-block="true"]` nodes via isolated inert DOMParser. */
 export function unwrapSanitizedEmailHtmlBlocks(editorHtml: string): string {
   if (!editorHtml || typeof editorHtml !== "string") return "";
-  if (typeof window === "undefined" || typeof DOMParser === "undefined") {
-    return "";
-  }
-
+  if (typeof window === "undefined" || typeof DOMParser === "undefined") return "";
   const doc = new DOMParser().parseFromString(editorHtml, "text/html");
-  const blocks = doc.body.querySelectorAll('div[data-email-html-block="true"]');
-
-  blocks.forEach((block) => {
-    const rawHtml = block.getAttribute("data-email-html") || "";
-    const safeHtml = sanitizeEmailHtml(rawHtml);
+  doc.body.querySelectorAll('div[data-email-html-block="true"]').forEach((block) => {
+    const safeHtml = sanitizeEmailHtml(block.getAttribute("data-email-html") || "");
     if (!safeHtml) {
       block.remove();
       return;
     }
-
     const fragmentDoc = new DOMParser().parseFromString(safeHtml, "text/html");
     const fragment = doc.createDocumentFragment();
     Array.from(fragmentDoc.body.childNodes).forEach((child) => {
@@ -300,6 +284,5 @@ export function unwrapSanitizedEmailHtmlBlocks(editorHtml: string): string {
     });
     block.replaceWith(fragment);
   });
-
   return doc.body.innerHTML;
 }

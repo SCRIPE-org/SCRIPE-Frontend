@@ -36,6 +36,12 @@ import {
   sanitizeCssAssetUrl,
 } from "@core/common/sanitize";
 import {
+  isTrustedSameOriginParentMessage,
+  parseStudioDraftUpdateMessage,
+  parseStudioThemeMessage,
+  postToSameOriginParent,
+} from "@core/common/postmessage-security";
+import {
   useCoreLoginBrandingTokens as useLoginBrandingTokens,
   CoreLoginBranding as LoginBranding,
   CoreSlotRenderer as SlotRenderer,
@@ -67,9 +73,10 @@ export function LoginPreviewShell() {
   // Listen for theme commands from studio parent
   useEffect(() => {
     const handler = (e: MessageEvent) => {
-      if (e.origin !== window.location.origin) return;
-      if (e.data?.type === "SCRIPE_STUDIO_SET_THEME") {
-        setTheme(e.data.theme);
+      if (!isTrustedSameOriginParentMessage(e)) return;
+      const validTheme = parseStudioThemeMessage(e.data);
+      if (validTheme) {
+        setTheme(validTheme);
       }
     };
     window.addEventListener("message", handler);
@@ -86,12 +93,14 @@ export function LoginPreviewShell() {
   // Listen for postMessage from studio parent
   useEffect(() => {
     // Signal to studio that preview is ready
-    window.parent?.postMessage({ type: "SCRIPE_PREVIEW_READY" }, window.location.origin);
+    postToSameOriginParent({ type: "SCRIPE_PREVIEW_READY" });
 
     const handler = (e: MessageEvent) => {
-      if (e.origin !== window.location.origin) return;
-      if (e.data?.type === "SCRIPE_STUDIO_DRAFT_UPDATE") {
-        setDraftOverrides(e.data.payload);
+      if (!isTrustedSameOriginParentMessage(e)) return;
+      const validDraft = parseStudioDraftUpdateMessage(e.data);
+      if (validDraft) {
+        setDraftOverrides(validDraft);
+        return;
       }
       if (e.data?.type === "SCRIPE_STUDIO_RESET") {
         setDraftOverrides(null);

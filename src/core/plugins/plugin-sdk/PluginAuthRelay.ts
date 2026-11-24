@@ -18,6 +18,8 @@ export class PluginAuthRelay {
   mount() {
     this.unsubscribe = this.bridge.onMessage(async (msg) => {
       if (msg.type !== "AUTH_TOKEN_REQUEST") return;
+      // Fail closed unless the plugin iframe has a verified non-opaque HTTPS origin
+      if (!this.bridge.canRelaySecrets()) return;
       try {
         const token = await this.getToken();
         this.bridge.send({ type: "AUTH_TOKEN", payload: token });

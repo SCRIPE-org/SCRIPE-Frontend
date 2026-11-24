@@ -16,6 +16,7 @@ import { generateCsv } from "@/modules/venue/reports/src/utils/excelReportExport
 import { formatSafeCsvCell } from "@/modules/crm/reports/src/presentation/utils/crmReportsCsvExport";
 import { escapeCsvCell } from "@/modules/shared/profile/core/src/presentation/utils/activity-csv.utils";
 import { composePreviewDocument } from "@/modules/admin/communication/templates/src/presentation/components/templatePreviewHelpers";
+import { DEFAULT_DESIGN } from "@/modules/admin/communication/templates/src/presentation/components/designVariablesTypes";
 
 describe("Area B — CSS, HTML, URI & CSV XSS/injection hardening", () => {
   afterEach(() => {
@@ -131,6 +132,7 @@ describe("Area B — CSS, HTML, URI & CSV XSS/injection hardening", () => {
       previewLang: 'en"><script>alert(2)</script>',
       skin: { surface: "#0D0D0E", text: "#F7F8F5", link: "#C6FF00" },
       designVariables: {
+        ...DEFAULT_DESIGN,
         backgroundColor: "#ffffff;}</style><script>alert(3)</script>",
         textColor: "#111111",
       },
