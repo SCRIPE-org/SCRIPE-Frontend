@@ -31,7 +31,7 @@ export interface PageSecurityHeaderOptions {
 const PREVIEW_FRAMEABLE_PREFIXES = ["/studio-preview", "/dashboard-preview"] as const;
 
 const PERMISSIONS_POLICY_VALUE =
-  "camera=(self), microphone=(), geolocation=(), interest-cohort=(), publickey-credentials-get=(self), publickey-credentials-create=(self)";
+  "camera=(self), microphone=(), geolocation=(), publickey-credentials-get=(self), publickey-credentials-create=(self)";
 
 /**
  * Extract an HTTP(S) origin from a configured URL candidate, discarding paths,
