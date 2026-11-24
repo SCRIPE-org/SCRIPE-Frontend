@@ -4,6 +4,7 @@
 "use client";
 
 import { useI18n } from "@core/providers/i18n-provider";
+import { sanitizeHttpUrl } from "@core/common/sanitize";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import {
   ExternalLink,
@@ -91,12 +92,22 @@ export function QuickLinksCard({ links }: QuickLinksCardProps) {
 
 function QuickLink({ icon: Icon, label, href }: { icon: LucideIcon; label: string; href: string }) {
   const { t } = useI18n();
+  const safeHref = sanitizeHttpUrl(href);
+
+  if (!safeHref) {
+    return (
+      <span className="flex items-center gap-2 rounded-nx-md border border-nx-line bg-nx-surface p-3 text-sm font-medium text-nx-ink-3 opacity-60">
+        <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
+        <span className="min-w-0 truncate">{label}</span>
+      </span>
+    );
+  }
 
   // A real anchor rather than a scripted window.open: these are navigations, so
   // they should be middle-clickable, copyable and announced as links.
   return (
     <a
-      href={href}
+      href={safeHref}
       target="_blank"
       rel="noopener noreferrer"
       className="flex items-center gap-2 rounded-nx-md border border-nx-line bg-nx-surface p-3 text-sm font-medium text-nx-ink transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter hover:border-nx-line-hi hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"

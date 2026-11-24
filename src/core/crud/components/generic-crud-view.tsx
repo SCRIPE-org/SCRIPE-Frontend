@@ -18,6 +18,7 @@
 "use client";
 
 import { Button } from "@core/ui/button";
+import { sanitizeCsvCell } from "@core/common/sanitize";
 import { Card, CardHeader, CardTitle, CardContent } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
 import { Alert, AlertDescription } from "@core/ui/alert";
@@ -1193,15 +1194,9 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
 
   const handleCsvExport = useCallback(() => {
     const items: any[] = viewModel.items || [];
-    const headerRow = columns.map((c) => `"${String(c.label).replace(/"/g, '""')}"`).join(",");
+    const headerRow = columns.map((c) => sanitizeCsvCell(c.label)).join(",");
     const dataRows = items.map((row) =>
-      columns
-        .map((c) => {
-          const val = row?.[c.key];
-          const text = val === null || val === undefined ? "" : String(val);
-          return `"${text.replace(/"/g, '""')}"`;
-        })
-        .join(",")
+      columns.map((c) => sanitizeCsvCell(row?.[c.key])).join(",")
     );
     const csvContent = [headerRow, ...dataRows].join("\n");
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });

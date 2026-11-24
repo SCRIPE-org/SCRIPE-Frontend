@@ -24,6 +24,7 @@ import { Trash2, MousePointerClick, Share2, Code2, GripVertical } from "lucide-r
 import { Button } from "@core/ui/button";
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@core/common/utils";
+import { sanitizeEmailHtml } from "@core/common/sanitize";
 
 // ─── Icon Map ───────────────────────────────────────────────
 const BLOCK_ICONS: Record<string, React.ReactNode> = {
@@ -47,6 +48,7 @@ export function EmailHtmlBlockView({ node, deleteNode, selected }: NodeViewProps
   // Build a self-contained HTML document for the iframe preview. Everything in
   // here is mail-client markup — see the COLOUR EXCEPTION note at the top.
   const iframeSrcDoc = useMemo(() => {
+    const safeHtml = sanitizeEmailHtml(html);
     return `<!DOCTYPE html>
 <html>
 <head>
@@ -64,7 +66,7 @@ export function EmailHtmlBlockView({ node, deleteNode, selected }: NodeViewProps
   }
 </style>
 </head>
-<body>${html}</body>
+<body>${safeHtml}</body>
 </html>`;
   }, [html]);
 

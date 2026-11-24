@@ -9,6 +9,8 @@
  * - Full metadata header: Generation timestamp, Tenant context, Filter parameters.
  */
 
+import { sanitizeCsvMinimalCell } from "@core/common/sanitize";
+
 export interface ExportColumn<T> {
   header: string;
   key: keyof T | string;
@@ -44,15 +46,10 @@ function escapeXml(unsafe: string | number | undefined | null): string {
 }
 
 /**
- * Escapes text for RFC 4180 CSV format.
+ * Escapes text for RFC 4180 CSV format while neutralizing spreadsheet formula prefixes (CWE-1236).
  */
 function escapeCsv(cell: string | number | undefined | null): string {
-  if (cell === undefined || cell === null) return "";
-  const str = String(cell);
-  if (str.includes(",") || str.includes('"') || str.includes("\n") || str.includes("\r")) {
-    return `"${str.replace(/"/g, '""')}"`;
-  }
-  return str;
+  return sanitizeCsvMinimalCell(cell);
 }
 
 /**

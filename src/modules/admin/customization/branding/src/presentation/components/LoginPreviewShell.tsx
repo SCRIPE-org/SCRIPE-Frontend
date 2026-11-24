@@ -30,7 +30,11 @@ import { Eye, EyeOff, Lock, User, Mail, ArrowLeft, KeyRound, Accessibility } fro
 import { LanguageSwitcher } from "@core/ui/layout/common/language-switcher";
 import { ThemeSwitcher } from "@core/ui/layout/common/theme-switcher";
 import { BRAND } from "@core/config/branding";
-import { sanitizeCss } from "@core/common/sanitize";
+import {
+  buildSafePerPageBgCss,
+  sanitizeCss,
+  sanitizeCssAssetUrl,
+} from "@core/common/sanitize";
 import {
   useCoreLoginBrandingTokens as useLoginBrandingTokens,
   CoreLoginBranding as LoginBranding,
@@ -173,7 +177,8 @@ export function LoginPreviewShell() {
     }
   })();
 
-  const logoUrl = (rawParsed.logoUrl as string) || "/brand/app-logo-1024.png";
+  const logoUrl =
+    sanitizeCssAssetUrl(rawParsed.logoUrl as string | undefined) || "/brand/app-logo-1024.png";
   const companyName = (rawParsed.companyName as string) || BRAND.name;
   const copyrightText = (rawParsed.copyrightText as string) || "";
 
@@ -190,50 +195,11 @@ export function LoginPreviewShell() {
   // Falls back to the global layout from useLoginBrandingTokens
   const effectiveLayout = (pageOverride.layout as string) || layout;
 
-  // Per-page background CSS override (M9) — when inheritBackground is false,
-  // the page has its own background instead of the global login background.
-  const perPageBgCss = (() => {
-    // Login page always uses global bg; skip if no override
-    if (activePageId === "login") return "";
-    const po = pageOverride as Record<string, unknown>;
-    // Default: inherit from login page
-    if (po.inheritBackground !== false) return "";
-
-    const rules: string[] = [];
-    const bgType = (po.bgType as string) || "solid";
-
-    if (bgType === "solid" && po.bgColor) {
-      rules.push(`--login-bg: ${po.bgColor};`);
-      rules.push(`background: ${po.bgColor} !important;`);
-    } else if (bgType === "gradient") {
-      const dir = (po.bgGradientDirection as string) || "135deg";
-      const from = (po.bgGradientFrom as string) || "#3b82f6";
-      const to = (po.bgGradientTo as string) || "#8b5cf6";
-      const grad = `linear-gradient(${dir}, ${from}, ${to})`;
-      rules.push(`--login-bg: ${from};`);
-      rules.push(`background: ${grad} !important;`);
-    } else if (bgType === "image" && po.bgImageUrl) {
-      const fit = (po.bgImageFit as string) || "cover";
-      const pos = (po.bgImagePosition as string) || "center";
-      rules.push(`background-image: url(${po.bgImageUrl}) !important;`);
-      rules.push(`background-size: ${fit === "fill" ? "100% 100%" : fit} !important;`);
-      rules.push(`background-position: ${pos} !important;`);
-      rules.push(`background-repeat: no-repeat !important;`);
-      // Overlay
-      if (po.bgOverlayEnabled) {
-        const overlayColor = (po.bgOverlayColor as string) || "#000000";
-        const overlayOpacity = (po.bgOverlayOpacity as number) ?? 30;
-        const hex = overlayColor.replace("#", "");
-        const r = parseInt(hex.substring(0, 2), 16);
-        const g = parseInt(hex.substring(2, 4), 16);
-        const b = parseInt(hex.substring(4, 6), 16);
-        rules.push(`--login-overlay: rgba(${r},${g},${b},${overlayOpacity / 100});`);
-      }
-    }
-
-    if (rules.length === 0) return "";
-    return `.login-page { ${rules.join(" ")} }`;
-  })();
+  // Per-page background CSS override (M9) — built with strict CSS property allowlisting
+  const perPageBgCss = buildSafePerPageBgCss(
+    activePageId,
+    pageOverride as Record<string, unknown>
+  );
 
   // Per-page custom CSS
   const perPageCustomCss = ((pageOverride as Record<string, unknown>).customCss as string) || "";

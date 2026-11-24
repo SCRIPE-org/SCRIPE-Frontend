@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
-import DOMPurify from "dompurify";
+import { sanitizeEmailHtml, sanitizeHttpUrl } from "@core/common/sanitize";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
@@ -52,47 +52,6 @@ function detectDir(text: string): { lang: string; dir: "rtl" | "ltr" } {
   const dir = ARABIC_SCRIPT_RE.test(text) ? "rtl" : "ltr";
   return { lang: dir === "rtl" ? "ar" : "en", dir };
 }
-
-// Same DOMPurify allow-list as templates/PreviewDialog.tsx — one sanitization
-// policy for every surface that renders admin- or lead-controlled HTML into a
-// srcDoc iframe, instead of each preview inventing its own regex denylist.
-const SANITIZE_OPTIONS = {
-  ALLOWED_TAGS: [
-    "h1",
-    "h2",
-    "h3",
-    "h4",
-    "h5",
-    "h6",
-    "p",
-    "br",
-    "hr",
-    "span",
-    "div",
-    "strong",
-    "b",
-    "em",
-    "i",
-    "u",
-    "s",
-    "ul",
-    "ol",
-    "li",
-    "table",
-    "thead",
-    "tbody",
-    "tr",
-    "th",
-    "td",
-    "a",
-    "img",
-    "blockquote",
-    "pre",
-    "code",
-  ],
-  ALLOWED_ATTR: ["href", "src", "alt", "class", "style", "target", "rel", "width", "height"],
-  ALLOW_DATA_ATTR: false,
-};
 
 // ─── Props ──────────────────────────────────────────────────
 /**
@@ -160,7 +119,7 @@ function ExpandedEmailRow({
     () => detectDir(`${emailSubject} ${emailBody}`),
     [emailSubject, emailBody]
   );
-  const sanitizedBody = useMemo(() => DOMPurify.sanitize(emailBody, SANITIZE_OPTIONS), [emailBody]);
+  const sanitizedBody = useMemo(() => sanitizeEmailHtml(emailBody), [emailBody]);
   const previewSrcDoc = useMemo(
     () =>
       `<!DOCTYPE html><html dir="${previewDir}" lang="${previewLang}"><head><meta charset="utf-8"/><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:13px;line-height:1.5;color:${skin.text};padding:12px;background:${skin.surface}}img{max-width:100%;height:auto}a{color:${skin.link}}</style></head><body>${sanitizedBody}</body></html>`,
@@ -217,7 +176,7 @@ function ExpandedEmailRow({
               {email.body.includes("<") ? (
                 <iframe
                   srcDoc={previewSrcDoc}
-                  sandbox="allow-same-origin"
+                  sandbox=""
                   className="w-full border-0"
                   style={{ height: "180px" }}
                   title={t("messaging.email.bodyPreview")}
@@ -251,13 +210,25 @@ function ExpandedEmailRow({
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {urls.map((url, i) => {
+                      const safeUrl = sanitizeHttpUrl(url, { allowRelative: true });
                       const fileName = decodeURIComponent(
                         url.split("/").pop() || `attachment-${i + 1}`
                       );
+                      if (!safeUrl) {
+                        return (
+                          <span
+                            key={i}
+                            className="inline-flex items-center gap-1.5 rounded-nx-md border border-nx-line bg-nx-raised-2 px-3 py-1.5 text-xs font-medium text-nx-ink-3"
+                          >
+                            <FileText className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                            <span className="max-w-[200px] truncate">{fileName}</span>
+                          </span>
+                        );
+                      }
                       return (
                         <a
                           key={i}
-                          href={url}
+                          href={safeUrl}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-1.5 rounded-nx-md border border-nx-line bg-nx-raised-2 px-3 py-1.5 text-xs font-medium text-nx-ink transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-raised focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"

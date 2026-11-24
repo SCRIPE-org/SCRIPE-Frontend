@@ -9,6 +9,7 @@ import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { Popover, PopoverContent, PopoverTrigger } from "@core/ui/popover";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
 import { useI18n } from "@core/providers/i18n-provider";
+import { sanitizeHttpUrl } from "@core/common/sanitize";
 import { Image as ImageIcon, X } from "lucide-react";
 import type { Editor } from "@tiptap/react";
 
@@ -36,8 +37,9 @@ export function ImageInsert({
   const uploadId = useId();
 
   const insertFromUrl = () => {
-    if (url) {
-      editor.chain().focus().setImage({ src: url }).run();
+    const safeUrl = sanitizeHttpUrl(url, { allowRelative: true });
+    if (safeUrl) {
+      editor.chain().focus().setImage({ src: safeUrl }).run();
       setUrl("");
       setOpen(false);
     }
@@ -67,7 +69,10 @@ export function ImageInsert({
     try {
       setUploading(true);
       const uploadedUrl = await onUpload(file);
-      editor.chain().focus().setImage({ src: uploadedUrl }).run();
+      const safeUploadedUrl = sanitizeHttpUrl(uploadedUrl, { allowRelative: true });
+      if (safeUploadedUrl) {
+        editor.chain().focus().setImage({ src: safeUploadedUrl }).run();
+      }
       setOpen(false);
     } catch {
       // Error handled by parent
