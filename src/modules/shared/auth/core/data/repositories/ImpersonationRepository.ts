@@ -8,7 +8,13 @@
  */
 import { secureTokenService } from "@core/common/secure-token-service";
 import { authBroadcast } from "@core/common/broadcast-auth";
+import {
+  runSessionCleanupCallbacks,
+  sweepScopedSessionStorageOnLogout,
+} from "@core/common/session-cleanup-registry";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
+import { clearAllDataExchangeCaches } from "@core/data-exchange/data/repositories/DataExchangeRepository";
+import { useDataExchangeJobsStore } from "@core/data-exchange/presentation/store/useDataExchangeJobsStore";
 import { useAppStore } from "@core/store/useAppStore";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { clearNavigationCaches } from "../utils/auth-storage-cleanup";
@@ -29,8 +35,12 @@ export class ImpersonationRepository {
 
     useAppStore.getState().beginSessionTransition();
     useNavigationStore.getState().reset();
+    clearAllDataExchangeCaches();
+    useDataExchangeJobsStore.getState().reset();
+    runSessionCleanupCallbacks();
 
     if (typeof window !== "undefined") {
+      sweepScopedSessionStorageOnLogout();
       sessionStorage.removeItem(STORAGE_KEYS.tenant_context);
       sessionStorage.removeItem("scr_tenant_breadcrumbs");
       if (isImpersonating) {

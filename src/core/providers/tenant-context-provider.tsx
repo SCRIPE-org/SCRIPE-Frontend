@@ -294,7 +294,7 @@ export function TenantContextProvider({ children }: TenantContextProviderProps) 
       clearNavigationCaches();
       useNavigationStore.getState().reset();
       clearAllDataExchangeCaches();
-      useDataExchangeJobsStore.getState().reset();
+      useDataExchangeJobsStore.getState().syncScope();
       invalidateAuthorizationCaches(queryClient, {
         tenantId: nextId,
         purgeSensitiveCaches: true,

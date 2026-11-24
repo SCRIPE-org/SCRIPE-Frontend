@@ -7,6 +7,10 @@
  */
 
 import { secureTokenService } from "./secure-token-service";
+import {
+  runSessionCleanupCallbacks,
+  sweepScopedSessionStorageOnLogout,
+} from "./session-cleanup-registry";
 import { appLogger } from "./logger";
 import { BRAND } from "@core/config/branding";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
@@ -56,8 +60,10 @@ class AuthBroadcastService {
   private clearSiblingSessionForImpersonation(): void {
     secureTokenService.clearTokens();
     useAppStore.getState().logout();
+    runSessionCleanupCallbacks();
     if (typeof window !== "undefined") {
       try {
+        sweepScopedSessionStorageOnLogout();
         localStorage.removeItem(STORAGE_KEYS.APP_STORE);
         sessionStorage.removeItem(STORAGE_KEYS.tenant_context);
         sessionStorage.removeItem(TENANT_BREADCRUMBS_KEY);
@@ -143,7 +149,16 @@ class AuthBroadcastService {
           return;
         }
         appLogger.debug("[AuthBroadcast] Received LOGOUT from another tab");
-        secureTokenService.clearTokens();
+        useAppStore.getState().logout();
+        if (typeof window !== "undefined") {
+          try {
+            localStorage.removeItem(STORAGE_KEYS.APP_STORE);
+            sessionStorage.removeItem(STORAGE_KEYS.tenant_context);
+            sessionStorage.removeItem(TENANT_BREADCRUMBS_KEY);
+          } catch {
+            // Ignore storage errors in restricted browsing contexts
+          }
+        }
         for (const cb of this.onLogoutCallbacks) {
           cb();
         }

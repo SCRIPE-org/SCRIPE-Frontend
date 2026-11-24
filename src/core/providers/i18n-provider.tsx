@@ -54,7 +54,10 @@ const warnedMissingKeys = new Set<string>();
 // client effect below has to correct it after mount.
 function persistLanguageCookie(lang: Language) {
   if (typeof document === "undefined") return;
-  document.cookie = `${STORAGE_KEYS.LANGUAGE}=${lang}; path=/; max-age=31536000; samesite=lax`;
+  const safeLang: Language = lang === "ar" ? "ar" : "en";
+  const isHttps = typeof window !== "undefined" && window.location?.protocol === "https:";
+  const secureAttr = isHttps ? "; Secure" : "";
+  document.cookie = `${STORAGE_KEYS.LANGUAGE}=${safeLang}; path=/; max-age=31536000; samesite=lax${secureAttr}`;
 }
 
 function reportMissingKey(key: string, language: Language): string {

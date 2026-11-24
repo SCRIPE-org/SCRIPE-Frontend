@@ -325,7 +325,7 @@ export function useTenantContextSwitcher(options?: UseTenantContextSwitcherOptio
           clearNavigationCaches();
           useNavigationStore.getState().reset();
           clearAllDataExchangeCaches();
-          useDataExchangeJobsStore.getState().reset();
+          useDataExchangeJobsStore.getState().syncScope();
           invalidateAuthorizationCaches(queryClient, {
             tenantId: tenantInfo.id,
             purgeSensitiveCaches: true,
@@ -397,7 +397,7 @@ export function useTenantContextSwitcher(options?: UseTenantContextSwitcherOptio
         clearNavigationCaches();
         useNavigationStore.getState().reset();
         clearAllDataExchangeCaches();
-        useDataExchangeJobsStore.getState().reset();
+        useDataExchangeJobsStore.getState().syncScope();
         invalidateAuthorizationCaches(queryClient, {
           tenantId: null,
           purgeSensitiveCaches: true,

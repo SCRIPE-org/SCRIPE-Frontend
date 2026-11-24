@@ -4,6 +4,12 @@ import { User } from "@modules/auth/core/domain/entities/User";
 import { PermissionCode, AdminRole } from "@core/common/types/permissions";
 import { secureTokenService } from "@core/common/secure-token-service";
 import { clearActivePrincipalKey, syncActivePrincipalKey } from "@core/common/active-principal";
+import {
+  purgeDynamicBrowserCaches,
+  runSessionCleanupCallbacks,
+  sweepScopedSessionStorageOnLogout,
+  writeAuthStateHintCookie,
+} from "@core/common/session-cleanup-registry";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { useSudoStore } from "@core/store/useSudoStore";
 import { usePatOneTimeSecretStore } from "@core/store/usePatOneTimeSecretStore";
@@ -64,20 +70,6 @@ interface AppState {
   // Hydration State
   _hasHydrated: boolean;
   setHasHydrated: (state: boolean) => void;
-}
-
-/**
- * Writes or clears the `scr_auth_state` pre-hydration UX hint cookie.
- * This cookie is NOT a security credential; when the page runs over HTTPS,
- * the `Secure` attribute is included so it is never sent over cleartext HTTP.
- */
-function writeAuthStateHintCookie(active: boolean): void {
-  if (typeof document === "undefined") return;
-  const isHttps = typeof window !== "undefined" && window.location?.protocol === "https:";
-  const secureAttr = isHttps ? "; Secure" : "";
-  document.cookie = active
-    ? `${STORAGE_KEYS.scr_auth_state}=true; path=/; max-age=2592000; samesite=Lax${secureAttr}`
-    : `${STORAGE_KEYS.scr_auth_state}=; path=/; max-age=0; samesite=Lax${secureAttr}`;
 }
 
 export const useAppStore = create<AppState>()(
@@ -150,6 +142,7 @@ export const useAppStore = create<AppState>()(
         clearActivePrincipalKey();
         useSudoStore.getState().reset();
         usePatOneTimeSecretStore.getState().clearPendingReceipt();
+        runSessionCleanupCallbacks();
         set({
           user: null,
           isAuthenticated: true,
@@ -188,6 +181,9 @@ export const useAppStore = create<AppState>()(
           requireMfaEnrollment: false,
           defaultRedirectPath: "/",
         });
+        runSessionCleanupCallbacks();
+        sweepScopedSessionStorageOnLogout();
+        purgeDynamicBrowserCaches();
       },
 
       // Subscription State
