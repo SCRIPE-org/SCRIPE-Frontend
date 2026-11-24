@@ -33,6 +33,10 @@ export interface FlatSectionProps {
   selectedPermissionCodes: Set<string>;
   /** Optional map of existing permission assignment overrides. */
   assignments?: Map<string, PermissionAssignmentJson>;
+  /** Disables selection checkboxes (for permission-locked or read-only views). */
+  disabled?: boolean;
+  /** Whether cross-tenant `all_tenants` scope option may be offered. */
+  allowAllTenants?: boolean;
   /** Optional custom CSS class name. */
   className?: string;
   /** Callback fired when an individual permission code is toggled. */
@@ -51,6 +55,8 @@ export function FlatSection({
   permissions,
   selectedPermissionCodes,
   assignments,
+  disabled,
+  allowAllTenants,
   className,
   onTogglePermission,
   onToggleGroup,
@@ -97,7 +103,7 @@ export function FlatSection({
                   <TriStateCheckbox
                     total={catPerms.length}
                     selected={catSelected}
-                    disabled={catPerms.length === 0}
+                    disabled={disabled || catPerms.length === 0}
                     onToggle={() => onToggleGroup(catPerms)}
                     label={categoryName}
                   />
@@ -115,6 +121,8 @@ export function FlatSection({
                 permission={permission}
                 isSelected={selectedPermissionCodes.has(permission.code)}
                 assignment={assignments?.get(permission.code)}
+                disabled={disabled}
+                allowAllTenants={allowAllTenants}
                 onToggle={() => onTogglePermission(permission.code)}
                 onUpdateConfig={onUpdateConfig}
               />
@@ -136,6 +144,10 @@ export interface FlatPermRowProps {
   isSelected: boolean;
   /** Optional current assignment configuration. */
   assignment?: PermissionAssignmentJson;
+  /** Disables selection checkboxes (for permission-locked or read-only views). */
+  disabled?: boolean;
+  /** Whether cross-tenant `all_tenants` scope option may be offered. */
+  allowAllTenants?: boolean;
   /** Optional custom CSS class name. */
   className?: string;
   /** Callback fired when the selection state is toggled. */
@@ -151,6 +163,8 @@ export function FlatPermRow({
   permission,
   isSelected,
   assignment,
+  disabled,
+  allowAllTenants,
   className,
   onToggle,
   onUpdateConfig,
@@ -174,6 +188,7 @@ export function FlatPermRow({
     >
       <Checkbox
         checked={isSelected}
+        disabled={disabled}
         onCheckedChange={onToggle}
         aria-label={permission.getLocalizedName(language)}
       />
@@ -184,14 +199,13 @@ export function FlatPermRow({
       <TooltipProvider delayDuration={150}>
         <Tooltip>
           <TooltipTrigger asChild>
-            <span
-              className="hidden shrink-0 cursor-help font-mono text-xs text-nx-ink-3 sm:inline"
-              tabIndex={0}
-            >
-              {permission.code}
+            <span className="hidden shrink-0 cursor-help font-mono text-xs text-nx-ink-3 sm:inline">
+              <bdi dir="ltr">{permission.code}</bdi>
             </span>
           </TooltipTrigger>
-          <TooltipContent side="top">{permission.code}</TooltipContent>
+          <TooltipContent side="top">
+            <bdi dir="ltr">{permission.code}</bdi>
+          </TooltipContent>
         </Tooltip>
       </TooltipProvider>
 
@@ -240,8 +254,11 @@ export function FlatPermRow({
                 id: permission.id,
                 code: permission.code,
                 displayName: permission.getLocalizedName(language),
+                resource: permission.resource,
               }}
               currentAssignment={assignment}
+              allowAllTenants={allowAllTenants}
+              isReadOnly={disabled}
               onSave={(next) => onUpdateConfig?.(permission.code, next)}
             />
           )}

@@ -136,7 +136,7 @@ export function RolesView() {
         label: t("roles.managePermissions"),
         icon: <Shield className="h-4 w-4" />,
         onClick: (role) => router.push(`/roles/${role.id}`),
-        requiredPermission: SYSTEM_PERMISSIONS.ROLES_UPDATE,
+        requiredPermission: SYSTEM_PERMISSIONS.ROLES_MANAGE_PERMISSIONS,
       },
       // Clone Role
       {
@@ -162,12 +162,14 @@ export function RolesView() {
         label: t("userGroups.assignToGroup"),
         icon: <Users className="h-4 w-4" />,
         onClick: (role) => handleOpenAssignToGroup(role),
+        requiredPermission: SYSTEM_PERMISSIONS.USER_GROUPS_UPDATE,
       },
       // Edit (Standard)
       {
         label: t("common.edit"),
         icon: <Pencil className="h-4 w-4" />,
         onClick: (role) => vm.openEditModal(role),
+        requiredPermission: SYSTEM_PERMISSIONS.ROLES_UPDATE,
       },
       // Delete (Standard) — opens RoleDeleteDialog instead of the generic
       // bare confirm; that dialog owns its own confirmation step.
@@ -176,6 +178,7 @@ export function RolesView() {
         icon: <Trash className="h-4 w-4" />,
         onClick: (role) => handleOpenDelete(role),
         variant: "destructive",
+        requiredPermission: SYSTEM_PERMISSIONS.ROLES_DELETE,
       },
     ],
     getItemDisplayName: (role) => role.getLocalizedName(language),
@@ -190,6 +193,7 @@ export function RolesView() {
           setBulkAssignToGroupOpen(true);
         },
         variant: "outline" as const,
+        requiredPermission: SYSTEM_PERMISSIONS.USER_GROUPS_UPDATE,
       },
       {
         label: t("common.delete"),

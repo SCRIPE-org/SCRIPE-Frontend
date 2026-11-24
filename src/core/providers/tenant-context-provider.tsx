@@ -21,7 +21,7 @@ import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { broadcastTenantContext } from "@core/services/api-factory";
 import { clearAllDataExchangeCaches } from "@core/data-exchange/data/repositories/DataExchangeRepository";
 import { useDataExchangeJobsStore } from "@core/data-exchange/presentation/store/useDataExchangeJobsStore";
-import { invalidateAuthorizationCaches } from "@core/hooks/use-authorization-sync";
+import { invalidateAuthorizationCaches, syncCurrentSessionAuthorization } from "@core/hooks/use-authorization-sync";
 import { appLogger } from "../common/logger";
 import { clearNavigationCaches } from "@modules/auth/core/data/utils/auth-storage-cleanup";
 
@@ -165,7 +165,7 @@ function navigateAfterSwitch(targetUrl: string | null | undefined, defaultUrl: s
  */
 export function TenantContextProvider({ children }: TenantContextProviderProps) {
   const { hasPermission } = usePermissions();
-  const { apiService } = useServices();
+  const { apiService, authRepository } = useServices();
   const queryClient = useQueryClient();
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
   const hasHydrated = useAppStore((s) => s._hasHydrated);
@@ -301,9 +301,22 @@ export function TenantContextProvider({ children }: TenantContextProviderProps) 
       });
       queryClient.invalidateQueries();
 
+      if (
+        options?.redirectTo === null &&
+        typeof (authRepository as { getCurrentPrincipal?: unknown } | undefined)
+          ?.getCurrentPrincipal === "function"
+      ) {
+        void syncCurrentSessionAuthorization({
+          queryClient,
+          authRepository: authRepository as { getCurrentPrincipal: () => Promise<any> },
+          targetTenantId: nextId,
+          forcePrincipalFetch: true,
+        });
+      }
+
       navigateAfterSwitch(options?.redirectTo, options?.defaultRedirect ?? "/");
     },
-    [apiService, queryClient]
+    [apiService, authRepository, queryClient]
   );
 
   const enterTenantWorld = useCallback(

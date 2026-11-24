@@ -11,7 +11,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Shield, Trash2, Pencil, Eye, Users, RefreshCw } from "lucide-react";
+import { Shield, Trash2, Pencil, Eye, Users, RefreshCw, Lock } from "lucide-react";
 
 // Generic CRUD imports
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
@@ -20,6 +20,7 @@ import { formatUtc } from "@core/common/utils";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { useI18n } from "@core/providers/i18n-provider";
+import { usePermission } from "@core/hooks/use-permission";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 
 // Role imports
@@ -41,6 +42,7 @@ interface TenantRolesTabProps {
  */
 export function TenantRolesTab({ tenantId, tenantName }: TenantRolesTabProps) {
   const { t, language } = useI18n();
+  const canResyncPermissions = usePermission(SYSTEM_PERMISSIONS.SUBSCRIPTIONS_ASSIGN);
 
   // All logic delegated to ViewModel
   const vm = useTenantRolesViewModel({ tenantId, tenantName });
@@ -67,11 +69,25 @@ export function TenantRolesTab({ tenantId, tenantName }: TenantRolesTabProps) {
       render:
         col.key === "code"
           ? (value: string) => (
-              <code className="rounded-nx-sm bg-nx-raised px-2 py-0.5 text-xs">{value}</code>
+              <code className="rounded-nx-sm bg-nx-raised px-2 py-0.5 text-xs">
+                <bdi dir="ltr">{value}</bdi>
+              </code>
             )
           : col.key === "name"
             ? (_: unknown, role: Role) => (
-                <span className="font-medium">{role.getLocalizedName(language)}</span>
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <span className="font-medium">{role.getLocalizedName(language)}</span>
+                  {role.isPermissionLocked && (
+                    <Badge
+                      variant="secondary"
+                      data-testid="role-locked-badge"
+                      className="gap-1 shrink-0 text-[11px]"
+                    >
+                      <Lock className="h-3 w-3" aria-hidden="true" />
+                      {t("roles.lockedBadge")}
+                    </Badge>
+                  )}
+                </div>
               )
             : col.key === "description"
               ? (_: unknown, role: Role) => (
@@ -112,10 +128,10 @@ export function TenantRolesTab({ tenantId, tenantName }: TenantRolesTabProps) {
     editInitialValues: vm.getEditInitialValues,
     getItemDisplayName: (item: Role) => item.getLocalizedName(language),
     permissions: {
-      canView: "roles.view",
-      canCreate: "roles.create",
-      canUpdate: "roles.update",
-      canDelete: "roles.delete",
+      canView: SYSTEM_PERMISSIONS.ROLES_VIEW,
+      canCreate: SYSTEM_PERMISSIONS.ROLES_CREATE,
+      canUpdate: SYSTEM_PERMISSIONS.ROLES_UPDATE,
+      canDelete: SYSTEM_PERMISSIONS.ROLES_DELETE,
     },
     enableBulkActions: true,
     bulkActions: [
@@ -127,6 +143,7 @@ export function TenantRolesTab({ tenantId, tenantName }: TenantRolesTabProps) {
           setBulkAssignToGroupOpen(true);
         },
         variant: "outline" as const,
+        requiredPermission: SYSTEM_PERMISSIONS.USER_GROUPS_UPDATE,
       },
     ],
     getActions: (vmInstance, tFn, handleDeleteFn): CrudAction<Role>[] => [
@@ -141,19 +158,21 @@ export function TenantRolesTab({ tenantId, tenantName }: TenantRolesTabProps) {
         onClick: (item: Role) => vmInstance.openEditModal(item),
         variant: "ghost",
         icon: <Pencil className="h-4 w-4" aria-hidden="true" />,
+        requiredPermission: SYSTEM_PERMISSIONS.ROLES_UPDATE,
       },
       {
         label: tFn("role.managePermissions"),
         onClick: (item: Role) => vm.openPermissionsDialog(item),
         variant: "ghost",
         icon: <Shield className="h-4 w-4" aria-hidden="true" />,
-        requiredPermission: SYSTEM_PERMISSIONS.ROLES_UPDATE,
+        requiredPermission: SYSTEM_PERMISSIONS.ROLES_MANAGE_PERMISSIONS,
       },
       {
         label: tFn("userGroups.assignToGroup"),
         onClick: (item: Role) => handleOpenAssignToGroup(item),
         variant: "ghost",
         icon: <Users className="h-4 w-4" aria-hidden="true" />,
+        requiredPermission: SYSTEM_PERMISSIONS.USER_GROUPS_UPDATE,
       },
       {
         label: tFn("common.delete"),
@@ -161,6 +180,7 @@ export function TenantRolesTab({ tenantId, tenantName }: TenantRolesTabProps) {
         variant: "ghost",
         className: "text-destructive hover:text-destructive/90",
         icon: <Trash2 className="h-4 w-4" aria-hidden="true" />,
+        requiredPermission: SYSTEM_PERMISSIONS.ROLES_DELETE,
       },
     ],
   };
@@ -173,15 +193,17 @@ export function TenantRolesTab({ tenantId, tenantName }: TenantRolesTabProps) {
           <h3 className="text-lg font-semibold text-nx-ink">{vm.title}</h3>
           <p className="text-sm text-nx-ink-2">{vm.subtitle}</p>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => vm.resyncPermissions()}
-          loading={vm.isResyncing}
-        >
-          {!vm.isResyncing && <RefreshCw className="me-2 h-4 w-4" aria-hidden="true" />}
-          {t("tenant.resyncPermissions")}
-        </Button>
+        {canResyncPermissions && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => vm.resyncPermissions()}
+            loading={vm.isResyncing}
+          >
+            {!vm.isResyncing && <RefreshCw className="me-2 h-4 w-4" aria-hidden="true" />}
+            {t("tenant.resyncPermissions")}
+          </Button>
+        )}
       </div>
 
       {/* Roles Table */}

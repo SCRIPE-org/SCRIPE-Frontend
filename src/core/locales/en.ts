@@ -268,6 +268,10 @@ export const en = {
     selectPermissions: "Select Permissions",
     selectPermissionsPlaceholder: "Select Permissions Placeholder",
     managePermissions: "Manage Permissions",
+    restrictedFieldsCount: "({count} restricted fields)",
+    scopeAllTenantsRestricted:
+      "Tenant roles cannot grant All Tenants scope. Choose Own Tenant, Hierarchy, or Own Only.",
+    bulkScopeSelectHint: "Select at least one permission to apply a bulk scope",
   },
   app: {
     title: "Admin Dashboard",

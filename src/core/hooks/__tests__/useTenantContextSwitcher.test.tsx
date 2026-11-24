@@ -32,11 +32,15 @@ const mockApiService = {
 
 const mockBroadcastTenantContext = vi.fn();
 const mockClearNavigationCaches = vi.fn();
+const mockGetCurrentPrincipal = vi.fn();
 
 vi.mock("@core/providers/service-provider", () => ({
   useServices: () => ({
     apiService: mockApiService,
-    authRepository: { logout: vi.fn().mockResolvedValue(undefined) },
+    authRepository: {
+      logout: vi.fn().mockResolvedValue(undefined),
+      getCurrentPrincipal: mockGetCurrentPrincipal,
+    },
   }),
 }));
 
@@ -365,5 +369,72 @@ describe("useTenantContextSwitcher", () => {
 
     expect(ok).toBe(false);
     expect(mockApiService.post).not.toHaveBeenCalled();
+  });
+
+  it("resyncs principal immediately in-place on membership switch and clears lastAuthRefresh", async () => {
+    sessionStorage.setItem(STORAGE_KEYS.lastAuthRefresh, "1700000000000");
+    useAppStore.setState({
+      isAuthenticated: true,
+      _hasHydrated: true,
+      permissions: ["identity_context.switch", "crm.leads.view"],
+      roles: [],
+      user: {
+        id: "user-3",
+        username: "multi.org.user",
+        isProtected: false,
+        tenantId: "home-t",
+      } as never,
+    });
+
+    mockApiService.get.mockResolvedValue([
+      {
+        memberTenantId: "enc-m-9",
+        memberTenantName: "Alexandria Branch",
+        memberTenantCode: "ALEX",
+        effectiveRoleCode: "BRANCH_MANAGER",
+      },
+    ]);
+    mockApiService.post.mockResolvedValue(undefined);
+    mockGetCurrentPrincipal.mockResolvedValue({
+      id: "user-3",
+      username: "multi.org.user",
+      isProtected: false,
+      tenantId: "enc-m-9",
+      roles: [
+        {
+          roleId: "r-branch",
+          roleName: "Branch Manager",
+          roleCode: "BRANCH_MANAGER",
+          inheritedPermissions: [],
+        },
+      ],
+      permissions: ["venue.courts.view", "identity_context.switch"],
+      restrictedFields: { "crm.opportunities": ["estimatedAmount"] },
+    });
+
+    const { result } = renderHook(() => useTenantContextSwitcher(), {
+      wrapper: createWrapper(queryClient),
+    });
+
+    await waitFor(() => {
+      expect(result.current.candidates).toHaveLength(1);
+    });
+
+    let ok = false;
+    await act(async () => {
+      ok = await result.current.switchToTenant(result.current.candidates[0], {
+        redirectTo: null,
+      });
+    });
+
+    expect(ok).toBe(true);
+    expect(sessionStorage.getItem(STORAGE_KEYS.lastAuthRefresh)).toBeNull();
+    await waitFor(() => {
+      expect(mockGetCurrentPrincipal).toHaveBeenCalledTimes(1);
+    });
+    expect(useAppStore.getState().permissions).toEqual([
+      "venue.courts.view",
+      "identity_context.switch",
+    ]);
   });
 });

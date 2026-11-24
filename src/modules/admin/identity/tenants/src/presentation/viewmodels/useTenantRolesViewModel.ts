@@ -16,6 +16,11 @@
 import { useState, useMemo, useCallback } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { usePermission } from "@core/hooks/use-permission";
+import { useAppStore } from "@core/store/useAppStore";
+import { useOptionalNavigation } from "@core/providers/navigation-provider";
+import { syncCurrentSessionAuthorization } from "@core/hooks/use-authorization-sync";
+import { SYSTEM_PERMISSIONS, isPlatformSuperAdminUser } from "@core/common/types/permissions";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useWorkspace } from "@core/providers/workspace-provider";
@@ -89,9 +94,18 @@ export function useTenantRolesViewModel({
   const { t, language } = useI18n();
   const { workspaceGroups } = useWorkspace();
   const cachedWorkspaces = useNavigationStore((s) => s.workspaces);
+  const nav = useOptionalNavigation();
+  const user = useAppStore((s) => s.user);
+  const userTenantId = user?.tenantId ?? null;
+  const isPlatformSuperAdmin = isPlatformSuperAdminUser(user);
+  const canViewTenants = usePermission(SYSTEM_PERMISSIONS.TENANTS_VIEW);
+  const useCrossTenantEndpoint = Boolean(
+    tenantId && (isPlatformSuperAdmin || (tenantId !== userTenantId && canViewTenants))
+  );
+  const useMyTenant = Boolean(!useCrossTenantEndpoint && (!tenantId || tenantId === userTenantId));
 
   // Delegate to core roles ViewModel - Dependency Inversion Principle
-  const rolesVm = useRolesViewModel({ tenantId });
+  const rolesVm = useRolesViewModel({ tenantId: useMyTenant ? undefined : tenantId, useMyTenant });
 
   // ─────────────────────────────────────────────────────────────────
   // Permissions Dialog State - Single Responsibility (dialog management)
@@ -116,7 +130,15 @@ export function useTenantRolesViewModel({
     () =>
       async (query: string): Promise<FieldOption[]> => {
         try {
-          const permissions = await identityContainer.tenantRepository.getTenantPermissions(tenantId);
+          const rawPermissions = useCrossTenantEndpoint
+            ? await identityContainer.tenantRepository.getTenantPermissions(tenantId)
+            : await identityContainer.roleRepository.getCurrentTenantAvailablePermissions();
+          const isTenantScoped = Boolean(tenantId || userTenantId);
+          const permissions = isTenantScoped
+            ? rawPermissions.filter(
+                (p) => (p as { platformOnly?: boolean }).platformOnly !== true
+              )
+            : rawPermissions;
 
           // Client-side filter if there's a search query
           let filtered = permissions;
@@ -152,7 +174,7 @@ export function useTenantRolesViewModel({
           return [];
         }
       },
-    [tenantId, language]
+    [tenantId, language, useCrossTenantEndpoint, userTenantId]
   );
 
   // ─────────────────────────────────────────────────────────────────
@@ -352,9 +374,14 @@ export function useTenantRolesViewModel({
   const { success: toastSuccess, error: toastError } = useEnhancedToast();
   const resyncMutation = useMutation({
     mutationFn: () => identityContainer.tenantRepository.resyncPermissions(tenantId),
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ["tenant-permissions-raw", tenantId] });
       queryClient.invalidateQueries({ queryKey: ["tenant-current-permissions-service", tenantId] });
+      await syncCurrentSessionAuthorization({
+        queryClient,
+        refreshNavigation: nav?.refreshNavigation,
+        targetTenantId: tenantId,
+      });
       toastSuccess({
         title: t("tenant.permissionsResynced"),
       });

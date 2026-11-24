@@ -8,7 +8,7 @@
  * Reads as three bands — identity, placement, reach — so the eye lands on the
  * number that matters without scanning a flat list of label/value pairs.
  */
-import { Shield, Users } from "lucide-react";
+import { Lock, Shield, Users } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
 import { Progress } from "@core/ui/progress";
@@ -74,10 +74,22 @@ export function RoleInfoCard({
   return (
     <Card className={className}>
       <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-base">
-          <Shield className="h-4 w-4 text-nx-ink-3" aria-hidden="true" />
-          {t("roles.roleDetails")}
-        </CardTitle>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <Shield className="h-4 w-4 text-nx-ink-3" aria-hidden="true" />
+            {t("roles.roleDetails")}
+          </CardTitle>
+          {role?.isPermissionLocked && (
+            <Badge
+              variant="secondary"
+              data-testid="role-locked-badge"
+              className="gap-1 text-xs"
+            >
+              <Lock className="h-3 w-3" aria-hidden="true" />
+              {t("roles.lockedBadge")}
+            </Badge>
+          )}
+        </div>
       </CardHeader>
 
       <CardContent className="space-y-4">

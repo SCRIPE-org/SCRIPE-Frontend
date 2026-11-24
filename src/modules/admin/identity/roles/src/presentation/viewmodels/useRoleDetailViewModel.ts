@@ -12,13 +12,18 @@
  */
 "use client";
 
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import { useParams } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { qk } from "@core/common/query-keys";
 import { appLogger } from "@core/common/logger";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { usePermission } from "@core/hooks/use-permission";
+import { useAppStore } from "@core/store/useAppStore";
+import { useOptionalNavigation } from "@core/providers/navigation-provider";
+import { syncCurrentSessionAuthorization } from "@core/hooks/use-authorization-sync";
+import { SYSTEM_PERMISSIONS, isPlatformSuperAdminUser } from "@core/common/types/permissions";
 import { identityContainer } from "@modules/identity/di";
 import type {
   Permission,
@@ -26,9 +31,16 @@ import type {
   PermissionCategoryGroup,
 } from "@modules/identity/permissions";
 import type { Role } from "../../domain/entities/Role";
-import type { PermissionAssignmentJson } from "../../domain/types/PermissionTypes";
+import {
+  PermissionScopes,
+  type PermissionAssignmentJson,
+} from "../../domain/types/PermissionTypes";
 import type { RoleWorkspaceStartPagesCardProps } from "../components/RoleWorkspaceStartPagesCard";
 import { useRoleWorkspaceEntriesViewModel } from "./useRoleWorkspaceEntriesViewModel";
+import {
+  extractRolePermissionAssignment,
+  normalizeRolePermissionScope,
+} from "../../domain/utils/permission-assignment-utils";
 
 // === Types ===
 /**
@@ -46,6 +58,8 @@ export interface RoleDetailHeaderProps {
   onSave: () => void;
   /** Whether the permission matrix has unsaved edits since the last load/save. */
   isDirty: boolean;
+  /** Whether the role's permissions are locked by edition synchronization. */
+  isPermissionLocked?: boolean;
 }
 
 /**
@@ -79,6 +93,10 @@ export interface PermissionTreeProps {
   onBulkScopeUpdate: (scope: string) => void;
   bulkScopeValue: string;
   setBulkScopeValue: (scope: string) => void;
+  allowAllTenants?: boolean;
+  isPermissionLocked?: boolean;
+  isReadOnly?: boolean;
+  lockReason?: string;
 }
 
 // === ViewModel ===
@@ -94,8 +112,15 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
   // keeps working. Both resolve to the same value on that route.
   const roleId = roleIdOverride ?? (params.id as string);
   const queryClient = useQueryClient();
+  const nav = useOptionalNavigation();
   const { success, error: toastError } = useEnhancedToast();
   const { roleRepository } = identityContainer;
+
+  const user = useAppStore((s) => s.user);
+  const userTenantId = user?.tenantId ?? null;
+  const isPlatformSuperAdmin = isPlatformSuperAdminUser(user);
+  const canViewTenants = usePermission(SYSTEM_PERMISSIONS.TENANTS_VIEW);
+  const canManagePermissions = usePermission(SYSTEM_PERMISSIONS.ROLES_MANAGE_PERMISSIONS);
 
   // === STATE ===
   const [assignments, setAssignments] = useState<Map<string, PermissionAssignmentJson>>(new Map());
@@ -132,18 +157,53 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
 
   // ── Backend-driven grouped permissions (Module → Category → Permissions) ──
   // ZERO client-side grouping: backend sends the tree, frontend renders it.
-  const { data: moduleGroups = [], isLoading: permissionsLoading } = useQuery<
+  const targetTenantId = role?.tenantId ?? null;
+  const isTenantRole = Boolean(targetTenantId || userTenantId);
+  const allowAllTenants = !isTenantRole;
+  const isPermissionLocked = Boolean(role?.isPermissionLocked);
+  const permissionsReadOnly = isPermissionLocked || !canManagePermissions;
+  const useCrossTenantEndpoint = Boolean(
+    targetTenantId &&
+      (isPlatformSuperAdmin || (targetTenantId !== userTenantId && canViewTenants))
+  );
+
+  const { data: rawModuleGroups = [], isLoading: permissionsLoading } = useQuery<
     PermissionModuleGroup[]
   >({
-    queryKey: ["roleAvailablePermissionsGrouped", role?.tenantId ?? "platform", searchQuery],
+    queryKey: [
+      "roleAvailablePermissionsGrouped",
+      useCrossTenantEndpoint ? targetTenantId : (userTenantId ?? "platform"),
+      searchQuery,
+    ],
     queryFn: () => {
-      if (role?.tenantId) {
-        return roleRepository.getTenantAvailablePermissionsGrouped(role.tenantId);
+      if (useCrossTenantEndpoint && targetTenantId) {
+        return roleRepository.getTenantAvailablePermissionsGrouped(
+          targetTenantId,
+          searchQuery || undefined
+        );
       }
       return roleRepository.getCurrentTenantAvailablePermissionsGrouped(searchQuery || undefined);
     },
     enabled: !roleLoading,
   });
+
+  // Defensive tenant guard: exclude any platform-only permissions when managing a tenant role
+  const moduleGroups = useMemo(() => {
+    if (!isTenantRole) return rawModuleGroups;
+    return rawModuleGroups
+      .map((mg) => ({
+        ...mg,
+        categories: mg.categories
+          .map((cat) => ({
+            ...cat,
+            permissions: cat.permissions.filter(
+              (p) => (p as { platformOnly?: boolean }).platformOnly !== true
+            ),
+          }))
+          .filter((cat) => cat.permissions.length > 0),
+      }))
+      .filter((mg) => mg.categories.length > 0);
+  }, [isTenantRole, rawModuleGroups]);
 
   // ── Blast Radius: Count of Admins holding this role ──
   const { data: adminCount = 0 } = useQuery({
@@ -165,10 +225,11 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
   // This replaces the broken `expandedKeys.size === 0 ? true` fallback.
   // When moduleGroups loads, populate expandedKeys with all module keys
   // so every module starts expanded. Users can then collapse individually.
-  const hasInitializedExpand = useRef(false);
+  const hasInitializedExpand = useRef<string | null>(null);
   useEffect(() => {
-    if (moduleGroups.length > 0 && !hasInitializedExpand.current) {
-      hasInitializedExpand.current = true;
+    const expandScopeKey = roleId ?? "__loaded__";
+    if (moduleGroups.length > 0 && hasInitializedExpand.current !== expandScopeKey) {
+      hasInitializedExpand.current = expandScopeKey;
       const keys = new Set<string>();
       moduleGroups.forEach((mg) => {
         keys.add(`module:${mg.module}`);
@@ -177,7 +238,7 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
         setExpandedKeys(keys);
       });
     }
-  }, [moduleGroups]);
+  }, [moduleGroups, roleId]);
 
   // === INITIALIZE ASSIGNMENTS WHEN DATA LOADS (once per role) ===
   // Guarded on roleId, not on rolePermissions' array reference: staleTime: 0
@@ -190,21 +251,16 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
   // saveMutation's onSuccess already clears isDirty directly.
   useEffect(() => {
     if (!roleId || rolePermissionsLoading || initializedRoleId === roleId) return;
-    if (!rolePermissions || rolePermissions.length === 0) return;
+    if (!rolePermissions) return;
 
     appLogger.debug("rolePermissions raw:", rolePermissions);
 
     const newAssignments = new Map<string, PermissionAssignmentJson>();
 
     rolePermissions.forEach((rp: any) => {
-      const code = rp.permissionCode || rp.PermissionCode || rp.code || rp.Code;
-
-      if (code) {
-        newAssignments.set(code, {
-          permissionId: rp.permissionId || rp.PermissionId || rp.id || rp.Id,
-          scopeOverride: rp.scope || rp.ScopeOverride,
-          restrictedFields: Array.isArray(rp.restrictedFields) ? rp.restrictedFields : undefined,
-        });
+      const parsed = extractRolePermissionAssignment(rp);
+      if (parsed) {
+        newAssignments.set(parsed.code, parsed.assignment);
       }
     });
 
@@ -228,7 +284,7 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
         throw new Error(t("roleDetail.workspaceEntriesMissingTargetError"));
       }
 
-      if (isDirty) {
+      if (isDirty && !permissionsReadOnly) {
         const allPermissions = getAllPermissionsFlat();
         const codeToIdMap = new Map<string, string>();
         allPermissions.forEach((p) => {
@@ -241,9 +297,11 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
             if (!id) {
               id = codeToIdMap.get(code) || "";
             }
+            const normalizedScope =
+              normalizeRolePermissionScope(assignment.scopeOverride, allowAllTenants) ?? null;
             return {
               permissionId: id,
-              scopeOverride: assignment.scopeOverride ?? null,
+              scopeOverride: normalizedScope,
               restrictedFields: assignment.restrictedFields ?? [],
             };
           })
@@ -261,10 +319,15 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
         await workspaceEntriesVm.saveWorkspaceEntries();
       }
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ["rolePermissions", roleId] });
       queryClient.invalidateQueries({ queryKey: ["role", roleId] });
       queryClient.invalidateQueries({ queryKey: qk.roles.workspaceEntries(roleId) });
+      await syncCurrentSessionAuthorization({
+        queryClient,
+        refreshNavigation: nav?.refreshNavigation,
+        targetTenantId,
+      });
       // Reset immediately rather than waiting on the invalidated refetch, so
       // the Save button/banner clear the instant the save resolves.
       setIsDirty(false);
@@ -292,6 +355,7 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
 
   const togglePermission = useCallback(
     (permissionCode: string) => {
+      if (permissionsReadOnly) return;
       setIsDirty(true);
       setAssignments((prev) => {
         const next = new Map(prev);
@@ -305,27 +369,35 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
           const permission = allPerms.find((p) => p.code === permissionCode);
           next.set(permissionCode, {
             permissionId: permission?.id || "",
-            scopeOverride: "Tenant",
+            scopeOverride: PermissionScopes.OwnTenant,
             restrictedFields: [],
           });
         }
         return next;
       });
     },
-    [moduleGroups]
+    [moduleGroups, permissionsReadOnly]
   );
 
-  const updateAssignment = useCallback((code: string, assignment: PermissionAssignmentJson) => {
-    setIsDirty(true);
-    setAssignments((prev) => {
-      const next = new Map(prev);
-      next.set(code, assignment);
-      return next;
-    });
-  }, []);
+  const updateAssignment = useCallback(
+    (code: string, assignment: PermissionAssignmentJson) => {
+      if (permissionsReadOnly) return;
+      setIsDirty(true);
+      setAssignments((prev) => {
+        const next = new Map(prev);
+        next.set(code, {
+          ...assignment,
+          scopeOverride: normalizeRolePermissionScope(assignment.scopeOverride, allowAllTenants),
+        });
+        return next;
+      });
+    },
+    [permissionsReadOnly, allowAllTenants]
+  );
 
   const toggleCategoryPermissions = useCallback(
     (permissions: Permission[]) => {
+      if (permissionsReadOnly) return;
       const categoryCodes = permissions.map((p) => p.code);
       const allSelected = categoryCodes.every((code) => assignments.has(code));
 
@@ -340,7 +412,7 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
               const permission = permissions.find((p) => p.code === code);
               next.set(code, {
                 permissionId: permission?.id || "",
-                scopeOverride: "Tenant",
+                scopeOverride: PermissionScopes.OwnTenant,
                 restrictedFields: [],
               });
             }
@@ -349,7 +421,7 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
         return next;
       });
     },
-    [assignments]
+    [assignments, permissionsReadOnly]
   );
 
   const expandAll = useCallback(() => {
@@ -372,19 +444,26 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
     saveMutation.mutate();
   }, [saveMutation]);
 
-  const bulkUpdateScope = useCallback((scope: string) => {
-    const scopeValue = scope === "own_tenant" ? undefined : scope;
+  const bulkUpdateScope = useCallback(
+    (scope: string) => {
+      if (permissionsReadOnly) return;
+      if (!allowAllTenants && scope.toLowerCase() === PermissionScopes.AllTenants) {
+        return;
+      }
+      const scopeValue = normalizeRolePermissionScope(scope, allowAllTenants);
 
-    setIsDirty(true);
-    setAssignments((prev) => {
-      const next = new Map(prev);
-      Array.from(next.keys()).forEach((key) => {
-        const current = next.get(key)!;
-        next.set(key, { ...current, scopeOverride: scopeValue });
+      setIsDirty(true);
+      setAssignments((prev) => {
+        const next = new Map(prev);
+        Array.from(next.keys()).forEach((key) => {
+          const current = next.get(key)!;
+          next.set(key, { ...current, scopeOverride: scopeValue });
+        });
+        return next;
       });
-      return next;
-    });
-  }, []);
+    },
+    [permissionsReadOnly, allowAllTenants]
+  );
 
   // === DERIVED STATE ===
   const isLoading = roleLoading || permissionsLoading || rolePermissionsLoading;
@@ -392,6 +471,11 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
     (sum, mg) => sum + mg.categories.reduce((s, cat) => s + cat.permissions.length, 0),
     0
   );
+  const lockReason = isPermissionLocked
+    ? t("roles.permissionLockedDescription")
+    : !canManagePermissions
+      ? t("roles.readOnlyPermissionsHint")
+      : undefined;
 
   // === RETURN PROPS FOR VIEW ===
   return {
@@ -401,6 +485,7 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
       isSaving: saveMutation.isPending,
       onSave: handleSave,
       isDirty: isDirty || workspaceEntriesVm.isEntriesDirty,
+      isPermissionLocked,
     } as RoleDetailHeaderProps,
 
     info: {
@@ -428,6 +513,10 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
       onBulkScopeUpdate: bulkUpdateScope,
       bulkScopeValue,
       setBulkScopeValue,
+      allowAllTenants,
+      isPermissionLocked,
+      isReadOnly: permissionsReadOnly,
+      lockReason,
     } as PermissionTreeProps,
 
     workspaceEntries: {

@@ -19,6 +19,8 @@ import type {
 } from "../../domain/entities/RoleRequests";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
+import { useOptionalNavigation } from "@core/providers/navigation-provider";
+import { syncCurrentSessionAuthorization } from "@core/hooks/use-authorization-sync";
 import { qk } from "@core/common/query-keys";
 
 interface UseRolesViewModelParams {
@@ -42,6 +44,7 @@ export function useRolesViewModel(params: UseRolesViewModelParams = {}) {
   const tenantId = useMyTenant ? undefined : ((propTenantId || contextTenantId) ?? undefined);
 
   const queryClient = useQueryClient();
+  const nav = useOptionalNavigation();
   const { success, error: toastError } = useEnhancedToast();
   const { roleRepository } = identityContainer;
 
@@ -96,6 +99,11 @@ export function useRolesViewModel(params: UseRolesViewModelParams = {}) {
     },
     update: async (id, data) => {
       await roleRepository.update(id, data);
+      await syncCurrentSessionAuthorization({
+        queryClient,
+        refreshNavigation: nav?.refreshNavigation,
+        targetTenantId: tenantId ?? null,
+      });
       success({
         title: "Role Updated",
         description: "The role has been updated successfully.",
@@ -104,6 +112,11 @@ export function useRolesViewModel(params: UseRolesViewModelParams = {}) {
     },
     delete: async (id) => {
       await roleRepository.delete(id);
+      await syncCurrentSessionAuthorization({
+        queryClient,
+        refreshNavigation: nav?.refreshNavigation,
+        targetTenantId: tenantId ?? null,
+      });
       success({
         title: "Role Deleted",
         description: "The role has been deleted successfully.",
@@ -132,18 +145,28 @@ export function useRolesViewModel(params: UseRolesViewModelParams = {}) {
 
       // Invalidate query to refresh the list
       queryClient.invalidateQueries({ queryKey });
+      await syncCurrentSessionAuthorization({
+        queryClient,
+        refreshNavigation: nav?.refreshNavigation,
+        targetTenantId: tenantId ?? null,
+      });
 
       return roleId;
     },
-    [roleRepository, tenantId, success, queryClient, queryKey]
+    [roleRepository, tenantId, success, queryClient, queryKey, nav]
   );
 
   // Assign permissions mutation (additional role-specific operation)
   const assignPermissionsMutation = useMutation({
     mutationFn: ({ roleId, request }: { roleId: string; request: AssignPermissionsRequest }) =>
       roleRepository.assignPermissions(roleId, request),
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: qk.roles.all });
+      await syncCurrentSessionAuthorization({
+        queryClient,
+        refreshNavigation: nav?.refreshNavigation,
+        targetTenantId: tenantId ?? null,
+      });
       success({
         title: "Permissions Assigned",
         description: "Permissions have been updated successfully.",
@@ -167,8 +190,13 @@ export function useRolesViewModel(params: UseRolesViewModelParams = {}) {
   const cloneMutation = useMutation({
     mutationFn: ({ request, roleId }: { request: CloneRoleRequest; roleId: string }) =>
       roleRepository.clone(roleId, request),
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey });
+      await syncCurrentSessionAuthorization({
+        queryClient,
+        refreshNavigation: nav?.refreshNavigation,
+        targetTenantId: tenantId ?? null,
+      });
       success({
         title: "Role Cloned",
         description: "The role has been cloned successfully.",
@@ -193,8 +221,13 @@ export function useRolesViewModel(params: UseRolesViewModelParams = {}) {
   const deleteRoleMutation = useMutation({
     mutationFn: ({ id, fallbackRoleId }: { id: string; fallbackRoleId?: string }) =>
       roleRepository.delete(id, fallbackRoleId ? { fallbackRoleId } : undefined),
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey });
+      await syncCurrentSessionAuthorization({
+        queryClient,
+        refreshNavigation: nav?.refreshNavigation,
+        targetTenantId: tenantId ?? null,
+      });
       success({
         title: "Role Deleted",
         description: "The role has been deleted successfully.",
@@ -211,8 +244,13 @@ export function useRolesViewModel(params: UseRolesViewModelParams = {}) {
   // Bulk Delete
   const bulkDeleteMutation = useMutation({
     mutationFn: (ids: string[]) => roleRepository.bulkDelete(ids),
-    onSuccess: (deletedCount) => {
+    onSuccess: async (deletedCount) => {
       queryClient.invalidateQueries({ queryKey });
+      await syncCurrentSessionAuthorization({
+        queryClient,
+        refreshNavigation: nav?.refreshNavigation,
+        targetTenantId: tenantId ?? null,
+      });
       success({
         title: "Roles Deleted",
         description: `${deletedCount} role(s) have been deleted successfully.`,

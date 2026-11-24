@@ -30,7 +30,7 @@ import { Button } from "@core/ui/button";
 import { cn } from "@core/common/utils";
 import type { Permission, PermissionCategoryGroup } from "@modules/identity/permissions";
 import type { PermissionAssignmentJson } from "../../domain/types/PermissionTypes";
-import { CORE_ACTIONS, humanize, MatrixTable, type MatrixRow } from "./MatrixTable";
+import { CORE_ACTIONS, MatrixTable, type MatrixRow } from "./MatrixTable";
 import { FlatSection } from "./FlatSection";
 
 /**
@@ -47,6 +47,10 @@ export interface PermissionModuleMatrixProps {
   selectedPermissionCodes: Set<string>;
   /** Map of existing permission assignment overrides, keyed by permission code. */
   assignments?: Map<string, PermissionAssignmentJson>;
+  /** Disables selection checkboxes (for permission-locked or read-only views). */
+  disabled?: boolean;
+  /** Whether cross-tenant `all_tenants` scope option may be offered. */
+  allowAllTenants?: boolean;
   /** Optional custom CSS class name. */
   className?: string;
   /** Callback fired when the module header accordion toggle is clicked. */
@@ -72,6 +76,8 @@ export function PermissionModuleMatrix({
   isExpanded,
   selectedPermissionCodes,
   assignments,
+  disabled,
+  allowAllTenants,
   className,
   onToggleModule,
   onTogglePermission,
@@ -117,10 +123,11 @@ export function PermissionModuleMatrix({
         const hasCore = cells.some(Boolean);
 
         if (!collision && hasCore) {
-          const rowLabel =
-            byResource.size > 1 ? `${cat.category} — ${humanize(res)}` : cat.category;
-
-          matrixRows.push({ category: rowLabel, cells });
+          matrixRows.push({
+            category: cat.category,
+            resource: byResource.size > 1 ? res : undefined,
+            cells,
+          });
           for (const p of resPerms) {
             if (!present.includes(p.action as (typeof CORE_ACTIONS)[number])) {
               flatPerms.push(p);
@@ -159,8 +166,8 @@ export function PermissionModuleMatrix({
       >
         <ChevronRight
           className={cn(
-            "h-4 w-4 shrink-0 text-nx-ink-3 transition-transform duration-nx-micro ease-nx-enter motion-reduce:transition-none rtl:-scale-x-100",
-            isExpanded && "rotate-90"
+            "h-4 w-4 shrink-0 text-nx-ink-3 transition-transform duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+            isExpanded ? "rotate-90" : "rtl:rotate-180"
           )}
           aria-hidden="true"
         />
@@ -183,6 +190,8 @@ export function PermissionModuleMatrix({
               rows={rows}
               selectedPermissionCodes={selectedPermissionCodes}
               assignments={assignments}
+              disabled={disabled}
+              allowAllTenants={allowAllTenants}
               onTogglePermission={onTogglePermission}
               onToggleGroup={onToggleGroup}
               onUpdateConfig={onUpdateConfig}
@@ -196,6 +205,8 @@ export function PermissionModuleMatrix({
               permissions={flat}
               selectedPermissionCodes={selectedPermissionCodes}
               assignments={assignments}
+              disabled={disabled}
+              allowAllTenants={allowAllTenants}
               onTogglePermission={onTogglePermission}
               onToggleGroup={onToggleGroup}
               onUpdateConfig={onUpdateConfig}

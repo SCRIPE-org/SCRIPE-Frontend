@@ -58,6 +58,13 @@ export const ar = {
     landingTargetNoResults: "لم يتم العثور على وجهة مطابقة.",
     landingEnforcedBadge: "مفروضة",
     landingTargetSystemLocked: "تُدار سياسة البدء لأدوار النظام تلقائياً.",
+    lockedBadge: "مقفل",
+    permissionLockedTitle: "تتم إدارة الصلاحيات تلقائياً",
+    permissionLockedDescription:
+      "يبقى دور المسؤول الفائق للمستأجر متزامناً تلقائياً مع باقة المستأجر النشطة وميزاتها. لا يمكن تعديل الصلاحيات يدوياً.",
+    readOnlyPermissionsTitle: "الصلاحيات للقراءة فقط",
+    readOnlyPermissionsHint: "ليست لديك صلاحية تعديل صلاحيات هذا الدور.",
+    assignToGroup: "تعيين إلى مجموعة",
     totalRoles: "{{count}} دور",
     groups: "المجموعات",
     noGroups: "لا توجد مجموعات",

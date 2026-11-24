@@ -51,14 +51,17 @@ export function ManageRolesDialog({ open, onOpenChange, admin, tenantId }: Manag
   // otherwise a role the admin already has beyond page 1 would render as a
   // raw, unlabelled id, or be missing entirely (F-68).
   const roleOptions: GenericSelectOption[] = useMemo(() => {
-    const byId = new Map<string, GenericSelectOption>();
+    type RoleOptionSource = NonNullable<typeof rolesData>["items"][number];
+    const byId = new Map<string, RoleOptionSource>();
     (rolesData?.items ?? [])
       .filter((role) => (role.tenantId || "") === scopeTenantId) // Double check strict scope
-      .forEach((role) => byId.set(role.id, vm.mapRoleOption(role)));
+      .forEach((role) => byId.set(role.id, role));
     resolvedExtraRoles.forEach((role) => {
-      if (!byId.has(role.id)) byId.set(role.id, vm.mapRoleOption(role));
+      if (!byId.has(role.id)) byId.set(role.id, role);
     });
-    return Array.from(byId.values());
+    return Array.from(byId.values())
+      .sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0))
+      .map((role) => vm.mapRoleOption(role));
   }, [rolesData, resolvedExtraRoles, scopeTenantId, vm]);
 
   // Logic: Map Current Roles to Available Options using ROLE CODE
@@ -135,7 +138,7 @@ export function ManageRolesDialog({ open, onOpenChange, admin, tenantId }: Manag
 
             {/* Role Multi-Selection */}
             <div className="space-y-2">
-              <Label className="flex items-center gap-2">
+              <Label id="manage-roles-select-label" className="flex items-center gap-2">
                 <Shield className="h-4 w-4" aria-hidden="true" />
                 {t("admin.role.selectRoles")} *
               </Label>
@@ -146,6 +149,7 @@ export function ManageRolesDialog({ open, onOpenChange, admin, tenantId }: Manag
                   setSelectedRoleIds(Array.isArray(val) ? val : [val])
                 }
                 placeholder={t("admin.role.selectRolePlaceholder")}
+                aria-labelledby="manage-roles-select-label"
                 type="multi"
                 // Server-side search so a role beyond the first fetched page
                 // can actually be found (and kept or removed) instead of

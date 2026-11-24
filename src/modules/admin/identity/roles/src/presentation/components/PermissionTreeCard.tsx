@@ -25,6 +25,7 @@
 
 import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
 import { Input } from "@core/ui/input";
 import { Button } from "@core/ui/button";
 import { Progress } from "@core/ui/progress";
@@ -57,8 +58,13 @@ export function PermissionTreeCard({
   onBulkScopeUpdate,
   bulkScopeValue,
   setBulkScopeValue,
+  allowAllTenants,
+  isPermissionLocked,
+  isReadOnly,
+  lockReason,
 }: PermissionTreeProps) {
   const { t } = useI18n();
+  const isLockedOrReadOnly = Boolean(isPermissionLocked || isReadOnly);
 
   // Live summary — selected vs. total across what is currently loaded (so it
   // reflects the visible set while a search filter is active).
@@ -157,11 +163,37 @@ export function PermissionTreeCard({
               setBulkScopeValue(val);
               if (val) onBulkScopeUpdate(val);
             }}
+            allowAllTenants={allowAllTenants}
             // Bulk scope only rewrites permissions that are already assigned, so
-            // offering it with an empty selection would be a silent no-op.
-            disabled={controlsDisabled || selected === 0}
+            // offering it with an empty selection or locked role would be a silent no-op.
+            disabled={controlsDisabled || selected === 0 || isLockedOrReadOnly}
+            disabledReason={
+              isLockedOrReadOnly
+                ? lockReason ||
+                  (isPermissionLocked
+                    ? t("roles.permissionLockedTitle")
+                    : t("roles.readOnlyPermissionsHint"))
+                : undefined
+            }
           />
         </div>
+
+        {isLockedOrReadOnly && (
+          <Alert variant="info" data-testid="role-permission-lock-alert">
+            <Lock className="h-4 w-4" aria-hidden="true" />
+            <AlertTitle>
+              {isPermissionLocked
+                ? t("roles.permissionLockedTitle")
+                : t("roles.readOnlyPermissionsTitle")}
+            </AlertTitle>
+            <AlertDescription className="text-xs leading-relaxed text-nx-ink">
+              {lockReason ||
+                (isPermissionLocked
+                  ? t("roles.permissionLockedDescription")
+                  : t("roles.readOnlyPermissionsHint"))}
+            </AlertDescription>
+          </Alert>
+        )}
       </CardHeader>
 
       <CardContent className="p-0">
@@ -201,6 +233,8 @@ export function PermissionTreeCard({
                 isExpanded={expandedKeys.has(`module:${mg.module}`)}
                 selectedPermissionCodes={selectedPermissionCodes}
                 assignments={assignments}
+                disabled={isLockedOrReadOnly}
+                allowAllTenants={allowAllTenants}
                 onToggleModule={() => onToggleExpand(`module:${mg.module}`)}
                 onTogglePermission={onTogglePermission}
                 onToggleGroup={onToggleAllInCategory}

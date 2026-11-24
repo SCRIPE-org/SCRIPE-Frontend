@@ -58,6 +58,13 @@ export const en = {
     landingTargetNoResults: "No matching destination found.",
     landingEnforcedBadge: "Enforced",
     landingTargetSystemLocked: "System role landing policy is managed automatically.",
+    lockedBadge: "Locked",
+    permissionLockedTitle: "Permissions are managed automatically",
+    permissionLockedDescription:
+      "This built-in tenant super-admin role stays synchronized with your tenant's active edition and feature entitlements. Permissions cannot be edited manually.",
+    readOnlyPermissionsTitle: "Permissions are read-only",
+    readOnlyPermissionsHint: "You do not have permission to modify this role's permissions.",
+    assignToGroup: "Assign to Group",
     totalRoles: "{{count}} roles",
     groups: "Groups",
     noGroups: "No groups",

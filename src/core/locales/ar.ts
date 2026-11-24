@@ -251,6 +251,10 @@ export const ar = {
     selectPermissionsPlaceholder: "اختر الصلاحيات...",
     managePermissions: "إدارة الصلاحيات",
     managePermissionsFor: "إدارة الصلاحيات لـ",
+    restrictedFieldsCount: "(الحقول المقيدة: {count})",
+    scopeAllTenantsRestricted:
+      "لا يمكن لأدوار المستأجر استخدام نطاق جميع المستأجرين. اختر هذا المستأجر أو التسلسل الهرمي أو السجلات الخاصة فقط.",
+    bulkScopeSelectHint: "اختر صلاحية واحدة على الأقل لتطبيق النطاق الجماعي",
   },
   imageUploader: {
     placeholder: "انقر للتحميل أو اسحب وأفلت",

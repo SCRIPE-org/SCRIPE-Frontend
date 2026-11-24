@@ -40,6 +40,10 @@ export interface MatrixCellProps {
   isSelected: boolean;
   /** Optional current assignment configuration. */
   assignment?: PermissionAssignmentJson;
+  /** Disables selection checkbox (for permission-locked or read-only views). */
+  disabled?: boolean;
+  /** Whether cross-tenant `all_tenants` scope option may be offered. */
+  allowAllTenants?: boolean;
   /** Optional custom CSS class name. */
   className?: string;
   /** Callback fired when the selection state is toggled. */
@@ -55,6 +59,8 @@ export function MatrixCell({
   permission,
   isSelected,
   assignment,
+  disabled,
+  allowAllTenants,
   className,
   onToggle,
   onUpdateConfig,
@@ -67,15 +73,19 @@ export function MatrixCell({
     t("role.scopeOverride") !== "role.scopeOverride"
       ? t("role.scopeOverride")
       : t("roles.scopeOverride");
+  const restrictionsSuffix = hasRestrictions
+    ? ` ${t("role.restrictedFieldsCount", { count: assignment!.restrictedFields!.length })}`
+    : "";
   const label = `${permission.getLocalizedName(language)} — ${scopeOverrideText}: ${scopeLabel(
     t,
     assignment?.scopeOverride
-  )}${hasRestrictions ? ` (${assignment!.restrictedFields!.length} restricted fields)` : ""}`;
+  )}${restrictionsSuffix}`;
 
   return (
     <span className={cn("inline-flex items-center justify-center gap-0.5", className)}>
       <Checkbox
         checked={isSelected}
+        disabled={disabled}
         onCheckedChange={onToggle}
         aria-label={permission.getLocalizedName(language)}
       />
@@ -90,7 +100,7 @@ export function MatrixCell({
                 onClick={() => setShowConfig(true)}
                 aria-label={label}
                 className={cn(
-                  "h-6 w-5 shrink-0 rounded-nx-sm p-0 hover:bg-nx-hover",
+                  "h-7 w-7 shrink-0 rounded-nx-sm p-0 hover:bg-nx-hover",
                   "focus-visible:shadow-nx-focus focus-visible:outline-none"
                 )}
               >
@@ -115,8 +125,11 @@ export function MatrixCell({
             id: permission.id,
             code: permission.code,
             displayName: permission.getLocalizedName(language),
+            resource: permission.resource,
           }}
           currentAssignment={assignment}
+          allowAllTenants={allowAllTenants}
+          isReadOnly={disabled}
           onSave={(next) => onUpdateConfig?.(permission.code, next)}
         />
       )}

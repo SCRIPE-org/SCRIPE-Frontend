@@ -11,6 +11,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useServices } from "@core/providers/service-provider";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { usePermission } from "@core/hooks/use-permission";
+import { useOptionalNavigation } from "@core/providers/navigation-provider";
+import { syncCurrentSessionAuthorization } from "@core/hooks/use-authorization-sync";
+import { SYSTEM_PERMISSIONS, isPlatformSuperAdminUser } from "@core/common/types/permissions";
 import { useAppStore } from "@core/store/useAppStore";
 import { identityContainer } from "@modules/identity/di";
 import { qk } from "@core/common/query-keys";
@@ -53,7 +57,12 @@ export function useAdminOperations(params: AdminOperationsParams) {
   const queryClient = useQueryClient();
   const { success, error: toastError } = useEnhancedToast();
   const { authRepository } = useServices();
-  const setAuth = useAppStore((state) => state.setAuth);
+  const nav = useOptionalNavigation();
+  const user = useAppStore((state) => state.user);
+  const userTenantId = user?.tenantId ?? null;
+  const isPlatformSuperAdmin = isPlatformSuperAdminUser(user);
+  const canViewTenants = usePermission(SYSTEM_PERMISSIONS.TENANTS_VIEW);
+  const targetTenantId = tenantId ?? contextTenantId ?? null;
 
   // Toggle active status mutation — optimistic update
   const toggleActiveMutation = useMutation({
@@ -95,8 +104,14 @@ export function useAdminOperations(params: AdminOperationsParams) {
   const assignRoleMutation = useMutation({
     mutationFn: ({ adminId, request }: { adminId: string; request: AssignRoleRequest }) =>
       adminRepository.assignRole(adminId, request),
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: qk.admins.all });
+      await syncCurrentSessionAuthorization({
+        queryClient,
+        authRepository,
+        refreshNavigation: nav?.refreshNavigation,
+        targetTenantId,
+      });
       success({
         title: t("admin.role.assigned"),
         description: t("admin.role.assignedDesc"),
@@ -119,8 +134,14 @@ export function useAdminOperations(params: AdminOperationsParams) {
       roleId: string;
       tenantId?: string;
     }) => adminRepository.removeRole(adminId, roleId, rTenantId),
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: qk.admins.all });
+      await syncCurrentSessionAuthorization({
+        queryClient,
+        authRepository,
+        refreshNavigation: nav?.refreshNavigation,
+        targetTenantId,
+      });
       success({
         title: t("admin.role.removed"),
         description: t("admin.role.removedDesc"),
@@ -204,14 +225,13 @@ export function useAdminOperations(params: AdminOperationsParams) {
       adminRepository.transferProtection({ targetAdminId }),
     onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: qk.admins.all });
-      try {
-        const user = await authRepository.getCurrentPrincipal();
-        if (user) {
-          setAuth(user, user.permissions || [], []);
-        }
-      } catch {
-        // Silently fail
-      }
+      await syncCurrentSessionAuthorization({
+        queryClient,
+        authRepository,
+        refreshNavigation: nav?.refreshNavigation,
+        targetTenantId,
+        forcePrincipalFetch: true,
+      });
       success({
         title: t("admin.protectionTransferred"),
         description: t("admin.protectionTransferredDesc"),
@@ -310,18 +330,28 @@ export function useAdminOperations(params: AdminOperationsParams) {
       try {
         const roleSearchTenantId = tenantId ?? contextTenantId ?? undefined;
         const isExplicitTenant = !!tenantId;
-        const result =
-          useMyTenant && !isExplicitTenant
-            ? await roleRepository.getCurrentTenantRoles({ search: query, page: 1, pageSize: 20 })
-            : await roleRepository.getAll({
-                search: query,
-                page: 1,
-                pageSize: 20,
-                tenantId: roleSearchTenantId,
-                strict: true,
-              });
+        const useCrossTenant = Boolean(
+          roleSearchTenantId &&
+            (isPlatformSuperAdmin || (roleSearchTenantId !== userTenantId && canViewTenants))
+        );
+        const useCurrentTenant =
+          (useMyTenant && !isExplicitTenant) ||
+          (!useCrossTenant && (!roleSearchTenantId || roleSearchTenantId === userTenantId));
 
-        return (result.items || []).map((role) => ({
+        const result = useCurrentTenant
+          ? await roleRepository.getCurrentTenantRoles({ search: query, page: 1, pageSize: 20 })
+          : await roleRepository.getAll({
+              search: query,
+              page: 1,
+              pageSize: 20,
+              tenantId: roleSearchTenantId,
+              strict: true,
+            });
+
+        const sorted = [...(result.items || [])].sort(
+          (a, b) => (a.priority ?? 0) - (b.priority ?? 0)
+        );
+        return sorted.map((role) => ({
           value: role.id,
           label: resolveBilingualLabel(role.nameEn, role.nameAr, language),
         }));
@@ -329,7 +359,16 @@ export function useAdminOperations(params: AdminOperationsParams) {
         return [];
       }
     },
-    [roleRepository, tenantId, contextTenantId, language, useMyTenant]
+    [
+      roleRepository,
+      tenantId,
+      contextTenantId,
+      language,
+      useMyTenant,
+      isPlatformSuperAdmin,
+      userTenantId,
+      canViewTenants,
+    ]
   );
 
   const handleGroupSearch = useCallback(
@@ -337,19 +376,26 @@ export function useAdminOperations(params: AdminOperationsParams) {
       try {
         const groupSearchTenantId = tenantId ?? contextTenantId ?? undefined;
         const isExplicitTenant = !!tenantId;
-        const result =
-          useMyTenant && !isExplicitTenant
-            ? await userGroupRepository.getCurrentTenantGroups({
-                search: query,
-                page: 1,
-                pageSize: 20,
-              })
-            : await userGroupRepository.getAll({
-                search: query,
-                page: 1,
-                pageSize: 20,
-                tenantId: groupSearchTenantId,
-              });
+        const useCrossTenant = Boolean(
+          groupSearchTenantId &&
+            (isPlatformSuperAdmin || (groupSearchTenantId !== userTenantId && canViewTenants))
+        );
+        const useCurrentTenant =
+          (useMyTenant && !isExplicitTenant) ||
+          (!useCrossTenant && (!groupSearchTenantId || groupSearchTenantId === userTenantId));
+
+        const result = useCurrentTenant
+          ? await userGroupRepository.getCurrentTenantGroups({
+              search: query,
+              page: 1,
+              pageSize: 20,
+            })
+          : await userGroupRepository.getAll({
+              search: query,
+              page: 1,
+              pageSize: 20,
+              tenantId: groupSearchTenantId,
+            });
 
         return (result.items || []).map((g) => ({
           value: g.id,
@@ -359,7 +405,16 @@ export function useAdminOperations(params: AdminOperationsParams) {
         return [];
       }
     },
-    [userGroupRepository, useMyTenant, tenantId, contextTenantId, language]
+    [
+      userGroupRepository,
+      useMyTenant,
+      tenantId,
+      contextTenantId,
+      language,
+      isPlatformSuperAdmin,
+      userTenantId,
+      canViewTenants,
+    ]
   );
 
   return {

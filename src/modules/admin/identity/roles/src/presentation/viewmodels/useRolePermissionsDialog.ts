@@ -22,11 +22,20 @@ import { useState, useMemo, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
+import { usePermission } from "@core/hooks/use-permission";
+import { useAppStore } from "@core/store/useAppStore";
+import { useOptionalNavigation } from "@core/providers/navigation-provider";
+import { syncCurrentSessionAuthorization } from "@core/hooks/use-authorization-sync";
+import { SYSTEM_PERMISSIONS, isPlatformSuperAdminUser } from "@core/common/types/permissions";
 import { identityContainer } from "@modules/identity/di";
 import type { Role } from "../../domain/entities/Role";
 import type { Permission, PermissionModuleGroup } from "@modules/identity/core";
 import type { PermissionAssignmentJson } from "../../domain/types/PermissionTypes";
 import { PermissionScopes } from "../../domain/types/PermissionTypes";
+import {
+  extractRolePermissionAssignment,
+  normalizeRolePermissionScope,
+} from "../../domain/utils/permission-assignment-utils";
 
 // ── Props & Result interfaces ──
 
@@ -66,6 +75,10 @@ export interface UseRolePermissionsDialogResult {
   adminCount: number;
   changesCount: { added: number; removed: number };
   isDirty: boolean;
+  allowAllTenants: boolean;
+  isPermissionLocked: boolean;
+  isReadOnly: boolean;
+  lockReason?: string;
 
   // Actions
   toggle: (code: string) => void;
@@ -103,6 +116,22 @@ export function useRolePermissionsDialog({
   const { t, language } = useI18n();
   const { toast } = useEnhancedToast();
   const queryClient = useQueryClient();
+  const nav = useOptionalNavigation();
+  const user = useAppStore((s) => s.user);
+  const userTenantId = user?.tenantId ?? null;
+  const isPlatformSuperAdmin = isPlatformSuperAdminUser(user);
+  const canViewTenants = usePermission(SYSTEM_PERMISSIONS.TENANTS_VIEW);
+  const canManagePermissions = usePermission(SYSTEM_PERMISSIONS.ROLES_MANAGE_PERMISSIONS);
+
+  const roleId = role?.id ?? null;
+  const roleTenantId = role?.tenantId ?? null;
+  const isPermissionLocked = Boolean(role?.isPermissionLocked);
+  const isReadOnly = isPermissionLocked || !canManagePermissions;
+  const lockReason = isPermissionLocked
+    ? t("roles.permissionLockedDescription")
+    : !canManagePermissions
+      ? t("roles.readOnlyPermissionsHint")
+      : undefined;
 
   const [search, setSearch] = useState("");
   const [assignments, setAssignments] = useState<Map<string, PermissionAssignmentJson>>(new Map());
@@ -131,15 +160,24 @@ export function useRolePermissionsDialog({
 
   // ── Effective Tenant Scope Resolution ──
   // If tenantId was explicitly passed, use it; otherwise fall back to role's tenantId.
-  const effectiveTenantId = tenantId || role?.tenantId;
+  const effectiveTenantId = tenantId || roleTenantId || null;
+  const isTenantRole = Boolean(effectiveTenantId || userTenantId);
+  const allowAllTenants = !isTenantRole;
+  const useCrossTenantEndpoint = Boolean(
+    effectiveTenantId &&
+      (isPlatformSuperAdmin || (effectiveTenantId !== userTenantId && canViewTenants))
+  );
 
   // ── Fetch available permissions GROUPED from backend ──
-  // If a tenant scope exists, fetch tenant's active licensed permissions.
-  // Otherwise, fetch system-wide / current-tenant available permissions.
-  const { data: tenantPermissionGroups = [], isLoading: loadingTenant } = useQuery({
-    queryKey: ["tenant-permissions-grouped", effectiveTenantId ?? "platform"],
+  // Cross-tenant/platform admins query `/Tenants/{id}/permissions/grouped`;
+  // own-tenant admins without `tenants.view` query `/roles/current-tenant/available-permissions/grouped`.
+  const { data: rawTenantPermissionGroups = [], isLoading: loadingTenant } = useQuery({
+    queryKey: [
+      "tenant-permissions-grouped",
+      useCrossTenantEndpoint ? effectiveTenantId : userTenantId ?? "platform",
+    ],
     queryFn: () => {
-      if (effectiveTenantId) {
+      if (useCrossTenantEndpoint && effectiveTenantId) {
         return identityContainer.roleRepository.getTenantAvailablePermissionsGrouped(
           effectiveTenantId
         );
@@ -149,6 +187,23 @@ export function useRolePermissionsDialog({
     enabled: open,
   });
 
+  const tenantPermissionGroups = useMemo((): PermissionModuleGroup[] => {
+    if (!isTenantRole) return rawTenantPermissionGroups;
+    return rawTenantPermissionGroups
+      .map((mg) => ({
+        ...mg,
+        categories: mg.categories
+          .map((cat) => ({
+            ...cat,
+            permissions: cat.permissions.filter(
+              (p) => (p as { platformOnly?: boolean }).platformOnly !== true
+            ),
+          }))
+          .filter((cat) => cat.permissions.length > 0),
+      }))
+      .filter((mg) => mg.categories.length > 0);
+  }, [isTenantRole, rawTenantPermissionGroups]);
+
   // Flat permission list derived from groups (for toggle/lookup logic only)
   const allPermissions = useMemo((): Permission[] => {
     return tenantPermissionGroups.flatMap((m) => m.categories.flatMap((c) => c.permissions));
@@ -156,26 +211,26 @@ export function useRolePermissionsDialog({
 
   // ── Fetch role's current permissions ──
   const { data: rolePermissions = [], isLoading: loadingRole } = useQuery({
-    queryKey: ["role-permissions", role?.id],
+    queryKey: ["role-permissions", roleId],
     queryFn: async () => {
-      if (!role) return [];
-      return identityContainer.roleRepository.getRolePermissions(role.id);
+      if (!roleId) return [];
+      return identityContainer.roleRepository.getRolePermissions(roleId);
     },
-    enabled: open && !!role?.id,
+    enabled: open && !!roleId,
   });
 
   // ── Blast Radius: Count of Admins holding this role ──
   const { data: adminCount = 0 } = useQuery({
-    queryKey: ["role-admin-count", role?.id],
-    queryFn: () => (role?.id ? identityContainer.roleRepository.getAdminCount(role.id) : 0),
-    enabled: open && !!role?.id,
+    queryKey: ["role-admin-count", roleId],
+    queryFn: () => (roleId ? identityContainer.roleRepository.getAdminCount(roleId) : 0),
+    enabled: open && !!roleId,
   });
 
   // ── Initialize assignments from role's permissions (once per role) ──
   useEffect(() => {
-    if (!open || !role?.id) return;
+    if (!open || !roleId) return;
     if (loadingRole || loadingTenant) return;
-    if (initializedRoleId === role.id) return;
+    if (initializedRoleId === roleId) return;
 
     const validCodes = new Map<string, string>(); // code → id
     allPermissions.forEach((p) => validCodes.set(p.code, p.id));
@@ -185,23 +240,11 @@ export function useRolePermissionsDialog({
 
     rolePermissions.forEach((rp: any) => {
       const code = rp.permissionCode || rp.PermissionCode || rp.code || rp.Code;
-      const permId = rp.permissionId || rp.PermissionId || rp.id || rp.Id;
       if (!code) return;
+      const parsed = extractRolePermissionAssignment(rp, validCodes.get(code) || "");
+      if (!parsed) return;
 
-      newAssignments.set(code, {
-        permissionId: permId || validCodes.get(code) || "",
-        scopeOverride: rp.scope ?? rp.scopeOverride ?? rp.ScopeOverride,
-        restrictedFields: (() => {
-          if (!rp.restrictedFields || rp.restrictedFields === "null" || rp.restrictedFields === "")
-            return [];
-          if (Array.isArray(rp.restrictedFields)) return rp.restrictedFields;
-          try {
-            return JSON.parse(rp.restrictedFields);
-          } catch {
-            return [];
-          }
-        })(),
-      });
+      newAssignments.set(parsed.code, parsed.assignment);
 
       const permissionDef = allPermissions.find((p) => p.code === code);
       if (permissionDef) {
@@ -225,11 +268,11 @@ export function useRolePermissionsDialog({
       setInitialKeys(new Set(newAssignments.keys()));
       setExpandedModules(new Set(modulesWithSelection));
       setExpandedGroups(perModuleExpanded);
-      setInitializedRoleId(role.id);
+      setInitializedRoleId(roleId);
     });
   }, [
     open,
-    role?.id,
+    roleId,
     allPermissions,
     rolePermissions,
     loadingRole,
@@ -240,14 +283,16 @@ export function useRolePermissionsDialog({
   // Save mutation
   const saveMutation = useMutation({
     mutationFn: async () => {
-      if (!role) throw new Error("No role selected");
+      if (!roleId) throw new Error("No role selected");
+      if (isReadOnly) throw new Error(lockReason || t("roles.readOnlyPermissionsHint"));
 
       const permissions = Array.from(assignments.entries())
         .map(([code, a]) => {
           const permId = a.permissionId || allPermissions.find((p) => p.code === code)?.id;
           return {
             permissionId: permId,
-            scopeOverride: a.scopeOverride ?? null,
+            scopeOverride:
+              normalizeRolePermissionScope(a.scopeOverride, allowAllTenants) ?? null,
             restrictedFields: a.restrictedFields ?? [],
           };
         })
@@ -261,14 +306,20 @@ export function useRolePermissionsDialog({
           } => !!a.permissionId
         );
 
-      await identityContainer.roleRepository.assignPermissions(role.id, {
+      await identityContainer.roleRepository.assignPermissions(roleId, {
         permissions: permissions,
       });
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       toast({ title: t("role.permissionsSaved") });
-      queryClient.invalidateQueries({ queryKey: ["role-permissions", role?.id] });
+      queryClient.invalidateQueries({ queryKey: ["role-permissions", roleId] });
+      queryClient.invalidateQueries({ queryKey: ["rolePermissions", roleId] });
       queryClient.invalidateQueries({ queryKey: ["roles"] });
+      await syncCurrentSessionAuthorization({
+        queryClient,
+        refreshNavigation: nav?.refreshNavigation,
+        targetTenantId: effectiveTenantId,
+      });
       onOpenChange(false);
     },
     onError: (error: Error) => {
@@ -282,6 +333,7 @@ export function useRolePermissionsDialog({
 
   // Toggle handlers
   const toggle = (code: string) => {
+    if (isReadOnly) return;
     setAssignments((prev) => {
       const next = new Map(prev);
       if (next.has(code)) {
@@ -301,14 +353,19 @@ export function useRolePermissionsDialog({
   };
 
   const updateAssignment = (code: string, assignment: PermissionAssignmentJson) => {
+    if (isReadOnly) return;
     setAssignments((prev) => {
       const next = new Map(prev);
-      next.set(code, assignment);
+      next.set(code, {
+        ...assignment,
+        scopeOverride: normalizeRolePermissionScope(assignment.scopeOverride, allowAllTenants),
+      });
       return next;
     });
   };
 
   const toggleGroup = (codes: string[]) => {
+    if (isReadOnly) return;
     const allSelected = codes.every((c) => assignments.has(c));
     setAssignments((prev) => {
       const next = new Map(prev);
@@ -369,7 +426,11 @@ export function useRolePermissionsDialog({
   };
 
   const bulkUpdateScope = (scope: string) => {
-    const scopeValue = scope === PermissionScopes.Default ? undefined : scope;
+    if (isReadOnly) return;
+    if (!allowAllTenants && scope.toLowerCase() === PermissionScopes.AllTenants) {
+      return;
+    }
+    const scopeValue = normalizeRolePermissionScope(scope, allowAllTenants);
     setAssignments((prev) => {
       const next = new Map(prev);
       Array.from(next.keys()).forEach((key) => {
@@ -449,6 +510,10 @@ export function useRolePermissionsDialog({
     adminCount,
     changesCount,
     isDirty,
+    allowAllTenants,
+    isPermissionLocked,
+    isReadOnly,
+    lockReason,
 
     // Actions
     toggle,

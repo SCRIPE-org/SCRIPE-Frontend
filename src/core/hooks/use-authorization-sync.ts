@@ -36,9 +36,13 @@ export function invalidateAuthorizationCaches(
 
   const keys: unknown[][] = [
     ["navigation"],
+    ["entitlements"],
     ["tenant-entitlements"],
     ["user-subscription", "me"],
     ["permissions"],
+    ["tenant-permissions-grouped"],
+    ["roleAvailablePermissionsGrouped"],
+    ["restrictions-available-permissions"],
     ["account", "context"],
     ["account", "dossier"],
     ["tenant-subscriptions"],
@@ -103,6 +107,15 @@ export function isAuthRevocationError(error: unknown): boolean {
   return status === 401 || status === 403;
 }
 
+async function resolveDefaultAuthRepository(): Promise<PrincipalRefreshRepository | null> {
+  try {
+    const { getAuthContainer } = await import("@modules/auth/di");
+    return getAuthContainer().authRepository;
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Refreshes the current user's principal, authorization caches, and workspace navigation
  * immediately after a permission, role, group, feature, or subscription mutation.
@@ -113,30 +126,44 @@ export async function syncCurrentSessionAuthorization(params: {
   refreshNavigation?: (() => void) | null;
   targetTenantId?: string | null;
   skipPrincipalFetch?: boolean;
+  forcePrincipalFetch?: boolean;
 }): Promise<void> {
-  const { queryClient, authRepository, refreshNavigation, targetTenantId, skipPrincipalFetch } = params;
+  const {
+    queryClient,
+    authRepository,
+    refreshNavigation,
+    targetTenantId,
+    skipPrincipalFetch,
+    forcePrincipalFetch,
+  } = params;
 
   invalidateAuthorizationCaches(queryClient, { tenantId: targetTenantId });
 
   const state = useAppStore.getState();
   const activeTenantId = state.user?.tenantId ?? null;
   const affectsActiveTenant =
-    !targetTenantId || !activeTenantId || targetTenantId === activeTenantId;
+    Boolean(forcePrincipalFetch) ||
+    !targetTenantId ||
+    !activeTenantId ||
+    targetTenantId === activeTenantId;
 
-  if (!skipPrincipalFetch && affectsActiveTenant && state.isAuthenticated && authRepository) {
-    try {
-      const freshPrincipal = await authRepository.getCurrentPrincipal();
-      if (freshPrincipal && freshPrincipal.id) {
-        applyRefreshedPrincipal(freshPrincipal);
+  if (!skipPrincipalFetch && affectsActiveTenant && state.isAuthenticated) {
+    const resolvedAuthRepo = authRepository ?? (await resolveDefaultAuthRepository());
+    if (resolvedAuthRepo) {
+      try {
+        const freshPrincipal = await resolvedAuthRepo.getCurrentPrincipal();
+        if (freshPrincipal && freshPrincipal.id) {
+          applyRefreshedPrincipal(freshPrincipal);
+        }
+      } catch (error) {
+        if (isAuthRevocationError(error)) {
+          useAppStore.getState().logout();
+          useNavigationStore.getState().reset();
+          queryClient?.clear();
+          return;
+        }
+        appLogger.debug("[AuthorizationSync] Non-fatal principal refresh skipped:", error);
       }
-    } catch (error) {
-      if (isAuthRevocationError(error)) {
-        useAppStore.getState().logout();
-        useNavigationStore.getState().reset();
-        queryClient?.clear();
-        return;
-      }
-      appLogger.debug("[AuthorizationSync] Non-fatal principal refresh skipped:", error);
     }
   }
 
