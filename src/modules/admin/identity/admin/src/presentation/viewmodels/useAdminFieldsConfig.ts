@@ -105,7 +105,7 @@ export function useAdminFieldsConfig(
     {
       name: "email",
       label: t("admin.email"),
-      type: "text" as const,
+      type: "email" as const,
       placeholder: t("admin.emailPlaceholder"),
       required: (values: Record<string, unknown>) => values.sendSetupEmail !== false,
     },
@@ -139,7 +139,7 @@ export function useAdminFieldsConfig(
     {
       name: "email",
       label: t("admin.email"),
-      type: "text" as const,
+      type: "email" as const,
       placeholder: t("admin.emailPlaceholder"),
     },
     {

@@ -244,7 +244,37 @@ export function useAdminOperations(params: AdminOperationsParams) {
         description: t("admin.setupEmailResentDesc"),
       });
     },
-    onError: handleMutationError,
+    onError: (err: Error) => {
+      if (isSudoCancelledError(err)) {
+        toastInfo?.({
+          title: t("profile.sudo.cancelledTitle"),
+          description: t("profile.sudo.cancelledDescription"),
+        });
+        return;
+      }
+      const typedErr = err as Error & { code?: string; status?: number; statusCode?: number };
+      const errCode = (typedErr.code ?? "").toUpperCase();
+      const errStatus = typedErr.status ?? typedErr.statusCode;
+      const isCooldownOrRateLimit =
+        errCode === "RATE_LIMIT_EXCEEDED" ||
+        errStatus === 429 ||
+        /wait\s+\d+\s+seconds|maximum resend limit|cooldown|rate[\s_-]?limit/i.test(err.message);
+      if (isCooldownOrRateLimit) {
+        toastError({
+          title: t("admin.setupEmailCooldownTitle"),
+          description: err.message,
+        });
+        return;
+      }
+      const isDeliveryFailure =
+        errCode === "SERVICE_UNAVAILABLE" ||
+        errStatus === 503 ||
+        /delivery|dispatch|unavailable|smtp|email.*fail/i.test(err.message);
+      toastError({
+        title: isDeliveryFailure ? t("admin.setupEmailFailedTitle") : t("common.error"),
+        description: err.message,
+      });
+    },
   });
 
   // Bulk mutations

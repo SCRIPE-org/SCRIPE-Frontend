@@ -271,10 +271,18 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
         {
           key: "isActive",
           label: t("admin.status"),
-          render: (value: boolean) => (
-            <Badge variant={value ? "success" : "secondary"}>
-              {value ? t("common.active") : t("common.inactive")}
-            </Badge>
+          render: (value: boolean, admin: Admin) => (
+            <div className="flex flex-wrap items-center gap-1.5">
+              <Badge variant={value ? "success" : "secondary"}>
+                {value ? t("common.active") : t("common.inactive")}
+              </Badge>
+              {admin?.needsAccountSetup && (
+                <Badge variant="warning">{t("admin.pendingSetup")}</Badge>
+              )}
+              {!admin?.needsAccountSetup && admin?.mustChangePassword && (
+                <Badge variant="outline">{t("admin.passwordChangeRequiredBadge")}</Badge>
+              )}
+            </div>
           ),
         },
         {
@@ -470,6 +478,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
       handleOpenResetPassword,
       handleOpenAssignToGroup,
       handleOpenManualSetup,
+      handleResendSetupEmail,
       handleImpersonate,
       handleOpenTransfer,
       handleTransferProtection,

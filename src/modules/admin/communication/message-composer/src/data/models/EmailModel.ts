@@ -14,9 +14,10 @@
  */
 export interface EmailRecipientJson {
   id: string;
-  email: string;
-  name: string;
-  type: "admin" | "user" | "custom";
+  email?: string | null;
+  name?: string;
+  username?: string;
+  type: "admin" | "user" | "custom" | string;
 }
 
 /**

@@ -8,7 +8,7 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
 import { communicationContainer } from "@modules/communication/di";
@@ -48,6 +48,7 @@ const QUERY_KEY = ["message-templates"];
 export function useTemplateFormViewModel() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { t } = useI18n();
   const queryClient = useQueryClient();
   const { success, error: toastError } = useEnhancedToast();
@@ -66,19 +67,23 @@ export function useTemplateFormViewModel() {
     refetchCustomFields,
   } = useTemplateCustomFields(mode, templateId, t);
 
-  // ─── Form State ──────────────────────────────────────────
-  const [form, setForm] = useState<TemplateFormValues>({
-    key: "",
-    channel: "Email",
-    language: "en",
-    subject: "",
-    body: "",
-    description: "",
+  const channelParam = searchParams?.get("channel");
+  const initialChannel: TemplateFormValues["channel"] =
+    channelParam === "SMS" || channelParam === "Push" || channelParam === "Email"
+      ? channelParam
+      : "Email";
+  const [form, setForm] = useState<TemplateFormValues>(() => ({
+    key: mode === "create" ? (searchParams?.get("key") ?? "") : "",
+    channel: mode === "create" ? initialChannel : "Email",
+    language: mode === "create" ? searchParams?.get("language") || "en" : "en",
+    subject: mode === "create" ? (searchParams?.get("subject") ?? "") : "",
+    body: mode === "create" ? (searchParams?.get("body") ?? "") : "",
+    description: mode === "create" ? (searchParams?.get("description") ?? "") : "",
     isActive: true,
-    category: "",
+    category: mode === "create" ? ((searchParams?.get("category") ?? "") as TemplateCategory | "") : "",
     placeholderSchema: [],
     designVariables: { ...DEFAULT_DESIGN },
-  });
+  }));
 
   // ─── Fetch template for edit mode ────────────────────────
   const {
@@ -139,23 +144,19 @@ export function useTemplateFormViewModel() {
     setForm((prev) => ({ ...prev, designVariables: vars }));
   }, []);
 
-  // ─── Create Mutation ─────────────────────────────────────
+  // ───Mutations ────────────────────────────────────────────
   const createMutation = useMutation({
     mutationFn: (data: CreateMessageTemplateRequest) => repo.create(data),
-    onError: () => {
-      toastError({ title: t("messaging.templates.createError") });
-    },
+    onError: (err: Error) =>
+      toastError({ title: t("messaging.templates.createError"), description: err?.message || undefined }),
   });
 
-  // ─── Update Mutation ─────────────────────────────────────
   const updateMutation = useMutation({
     mutationFn: (data: UpdateMessageTemplateRequest) => repo.update(templateId!, data),
-    onError: () => {
-      toastError({ title: t("messaging.templates.updateError") });
-    },
+    onError: (err: Error) =>
+      toastError({ title: t("messaging.templates.updateError"), description: err?.message || undefined }),
   });
 
-  // ─── Reset Design Mutation ───────────────────────────────
   const resetDesignMutation = useMutation({
     mutationFn: () => repo.resetDesign(templateId!),
     onSuccess: async () => {
@@ -164,9 +165,8 @@ export function useTemplateFormViewModel() {
       queryClient.invalidateQueries({ queryKey: QUERY_KEY });
       success({ title: t("messaging.templates.resetDesignSuccess") });
     },
-    onError: () => {
-      toastError({ title: t("messaging.templates.resetDesignError") });
-    },
+    onError: (err: Error) =>
+      toastError({ title: t("messaging.templates.resetDesignError"), description: err?.message || undefined }),
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);

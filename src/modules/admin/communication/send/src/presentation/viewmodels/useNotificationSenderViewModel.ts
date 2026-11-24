@@ -99,9 +99,10 @@ export function useNotificationSenderViewModel() {
       success({ title: t("messaging.notifications.sendSuccess") });
       resetForm();
     },
-    onError: () => {
+    onError: (err: Error) => {
       toastError({
         title: t("messaging.notifications.sendError"),
+        description: err?.message || undefined,
       });
     },
   });

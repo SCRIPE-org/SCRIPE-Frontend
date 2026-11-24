@@ -309,8 +309,8 @@ export function useEmailComposerViewModel() {
   }, []);
 
   // ─── Helper: convert frontend recipient type to backend enum ─
-  const toBackendRecipientType = (type: EmailRecipient["type"]): string => {
-    switch (type) {
+  const toBackendRecipientType = (type: EmailRecipient["type"] | string): string => {
+    switch ((type ?? "").toLowerCase()) {
       case "admin":
         return "Admin";
       case "user":
@@ -406,8 +406,11 @@ export function useEmailComposerViewModel() {
       success({ title: t("messaging.email.sendSuccess") });
       resetForm();
     },
-    onError: () => {
-      toastError({ title: t("messaging.email.sendError") });
+    onError: (err: Error) => {
+      toastError({
+        title: t("messaging.email.sendError"),
+        description: err?.message || undefined,
+      });
     },
   });
 
@@ -434,10 +437,9 @@ export function useEmailComposerViewModel() {
 
   const confirmSend = useCallback(() => {
     setConfirmSendOpen(false);
-    // Merge all recipients (To + CC + BCC) — each gets their own email
-    const allRecipients = [...recipients, ...ccRecipients, ...bccRecipients];
-    sendMutation.mutate(allRecipients);
-  }, [recipients, ccRecipients, bccRecipients, sendMutation]);
+    // Send one request per To recipient; CC and BCC arrays are already attached on the payload
+    sendMutation.mutate(recipients);
+  }, [recipients, sendMutation]);
 
   // ─── Reset Form ───────────────────────────────────────────
   const resetForm = useCallback(() => {
@@ -487,8 +489,11 @@ export function useEmailComposerViewModel() {
       queryClient.invalidateQueries({ queryKey: HISTORY_QUERY_KEY });
       success({ title: t("messaging.email.cancelSuccess") });
     },
-    onError: () => {
-      toastError({ title: t("messaging.email.cancelError") });
+    onError: (err: Error) => {
+      toastError({
+        title: t("messaging.email.cancelError"),
+        description: err?.message || undefined,
+      });
     },
   });
 
@@ -615,8 +620,11 @@ export function useEmailComposerViewModel() {
             queryClient.invalidateQueries({ queryKey: HISTORY_QUERY_KEY });
             success({ title: t("messaging.email.resendSuccess") });
           })
-          .catch(() => {
-            toastError({ title: t("messaging.email.resendError") });
+          .catch((err: Error) => {
+            toastError({
+              title: t("messaging.email.resendError"),
+              description: err?.message || undefined,
+            });
           });
       },
       [repo, queryClient, success, toastError, t]
@@ -628,7 +636,7 @@ export function useEmailComposerViewModel() {
           subject: email.subject,
           body: email.body,
         });
-        router.push(`/communication/templates/create?${params.toString()}`);
+        router.push(`/communication/templates/new?${params.toString()}`);
       },
       [router]
     ),

@@ -57,7 +57,7 @@ const AdminModelSchema = z.object({
   tenantName: optionalString(),
   isSuperAdmin: z.boolean().optional().default(false),
   canModify: z.boolean().optional().default(true),
-  isAccountActivated: z.boolean().optional().default(false),
+  isAccountActivated: z.boolean().optional().default(true),
   mustChangePassword: z.boolean().optional().default(false),
   isProtected: z.boolean().optional().default(false),
 });
@@ -123,7 +123,12 @@ export class AdminMapper {
       entity.tenantName,
       entity.isSuperAdmin,
       entity.canModify,
-      undefined
+      undefined,
+      entity.data.groupNamesEn,
+      entity.data.groupNamesAr,
+      entity.isAccountActivated,
+      entity.mustChangePassword,
+      entity.isProtected
     );
   }
 
