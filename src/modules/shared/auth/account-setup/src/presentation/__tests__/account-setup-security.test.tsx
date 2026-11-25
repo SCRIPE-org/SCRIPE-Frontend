@@ -106,6 +106,42 @@ describe("Account setup security, mapper policy & URL hygiene", () => {
     expect(window.location.hash).toBe("#other=1");
   });
 
+  it("retains ?token= query parameter across Next.js 16 replaceState re-render when useSearchParams syncs to empty", async () => {
+    window.history.replaceState(
+      {},
+      "",
+      "/setup-account?token=query-invite-tok-123&_tenant=SCRIPE"
+    );
+    mockValidateToken.mockResolvedValue(
+      new SetupTokenInfo({
+        isValid: true,
+        email: "invited@scripe.test",
+        adminUsername: "invited.admin",
+        tenantName: "SCRIPE",
+        tenantCode: "SCRIPE",
+        passwordMinLength: 12,
+        passwordRequireUppercase: true,
+        passwordRequireLowercase: true,
+        passwordRequireNumber: true,
+        passwordRequireSpecial: true,
+      })
+    );
+    mockGetCustomFields.mockResolvedValue([]);
+
+    const { rerender } = render(<SetupAccountView />);
+
+    // Effect 1 strips ?token= via history.replaceState, leaving ?_tenant=SCRIPE
+    expect(window.location.search).toBe("?_tenant=SCRIPE");
+
+    // Simulate Next.js 16 App Router re-rendering after history.replaceState updates useSearchParams()
+    rerender(<SetupAccountView />);
+
+    await waitFor(() => {
+      expect(mockValidateToken).toHaveBeenCalledWith("query-invite-tok-123");
+    });
+    expect(screen.queryByText("auth.accountSetup.missingToken")).not.toBeInTheDocument();
+  });
+
   it("preserves email and _tenant when launching login from LaunchCelebrationCard", () => {
     render(
       <LaunchCelebrationCard

@@ -67,7 +67,7 @@ export function SetupAccountView() {
     if (mutated) {
       window.history.replaceState({}, document.title, `${url.pathname}${url.search}${url.hash}`);
     }
-    setToken(resolved);
+    setToken((prev) => resolved || prev);
     setIsResolvingToken(false);
   }, [queryToken]);
 
