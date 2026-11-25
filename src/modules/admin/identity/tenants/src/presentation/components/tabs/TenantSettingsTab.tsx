@@ -169,12 +169,20 @@ export function TenantSettingsTab({ tenantId }: TenantSettingsTabProps) {
             label={t("tenant.requireUppercase")}
           />
           <RequirementBadge
+            satisfied={Boolean(settings.passwordRequireLowercase)}
+            label={t("tenant.requireLowercase")}
+          />
+          <RequirementBadge
             satisfied={settings.passwordRequireNumber}
             label={t("tenant.requireNumber")}
           />
           <RequirementBadge
             satisfied={settings.passwordRequireSpecial}
             label={t("tenant.requireSpecial")}
+          />
+          <RequirementBadge
+            satisfied={settings.checkBreachedPasswords !== false}
+            label={t("tenant.checkBreachedPasswords")}
           />
           <RequirementBadge satisfied={settings.require2FA} label={t("tenant.require2FA")} />
         </div>

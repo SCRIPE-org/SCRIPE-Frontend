@@ -3,7 +3,9 @@
 
 import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { usePermissions } from "@core/hooks/use-permissions";
+import { isSudoCancelledError, useSudoStore } from "@core/store/useSudoStore";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { identityContainer } from "@modules/identity/di";
 import type { Tenant } from "../../domain/entities/Tenant";
@@ -25,6 +27,7 @@ interface UseTenantHeaderViewModelProps {
  */
 export function useTenantHeaderViewModel({ tenant, onUpdate }: UseTenantHeaderViewModelProps) {
   const { t, direction } = useI18n();
+  const { success: toastSuccess, error: toastError, info: toastInfo } = useEnhancedToast();
   const { hasPermission } = usePermissions();
   const isRtl = direction === "rtl";
 
@@ -82,6 +85,21 @@ export function useTenantHeaderViewModel({ tenant, onUpdate }: UseTenantHeaderVi
     isActive: tenant.isInternal ? true : tenant.isActive,
   });
 
+  const notifyMutationError = (error: unknown) => {
+    if (isSudoCancelledError(error)) {
+      toastInfo?.({
+        title: t("profile.sudo.cancelledTitle"),
+        description: t("profile.sudo.cancelledDescription"),
+      });
+      return;
+    }
+    const err = error as { message?: string };
+    toastError({
+      title: t("common.error"),
+      description: err?.message || t("common.error"),
+    });
+  };
+
   const handleEditSubmit = async () => {
     try {
       setIsUpdating(true);
@@ -90,10 +108,15 @@ export function useTenantHeaderViewModel({ tenant, onUpdate }: UseTenantHeaderVi
         description: editForm.description || undefined,
         isActive: tenant.isInternal ? true : editForm.isActive,
       });
+      toastSuccess({
+        title: t("tenant.updated"),
+        description: t("tenant.updatedDescription"),
+      });
       setEditOpen(false);
       onUpdate?.();
     } catch (error) {
       appLogger.error("Failed to update tenant:", error);
+      notifyMutationError(error);
     } finally {
       setIsUpdating(false);
     }
@@ -103,9 +126,15 @@ export function useTenantHeaderViewModel({ tenant, onUpdate }: UseTenantHeaderVi
     try {
       setIsUpdating(true);
       await identityContainer.tenantRepository.toggleStatus(tenant.id, !tenant.isActive);
+      toastSuccess({
+        title: t("tenant.updated"),
+        description: t("tenant.updatedDescription"),
+      });
       onUpdate?.();
     } catch (error) {
       appLogger.error("Failed to toggle tenant status:", error);
+      notifyMutationError(error);
+      throw error;
     } finally {
       setIsUpdating(false);
     }
@@ -115,14 +144,21 @@ export function useTenantHeaderViewModel({ tenant, onUpdate }: UseTenantHeaderVi
     try {
       setIsDeleting(true);
       await identityContainer.tenantRepository.delete(tenant.id, { cascadeChildren });
+      toastSuccess({
+        title: t("tenant.deleted"),
+        description: t("tenant.deletedDescription"),
+      });
       window.location.href = "/tenants";
     } catch (error) {
       appLogger.error("Failed to delete tenant:", error);
+      notifyMutationError(error);
       setIsDeleting(false);
+      throw error;
     }
   };
 
   const handleEditOpenChange = (open: boolean) => {
+    if (!open && useSudoStore.getState().modalOpen) return;
     setEditOpen(open);
     if (open) {
       setEditForm({

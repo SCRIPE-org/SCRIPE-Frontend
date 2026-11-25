@@ -511,6 +511,7 @@ describe("Unified Sudo Engine, Passkey Step-Up & Principal Separation", () => {
     expect(secResult.current.security?.isSsoFeatureEnabled).toBe(false);
     expect(secResult.current.security?.isSecurityPageEnabled).toBe(true);
     expect(intResult.current.integrationsFeatureEnabled).toBe(true);
+    expect(mockGetExternalLogins).not.toHaveBeenCalled();
     expect(intResult.current.patQuota).toEqual({
       activeCount: 5,
       maxLimit: 5,
@@ -605,10 +606,11 @@ describe("Unified Sudo Engine, Passkey Step-Up & Principal Separation", () => {
     });
   });
 
-  it("AccountLifecycleCard passes sudoCode, catches errors keeping modal open, and ProfileInfoForm + EnrollPasskeyModal handle errors cleanly", async () => {
+  it("AccountLifecycleCard delegates policy-driven Sudo deactivation without hardcoded 6-digit TOTP input, ignores cancel cleanly, and ProfileInfoForm + EnrollPasskeyModal handle errors cleanly", async () => {
     const onDeactivate = vi
       .fn()
-      .mockRejectedValueOnce(new Error("Sudo TOTP code expired"))
+      .mockRejectedValueOnce(new Error("Sudo verification was cancelled."))
+      .mockRejectedValueOnce(new Error("Forbidden: missing step-up token"))
       .mockResolvedValueOnce({ deactivated: true });
 
     const profile = {
@@ -630,23 +632,31 @@ describe("Unified Sudo Engine, Passkey Step-Up & Principal Separation", () => {
     );
 
     fireEvent.click(screen.getByTestId("open-deactivate-account-btn"));
+    expect(screen.queryByTestId("deactivate-sudo-code-input")).not.toBeInTheDocument();
+
     fireEvent.change(screen.getByTestId("deactivate-confirm-username-input"), {
       target: { value: "exec.admin" },
     });
-    fireEvent.change(screen.getByTestId("deactivate-sudo-code-input"), {
-      target: { value: "987654" },
-    });
 
+    // Cancellation closes step-up cleanly without surfacing spurious error alert
     fireEvent.click(screen.getByTestId("confirm-deactivate-account-btn"));
-
     await waitFor(() => {
-      expect(screen.getByTestId("deactivate-error-alert")).toHaveTextContent(
-        "Sudo TOTP code expired"
-      );
+      expect(onDeactivate).toHaveBeenCalledTimes(1);
     });
-    expect(onDeactivate).toHaveBeenCalledWith("987654");
+    expect(screen.queryByTestId("deactivate-error-alert")).not.toBeInTheDocument();
     expect(screen.getByTestId("deactivate-account-modal")).toBeInTheDocument();
 
+    // Non-cancel error surfaces inside deactivate-error-alert keeping modal open
+    fireEvent.click(screen.getByTestId("confirm-deactivate-account-btn"));
+    await waitFor(() => {
+      expect(screen.getByTestId("deactivate-error-alert")).toHaveTextContent(
+        "Forbidden: missing step-up token"
+      );
+    });
+    expect(onDeactivate).toHaveBeenCalledTimes(2);
+    expect(screen.getByTestId("deactivate-account-modal")).toBeInTheDocument();
+
+    // Retry succeeds and closes modal
     fireEvent.click(screen.getByTestId("confirm-deactivate-account-btn"));
     await waitFor(() => {
       expect(screen.queryByTestId("deactivate-account-modal")).not.toBeInTheDocument();

@@ -45,6 +45,7 @@ const {
     _hasHydrated: true,
     subscriptionStatus: null as string | null,
     mustChangePassword: false,
+    requireMfaEnrollment: false,
     defaultRedirectPath: "/overview",
     user: { id: "user-1", username: "admin" } as { id: string; username: string } | null,
     roles: [] as Array<{ id: string; roleCode: string; roleName: string }>,
@@ -53,6 +54,7 @@ const {
     setAuth: vi.fn(),
     setSubscriptionInfo: vi.fn(),
     setMustChangePassword: vi.fn(),
+    setRequireMfaEnrollment: vi.fn(),
   };
 
   const mockUseAppStore = Object.assign(
@@ -238,6 +240,7 @@ describe("RouteGuard - Hardened Phase 2 Option C Security & Context Gates", () =
     appState._hasHydrated = true;
     appState.subscriptionStatus = null;
     appState.mustChangePassword = false;
+    appState.requireMfaEnrollment = false;
     appState.defaultRedirectPath = "/overview";
     appState.user = { id: "user-1", username: "admin" };
     appState.permissions = [];
@@ -1051,5 +1054,93 @@ describe("RouteGuard - Hardened Phase 2 Option C Security & Context Gates", () =
       []
     );
     expect(mockRouterPush).not.toHaveBeenCalledWith(expect.stringContaining("/login"));
+  });
+
+  it("does not bounce authenticated users away from /forgot-password or /reset-password and skips silent refresh there", () => {
+    for (const recoveryPath of ["/forgot-password", "/reset-password"]) {
+      vi.clearAllMocks();
+      currentPathname = recoveryPath;
+      mockUseAppStore.getState().isAuthenticated = true;
+      mockHasToken.mockReturnValue(false);
+
+      const { unmount } = render(
+        <RouteGuard>
+          <div data-testid={`recovery-${recoveryPath}`}>Recovery Content</div>
+        </RouteGuard>
+      );
+
+      expect(screen.getByTestId(`recovery-${recoveryPath}`)).toBeInTheDocument();
+      expect(mockRouterReplace).not.toHaveBeenCalled();
+      expect(mockRouterPush).not.toHaveBeenCalled();
+      expect(mockRefreshToken).not.toHaveBeenCalled();
+      unmount();
+    }
+  });
+
+  it("redirects authenticated sessions with requireMfaEnrollment=true to /account/security?mfa_enroll=true and permits /account/security", () => {
+    currentPathname = "/dashboard";
+    mockUseAppStore.getState().requireMfaEnrollment = true;
+
+    const { rerender } = render(
+      <RouteGuard>
+        <div data-testid="dashboard-content">Dashboard</div>
+      </RouteGuard>
+    );
+
+    expect(mockRouterReplace).toHaveBeenCalledWith("/account/security?mfa_enroll=true");
+    expect(screen.queryByTestId("dashboard-content")).not.toBeInTheDocument();
+
+    vi.clearAllMocks();
+    currentPathname = "/account/security";
+    rerender(
+      <RouteGuard>
+        <div data-testid="security-content">Security</div>
+      </RouteGuard>
+    );
+
+    expect(screen.getByTestId("security-content")).toBeInTheDocument();
+    expect(mockRouterReplace).not.toHaveBeenCalled();
+  });
+
+  it("prioritizes mustChangePassword over requireMfaEnrollment in the auth-wall ordering", () => {
+    currentPathname = "/dashboard";
+    mockUseAppStore.getState().mustChangePassword = true;
+    mockUseAppStore.getState().requireMfaEnrollment = true;
+
+    render(
+      <RouteGuard>
+        <div data-testid="dashboard-content">Dashboard</div>
+      </RouteGuard>
+    );
+
+    expect(mockRouterReplace).toHaveBeenCalledWith("/change-password");
+  });
+
+  it("allows /logout cleanly without stalling behind PendingPayment, mustChangePassword, requireMfaEnrollment, or token-loss redirect loops (FE-LOW-01)", () => {
+    currentPathname = "/logout";
+    mockUseAppStore.getState().subscriptionStatus = "PendingPayment";
+    mockUseAppStore.getState().mustChangePassword = true;
+    mockUseAppStore.getState().requireMfaEnrollment = true;
+
+    const { rerender } = render(
+      <RouteGuard>
+        <div data-testid="logout-content">Signing out...</div>
+      </RouteGuard>
+    );
+
+    expect(screen.getByTestId("logout-content")).toBeInTheDocument();
+    expect(mockRouterReplace).not.toHaveBeenCalled();
+    expect(mockRouterPush).not.toHaveBeenCalled();
+
+    // Even unauthenticated or missing in-memory token during logout transitions passes cleanly
+    mockHasToken.mockReturnValue(false);
+    mockUseAppStore.getState().isAuthenticated = false;
+    rerender(
+      <RouteGuard>
+        <div data-testid="logout-content">Signing out...</div>
+      </RouteGuard>
+    );
+    expect(screen.getByTestId("logout-content")).toBeInTheDocument();
+    expect(mockRouterPush).not.toHaveBeenCalled();
   });
 });

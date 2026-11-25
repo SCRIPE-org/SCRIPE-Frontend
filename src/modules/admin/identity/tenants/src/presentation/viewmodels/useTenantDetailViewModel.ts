@@ -45,6 +45,7 @@ export function useTenantDetailViewModel({ tenantId }: UseTenantDetailViewModelP
 
   const handleUpdate = () => {
     queryClient.invalidateQueries({ queryKey: ["tenant", tenantId] });
+    queryClient.invalidateQueries({ queryKey: ["tenants"] });
   };
 
   const handleEnter = () => {

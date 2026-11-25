@@ -4,45 +4,24 @@
  * useForceChangePasswordViewModel
  *
  * ViewModel orchestrating first-login / mandatory password change (mcp=true)
- * with MMC parity: single-session rotation without forcing logout.
+ * with dynamic backend PasswordPolicyModel validation and single-session token rotation.
  */
 import { useState, useCallback, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useServices } from "@core/providers/service-provider";
 import { useAppStore } from "@core/store/useAppStore";
+import { useSudoStore } from "@core/store/useSudoStore";
+import { usePatOneTimeSecretStore } from "@core/store/usePatOneTimeSecretStore";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { buildPostAuthEntryUrl } from "@core/common/redirect-safety";
+import {
+  evaluatePasswordPolicy,
+  findFirstPolicyViolation,
+} from "@core/common/password-policy";
 import { container } from "@modules/profile/di";
-
-/** Evaluation breakdown of mandatory password complexity rules. */
-export interface PasswordRulesEvaluation {
-  minLength: boolean;
-  uppercase: boolean;
-  lowercase: boolean;
-  number: boolean;
-  special: boolean;
-  allMet: boolean;
-}
-
-/** Evaluates a candidate password against complexity requirements. */
-export function evaluatePasswordRules(password: string): PasswordRulesEvaluation {
-  const minLength = password.length >= 12;
-  const uppercase = /[A-Z]/.test(password);
-  const lowercase = /[a-z]/.test(password);
-  const number = /[0-9]/.test(password);
-  const special = /[^A-Za-z0-9]/.test(password);
-  return {
-    minLength,
-    uppercase,
-    lowercase,
-    number,
-    special,
-    allMet: minLength && uppercase && lowercase && number && special,
-  };
-}
 
 /** ViewModel orchestrating mandatory first-login password rotation without session loss. */
 export function useForceChangePasswordViewModel() {
@@ -57,31 +36,53 @@ export function useForceChangePasswordViewModel() {
   const setAuth = useAppStore((state) => state.setAuth);
   const setSubscriptionInfo = useAppStore((state) => state.setSubscriptionInfo);
   const setMustChangePassword = useAppStore((state) => state.setMustChangePassword);
+  const setRequireMfaEnrollment = useAppStore((state) => state.setRequireMfaEnrollment);
   const setDefaultRedirectPath = useAppStore((state) => state.setDefaultRedirectPath);
   const logout = useAppStore((state) => state.logout);
 
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [showNew, setShowNew] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const rules = evaluatePasswordRules(newPassword);
+  const {
+    data: policy = null,
+    isLoading: isPolicyLoading,
+    error: policyErrorObj,
+    refetch: refetchPolicy,
+  } = useQuery({
+    queryKey: ["auth", "force-change", "password-policy"],
+    queryFn: () => authRepository.getPasswordPolicy(),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const policyError = policyErrorObj instanceof Error ? policyErrorObj.message : null;
+  const evaluation = evaluatePasswordPolicy(newPassword, policy);
   const passwordsMatch = newPassword.length > 0 && newPassword === confirmPassword;
   const showMismatch = confirmPassword.length > 0 && newPassword !== confirmPassword;
-  const canSubmit = !isSubmitting && rules.allMet && passwordsMatch;
+  const canSubmit =
+    !isSubmitting &&
+    !isPolicyLoading &&
+    policy !== null &&
+    evaluation.allMet &&
+    passwordsMatch;
 
   const handleSubmit = useCallback(
     async (e?: FormEvent) => {
       e?.preventDefault();
       setSubmitError(null);
 
-      const currentRules = evaluatePasswordRules(newPassword);
-      if (!currentRules.allMet) {
-        setSubmitError(t("profile.security.requirementsTitle"));
+      if (!policy) {
+        setSubmitError(policyError || t("common.passwordPolicy.loadFailed"));
         return;
       }
+
+      const violation = findFirstPolicyViolation(newPassword, policy);
+      if (violation) {
+        setSubmitError(t(violation.key, violation.params));
+        return;
+      }
+
       if (newPassword !== confirmPassword) {
         setSubmitError(t("profile.security.passwordMismatch"));
         return;
@@ -98,11 +99,14 @@ export function useForceChangePasswordViewModel() {
         let resolvedUser = user;
         let resolvedSubStatus: string | null =
           result?.subscriptionStatus ?? currentSubscriptionStatus ?? null;
+        let resolvedRequireMfaEnrollment: boolean = Boolean(result?.requireMfaEnrollment);
 
         try {
           const refreshRes = await authRepository.refreshToken();
           if (refreshRes.kind === "ok") {
             resolvedSubStatus = refreshRes.value.subscriptionStatus ?? resolvedSubStatus;
+            resolvedRequireMfaEnrollment =
+              refreshRes.value.requireMfaEnrollment ?? resolvedRequireMfaEnrollment;
             setSubscriptionInfo(
               refreshRes.value.subscriptionStatus ?? null,
               refreshRes.value.gracePhase ?? null,
@@ -143,6 +147,7 @@ export function useForceChangePasswordViewModel() {
             : null;
         const targetUrl = buildPostAuthEntryUrl({
           mustChangePassword: false,
+          requireMfaEnrollment: resolvedRequireMfaEnrollment,
           subscriptionStatus: resolvedSubStatus,
           redirect: queryRedirect,
         });
@@ -150,6 +155,7 @@ export function useForceChangePasswordViewModel() {
         useNavigationStore.getState().reset();
         setDefaultRedirectPath("/");
         setMustChangePassword(false);
+        setRequireMfaEnrollment?.(resolvedRequireMfaEnrollment);
 
         await queryClient.invalidateQueries();
         operationSuccess(t("profile.security.passwordChanged"));
@@ -167,6 +173,8 @@ export function useForceChangePasswordViewModel() {
       }
     },
     [
+      policy,
+      policyError,
       newPassword,
       confirmPassword,
       user,
@@ -175,6 +183,7 @@ export function useForceChangePasswordViewModel() {
       setAuth,
       setSubscriptionInfo,
       setMustChangePassword,
+      setRequireMfaEnrollment,
       setDefaultRedirectPath,
       queryClient,
       operationSuccess,
@@ -185,10 +194,21 @@ export function useForceChangePasswordViewModel() {
   );
 
   const handleLogout = useCallback(async () => {
+    const queryTenant =
+      typeof window !== "undefined"
+        ? new URLSearchParams(window.location.search).get("_tenant")
+        : null;
     await authRepository.logout().catch(() => undefined);
+    useSudoStore.getState().reset();
+    usePatOneTimeSecretStore.getState().clearPendingReceipt();
     logout();
     queryClient.clear();
-    router.replace("/login");
+    const loginParams = new URLSearchParams();
+    if (queryTenant) {
+      loginParams.set("_tenant", queryTenant);
+    }
+    loginParams.set("logged_out", "1");
+    router.replace(`/login?${loginParams.toString()}`);
   }, [authRepository, logout, queryClient, router]);
 
   return {
@@ -200,13 +220,13 @@ export function useForceChangePasswordViewModel() {
     setNewPassword,
     confirmPassword,
     setConfirmPassword,
-    showNew,
-    setShowNew,
-    showConfirm,
-    setShowConfirm,
+    policy,
+    isPolicyLoading,
+    policyError,
+    refetchPolicy,
+    evaluation,
     isSubmitting,
     submitError,
-    rules,
     passwordsMatch,
     showMismatch,
     canSubmit,

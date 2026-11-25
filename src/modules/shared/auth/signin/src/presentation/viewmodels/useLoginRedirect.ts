@@ -55,10 +55,12 @@ export function useLoginRedirect() {
     if (isAuthenticated && hasToken) {
       hasTriggeredRedirect.current = true;
       setIsRedirecting(true);
-      const { mustChangePassword, subscriptionStatus } = useAppStore.getState();
+      const { mustChangePassword, requireMfaEnrollment, subscriptionStatus } =
+        useAppStore.getState();
       handleRedirect(
         buildPostAuthEntryUrl({
           mustChangePassword,
+          requireMfaEnrollment,
           subscriptionStatus,
           redirect: rawQueryRedirect,
         })
@@ -75,6 +77,7 @@ export function useLoginRedirect() {
     const state = useAppStore.getState();
     const target = buildPostAuthEntryUrl({
       mustChangePassword: state.mustChangePassword,
+      requireMfaEnrollment: state.requireMfaEnrollment,
       subscriptionStatus: state.subscriptionStatus,
       redirect: searchParams.get("redirect"),
     });

@@ -7,6 +7,7 @@ export const PROFILE_ENDPOINTS = {
   DOSSIER: `${V1}/account/dossier`,
   UPDATE_DOSSIER: `${V1}/account/dossier`,
   AVATAR: `${V1}/account/dossier/avatar`,
+  PASSWORD_POLICY: `${V1}/auth/admin/password-policy`,
   CHANGE_PASSWORD: (id: string) => `${V1}/admins/${id}/change-password`,
   SESSIONS: `${V1}/auth/admin/sessions`,
   REVOKE_SESSION: (tokenId: string) => `${V1}/auth/admin/sessions/${tokenId}`,

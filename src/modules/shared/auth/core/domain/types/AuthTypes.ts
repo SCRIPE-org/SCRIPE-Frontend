@@ -42,6 +42,7 @@ export interface LoginResponseJson {
     lockedUntil?: string | null;
   }> | null;
   mustChangePassword?: boolean;
+  requireMfaEnrollment?: boolean;
   subscriptionStatus?: string | null;
   gracePhase?: string | null;
   editionName?: string | null;
@@ -73,6 +74,7 @@ export interface LoginResponseModel extends LoginResponseJson {
     lockedUntil?: string | null;
   }> | null;
   mustChangePassword: boolean;
+  requireMfaEnrollment?: boolean;
   subscriptionStatus: string | null;
   gracePhase: string | null;
   editionName: string | null;
@@ -89,9 +91,12 @@ export interface Verify2FARequestJson {
   tenantId?: string;
   twoFactorPendingToken?: string | null;
   staySignedIn?: boolean;
+  returnOrigin?: string | null;
+  returnPath?: string | null;
 }
 
 export interface Verify2FARequestModel {
+  principalType?: "admin" | "user";
   toJson(): Verify2FARequestJson;
 }
 
@@ -99,19 +104,29 @@ export interface Verify2FAResponseJson {
   accessToken: string;
   expiresAt: string;
   mustChangePassword?: boolean;
+  requireMfaEnrollment?: boolean;
   subscriptionStatus?: string | null;
   gracePhase?: string | null;
   editionName?: string | null;
   userProfile?: unknown;
   defaultRedirectPath?: string | null;
+  handoffCode?: string | null;
+  handoffState?: string | null;
+  returnOrigin?: string | null;
+  returnPath?: string | null;
 }
 
 export interface Verify2FAResponseModel extends Verify2FAResponseJson {
   mustChangePassword: boolean;
+  requireMfaEnrollment?: boolean;
   subscriptionStatus: string | null;
   gracePhase: string | null;
   editionName: string | null;
   defaultRedirectPath: string;
+  handoffCode?: string | null;
+  handoffState?: string | null;
+  returnOrigin?: string | null;
+  returnPath?: string | null;
 }
 
 export interface WorkspaceInfoDto {
@@ -155,6 +170,7 @@ export interface VerifyPasskeyAuthRequestData {
   clientExtensionResults?: Record<string, unknown>;
   tenantId?: string | null;
   challengeId?: string;
+  staySignedIn?: boolean;
 }
 
 export interface PasskeyAuthVerifyResult {
@@ -162,7 +178,10 @@ export interface PasskeyAuthVerifyResult {
   refreshToken: string;
   expiresAt?: string;
   mustChangePassword?: boolean;
+  requireMfaEnrollment?: boolean;
   requires2FA?: boolean;
+  twoFactorPendingToken?: string | null;
+  staySignedIn?: boolean;
   subscriptionStatus?: string | null;
   gracePhase?: string | null;
   editionName?: string | null;

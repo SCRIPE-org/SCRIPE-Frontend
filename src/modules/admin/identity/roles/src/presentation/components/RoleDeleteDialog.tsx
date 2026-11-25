@@ -71,7 +71,6 @@ export function RoleDeleteDialog({
 
   const handleConfirm = async () => {
     await onConfirm(hasAdmins ? fallbackRoleId : undefined);
-    onOpenChange(false);
   };
 
   return (
@@ -89,6 +88,7 @@ export function RoleDeleteDialog({
       onConfirm={handleConfirm}
       isLoading={isDeleting || isLoading}
       disableConfirm={hasAdmins && !fallbackRoleId}
+      preventAutoClose={true}
     >
       {isLoading ? (
         <LoadingSpinner size="sm" showText={false} />

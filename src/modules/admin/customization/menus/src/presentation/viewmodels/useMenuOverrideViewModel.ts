@@ -24,7 +24,11 @@ import type { MenuTreeNode } from "../../domain/entities/MenuItem";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useAppStore } from "@core/store/useAppStore";
-import { hasPermission, SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
+import {
+  hasPermission,
+  isPlatformSuperAdminUser,
+  SYSTEM_PERMISSIONS,
+} from "@core/common/types/permissions";
 import {
   type OverrideDialogState,
   type OverrideFormData,
@@ -59,8 +63,10 @@ export function useMenuOverrideViewModel(): UseMenuOverrideViewModelResult {
   const { refreshNavigation } = useNavigation();
 
   const permissions = useAppStore((s) => s.permissions);
-  const userTenantId = useAppStore((s) => s.user?.tenantId);
-  const isSuperAdmin = permissions.includes("*");
+  const roles = useAppStore((s) => s.roles);
+  const user = useAppStore((s) => s.user);
+  const userTenantId = user?.tenantId;
+  const isSuperAdmin = isPlatformSuperAdminUser(user, permissions, roles);
 
   // Available Scopes (permission and tenant context gated)
   const availableScopes = useMemo(() => {

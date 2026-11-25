@@ -58,6 +58,9 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
   const { isPlatformSuperAdmin } = usePermissions();
   const currentUser = useAppStore((state) => state.user);
 
+  // Role/Password dialog state (declared prior to ViewModel so dialog password policy scopes to the selected admin's tenant)
+  const [selectedAdminForAction, setSelectedAdminForAction] = useState<Admin | null>(null);
+
   // Use current-tenant admins if not platform super admin (Tenant Admin mode)
   // Platform Super Admins outside drill-down use the standard endpoint
   const {
@@ -84,12 +87,18 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
     isResendingSetupEmail,
     handleManualSetup,
     isManualSettingUp,
-  } = useAdminsViewModel({ useMyTenant: !isPlatformSuperAdmin, tenantId });
+    dialogPasswordPolicy,
+    isDialogPasswordPolicyLoading,
+    dialogPasswordPolicyError,
+    retryDialogPasswordPolicy,
+  } = useAdminsViewModel({
+    useMyTenant: !isPlatformSuperAdmin,
+    tenantId,
+    actionTenantId: selectedAdminForAction?.tenantId ?? tenantId,
+  });
 
   const configBase = getConfigBase();
 
-  // Role/Password dialog state
-  const [selectedAdminForAction, setSelectedAdminForAction] = useState<Admin | null>(null);
   const [manageRolesDialogOpen, setManageRolesDialogOpen] = useState(false);
   const [resetPasswordDialogOpen, setResetPasswordDialogOpen] = useState(false);
   const [manualSetupDialogOpen, setManualSetupDialogOpen] = useState(false);
@@ -153,8 +162,12 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
       adminId: string,
       request: import("../../domain/entities/AdminRequests").TransferAdminRequest
     ) => {
-      await handleTransfer(adminId, request);
-      setTransferDialogOpen(false);
+      try {
+        await handleTransfer(adminId, request);
+        setTransferDialogOpen(false);
+      } catch {
+        // Toast / Sudo cancellation handled by transferMutation.onError
+      }
     },
     [handleTransfer]
   );
@@ -258,10 +271,18 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
         {
           key: "isActive",
           label: t("admin.status"),
-          render: (value: boolean) => (
-            <Badge variant={value ? "success" : "secondary"}>
-              {value ? t("common.active") : t("common.inactive")}
-            </Badge>
+          render: (value: boolean, admin: Admin) => (
+            <div className="flex flex-wrap items-center gap-1.5">
+              <Badge variant={value ? "success" : "secondary"}>
+                {value ? t("common.active") : t("common.inactive")}
+              </Badge>
+              {admin?.needsAccountSetup && (
+                <Badge variant="warning">{t("admin.pendingSetup")}</Badge>
+              )}
+              {!admin?.needsAccountSetup && admin?.mustChangePassword && (
+                <Badge variant="outline">{t("admin.passwordChangeRequiredBadge")}</Badge>
+              )}
+            </div>
           ),
         },
         {
@@ -457,6 +478,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
       handleOpenResetPassword,
       handleOpenAssignToGroup,
       handleOpenManualSetup,
+      handleResendSetupEmail,
       handleImpersonate,
       handleOpenTransfer,
       handleTransferProtection,
@@ -484,7 +506,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
           adminIds={selectedBulkAdminIds}
           mode="admin"
           tenantId={tenantId}
-          useMyTenant={true}
+          useMyTenant={!isPlatformSuperAdmin && !tenantId}
         />
       )}
 
@@ -502,6 +524,10 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
         admin={selectedAdminForAction}
         onResetPassword={onResetPasswordSubmit}
         isLoading={isResettingPassword}
+        passwordPolicy={dialogPasswordPolicy}
+        isPasswordPolicyLoading={isDialogPasswordPolicyLoading}
+        passwordPolicyError={dialogPasswordPolicyError}
+        onRetryPasswordPolicy={retryDialogPasswordPolicy}
       />
 
       <ManualSetupDialog
@@ -510,6 +536,10 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
         admin={selectedAdminForAction}
         onManualSetup={onManualSetupSubmit}
         isLoading={isManualSettingUp}
+        passwordPolicy={dialogPasswordPolicy}
+        isPasswordPolicyLoading={isDialogPasswordPolicyLoading}
+        passwordPolicyError={dialogPasswordPolicyError}
+        onRetryPasswordPolicy={retryDialogPasswordPolicy}
       />
 
       <AdminTransferDialog
@@ -528,7 +558,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
         adminId={selectedAdminForAction?.id}
         adminName={selectedAdminForAction?.displayName}
         tenantId={selectedAdminForAction?.tenantId || tenantId}
-        useMyTenant={true}
+        useMyTenant={!isPlatformSuperAdmin && !tenantId}
       />
     </>
   );

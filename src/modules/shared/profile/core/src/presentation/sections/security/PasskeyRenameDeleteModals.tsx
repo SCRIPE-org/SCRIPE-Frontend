@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Button } from "@core/ui/button";
+import { Alert, AlertDescription } from "@core/ui/alert";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import {
@@ -14,6 +15,7 @@ import {
 } from "@core/ui/dialog";
 import { toast } from "@core/ui/sileo-toast";
 import type { PasskeyCredential } from "../../../domain/entities/PasskeyCredential";
+import { isSudoCancelledError } from "../../utils/sudoElevation";
 import { AlertTriangle, Loader2, Trash2 } from "lucide-react";
 
 function isLastCredentialLockError(err: unknown): boolean {
@@ -93,6 +95,7 @@ export function PasskeyRenameDeleteModals({
       setRenameDraft(null);
       onRenameClose();
     } catch (err) {
+      if (isSudoCancelledError(err)) return;
       setRenameErrorState({
         id: renameTarget.id,
         value: err instanceof Error ? err.message : t("profile.common.error"),
@@ -108,6 +111,7 @@ export function PasskeyRenameDeleteModals({
       toast.success(t("profile.passkeys.deleteSuccess"));
       onDeleteClose();
     } catch (err) {
+      if (isSudoCancelledError(err)) return;
       setDeleteErrorState({
         id: deleteTarget.id,
         value: isLastCredentialLockError(err)
@@ -209,10 +213,12 @@ export function PasskeyRenameDeleteModals({
                 </p>
               </div>
               {totalPasskeysCount <= 1 && (
-                <div className="rounded-xl border border-warning/40 bg-warning/10 p-3 flex items-start gap-2 text-xs text-warning">
-                  <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" />
-                  <span>{t("profile.passkeys.deleteWarning")}</span>
-                </div>
+                <Alert variant="warning">
+                  <AlertTriangle className="h-4 w-4 shrink-0" aria-hidden="true" />
+                  <AlertDescription className="text-xs">
+                    {t("profile.passkeys.deleteWarning")}
+                  </AlertDescription>
+                </Alert>
               )}
               {deleteError && (
                 <div

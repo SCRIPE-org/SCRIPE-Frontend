@@ -1,5 +1,8 @@
 import { buildUrl } from "@/core/config/api-endpoints/_shared";
+import { isExternalCustomDomain } from "@core/common/origin-routing";
+import type { PasswordPolicyDto } from "@core/common/password-policy";
 import type { IApiService } from "@core/interfaces/api.interface";
+import { postCustomDomainSessionRelay } from "@core/services/custom-domain-relay-client";
 import type { IProfileService } from "../../domain/interfaces/IProfileService";
 import type { AdminProfile } from "../../domain/entities/AdminProfile";
 import type { ActiveSession } from "../../domain/entities/ActiveSession";
@@ -8,6 +11,7 @@ import type { ExternalLogin } from "../../domain/entities/ExternalLogin";
 import type {
   UpdateProfileRequest,
   ChangePasswordRequest,
+  ChangePasswordSessionResult,
   Enable2FAResult,
   InitiateExternalLoginLinkRequest,
   InitiateExternalLoginLinkResponse,
@@ -29,31 +33,64 @@ export class ProfileService implements IProfileService {
     return this.api.put<AdminProfile>(PROFILE_ENDPOINTS.UPDATE_DOSSIER, data);
   }
 
-  async uploadAvatar(file: File): Promise<{ profileImageUrl: string }> {
-    const formData = new FormData();
-    formData.append("file", file);
-    return this.api.post<{ profileImageUrl: string }>(PROFILE_ENDPOINTS.AVATAR, formData);
-  }
-
   async removeAvatar(): Promise<void> {
     return this.api.delete<void>(PROFILE_ENDPOINTS.AVATAR);
+  }
+
+  async getPasswordPolicy(): Promise<PasswordPolicyDto> {
+    return this.api.get<PasswordPolicyDto>(PROFILE_ENDPOINTS.PASSWORD_POLICY);
   }
 
   /**
    * AdminsController.ChangePassword is `POST /v1/admins/{id}/change-password` — it needs
    * the current admin's own id, which this service doesn't otherwise hold. Resolve it via
-   * GET /v1/account/dossier (AdminProfileDto always carries `id`) before posting.
+   * GET /v1/account/dossier (`AccountDossierDto` returns `adminId`; legacy DTOs return `id`).
    */
-  async changePassword(data: ChangePasswordRequest): Promise<void> {
-    const me = await this.api.get<{ id: string }>(PROFILE_ENDPOINTS.DOSSIER);
-    return this.api.post<void>(PROFILE_ENDPOINTS.CHANGE_PASSWORD(me.id), data);
+  async changePassword(
+    data: ChangePasswordRequest,
+    sudoToken?: string
+  ): Promise<ChangePasswordSessionResult | void> {
+    const me = await this.api.get<{ adminId?: string; id?: string }>(PROFILE_ENDPOINTS.DOSSIER);
+    const adminId = (me?.adminId ?? me?.id ?? "").trim();
+    if (!adminId) {
+      throw new Error("Unable to resolve administrator identifier for password change.");
+    }
+    if (isExternalCustomDomain()) {
+      return postCustomDomainSessionRelay<ChangePasswordSessionResult | void>(
+        "/api/auth/session/establish",
+        {
+          mode: "change-password",
+          adminId,
+          id: adminId,
+          ...data,
+        },
+        { includeAuth: true, sudoToken }
+      );
+    }
+    if (sudoToken) {
+      return this.api.post<ChangePasswordSessionResult | void>(
+        PROFILE_ENDPOINTS.CHANGE_PASSWORD(adminId),
+        data,
+        undefined,
+        { headers: { "X-Sudo-Token": sudoToken } }
+      );
+    }
+    return this.api.post<ChangePasswordSessionResult | void>(
+      PROFILE_ENDPOINTS.CHANGE_PASSWORD(adminId),
+      data
+    );
   }
 
   async getSessions(): Promise<ActiveSession[]> {
     return this.api.get<ActiveSession[]>(PROFILE_ENDPOINTS.SESSIONS);
   }
 
-  async revokeSession(tokenId: string): Promise<void> {
+  async revokeSession(tokenId: string, sudoToken?: string): Promise<void> {
+    if (sudoToken) {
+      return this.api.delete<void>(PROFILE_ENDPOINTS.REVOKE_SESSION(tokenId), undefined, {
+        headers: { "X-Sudo-Token": sudoToken },
+      });
+    }
     return this.api.delete<void>(PROFILE_ENDPOINTS.REVOKE_SESSION(tokenId));
   }
 
@@ -62,7 +99,24 @@ export class ProfileService implements IProfileService {
    * httpOnly refresh-token cookie via CookieAuthMiddleware — same pattern as
    * AuthService.logout()/refreshToken(), which also POST an empty body.
    */
-  async revokeAllSessions(): Promise<{ revokedCount: number }> {
+  async revokeAllSessions(sudoToken?: string): Promise<{ revokedCount: number }> {
+    if (isExternalCustomDomain()) {
+      return postCustomDomainSessionRelay<{ revokedCount: number }>(
+        "/api/auth/session/establish",
+        {
+          mode: "revoke-other-sessions",
+        },
+        { includeAuth: true, sudoToken }
+      );
+    }
+    if (sudoToken) {
+      return this.api.post<{ revokedCount: number }>(
+        PROFILE_ENDPOINTS.REVOKE_ALL_SESSIONS,
+        {},
+        undefined,
+        { headers: { "X-Sudo-Token": sudoToken } }
+      );
+    }
     return this.api.post<{ revokedCount: number }>(PROFILE_ENDPOINTS.REVOKE_ALL_SESSIONS, {});
   }
 

@@ -24,6 +24,11 @@ import {
   type SettingsContextType,
 } from "@core/providers/settings-provider";
 import { applySettingsToDOM } from "@core/settings/dom-applicator";
+import {
+  isTrustedSameOriginParentMessage,
+  parseDashboardSettingsUpdateMessage,
+  postToSameOriginParent,
+} from "@core/common/postmessage-security";
 import { MockDashboardContent } from "./MockDashboardContent";
 
 /** Valid settings keys whitelist (security hardening against injected attributes). */
@@ -144,24 +149,16 @@ export function DashboardPreviewShell() {
   // Listen for postMessage from studio parent — update in-memory state only
   useEffect(() => {
     // Signal to studio that preview is ready
-    window.parent?.postMessage({ type: "DASHBOARD_PREVIEW_READY" }, window.location.origin);
+    postToSameOriginParent({ type: "DASHBOARD_PREVIEW_READY" });
 
     const handler = (e: MessageEvent) => {
-      if (e.origin !== window.location.origin) return;
+      if (!isTrustedSameOriginParentMessage(e)) return;
 
-      if (e.data?.type === "DASHBOARD_SETTINGS_UPDATE") {
-        const rawSettings = e.data.settings;
-        if (!rawSettings || typeof rawSettings !== "object") return;
+      const newSettings = parseDashboardSettingsUpdateMessage(e.data, VALID_SETTINGS_KEYS);
+      if (!newSettings) return;
 
-        // Filter to valid keys only (reject unknown/injected keys)
-        const newSettings = Object.fromEntries(
-          Object.entries(rawSettings).filter(([k]) => VALID_SETTINGS_KEYS.has(k))
-        );
-        if (Object.keys(newSettings).length === 0) return;
-
-        // Update in-memory state only — NO localStorage, NO events
-        setPreviewOverrides((prev) => ({ ...prev, ...newSettings }));
-      }
+      // Update in-memory state only — NO localStorage, NO events
+      setPreviewOverrides((prev) => ({ ...prev, ...newSettings }));
     };
 
     window.addEventListener("message", handler);

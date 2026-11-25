@@ -5,12 +5,19 @@
  * @module auth/account-setup/presentation/utils
  */
 
+import {
+  DEFAULT_PASSWORD_MAX_LENGTH,
+  evaluatePasswordPolicy,
+  type PasswordPolicyModel,
+} from "@core/common/password-policy";
 import type { SetupCustomField } from "../../domain/entities";
 
 /** Password complexity policy flags resolved from token metadata. */
 export interface AccountSetupPasswordPolicy {
   minLength: number;
+  maxLength?: number;
   requireUppercase: boolean;
+  requireLowercase?: boolean;
   requireNumber: boolean;
   requireSpecial: boolean;
 }
@@ -18,6 +25,7 @@ export interface AccountSetupPasswordPolicy {
 /** Boolean evaluation results for each password policy constraint. */
 export interface AccountSetupPasswordChecks {
   minLength: boolean;
+  withinMaxLength: boolean;
   hasUpper: boolean;
   hasLower: boolean;
   hasNumber: boolean;
@@ -28,11 +36,26 @@ export interface AccountSetupPasswordChecks {
 /** Localized validation messages used when summarizing unmet password rules. */
 export interface AccountSetupPasswordMessages {
   minLength: string;
+  maxLength?: string;
   hasUpper: string;
   hasLower: string;
   hasNumber: string;
   hasSpecial: string;
   matches: string;
+}
+
+function toPolicyModel(policy: AccountSetupPasswordPolicy): PasswordPolicyModel {
+  return {
+    minLength: policy.minLength,
+    maxLength: policy.maxLength ?? DEFAULT_PASSWORD_MAX_LENGTH,
+    requireUppercase: policy.requireUppercase,
+    requireLowercase: policy.requireLowercase ?? false,
+    requireNumber: policy.requireNumber,
+    requireSpecial: policy.requireSpecial,
+    historyCount: 0,
+    checkBreachedPasswords: false,
+    expiryDays: null,
+  };
 }
 
 /**
@@ -43,12 +66,16 @@ export function evaluateAccountSetupPasswordChecks(
   confirmPassword: string,
   policy: AccountSetupPasswordPolicy
 ): AccountSetupPasswordChecks {
+  const evaluation = evaluatePasswordPolicy(password, toPolicyModel(policy));
+  const byKey = new Map(evaluation.rules.map((r) => [r.key, r.met]));
+
   return {
-    minLength: password.length >= policy.minLength,
-    hasUpper: policy.requireUppercase ? /[A-Z]/.test(password) : true,
-    hasLower: /[a-z]/.test(password),
-    hasNumber: policy.requireNumber ? /\d/.test(password) : true,
-    hasSpecial: policy.requireSpecial ? /[^A-Za-z0-9]/.test(password) : true,
+    minLength: byKey.get("minLength") ?? false,
+    withinMaxLength: evaluation.withinMaxLength,
+    hasUpper: byKey.get("uppercase") ?? true,
+    hasLower: byKey.get("lowercase") ?? true,
+    hasNumber: byKey.get("number") ?? true,
+    hasSpecial: byKey.get("special") ?? true,
     matches: password === confirmPassword && confirmPassword.length > 0,
   };
 }
@@ -61,16 +88,16 @@ export function computeAccountSetupPasswordScore(
   policy: AccountSetupPasswordPolicy
 ): number {
   let passed = 0;
-  let total = 0;
-
-  total++;
+  let total = 1; // minLength is always active
   if (checks.minLength) passed++;
-  total++;
-  if (checks.hasLower) passed++;
 
   if (policy.requireUppercase) {
     total++;
     if (checks.hasUpper) passed++;
+  }
+  if (policy.requireLowercase) {
+    total++;
+    if (checks.hasLower) passed++;
   }
   if (policy.requireNumber) {
     total++;
@@ -81,7 +108,7 @@ export function computeAccountSetupPasswordScore(
     if (checks.hasSpecial) passed++;
   }
 
-  total++;
+  total++; // confirm password match
   if (checks.matches) passed++;
 
   return Math.round((passed / total) * 100);
@@ -107,11 +134,15 @@ export function computeAccountSetupPasswordEntropy(password: string): number {
 export function collectPasswordValidationErrors(
   checks: AccountSetupPasswordChecks,
   minLength: number,
-  messages: AccountSetupPasswordMessages
+  messages: AccountSetupPasswordMessages,
+  maxLength = DEFAULT_PASSWORD_MAX_LENGTH
 ): string[] {
   const errors: string[] = [];
   if (!checks.minLength) {
     errors.push(messages.minLength.replace("{{min}}", String(minLength)));
+  }
+  if (!checks.withinMaxLength && messages.maxLength) {
+    errors.push(messages.maxLength.replace("{{max}}", String(maxLength)));
   }
   if (!checks.hasUpper) errors.push(messages.hasUpper);
   if (!checks.hasLower) errors.push(messages.hasLower);
@@ -126,7 +157,8 @@ export function collectPasswordValidationErrors(
  */
 export function validateAccountSetupCustomFields(
   customFields: SetupCustomField[],
-  customFieldValues: Record<string, unknown>
+  customFieldValues: Record<string, unknown>,
+  requiredMessage = "This field is required"
 ): Record<string, string> {
   const errors: Record<string, string> = {};
   for (const field of customFields) {
@@ -139,7 +171,7 @@ export function validateAccountSetupCustomFields(
         (Array.isArray(val) && val.length === 0);
 
       if (isEmpty) {
-        errors[field.key] = "This field is required";
+        errors[field.key] = requiredMessage;
       }
     }
   }

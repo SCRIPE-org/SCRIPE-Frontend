@@ -10,8 +10,12 @@
 import { useMemo } from "react";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
 import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
-import { useUserGroupsViewModel } from "../viewmodels/useUserGroupsViewModel";
+import {
+  useUserGroupsViewModel,
+  type UserGroupListItem,
+} from "../viewmodels/useUserGroupsViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
+import { usePermissions } from "@core/hooks/use-permission";
 import { resolveBilingualLabel } from "@core/common/utils";
 import { Badge } from "@core/ui/badge";
 import {
@@ -29,21 +33,6 @@ import { CascadeDeleteDialog } from "../components/CascadeDeleteDialog";
 import { CascadeStatusDialog } from "../components/CascadeStatusDialog";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
-interface UserGroupListItem {
-  id: string;
-  nameEn: string;
-  nameAr: string;
-  code: string;
-  descriptionEn?: string;
-  descriptionAr?: string;
-  tenantId: string;
-  tenantName?: string;
-  isActive: boolean;
-  memberCount: number;
-  roleCount: number;
-  createdAt: string;
-}
-
 /**
  * Presentation UI component rendering the user groups view.
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
@@ -52,6 +41,7 @@ export function UserGroupsView() {
   useModuleLocales(() => import("../../../locales"), "user-groups");
 
   const { t, language } = useI18n();
+  const { isPlatformSuperAdmin } = usePermissions();
   const router = useRouter();
   const {
     vm,
@@ -68,7 +58,7 @@ export function UserGroupsView() {
     setStatusDialog,
     confirmDelete,
     confirmStatus,
-  } = useUserGroupsViewModel({ useMyTenant: true });
+  } = useUserGroupsViewModel({ useMyTenant: !isPlatformSuperAdmin });
   const configBase = getConfigBase(t);
 
   const config: CrudConfig<UserGroupListItem> = useMemo(

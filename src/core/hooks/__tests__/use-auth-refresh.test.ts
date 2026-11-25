@@ -83,7 +83,7 @@ describe("useAuthRefresh — role and permission preservation", () => {
     expect(storeState.user?.isSuperAdmin).toBe(true);
   });
 
-  it("never wipes roles if backend returns empty roles array during refresh (preserves currentRoles)", async () => {
+  it("overwrites roles and permissions with empty arrays when backend revokes privileges (zero stale retention)", async () => {
     const userWithoutRoles = new User({
       id: "user-123",
       username: "test.admin",
@@ -91,8 +91,8 @@ describe("useAuthRefresh — role and permission preservation", () => {
       lastName: "Admin",
       phoneNumber: "123",
       adminTypeName: "Admin",
-      permissions: ["crm.leads.view"],
-      roles: [], // empty roles array returned
+      permissions: [],
+      roles: [],
       tenantId: "tenant-ahly",
     });
 
@@ -105,9 +105,23 @@ describe("useAuthRefresh — role and permission preservation", () => {
     });
 
     const storeState = useAppStore.getState();
-    // Existing roles must be preserved
-    expect(storeState.roles).toHaveLength(1);
-    expect(storeState.roles[0].roleCode).toBe("CrmAdmin");
+    expect(storeState.roles).toEqual([]);
+    expect(storeState.permissions).toEqual([]);
+  });
+
+  it("clears auth state and navigation when /auth/admin/principal returns 401 or 403", async () => {
+    mockGetCurrentPrincipal.mockRejectedValueOnce({ status: 403, message: "Forbidden" });
+
+    const { result } = renderHook(() => useAuthRefresh({ enabled: false }));
+
+    await act(async () => {
+      await result.current.refresh();
+    });
+
+    const storeState = useAppStore.getState();
+    expect(storeState.isAuthenticated).toBe(false);
+    expect(storeState.permissions).toEqual([]);
+    expect(storeState.roles).toEqual([]);
   });
 
   it("defensive guard: if getCurrentPrincipal returns malformed response with empty/missing id, does not call setAuth or wipe state", async () => {

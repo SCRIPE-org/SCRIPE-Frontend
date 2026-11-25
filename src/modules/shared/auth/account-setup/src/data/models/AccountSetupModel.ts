@@ -14,8 +14,10 @@ export interface ValidateTokenResponse {
   errorMessage?: string;
   passwordMinLength?: number;
   passwordRequireUppercase?: boolean;
+  passwordRequireLowercase?: boolean;
   passwordRequireNumber?: boolean;
   passwordRequireSpecial?: boolean;
+  passwordPolicy?: import("@core/common/password-policy").PasswordPolicyDto | null;
   adminId?: string;
   firstName?: string;
   lastName?: string;

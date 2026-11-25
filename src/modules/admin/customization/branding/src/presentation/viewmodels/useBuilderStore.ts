@@ -19,6 +19,7 @@ import type {
   AuthPageId,
 } from "../../domain/entities/CanvasComponent";
 import type { SavedTemplate } from "../../domain/entities/SavedTemplate";
+import { resolveTenantScopedStorageKey } from "@core/common/session-cleanup-registry";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { appLogger } from "@core/common/logger";
 import {
@@ -689,12 +690,13 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
     });
   },
 
-  // ── Saved Templates Management ──
+  // ── Saved Templates Management (Tenant-Scoped LS-03) ──
   loadSavedTemplates: () => {
     try {
-      const raw =
-        typeof window !== "undefined" ? localStorage.getItem(STORAGE_KEYS.BUILDER_TEMPLATES) : null;
-      set({ savedTemplates: raw ? JSON.parse(raw) : [] });
+      const key = resolveTenantScopedStorageKey(STORAGE_KEYS.BUILDER_TEMPLATES);
+      const raw = typeof window !== "undefined" ? window.localStorage.getItem(key) : null;
+      const parsed = raw ? JSON.parse(raw) : [];
+      set({ savedTemplates: Array.isArray(parsed) ? parsed : [] });
     } catch {
       set({ savedTemplates: [] });
     }
@@ -713,7 +715,9 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
     const updated = [...state.savedTemplates, newTemplate];
     if (typeof window !== "undefined") {
       try {
-        localStorage.setItem(STORAGE_KEYS.BUILDER_TEMPLATES, JSON.stringify(updated));
+        const key = resolveTenantScopedStorageKey(STORAGE_KEYS.BUILDER_TEMPLATES);
+        window.localStorage.setItem(key, JSON.stringify(updated));
+        window.localStorage.removeItem(STORAGE_KEYS.BUILDER_TEMPLATES);
       } catch (e) {
         appLogger.error("Builder template save failed", e);
       }
@@ -726,7 +730,9 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
     const updated = state.savedTemplates.filter((t) => t.id !== id);
     if (typeof window !== "undefined") {
       try {
-        localStorage.setItem(STORAGE_KEYS.BUILDER_TEMPLATES, JSON.stringify(updated));
+        const key = resolveTenantScopedStorageKey(STORAGE_KEYS.BUILDER_TEMPLATES);
+        window.localStorage.setItem(key, JSON.stringify(updated));
+        window.localStorage.removeItem(STORAGE_KEYS.BUILDER_TEMPLATES);
       } catch (e) {
         appLogger.error("Builder template delete failed", e);
       }

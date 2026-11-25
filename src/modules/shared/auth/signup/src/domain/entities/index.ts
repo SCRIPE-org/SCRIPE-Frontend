@@ -315,6 +315,7 @@ export interface SignupResult {
   checkoutUrl: string | null;
   /** Opaque polling token: store in sessionStorage, poll GET /signup/status on /signup/finalize */
   signupRef: string | null;
+  requireMfaEnrollment?: boolean;
 }
 
 /** GET /signup/status response — the finalize page polls this. */
@@ -344,6 +345,7 @@ export interface SignupCompleteResult {
   tenantName: string;
   redirectUrl: string;
   user: User | null;
+  requireMfaEnrollment?: boolean;
 }
 
 // ─── Resume / Change-plan ─────────────────────────────────────────────────────

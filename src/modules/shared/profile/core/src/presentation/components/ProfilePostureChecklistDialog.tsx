@@ -18,7 +18,10 @@ import {
 } from "@core/ui/dialog";
 import { CheckCircle2, Circle, ShieldCheck } from "lucide-react";
 import type { AdminProfile } from "../../domain/entities/AdminProfile";
-import type { SovereignAccountContext } from "../../domain/entities/SovereignAccountEntities";
+import type {
+  SovereignAccountContext,
+  SovereignSecuritySlice,
+} from "../../domain/entities/SovereignAccountEntities";
 
 /** Rendered checklist item in the Security Posture dialog. */
 export interface PostureChecklistViewItem {
@@ -41,10 +44,17 @@ export function formatSudoRemainingTime(totalSeconds: number): string {
 export function buildPostureChecklistItems(
   accountContext: SovereignAccountContext | null | undefined,
   profile: AdminProfile | null | undefined,
-  t: (key: string, params?: Record<string, string | number>) => string
+  t: (key: string, params?: Record<string, string | number>) => string,
+  security?: Partial<
+    Pick<SovereignSecuritySlice, "postureChecklist" | "isTwoFactorEnabled" | "isPasswordExpired">
+  > | null
 ): PostureChecklistViewItem[] {
-  if (accountContext?.postureChecklist && accountContext.postureChecklist.length > 0) {
-    return accountContext.postureChecklist.map((item) => ({
+  const checklist =
+    accountContext?.postureChecklist && accountContext.postureChecklist.length > 0
+      ? accountContext.postureChecklist
+      : security?.postureChecklist;
+  if (checklist && checklist.length > 0) {
+    return checklist.map((item) => ({
       key: item.key,
       label: item.labelKey.includes(".")
         ? t(item.labelKey, { defaultValue: item.labelKey })
@@ -59,7 +69,7 @@ export function buildPostureChecklistItems(
       key: "totp",
       label: t("profile.posture.totp"),
       weight: "+30%",
-      done: Boolean(profile?.isTwoFactorEnabled),
+      done: Boolean(security?.isTwoFactorEnabled ?? profile?.isTwoFactorEnabled),
       href: "/account/security",
     },
     {

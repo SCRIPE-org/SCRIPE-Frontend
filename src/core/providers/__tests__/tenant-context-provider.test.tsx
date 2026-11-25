@@ -16,11 +16,15 @@ const mockApiService = {
 
 const mockBroadcastTenantContext = vi.fn();
 const mockClearNavigationCaches = vi.fn();
+const mockGetCurrentPrincipal = vi.fn();
 
 vi.mock("@core/providers/service-provider", () => ({
   useServices: () => ({
     apiService: mockApiService,
-    authRepository: { logout: vi.fn().mockResolvedValue(undefined) },
+    authRepository: {
+      logout: vi.fn().mockResolvedValue(undefined),
+      getCurrentPrincipal: mockGetCurrentPrincipal,
+    },
   }),
 }));
 
@@ -227,5 +231,66 @@ describe("TenantContextProvider", () => {
 
     expect(sessionStorage.getItem(STORAGE_KEYS.tenant_context)).not.toBeNull();
     expect(mockBroadcastTenantContext).toHaveBeenLastCalledWith("member-tenant-5");
+  });
+
+  it("resyncs principal and clears lastAuthRefresh immediately when switching with redirectTo: null", async () => {
+    sessionStorage.setItem(STORAGE_KEYS.lastAuthRefresh, "1700000000000");
+    useAppStore.setState({
+      isAuthenticated: true,
+      _hasHydrated: true,
+      permissions: ["tenants.drill_down", "crm.leads.view"],
+      roles: [
+        {
+          roleId: "r1",
+          roleName: "System Super Admin",
+          roleCode: "SYSTEM_SUPER_ADMIN",
+          inheritedPermissions: [],
+        },
+      ],
+      user: {
+        id: "sa-1",
+        username: "admin",
+        isProtected: true,
+        tenantId: null,
+      } as never,
+    });
+
+    mockGetCurrentPrincipal.mockResolvedValue({
+      id: "sa-1",
+      username: "admin",
+      isProtected: true,
+      tenantId: "holding-1",
+      roles: [
+        {
+          roleId: "r2",
+          roleName: "Tenant View",
+          roleCode: "T_VIEWER",
+          inheritedPermissions: [],
+        },
+      ],
+      permissions: ["crm.opportunities.read"],
+      restrictedFields: { "crm.opportunities": ["estimatedAmount"] },
+    });
+
+    const wrapper = createWrapper(queryClient);
+    const { result } = renderHook(() => useTenantContext(), { wrapper });
+
+    act(() => {
+      result.current.enterTenantWorld(
+        { id: "holding-1", name: "Holding Corp" },
+        { redirectTo: null }
+      );
+    });
+
+    expect(sessionStorage.getItem(STORAGE_KEYS.lastAuthRefresh)).toBeNull();
+    await waitFor(() => {
+      expect(mockGetCurrentPrincipal).toHaveBeenCalledTimes(1);
+    });
+    await waitFor(() => {
+      expect(useAppStore.getState().permissions).toEqual(["crm.opportunities.read"]);
+    });
+    expect(useAppStore.getState().restrictedFields).toEqual({
+      "crm.opportunities": ["estimatedAmount"],
+    });
   });
 });

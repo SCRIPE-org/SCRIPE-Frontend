@@ -1,3 +1,5 @@
+import type { PasswordPolicyDto } from "@core/common/password-policy";
+
 export interface TenantBrandingModel {
   tenantId?: string | null;
   name?: string | null;
@@ -15,4 +17,5 @@ export interface TenantBrandingModel {
   slotConfigJson?: string | null;
   dashboardThemeJson?: string | null;
   isSafeMode?: boolean | null;
+  passwordPolicy?: PasswordPolicyDto | null;
 }

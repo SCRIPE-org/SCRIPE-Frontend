@@ -24,11 +24,16 @@ export class EmailMapper {
    * Convert EmailRecipientJson → EmailRecipient Entity
    */
   static toRecipientEntity(json: EmailRecipientJson): EmailRecipient {
+    const rawType = (json.type ?? "").toLowerCase();
+    const normalizedType: EmailRecipientData["type"] =
+      rawType === "admin" ? "admin" : rawType === "user" ? "user" : "custom";
+    const email = (json.email ?? "").trim();
+    const name = (json.name || json.username || email).trim();
     const data: EmailRecipientData = {
       id: json.id,
-      email: json.email,
-      name: json.name,
-      type: json.type,
+      email,
+      name,
+      type: normalizedType,
     };
     return new EmailRecipient(data);
   }

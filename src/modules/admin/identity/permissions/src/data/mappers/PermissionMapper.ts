@@ -32,6 +32,7 @@ const PermissionModelSchema = z.object({
   descriptionAr: optionalString(),
   nameEn: optionalString(),
   nameAr: optionalString(),
+  platformOnly: z.boolean().nullish().default(false),
 });
 
 /**
@@ -57,6 +58,7 @@ export class PermissionMapper {
       descriptionAr: validated.descriptionAr ?? undefined,
       nameEn: validated.nameEn ?? undefined,
       nameAr: validated.nameAr ?? undefined,
+      platformOnly: Boolean(validated.platformOnly),
     };
     return new Permission(props);
   }
@@ -76,7 +78,8 @@ export class PermissionMapper {
       entity.descriptionEn,
       entity.descriptionAr,
       entity.nameEn,
-      entity.nameAr
+      entity.nameAr,
+      entity.platformOnly
     );
   }
 
@@ -111,6 +114,7 @@ export class PermissionMapper {
             descriptionAr: pJson.descriptionAr,
             nameEn: pJson.nameEn,
             nameAr: pJson.nameAr,
+            platformOnly: Boolean(pJson.platformOnly),
           };
           return new Permission(props);
         }),

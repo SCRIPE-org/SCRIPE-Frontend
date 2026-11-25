@@ -22,6 +22,7 @@ import { IntegrationsTelemetryStrip } from "../sections/integrations/Integration
 import { PatOneTimeSecretBanner } from "../sections/integrations/PatOneTimeSecretBanner";
 import { PatConsoleListSection } from "../sections/integrations/PatConsoleListSection";
 import { PatSecretAndConfirmModals } from "../sections/integrations/PatSecretAndConfirmModals";
+import { isSudoCancelledError } from "../utils/sudoElevation";
 
 /**
  * Developer integrations and Personal Access Token (PAT) ledger console (/account/integrations).
@@ -122,6 +123,7 @@ export function AccountIntegrationsView() {
       await rollToken(pendingRollToken.id, pendingRollToken.name);
       setPendingRollToken(null);
     } catch (err: unknown) {
+      if (isSudoCancelledError(err)) return;
       setActionError(err instanceof Error ? err.message : t("profile.common.error"));
     }
   };
@@ -133,6 +135,7 @@ export function AccountIntegrationsView() {
       await revokeToken(pendingRevokeToken.id);
       setPendingRevokeToken(null);
     } catch (err: unknown) {
+      if (isSudoCancelledError(err)) return;
       setActionError(err instanceof Error ? err.message : t("profile.common.error"));
     }
   };

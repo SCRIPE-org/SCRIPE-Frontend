@@ -9,7 +9,8 @@
  * title/actions flex row. Composing PageHeader means the role page opens
  * exactly like every other record page in the product.
  */
-import { Save, Shield } from "lucide-react";
+import { Lock, Save, Shield } from "lucide-react";
+import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Skeleton } from "@core/ui/skeleton";
 import { PageHeader } from "@core/ui/page-header";
@@ -28,6 +29,8 @@ export interface RoleDetailHeaderProps {
   onSave: () => void;
   /** Whether the permission matrix has unsaved edits since the last load/save. */
   isDirty: boolean;
+  /** Whether the role's permissions are locked by edition synchronization. */
+  isPermissionLocked?: boolean;
 }
 
 /**
@@ -40,9 +43,11 @@ export function RoleDetailHeader({
   isSaving,
   onSave,
   isDirty,
+  isPermissionLocked,
 }: RoleDetailHeaderProps) {
   const { t, language } = useI18n();
   const roleName = resolveBilingualLabel(role?.nameEn ?? "", role?.nameAr ?? "", language);
+  const locked = Boolean(isPermissionLocked || role?.isPermissionLocked);
   const breadcrumbSegments = [
     { label: t("roles.title"), href: "/roles" },
     { label: isLoading ? t("common.loading") : roleName || t("roles.roleDetails") },
@@ -60,7 +65,25 @@ export function RoleDetailHeader({
       title={isLoading ? <Skeleton className="h-6 w-48" /> : (roleName ?? "")}
       // The code is an identifier, and identifiers stay mono here — the list
       // column and the info card render it the same way.
-      description={role?.code ? <span className="font-mono">{role.code}</span> : undefined}
+      description={
+        role?.code ? (
+          <span className="inline-flex flex-wrap items-center gap-2">
+            <span className="font-mono">
+              <bdi dir="ltr">{role.code}</bdi>
+            </span>
+            {locked && (
+              <Badge
+                variant="secondary"
+                data-testid="role-locked-badge"
+                className="gap-1 text-[11px]"
+              >
+                <Lock className="h-3 w-3" aria-hidden="true" />
+                {t("roles.lockedBadge")}
+              </Badge>
+            )}
+          </span>
+        ) : undefined
+      }
       actions={
         // Reflects real edit state (see useRoleDetailViewModel's isDirty) instead
         // of only gating on the loading flag — navigating away with a dozen

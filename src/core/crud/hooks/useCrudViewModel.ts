@@ -20,6 +20,8 @@ export interface CrudViewModelOptions {
    * existing caller keeps today's immediate toast + auto-close.
    */
   deferSuccessEffects?: boolean;
+  /** Optional mutation error hook invoked after useGenericMutations error handling. */
+  onError?: (error: Error) => void;
 }
 
 export type SortDirection = "asc" | "desc";
@@ -103,6 +105,7 @@ export function useCrudViewModel<T extends BaseEntity, TCreate = any, TUpdate = 
   const mutations = useGenericMutations<T, TCreate, TUpdate>(key, services, {
     optimisticDelete: true,
     deferSuccessToast: deferSuccessEffects,
+    onError: options.onError,
     onCreateSuccess: () => {
       if (!deferSuccessEffects) setIsCreateModalOpen(false);
     },

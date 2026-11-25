@@ -24,7 +24,9 @@ export class EmailRepository implements IEmailRepository {
 
   async searchRecipients(query: string): Promise<EmailRecipient[]> {
     const jsonList = await this.service.searchRecipients(query);
-    return jsonList.map((json) => EmailMapper.toRecipientEntity(json));
+    return jsonList
+      .map((json) => EmailMapper.toRecipientEntity(json))
+      .filter((recipient) => Boolean(recipient.email));
   }
 
   async send(data: SendManualEmailPayload): Promise<void> {

@@ -11,7 +11,11 @@
   },
   "rules": {
     "no-unused-vars": "warn",
-    "react/jsx-key": "error"
+    "no-eval": "error",
+    "no-script-url": "warn",
+    "react/jsx-key": "error",
+    "react/jsx-no-target-blank": "error",
+    "react/no-danger": "warn"
   },
   "ignorePatterns": [
     ".next/**",

@@ -11,8 +11,9 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useServices } from "@core/providers/service-provider";
 import { useAppStore } from "@core/store/useAppStore";
-import { authContainer } from "@modules/auth/di";
+import { extractAndScrubMagicLinkToken } from "../utils/magicLinkUrl";
 import type { User } from "@modules/auth/core/domain/entities/User";
 import type { WorkspaceChoice } from "@modules/auth/core/domain/errors/AuthErrors";
 import type { AdminRole, PermissionCode } from "@core/common/types/permissions";
@@ -47,6 +48,7 @@ export interface UseMagicLinkCallbackViewModelReturn {
 interface SessionPayload {
   user: User;
   mustChangePassword?: boolean;
+  requireMfaEnrollment?: boolean;
   subscriptionStatus?: string | null;
   gracePhase?: string | null;
   editionName?: string | null;
@@ -65,13 +67,18 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
   const setAuth = useAppStore((state) => state.setAuth);
   const setSubscriptionInfo = useAppStore((state) => state.setSubscriptionInfo);
   const setMustChangePassword = useAppStore((state) => state.setMustChangePassword);
+  const setRequireMfaEnrollment = useAppStore((state) => state.setRequireMfaEnrollment);
   const setDefaultRedirectPath = useAppStore((state) => state.setDefaultRedirectPath);
+  const { authRepository } = useServices();
+  const authRepositoryRef = useRef(authRepository);
+  authRepositoryRef.current = authRepository;
 
-  const token = searchParams?.get("token") ?? "";
-  const tenantId = searchParams?.get("tenantId") ?? undefined;
+  const queryToken = (searchParams?.get("token") ?? "").trim();
+  const [token, setToken] = useState<string>(queryToken);
+  const tenantId = searchParams?.get("tenantId") ?? searchParams?.get("_tenant") ?? undefined;
   const queryRedirect = searchParams?.get("redirect") ?? null;
 
-  const [state, setState] = useState<MagicLinkVerifyState>(token ? "verifying" : "error");
+  const [state, setState] = useState<MagicLinkVerifyState>("verifying");
   const [availableWorkspaces, setAvailableWorkspaces] = useState<WorkspaceChoice[]>([]);
   const [isSelectingWorkspace, setIsSelectingWorkspace] = useState(false);
   const [workspaceSelectionError, setWorkspaceSelectionError] = useState<string | undefined>(
@@ -86,7 +93,7 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
   const [isVerifying2FA, setIsVerifying2FA] = useState(false);
   const [twoFactorError, setTwoFactorError] = useState("");
 
-  // Guard against React StrictMode double-invoking single-use magic-link verification
+  // Guard against React StrictMode / re-render re-invoking single-use magic-link verification
   const verifiedTokenRef = useRef<string | null>(null);
 
   const enterTwoFactorStep = useCallback((pendingToken: string, staySignedIn: boolean) => {
@@ -100,8 +107,10 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
   const hydrateAndRedirect = useCallback(
     (payload: SessionPayload, delayMs: number, isCancelled?: () => boolean) => {
       const mustChange = Boolean(payload.mustChangePassword);
+      const requireMfa = Boolean(payload.requireMfaEnrollment);
       const targetPath = buildPostAuthEntryUrl({
         mustChangePassword: mustChange,
+        requireMfaEnrollment: requireMfa,
         subscriptionStatus: payload.subscriptionStatus,
         redirect: queryRedirect,
       });
@@ -121,8 +130,9 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
           payload.editionName ?? null
         );
         setMustChangePassword(mustChange);
+        setRequireMfaEnrollment?.(requireMfa);
         setDefaultRedirectPath("/");
-        if (!mustChange && payload.subscriptionStatus !== "PendingPayment") {
+        if (!mustChange && !requireMfa && payload.subscriptionStatus !== "PendingPayment") {
           queryClient.invalidateQueries();
         }
         if (targetPath.startsWith("http://") || targetPath.startsWith("https://")) {
@@ -139,24 +149,50 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
       setAuth,
       setSubscriptionInfo,
       setMustChangePassword,
+      setRequireMfaEnrollment,
       setDefaultRedirectPath,
       queryClient,
       router,
     ]
   );
 
+  const enterTwoFactorStepRef = useRef(enterTwoFactorStep);
+  enterTwoFactorStepRef.current = enterTwoFactorStep;
+  const hydrateAndRedirectRef = useRef(hydrateAndRedirect);
+  hydrateAndRedirectRef.current = hydrateAndRedirect;
+  const isMountedRef = useRef(true);
+
   useEffect(() => {
-    if (!token || verifiedTokenRef.current === token) return;
-    verifiedTokenRef.current = token;
-    let cancelled = false;
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    const resolvedToken = extractAndScrubMagicLinkToken(queryToken);
+    if (resolvedToken) {
+      setToken(resolvedToken);
+    }
+
+    const activeToken = resolvedToken || verifiedTokenRef.current || "";
+    if (!activeToken) {
+      setState("error");
+      return;
+    }
+    if (verifiedTokenRef.current === activeToken) return;
+    verifiedTokenRef.current = activeToken;
 
     (async () => {
       try {
-        const response = await authContainer.authRepository.verifyMagicLink(token, tenantId);
-        if (cancelled) return;
+        const response = await authRepositoryRef.current.verifyMagicLink(activeToken, tenantId);
+        if (!isMountedRef.current) return;
 
         if (response.requires2FA && response.twoFactorPendingToken) {
-          enterTwoFactorStep(response.twoFactorPendingToken, Boolean(response.staySignedIn));
+          enterTwoFactorStepRef.current(
+            response.twoFactorPendingToken,
+            Boolean(response.staySignedIn)
+          );
           return;
         }
         if (response.requiresWorkspaceSelection && response.availableWorkspaces?.length) {
@@ -165,34 +201,31 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
           return;
         }
         if (response.user) {
-          hydrateAndRedirect(
+          hydrateAndRedirectRef.current(
             { ...response, user: response.user },
             1200,
-            () => cancelled
+            () => !isMountedRef.current
           );
           return;
         }
         setState("error");
       } catch {
-        if (!cancelled) setState("error");
+        if (isMountedRef.current) setState("error");
       }
     })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [token, tenantId, enterTwoFactorStep, hydrateAndRedirect]);
+  }, [queryToken, tenantId]);
 
   const selectWorkspace = useCallback(
     async (workspace: WorkspaceChoice) => {
-      if (!token) return;
+      const activeToken = token || verifiedTokenRef.current || "";
+      if (!activeToken) return;
       setWorkspaceSelectionError(undefined);
       setIsSelectingWorkspace(true);
 
       try {
         const targetTenantId = workspace.isPlatformAdmin ? undefined : workspace.tenantId;
-        const response = await authContainer.authRepository.verifyMagicLink(
-          token,
+        const response = await authRepositoryRef.current.verifyMagicLink(
+          activeToken,
           targetTenantId,
           false,
           workspace.isPlatformAdmin
@@ -226,7 +259,7 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
     setTwoFactorError("");
     setIsVerifying2FA(true);
     try {
-      const result = await authContainer.authRepository.verify2FA(
+      const result = await authRepositoryRef.current.verify2FA(
         "",
         null,
         twoFactorCode.trim(),
@@ -253,19 +286,8 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
   }, [router]);
 
   return {
-    state,
-    direction,
-    availableWorkspaces,
-    isSelectingWorkspace,
-    workspaceSelectionError,
-    selectWorkspace,
-    twoFactorCode,
-    setTwoFactorCode,
-    useBackupCode,
-    isVerifying2FA,
-    twoFactorError,
-    handleVerify2FA,
-    toggleBackupCode,
-    goBackToLogin,
+    state, direction, availableWorkspaces, isSelectingWorkspace, workspaceSelectionError,
+    selectWorkspace, twoFactorCode, setTwoFactorCode, useBackupCode, isVerifying2FA,
+    twoFactorError, handleVerify2FA, toggleBackupCode, goBackToLogin,
   };
 }

@@ -22,10 +22,10 @@ export function EmergencyLockdownShieldCard({ onOpenLockdown }: EmergencyLockdow
 
   return (
     <Card className="border border-destructive/40 bg-destructive/5 hover:border-destructive/60 transition-colors">
-      <CardHeader className="pb-3 flex flex-row items-center justify-between">
-        <div>
+      <CardHeader className="pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="min-w-0">
           <div className="flex items-center gap-2 text-destructive">
-            <ShieldX className="h-4 w-4" style={{ minWidth: 16, minHeight: 16 }} />
+            <ShieldX className="h-4 w-4 shrink-0" style={{ minWidth: 16, minHeight: 16 }} />
             <CardTitle className="text-sm font-bold">{t("profile.lockdown.sectionTitle")}</CardTitle>
           </div>
           <CardDescription className="text-xs text-destructive/80 mt-1">
@@ -38,7 +38,7 @@ export function EmergencyLockdownShieldCard({ onOpenLockdown }: EmergencyLockdow
           size="sm"
           onClick={onOpenLockdown}
           data-testid="trigger-lockdown-btn"
-          className="text-xs font-semibold gap-1.5"
+          className="text-xs font-semibold gap-1.5 shrink-0 self-start sm:self-center"
         >
           <ShieldAlert className="h-3.5 w-3.5" />
           <span>{t("profile.lockdown.triggerBtn")}</span>

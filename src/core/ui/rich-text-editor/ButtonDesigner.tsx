@@ -17,6 +17,11 @@ import {
   FormMessage,
 } from "@core/ui/form";
 import { useI18n } from "@core/providers/i18n-provider";
+import {
+  sanitizeCssDeclarationValue,
+  sanitizeEmailHref,
+  sanitizeHtml,
+} from "@core/common/sanitize";
 import { MousePointerClick } from "lucide-react";
 import { ColorPickerField } from "./ColorPickerField";
 
@@ -84,8 +89,16 @@ export function ButtonDesigner({ onInsert }: ButtonDesignerProps) {
   const generateHtml = (values: ButtonConfig): string => {
     const widthStyle = values.fullWidth ? "width:100%;" : "";
     const shadowStyle = values.shadow ? `box-shadow:${CTA_SHADOW};` : "";
+    const safeUrl = sanitizeHtml(sanitizeEmailHref(values.url) ?? "#");
+    const safeText = sanitizeHtml(values.text || fallbackText);
+    const safeBgColor = sanitizeCssDeclarationValue(values.bgColor) || DEFAULT_CONFIG.bgColor;
+    const safeTextColor = sanitizeCssDeclarationValue(values.textColor) || DEFAULT_CONFIG.textColor;
+    const safeRadius = Number.isFinite(values.borderRadius) ? Math.max(0, Math.min(999, Math.round(values.borderRadius))) : DEFAULT_CONFIG.borderRadius;
+    const safePaddingY = Number.isFinite(values.paddingY) ? Math.max(0, Math.min(100, Math.round(values.paddingY))) : DEFAULT_CONFIG.paddingY;
+    const safePaddingX = Number.isFinite(values.paddingX) ? Math.max(0, Math.min(160, Math.round(values.paddingX))) : DEFAULT_CONFIG.paddingX;
+    const safeFontSize = Number.isFinite(values.fontSize) ? Math.max(8, Math.min(72, Math.round(values.fontSize))) : DEFAULT_CONFIG.fontSize;
 
-    return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:8px auto;border-collapse:collapse;${widthStyle}"><tr><td align="center" style="background:${values.bgColor};border-radius:${values.borderRadius}px;padding:${values.paddingY}px ${values.paddingX}px;${shadowStyle}"><a href="${values.url}" target="_blank" rel="noopener noreferrer" style="color:${values.textColor};font-size:${values.fontSize}px;font-weight:600;text-decoration:none;display:inline-block;line-height:1.4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">${values.text || fallbackText}</a></td></tr></table>`;
+    return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:8px auto;border-collapse:collapse;${widthStyle}"><tr><td align="center" style="background:${safeBgColor};border-radius:${safeRadius}px;padding:${safePaddingY}px ${safePaddingX}px;${shadowStyle}"><a href="${safeUrl}" target="_blank" rel="noopener noreferrer" style="color:${safeTextColor};font-size:${safeFontSize}px;font-weight:600;text-decoration:none;display:inline-block;line-height:1.4;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">${safeText}</a></td></tr></table>`;
   };
 
   const handleInsert = () => {

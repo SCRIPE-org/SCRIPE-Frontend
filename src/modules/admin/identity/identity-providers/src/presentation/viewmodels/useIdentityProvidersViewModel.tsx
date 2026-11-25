@@ -26,6 +26,7 @@ import { Button } from "@core/ui/button";
 import { Pencil, Trash2, Zap, Shield, Users, Fingerprint } from "lucide-react";
 import { formatUtc } from "@core/common/utils";
 import Image from "next/image";
+import { isSudoCancelledError } from "../utils/sudoCancellation";
 
 /** Diagnostic state produced by a list-view Test Connection check. */
 export interface ProviderTestDiagnosticsState {
@@ -124,12 +125,13 @@ export function useIdentityProvidersViewModel() {
       }
       return { snapshots };
     },
-    onError: (_err, _item, context) => {
+    onError: (err, _item, context) => {
       if (context?.snapshots) {
         for (const [key, snapshot] of context.snapshots) {
           queryClient.setQueryData(key, snapshot);
         }
       }
+      if (isSudoCancelledError(err)) return;
       toastError({
         title: t("common.error"),
         description: t("identityProviders.toggleStatusError"),
@@ -168,6 +170,7 @@ export function useIdentityProvidersViewModel() {
       }
     },
     onError: (err: Error, variables) => {
+      if (isSudoCancelledError(err)) return;
       setLastTestDiagnostics({
         providerId: variables.id,
         providerName: variables.providerName,

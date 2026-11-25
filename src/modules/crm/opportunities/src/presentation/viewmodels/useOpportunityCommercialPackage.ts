@@ -2,10 +2,24 @@
 
 import { useCallback } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { registerSessionCleanupCallback } from "@core/common/session-cleanup-registry";
 import { useCrmTenantScope, useSafeQueryClient } from "@modules/crm/shared";
 import type { CrmDealCommercialPackage } from "../../domain/models/crm-opportunity-quote.types";
 
 const PACKAGE_MEMORY_CACHE = new Map<string, CrmDealCommercialPackage>();
+
+/**
+ * Purges volatile commercial quote packages from memory (invoked automatically on logout/identity swap).
+ */
+export function clearOpportunityCommercialPackageCache(): void {
+  PACKAGE_MEMORY_CACHE.clear();
+}
+
+registerSessionCleanupCallback(clearOpportunityCommercialPackageCache);
+
+function isAuthenticatedUserScope(userId: string): boolean {
+  return Boolean(userId && userId !== "anon");
+}
 
 function buildStorageKey(tenantId: string, userId: string, opportunityId: string): string {
   return `scripe:crm:deal-package:${tenantId}:${userId}:${opportunityId}`;
@@ -19,7 +33,7 @@ function readScopedPackage(
   const key = buildStorageKey(tenantId, userId, opportunityId);
   const inMemory = PACKAGE_MEMORY_CACHE.get(key);
   if (inMemory) return inMemory;
-  if (typeof window === "undefined") return null;
+  if (typeof window === "undefined" || !isAuthenticatedUserScope(userId)) return null;
   try {
     const raw = window.sessionStorage?.getItem(key);
     if (!raw) return null;
@@ -39,7 +53,7 @@ function writeScopedPackage(
 ): CrmDealCommercialPackage {
   const key = buildStorageKey(tenantId, userId, opportunityId);
   PACKAGE_MEMORY_CACHE.set(key, pkg);
-  if (typeof window !== "undefined") {
+  if (typeof window !== "undefined" && isAuthenticatedUserScope(userId)) {
     try {
       window.sessionStorage?.setItem(key, JSON.stringify(pkg));
     } catch {

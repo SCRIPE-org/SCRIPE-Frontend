@@ -92,8 +92,11 @@ export function TenantSettingsEditDialog({
     if (activeTab === "security") {
       request.passwordMinLength = formData.passwordMinLength;
       request.passwordRequireUppercase = formData.passwordRequireUppercase;
+      request.passwordRequireLowercase = Boolean(formData.passwordRequireLowercase);
       request.passwordRequireNumber = formData.passwordRequireNumber;
       request.passwordRequireSpecial = formData.passwordRequireSpecial;
+      request.passwordHistoryCount = formData.passwordHistoryCount ?? 5;
+      request.checkBreachedPasswords = formData.checkBreachedPasswords !== false;
       request.loginLockoutThreshold = formData.loginLockoutThreshold;
       request.loginLockoutMinutes = formData.loginLockoutMinutes;
       request.passwordExpiryDays = formData.passwordExpiryDays;

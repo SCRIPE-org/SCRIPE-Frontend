@@ -180,4 +180,42 @@ describe("TenantSettingsEditDialog (BAM-03, SEC-07)", () => {
     expect(savedPayload.auditRetentionDays).toBeUndefined();
     expect(savedPayload.identityProviderMode).toBe("inherit");
   });
+
+  it("exposes passwordRequireLowercase, passwordHistoryCount (0-24), and checkBreachedPasswords in Security tab", () => {
+    const onSave = vi.fn();
+    render(
+      <TenantSettingsEditDialog
+        open={true}
+        onOpenChange={vi.fn()}
+        initialSection="security"
+        settings={buildSettings({
+          passwordRequireLowercase: false,
+          passwordHistoryCount: 5,
+          checkBreachedPasswords: true,
+        })}
+        onSave={onSave}
+        isSaving={false}
+      />
+    );
+
+    const historyInput = document.getElementById("dialog-password-history-count") as HTMLInputElement;
+    const requireLower = document.getElementById("dialog-require-lowercase")!;
+    const checkBreached = document.getElementById("dialog-check-breached")!;
+
+    expect(historyInput).toHaveAttribute("min", "0");
+    expect(historyInput).toHaveAttribute("max", "24");
+
+    fireEvent.change(historyInput, { target: { value: "10" } });
+    fireEvent.click(requireLower);
+    fireEvent.click(checkBreached);
+    fireEvent.click(screen.getByRole("button", { name: "common.save" }));
+
+    expect(onSave).toHaveBeenCalledWith(
+      expect.objectContaining({
+        passwordRequireLowercase: true,
+        passwordHistoryCount: 10,
+        checkBreachedPasswords: false,
+      })
+    );
+  });
 });

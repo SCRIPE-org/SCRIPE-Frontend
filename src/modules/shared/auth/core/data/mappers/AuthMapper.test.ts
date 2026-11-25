@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { AuthMapper } from "./AuthMapper";
 import { User } from "../../domain/entities/User";
 import type { UserProfileJson } from "../models/AuthModel";
+import { Verify2FAResponseModel } from "../models/TwoFactorModels";
 
 describe("AuthMapper", () => {
   const samplePrincipalJson: UserProfileJson = {
@@ -105,5 +106,21 @@ describe("AuthMapper", () => {
     expect(AuthMapper.userFromUnknown(null)).toBeNull();
     expect(AuthMapper.userFromUnknown(undefined)).toBeNull();
     expect(AuthMapper.userFromUnknown(12345)).toBeNull();
+  });
+
+  it("Verify2FAResponseModel.fromJson preserves requireMfaEnrollment flag", () => {
+    const enrolledModel = Verify2FAResponseModel.fromJson({
+      accessToken: "jwt-2fa",
+      expiresAt: "2026-12-01T00:00:00Z",
+      mustChangePassword: false,
+      requireMfaEnrollment: true,
+    });
+    expect(enrolledModel.requireMfaEnrollment).toBe(true);
+
+    const defaultModel = Verify2FAResponseModel.fromJson({
+      accessToken: "jwt-2fa",
+      expiresAt: "2026-12-01T00:00:00Z",
+    });
+    expect(defaultModel.requireMfaEnrollment).toBe(false);
   });
 });

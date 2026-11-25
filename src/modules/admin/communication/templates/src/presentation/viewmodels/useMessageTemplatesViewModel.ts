@@ -84,8 +84,11 @@ export function useMessageTemplatesViewModel() {
       queryClient.invalidateQueries({ queryKey: QUERY_KEY });
       success({ title: t("messaging.templates.cloneSuccess") });
     },
-    onError: () => {
-      toastError({ title: t("messaging.templates.cloneError") });
+    onError: (err: Error) => {
+      toastError({
+        title: t("messaging.templates.cloneError"),
+        description: err?.message || undefined,
+      });
     },
   });
 
@@ -101,8 +104,11 @@ export function useMessageTemplatesViewModel() {
       setPreviewResult(result);
       setPreviewOpen(true);
     },
-    onError: () => {
-      toastError({ title: t("messaging.templates.previewError") });
+    onError: (err: Error) => {
+      toastError({
+        title: t("messaging.templates.previewError"),
+        description: err?.message || undefined,
+      });
     },
   });
 

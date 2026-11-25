@@ -31,6 +31,7 @@ import { PatMetadataConfigCard } from "../sections/integrations/PatMetadataConfi
 import { PatCidrAllowlistCard, parseCidrEntries } from "../sections/integrations/PatCidrAllowlistCard";
 import { PatPermissionStudioCard } from "../sections/integrations/PatPermissionStudioCard";
 import { PatSecretAndConfirmModals } from "../sections/integrations/PatSecretAndConfirmModals";
+import { isSudoCancelledError } from "../utils/sudoElevation";
 import { Edit3, Loader2, RefreshCw, Trash2 } from "lucide-react";
 
 /** Props for PatDetailPageView. */
@@ -87,19 +88,14 @@ export function PatDetailPageView({ tokenId }: PatDetailPageViewProps) {
   const token = personalTokens.find((item) => item.id === decodedId);
 
   if (
-    (isLoadingIntegrations &&
-      personalTokens.length === 0 &&
-      !isIntegrationsDisabled &&
-      !isIntegrationsError) ||
+    (isLoadingIntegrations && personalTokens.length === 0 && !isIntegrationsDisabled && !isIntegrationsError) ||
     (isRedirectingAfterRevoke && !token)
   ) {
     return <PatDetailPageSkeleton />;
   }
-
   if (isIntegrationsDisabled) {
     return <FeatureUnavailableGate featureKey="Integrations.ApiKeys.Enabled" />;
   }
-
   if (isIntegrationsError && personalTokens.length === 0) {
     return (
       <AccountSliceErrorState
@@ -110,7 +106,6 @@ export function PatDetailPageView({ tokenId }: PatDetailPageViewProps) {
       />
     );
   }
-
   if (!token) {
     return (
       <div className="space-y-4">
@@ -147,7 +142,6 @@ export function PatDetailPageView({ tokenId }: PatDetailPageViewProps) {
     if (editScopes.length === 0) return setEditError(t("profile.integrations.tokenScopesRequiredError"));
     const { entries, invalidEntry } = parseCidrEntries(editCidrs);
     if (invalidEntry) return setEditError(t("profile.integrations.invalidCidrError", { cidr: invalidEntry }));
-
     try {
       await updateToken(token.id, {
         name: editName.trim(),
@@ -159,6 +153,7 @@ export function PatDetailPageView({ tokenId }: PatDetailPageViewProps) {
       });
       setIsEditing(false);
     } catch (err: unknown) {
+      if (isSudoCancelledError(err)) return;
       setEditError(err instanceof Error ? err.message : t("profile.common.error"));
     }
   };
@@ -169,6 +164,7 @@ export function PatDetailPageView({ tokenId }: PatDetailPageViewProps) {
       await rollToken(token.id, token.name);
       setPendingRollOpen(false);
     } catch (e: unknown) {
+      if (isSudoCancelledError(e)) return;
       setActionError(e instanceof Error ? e.message : t("profile.common.error"));
     }
   };
@@ -183,6 +179,7 @@ export function PatDetailPageView({ tokenId }: PatDetailPageViewProps) {
       router.replace("/account/integrations");
     } catch (e: unknown) {
       setIsRedirectingAfterRevoke(false);
+      if (isSudoCancelledError(e)) return;
       setActionError(e instanceof Error ? e.message : t("profile.common.error"));
     }
   };
@@ -287,15 +284,9 @@ export function PatDetailPageView({ tokenId }: PatDetailPageViewProps) {
         isRollingToken={isRollingToken}
         isRevokingToken={isRevokingToken}
         actionError={actionError}
-        onCloseRoll={() => {
-          setPendingRollOpen(false);
-          setActionError(null);
-        }}
+        onCloseRoll={() => { setPendingRollOpen(false); setActionError(null); }}
         onConfirmRoll={() => void handleConfirmRoll()}
-        onCloseRevoke={() => {
-          setPendingRevokeOpen(false);
-          setActionError(null);
-        }}
+        onCloseRevoke={() => { setPendingRevokeOpen(false); setActionError(null); }}
         onConfirmRevoke={() => void handleConfirmRevoke()}
       />
     </div>

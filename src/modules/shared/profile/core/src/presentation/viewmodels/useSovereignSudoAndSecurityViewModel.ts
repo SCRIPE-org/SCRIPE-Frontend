@@ -6,11 +6,13 @@
  */
 import { useCallback } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useAppStore } from "@core/store/useAppStore";
 import { useSudoStore } from "@core/store/useSudoStore";
 import { assertPasskey } from "@core/services/webauthn.service";
 import { container } from "@modules/profile/di";
 import { invalidateOnConcurrencyConflict } from "../utils/concurrency";
 import { sovereignAccountKeys } from "../utils/sovereignAccountKeys";
+import { isSudoCancelledError } from "../utils/sudoElevation";
 
 /** ViewModel hook coordinating WebAuthn passkey, TOTP, and password Sudo step-up elevation. */
 export function useSudoViewModel() {
@@ -125,6 +127,13 @@ export function useAccountSecuritySliceViewModel() {
   return {
     security: data
       ? {
+          isTwoFactorEnabled: data.isTwoFactorEnabled,
+          backupCodesRemaining: data.backupCodesRemaining,
+          passwordLastChangedUtc: data.passwordLastChangedUtc ?? null,
+          isPasswordExpired: Boolean(data.isPasswordExpired),
+          daysUntilPasswordExpiry: data.daysUntilPasswordExpiry ?? null,
+          securityPostureScore: data.securityPostureScore,
+          postureChecklist: data.postureChecklist,
           trustedCidrs: data.trustedCidrs,
           currentClientIp: data.currentClientIp,
           isCurrentIpAllowed: data.isCurrentIpAllowed,
@@ -145,15 +154,20 @@ export function useAccountSecuritySliceViewModel() {
         rowVersion: payload.rowVersion ?? data?.rowVersion,
       }),
     isUpdatingPolicy: updateMutation.isPending,
-    updatePolicyError: updateMutation.error,
+    updatePolicyError:
+      updateMutation.error && !isSudoCancelledError(updateMutation.error)
+        ? updateMutation.error
+        : null,
   };
 }
 
 /** Queries active account sessions and exposes session RTT latency ping mutations. */
 export function useSovereignSessionsSlice() {
+  const requireMfaEnrollment = useAppStore((s) => s.requireMfaEnrollment);
   const query = useQuery({
     queryKey: sovereignAccountKeys.sessions(),
     queryFn: () => container.sovereignAccountRepository.getSessions(),
+    enabled: !requireMfaEnrollment,
   });
   const pingMutation = useMutation({
     mutationFn: (sessionId: string) =>

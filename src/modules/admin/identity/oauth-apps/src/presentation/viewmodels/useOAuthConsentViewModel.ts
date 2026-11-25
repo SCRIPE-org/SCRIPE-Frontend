@@ -8,7 +8,8 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useServices } from "@core/providers/service-provider";
 import { secureTokenService } from "@core/common/secure-token-service";
 import { sanitizeHttpUrl } from "@core/common/sanitize";
-import { OIDC_KEYS } from "@core/config/oidc-keys";
+import { isSafeRedirectTarget } from "@core/common/redirect-safety";
+import { ALLOWED_OIDC_PARAMS, OIDC_KEYS } from "@core/config/oidc-keys";
 import { appLogger } from "@core/common/logger";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -35,7 +36,6 @@ export interface OAuthConsentViewModelResult {
   // Form Submission Data
   formAction: string | null;
   formParams: Record<string, string>;
-  accessToken: string | null;
   formRef: React.RefObject<HTMLFormElement | null>;
 
   // Actions
@@ -78,7 +78,6 @@ export function useOAuthConsentViewModel(): OAuthConsentViewModelResult {
   const formRef = useRef<HTMLFormElement | null>(null);
   const [formAction, setFormAction] = useState<string | null>(null);
   const [formParams, setFormParams] = useState<Record<string, string>>({});
-  const [accessToken, setAccessToken] = useState<string | null>(null);
 
   const clientId = searchParams.get("client_id");
   const redirectUri = searchParams.get("redirect_uri");
@@ -90,17 +89,42 @@ export function useOAuthConsentViewModel(): OAuthConsentViewModelResult {
   const userDisplayName = user?.displayName || user?.username || null;
 
   const redirectToLogin = useCallback(() => {
-    const sanitizedParams = new URLSearchParams(searchParams.toString());
-    sanitizedParams.delete(OIDC_KEYS.CONSENT_TICKET);
-    const sanitizedQuery = sanitizedParams.toString();
-    const redirectPath = encodeURIComponent(
-      sanitizedQuery ? `/authorize?${sanitizedQuery}` : "/authorize"
-    );
+    let connectAuthorizeUrl: string;
+    if (typeof authRepository.buildOidcAuthorizeUrl === "function") {
+      connectAuthorizeUrl = authRepository.buildOidcAuthorizeUrl(searchParams);
+    } else {
+      const backendUrl =
+        process.env.NEXT_PUBLIC_IDENTITY_API_URL ||
+        process.env.NEXT_PUBLIC_API_URL ||
+        "http://localhost:5035/api";
+      let baseHost = backendUrl.replace(/\/(?:api|identity)\/?$/, "");
+      try {
+        baseHost = new URL(backendUrl).origin;
+      } catch {
+        // Keep fallback base host
+      }
+      const allowedSet = new Set<string>(ALLOWED_OIDC_PARAMS);
+      const authorizeParams = new URLSearchParams();
+      searchParams.forEach((value, key) => {
+        if (key === OIDC_KEYS.CONSENT_TICKET) return;
+        if (allowedSet.has(key)) authorizeParams.set(key, value);
+      });
+      const qs = authorizeParams.toString();
+      connectAuthorizeUrl = qs
+        ? `${baseHost}/connect/authorize?${qs}`
+        : `${baseHost}/connect/authorize`;
+    }
+
     secureTokenService.clearTokens();
     logout();
     queryClient.clear();
-    router.replace(`/login?redirect=${redirectPath}`);
-  }, [searchParams, logout, queryClient, router]);
+
+    if (isSafeRedirectTarget(connectAuthorizeUrl)) {
+      router.replace(`/login?redirect=${encodeURIComponent(connectAuthorizeUrl)}`);
+      return;
+    }
+    router.replace("/login");
+  }, [authRepository, searchParams, logout, queryClient, router]);
 
   // 1. Define TanStack Query Mutations for Clean Server State
   const { mutate: restoreSession } = useMutation({
@@ -158,11 +182,10 @@ export function useOAuthConsentViewModel(): OAuthConsentViewModelResult {
         }
 
         // Delegate to repository so backend OpenIddict validates client_id + redirect_uri
-        const formRequest = authRepository.buildOidcConsentForm(searchParams, token, decision);
+        const formRequest = authRepository.buildOidcConsentForm(searchParams, decision);
 
         setFormAction(formRequest.action);
         setFormParams(formRequest.params);
-        setAccessToken(token);
 
         setTimeout(() => {
           if (formRef.current) {
@@ -233,7 +256,6 @@ export function useOAuthConsentViewModel(): OAuthConsentViewModelResult {
     userDisplayName,
     formAction,
     formParams,
-    accessToken,
     formRef,
     handleApprove,
     handleDeny,

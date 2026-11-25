@@ -51,7 +51,7 @@ export function MessageTemplatesView() {
     isPreviewLoading,
     t,
   } = useMessageTemplatesViewModel();
-  const { success } = useEnhancedToast();
+  const { success, error: toastError } = useEnhancedToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // ─── Export ────────────────────────────────────────────────
@@ -107,14 +107,14 @@ export function MessageTemplatesView() {
           });
           router.push(`/communication/templates/new?${params.toString()}`);
         } catch {
-          success({ title: t("messaging.templates.importError") });
+          toastError({ title: t("messaging.templates.importError") });
         }
       };
       reader.readAsText(file);
       // Reset so same file can be re-imported
       e.target.value = "";
     },
-    [router, success, t]
+    [router, toastError, t]
   );
 
   // Navigate to full-page form instead of opening modal

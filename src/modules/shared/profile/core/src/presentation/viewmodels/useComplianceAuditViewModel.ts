@@ -10,6 +10,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { container } from "@modules/profile/di";
+import { sanitizeCsvCell } from "@core/common/sanitize";
 import type { SecurityAuditEntry } from "../../domain/entities/SecurityAuditEntry";
 
 /** React Query key factory for compliance audit trail queries. */
@@ -79,17 +80,28 @@ export function useComplianceAuditViewModel() {
   // Export CSV
   const exportCsv = () => {
     if (filteredEntries.length === 0) return;
-    const headers = ["ID", "Timestamp (UTC)", "Event Type", "Status", "IP Address", "User Agent", "Details", "Impersonated By"];
-    const rows = filteredEntries.map((e) => [
-      e.id,
-      e.timestamp.toISOString(),
-      e.eventType,
-      e.isSuccess ? "Success" : "Failure",
-      e.ipAddress,
-      `"${(e.userAgent || "").replace(/"/g, '""')}"`,
-      `"${(e.details || "").replace(/"/g, '""')}"`,
-      e.impersonatedBy || "None",
-    ]);
+    const headers = [
+      "ID",
+      "Timestamp (UTC)",
+      "Event Type",
+      "Status",
+      "IP Address",
+      "User Agent",
+      "Details",
+      "Impersonated By",
+    ].map(sanitizeCsvCell);
+    const rows = filteredEntries.map((e) =>
+      [
+        e.id,
+        e.timestamp.toISOString(),
+        e.eventType,
+        e.isSuccess ? "Success" : "Failure",
+        e.ipAddress,
+        e.userAgent || "",
+        e.details || "",
+        e.impersonatedBy || "None",
+      ].map(sanitizeCsvCell)
+    );
 
     const csvContent = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });

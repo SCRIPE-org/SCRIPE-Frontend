@@ -21,16 +21,19 @@ export const COMPLIANCE_PERMISSIONS = {
   // ── Data Subject Requests (DSR) ────────────────────────
   COMPLIANCE_DSR_VIEW: "compliance_dsr.view",
   COMPLIANCE_DSR_CREATE: "compliance_dsr.create",
+  COMPLIANCE_DSR_UPDATE: "compliance_dsr.update",
   COMPLIANCE_DSR_REVIEW: "compliance_dsr.review",
   COMPLIANCE_DSR_EXECUTE: "compliance_dsr.execute",
   COMPLIANCE_DSR_CANCEL: "compliance_dsr.cancel",
 
   // ── Retention Policies ─────────────────────────────────
   COMPLIANCE_RETENTION_VIEW: "compliance_retention.view",
+  COMPLIANCE_RETENTION_UPDATE: "compliance_retention.update",
   COMPLIANCE_RETENTION_MANAGE: "compliance_retention.manage",
 
   // ── Data Inventory ─────────────────────────────────────
   COMPLIANCE_DATA_INVENTORY_VIEW: "compliance_data_inventory.view",
+  COMPLIANCE_DATA_INVENTORY_UPDATE: "compliance_data_inventory.update",
   COMPLIANCE_DATA_INVENTORY_MANAGE: "compliance_data_inventory.manage",
 
   // ── Reports ────────────────────────────────────────────

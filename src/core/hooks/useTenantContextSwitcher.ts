@@ -16,6 +16,7 @@ import { broadcastTenantContext } from "@core/services/api-factory";
 import { clearAllDataExchangeCaches } from "@core/data-exchange/data/repositories/DataExchangeRepository";
 import { useDataExchangeJobsStore } from "@core/data-exchange/presentation/store/useDataExchangeJobsStore";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
+import { invalidateAuthorizationCaches, syncCurrentSessionAuthorization } from "@core/hooks/use-authorization-sync";
 import { clearNavigationCaches } from "@modules/auth/core/data/utils/auth-storage-cleanup";
 import { appLogger } from "@core/common/logger";
 
@@ -126,7 +127,7 @@ function isHttpStatus(err: unknown, statuses: number[]): boolean {
  */
 export function useTenantContextSwitcher(options?: UseTenantContextSwitcherOptions) {
   const { enabled = true } = options ?? {};
-  const { apiService } = useServices();
+  const { apiService, authRepository } = useServices();
   const { hasPermission } = usePermissions();
   const tenantContext = useOptionalTenantContext();
   const { activeTenantId, activeTenantName, isImpersonating } = useAdminContext();
@@ -318,11 +319,30 @@ export function useTenantContextSwitcher(options?: UseTenantContextSwitcherOptio
           }
           apiService.setTenantContext(tenantInfo.id);
           broadcastTenantContext(tenantInfo.id);
+          if (typeof window !== "undefined") {
+            sessionStorage.removeItem(STORAGE_KEYS.lastAuthRefresh);
+          }
           clearNavigationCaches();
           useNavigationStore.getState().reset();
           clearAllDataExchangeCaches();
-          useDataExchangeJobsStore.getState().reset();
+          useDataExchangeJobsStore.getState().syncScope();
+          invalidateAuthorizationCaches(queryClient, {
+            tenantId: tenantInfo.id,
+            purgeSensitiveCaches: true,
+          });
           queryClient.invalidateQueries();
+          if (
+            switchOptions?.redirectTo === null &&
+            typeof (authRepository as { getCurrentPrincipal?: unknown } | undefined)
+              ?.getCurrentPrincipal === "function"
+          ) {
+            void syncCurrentSessionAuthorization({
+              queryClient,
+              authRepository: authRepository as { getCurrentPrincipal: () => Promise<any> },
+              targetTenantId: tenantInfo.id,
+              forcePrincipalFetch: true,
+            });
+          }
           if (redirectTo !== null && typeof window !== "undefined") {
             try {
               window.location.href = redirectTo;
@@ -349,6 +369,7 @@ export function useTenantContextSwitcher(options?: UseTenantContextSwitcherOptio
       canDrillDown,
       canSwitchMembership,
       apiService,
+      authRepository,
       pathname,
       tenantContext,
       queryClient,
@@ -370,11 +391,30 @@ export function useTenantContextSwitcher(options?: UseTenantContextSwitcherOptio
         }
         apiService.setTenantContext(null);
         broadcastTenantContext(null);
+        if (typeof window !== "undefined") {
+          sessionStorage.removeItem(STORAGE_KEYS.lastAuthRefresh);
+        }
         clearNavigationCaches();
         useNavigationStore.getState().reset();
         clearAllDataExchangeCaches();
-        useDataExchangeJobsStore.getState().reset();
+        useDataExchangeJobsStore.getState().syncScope();
+        invalidateAuthorizationCaches(queryClient, {
+          tenantId: null,
+          purgeSensitiveCaches: true,
+        });
         queryClient.invalidateQueries();
+        if (
+          exitOptions?.redirectTo === null &&
+          typeof (authRepository as { getCurrentPrincipal?: unknown } | undefined)
+            ?.getCurrentPrincipal === "function"
+        ) {
+          void syncCurrentSessionAuthorization({
+            queryClient,
+            authRepository: authRepository as { getCurrentPrincipal: () => Promise<any> },
+            targetTenantId: null,
+            forcePrincipalFetch: true,
+          });
+        }
         if (redirectTo !== null && typeof window !== "undefined") {
           try {
             window.location.href = redirectTo;
@@ -384,7 +424,7 @@ export function useTenantContextSwitcher(options?: UseTenantContextSwitcherOptio
         }
       }
     },
-    [pathname, tenantContext, apiService, queryClient]
+    [pathname, tenantContext, apiService, authRepository, queryClient]
   );
 
   return {

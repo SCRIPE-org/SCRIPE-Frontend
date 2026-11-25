@@ -336,4 +336,42 @@ describe("PermissionModuleMatrix", () => {
     fireEvent.click(scopeBtn);
     expect(screen.getByRole("dialog")).toBeInTheDocument();
   });
+
+  it("keeps scope config inspection clickable in read-only disabled mode", () => {
+    const assignments = new Map<string, PermissionAssignmentJson>([
+      [
+        "roles.view",
+        {
+          permissionId: "p1",
+          scopeOverride: "own_tenant",
+          restrictedFields: ["salary"],
+        },
+      ],
+    ]);
+
+    renderMatrix(
+      <PermissionModuleMatrix
+        module="Identity"
+        categories={categories}
+        isExpanded={true}
+        disabled={true}
+        selectedPermissionCodes={new Set(["roles.view"])}
+        assignments={assignments}
+        onToggleModule={vi.fn()}
+        onTogglePermission={vi.fn()}
+        onToggleGroup={vi.fn()}
+        onUpdateConfig={vi.fn()}
+      />
+    );
+
+    const viewCheckbox = screen.getByRole("checkbox", { name: "View Roles" });
+    expect(viewCheckbox).toBeDisabled();
+
+    const scopeBtn = screen.getByRole("button", { name: /View Roles/i });
+    expect(scopeBtn).not.toBeDisabled();
+    fireEvent.click(scopeBtn);
+
+    expect(screen.getByTestId("permission-config-dialog")).toBeInTheDocument();
+    expect(screen.getByText("salary")).toBeInTheDocument();
+  });
 });

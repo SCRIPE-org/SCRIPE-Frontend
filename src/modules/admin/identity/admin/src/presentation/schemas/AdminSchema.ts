@@ -4,135 +4,155 @@
  * Zod validation schema for admin forms.
  */
 import { z } from "zod";
+import {
+  DEFAULT_PASSWORD_MAX_LENGTH,
+  createPolicyPasswordSchema,
+  type PasswordPolicyModel,
+  type TranslatePasswordPolicyFn,
+} from "@core/common/password-policy";
 import { isValidPhoneNumber } from "@core/ui/phone-input";
 
 /**
- * Create admin form schema
- *
+ * Builds the create-admin Zod schema with localized messages and dynamic tenant password policy.
  * Supports two modes:
  * 1. sendSetupEmail=true (default): Email invitation — password not required, email required
- * 2. sendSetupEmail=false: Manual password — password required, mustChangePassword optional
+ * 2. sendSetupEmail=false: Manual password — password required matching backend PasswordPolicyModel
  */
-export const createAdminSchema = z
-  .object({
-    username: z
-      .string()
-      .min(3, "Username must be at least 3 characters")
-      .max(100, "Username must be at most 100 characters")
-      .regex(/^[a-zA-Z0-9_]+$/, "Username can only contain letters, numbers, and underscores"),
-    password: z
-      .string()
-      .max(100, "Password must be at most 100 characters")
-      .optional()
-      .or(z.literal("")),
-    firstName: z.string().max(100, "First name must be at most 100 characters").optional(),
-    lastName: z.string().max(100, "Last name must be at most 100 characters").optional(),
+export function buildCreateAdminSchema(
+  t: TranslatePasswordPolicyFn,
+  policy: PasswordPolicyModel | null | undefined
+) {
+  const maxPasswordLength = policy?.maxLength ?? DEFAULT_PASSWORD_MAX_LENGTH;
+  const policySchema = createPolicyPasswordSchema(policy, t);
+
+  return z
+    .object({
+      username: z
+        .string()
+        .min(3, t("admin.validation.usernameMin"))
+        .max(100, t("admin.validation.usernameMax"))
+        .regex(/^[a-zA-Z0-9_]+$/, t("admin.validation.usernameFormat")),
+      password: z
+        .string()
+        .max(maxPasswordLength, t("common.passwordPolicy.maxLengthExceeded", { max: maxPasswordLength }))
+        .optional()
+        .or(z.literal("")),
+      firstName: z.string().max(100, t("admin.validation.firstNameMax")).optional(),
+      lastName: z.string().max(100, t("admin.validation.lastNameMax")).optional(),
+      phoneNumber: z
+        .string()
+        .max(20, t("admin.validation.phoneMax"))
+        .refine((val) => !val || !val.trim() || isValidPhoneNumber(val), {
+          message: t("admin.validation.invalidPhone"),
+        })
+        .optional()
+        .or(z.literal("")),
+      email: z
+        .string()
+        .email(t("admin.validation.invalidEmail"))
+        .max(256, t("admin.validation.emailMax"))
+        .optional()
+        .or(z.literal("")),
+      notes: z.string().max(500, t("admin.validation.notesMax")).optional(),
+      /** true = email invitation (default), false = manual password */
+      sendSetupEmail: z.boolean().optional().default(true),
+      /** Only used when sendSetupEmail=false */
+      mustChangePassword: z.boolean().optional().default(false),
+    })
+    .superRefine((data, ctx) => {
+      if (!data.sendSetupEmail) {
+        if (!data.password) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: t("admin.passwordRequired"),
+            path: ["password"],
+          });
+        } else {
+          const parsed = policySchema.safeParse(data.password);
+          if (!parsed.success) {
+            for (const issue of parsed.error.issues) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: issue.message,
+                path: ["password"],
+              });
+            }
+          }
+        }
+      }
+      if (data.sendSetupEmail && (!data.email || data.email.length === 0)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: t("admin.validation.emailRequiredForInvite"),
+          path: ["email"],
+        });
+      }
+    });
+}
+
+/**
+ * Builds the update-admin Zod schema with localized validation messages.
+ */
+export function buildUpdateAdminSchema(t: TranslatePasswordPolicyFn) {
+  return z.object({
+    firstName: z.string().max(100, t("admin.validation.firstNameMax")).optional(),
+    lastName: z.string().max(100, t("admin.validation.lastNameMax")).optional(),
     phoneNumber: z
       .string()
-      .max(20, "Phone number must be at most 20 characters")
+      .max(20, t("admin.validation.phoneMax"))
       .refine((val) => !val || !val.trim() || isValidPhoneNumber(val), {
-        message: "Invalid phone number format",
+        message: t("admin.validation.invalidPhone"),
       })
       .optional()
       .or(z.literal("")),
     email: z
       .string()
-      .email("Invalid email format")
-      .max(256, "Email must be at most 256 characters")
+      .email(t("admin.validation.invalidEmail"))
+      .max(256, t("admin.validation.emailMax"))
       .optional()
       .or(z.literal("")),
-    notes: z.string().max(500, "Notes must be at most 500 characters").optional(),
-    /** true = email invitation (default), false = manual password */
-    sendSetupEmail: z.boolean().optional().default(true),
-    /** Only used when sendSetupEmail=false */
-    mustChangePassword: z.boolean().optional().default(false),
-  })
-  .superRefine((data, ctx) => {
-    // When NOT sending setup email (manual password mode), password is required
-    if (!data.sendSetupEmail) {
-      if (!data.password || data.password.length < 6) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Password must be at least 6 characters",
-          path: ["password"],
-        });
-      }
-    }
-    // When sending setup email, email is required
-    if (data.sendSetupEmail) {
-      if (!data.email || data.email.length === 0) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Email is required for email invitation",
-          path: ["email"],
-        });
-      }
-    }
+    notes: z.string().max(500, t("admin.validation.notesMax")).optional(),
+    isActive: z.boolean().optional(),
   });
+}
 
 /**
- * Update admin form schema
+ * Builds the reset-password Zod schema driven strictly by `policy`.
  */
-export const updateAdminSchema = z.object({
-  firstName: z.string().max(100, "First name must be at most 100 characters").optional(),
-  lastName: z.string().max(100, "Last name must be at most 100 characters").optional(),
-  phoneNumber: z
-    .string()
-    .max(20, "Phone number must be at most 20 characters")
-    .refine((val) => !val || !val.trim() || isValidPhoneNumber(val), {
-      message: "Invalid phone number format",
+export function buildResetPasswordSchema(
+  t: TranslatePasswordPolicyFn,
+  policy: PasswordPolicyModel | null | undefined
+) {
+  const maxPasswordLength = policy?.maxLength ?? DEFAULT_PASSWORD_MAX_LENGTH;
+  return z
+    .object({
+      newPassword: createPolicyPasswordSchema(policy, t).pipe(
+        z.string().max(
+          maxPasswordLength,
+          t("common.passwordPolicy.maxLengthExceeded", { max: maxPasswordLength })
+        )
+      ),
+      confirmPassword: z.string(),
     })
-    .optional()
-    .or(z.literal("")),
-  email: z
-    .string()
-    .email("Invalid email format")
-    .max(256, "Email must be at most 256 characters")
-    .optional()
-    .or(z.literal("")),
-  notes: z.string().max(500, "Notes must be at most 500 characters").optional(),
-  isActive: z.boolean().optional(),
-});
+    .refine((data) => data.newPassword === data.confirmPassword, {
+      message: t("admin.passwordsDoNotMatch"),
+      path: ["confirmPassword"],
+    });
+}
 
 /**
- * Reset password schema
+ * Builds the assign-role Zod schema with localized messages.
  */
-export const resetPasswordSchema = z
-  .object({
-    newPassword: z
-      .string()
-      .min(6, "Password must be at least 6 characters")
-      .max(100, "Password must be at most 100 characters"),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.newPassword === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
+export function buildAssignRoleSchema(t: TranslatePasswordPolicyFn) {
+  return z.object({
+    roleId: z.string().min(1, t("admin.validation.roleRequired")),
+    tenantId: z.string().optional(),
+    inheritToChildren: z.boolean().optional(),
+    expiresAt: z.string().optional(),
   });
+}
 
-/**
- * Assign role schema
- */
-export const assignRoleSchema = z.object({
-  roleId: z.string().min(1, "Role is required"),
-  tenantId: z.string().optional(),
-  inheritToChildren: z.boolean().optional(),
-  expiresAt: z.string().optional(),
-});
-
-/**
- * Exported type defining parameters and fields for create admin form data configurations.
- */
-export type CreateAdminFormData = z.infer<typeof createAdminSchema>;
-/**
- * Exported type defining parameters and fields for update admin form data configurations.
- */
-export type UpdateAdminFormData = z.infer<typeof updateAdminSchema>;
-/**
- * Exported type defining parameters and fields for reset password form data configurations.
- */
-export type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
-/**
- * Exported type defining parameters and fields for assign role form data configurations.
- */
-export type AssignRoleFormData = z.infer<typeof assignRoleSchema>;
+export type CreateAdminFormData = z.infer<ReturnType<typeof buildCreateAdminSchema>>;
+export type UpdateAdminFormData = z.infer<ReturnType<typeof buildUpdateAdminSchema>>;
+export type ResetPasswordFormData = z.infer<ReturnType<typeof buildResetPasswordSchema>>;
+export type AssignRoleFormData = z.infer<ReturnType<typeof buildAssignRoleSchema>>;

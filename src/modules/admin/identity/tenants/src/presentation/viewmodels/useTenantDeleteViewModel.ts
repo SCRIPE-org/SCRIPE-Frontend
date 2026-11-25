@@ -55,8 +55,12 @@ export function useTenantDeleteViewModel({
   const isConfirmDisabled = hasDescendants && (!canCascadeDelete || !cascadeChildren);
 
   const handleConfirm = async () => {
-    await onConfirm(cascadeChildren);
-    onOpenChange(false);
+    try {
+      await onConfirm(cascadeChildren);
+      onOpenChange(false);
+    } catch {
+      // Toast / Sudo cancellation handled by caller
+    }
   };
 
   return {

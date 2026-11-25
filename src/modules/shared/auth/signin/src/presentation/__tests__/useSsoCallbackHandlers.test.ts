@@ -6,7 +6,7 @@ import {
   handleSamlCallback,
   type SsoCallbackDeps,
   type SsoCallbackSetters,
-} from "../viewmodels/useSsoCallbackHandlers";
+} from "../utils/ssoCallbackHandlers";
 import { useTokenLogin } from "../viewmodels/useTokenLogin";
 import { useQrSignInViewModel } from "../viewmodels/useQrSignInViewModel";
 import { getSafeRedirectPath } from "../utils/redirect-safety";
@@ -76,6 +76,16 @@ vi.mock("@core/store/useAppStore", () => {
 vi.mock("@tanstack/react-query", () => ({
   useQueryClient: () => ({
     invalidateQueries: mockInvalidateQueries,
+  }),
+}));
+
+vi.mock("@core/providers/service-provider", () => ({
+  useServices: () => ({
+    authRepository: {
+      getCurrentPrincipal: (...args: unknown[]) => mockGetCurrentPrincipal(...args),
+      beginQrSignIn: (...args: unknown[]) => mockBeginQrSignIn(...args),
+      checkQrSignIn: (...args: unknown[]) => mockCheckQrSignIn(...args),
+    },
   }),
 }));
 
@@ -171,6 +181,7 @@ describe("useSsoCallbackHandlers, useTokenLogin & useQrSignInViewModel (BAM-01, 
       token: "pending-oidc-2fa-ticket",
       staySignedIn: true,
       email: "admin@ahly.club",
+      principalType: "admin",
     });
     expect(ctx.setState).toHaveBeenCalledWith("two_factor");
     expect(mockSetAccessToken).not.toHaveBeenCalled();
@@ -198,6 +209,7 @@ describe("useSsoCallbackHandlers, useTokenLogin & useQrSignInViewModel (BAM-01, 
       token: "pending-saml-2fa-ticket",
       staySignedIn: false,
       email: "saml@ahly.club",
+      principalType: "admin",
     });
     expect(ctx.setState).toHaveBeenCalledWith("two_factor");
     expect(mockSetAccessToken).not.toHaveBeenCalled();
@@ -346,6 +358,7 @@ describe("useSsoCallbackHandlers, useTokenLogin & useQrSignInViewModel (BAM-01, 
       gracePhase: null,
       editionName: "Pro",
       mustChangePassword: true,
+      requireMfaEnrollment: false,
     });
     vi.useRealTimers();
   });
@@ -404,5 +417,65 @@ describe("useSsoCallbackHandlers, useTokenLogin & useQrSignInViewModel (BAM-01, 
     expect(getSafeRedirectPath("//evil.example/overview")).toBe("/overview");
     expect(getSafeRedirectPath("/\\evil.example")).toBe("/overview");
     expect(getSafeRedirectPath("http://localhost:5035/evil-path")).toBe("/overview");
+  });
+
+  it("handleOidcCallback routes user SSO logins through buildPostAuthEntryUrl and preserves safe ?redirect=", async () => {
+    vi.useFakeTimers();
+    const originalUrl = window.location.href;
+    window.history.replaceState({}, "", "/sso/callback?redirect=%2Fportal%2Fbookings");
+
+    const ctx = buildDeps();
+    ctx.getCurrentPrincipal.mockResolvedValueOnce({
+      id: "member-1",
+      permissions: ["portal.view"],
+      roles: ["Member"],
+    } as unknown as User);
+    ctx.completeCallback.mockResolvedValueOnce({
+      type: "user",
+      accessToken: "user-sso-jwt",
+      mustChangePassword: false,
+      subscriptionStatus: "Active",
+    });
+
+    await handleOidcCallback(
+      new URLSearchParams("code=user-code&state=user-state"),
+      ctx.deps,
+      ctx.setters
+    );
+    await vi.advanceTimersByTimeAsync(350);
+
+    expect(ctx.redirectTo).toHaveBeenCalledWith(
+      `/?redirect=${encodeURIComponent("/portal/bookings")}`
+    );
+
+    window.history.replaceState({}, "", originalUrl);
+    vi.useRealTimers();
+  });
+
+  it("handleOidcCallback enforces /account/security?mfa_enroll=true when requireMfaEnrollment=true", async () => {
+    vi.useFakeTimers();
+    const ctx = buildDeps();
+    ctx.getCurrentPrincipal.mockResolvedValueOnce({
+      id: "admin-1",
+      permissions: ["Identity.Users.Read"],
+      roles: ["TenantAdmin"],
+    } as unknown as User);
+    ctx.completeCallback.mockResolvedValueOnce({
+      type: "admin",
+      accessToken: "admin-sso-jwt",
+      mustChangePassword: false,
+      requireMfaEnrollment: true,
+      subscriptionStatus: "PendingPayment",
+    });
+
+    await handleOidcCallback(
+      new URLSearchParams("code=adm-code&state=adm-state"),
+      ctx.deps,
+      ctx.setters
+    );
+    await vi.advanceTimersByTimeAsync(350);
+
+    expect(ctx.redirectTo).toHaveBeenCalledWith("/account/security?mfa_enroll=true");
+    vi.useRealTimers();
   });
 });

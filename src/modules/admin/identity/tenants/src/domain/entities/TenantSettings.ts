@@ -27,10 +27,16 @@ export interface TenantSecuritySettings {
   passwordMinLength: number;
   /** Require uppercase letter */
   passwordRequireUppercase: boolean;
+  /** Require lowercase letter */
+  passwordRequireLowercase?: boolean;
   /** Require number */
   passwordRequireNumber: boolean;
   /** Require special character */
   passwordRequireSpecial: boolean;
+  /** Number of previous passwords blocked from reuse (0 = disabled, max 24) */
+  passwordHistoryCount?: number;
+  /** Whether commonly breached passwords are blocked */
+  checkBreachedPasswords?: boolean;
   /** Days until password expires (null = never) */
   passwordExpiryDays?: number;
   /** Failed login attempts before lockout */
@@ -128,8 +134,11 @@ export const DEFAULT_TENANT_SETTINGS: TenantSettings = {
   security: {
     passwordMinLength: 8,
     passwordRequireUppercase: true,
+    passwordRequireLowercase: false,
     passwordRequireNumber: true,
     passwordRequireSpecial: false,
+    passwordHistoryCount: 5,
+    checkBreachedPasswords: true,
     passwordExpiryDays: undefined, // never
     loginLockoutThreshold: 5,
     loginLockoutMinutes: 15,

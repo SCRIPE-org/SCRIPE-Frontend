@@ -15,6 +15,7 @@ export const ar = {
     badges: {
       admin: "مسؤول",
       platformScope: "نطاق شامل",
+      tenantFallback: "هذه المؤسسة",
     },
     kpis: {
       totalEvents: "إجمالي الأحداث",

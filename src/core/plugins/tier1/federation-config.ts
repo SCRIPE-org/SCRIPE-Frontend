@@ -31,6 +31,15 @@ export type PluginFederationRemote = {
   exposedModule: string;
 };
 
-export function buildRemoteEntryUrl(baseUrl: string, pluginKey: string): string {
-  return `${baseUrl}/remoteEntry.js`;
+import { validateExternalPluginOriginUrl } from "@core/common/postmessage-security";
+
+export function buildRemoteEntryUrl(baseUrl: string, _pluginKey: string): string {
+  const parsed = validateExternalPluginOriginUrl(baseUrl);
+  if (!parsed) {
+    throw new Error("Invalid federated plugin baseUrl");
+  }
+  const normalizedBase = parsed.toString().endsWith("/")
+    ? parsed.toString()
+    : `${parsed.toString()}/`;
+  return new URL("remoteEntry.js", normalizedBase).toString();
 }

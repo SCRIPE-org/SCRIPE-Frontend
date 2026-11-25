@@ -14,7 +14,10 @@ import { sovereignAccountKeys } from "./useSovereignAccountSlicesViewModel";
  * Internal hook isolating passkey enrollment, deletion, and rename mutations
  * for {@link useSecurityVaultViewModel}.
  */
-export function useSecurityPasskeyActions(passkeysQueryKey: readonly string[]) {
+export function useSecurityPasskeyActions(
+  passkeysQueryKey: readonly string[],
+  onMfaEnrollmentComplete?: () => Promise<void>
+) {
   const securityRepo = container.securityRepository;
   const queryClient = useQueryClient();
 
@@ -55,17 +58,27 @@ export function useSecurityPasskeyActions(passkeysQueryKey: readonly string[]) {
         sudoToken
       );
     },
-    onSuccess: invalidatePasskeyCaches,
+    onSuccess: async () => {
+      invalidatePasskeyCaches();
+      if (onMfaEnrollmentComplete) {
+        await onMfaEnrollmentComplete();
+      }
+    },
   });
 
   const removePasskeyMutation = useMutation({
-    mutationFn: (id: string) => securityRepo.removePasskey(id),
+    mutationFn: async (id: string) => {
+      const sudoToken = await ensureSudoElevation();
+      return securityRepo.removePasskey(id, sudoToken);
+    },
     onSuccess: invalidatePasskeyCaches,
   });
 
   const renamePasskeyMutation = useMutation({
-    mutationFn: ({ id, newName }: { id: string; newName: string }) =>
-      securityRepo.renamePasskey(id, newName),
+    mutationFn: async ({ id, newName }: { id: string; newName: string }) => {
+      const sudoToken = await ensureSudoElevation();
+      return securityRepo.renamePasskey(id, newName, sudoToken);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: passkeysQueryKey });
     },

@@ -7,19 +7,20 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useNavigation } from "@core/providers/navigation-provider";
 import { useAppStore } from "@core/store/useAppStore";
-import { getAuthContainer } from "@modules/auth/di";
+import { useServices } from "@core/providers/service-provider";
 import {
+  buildVerifiedCrossOriginCallbackUrl,
+  completePrincipalLogin,
   handleOidcCallback,
   handleSamlCallback,
-  completeAdminLogin,
+  resolveSsoErrorOutcome,
   type SsoTwoFactorPendingData,
-} from "./useSsoCallbackHandlers";
+} from "../utils/ssoCallbackHandlers";
+import { executeSsoTwoFactorVerification } from "../utils/ssoTwoFactorBridge";
 import type { WorkspaceChoice } from "@modules/auth/core/domain/errors/AuthErrors";
-import type { AdminRole, PermissionCode } from "@core/common/types/permissions";
-import { buildPostAuthEntryUrl } from "../utils/redirect-safety";
 
 /** Supported SSO callback protocol types. */
-export type SsoCallbackKind = "oidc" | "saml";
+export type SsoCallbackKind = "oidc" | "saml" | "continue";
 
 /** State machine for the SSO callback page. */
 export type SsoCallbackState =
@@ -36,9 +37,22 @@ export interface SsoCallbackError {
   message: string;
 }
 
+function scrubSensitiveSsoUrlParams(): void {
+  if (typeof window === "undefined") return;
+  try {
+    const current = new URL(window.location.href);
+    if (!current.searchParams.has("code") && !current.searchParams.has("state")) return;
+    current.searchParams.delete("code");
+    current.searchParams.delete("state");
+    window.history.replaceState({}, "", `${current.pathname}${current.search}${current.hash}`);
+  } catch {
+    // Ignore history API restrictions
+  }
+}
+
 /**
- * ViewModel hook coordinating OIDC/OAuth2 and SAML 2.0 callback completion,
- * multi-workspace selection, and hybrid IdP MFA (`twoFactorPendingToken`) verification.
+ * ViewModel hook coordinating OIDC/OAuth2, SAML 2.0, and central `/sso/continue`
+ * callback completion, multi-workspace selection, and hybrid IdP MFA verification.
  */
 export function useSsoCallbackHandler(kind: SsoCallbackKind) {
   const router = useRouter();
@@ -47,7 +61,11 @@ export function useSsoCallbackHandler(kind: SsoCallbackKind) {
   const setAuth = useAppStore((state) => state.setAuth);
   const setSubscriptionInfo = useAppStore((state) => state.setSubscriptionInfo);
   const setMustChangePassword = useAppStore((state) => state.setMustChangePassword);
+  const setRequireMfaEnrollment = useAppStore((state) => state.setRequireMfaEnrollment);
   const setDefaultRedirectPath = useAppStore((state) => state.setDefaultRedirectPath);
+  const { authRepository, ssoRepository } = useServices();
+  const servicesRef = useRef({ authRepository, ssoRepository });
+  servicesRef.current = { authRepository, ssoRepository };
   const { refreshNavigation } = useNavigation();
   const queryClient = useQueryClient();
   const { success: operationSuccess } = useEnhancedToast();
@@ -55,7 +73,11 @@ export function useSsoCallbackHandler(kind: SsoCallbackKind) {
 
   const [state, setState] = useState<SsoCallbackState>("processing");
   const [errorInfo, setErrorInfo] = useState<SsoCallbackError | null>(null);
-
+  const [errorCode, setErrorCode] = useState<string | null>(null);
+  const [handoffContext, setHandoffContext] = useState<{
+    returnOrigin?: string | null;
+    returnPath?: string | null;
+  }>({});
   const [workspaceData, setWorkspaceData] = useState<{
     workspaces: WorkspaceChoice[];
     token: string;
@@ -63,8 +85,6 @@ export function useSsoCallbackHandler(kind: SsoCallbackKind) {
   const [workspaceEmail, setWorkspaceEmail] = useState<string>("");
   const [isSelectingWorkspace, setIsSelectingWorkspace] = useState(false);
   const [selectionError, setSelectionError] = useState<string | undefined>(undefined);
-
-  // Hybrid MFA step-up state (BAM-01)
   const [twoFactorPending, setTwoFactorPending] = useState<SsoTwoFactorPendingData | null>(null);
   const [twoFactorCode, setTwoFactorCode] = useState("");
   const [useBackupCode, setUseBackupCode] = useState(false);
@@ -82,65 +102,89 @@ export function useSsoCallbackHandler(kind: SsoCallbackKind) {
     [router]
   );
 
+  const buildDeps = useCallback(
+    () => ({
+      authRepository: servicesRef.current.authRepository,
+      ssoRepository: servicesRef.current.ssoRepository,
+      setAuth,
+      setSubscriptionInfo,
+      setMustChangePassword,
+      setRequireMfaEnrollment,
+      refreshNavigation,
+      invalidateQueries: () => queryClient.invalidateQueries(),
+      operationSuccess,
+      t,
+    }),
+    [operationSuccess, queryClient, refreshNavigation, setAuth, setMustChangePassword, setRequireMfaEnrollment, setSubscriptionInfo, t]
+  );
+
   const handleSelectWorkspace = async (workspace: WorkspaceChoice) => {
     if (!workspaceData) return;
     setIsSelectingWorkspace(true);
     setSelectionError(undefined);
     try {
-      const { ssoRepository, authRepository } = getAuthContainer();
       const targetTenantId = workspace.isPlatformAdmin ? "" : workspace.tenantId;
-      const result = await ssoRepository.completeWorkspaceSelection(
+      const result = await servicesRef.current.ssoRepository.completeWorkspaceSelection(
         workspaceData.token,
         targetTenantId
       );
-
-      // Hybrid MFA step-up after workspace selection
+      const returnOrigin =
+        result.returnOrigin !== undefined
+          ? result.returnOrigin
+          : (handoffContext.returnOrigin ?? null);
+      const returnPath =
+        result.returnOrigin === null
+          ? (result.returnPath ?? null)
+          : (result.returnPath ?? handoffContext.returnPath ?? null);
+      if (result.returnOrigin === null) {
+        setHandoffContext({ returnOrigin: null, returnPath });
+      }
+      // Resolve central hybrid-2FA BEFORE forwarding to any cross-origin custom domain (#227/#228).
       if (result.requires2FA && result.twoFactorPendingToken) {
         setTwoFactorPending({
           token: result.twoFactorPendingToken,
           staySignedIn: Boolean(result.staySignedIn),
           email: result.email,
+          principalType: result.type === "user" ? "user" : "admin",
+          returnOrigin,
+          returnPath,
         });
         setTwoFactorCode("");
         setTwoFactorError("");
         setState("two_factor");
         return;
       }
-
-      if (result.type === "admin" && result.accessToken) {
-        const deps = {
-          authRepository,
-          ssoRepository,
-          setAuth,
-          setSubscriptionInfo,
-          setMustChangePassword,
-          refreshNavigation,
-          invalidateQueries: () => queryClient.invalidateQueries(),
-          operationSuccess,
-          t,
-        };
-        const setters = {
-          setState,
-          setErrorInfo,
-          redirectTo: navigateToTarget,
-        };
-        await completeAdminLogin(
+      const crossOrigin = buildVerifiedCrossOriginCallbackUrl(
+        result.returnOrigin,
+        result.handoffCode,
+        result.handoffState,
+        returnPath,
+        result.returnOrigin ? [result.returnOrigin] : undefined
+      );
+      if (crossOrigin) {
+        setState("success");
+        setTimeout(() => navigateToTarget(crossOrigin), 150);
+        return;
+      }
+      if ((result.type === "admin" || result.type === "user") && result.accessToken) {
+        await completePrincipalLogin(
+          result.type,
           result.accessToken,
           {
             status: result.subscriptionStatus,
             gracePhase: result.gracePhase,
             editionName: result.editionName,
             mustChangePassword: result.mustChangePassword,
+            requireMfaEnrollment: result.requireMfaEnrollment,
+            returnPath,
+            returnOrigin,
           },
-          deps,
-          setters
+          buildDeps(),
+          { setState, setErrorInfo, redirectTo: navigateToTarget }
         );
       } else {
         setState("error");
-        setErrorInfo({
-          title: t("auth.sso.callbackError"),
-          message: t("auth.sso.unsupportedAccountType"),
-        });
+        setErrorInfo({ title: t("auth.sso.callbackError"), message: t("auth.sso.unsupportedAccountType") });
       }
     } catch (err: unknown) {
       setSelectionError(err instanceof Error ? err.message : t("auth.sso.callbackErrorGeneric"));
@@ -155,47 +199,27 @@ export function useSsoCallbackHandler(kind: SsoCallbackKind) {
       setTwoFactorError(t("auth.twoFactor.enterCode"));
       return;
     }
-
     setTwoFactorError("");
     setIsVerifying2FA(true);
     try {
-      const { authRepository } = getAuthContainer();
-      const result = await authRepository.verify2FA(
-        "",
-        null,
-        twoFactorCode.trim(),
-        undefined,
-        twoFactorPending.token,
-        twoFactorPending.staySignedIn
-      );
-
-      const { user } = result;
-      setAuth(
-        user,
-        (user.permissions || []) as PermissionCode[],
-        (user.roles || []) as AdminRole[],
-        true
-      );
-      setSubscriptionInfo(result.subscriptionStatus, result.gracePhase, result.editionName);
-      const mustChange = Boolean(result.mustChangePassword);
-      setMustChangePassword(mustChange);
-      setDefaultRedirectPath("/");
-
-      if (!mustChange && result.subscriptionStatus !== "PendingPayment") {
-        queryClient.invalidateQueries();
-      }
-
-      const targetPath = buildPostAuthEntryUrl({
-        mustChangePassword: mustChange,
-        subscriptionStatus: result.subscriptionStatus,
-        redirect: searchParams?.get("redirect"),
+      await executeSsoTwoFactorVerification({
+        authRepository: servicesRef.current.authRepository,
+        twoFactorPending,
+        twoFactorCode,
+        handoffContext,
+        queryRedirect: searchParams?.get("redirect") ?? null,
+        setAuth,
+        setSubscriptionInfo,
+        setMustChangePassword,
+        setRequireMfaEnrollment,
+        setDefaultRedirectPath,
+        invalidateQueries: () => queryClient.invalidateQueries(),
+        operationSuccess,
+        setState: (s) => setState(s),
+        setTwoFactorError,
+        navigateToTarget,
+        t,
       });
-
-      operationSuccess(t("auth.welcomeBack"));
-      setState("success");
-      setTimeout(() => {
-        navigateToTarget(targetPath);
-      }, 200);
     } catch (err: unknown) {
       setTwoFactorError(err instanceof Error ? err.message : t("auth.twoFactor.invalidCode"));
     } finally {
@@ -209,76 +233,57 @@ export function useSsoCallbackHandler(kind: SsoCallbackKind) {
     setTwoFactorError("");
   };
 
-  const handleBack = () => {
-    router.replace("/login");
-  };
-
   useEffect(() => {
     if (hasProcessed.current) return;
     hasProcessed.current = true;
+    const snapshot = new URLSearchParams(searchParams?.toString() ?? "");
+    scrubSensitiveSsoUrlParams();
 
-    const { authRepository, ssoRepository } = getAuthContainer();
-
-    const deps = {
-      authRepository,
-      ssoRepository,
-      setAuth,
-      setSubscriptionInfo,
-      setMustChangePassword,
-      refreshNavigation,
-      invalidateQueries: () => queryClient.invalidateQueries(),
-      operationSuccess,
-      t,
-    };
-
+    const deps = buildDeps();
     const setters = {
       setState,
       setErrorInfo,
+      setErrorCode,
       redirectTo: navigateToTarget,
       setWorkspaceSelectionData: (data: {
         workspaces: WorkspaceChoice[];
         token: string;
         email?: string;
+        returnOrigin?: string | null;
+        returnPath?: string | null;
       }) => {
         setWorkspaceData(data);
         setWorkspaceEmail(data.email || "");
+        setHandoffContext({ returnOrigin: data.returnOrigin ?? null, returnPath: data.returnPath ?? null });
       },
       setTwoFactorPending: (data: SsoTwoFactorPendingData) => {
         setTwoFactorPending(data);
+        setHandoffContext({ returnOrigin: data.returnOrigin ?? null, returnPath: data.returnPath ?? null });
         setTwoFactorCode("");
         setTwoFactorError("");
       },
     };
-
     setTimeout(() => {
-      if (kind === "oidc") {
-        void handleOidcCallback(searchParams, deps, setters);
-      } else {
-        void handleSamlCallback(searchParams, deps, setters);
-      }
+      void (kind === "saml"
+        ? handleSamlCallback(snapshot, deps, setters)
+        : handleOidcCallback(snapshot, deps, setters));
     }, 0);
-  }, [
-    kind,
-    navigateToTarget,
-    operationSuccess,
-    queryClient,
-    refreshNavigation,
-    searchParams,
-    setAuth,
-    setMustChangePassword,
-    setSubscriptionInfo,
-    t,
-  ]);
+  }, [buildDeps, kind, navigateToTarget, searchParams]);
+
+  const rawQueryError = searchParams?.get("error") ?? searchParams?.get("error_code");
+  const resolvedErrorCode =
+    errorCode ?? (rawQueryError ? resolveSsoErrorOutcome(rawQueryError, t).safeCode : null);
 
   return {
     state,
     errorInfo,
+    errorCode: resolvedErrorCode,
     workspaceData,
     workspaceEmail,
     isSelectingWorkspace,
     selectionError,
     handleSelectWorkspace,
-    handleBack,
+    handleBack: () => router.replace("/login"),
     twoFactorCode,
     setTwoFactorCode,
     useBackupCode,

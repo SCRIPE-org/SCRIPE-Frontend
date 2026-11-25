@@ -15,6 +15,7 @@ import { DossierPageSkeleton } from "../components/AccountSkeletons";
 import { AccountSliceErrorState } from "../components/AccountSliceErrorState";
 import { DossierAuthoritySection } from "../sections/dossier/DossierAuthoritySection";
 import { DossierIdentityCardsSection } from "../sections/dossier/DossierIdentityCardsSection";
+import { isSudoCancelledError } from "../utils/sudoElevation";
 import { MailCheck } from "lucide-react";
 
 /**
@@ -91,7 +92,7 @@ export function AccountDossierView() {
   const initials = `${profile.firstName?.[0] || ""}${profile.lastName?.[0] || ""}`.toUpperCase();
   const memberships = dossier?.clubMemberships ?? [];
   const isPlatformAdmin = principalContext?.principalKind === "PlatformAdmin";
-  const isEmailVerified = dossier?.isEmailVerified ?? profile.isEmailVerified ?? true;
+  const isEmailVerified = dossier?.isEmailVerified ?? profile.isEmailVerified ?? false;
   const isSolePrimaryOwner =
     principalContext?.isSolePrimaryOwner ??
     (memberships.length > 0 ? memberships.some((m) => m.isPrimary) : false);
@@ -106,6 +107,7 @@ export function AccountDossierView() {
       }
       return res;
     } catch (err: unknown) {
+      if (isSudoCancelledError(err)) return undefined;
       toast.error(err instanceof Error && err.message ? err.message : t("profile.common.error"));
       return undefined;
     }
@@ -184,7 +186,7 @@ export function AccountDossierView() {
             : (profile.clubAffiliation ?? "")
         }
         onExportData={exportAccountData}
-        onDeactivateAccount={(sudoCode) => deactivateAccount(sudoCode)}
+        onDeactivateAccount={() => deactivateAccount()}
       />
 
       <IdentityChangeVerificationModal

@@ -64,6 +64,14 @@ export enum ErrorSeverity {
   CRITICAL = "critical",
 }
 
+export const MAX_ERROR_LOG_ENTRIES = 50;
+
+function redactSensitiveErrorText(text: string): string {
+  return text
+    .replace(/([?&](?:token|code|state|otp|email|handoff_token|access_token|refresh_token)=)[^&\s#]+/gi, "$1[REDACTED]")
+    .replace(/Bearer\s+[A-Za-z0-9\-._~+/]+=*/gi, "Bearer [REDACTED]");
+}
+
 /**
  * Centralized Error Handler Class
  */
@@ -79,6 +87,15 @@ export class ErrorHandler {
       logLevel: "error",
       ...config,
     };
+
+    if (typeof window !== "undefined") {
+      window.addEventListener("scripe:auth-logout", () => this.clearErrorLog());
+      window.addEventListener("storage", (event) => {
+        if (event.key === null || (event.key === "scr_auth_state" && !event.newValue)) {
+          this.clearErrorLog();
+        }
+      });
+    }
   }
 
   /**
@@ -97,7 +114,10 @@ export class ErrorHandler {
       this.reportError(appError);
     }
 
-    // Store in error log
+    // Store in bounded ring buffer so in-memory diagnostics never grow unbounded
+    if (this.errorLog.length >= MAX_ERROR_LOG_ENTRIES) {
+      this.errorLog.splice(0, this.errorLog.length - MAX_ERROR_LOG_ENTRIES + 1);
+    }
     this.errorLog.push(appError);
 
     return appError;
@@ -108,15 +128,22 @@ export class ErrorHandler {
    */
   private normalizeError(error: Error | AppError, context?: string): AppError {
     if ("code" in error && "timestamp" in error) {
-      return error as AppError;
+      return {
+        ...(error as AppError),
+        message: redactSensitiveErrorText(error.message || "An unknown error occurred"),
+      };
     }
 
     const errorCode = this.determineErrorCode(error);
+    const safeMessage = redactSensitiveErrorText(error.message || "An unknown error occurred");
 
     return {
       code: errorCode,
-      message: error.message || "An unknown error occurred",
-      details: error.stack || error,
+      message: safeMessage,
+      details:
+        process.env.NODE_ENV === "development" && error.stack
+          ? redactSensitiveErrorText(error.stack)
+          : undefined,
       timestamp: new Date(),
       context,
     };
@@ -128,36 +155,15 @@ export class ErrorHandler {
   private determineErrorCode(error: Error): string {
     const message = error.message.toLowerCase();
 
-    if (message.includes("unauthorized") || message.includes("401")) {
-      return ERROR_CODES.AUTH_UNAUTHORIZED;
-    }
-
-    if (message.includes("forbidden") || message.includes("403")) {
-      return ERROR_CODES.AUTH_FORBIDDEN;
-    }
-
-    if (message.includes("timeout")) {
-      return ERROR_CODES.NETWORK_TIMEOUT;
-    }
-
-    if (message.includes("network") || message.includes("connection")) {
-      return ERROR_CODES.NETWORK_CONNECTION_FAILED;
-    }
-
-    if (message.includes("not found") || message.includes("404")) {
-      return ERROR_CODES.RESOURCE_NOT_FOUND;
-    }
-
-    if (message.includes("validation") || message.includes("required")) {
-      return ERROR_CODES.VALIDATION_REQUIRED_FIELD;
-    }
-
+    if (message.includes("unauthorized") || message.includes("401")) return ERROR_CODES.AUTH_UNAUTHORIZED;
+    if (message.includes("forbidden") || message.includes("403")) return ERROR_CODES.AUTH_FORBIDDEN;
+    if (message.includes("timeout")) return ERROR_CODES.NETWORK_TIMEOUT;
+    if (message.includes("network") || message.includes("connection")) return ERROR_CODES.NETWORK_CONNECTION_FAILED;
+    if (message.includes("not found") || message.includes("404")) return ERROR_CODES.RESOURCE_NOT_FOUND;
+    if (message.includes("validation") || message.includes("required")) return ERROR_CODES.VALIDATION_REQUIRED_FIELD;
     return ERROR_CODES.SYSTEM_UNKNOWN_ERROR;
   }
 
-  /**
-   * Log error with appropriate level
-   */
   private logError(error: AppError): void {
     const logMessage = `[${error.code}] ${error.message}`;
     const logData = {
@@ -185,14 +191,13 @@ export class ErrorHandler {
     }
   }
 
-  /**
-   * Report error to external monitoring service
-   */
   private reportError(error: AppError): void {
-    // In production, this would send to services like Sentry, LogRocket, etc.
     if (process.env.NODE_ENV === "production") {
-      // Example: Sentry.captureException(error);
-      appLogger.warn("Error reporting to external service:", error);
+      appLogger.warn("Error reporting to external service:", {
+        code: error.code,
+        message: error.message,
+        context: error.context,
+      });
     }
   }
 

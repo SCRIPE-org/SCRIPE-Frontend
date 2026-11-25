@@ -15,8 +15,9 @@ const envSchema = z.object({
   // API Configuration
   NEXT_PUBLIC_API_URL: z.string().url().default("http://localhost:3001/api"),
 
-  // App Configuration
+  // App & Central Auth Configuration
   NEXT_PUBLIC_APP_URL: z.string().url().default("http://localhost:3000"),
+  NEXT_PUBLIC_AUTH_URL: z.string().url().optional(),
   NEXT_PUBLIC_APP_NAME: z.string().default("Next Frontend Template"),
 
   // Feature Flags
@@ -28,7 +29,7 @@ const envSchema = z.object({
   NEXT_PUBLIC_ENABLE_DEVTOOLS: z
     .string()
     .optional()
-    .default("true")
+    .default(process.env.NODE_ENV === "development" ? "true" : "false")
     .transform((v) => v === "true"),
 
   // Optional: External Services
@@ -44,6 +45,7 @@ function validateEnv() {
   const env = {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+    NEXT_PUBLIC_AUTH_URL: process.env.NEXT_PUBLIC_AUTH_URL,
     NEXT_PUBLIC_APP_NAME: process.env.NEXT_PUBLIC_APP_NAME,
     NEXT_PUBLIC_ENABLE_ANALYTICS: process.env.NEXT_PUBLIC_ENABLE_ANALYTICS,
     NEXT_PUBLIC_ENABLE_DEVTOOLS: process.env.NEXT_PUBLIC_ENABLE_DEVTOOLS,
@@ -53,8 +55,8 @@ function validateEnv() {
   const result = envSchema.safeParse(env);
 
   if (!result.success) {
-    appLogger.error("❌ Invalid environment variables:");
-    appLogger.error(`❌ Invalid environment variables: ${result.error.flatten().fieldErrors}`);
+    const invalidFields = Object.keys(result.error.flatten().fieldErrors).join(", ");
+    appLogger.error(`Invalid environment variable keys: ${invalidFields || "unknown"}`);
     // In development, throw to catch issues early
     if (process.env.NODE_ENV === "development") {
       throw new Error("Invalid environment configuration");

@@ -7,6 +7,7 @@
  * @module admin/data
  */
 import type { IApiService } from "@core/interfaces/api.interface";
+import type { PasswordPolicyDto } from "@core/common/password-policy";
 import { buildUrl } from "@/core/config/api-endpoints/_shared";
 import {
   AdminModel,
@@ -204,5 +205,10 @@ export class AdminService implements IAdminService {
 
   async resendSetupEmail(adminId: string): Promise<void> {
     await this.api.post(ADMIN_ENDPOINTS.RESEND_SETUP_EMAIL, { adminId });
+  }
+
+  async getPasswordPolicy(tenantId?: string): Promise<PasswordPolicyDto> {
+    const url = buildUrl(ADMIN_ENDPOINTS.PASSWORD_POLICY, { tenantId });
+    return this.api.get<PasswordPolicyDto>(url);
   }
 }

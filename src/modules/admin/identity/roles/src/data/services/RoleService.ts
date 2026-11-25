@@ -171,7 +171,7 @@ export class RoleService implements IRoleService {
       { ids }
     );
     if (typeof response === "number") return response;
-    return response.affectedRows ?? ids.length;
+    return response?.affectedRows ?? ids.length;
   }
 
   async getRoleWorkspaceEntries(roleId: string): Promise<RoleWorkspaceEntryPolicyDto[]> {

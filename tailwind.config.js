@@ -224,6 +224,12 @@ module.exports = {
         // Popovers open from inside dropdowns occasionally (filter builders),
         // never the other way round — so popover sits one step above.
         popover: "1060",
+        // Step-up Sudo verification dialog, scrim, and its inline info popover
+        // stack strictly above parent modals/dropdowns/popovers (1000..1060)
+        // and strictly below transient toasts (1100) and tooltips (1200).
+        "sudo-overlay": "1070",
+        "sudo-modal": "1075",
+        "sudo-popover": "1080",
         toast: "1100",
         tooltip: "1200",
       },

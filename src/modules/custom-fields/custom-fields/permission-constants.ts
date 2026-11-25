@@ -62,9 +62,17 @@ export const CUSTOM_FIELDS_PERMISSIONS = {
   VISIBILITY_RULE_UPDATE: "custom-field-visibility-rules.update",
   VISIBILITY_RULE_DELETE: "custom-field-visibility-rules.delete",
 
-  // ── Import / Export (Wave 6 rows 6.4 and 6.5) ─────────────
+  // ── Export ─────────────────────────────────────────────────
   EXPORT: "custom-fields.export",
-  IMPORT: "custom-fields.import",
+
+  // ── Maintenance & Backfill (PlatformOnly) ──────────────────
+  BACKFILL: "custom-fields.backfill",
+  BACKFILL_FIELD_GROUP_KEYS: "custom-fields.backfill-field-group-keys",
+  BACKFILL_VALUES: "custom-fields.backfill-values",
+  MOVE_DATE_VALUES: "custom-fields.move-date-values",
+  RECONCILE_VALUES: "custom-fields.reconcile-values",
+  REPAIR_TWINS: "custom-fields.repair-twins",
+  SWEEP_ORPHANED_TWINS: "custom-fields.sweep-orphaned-twins",
 
   // ── Sensitive Fields & Key Management ─────────────────────
   VIEW_SENSITIVE: "custom-fields.view-sensitive",
@@ -72,6 +80,5 @@ export const CUSTOM_FIELDS_PERMISSIONS = {
 } as const;
 
 export const CUSTOM_FIELDS_EXPORT_PERMISSION = "custom-fields.export";
-export const CUSTOM_FIELDS_IMPORT_PERMISSION = "custom-fields.import";
 export const CUSTOM_FIELDS_VIEW_SENSITIVE_PERMISSION = "custom-fields.view-sensitive";
 export const CUSTOM_FIELDS_MANAGE_KEYS_PERMISSION = "custom-fields.manage-keys";

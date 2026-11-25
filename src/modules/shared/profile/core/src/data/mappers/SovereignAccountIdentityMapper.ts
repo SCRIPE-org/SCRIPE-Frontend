@@ -4,6 +4,7 @@
  * Pure DTO-to-entity mapping helpers for account context, identity dossier,
  * security posture, and active session fleet slices.
  */
+import { mapPasswordPolicyDto } from "@core/common/password-policy";
 import type {
   AccountPrincipalContext,
   AvailableSsoProvider,
@@ -193,6 +194,13 @@ export function mapSecuritySlice(raw: any): SovereignSecuritySlice {
     isSsoFeatureEnabled: raw.isSsoFeatureEnabled !== false,
     isSecurityPageEnabled: raw.isSecurityPageEnabled !== false,
     backupCodesRemaining: Number(raw.backupCodesRemaining ?? 0),
+    passwordLastChangedUtc:
+      raw.passwordLastChangedUtc ?? raw.passwordLastChanged ?? null,
+    isPasswordExpired: Boolean(raw.isPasswordExpired),
+    daysUntilPasswordExpiry:
+      typeof raw.daysUntilPasswordExpiry === "number"
+        ? raw.daysUntilPasswordExpiry
+        : null,
     passkeyCount: passkeysCount,
     hardwareKeyCount: Number(raw.hardwareKeyCount ?? passkeysCount),
     securityPostureScore: Number(
@@ -210,6 +218,7 @@ export function mapSecuritySlice(raw: any): SovereignSecuritySlice {
       raw.isClientIpAllowed ?? raw.isCurrentIpAllowed ?? true
     ),
     availableSsoProviders: mapAvailableSsoProviders(raw.availableSsoProviders),
+    passwordPolicy: raw.passwordPolicy ? mapPasswordPolicyDto(raw.passwordPolicy) : null,
     rowVersion: raw.rowVersion ?? undefined,
   };
 }

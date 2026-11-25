@@ -27,9 +27,14 @@ import {
 // ─── Admin Response Schema ────────────────────────────────────────────────────
 
 const AdminRoleJsonSchema = z.object({
-  id: uuidField(),
-  nameEn: z.string(),
-  nameAr: z.string().optional().default(""),
+  roleId: uuidField(),
+  roleNameEn: z.string(),
+  roleNameAr: z.string().optional().default(""),
+  roleCode: z.string().optional().default(""),
+  tenantId: optionalString(),
+  tenantName: optionalString(),
+  expiresAt: optionalIsoDate(),
+  inheritToChildren: z.boolean().optional(),
 });
 
 const AdminModelSchema = z.object({
@@ -52,7 +57,7 @@ const AdminModelSchema = z.object({
   tenantName: optionalString(),
   isSuperAdmin: z.boolean().optional().default(false),
   canModify: z.boolean().optional().default(true),
-  isAccountActivated: z.boolean().optional().default(false),
+  isAccountActivated: z.boolean().optional().default(true),
   mustChangePassword: z.boolean().optional().default(false),
   isProtected: z.boolean().optional().default(false),
 });
@@ -118,7 +123,12 @@ export class AdminMapper {
       entity.tenantName,
       entity.isSuperAdmin,
       entity.canModify,
-      undefined
+      undefined,
+      entity.data.groupNamesEn,
+      entity.data.groupNamesAr,
+      entity.isAccountActivated,
+      entity.mustChangePassword,
+      entity.isProtected
     );
   }
 
@@ -186,7 +196,14 @@ export class AdminMapper {
    */
   static toRoleData(role: AdminRoleJson): AdminRoleData {
     return {
-      ...role,
+      roleId: role.roleId,
+      roleNameEn: role.roleNameEn,
+      roleNameAr: role.roleNameAr ?? "",
+      roleCode: role.roleCode ?? "",
+      tenantId: role.tenantId ?? undefined,
+      tenantName: role.tenantName ?? undefined,
+      expiresAt: role.expiresAt ?? undefined,
+      inheritToChildren: role.inheritToChildren,
     };
   }
 }

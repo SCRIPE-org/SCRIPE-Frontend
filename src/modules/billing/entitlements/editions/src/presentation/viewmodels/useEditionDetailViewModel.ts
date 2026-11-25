@@ -5,6 +5,7 @@ import { useState, useCallback, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { useSessionAuthorizationSync } from "@core/hooks/use-session-authorization-sync";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useAppStore } from "@core/store/useAppStore";
 import type { Edition } from "../../domain/entities/Edition";
@@ -95,6 +96,7 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
   const { success, error: toastError } = useEnhancedToast();
   const { t } = useI18n();
   const queryClient = useQueryClient();
+  const syncSessionAuthorization = useSessionAuthorizationSync();
   const { editionRepository, featureRepository } = entitlementsContainer;
 
   // ── System admin detection (tenantId == null) ──
@@ -502,6 +504,7 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
       queryClient.invalidateQueries({
         queryKey: ["entitlements", "editions", editionId, "versions"],
       });
+      await syncSessionAuthorization(null);
     },
     onError: (err) => {
       toastError({
@@ -526,12 +529,13 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
     onMutate: (featureId) => {
       setPendingRemoveFeatureIds((prev) => new Set(prev).add(featureId));
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       success({
         title: t("entitlements.editions.featureRemoved"),
         description: t("entitlements.editions.featureRemovedDesc"),
       });
       queryClient.invalidateQueries({ queryKey: ["entitlements", "editions", editionId] });
+      await syncSessionAuthorization(null);
     },
     onError: (err) => {
       toastError({

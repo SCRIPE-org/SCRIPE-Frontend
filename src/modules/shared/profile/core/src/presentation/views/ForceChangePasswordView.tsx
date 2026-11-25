@@ -36,13 +36,12 @@ export function ForceChangePasswordView() {
             onNewPasswordChange={vm.setNewPassword}
             confirmPassword={vm.confirmPassword}
             onConfirmPasswordChange={vm.setConfirmPassword}
-            showNew={vm.showNew}
-            onToggleShowNew={() => vm.setShowNew(!vm.showNew)}
-            showConfirm={vm.showConfirm}
-            onToggleShowConfirm={() => vm.setShowConfirm(!vm.showConfirm)}
+            policy={vm.policy}
+            isPolicyLoading={vm.isPolicyLoading}
+            policyError={vm.policyError}
+            onRetryPolicy={() => void vm.refetchPolicy()}
             isSubmitting={vm.isSubmitting}
             submitError={vm.submitError}
-            rules={vm.rules}
             showMismatch={vm.showMismatch}
             canSubmit={vm.canSubmit}
             onSubmit={vm.handleSubmit}

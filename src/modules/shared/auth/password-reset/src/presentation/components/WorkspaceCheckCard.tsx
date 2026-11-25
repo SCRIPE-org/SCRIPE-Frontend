@@ -5,7 +5,7 @@ import { Button } from "@core/ui/button";
 import { Building2, Check } from "lucide-react";
 import { useResolvedFileUrl } from "@core/hooks/use-resolved-file-url";
 import { useI18n } from "@core/providers/i18n-provider";
-import type { WorkspaceOption } from "../viewmodels/useForgotPasswordViewModel";
+import type { WorkspaceOption } from "../viewmodels/usePasswordRecoveryViewModel";
 import Image from "next/image";
 
 interface WorkspaceCheckCardProps {
@@ -15,8 +15,7 @@ interface WorkspaceCheckCardProps {
 }
 
 /**
- * Presentation UI component rendering the workspace check card.
- * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ * Selectable workspace card used in multi-tenant password recovery.
  */
 export function WorkspaceCheckCard({ workspace, isSelected, onToggle }: WorkspaceCheckCardProps) {
   const { t } = useI18n();
@@ -33,7 +32,6 @@ export function WorkspaceCheckCard({ workspace, isSelected, onToggle }: Workspac
         boxShadow: isSelected ? "0 0 0 2px var(--sx-accent-ring, rgba(198,255,0,.18))" : "none",
       }}
     >
-      {/* Checkbox */}
       <div
         className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 transition-all ${isSelected ? "border-nx-accent bg-nx-accent" : "bg-transparent"}`}
         style={isSelected ? undefined : { borderColor: "var(--sx-chip-border)" }}
@@ -41,7 +39,6 @@ export function WorkspaceCheckCard({ workspace, isSelected, onToggle }: Workspac
         {isSelected && <Check className="h-3 w-3 text-nx-on-fill" aria-hidden="true" />}
       </div>
 
-      {/* Logo / Icon */}
       <div
         className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-xl"
         style={{
@@ -56,7 +53,6 @@ export function WorkspaceCheckCard({ workspace, isSelected, onToggle }: Workspac
         )}
       </div>
 
-      {/* Name */}
       <div className="min-w-0 flex-1">
         <p className="truncate text-[14px] font-semibold" style={{ color: "var(--sx-text)" }}>
           {workspace.tenantName}

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { useSessionAuthorizationSync } from "@core/hooks/use-session-authorization-sync";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { EditionVersion } from "../../domain/entities/EditionVersion";
 
@@ -47,6 +48,7 @@ export function useVersionsViewModel(editionId: string): VersionsViewModelResult
   const { t } = useI18n();
   const { success, error: toastError } = useEnhancedToast();
   const queryClient = useQueryClient();
+  const syncSessionAuthorization = useSessionAuthorizationSync();
   const { editionRepository } = entitlementsContainer;
 
   // ── State ──
@@ -107,7 +109,7 @@ export function useVersionsViewModel(editionId: string): VersionsViewModelResult
 
       return editionRepository.publishVersion(editionId, versionId, payload);
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       success({
         title: t("entitlements.editions.versions.published"),
         description: t("entitlements.editions.versions.publishedDesc"),
@@ -116,6 +118,7 @@ export function useVersionsViewModel(editionId: string): VersionsViewModelResult
         queryKey: ["entitlements", "editions", editionId, "versions"],
       });
       queryClient.invalidateQueries({ queryKey: ["entitlements", "editions", editionId] });
+      await syncSessionAuthorization(null);
       setPublishVersionId(null);
       setRolloutStrategy("Immediate");
       setScheduledAt("");

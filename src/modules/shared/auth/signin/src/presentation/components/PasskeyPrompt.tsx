@@ -14,7 +14,8 @@ import { Fingerprint, AlertCircle, Loader2, ArrowLeft, ShieldX } from "lucide-re
 
 /** Props for {@link PasskeyPrompt}. */
 interface PasskeyPromptProps {
-  onSuccess: (result: PasskeyAuthVerifyResult) => void;
+  onSuccess: (result: PasskeyAuthVerifyResult) => void | Promise<void>;
+  onTwoFactorRequired?: (pendingToken: string, staySignedIn: boolean) => void;
   onBack: () => void;
   isRTL: boolean;
   tenantId?: string | null;
@@ -24,13 +25,14 @@ interface PasskeyPromptProps {
 /** WebAuthn / FIDO2 biometric passkey sign-in prompt view. */
 export function PasskeyPrompt({
   onSuccess,
+  onTwoFactorRequired,
   onBack,
   isRTL,
   tenantId,
   identifier,
 }: PasskeyPromptProps) {
   const { t } = useI18n();
-  const vm = usePasskeyLoginViewModel(onSuccess, tenantId, identifier);
+  const vm = usePasskeyLoginViewModel(onSuccess, tenantId, identifier, onTwoFactorRequired);
 
   // ── Not supported state ──
   if (!vm.isSupported) {
@@ -105,7 +107,7 @@ export function PasskeyPrompt({
         <Button
           type="button"
           data-testid="passkey-authenticate-btn"
-          onClick={vm.authenticateWithPasskey}
+          onClick={() => void vm.authenticateWithPasskey()}
           disabled={vm.isLoading}
           className="w-full h-10 text-xs font-semibold gap-2"
         >

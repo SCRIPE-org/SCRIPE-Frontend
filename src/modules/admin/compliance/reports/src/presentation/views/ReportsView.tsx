@@ -39,6 +39,7 @@ import { overlayFooterClasses } from "@core/ui/dialog";
 import { usePermission } from "@core/hooks/use-permission";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { useAppStore } from "@/core/store/useAppStore";
+import { sanitizeHttpUrl } from "@core/common/sanitize";
 import { formatUtc } from "@core/common/utils";
 
 // ── Report type metadata ───────────────────────────────────────────────────────
@@ -260,7 +261,10 @@ function ReportCard({ report }: { report: ComplianceReport }) {
                 id={`report-download-${report.id}`}
                 variant="outline"
                 size="sm"
-                onClick={() => window.open(report.downloadUrl!, "_blank")}
+                onClick={() => {
+                  const safeUrl = sanitizeHttpUrl(report.downloadUrl, { allowRelative: true });
+                  if (safeUrl) window.open(safeUrl, "_blank", "noopener,noreferrer");
+                }}
               >
                 <Download className="me-1.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                 {t("compliance.downloadReport")}

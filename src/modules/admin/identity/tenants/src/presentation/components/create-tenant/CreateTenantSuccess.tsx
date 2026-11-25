@@ -9,6 +9,7 @@
 "use client";
 
 import React from "react";
+import { sanitizeHttpUrl } from "@core/common/sanitize";
 import { Button } from "@core/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
 import { DetailRow } from "@core/ui/detail-row";
@@ -77,17 +78,23 @@ export function CreateTenantSuccess({ vm, t, direction }: CreateTenantSuccessPro
                 <TooltipContent>{t("common.copy")}</TooltipContent>
               </Tooltip>
             </TooltipProvider>
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-9 w-9 shrink-0"
-              aria-label={t("common.open")}
-              asChild
-            >
-              <a href={result.accountSetupUrl} target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
-              </a>
-            </Button>
+            {(() => {
+              const safeSetupUrl = sanitizeHttpUrl(result.accountSetupUrl, { allowRelative: true });
+              if (!safeSetupUrl) return null;
+              return (
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-9 w-9 shrink-0"
+                  aria-label={t("common.open")}
+                  asChild
+                >
+                  <a href={safeSetupUrl} target="_blank" rel="noopener noreferrer">
+                    <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+                  </a>
+                </Button>
+              );
+            })()}
           </div>
         </div>
 

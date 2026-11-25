@@ -15,7 +15,6 @@
 "use client";
 
 import { useState } from "react";
-import { X, Plus } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -27,16 +26,22 @@ import {
 import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
 import { GenericSelect } from "@core/crud/components/generic-select";
-import { Input } from "@core/ui/input";
 import { Badge } from "@core/ui/badge";
+import { useSudoStore } from "@core/store/useSudoStore";
+import { PermissionRestrictedFieldsEditor } from "./PermissionRestrictedFieldsEditor";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermission } from "@core/hooks/use-permission";
-import { CUSTOM_FIELDS_PERMISSIONS } from "@core/common/types/permissions";
+import { CUSTOM_FIELDS_PERMISSIONS, extractPermissionResource } from "@core/common/types/permissions";
+import { useAppStore } from "@core/store/useAppStore";
 import { useRestrictableCustomFieldKeys } from "@core/hooks/use-restrictable-custom-field-keys";
 import {
   PermissionScopes,
   type PermissionAssignmentJson,
 } from "../../domain/types/PermissionTypes";
+import {
+  findRequiredRestrictedFields,
+  parseRestrictedFieldDraft,
+} from "../../domain/utils/permission-assignment-utils";
 
 /**
  * Interface defining property specifications, keys types, and structural contract rules for permission config dialog props.
@@ -48,9 +53,22 @@ export interface PermissionConfigDialogProps {
     id: string;
     code: string;
     displayName: string;
+    resource?: string;
   };
   currentAssignment?: PermissionAssignmentJson;
+  /** Whether cross-tenant `all_tenants` scope option may be offered (false for tenant roles). */
+  allowAllTenants?: boolean;
+  /** Read-only lock mode (for edition-synced or unauthorized views). */
+  isReadOnly?: boolean;
   onSave: (assignment: PermissionAssignmentJson) => void;
+}
+
+function resolveInitialScope(currentAssignment?: PermissionAssignmentJson): string {
+  const rawScope = currentAssignment?.scopeOverride?.trim();
+  const lowerScope = rawScope?.toLowerCase();
+  return !rawScope || lowerScope === "default" || lowerScope === "tenant"
+    ? PermissionScopes.Default
+    : rawScope;
 }
 
 /**
@@ -62,76 +80,76 @@ export function PermissionConfigDialog({
   onOpenChange,
   permission,
   currentAssignment,
+  allowAllTenants = true,
+  isReadOnly = false,
   onSave,
 }: PermissionConfigDialogProps) {
   const { t } = useI18n();
+  const userTenantId = useAppStore((s) => s.user?.tenantId ?? null);
+  const canUseAllTenants = allowAllTenants && !userTenantId;
 
   /**
-   * Permission codes are `{resource}.{action}`, and a resource never contains a dot
-   * (`compliance_dsr.view` uses an underscore), so the resource is the part before the
-   * first dot. Derived from the code the dialog already receives rather than taken as a
-   * new prop: `PermissionConfigDialogProps` is publicly exported and mounted from two
-   * places inside the matrix, so a required prop would be a breaking signature change
-   * for no gain.
+   * Permission codes follow `{resource}.{action}` where `resource` can contain
+   * dots (`crm.opportunities.read`) or `action` can have known compound suffixes
+   * (`crm.opportunities.stage.override`). Prefer the explicit backend resource when
+   * passed from the matrix/flat row and fall back to canonical extraction.
    */
-  const permissionResource = permission.code.split(".")[0];
+  const permissionResource =
+    permission.resource?.trim() || extractPermissionResource(permission.code);
 
   // Both candidate endpoints require `custom-fields.view`. A role administrator
   // holding `roles.*` without it is an ordinary configuration, and must degrade to
   // plain free text rather than get a 403 on every dialog open.
   const canReadCustomFields = usePermission(CUSTOM_FIELDS_PERMISSIONS.CUSTOM_FIELD_VIEW);
   const suggestions = useRestrictableCustomFieldKeys(open ? permissionResource : undefined, {
-    enabled: canReadCustomFields,
+    enabled: canReadCustomFields && !isReadOnly,
   });
 
-  const [scope, setScope] = useState<string>(PermissionScopes.Default);
-  const [restrictedFields, setRestrictedFields] = useState<string[]>([]);
+  const [scope, setScope] = useState<string>(() => resolveInitialScope(currentAssignment));
+  const [restrictedFields, setRestrictedFields] = useState<string[]>(
+    () => currentAssignment?.restrictedFields ?? []
+  );
   const [newField, setNewField] = useState("");
 
-  // Initialize state from current assignment
+  // Sync state when open or currentAssignment transitions after mount
   const [prevOpen, setPrevOpen] = useState(open);
   const [prevCurrentAssignment, setPrevCurrentAssignment] = useState(currentAssignment);
   if (open !== prevOpen || currentAssignment !== prevCurrentAssignment) {
     setPrevOpen(open);
     setPrevCurrentAssignment(currentAssignment);
     if (open) {
-      setScope(currentAssignment?.scopeOverride || PermissionScopes.Default);
-      setRestrictedFields(currentAssignment?.restrictedFields || []);
+      setScope(resolveInitialScope(currentAssignment));
+      setRestrictedFields(currentAssignment?.restrictedFields ?? []);
       setNewField("");
     }
   }
 
-  const trimmedField = newField.trim();
-  /**
-   * Duplicate detection is case-INSENSITIVE, matching the server: it compares these
-   * hand-typed names with `OrdinalIgnoreCase` on every enforcement surface. The old
-   * exact-case check let an admin add both `Salary` and `salary`, which are one
-   * restriction wearing two tags — and now that the picker offers canonical keys, a
-   * mixed-case pair is easy to produce by typing one and clicking the other.
-   */
-  const isAlreadyRestricted = (field: string) =>
-    restrictedFields.some((existing) => existing.toLowerCase() === field.toLowerCase());
-  const canAddField = trimmedField.length > 0 && !isAlreadyRestricted(trimmedField);
+  const draftParse = parseRestrictedFieldDraft(newField, restrictedFields);
+  const restrictedLower = new Set(restrictedFields.map((field) => field.toLowerCase()));
+  const canAddField = draftParse.added.length > 0;
 
   /** Suggestions not already chosen — the list the datalist actually offers. */
-  const availableSuggestions = suggestions.keys.filter((entry) => !isAlreadyRestricted(entry.key));
+  const availableSuggestions = suggestions.keys.filter(
+    (entry) => !restrictedLower.has(entry.key.toLowerCase())
+  );
 
   /**
-   * Required custom fields among the chosen tags. Restricting one is refused
-   * server-side and takes the WHOLE save down, not just that tag, so this is warned
-   * about before the admin presses save rather than discovered after every other edit
-   * in the dialog is discarded. Advisory only: the flag is a snapshot, and a field
-   * flipped to required afterwards still fails.
+   * Required custom fields among the chosen tags AND any uncommitted draft tokens.
+   * Restricting one is refused server-side and takes the WHOLE save down, so
+   * block Save whenever a required key appears in either committed tags or draft input.
    */
-  const chosenRequiredFields = restrictedFields.filter((field) =>
-    suggestions.keys.some(
-      (entry) => entry.isRequired && entry.key.toLowerCase() === field.toLowerCase()
-    )
+  const requiredKeysLower = new Set(
+    suggestions.keys.filter((entry) => entry.isRequired).map((entry) => entry.key.toLowerCase())
+  );
+  const chosenRequiredFields = findRequiredRestrictedFields(
+    restrictedFields,
+    newField,
+    requiredKeysLower
   );
 
   const handleAddField = () => {
     if (!canAddField) return;
-    setRestrictedFields([...restrictedFields, trimmedField]);
+    setRestrictedFields(draftParse.nextFields);
     setNewField("");
   };
 
@@ -140,10 +158,12 @@ export function PermissionConfigDialog({
   };
 
   const handleSave = () => {
+    if (isReadOnly || hasInvalidAllTenantsSelection || chosenRequiredFields.length > 0) return;
+    const finalFields = newField.trim() ? draftParse.nextFields : restrictedFields;
     const assignment: PermissionAssignmentJson = {
       permissionId: permission.id,
       scopeOverride: scope === PermissionScopes.Default ? undefined : scope,
-      restrictedFields: restrictedFields.length > 0 ? restrictedFields : undefined,
+      restrictedFields: finalFields.length > 0 ? finalFields : undefined,
     };
     onSave(assignment);
     onOpenChange(false);
@@ -155,12 +175,30 @@ export function PermissionConfigDialog({
     { value: PermissionScopes.Own, label: t("role.scopeOwn") },
     { value: PermissionScopes.OwnTenant, label: t("role.scopeOwnTenant") },
     { value: PermissionScopes.Hierarchy, label: t("role.scopeHierarchy") },
-    { value: PermissionScopes.AllTenants, label: t("role.scopeAllTenants") },
+    ...(canUseAllTenants
+      ? [{ value: PermissionScopes.AllTenants, label: t("role.scopeAllTenants") }]
+      : []),
   ];
+  const hasInvalidAllTenantsSelection =
+    !canUseAllTenants && scope.toLowerCase() === PermissionScopes.AllTenants;
+
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen && useSudoStore.getState().modalOpen) return;
+    onOpenChange(nextOpen);
+  };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[26rem]">
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogContent
+        className="sm:max-w-[26rem]"
+        data-testid="permission-config-dialog"
+        onInteractOutside={(e) => {
+          if (useSudoStore.getState().modalOpen) e.preventDefault();
+        }}
+        onPointerDownOutside={(e) => {
+          if (useSudoStore.getState().modalOpen) e.preventDefault();
+        }}
+      >
         <DialogHeader>
           <DialogTitle>{t("permission.configure")}</DialogTitle>
           {/* The subject, stated once and unambiguously: this dialog edits THIS
@@ -168,7 +206,7 @@ export function PermissionConfigDialog({
           <DialogDescription className="flex flex-wrap items-center gap-2">
             <span className="min-w-0 truncate text-nx-ink">{permission.displayName}</span>
             <Badge variant="secondary" className="shrink-0 font-mono text-[11px]">
-              {permission.code}
+              <bdi dir="ltr">{permission.code}</bdi>
             </Badge>
           </DialogDescription>
         </DialogHeader>
@@ -178,116 +216,58 @@ export function PermissionConfigDialog({
           <div className="space-y-1.5">
             {/* No htmlFor: GenericSelect's trigger is a role="combobox" div, not
                 a labelable control — a for/id pair here would be a lie. */}
-            <Label>{t("role.scopeOverride")}</Label>
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <Label id="permission-scope-label">{t("role.scopeOverride")}</Label>
+              <Badge
+                variant="outline"
+                data-testid="permission-config-resource-badge"
+                className="font-mono text-xs"
+              >
+                <bdi dir="ltr">{permissionResource}</bdi>
+              </Badge>
+            </div>
             <GenericSelect
               type="single"
               options={scopeOptions}
               value={scope}
               onValueChange={(val: string | string[]) => setScope(val as string)}
               placeholder={t("role.selectScope")}
+              disabled={isReadOnly}
+              aria-labelledby="permission-scope-label"
             />
-            <p className="text-xs text-nx-ink-3">{t("role.scopeHint")}</p>
-          </div>
-
-          {/* ── Restricted fields (tag input) ── */}
-          <div className="space-y-1.5">
-            <Label htmlFor="permission-restricted-field">{t("role.restrictedFields")}</Label>
-            <div className="flex gap-2">
-              <Input
-                id="permission-restricted-field"
-                value={newField}
-                onChange={(e) => setNewField(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    handleAddField();
-                  }
-                }}
-                placeholder={t("role.enterField")}
-                className="flex-1"
-                /* Suggestions are LAYERED ON, never replacing free text. Restricted
-                   fields also name built-in record properties, which are not
-                   enumerable from here at all, so an options-only control would remove
-                   the ability to restrict them. A native datalist keeps the input free
-                   text, needs no new component (none in @core/ui accepts both), and
-                   stays keyboard- and screen-reader-navigable by construction. */
-                list={
-                  availableSuggestions.length > 0
-                    ? "permission-restricted-field-options"
-                    : undefined
-                }
-              />
-              {availableSuggestions.length > 0 && (
-                <datalist id="permission-restricted-field-options">
-                  {availableSuggestions.map((entry) => (
-                    <option
-                      key={entry.key}
-                      value={entry.key}
-                      /* The label carries the warning, because a datalist option has
-                         nowhere else to put one. */
-                      label={
-                        entry.isRequired
-                          ? `${entry.labelEn} — ${t("role.restrictedFieldRequiredWarning")}`
-                          : entry.labelEn
-                      }
-                    />
-                  ))}
-                </datalist>
-              )}
-              <Button
-                type="button"
-                size="icon"
-                variant="secondary"
-                onClick={handleAddField}
-                disabled={!canAddField}
-                aria-label={t("common.add")}
-              >
-                <Plus className="h-4 w-4" aria-hidden="true" />
-              </Button>
-            </div>
-
-            <ul className="flex min-h-[2.5rem] list-none flex-wrap gap-1.5 rounded-nx-md border border-nx-line bg-nx-hover p-2">
-              {restrictedFields.length === 0 ? (
-                <li className="self-center text-sm text-nx-ink-3">{t("role.noRestrictions")}</li>
-              ) : (
-                restrictedFields.map((field) => (
-                  <li key={field}>
-                    <Badge variant="secondary" className="gap-1 pe-1">
-                      <span className="truncate">{field}</span>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleRemoveField(field)}
-                        aria-label={`${t("common.remove")} ${field}`}
-                        className="grid h-4 w-4 place-items-center rounded-full p-0 transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-raised-2 focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
-                      >
-                        <X className="h-3 w-3" aria-hidden="true" />
-                      </Button>
-                    </Badge>
-                  </li>
-                ))
-              )}
-            </ul>
-            <p className="text-xs text-nx-ink-3">{t("role.restrictionHint")}</p>
-            {chosenRequiredFields.length > 0 && (
-              <p role="alert" className="text-xs text-nx-danger">
-                {t("role.restrictedFieldsRequiredConflict", {
-                  fields: chosenRequiredFields.join(", "),
-                })}
+            {hasInvalidAllTenantsSelection ? (
+              <p role="alert" className="text-xs text-nx-warning-strong">
+                {t("role.scopeAllTenantsRestricted")}
               </p>
-            )}
-            {suggestions.isTruncated && (
-              <p className="text-xs text-nx-ink-3">{t("role.restrictedFieldsTruncated")}</p>
+            ) : (
+              <p className="text-xs text-nx-ink-3">{t("role.scopeHint")}</p>
             )}
           </div>
+
+          <PermissionRestrictedFieldsEditor
+            restrictedFields={restrictedFields}
+            newField={newField}
+            onNewFieldChange={setNewField}
+            canAddField={canAddField}
+            onAddField={handleAddField}
+            onRemoveField={handleRemoveField}
+            availableSuggestions={availableSuggestions}
+            chosenRequiredFields={chosenRequiredFields}
+            isTruncated={suggestions.isTruncated}
+            isReadOnly={isReadOnly}
+          />
         </div>
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             {t("common.cancel")}
           </Button>
-          <Button onClick={handleSave}>{t("common.save")}</Button>
+          <Button
+            onClick={handleSave}
+            disabled={isReadOnly || hasInvalidAllTenantsSelection || chosenRequiredFields.length > 0}
+          >
+            {t("common.save")}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

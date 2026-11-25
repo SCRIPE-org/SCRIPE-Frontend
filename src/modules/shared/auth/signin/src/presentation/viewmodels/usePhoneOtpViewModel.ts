@@ -64,7 +64,7 @@ export interface UsePhoneOtpViewModelReturn {
  * (`requires2FA` + `twoFactorPendingToken`).
  */
 export function usePhoneOtpViewModel(
-  onSuccess: (result: TokenLoginPayload) => void,
+  onSuccess: (result: TokenLoginPayload) => void | Promise<void>,
   options?: UsePhoneOtpOptions
 ): UsePhoneOtpViewModelReturn {
   const { t } = useI18n();
@@ -82,6 +82,14 @@ export function usePhoneOtpViewModel(
   const [cooldown, setCooldown] = useState(0);
   const [availableWorkspaces, setAvailableWorkspaces] = useState<WorkspaceChoice[]>([]);
   const cooldownRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const isMountedRef = useRef(true);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   // Error shake — keyed counter, incremented at every setError() call
   const [shakeKey, setShakeKey] = useState(0);
@@ -118,28 +126,32 @@ export function usePhoneOtpViewModel(
   }, [step]);
 
   const handleVerifyOutcome = useCallback(
-    (result: LoginResponseModel) => {
+    async (result: LoginResponseModel) => {
       if (result.requires2FA && result.twoFactorPendingToken) {
         onTwoFactorRequired?.(result.twoFactorPendingToken, Boolean(result.staySignedIn));
         return;
       }
 
       if (result.requiresWorkspaceSelection && result.availableWorkspaces?.length) {
+        if (!isMountedRef.current) return;
         setAvailableWorkspaces(result.availableWorkspaces as WorkspaceChoice[]);
         setStep("workspace-selection");
         onWorkspaceSelection?.(result);
         return;
       }
 
-      onSuccess({
-        accessToken: result.accessToken,
-        refreshToken: result.refreshToken ?? "",
-        mustChangePassword: result.mustChangePassword,
-        subscriptionStatus: result.subscriptionStatus,
-        gracePhase: result.gracePhase,
-        editionName: result.editionName,
-        defaultRedirectPath: result.defaultRedirectPath,
-      });
+      await Promise.resolve(
+        onSuccess({
+          accessToken: result.accessToken,
+          refreshToken: result.refreshToken ?? "",
+          mustChangePassword: result.mustChangePassword,
+          requireMfaEnrollment: result.requireMfaEnrollment,
+          subscriptionStatus: result.subscriptionStatus,
+          gracePhase: result.gracePhase,
+          editionName: result.editionName,
+          defaultRedirectPath: result.defaultRedirectPath,
+        })
+      );
     },
     [onSuccess, onTwoFactorRequired, onWorkspaceSelection]
   );
@@ -160,12 +172,15 @@ export function usePhoneOtpViewModel(
 
     try {
       const result = await authRepository.requestPhoneOtp(phone.trim(), tenantId);
+      if (!isMountedRef.current) return;
       setCooldown(result?.retryAfterSeconds ?? 60);
       setStep("code");
     } catch (err) {
-      setErrorWithShake(err instanceof Error ? err.message : t("auth.phoneOtp.requestFailed"));
+      if (isMountedRef.current) {
+        setErrorWithShake(err instanceof Error ? err.message : t("auth.phoneOtp.requestFailed"));
+      }
     } finally {
-      setIsLoading(false);
+      if (isMountedRef.current) setIsLoading(false);
     }
   }, [phone, tenantId, authRepository, t, setErrorWithShake]);
 
@@ -181,11 +196,13 @@ export function usePhoneOtpViewModel(
 
     try {
       const result = await authRepository.verifyPhoneOtp(phone.trim(), code, tenantId);
-      handleVerifyOutcome(result);
+      await handleVerifyOutcome(result);
     } catch (err) {
-      setErrorWithShake(err instanceof Error ? err.message : t("auth.phoneOtp.verifyFailed"));
+      if (isMountedRef.current) {
+        setErrorWithShake(err instanceof Error ? err.message : t("auth.phoneOtp.verifyFailed"));
+      }
     } finally {
-      setIsLoading(false);
+      if (isMountedRef.current) setIsLoading(false);
     }
   }, [phone, code, tenantId, authRepository, handleVerifyOutcome, t, setErrorWithShake]);
 
@@ -206,11 +223,13 @@ export function usePhoneOtpViewModel(
           false,
           workspace.isPlatformAdmin
         );
-        handleVerifyOutcome(result);
+        await handleVerifyOutcome(result);
       } catch (err) {
-        setErrorWithShake(err instanceof Error ? err.message : t("auth.phoneOtp.verifyFailed"));
+        if (isMountedRef.current) {
+          setErrorWithShake(err instanceof Error ? err.message : t("auth.phoneOtp.verifyFailed"));
+        }
       } finally {
-        setIsLoading(false);
+        if (isMountedRef.current) setIsLoading(false);
       }
     },
     [phone, code, authRepository, handleVerifyOutcome, t, setErrorWithShake]
@@ -222,11 +241,11 @@ export function usePhoneOtpViewModel(
     setIsLoading(true);
     try {
       const result = await authRepository.requestPhoneOtp(phone.trim(), tenantId);
-      setCooldown(result?.retryAfterSeconds ?? 60);
+      if (isMountedRef.current) setCooldown(result?.retryAfterSeconds ?? 60);
     } catch {
       /* silent — enumeration-safe */
     } finally {
-      setIsLoading(false);
+      if (isMountedRef.current) setIsLoading(false);
     }
   }, [phone, cooldown, tenantId, authRepository]);
 

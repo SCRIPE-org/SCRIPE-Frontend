@@ -4,8 +4,12 @@
  * and HTML document rendering helpers for the email template live preview component.
  */
 
-import DOMPurify from "dompurify";
 import { Monitor, Tablet, Smartphone } from "lucide-react";
+import {
+  sanitizeCssDeclarationValue,
+  sanitizeEmailHtml,
+  sanitizeHtml,
+} from "@core/common/sanitize";
 import type { DesignVariables } from "./DesignVariablesPanel";
 
 /**
@@ -127,18 +131,26 @@ export function composePreviewDocument({
   skin,
   designVariables,
 }: ComposePreviewDocumentParams): string {
-  const sanitized = DOMPurify.sanitize(debouncedBody, SANITIZE_OPTIONS);
+  const sanitized = sanitizeEmailHtml(debouncedBody);
+  const safeDir = previewDir === "rtl" ? "rtl" : "ltr";
+  const safeLang = /^[a-zA-Z]{2,8}(?:-[a-zA-Z0-9]{1,8})*$/.test(previewLang)
+    ? sanitizeHtml(previewLang)
+    : "en";
 
-  const bodyBackground = designVariables?.backgroundColor || skin.surface;
-  const bodyColor = designVariables?.textColor || skin.text;
+  const bodyBackground = sanitizeCssDeclarationValue(designVariables?.backgroundColor) || skin.surface;
+  const bodyColor = sanitizeCssDeclarationValue(designVariables?.textColor) || skin.text;
   const bodyFontFamily =
-    designVariables?.fontFamily ||
+    sanitizeCssDeclarationValue(designVariables?.fontFamily) ||
     "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
-  const bodyFontSize = designVariables?.bodyFontSize ? `${designVariables.bodyFontSize}px` : "14px";
-  const linkColor = designVariables?.primaryColor || skin.link;
+  const parsedFontSize = Number(designVariables?.bodyFontSize);
+  const bodyFontSize =
+    Number.isFinite(parsedFontSize) && parsedFontSize >= 10 && parsedFontSize <= 36
+      ? `${Math.round(parsedFontSize)}px`
+      : "14px";
+  const linkColor = sanitizeCssDeclarationValue(designVariables?.primaryColor) || skin.link;
 
   return `<!DOCTYPE html>
-<html dir="${previewDir}" lang="${previewLang}">
+<html dir="${safeDir}" lang="${safeLang}">
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>

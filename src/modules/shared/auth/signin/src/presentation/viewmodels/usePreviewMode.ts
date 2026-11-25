@@ -1,6 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import {
+  isTrustedSameOriginParentMessage,
+  parseStudioDraftUpdateMessage,
+  postToSameOriginParent,
+} from "@core/common/postmessage-security";
 
 /**
  * Interface defining property specifications, keys types, and structural contract rules for preview overrides.
@@ -30,12 +35,17 @@ export function usePreviewMode() {
     if (!isPreviewMode) return;
 
     // Signal to studio that preview is ready
-    window.parent?.postMessage({ type: "SCRIPE_PREVIEW_READY" }, window.location.origin);
+    postToSameOriginParent({ type: "SCRIPE_PREVIEW_READY" });
 
     const handler = (e: MessageEvent) => {
-      if (e.origin !== window.location.origin) return;
-      if (e.data?.type === "SCRIPE_STUDIO_DRAFT_UPDATE") {
-        setPreviewOverrides(e.data.payload as PreviewOverrides);
+      if (!isTrustedSameOriginParentMessage(e)) return;
+      const validDraft = parseStudioDraftUpdateMessage(e.data);
+      if (validDraft) {
+        setPreviewOverrides({
+          loginBrandingJson: validDraft.loginBrandingJson,
+          slotConfigJson: validDraft.slotConfigJson,
+        });
+        return;
       }
       if (e.data?.type === "SCRIPE_STUDIO_RESET") {
         setPreviewOverrides(null);

@@ -111,7 +111,7 @@ export function LaunchCelebrationCard({
             <div className="min-w-0 flex-1 space-y-1">
               <div className="flex min-w-0 items-center gap-2">
                 <span className="truncate text-sm font-semibold text-nx-ink">
-                  {adminName || "Administrator"}
+                  {adminName || t("auth.accountSetup.administrator")}
                 </span>
                 {adminUsername && (
                   <Badge
@@ -132,7 +132,7 @@ export function LaunchCelebrationCard({
               <p className="truncate font-medium text-nx-ink">{tenantName || "—"}</p>
             </div>
             <div className="min-w-0 space-y-0.5">
-              <span className="text-nx-ink-2">Assigned Role</span>
+              <span className="text-nx-ink-2">{t("auth.accountSetup.assignedRole")}</span>
               <p className="flex items-center gap-1 truncate font-medium text-nx-ink">
                 <Shield className="h-3 w-3 shrink-0 text-nx-accent" />
                 <span className="truncate">{t("auth.accountSetup.superAdminRole")}</span>
@@ -151,10 +151,11 @@ export function LaunchCelebrationCard({
           size="lg"
           className="w-full gap-2 font-semibold"
           onClick={() => {
-            const redirectUrl = adminEmail
-              ? `/login?email=${encodeURIComponent(adminEmail)}`
-              : "/login";
-            router.push(redirectUrl);
+            const params = new URLSearchParams();
+            if (adminEmail) params.set("email", adminEmail);
+            if (tenantCode) params.set("_tenant", tenantCode);
+            const qs = params.toString();
+            router.push(qs ? `/login?${qs}` : "/login");
           }}
         >
           <span>{t("auth.accountSetup.enterWorkspace")}</span>

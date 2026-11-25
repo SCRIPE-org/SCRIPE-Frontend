@@ -7,9 +7,6 @@
 "use client";
 
 export * from "./InfoRow";
-export * from "./PasswordField";
-export * from "./PasswordStrengthMeter";
-export * from "./PasswordCheck";
 export * from "./StepProgressIndicator";
 export * from "./DesktopSetupSidebar";
 export * from "./AvatarUploader";

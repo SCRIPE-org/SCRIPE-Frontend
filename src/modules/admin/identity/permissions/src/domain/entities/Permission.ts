@@ -20,6 +20,7 @@ export interface PermissionProps {
   descriptionAr?: string;
   nameEn?: string;
   nameAr?: string;
+  platformOnly?: boolean;
 }
 
 /**
@@ -80,6 +81,10 @@ export class Permission {
 
   get nameAr(): string | undefined {
     return this.props.nameAr;
+  }
+
+  get platformOnly(): boolean {
+    return Boolean(this.props.platformOnly);
   }
 
   // ===== Business Logic =====

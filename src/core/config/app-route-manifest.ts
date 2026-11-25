@@ -116,6 +116,7 @@ export const APP_ROUTE_MANIFEST: readonly AppRouteManifestEntry[] = [
   { pattern: "/magic-link", binding: "public" },
   { pattern: "/qr-approve", binding: "public" },
   { pattern: "/sso/callback", binding: "public" },
+  { pattern: "/sso/continue", binding: "public" },
   { pattern: "/sso/saml/callback", binding: "public" },
   { pattern: "/bookings/guest", binding: "public" },
   { pattern: "/authorize", binding: "public" },

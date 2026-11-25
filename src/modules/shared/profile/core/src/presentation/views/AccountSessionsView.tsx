@@ -13,6 +13,7 @@ import { SessionsPageSkeleton } from "../components/AccountSkeletons";
 import { AccountSliceErrorState } from "../components/AccountSliceErrorState";
 import { SessionsFleetListSection } from "../sections/sessions/SessionsFleetListSection";
 import { RevokeOtherSessionsDialog } from "../sections/sessions/RevokeOtherSessionsDialog";
+import { isSudoCancelledError } from "../utils/sudoElevation";
 import { AlertCircle, Trash2, RefreshCw, Loader2, ShieldAlert } from "lucide-react";
 
 /**
@@ -87,6 +88,7 @@ export function AccountSessionsView() {
     try {
       await revokeSession(sessionId);
     } catch (err: unknown) {
+      if (isSudoCancelledError(err)) return;
       const msg = err instanceof Error && err.message ? err.message : t("profile.common.error");
       setRevokeSessionError(msg);
       toast.error(msg);
@@ -99,6 +101,7 @@ export function AccountSessionsView() {
       await revokeAllOtherSessions();
       setConfirmRevokeAllOpen(false);
     } catch (err: unknown) {
+      if (isSudoCancelledError(err)) return;
       setRevokeAllError(err instanceof Error ? err.message : t("profile.common.error"));
     }
   };

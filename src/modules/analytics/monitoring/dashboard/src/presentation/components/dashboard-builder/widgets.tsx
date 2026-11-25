@@ -14,6 +14,7 @@
 "use client";
 
 import React from "react";
+import { sanitizeHttpUrl } from "@core/common/sanitize";
 import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
@@ -557,16 +558,16 @@ export function WidgetAnnouncement({ props }: { props: Record<string, unknown> }
 export function WidgetCustom({ props }: { props: Record<string, unknown> }) {
   const { t } = useI18n();
   const title = (props.title as string) || t("dashboard.builder.widget.customWidget");
-  const url = (props.url as string) || "";
+  const safeUrl = sanitizeHttpUrl(props.url as string | undefined);
   const height = (props.height as number) || 300;
 
   return (
     <Card className={cn(TILE, "overflow-hidden")}>
       <CardHeader className={cn(TILE_HEADER, "border-b border-nx-line px-4 py-2 pb-2")}>
         <CardTitle className={TILE_TITLE}>{title}</CardTitle>
-        {url && (
+        {safeUrl && (
           <a
-            href={url}
+            href={safeUrl}
             target="_blank"
             rel="noopener noreferrer"
             aria-label={t("dashboard.builder.preview.openCustomSource")}
@@ -576,13 +577,13 @@ export function WidgetCustom({ props }: { props: Record<string, unknown> }) {
           </a>
         )}
       </CardHeader>
-      {url ? (
+      {safeUrl ? (
         <iframe
-          src={url}
+          src={safeUrl}
           className="flex-1 border-0"
           style={{ minHeight: height }}
           title={title}
-          sandbox="allow-scripts allow-same-origin"
+          sandbox="allow-scripts"
         />
       ) : (
         <CardContent

@@ -12,6 +12,7 @@ export const PLUGINS_PERMISSIONS = {
   // ── Installed ───────────────────────────────────────────
   PLUGINS_INSTALLED_VIEW: "plugins_installed.view",
   PLUGINS_INSTALLED_MANAGE: "plugins_installed.manage",
+  PLUGINS_INSTALLED_UPDATE: "plugins_installed.update",
   PLUGINS_INSTALLED_CONFIGURE: "plugins_installed.configure",
 
   // ── Definitions (Developer) ────────────────────────────

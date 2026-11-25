@@ -7,28 +7,38 @@
  */
 "use client";
 
-import { useState, useMemo } from "react";
+import { useId, useState, useMemo } from "react";
+import { extractPermissionResource } from "@core/common/types/permissions";
+import { useSudoStore } from "@core/store/useSudoStore";
+import { Alert, AlertDescription } from "@core/ui/alert";
 import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
-import { Input } from "@core/ui/input";
-import { Badge } from "@core/ui/badge";
 import { GenericModal } from "@core/crud/components/generic-modal";
 import { GenericSelect } from "@core/crud/components/generic-select";
-import { Lock, Plus, X, Trash2 } from "lucide-react";
+import { AlertTriangle, Info, Lock, Plus } from "lucide-react";
 import { useSetRestrictionsViewModel } from "../viewmodels/useSetRestrictionsViewModel";
-
-interface Restriction {
-  permissionCode: string;
-  restrictedFields: string[];
-}
+import { RestrictionRowCard, type RestrictionItem } from "./RestrictionRowCard";
+import {
+  commitRestrictionDrafts,
+  formatRestrictableResourceLabel,
+  mergeRestrictedFields,
+  resolveRestrictableResource,
+} from "./restriction-resource-label";
 
 interface SetRestrictionsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  currentRestrictions: Restriction[];
-  onSubmit: (restrictions: Restriction[]) => void;
+  currentRestrictions: RestrictionItem[];
+  onSubmit: (restrictions: RestrictionItem[]) => Promise<unknown> | void;
   isSubmitting?: boolean;
   tenantId?: string;
+}
+
+function cloneRestrictions(items: RestrictionItem[]): RestrictionItem[] {
+  return items.map((r) => ({
+    permissionCode: r.permissionCode,
+    restrictedFields: [...r.restrictedFields],
+  }));
 }
 
 /**
@@ -43,208 +53,228 @@ export function SetRestrictionsDialog({
   isSubmitting,
   tenantId,
 }: SetRestrictionsDialogProps) {
-  const { t, availablePermissions, isLoadingPermissions } = useSetRestrictionsViewModel({
-    tenantId,
-    open,
-  });
-  const [restrictions, setRestrictions] = useState<Restriction[]>([]);
+  const { t, availablePermissions, isLoadingPermissions, canReadCustomFields } =
+    useSetRestrictionsViewModel({
+      tenantId,
+      open,
+    });
+  const resourceSelectLabelId = useId();
+  const [restrictions, setRestrictions] = useState<RestrictionItem[]>(() =>
+    open ? cloneRestrictions(currentRestrictions) : []
+  );
+  const [draftFieldsByCode, setDraftFieldsByCode] = useState<Record<string, string>>({});
   const [newPermissionCode, setNewPermissionCode] = useState("");
-  const [newField, setNewField] = useState("");
-  const [activeRestrictionIndex, setActiveRestrictionIndex] = useState<number | null>(null);
+  const [duplicateResourceNotice, setDuplicateResourceNotice] = useState<string | null>(null);
 
-  // Distinct resource options mapped with localized label
+  // Distinct canonical resource options mapped with localized bilingual labels
   const resourceOptions = useMemo(() => {
-    const uniqueResources = Array.from(
-      new Set(availablePermissions.map((p) => p.resource).filter(Boolean))
-    );
-    return uniqueResources
+    const uniqueResources = new Map<string, string>();
+    for (const perm of availablePermissions) {
+      const canonical = extractPermissionResource(perm.code, perm.resource).trim();
+      if (!canonical) continue;
+      const key = canonical.toLowerCase();
+      if (!uniqueResources.has(key)) {
+        uniqueResources.set(key, canonical);
+      }
+    }
+
+    return Array.from(uniqueResources.values())
       .map((res) => ({
         value: res,
-        label: t(`nav.${res}`) || res.charAt(0).toUpperCase() + res.slice(1),
+        label: formatRestrictableResourceLabel(res, t, availablePermissions),
+        description: res,
       }))
       .sort((a, b) => a.label.localeCompare(b.label));
   }, [availablePermissions, t]);
 
-  // Pre-fill from current
+  // Pre-fill from current restrictions when dialog transitions open
   const [prevOpen, setPrevOpen] = useState(open);
-  const [prevCurrentRestrictions, setPrevCurrentRestrictions] = useState(currentRestrictions);
-  if (open !== prevOpen || currentRestrictions !== prevCurrentRestrictions) {
+  if (open !== prevOpen) {
     setPrevOpen(open);
-    setPrevCurrentRestrictions(currentRestrictions);
     if (open) {
-      setRestrictions(
-        currentRestrictions.map((r) => ({
-          permissionCode: r.permissionCode,
-          restrictedFields: [...r.restrictedFields],
-        }))
-      );
+      setRestrictions(cloneRestrictions(currentRestrictions));
+      setDraftFieldsByCode({});
       setNewPermissionCode("");
-      setNewField("");
-      setActiveRestrictionIndex(null);
+      setDuplicateResourceNotice(null);
     }
   }
 
   const addRestriction = () => {
-    const code = newPermissionCode.trim();
-    if (!code) return;
-    if (restrictions.some((r) => r.permissionCode === code)) return;
-    setRestrictions([...restrictions, { permissionCode: code, restrictedFields: [] }]);
+    const rawCode = newPermissionCode.trim();
+    if (!rawCode) return;
+    const canonical = resolveRestrictableResource(rawCode, availablePermissions) || rawCode;
+    const exists = restrictions.some((r) => {
+      const existingCanonical = resolveRestrictableResource(r.permissionCode, availablePermissions);
+      return (
+        existingCanonical.toLowerCase() === canonical.toLowerCase() ||
+        r.permissionCode.trim().toLowerCase() === rawCode.toLowerCase()
+      );
+    });
+    if (exists) {
+      setDuplicateResourceNotice(t("userGroups.restrictionsTab.alreadyAdded"));
+      return;
+    }
+
+    setRestrictions((prev) => [...prev, { permissionCode: canonical, restrictedFields: [] }]);
     setNewPermissionCode("");
-    setActiveRestrictionIndex(restrictions.length);
+    setDuplicateResourceNotice(null);
   };
 
   const removeRestriction = (index: number) => {
-    setRestrictions(restrictions.filter((_, i) => i !== index));
-    if (activeRestrictionIndex === index) setActiveRestrictionIndex(null);
+    const removed = restrictions[index];
+    setRestrictions((prev) => prev.filter((_, i) => i !== index));
+    if (removed) {
+      setDraftFieldsByCode((prev) => {
+        if (!(removed.permissionCode in prev)) return prev;
+        const next = { ...prev };
+        delete next[removed.permissionCode];
+        return next;
+      });
+    }
+    setDuplicateResourceNotice(null);
   };
 
-  const addField = (index: number) => {
-    const field = newField.trim();
-    if (!field) return;
-    const updated = [...restrictions];
-    if (!updated[index].restrictedFields.includes(field)) {
-      updated[index].restrictedFields.push(field);
-      setRestrictions(updated);
+  const setRowDraftField = (index: number, value: string) => {
+    const target = restrictions[index];
+    if (!target) return;
+    setDraftFieldsByCode((prev) => ({
+      ...prev,
+      [target.permissionCode]: value,
+    }));
+  };
+
+  const addField = (
+    index: number,
+    rawField: string
+  ): { added: string[]; duplicates: string[] } => {
+    const target = restrictions[index];
+    if (!target) return { added: [], duplicates: [] };
+    const { nextFields, added, duplicates } = mergeRestrictedFields(
+      target.restrictedFields,
+      rawField
+    );
+    if (added.length > 0) {
+      setRestrictions((prev) =>
+        prev.map((item, idx) =>
+          idx === index ? { ...item, restrictedFields: nextFields } : item
+        )
+      );
     }
-    setNewField("");
+    return { added, duplicates };
   };
 
   const removeField = (rIndex: number, field: string) => {
-    const updated = [...restrictions];
-    updated[rIndex].restrictedFields = updated[rIndex].restrictedFields.filter((f) => f !== field);
-    setRestrictions(updated);
+    setRestrictions((prev) =>
+      prev.map((item, idx) =>
+        idx === rIndex
+          ? {
+              ...item,
+              restrictedFields: item.restrictedFields.filter((f) => f !== field),
+            }
+          : item
+      )
+    );
   };
 
-  const handleSave = () => {
-    onSubmit(restrictions);
+  const handleSave = async () => {
+    const { committedRestrictions, nextDrafts } = commitRestrictionDrafts(
+      restrictions,
+      draftFieldsByCode
+    );
+    setRestrictions(committedRestrictions);
+    setDraftFieldsByCode(nextDrafts);
+
+    try {
+      await onSubmit(committedRestrictions);
+    } catch {
+      // ViewModel surfaces error/Sudo cancellation feedback; preserve edits and keep dialog open.
+    }
+  };
+
+  const handleClose = (nextOpen: boolean) => {
+    if (!nextOpen && useSudoStore.getState().modalOpen) return;
+    onOpenChange(nextOpen);
   };
 
   return (
     <GenericModal
       open={open}
-      onOpenChange={onOpenChange}
+      onOpenChange={handleClose}
       title={t("userGroups.restrictionsTab.manageRestrictions")}
       description={t("userGroups.restrictionsTab.manageRestrictionsDesc")}
       size="lg"
     >
-      <div className="space-y-4 py-2">
-        {/* Add new restriction */}
-        <div className="space-y-2">
-          <Label className="flex items-center gap-2">
-            <Lock className="h-4 w-4" aria-hidden="true" />
-            {t("userGroups.restrictionsTab.addPermission")}
-          </Label>
-          <div className="flex gap-2">
-            <div className="flex-1">
-              <GenericSelect
-                value={newPermissionCode}
-                onValueChange={(val: string | string[]) => setNewPermissionCode(val as string)}
-                options={resourceOptions}
-                placeholder={t("userGroups.restrictionsTab.permissionPlaceholder")}
-                loading={isLoadingPermissions}
-                searchable
-              />
+      <div data-testid="set-restrictions-dialog" className="flex max-h-[72dvh] flex-col gap-4 py-1">
+        <div className="shrink-0 space-y-4">
+          <Alert data-testid="restriction-additive-hint" variant="info" className="py-2.5">
+            <Info className="h-4 w-4" aria-hidden="true" />
+            <AlertDescription className="text-xs">
+              {t("userGroups.restrictionsTab.additiveNotice")}
+            </AlertDescription>
+          </Alert>
+          <div className="space-y-2">
+            <Label id={resourceSelectLabelId} className="flex items-center gap-2">
+              <Lock className="h-4 w-4" aria-hidden="true" />
+              {t("userGroups.restrictionsTab.addPermission")}
+            </Label>
+            <div className="flex gap-2">
+              <div className="min-w-0 flex-1">
+                <GenericSelect
+                  aria-labelledby={resourceSelectLabelId}
+                  value={newPermissionCode}
+                  onValueChange={(val: string | string[]) => {
+                    setNewPermissionCode(val as string);
+                    if (duplicateResourceNotice) setDuplicateResourceNotice(null);
+                  }}
+                  options={resourceOptions}
+                  placeholder={t("userGroups.restrictionsTab.permissionPlaceholder")}
+                  loading={isLoadingPermissions}
+                  searchable
+                />
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={addRestriction}
+                disabled={!newPermissionCode.trim()}
+                aria-label={t("userGroups.restrictionsTab.addPermission")}
+                data-testid="add-restriction-button"
+              >
+                <Plus className="h-4 w-4" aria-hidden="true" />
+              </Button>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={addRestriction}
-              disabled={!newPermissionCode.trim()}
-              aria-label={t("userGroups.restrictionsTab.addPermission")}
-            >
-              <Plus className="h-4 w-4" aria-hidden="true" />
-            </Button>
+            {duplicateResourceNotice && (
+              <Alert variant="warning" role="alert" className="py-2">
+                <AlertTriangle className="h-4 w-4" aria-hidden="true" />
+                <AlertDescription className="text-xs">{duplicateResourceNotice}</AlertDescription>
+              </Alert>
+            )}
           </div>
         </div>
 
-        {/* Existing restrictions list */}
-        <div className="max-h-80 space-y-3 overflow-y-auto">
+        {/* Bounded scrollable restrictions list so footer buttons remain visible */}
+        <div data-testid="restrictions-list-scroll" className="min-h-0 flex-1 space-y-3 overflow-y-auto pe-1">
           {restrictions.length === 0 ? (
-            <p className="py-6 text-center text-sm text-nx-ink-3">
-              {t("userGroups.noRestrictions")}
-            </p>
+            <p className="py-6 text-center text-sm text-nx-ink-3">{t("userGroups.noRestrictions")}</p>
           ) : (
             restrictions.map((restriction, rIndex) => (
-              <div
-                key={restriction.permissionCode}
-                className="space-y-2 rounded-nx-md border border-nx-line p-3"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="font-mono text-sm font-medium">
-                    {restriction.permissionCode}
-                  </span>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-7 w-7 p-0 text-destructive hover:text-destructive/90"
-                    onClick={() => removeRestriction(rIndex)}
-                    aria-label={`${t("userGroups.restrictionsTab.removeRestriction")}: ${restriction.permissionCode}`}
-                  >
-                    <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
-                  </Button>
-                </div>
-
-                {/* Fields */}
-                <div className="flex flex-wrap gap-1">
-                  {restriction.restrictedFields.map((field) => (
-                    <Badge key={field} variant="secondary" className="gap-1 text-xs">
-                      {field}
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => removeField(rIndex, field)}
-                        className="ms-1 h-auto w-auto p-0 hover:bg-transparent hover:text-destructive"
-                        aria-label={t("userGroups.restrictionsTab.removeField", { field })}
-                      >
-                        <X className="h-3 w-3" aria-hidden="true" />
-                      </Button>
-                    </Badge>
-                  ))}
-                </div>
-
-                {/* Add field input */}
-                <div className="flex gap-2">
-                  <Input
-                    value={activeRestrictionIndex === rIndex ? newField : ""}
-                    onChange={(e) => {
-                      setActiveRestrictionIndex(rIndex);
-                      setNewField(e.target.value);
-                    }}
-                    onFocus={() => setActiveRestrictionIndex(rIndex)}
-                    placeholder={t("userGroups.restrictionsTab.fieldPlaceholder")}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        addField(rIndex);
-                      }
-                    }}
-                    className="h-8 text-xs"
-                  />
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="h-8"
-                    onClick={() => {
-                      setActiveRestrictionIndex(rIndex);
-                      addField(rIndex);
-                    }}
-                    disabled={activeRestrictionIndex !== rIndex || !newField.trim()}
-                    aria-label={t("userGroups.restrictionsTab.addField")}
-                  >
-                    <Plus className="h-3 w-3" aria-hidden="true" />
-                  </Button>
-                </div>
-              </div>
+              <RestrictionRowCard
+                key={restriction.permissionCode} restriction={restriction} index={rIndex} open={open}
+                canReadCustomFields={canReadCustomFields} availablePermissions={availablePermissions}
+                draftField={draftFieldsByCode[restriction.permissionCode] ?? ""} t={t}
+                onDraftFieldChange={setRowDraftField} onRemoveRestriction={removeRestriction}
+                onAddField={addField} onRemoveField={removeField}
+              />
             ))
           )}
         </div>
 
-        <div className="mt-4 flex justify-end gap-2 border-t border-nx-line pt-4">
-          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
+        <div data-testid="set-restrictions-footer" className="flex shrink-0 justify-end gap-2 border-t border-nx-line pt-4">
+          <Button type="button" variant="outline" data-skip-blur-commit="true" onClick={() => handleClose(false)} disabled={isSubmitting}>
             {t("common.cancel")}
           </Button>
-          <Button onClick={handleSave} loading={isSubmitting}>
+          <Button type="button" onClick={handleSave} loading={isSubmitting} data-testid="save-restrictions-button">
             {t("userGroups.restrictionsTab.saveRestrictions")}
           </Button>
         </div>

@@ -5,7 +5,7 @@
  *
  * @module auth/account-setup
  */
-import type { IApiService } from "@core/interfaces/api.interface";
+import type { IPublicApiService } from "@core/interfaces/public-api.interface";
 import type {
   ActivateAccountRequest,
   ActivateAccountResponse,
@@ -27,23 +27,24 @@ export type {
 
 /**
  * HTTP service handling pre-authentication account setup and activation endpoints.
+ * Uses IPublicApiService (no Bearer token or CSRF session injection).
  */
 export class AccountSetupService implements IAccountSetupService {
-  constructor(private readonly api: IApiService) {}
+  constructor(private readonly api: IPublicApiService) {}
 
   async validateToken(token: string): Promise<ValidateTokenResponse> {
-    return this.api.getPublic<ValidateTokenResponse>(
+    return this.api.get<ValidateTokenResponse>(
       ACCOUNT_SETUP_ENDPOINTS.VALIDATE_TOKEN(token)
     );
   }
 
   async getCustomFields(token: string): Promise<SetupCustomFieldDto[]> {
-    return this.api.getPublic<SetupCustomFieldDto[]>(
+    return this.api.get<SetupCustomFieldDto[]>(
       ACCOUNT_SETUP_ENDPOINTS.CUSTOM_FIELDS(token)
     );
   }
 
   async activateAccount(request: ActivateAccountRequest): Promise<ActivateAccountResponse> {
-    return this.api.postPublic<ActivateAccountResponse>(ACCOUNT_SETUP_ENDPOINTS.ACTIVATE, request);
+    return this.api.post<ActivateAccountResponse>(ACCOUNT_SETUP_ENDPOINTS.ACTIVATE, request);
   }
 }

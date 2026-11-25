@@ -71,10 +71,14 @@ export function ForensicPayloadDrawer({
     2
   );
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(formattedJson);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard?.writeText(formattedJson);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Clipboard API unavailable in restricted contexts
+    }
   };
 
   const handleDownload = () => {

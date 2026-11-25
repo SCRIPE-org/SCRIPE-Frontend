@@ -52,6 +52,9 @@ export const VENUE_PERMISSIONS = {
   AVAILABILITY_CALENDAR_VIEW: "availability-calendars.view",
   AVAILABILITY_CALENDAR_CREATE: "availability-calendars.create",
   AVAILABILITY_CALENDAR_UPDATE: "availability-calendars.update",
+  AVAILABILITY_EXCEPTION_VIEW: "availability-exceptions.view",
+  AVAILABILITY_EXCEPTION_CREATE: "availability-exceptions.create",
+  AVAILABILITY_EXCEPTION_UPDATE: "availability-exceptions.update",
   AVAILABILITY_SEARCH_VIEW: "availability-search.view",
   BLACKOUT_VIEW: "blackouts.view",
   BLACKOUT_CREATE: "blackouts.create",
@@ -62,18 +65,25 @@ export const VENUE_PERMISSIONS = {
   MAINTENANCE_BLOCK_UPDATE: "maintenance-blocks.update",
   MAINTENANCE_BLOCK_DELETE: "maintenance-blocks.delete",
   VENUE_ATTENTION_VIEW: "venue-attention.view",
+  VENUE_SCOPE_OVERRIDE: "venue.scope.override",
 
   // ── Commercial pricing ───────────────────────────────────
   CATALOG_PRICING_VIEW_COMMERCIALS: "catalog-pricing.view-commercials.view",
   CATALOG_PRICING_CALCULATE_QUOTE: "catalog-pricing.calculate-quote.view",
+  CATALOG_PRICING_VALIDATE_ELIGIBILITY: "catalog-pricing.validate-eligibility.view",
   CATALOG_PRICING_CREATE_CATALOG_ITEM: "catalog-pricing.create-catalog-item.manage",
   CATALOG_PRICING_PUBLISH_OFFERING: "catalog-pricing.publish-offering.manage",
+  CATALOG_PRICING_RETIRE_OFFERING: "catalog-pricing.retire-offering.manage",
   CATALOG_PRICING_CREATE_PRICE_BOOK_VERSION: "catalog-pricing.create-price-book-version.manage",
   CATALOG_PRICING_APPLY_DISCOUNT_TAX: "catalog-pricing.apply-discount-tax.manage",
+  CATALOG_PRICING_APPLY_CONTRACT_RATE: "catalog-pricing.apply-contract-rate.manage",
+  CATALOG_PRICING_SET_PRICE_RULE: "catalog-pricing.set-price-rule.manage",
+  CATALOG_PRICING_SNAPSHOT_PRICE: "catalog-pricing.snapshot-price.manage",
   CATALOG_PRICING_OVERRIDE_PRICE: "catalog-pricing.override-price.manage",
 
   // ── Finance (Finance owns all money truth) ───────────────
   FINANCE_RECEIVABLES_VIEW: "finance.receivables.view",
+  FINANCE_RECEIVABLES_CREATE: "finance.receivables.create",
   FINANCE_PAYMENTS_VIEW: "finance.payments.view",
   FINANCE_PAYMENTS_CREATE: "finance.payments.create",
   FINANCE_PAYMENT_ALLOCATIONS_UPDATE: "finance.payment-allocations.update",
@@ -83,6 +93,7 @@ export const VENUE_PERMISSIONS = {
   // ── Booking Operator Workspace ────────────────────────────
   RESERVATION_VIEW: "reservations.view",
   RESERVATION_CREATE: "reservations.create",
+  RESERVATION_UPDATE: "reservations.update",
   RESERVATION_CONFIRM: "reservations.confirm",
   RESERVATION_CHECK_IN: "reservations.check-in",
   RESERVATION_COMPLETE: "reservations.complete",
@@ -90,7 +101,10 @@ export const VENUE_PERMISSIONS = {
   RESERVATION_CANCEL: "reservations.cancel",
   RESERVATION_RESCHEDULE: "reservations.reschedule",
   RESERVATION_CHANGE_RESOURCE: "reservations.change-resource",
+  BOOKING_HOLD_VIEW: "booking-holds.view",
   BOOKING_HOLD_CREATE: "booking-holds.create",
+  BOOKING_REQUEST_VIEW: "booking-requests.view",
+  BOOKING_REQUEST_CREATE: "booking-requests.create",
 
   // Cross-module read consumed by the Venue composition layer. Party Kernel
   // remains the owner of the permission and customer data.

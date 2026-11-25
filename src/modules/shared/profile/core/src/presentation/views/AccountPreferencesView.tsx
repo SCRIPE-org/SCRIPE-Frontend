@@ -6,6 +6,10 @@ import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useWorkspace } from "@core/providers/workspace-provider";
 import { useAppStore } from "@core/store/useAppStore";
+import {
+  isPlatformSuperAdminUser,
+  isTenantSuperAdminUser,
+} from "@core/common/types/permissions";
 import { Alert, AlertDescription } from "@core/ui/alert";
 import { toast, resolveRtlPosition, type SileoPosition } from "@core/ui/sileo-toast";
 import {
@@ -33,10 +37,7 @@ import { WorkspaceStartPagesSection } from "../sections/preferences/WorkspaceSta
 
 const useSafeOptionalTenantContext = resolveOptionalTenantContextHook();
 
-/**
- * Ergonomics, theme, privacy blur, toast placement, and regional localization view
- * (/account/preferences) using continuous serialized auto-save without a manual save button.
- */
+/** Ergonomics, theme, privacy blur, toast placement, and regional localization view (/account/preferences). */
 export function AccountPreferencesView() {
   const { t, language, direction } = useI18n();
   const isRtl = direction === "rtl";
@@ -48,16 +49,15 @@ export function AccountPreferencesView() {
   const permissionCtx = useSafeOptionalPermissions();
   const storeUser = useAppStore((s) => s.user);
   const storePermissions = useAppStore((s) => s.permissions);
+  const storeRoles = useAppStore((s) => s.roles);
   const cachedWorkspaces = useNavigationStore((s) => s.workspaces);
   const storeContextKey = useNavigationStore((s) => s.contextKey);
   const isSuperAdmin = Boolean(
     accountContext?.principalContext?.isSuperAdmin ||
-      permissionCtx?.isSuperAdmin ||
       permissionCtx?.isPlatformSuperAdmin ||
       permissionCtx?.isTenantSuperAdmin ||
-      (storeUser !== null && "isSuperAdmin" in storeUser && storeUser.isSuperAdmin === true) ||
-      storeUser?.isProtected === true ||
-      storePermissions.includes("*")
+      isPlatformSuperAdminUser(storeUser, storePermissions, storeRoles) ||
+      isTenantSuperAdminUser(storeUser, storeRoles)
   );
   const activeContextLabel = resolveAccountScopeLabel({
     t,

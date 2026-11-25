@@ -8,6 +8,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { isTrustedSameOriginIframeMessage } from "@core/common/postmessage-security";
 
 // ── Message Types ──────────────────────────────────────
 /**
@@ -42,7 +43,7 @@ export function useStudioBridge() {
   // Listen for PREVIEW_READY from iframe
   useEffect(() => {
     const handler = (e: MessageEvent) => {
-      if (typeof window !== "undefined" && e.origin !== window.location.origin) return;
+      if (!isTrustedSameOriginIframeMessage(e, iframeRef.current)) return;
       if (e.data?.type === STUDIO_MSG.PREVIEW_READY) {
         setIsPreviewReady(true);
         // Re-send cached draft on iframe ready

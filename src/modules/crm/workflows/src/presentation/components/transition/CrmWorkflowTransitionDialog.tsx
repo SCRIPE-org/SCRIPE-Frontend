@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@core/ui/dialog";
@@ -60,7 +60,7 @@ export function CrmWorkflowTransitionDialog({
   const defaultValues = useMemo(() => getDefaultTransitionValues(record, activeCustomFields), [record, activeCustomFields]);
 
   const { register, handleSubmit, control, watch, reset, formState: { errors } } = useForm<CrmWorkflowTransitionFormData>({
-    resolver: zodResolver(schema as never),
+    resolver: zodResolver(schema as unknown as Parameters<typeof zodResolver>[0]) as unknown as Resolver<CrmWorkflowTransitionFormData>,
     defaultValues,
   });
 

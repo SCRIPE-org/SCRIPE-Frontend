@@ -1,3 +1,4 @@
+import type { PasswordPolicyDto } from "@core/common/password-policy";
 import type { AdminProfile } from "../entities/AdminProfile";
 import type { ActiveSession } from "../entities/ActiveSession";
 import type { SecurityLogEntry } from "../entities/SecurityLogEntry";
@@ -5,6 +6,7 @@ import type { ExternalLogin } from "../entities/ExternalLogin";
 import type {
   UpdateProfileRequest,
   ChangePasswordRequest,
+  ChangePasswordSessionResult,
   Enable2FAResult,
   InitiateExternalLoginLinkRequest,
   InitiateExternalLoginLinkResponse,
@@ -17,12 +19,15 @@ import type {
 export interface IProfileService {
   getProfile(): Promise<AdminProfile>;
   updateProfile(data: UpdateProfileRequest): Promise<AdminProfile>;
-  uploadAvatar(file: File): Promise<{ profileImageUrl: string }>;
   removeAvatar(): Promise<void>;
-  changePassword(data: ChangePasswordRequest): Promise<void>;
+  getPasswordPolicy(): Promise<PasswordPolicyDto>;
+  changePassword(
+    data: ChangePasswordRequest,
+    sudoToken?: string
+  ): Promise<ChangePasswordSessionResult | void>;
   getSessions(): Promise<ActiveSession[]>;
-  revokeSession(tokenId: string): Promise<void>;
-  revokeAllSessions(): Promise<{ revokedCount: number }>;
+  revokeSession(tokenId: string, sudoToken?: string): Promise<void>;
+  revokeAllSessions(sudoToken?: string): Promise<{ revokedCount: number }>;
   enable2FA(): Promise<Enable2FAResult>;
   confirm2FA(code: string): Promise<void>;
   disable2FA(password: string, twoFactorCode: string): Promise<void>;

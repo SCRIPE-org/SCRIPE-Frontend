@@ -8,6 +8,8 @@ export const AUTH_CORE_ENDPOINTS = {
   DOSSIER: `${V1}/account/dossier`,
   IMPERSONATE: (id: string) => `${V1}/auth/admin/impersonate/${id}`,
   STOP_IMPERSONATION: `${V1}/auth/admin/stop-impersonation`,
+  // ── Effective Password Policy ──
+  PASSWORD_POLICY: `${V1}/auth/admin/password-policy`,
   // ── Admin Password Reset (targets Admins table, not Users) ──
   ADMIN_REQUEST_PASSWORD_RESET: `${V1}/auth/admin/request-password-reset`,
   ADMIN_VERIFY_RESET_OTP: `${V1}/auth/admin/verify-reset-otp`,
@@ -16,6 +18,7 @@ export const AUTH_CORE_ENDPOINTS = {
   DISCOVER_WORKSPACES: `${V1}/auth/admin/discover-workspaces`,
   TWO_FA: {
     VERIFY: `${V1}/auth/admin/2fa/verify`,
+    USER_VERIFY: `${V1}/auth/user/2fa/verify`,
   },
   // ── Passwordless magic-link login ─────────────────────────────
   MAGIC_LINK: {
@@ -24,11 +27,15 @@ export const AUTH_CORE_ENDPOINTS = {
   },
   OIDC: {
     ADMIN_PROVIDERS: `${V1}/auth/oidc/providers/admin`,
+    START: `${V1}/auth/oidc/start`,
     CHALLENGE: `${V1}/auth/oidc/challenge`,
     CALLBACK: `${V1}/auth/oidc/callback`,
     AUTHORIZE: `/connect/authorize`,
     LOGOUT: `/oidc/logout`,
     COMPLETE_WORKSPACE_SELECTION: `${V1}/auth/oidc/complete-workspace-selection`,
+  },
+  SSO: {
+    HANDOFF: `${V1}/auth/sso/handoff`,
   },
   SAML: {
     LOGIN: `${V1}/auth/saml/login`,
@@ -52,9 +59,6 @@ export const AUTH_CORE_ENDPOINTS = {
     SESSION_STATUS: (id: string) => `${V1}/auth/qr-login/session/${id}/status`,
     APPROVE: `${V1}/auth/qr-login/approve`,
     REJECT: `${V1}/auth/qr-login/reject`,
-  },
-  PROFILE: {
-    LINK_EXTERNAL_LOGIN: `${V1}/auth/admin/external-logins/link`,
   },
   TENANTS: {
     RESOLVE: `${V1}/customization/resolve`,

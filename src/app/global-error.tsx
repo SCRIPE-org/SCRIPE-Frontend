@@ -32,30 +32,8 @@ const t = (key: string, language: "ar" | "en"): string => {
   return typeof value === "string" ? value : key;
 };
 
-// This file replaces the ENTIRE root layout when a root-level render error
-// occurs, so none of its providers (ThemeProvider, AppProvider) are mounted —
-// next-themes' own flash-prevention script never runs here either. Next.js
-// requires global-error to be a Client Component, which also rules out
-// reading the theme server-side via next/headers `cookies()` the way the root
-// layout does for locale (R8). This is the client-side equivalent: a script
-// that runs synchronously as the document is parsed, before body paints, so
-// a dark-theme user hitting a fatal error never sees a white flash on top of
-// whatever else broke. Mirrors ThemeProvider's own fallback chain exactly
-// (core/providers/theme-provider.tsx): localStorage["theme"] (next-themes'
-// own default key) → STORAGE_KEYS.PREF_THEME (tenant default) → system.
-const THEME_NOFLASH_SCRIPT = `
-(function () {
-  try {
-    var explicit = localStorage.getItem("theme");
-    var tenantPref = localStorage.getItem("${STORAGE_KEYS.PREF_THEME}");
-    var resolved = explicit || tenantPref || "system";
-    var isDark =
-      resolved === "dark" ||
-      (resolved === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
-    if (isDark) document.documentElement.classList.add("dark");
-  } catch (e) {}
-})();
-`;
+// Pre-paint theme bootstrap lives in static `public/theme-noflash.js` (zero inline script under nonce CSP).
+// Mirrors ThemeProvider's fallback chain: localStorage["theme"] → STORAGE_KEYS.PREF_THEME → system.
 
 export default function GlobalError({
   error,
@@ -90,10 +68,7 @@ export default function GlobalError({
   return (
     <html lang={language} dir={language === "ar" ? "rtl" : "ltr"} suppressHydrationWarning>
       <head>
-        <script
-          suppressHydrationWarning
-          dangerouslySetInnerHTML={{ __html: THEME_NOFLASH_SCRIPT }}
-        />
+        <script src="/theme-noflash.js" defer={false} />
       </head>
       <body suppressHydrationWarning>
         <div className="flex min-h-screen items-center justify-center bg-nx-ground p-4">

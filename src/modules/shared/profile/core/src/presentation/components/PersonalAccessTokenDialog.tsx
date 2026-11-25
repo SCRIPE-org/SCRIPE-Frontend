@@ -76,11 +76,15 @@ export function PersonalAccessTokenDialog({
     });
   };
 
-  const handleCopy = () => {
+  const handleCopy = async () => {
     if (!createdSecret) return;
-    navigator.clipboard.writeText(createdSecret);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    try {
+      await navigator.clipboard?.writeText(createdSecret);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Clipboard API unavailable in restricted contexts
+    }
   };
 
   const handleClose = () => {

@@ -101,6 +101,7 @@ export function useWorkspaceSelector(opts: UseWorkspaceSelectorOptions) {
           const storeState = useAppStore.getState();
           const targetPath = buildPostAuthEntryUrl({
             mustChangePassword: storeState.mustChangePassword,
+            requireMfaEnrollment: storeState.requireMfaEnrollment,
             subscriptionStatus: storeState.subscriptionStatus,
             redirect: redirectPath,
           });
@@ -167,6 +168,7 @@ export function useWorkspaceSelector(opts: UseWorkspaceSelectorOptions) {
           const storeState = useAppStore.getState();
           const targetPath = buildPostAuthEntryUrl({
             mustChangePassword: storeState.mustChangePassword,
+            requireMfaEnrollment: storeState.requireMfaEnrollment,
             subscriptionStatus: storeState.subscriptionStatus,
             redirect: redirectPath,
           });

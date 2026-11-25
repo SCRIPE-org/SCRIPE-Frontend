@@ -63,18 +63,54 @@ const instanceCache = new Map<string, IApiService>();
 /** Latest tenant context pushed by broadcastTenantContext (applied to newly constructed instances). */
 let activeBroadcastTenantId: string | null | undefined;
 
+/** Centralized auth lifecycle handlers applied to all existing and future ApiService instances. */
+let activeRefreshHandler: (() => Promise<string | null>) | null = null;
+let activeLogoutHandler: (() => void) | null = null;
+
 /** The base fallback URL used when no module-specific env var is set */
 const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || "/api").trim();
 
 /** Cache key for the default (non-module) instance */
 const BASE_KEY = "__base__";
 
-function createApiService(url: string): IApiService {
-  const service = new ApiService(url);
+function applyConfiguredHandlers(service: IApiService): void {
   if (activeBroadcastTenantId !== undefined) {
     service.setTenantContext(activeBroadcastTenantId);
   }
+  if (activeRefreshHandler) {
+    service.setRefreshHandler(activeRefreshHandler);
+  }
+  if (activeLogoutHandler) {
+    service.setLogoutHandler(activeLogoutHandler);
+  }
+}
+
+function createApiService(url: string): IApiService {
+  const service = new ApiService(url);
+  applyConfiguredHandlers(service);
   return service;
+}
+
+/**
+ * Registers shared refresh and logout handlers across every cached base and
+ * module ApiService instance (including split microservices such as IDENTITY),
+ * and ensures all subsequently constructed instances receive the same handlers.
+ */
+export function configureApiAuthHandlers(handlers: {
+  onRefresh: () => Promise<string | null>;
+  onLogout: () => void;
+}): void {
+  activeRefreshHandler = handlers.onRefresh;
+  activeLogoutHandler = handlers.onLogout;
+
+  const seen = new Set<IApiService>();
+  for (const service of instanceCache.values()) {
+    if (!seen.has(service)) {
+      seen.add(service);
+      service.setRefreshHandler(handlers.onRefresh);
+      service.setLogoutHandler(handlers.onLogout);
+    }
+  }
 }
 
 /**
@@ -122,6 +158,8 @@ export function getActiveTenantContextId(): string | null {
 export function clearApiServiceCache(): void {
   instanceCache.clear();
   activeBroadcastTenantId = undefined;
+  activeRefreshHandler = null;
+  activeLogoutHandler = null;
 }
 
 /**

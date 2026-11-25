@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { useServices } from "@core/providers/service-provider";
 import type { LoginStep } from "./use-login-viewmodel";
-import { authContainer } from "@modules/auth/di";
 
 interface UseMagicLinkHandlerProps {
   setLoginStep: (step: LoginStep | "magic-link-sent") => void;
@@ -16,6 +16,7 @@ interface UseMagicLinkHandlerProps {
  * - reset: goes back to credentials.
  */
 export function useMagicLinkHandler({ setLoginStep, setError }: UseMagicLinkHandlerProps) {
+  const { authRepository } = useServices();
   const [magicLinkEmail, setMagicLinkEmail] = useState("");
   const [isSending, setIsSending] = useState(false);
 
@@ -28,8 +29,7 @@ export function useMagicLinkHandler({ setLoginStep, setError }: UseMagicLinkHand
       setError("");
 
       try {
-        const authService = authContainer.authService;
-        await authService.requestMagicLink(email, tenantId);
+        await authRepository.requestMagicLink(email, tenantId);
         setMagicLinkEmail(email);
         setLoginStep("magic-link-sent" as never);
       } catch {
@@ -38,13 +38,15 @@ export function useMagicLinkHandler({ setLoginStep, setError }: UseMagicLinkHand
         setIsSending(false);
       }
     },
-    [isSending, setError, setLoginStep]
+    [authRepository, isSending, setError, setLoginStep]
   );
 
-  const resendMagicLink = useCallback(async (email: string, tenantId?: string) => {
-    const authService = authContainer.authService;
-    await authService.requestMagicLink(email, tenantId);
-  }, []);
+  const resendMagicLink = useCallback(
+    async (email: string, tenantId?: string) => {
+      await authRepository.requestMagicLink(email, tenantId);
+    },
+    [authRepository]
+  );
 
   const resetMagicLink = useCallback(() => {
     setMagicLinkEmail("");

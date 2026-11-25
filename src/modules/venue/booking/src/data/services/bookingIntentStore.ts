@@ -1,3 +1,4 @@
+import { registerSessionCleanupCallback } from "@core/common/session-cleanup-registry";
 import type { BookingBusinessIntent } from "../../domain/entities/Booking";
 
 const STORAGE_KEY = "scripe.venue.booking.intent.v1";
@@ -164,6 +165,7 @@ export async function getOrCreateBookingIntent(
   return intent;
 }
 
+/** Records server-issued hold expiry against the active booking intent in memory and `sessionStorage`. */
 export function recordBookingHoldExpiry(
   draftIdempotencyKey: string,
   holdIdempotencyKey: string,
@@ -203,6 +205,7 @@ export function recordBookingHoldExpiry(
   }
 }
 
+/** Clears the active booking intent in memory and `sessionStorage`. */
 export function clearBookingIntent(): void {
   storageGeneration += 1;
   memoryIntent = null;
@@ -212,3 +215,5 @@ export function clearBookingIntent(): void {
     // Browser storage may be disabled; the viewmodel still clears its in-memory intent.
   }
 }
+
+registerSessionCleanupCallback(clearBookingIntent);

@@ -6,28 +6,20 @@ import { Button } from "@core/ui/button";
 import { Mail, RefreshCw } from "lucide-react";
 import { StepDots } from "./StepDots";
 import { OtpInputField } from "@core/ui/otp-input-field";
-import type { useForgotPasswordViewModel } from "../viewmodels/useForgotPasswordViewModel";
+import type { UsePasswordRecoveryViewModelReturn } from "../viewmodels/usePasswordRecoveryViewModel";
 
 interface OtpStepProps {
-  vm: ReturnType<typeof useForgotPasswordViewModel>;
+  vm: UsePasswordRecoveryViewModelReturn;
   totalSteps: number;
 }
 
 /**
- * Presentation UI component rendering the otp step.
- * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ * Presentation UI component rendering Step 3 (6-digit OTP verification).
+ * Uses `OtpInputField` `onComplete` instead of an auto-submitting effect so invalid
+ * codes do not re-trigger requests in a loop.
  */
 export function OtpStep({ vm, totalSteps }: OtpStepProps) {
   const { t } = useI18n();
-
-  // Auto-submit when 6 digits are entered
-  const otp = vm.otp;
-  const submitOtp = vm.submitOtp;
-  React.useEffect(() => {
-    if (otp.length === 6) {
-      submitOtp({ preventDefault: () => {} } as React.FormEvent);
-    }
-  }, [otp, submitOtp]);
 
   const resolveError = (err: string) => {
     if (!err) return "";
@@ -62,14 +54,24 @@ export function OtpStep({ vm, totalSteps }: OtpStepProps) {
         </h1>
         <p className="mt-1.5 text-[13px] leading-relaxed" style={{ color: "var(--sx-text-mute)" }}>
           {t("auth.enterOtpSubtitle").replace("{{email}}", "")}{" "}
-          <strong style={{ color: "var(--sx-text)" }}>{vm.email}</strong>
+          <strong style={{ color: "var(--sx-text)" }}>
+            <bdi dir="ltr" className="inline-block">{vm.email}</bdi>
+          </strong>
         </p>
       </div>
 
       <StepDots current={3} total={totalSteps} />
 
       <form onSubmit={vm.submitOtp} className="flex flex-col gap-5">
-        <OtpInputField value={vm.otp} onChange={vm.setOtp} variant="vault" id="reset-otp" />
+        <OtpInputField
+          value={vm.otp}
+          onChange={vm.setOtp}
+          onComplete={() => void vm.submitOtp()}
+          variant="vault"
+          id="reset-otp"
+          disabled={vm.isLoading}
+          aria-invalid={Boolean(vm.error)}
+        />
 
         {vm.error && (
           <div
@@ -91,17 +93,16 @@ export function OtpStep({ vm, totalSteps }: OtpStepProps) {
         </Button>
       </form>
 
-      {/* Resend */}
       <div className="text-center">
         <Button
           type="button"
           variant="ghost"
-          onClick={vm.resendCode}
+          onClick={() => void vm.resendCode()}
           disabled={vm.cooldown > 0 || vm.isLoading}
-          className="inline-flex h-auto items-center gap-1.5 p-0 text-[12px] font-medium hover:bg-transparent disabled:opacity-40"
+          className="inline-flex h-auto items-center gap-1.5 border-0 !border-transparent !bg-transparent px-2 py-1 text-[12px] font-medium hover:!bg-transparent disabled:!border-transparent disabled:!bg-transparent disabled:!shadow-none disabled:opacity-40"
           style={{ color: "var(--sx-text-mute)" }}
         >
-          <RefreshCw className="h-3.5 w-3.5" />
+          <RefreshCw className="h-3.5 w-3.5" aria-hidden="true" />
           {vm.cooldown > 0
             ? t("auth.resendCooldown").replace("{{seconds}}", String(vm.cooldown))
             : t("auth.resendCode")}

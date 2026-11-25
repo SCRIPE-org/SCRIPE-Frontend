@@ -16,6 +16,7 @@ import CharacterCount from "@tiptap/extension-character-count";
 import Subscript from "@tiptap/extension-subscript";
 import Superscript from "@tiptap/extension-superscript";
 import { cn } from "@core/common/utils";
+import { unwrapSanitizedEmailHtmlBlocks } from "@core/common/sanitize";
 import { Textarea } from "@core/ui/textarea";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { VariableDefinition } from "./VariablePicker";
@@ -95,25 +96,7 @@ export interface RichTextEditorProps {
  */
 function getEmailSafeHTML(editor: ReturnType<typeof useEditor>): string {
   if (!editor) return "";
-
-  // Get standard TipTap HTML
-  const html = editor.getHTML();
-
-  // Replace emailHtmlBlock wrappers with their stored raw HTML
-  // The wrapper has the pattern: <div data-email-html-block="true" data-email-html="...">...</div>
-  const wrapper = document.createElement("div");
-  wrapper.innerHTML = html;
-
-  const blocks = wrapper.querySelectorAll('div[data-email-html-block="true"]');
-  blocks.forEach((block) => {
-    const rawHtml = block.getAttribute("data-email-html") || "";
-    if (rawHtml) {
-      const fragment = document.createRange().createContextualFragment(rawHtml);
-      block.replaceWith(fragment);
-    }
-  });
-
-  return wrapper.innerHTML;
+  return unwrapSanitizedEmailHtmlBlocks(editor.getHTML());
 }
 
 // ─── Main Component ─────────────────────────────────────────

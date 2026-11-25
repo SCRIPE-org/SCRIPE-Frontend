@@ -25,6 +25,7 @@ export type { TenantProps, TenantTreeNode } from "../tenants/src/domain/entities
 export { Role } from "../roles/src/domain/entities/Role";
 export { useRolesViewModel } from "../roles/src/presentation/viewmodels/useRolesViewModel";
 export { RolePermissionsDialog } from "../roles/src/presentation/components/RolePermissionsDialog";
+export { RoleDeleteDialog } from "../roles/src/presentation/components/RoleDeleteDialog";
 export {
   getRoleLandingFields,
   getRoleEditInitialValues,

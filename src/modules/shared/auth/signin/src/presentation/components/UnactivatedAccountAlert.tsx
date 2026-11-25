@@ -43,12 +43,10 @@ export function UnactivatedAccountAlert({
         </div>
         <div className="flex-1 space-y-1">
           <h4 className="text-sm font-semibold text-nx-ink">
-            {t("auth.accountSetup.activationRequiredTitle") || "Account Setup Required"}
+            {t("auth.accountSetup.activationRequiredTitle")}
           </h4>
           <p className="text-xs leading-relaxed text-nx-ink-2">
-            {accountNotActivatedMessage ||
-              t("auth.accountSetup.activationRequiredDesc") ||
-              "Your account is not active yet. A setup link was automatically sent to your email address."}
+            {accountNotActivatedMessage || t("auth.accountSetup.activationRequiredDesc")}
           </p>
         </div>
       </div>
@@ -56,8 +54,8 @@ export function UnactivatedAccountAlert({
       <div className="flex items-center justify-between border-t border-info/20 pt-2.5 text-xs">
         <span className="font-mono text-[11px] text-nx-ink-2">
           {isCooldownActive
-            ? `Resend available in ${cooldownSeconds}s`
-            : "Didn't receive the email?"}
+            ? t("auth.accountSetup.resendAvailableIn").replace("{{seconds}}", String(cooldownSeconds))
+            : t("auth.accountSetup.didNotReceiveEmail")}
         </span>
         <Button
           type="button"
@@ -72,7 +70,7 @@ export function UnactivatedAccountAlert({
           ) : (
             <Mail className="h-3 w-3" aria-hidden="true" />
           )}
-          <span>Resend Email</span>
+          <span>{t("auth.accountSetup.resendEmailAction")}</span>
         </Button>
       </div>
     </div>

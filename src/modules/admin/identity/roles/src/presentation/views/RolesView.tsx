@@ -13,6 +13,7 @@ import { useRolesViewModel } from "../viewmodels/useRolesViewModel";
 import { GenericCrudView, type CrudConfig } from "@core/crud/components/generic-crud-view";
 import { Shield, Pencil, Trash, Copy, Users } from "lucide-react";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
+import { useSudoStore } from "@core/store/useSudoStore";
 import { useAdminContext } from "@core/hooks/useAdminContext";
 import type { LandingTargetScopeMode } from "@core/navigation";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
@@ -136,23 +137,27 @@ export function RolesView() {
         label: t("roles.managePermissions"),
         icon: <Shield className="h-4 w-4" />,
         onClick: (role) => router.push(`/roles/${role.id}`),
-        requiredPermission: SYSTEM_PERMISSIONS.ROLES_UPDATE,
+        requiredPermission: SYSTEM_PERMISSIONS.ROLES_MANAGE_PERMISSIONS,
       },
       // Clone Role
       {
         label: t("roles.cloneRole"),
         icon: <Copy className="h-4 w-4" />,
-        onClick: (role) => {
+        onClick: async (role) => {
           const cloneName = `${role.getLocalizedName("en")} (Copy)`;
           const cloneNameAr = `${role.getLocalizedName("ar")} (نسخة)`;
           if (vm.clone) {
-            vm.clone(
-              {
-                nameEn: cloneName,
-                nameAr: cloneNameAr,
-              },
-              role.id
-            );
+            try {
+              await vm.clone(
+                {
+                  nameEn: cloneName,
+                  nameAr: cloneNameAr,
+                },
+                role.id
+              );
+            } catch {
+              // Toast handled inside cloneMutation.onError
+            }
           }
         },
         requiredPermission: SYSTEM_PERMISSIONS.ROLES_CREATE,
@@ -162,12 +167,14 @@ export function RolesView() {
         label: t("userGroups.assignToGroup"),
         icon: <Users className="h-4 w-4" />,
         onClick: (role) => handleOpenAssignToGroup(role),
+        requiredPermission: SYSTEM_PERMISSIONS.USER_GROUPS_UPDATE,
       },
       // Edit (Standard)
       {
         label: t("common.edit"),
         icon: <Pencil className="h-4 w-4" />,
         onClick: (role) => vm.openEditModal(role),
+        requiredPermission: SYSTEM_PERMISSIONS.ROLES_UPDATE,
       },
       // Delete (Standard) — opens RoleDeleteDialog instead of the generic
       // bare confirm; that dialog owns its own confirmation step.
@@ -176,6 +183,7 @@ export function RolesView() {
         icon: <Trash className="h-4 w-4" />,
         onClick: (role) => handleOpenDelete(role),
         variant: "destructive",
+        requiredPermission: SYSTEM_PERMISSIONS.ROLES_DELETE,
       },
     ],
     getItemDisplayName: (role) => role.getLocalizedName(language),
@@ -190,6 +198,7 @@ export function RolesView() {
           setBulkAssignToGroupOpen(true);
         },
         variant: "outline" as const,
+        requiredPermission: SYSTEM_PERMISSIONS.USER_GROUPS_UPDATE,
       },
       {
         label: t("common.delete"),
@@ -213,6 +222,7 @@ export function RolesView() {
         <AssignToGroupDialog
           open={bulkAssignToGroupOpen}
           onOpenChange={(open) => {
+            if (!open && useSudoStore.getState().modalOpen) return;
             if (!open) {
               setBulkAssignToGroupOpen(false);
               setSelectedBulkRoleIds([]);
@@ -220,24 +230,30 @@ export function RolesView() {
           }}
           mode="role"
           roleIds={selectedBulkRoleIds}
-          useMyTenant={true}
+          tenantId={activeTenantId ?? undefined}
+          useMyTenant={!isPlatformSuperAdmin && !activeTenantId}
         />
       )}
 
       {/* Assign to Group Dialog */}
       <AssignToGroupDialog
         open={assignToGroupOpen}
-        onOpenChange={setAssignToGroupOpen}
+        onOpenChange={(open) => {
+          if (!open && useSudoStore.getState().modalOpen) return;
+          setAssignToGroupOpen(open);
+        }}
         mode="role"
         roleId={selectedRoleForGroup?.id}
         roleName={selectedRoleForGroup?.getLocalizedName(language)}
-        useMyTenant={true}
+        tenantId={selectedRoleForGroup?.tenantId ?? activeTenantId ?? undefined}
+        useMyTenant={!isPlatformSuperAdmin && !activeTenantId}
       />
 
       {/* Delete Dialog — admin-count-aware, forces a fallback role pick before deleting */}
       <RoleDeleteDialog
         open={deleteDialogOpen}
         onOpenChange={(open) => {
+          if (!open && useSudoStore.getState().modalOpen) return;
           setDeleteDialogOpen(open);
           if (!open) setRoleToDelete(null);
         }}
@@ -245,7 +261,10 @@ export function RolesView() {
         tenantId={roleToDelete?.tenantId}
         onConfirm={async (fallbackRoleId) => {
           if (!roleToDelete) return;
+          // Propagate rejection so RoleDeleteDialog keeps roleToDelete intact on failure/Sudo cancel;
+          // deleteRoleMutation.onError already surfaces localized feedback.
           await deleteRole(roleToDelete.id, fallbackRoleId);
+          setDeleteDialogOpen(false);
           setRoleToDelete(null);
         }}
         isDeleting={isDeletingRole}

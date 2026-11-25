@@ -18,6 +18,7 @@
 "use client";
 
 import { Button } from "@core/ui/button";
+import { sanitizeCsvCell } from "@core/common/sanitize";
 import { Card, CardHeader, CardTitle, CardContent } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
 import { Alert, AlertDescription } from "@core/ui/alert";
@@ -621,7 +622,11 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
             }),
         });
       } else {
-        await execute();
+        try {
+          await execute();
+        } catch {
+          // Mutation error / Sudo cancellation handled by action caller
+        }
       }
     },
     [deleteSystem, viewModel, config, t]
@@ -645,7 +650,11 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
             t("crud.confirm.globalAction", { action: action.label.toLowerCase() }),
         });
       } else {
-        await execute();
+        try {
+          await execute();
+        } catch {
+          // Error / Sudo cancellation handled by action caller
+        }
       }
     },
     [deleteSystem, viewModel, config, t]
@@ -679,9 +688,13 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
           }
         );
       } else {
-        // No confirmation needed, just execute and refresh
-        await action.onClick(item);
-        await viewModel.refreshItems();
+        // No confirmation needed, execute and refresh if successful
+        try {
+          await action.onClick(item);
+          await viewModel.refreshItems();
+        } catch {
+          // Error / Sudo cancellation handled by action caller
+        }
       }
     },
     [deleteSystem, viewModel, config, t]
@@ -837,7 +850,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
     }
 
     return [...baseFields, ...injectedFields, ...mappedCustomConfigs].filter(
-      (field) => !isFieldRestricted(field.name)
+      (field) => !isFieldRestricted(decodeCustomFieldName(field.name) ?? field.name)
     );
   }, [createFields, rawCustomConfigs, isFieldRestricted, t]);
 
@@ -894,7 +907,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
   const editFieldsWithCustom = useMemo(
     () =>
       [...editFieldsOwn, ...editCustomFieldConfigs].filter(
-        (field) => !isFieldRestricted(field.name)
+        (field) => !isFieldRestricted(decodeCustomFieldName(field.name) ?? field.name)
       ),
     [editFieldsOwn, editCustomFieldConfigs, isFieldRestricted]
   );
@@ -905,7 +918,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
   const viewFieldsWithCustom = useMemo(
     () =>
       [...editFieldsOwn, ...viewCustomFieldConfigs].filter(
-        (field) => !isFieldRestricted(field.name)
+        (field) => !isFieldRestricted(decodeCustomFieldName(field.name) ?? field.name)
       ),
     [editFieldsOwn, viewCustomFieldConfigs, isFieldRestricted]
   );
@@ -1193,15 +1206,9 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
 
   const handleCsvExport = useCallback(() => {
     const items: any[] = viewModel.items || [];
-    const headerRow = columns.map((c) => `"${String(c.label).replace(/"/g, '""')}"`).join(",");
+    const headerRow = columns.map((c) => sanitizeCsvCell(c.label)).join(",");
     const dataRows = items.map((row) =>
-      columns
-        .map((c) => {
-          const val = row?.[c.key];
-          const text = val === null || val === undefined ? "" : String(val);
-          return `"${text.replace(/"/g, '""')}"`;
-        })
-        .join(",")
+      columns.map((c) => sanitizeCsvCell(row?.[c.key])).join(",")
     );
     const csvContent = [headerRow, ...dataRows].join("\n");
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
@@ -1842,10 +1849,15 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
           initialValues={config?.createInitialValues || {}}
           onSubmit={async (data) => {
             const { entityData, customFieldValues } = splitCustomFieldValues(data);
-            // Sanitize: never submit restricted fields to the server
+            // Sanitize: never submit restricted fields or masked sentinel placeholders to the server
             for (const key of Object.keys(entityData)) {
-              if (isFieldRestricted(key)) {
+              if (isFieldRestricted(key) || entityData[key] === "***") {
                 delete entityData[key];
+              }
+            }
+            for (const cfKey of Object.keys(customFieldValues)) {
+              if (isFieldRestricted(cfKey) || customFieldValues[cfKey] === "***") {
+                delete customFieldValues[cfKey];
               }
             }
             const shouldSaveCustomFields = !entityData.deferCustomFieldsToSetup;
@@ -1943,10 +1955,15 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
           onSubmit={async (data) => {
             if (!viewModel.editingItem) return;
             const { entityData, customFieldValues } = splitCustomFieldValues(data);
-            // Sanitize: never submit restricted fields to the server
+            // Sanitize: never submit restricted fields or masked sentinel placeholders to the server
             for (const key of Object.keys(entityData)) {
-              if (isFieldRestricted(key)) {
+              if (isFieldRestricted(key) || entityData[key] === "***") {
                 delete entityData[key];
+              }
+            }
+            for (const cfKey of Object.keys(customFieldValues)) {
+              if (isFieldRestricted(cfKey) || customFieldValues[cfKey] === "***") {
+                delete customFieldValues[cfKey];
               }
             }
             await viewModel.updateItem(viewModel.editingItem.id, entityData);
@@ -2028,7 +2045,11 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
       {/* Professional confirmation dialog for delete and action operations */}
       <ConfirmationDialog
         open={deleteSystem.showConfirmation}
-        onOpenChange={deleteSystem.cancelDelete}
+        onOpenChange={(nextOpen) => {
+          if (!nextOpen) {
+            deleteSystem.cancelDelete();
+          }
+        }}
         title={deleteSystem.deleteOptions.confirmTitle || t("common.confirmDelete")}
         description={deleteSystem.deleteOptions.confirmDescription || t("common.deleteWarning")}
         confirmText={
@@ -2043,6 +2064,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
         onCancel={deleteSystem.cancelDelete}
         variant={deleteSystem.deleteOptions.variant || "destructive"}
         isLoading={deleteSystem.isDeleting}
+        preventAutoClose={true}
       />
     </div>
   );

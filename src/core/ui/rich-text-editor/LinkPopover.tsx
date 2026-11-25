@@ -8,6 +8,7 @@ import { Label } from "@core/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@core/ui/popover";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
 import { useI18n } from "@core/providers/i18n-provider";
+import { sanitizeEmailHref } from "@core/common/sanitize";
 import { Link as LinkIcon } from "lucide-react";
 import type { Editor } from "@tiptap/react";
 
@@ -21,8 +22,15 @@ export function LinkPopover({ editor }: { editor: Editor }) {
   const isLinked = editor.isActive("link");
 
   const handleApply = () => {
-    if (url) {
-      editor.chain().focus().extendMarkRange("link").setLink({ href: url, target: "_blank" }).run();
+    if (url.trim()) {
+      const safeUrl = sanitizeEmailHref(url);
+      if (!safeUrl) return;
+      editor
+        .chain()
+        .focus()
+        .extendMarkRange("link")
+        .setLink({ href: safeUrl, target: "_blank", rel: "noopener noreferrer" })
+        .run();
     } else {
       editor.chain().focus().unsetLink().run();
     }

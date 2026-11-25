@@ -60,11 +60,17 @@ import { DatePicker } from "@core/ui/date-picker";
 import { RichTextEditor } from "@core/ui/rich-text-editor";
 import { ImageUploader } from "@core/ui/image-uploader";
 import { PasswordInput } from "@core/ui/password-input";
+import { PasswordWithPolicyField } from "@core/ui/password-policy-field";
+import {
+  findFirstPolicyViolation,
+  type PasswordPolicyModel,
+} from "@core/common/password-policy";
 import { PhoneInput, isValidPhoneNumber } from "@core/ui/phone-input";
 import { usePermissions } from "@core/providers/permission-provider";
 import type { PermissionCode } from "@core/common/types/permissions";
 import { AlertCircle } from "lucide-react";
 import { parseApiValidationError } from "@core/common/api-validation-error";
+import { isSudoCancelledError } from "@core/store/useSudoStore";
 // Type-only for the props contract, plus the registry READ. Not a cycle: this
 // module is `core`, and customFieldsExtension.tsx's own import of `FieldConfig`
 // from this file is `import type`, erased at build — its only runtime imports
@@ -317,6 +323,11 @@ export interface FieldConfig {
   patternError?: string; // Custom error message when pattern fails
   minLength?: number; // For text inputs
   maxLength?: number; // For text inputs
+  // Policy-driven password support (used by Admin creation & security forms)
+  passwordPolicy?: PasswordPolicyModel | null;
+  passwordPolicyLoading?: boolean;
+  passwordPolicyError?: string | null;
+  onRetryPasswordPolicy?: () => void;
   // Permissions
   requiredPermission?: PermissionCode;
   requiredPermissions?: PermissionCode[];
@@ -1076,6 +1087,28 @@ export function GenericForm({
         return;
       }
 
+      // Policy validation for password fields backed by PasswordPolicyModel
+      if (field.type === "password" && field.passwordPolicy !== undefined) {
+        const required = isFieldRequired(field, formData);
+        const rawPassword = typeof val === "string" ? val : "";
+        if (required && isRequiredFieldEmpty(field, val)) {
+          newErrors[field.name] = t("validation.required");
+          return;
+        }
+        if (required || rawPassword.length > 0) {
+          if (!field.passwordPolicy) {
+            newErrors[field.name] = t("common.passwordPolicy.loadFailed");
+            return;
+          }
+          const violation = findFirstPolicyViolation(rawPassword, field.passwordPolicy);
+          if (violation) {
+            newErrors[field.name] = t(violation.key, violation.params);
+            return;
+          }
+        }
+        return;
+      }
+
       // Check required
       const required = isFieldRequired(field, formData);
       if (!required) return;
@@ -1174,6 +1207,10 @@ export function GenericForm({
       });
       await onSubmit(submitData);
     } catch (error) {
+      // Sudo cancellation aborts elevation cleanly via info toast without showing a destructive form banner.
+      if (isSudoCancelledError(error)) {
+        return;
+      }
       // Parse ASP.NET RFC 7807/9110 and standard API validation errors into field-level errors
       const parsed = parseApiValidationError(
         error,
@@ -1894,6 +1931,38 @@ export function GenericForm({
                     aria-invalid={invalid || undefined}
                     dir={direction}
                   />
+                ) : field.type === "password" && field.passwordPolicy !== undefined ? (
+                  <div className="relative w-full">
+                    <PasswordWithPolicyField
+                      id={field.name}
+                      value={formData[field.name] ?? ""}
+                      onValueChange={(val) => handleChange(field.name, val)}
+                      policy={field.passwordPolicy}
+                      policyLoading={field.passwordPolicyLoading}
+                      policyError={field.passwordPolicyError}
+                      onRetryPolicy={field.onRetryPasswordPolicy}
+                      required={isFieldRequired(field, formData)}
+                      className={cn(
+                        getInputClasses(getInputHeight()),
+                        "text-start",
+                        invalid && "border-nx-danger"
+                      )}
+                      placeholder={field.placeholder}
+                      disabled={fieldDisabled}
+                      readOnly={readOnly}
+                      autoComplete={field.autoComplete ?? "new-password"}
+                      aria-describedby={describedBy}
+                      aria-invalid={invalid || undefined}
+                      alwaysShowChecklist={
+                        Boolean(formData[field.name]) ||
+                        Boolean(field.passwordPolicyLoading) ||
+                        Boolean(field.passwordPolicyError)
+                      }
+                      showStrengthBar={true}
+                      surface="nexus"
+                      t={t}
+                    />
+                  </div>
                 ) : field.type === "password" ? (
                   <div className="relative w-full">
                     <PasswordInput

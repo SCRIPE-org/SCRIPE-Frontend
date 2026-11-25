@@ -5,7 +5,6 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { FeatureUnavailableGate } from "@core/components/tenant-context";
 import { Alert, AlertDescription } from "@core/ui/alert";
 import { Button } from "@core/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { toast } from "@core/ui/sileo-toast";
 import { useSecurityVaultViewModel } from "../viewmodels/useSecurityVaultViewModel";
 import {
@@ -15,7 +14,6 @@ import {
 import { EnrollPasskeyModal } from "../components/EnrollPasskeyModal";
 import { TwoFactorWizardModal } from "../components/TwoFactorWizardModal";
 import { EmergencyLockdownDialog } from "../components/EmergencyLockdownDialog";
-import { PasswordChangeForm } from "../components/PasswordChangeForm";
 import { SecurityAdvancedShieldSection } from "../components/SecurityAdvancedShieldSection";
 import { ConnectedEnterpriseSsoCard } from "../components/ConnectedEnterpriseSsoCard";
 import { SecurityPageSkeleton } from "../components/AccountSkeletons";
@@ -23,12 +21,18 @@ import { AccountSliceErrorState } from "../components/AccountSliceErrorState";
 import { PasskeyVaultSection } from "../sections/security/PasskeyVaultSection";
 import { SudoSessionCardSection } from "../sections/security/SudoSessionCardSection";
 import { StandaloneTotpSection } from "../sections/security/StandaloneTotpSection";
+import { PasswordRotationSection } from "../sections/security/PasswordRotationSection";
+import {
+  MfaEnrollmentRequiredBanner,
+  MfaLockedControlsNotice,
+} from "../sections/security/MfaEnrollmentNotices";
 import { PasskeyRenameDeleteModals } from "../sections/security/PasskeyRenameDeleteModals";
 import { DisableTwoFactorModal } from "../sections/security/DisableTwoFactorModal";
 import { RegenerateBackupCodesModal } from "../sections/security/RegenerateBackupCodesModal";
+import { isSudoCancelledError } from "../utils/sudoElevation";
 import type { PasskeyCredential } from "../../domain/entities/PasskeyCredential";
 import type { ChangePasswordRequest } from "../../domain/interfaces/IProfileRepository";
-import { AlertCircle, Lock, RefreshCw } from "lucide-react";
+import { AlertCircle, RefreshCw } from "lucide-react";
 
 /**
  * Security vault view (/account/security) composing Passkey Vault, Enterprise SSO,
@@ -51,6 +55,7 @@ export function AccountSecurityView() {
   } = useAccountSecuritySliceViewModel();
 
   const showSsoCard =
+    !vm.requireMfaEnrollment &&
     security?.isSsoFeatureEnabled !== false &&
     featureFlags?.externalSsoEnabled !== false;
   const showTotpSection =
@@ -84,7 +89,8 @@ export function AccountSecurityView() {
   const passkeysPending =
     vm.isLoadingPasskeys && vm.passkeys.length === 0 && !vm.passkeysError;
   const securityPending = isLoadingSecurity && !security && !isSecurityError;
-  const contextPending = Boolean(isLoadingContext) && !principalContext && !isContextError;
+  const contextPending =
+    !vm.requireMfaEnrollment && Boolean(isLoadingContext) && !principalContext && !isContextError;
 
   if (passkeysPending || securityPending || contextPending) {
     return <SecurityPageSkeleton />;
@@ -113,6 +119,7 @@ export function AccountSecurityView() {
     try {
       await vm.begin2FaSetup();
     } catch (err: unknown) {
+      if (isSudoCancelledError(err)) return;
       const msg = err instanceof Error && err.message ? err.message : t("profile.common.error");
       setTwoFaSetupError(msg);
       toast.error(msg);
@@ -132,6 +139,8 @@ export function AccountSecurityView() {
         <h1 className="text-xl font-bold tracking-tight text-nx-ink">{t("profile.security.title")}</h1>
         <p className="text-xs text-nx-ink-3 mt-1">{t("profile.security.subtitle")}</p>
       </div>
+
+      {vm.requireMfaEnrollment && <MfaEnrollmentRequiredBanner t={t} />}
 
       {vm.passkeysError && vm.passkeys.length === 0 && (
         <Alert variant="destructive" data-testid="passkeys-load-error-alert">
@@ -195,33 +204,36 @@ export function AccountSecurityView() {
           />
         </>
       )}
-      <Card className="border border-nx-line bg-nx-surface hover:border-nx-line-hi transition-colors">
-        <CardHeader className="pb-3">
-          <div className="flex items-center gap-2">
-            <Lock className="h-4 w-4 text-nx-accent" style={{ minWidth: 16, minHeight: 16 }} />
-            <CardTitle className="text-sm font-bold text-nx-ink">{t("profile.security.changePassword")}</CardTitle>
-          </div>
-          <CardDescription className="text-xs text-nx-ink-3">{t("profile.security.passwordRequirements")}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <PasswordChangeForm
+      {!vm.requireMfaEnrollment ? (
+        <>
+          <PasswordRotationSection
+            t={t}
+            isPasswordExpired={vm.isPasswordExpired}
+            daysUntilPasswordExpiry={vm.daysUntilPasswordExpiry}
+            passwordLastChanged={vm.passwordLastChanged}
+            policy={vm.passwordPolicy ?? null}
+            policyLoading={vm.isLoadingPasswordPolicy}
+            policyError={vm.passwordPolicyError}
+            onRetryPolicy={() => void vm.refetchPasswordPolicy?.()}
             isTwoFactorEnabled={vm.isTwoFactorEnabled}
             onSubmit={handlePasswordSubmit}
             isSubmitting={vm.isChangingPassword}
             submitError={vm.changePasswordError}
             success={passwordSuccess}
           />
-        </CardContent>
-      </Card>
-      <SecurityAdvancedShieldSection
-        trustedCidrs={security?.trustedCidrs ?? []}
-        currentClientIp={security?.currentClientIp}
-        rowVersion={security?.rowVersion}
-        onUpdatePolicy={updateSecurityPolicy}
-        isUpdatingPolicy={isUpdatingPolicy}
-        policyError={updatePolicyError}
-        onOpenLockdown={() => setIsLockdownOpen(true)}
-      />
+          <SecurityAdvancedShieldSection
+            trustedCidrs={security?.trustedCidrs ?? []}
+            currentClientIp={security?.currentClientIp}
+            rowVersion={security?.rowVersion}
+            onUpdatePolicy={updateSecurityPolicy}
+            isUpdatingPolicy={isUpdatingPolicy}
+            policyError={updatePolicyError}
+            onOpenLockdown={() => setIsLockdownOpen(true)}
+          />
+        </>
+      ) : (
+        <MfaLockedControlsNotice t={t} />
+      )}
       <EnrollPasskeyModal
         isOpen={isEnrollModalOpen}
         onClose={() => {
@@ -241,7 +253,7 @@ export function AccountSecurityView() {
         isConfirming={vm.isConfirming2Fa}
       />
       <EmergencyLockdownDialog
-        isOpen={isLockdownOpen}
+        isOpen={!vm.requireMfaEnrollment && isLockdownOpen}
         onClose={() => setIsLockdownOpen(false)}
         onConfirmLockdown={vm.emergencyLockdown}
         isLockingDown={vm.isLockingDown}

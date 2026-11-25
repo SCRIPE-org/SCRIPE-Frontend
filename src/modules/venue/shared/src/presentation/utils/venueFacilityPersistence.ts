@@ -1,23 +1,47 @@
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { useAppStore } from "@core/store/useAppStore";
+
+/** Minimal facility identifier contract for authorized facility lookup. */
 export interface FacilityLike {
   id: string;
 }
 
+const LEGACY_UNSCOPED_FACILITY_KEY = "scripe_venue_selected_facility";
+
 /**
- * Returns the active tenant identifier from the user profile, app store, or storage context.
+ * Returns the active tenant identifier, prioritizing tab-scoped `sessionStorage` drill-down context
+ * (`scr_tenant_ctx.id`) over the principal's home `tenantId` or `tenantCode`.
  */
 export function getActiveTenantId(): string | null {
   if (typeof window === "undefined") return null;
-  const storeUser = useAppStore.getState().user;
-  if (storeUser?.tenantId) return storeUser.tenantId;
-  const tenantCode = useAppStore.getState().tenantCode;
-  if (tenantCode) return tenantCode;
+
   try {
-    const rawCtx = localStorage.getItem(STORAGE_KEYS.tenant_context);
-    if (rawCtx) {
-      const parsed = JSON.parse(rawCtx);
-      if (parsed?.tenantId) return parsed.tenantId;
+    const rawSessionCtx = window.sessionStorage.getItem(STORAGE_KEYS.tenant_context);
+    if (rawSessionCtx) {
+      const parsed = JSON.parse(rawSessionCtx) as { id?: unknown; tenantId?: unknown } | null;
+      if (typeof parsed?.id === "string" && parsed.id.trim().length > 0) {
+        return parsed.id.trim();
+      }
+      if (typeof parsed?.tenantId === "string" && parsed.tenantId.trim().length > 0) {
+        return parsed.tenantId.trim();
+      }
+    }
+  } catch {
+    // Graceful fallback if sessionStorage JSON is malformed
+  }
+
+  const state = useAppStore.getState();
+  if (state.user?.tenantId) return state.user.tenantId;
+  if (state.tenantCode) return state.tenantCode;
+
+  try {
+    const rawLegacyCtx = window.localStorage.getItem(STORAGE_KEYS.tenant_context);
+    if (rawLegacyCtx) {
+      const parsed = JSON.parse(rawLegacyCtx) as { id?: unknown; tenantId?: unknown } | null;
+      if (typeof parsed?.id === "string" && parsed.id.trim().length > 0) return parsed.id.trim();
+      if (typeof parsed?.tenantId === "string" && parsed.tenantId.trim().length > 0) {
+        return parsed.tenantId.trim();
+      }
     }
   } catch {
     // Graceful fallback
@@ -26,16 +50,16 @@ export function getActiveTenantId(): string | null {
 }
 
 /**
- * Generates a tenant-scoped localStorage key for venue facility selection.
+ * Generates a tenant-scoped `localStorage` key for venue facility selection.
  */
 export function getFacilityStorageKey(explicitTenantId?: string | null): string {
   const tenantId = explicitTenantId ?? getActiveTenantId();
-  return tenantId ? `scripe_venue_facility_${tenantId}` : "scripe_venue_selected_facility";
+  return tenantId ? `scripe_venue_facility_${tenantId}` : LEGACY_UNSCOPED_FACILITY_KEY;
 }
 
 /**
- * Retrieves the saved facility ID, ensuring it is authorized and exists in the authorized facilities list.
- * Falls back to the first authorized facility if the persisted ID is missing, stale, or unauthorized.
+ * Retrieves the saved facility ID, ensuring it exists in `authorizedFacilities`.
+ * Falls back to the first authorized facility if missing, stale, or unauthorized.
  */
 export function getSavedFacilityId(
   authorizedFacilities: FacilityLike[],
@@ -44,18 +68,28 @@ export function getSavedFacilityId(
   if (typeof window === "undefined" || !authorizedFacilities.length) return null;
   const key = getFacilityStorageKey(explicitTenantId);
   const savedId =
-    localStorage.getItem(key) || localStorage.getItem("scripe_venue_selected_facility");
+    window.localStorage.getItem(key) ||
+    (key === LEGACY_UNSCOPED_FACILITY_KEY
+      ? window.localStorage.getItem(LEGACY_UNSCOPED_FACILITY_KEY)
+      : null);
 
   const match = authorizedFacilities.find((f) => f.id === savedId);
   return match ? match.id : (authorizedFacilities[0]?.id ?? null);
 }
 
 /**
- * Persists the selected facility ID under the tenant-scoped key and legacy fallback key.
+ * Persists the selected facility ID strictly under the resolved tenant-scoped key
+ * (removing any legacy unscoped fallback key when tenant scope is active).
  */
 export function saveFacilityId(facilityId: string, explicitTenantId?: string | null): void {
   if (typeof window === "undefined") return;
   const key = getFacilityStorageKey(explicitTenantId);
-  localStorage.setItem(key, facilityId);
-  localStorage.setItem("scripe_venue_selected_facility", facilityId);
+  try {
+    window.localStorage.setItem(key, facilityId);
+    if (key !== LEGACY_UNSCOPED_FACILITY_KEY) {
+      window.localStorage.removeItem(LEGACY_UNSCOPED_FACILITY_KEY);
+    }
+  } catch {
+    // Ignore storage quota errors
+  }
 }

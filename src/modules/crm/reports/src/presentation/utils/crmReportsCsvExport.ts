@@ -1,6 +1,6 @@
 "use client";
 
-import { sanitizeFilename } from "@core/common/sanitize";
+import { sanitizeCsvCell, sanitizeFilename } from "@core/common/sanitize";
 import type {
   CrmCurrencyPipelineBreakdown,
   CrmPipelineReport,
@@ -13,10 +13,7 @@ import type {
  * @returns Escaped RFC4180 CSV cell string.
  */
 export function formatSafeCsvCell(value: unknown): string {
-  const str = value === null || value === undefined ? "" : String(value);
-  const needsPrefix = /^[=+\-@\t\r\n]/.test(str) || /^[ \t\r\n]*[=+\-@]/.test(str);
-  const safe = needsPrefix ? `'${str}` : str;
-  return `"${safe.replace(/"/g, '""')}"`;
+  return sanitizeCsvCell(value);
 }
 
 /**

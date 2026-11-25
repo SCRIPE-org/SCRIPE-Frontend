@@ -268,6 +268,10 @@ export const en = {
     selectPermissions: "Select Permissions",
     selectPermissionsPlaceholder: "Select Permissions Placeholder",
     managePermissions: "Manage Permissions",
+    restrictedFieldsCount: "({count} restricted fields)",
+    scopeAllTenantsRestricted:
+      "Tenant roles cannot grant All Tenants scope. Choose Own Tenant, Hierarchy, or Own Only.",
+    bulkScopeSelectHint: "Select at least one permission to apply a bulk scope",
   },
   app: {
     title: "Admin Dashboard",
@@ -411,6 +415,25 @@ export const en = {
     },
   },
   common: {
+    passwordPolicy: {
+      requirementsTitle: "Password requirements",
+      loadingPolicy: "Loading password policy...",
+      loadFailed: "Unable to load password requirements. Retry before continuing.",
+      retryPolicy: "Retry",
+      minLength: "At least {{min}} characters",
+      maxLengthExceeded: "Must not exceed {{max}} characters",
+      uppercase: "One uppercase letter (A-Z)",
+      lowercase: "One lowercase letter (a-z)",
+      number: "One number (0-9)",
+      special: "One special character",
+      historyNotice: "Cannot reuse your last {{count}} passwords",
+      breachCheckNotice: "Screened against commonly breached passwords",
+      expiryNotice: "Passwords expire every {{days}} days",
+      strengthLabel: "Strength",
+      weak: "Weak",
+      fair: "Fair",
+      strong: "Strong",
+    },
     operationToast: {
       successTitle: "{operation} Successful",
       successWithItem: "{item} has been {operationLower} successfully.",
