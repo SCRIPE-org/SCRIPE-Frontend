@@ -453,8 +453,8 @@ importers:
         specifier: ^1.5.0
         version: 1.5.0(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       libphonenumber-js:
-        specifier: ^1.13.7
-        version: 1.13.15
+        specifier: ^1.13.17
+        version: 1.13.17
       lucide-react:
         specifier: ^1.73.0
         version: 1.73.0(@types/react@19.3.0)(react@19.3.1)
@@ -4155,8 +4155,8 @@ packages:
   jsonfile@6.2.1:
     resolution: {integrity: sha512-zwOTdL3rFQ/lRdBnntKVOX6k5cKJwEc1HdilT71BWEu7J41gXIB2MRp+vxduPSwZJPWBxEzv4yH1wYLJGUHX4Q==}
 
-  libphonenumber-js@1.13.15:
-    resolution: {integrity: sha512-AHdhEQeDFEJ4GKDAQ9AwxChy+v2kUILUB3TGQRpkXMkWePjXTU/WQEzWVQoIx/Gz8fE73Wr5SEuZCy2vk8jrMQ==}
+  libphonenumber-js@1.13.17:
+    resolution: {integrity: sha512-V92dxRHhYTsHF5B6IjR8rtKW6qL7xKuERPFFqZt7XQl8A+NikbwEzjhxGpM+R6JnWjaL7/wokWSdTG/eyYAscQ==}
 
   linkifyjs@4.4.0:
     resolution: {integrity: sha512-InTexvtbai+2c+dEVGcc6O6P2DMVIiwD9a/i4zFroazOIYLOS6FSVmAJ7kFeumnCMx6/gQqNAkbUvgMubV4+MA==}
@@ -8661,7 +8661,7 @@ snapshots:
     optionalDependencies:
       graceful-fs: 4.2.11
 
-  libphonenumber-js@1.13.15: {}
+  libphonenumber-js@1.13.17: {}
 
   linkifyjs@4.4.0: {}
 
@@ -9154,7 +9154,7 @@ snapshots:
       classnames: 2.5.1
       country-flag-icons: 1.6.20
       input-format: 0.3.14(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
-      libphonenumber-js: 1.13.15
+      libphonenumber-js: 1.13.17
       prop-types: 15.8.1
       react: 19.3.1
       react-dom: 19.3.1(react@19.3.1)
