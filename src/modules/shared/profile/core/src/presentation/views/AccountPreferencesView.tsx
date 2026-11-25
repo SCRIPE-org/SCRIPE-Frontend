@@ -37,10 +37,7 @@ import { WorkspaceStartPagesSection } from "../sections/preferences/WorkspaceSta
 
 const useSafeOptionalTenantContext = resolveOptionalTenantContextHook();
 
-/**
- * Ergonomics, theme, privacy blur, toast placement, and regional localization view
- * (/account/preferences) using continuous serialized auto-save without a manual save button.
- */
+/** Ergonomics, theme, privacy blur, toast placement, and regional localization view (/account/preferences). */
 export function AccountPreferencesView() {
   const { t, language, direction } = useI18n();
   const isRtl = direction === "rtl";
