@@ -137,7 +137,7 @@ describe("CRM Frontend Localization & Architecture Gate", () => {
       }
       const lines = content.split(/\r?\n/);
       lines.forEach((line, idx) => {
-        if (!/^\s*\/\//.test(line) && /:\s*any\b|\bas\s+any\b/.test(line)) {
+        if (!/^\s*(?:\/\/|\/?\*)/.test(line) && /:\s*any\b|\bas\s+any\b/.test(line)) {
           anyViolations.push(`${rel}:${idx + 1}`);
         }
       });
