@@ -107,12 +107,11 @@ describe("useOAuthConsentViewModel (SEC-03)", () => {
     mockHasToken.mockReturnValue(true);
     mockGetAccessToken.mockReturnValue("valid-jwt-token");
     mockBuildOidcConsentForm.mockImplementation(
-      (_params: URLSearchParams, token: string, decision: "approve" | "deny" = "approve") => ({
+      (_params: URLSearchParams, decision: "approve" | "deny" = "approve") => ({
         action: "http://localhost:5035/connect/authorize",
         params: {
           client_id: "test-client",
           consent_ticket: "signed-ticket",
-          access_token: token,
           decision,
         },
       })
@@ -141,7 +140,6 @@ describe("useOAuthConsentViewModel (SEC-03)", () => {
 
     expect(mockBuildOidcConsentForm).toHaveBeenCalledWith(
       mockSearchParamsRef.current,
-      "valid-jwt-token",
       "deny"
     );
     expect(result.current.formAction).toBe("http://localhost:5035/connect/authorize");
@@ -178,7 +176,6 @@ describe("useOAuthConsentViewModel (SEC-03)", () => {
 
     expect(mockBuildOidcConsentForm).toHaveBeenCalledWith(
       mockSearchParamsRef.current,
-      "valid-jwt-token",
       "deny"
     );
     expect(window.location.href).toBe(initialHref);
@@ -224,7 +221,6 @@ describe("useOAuthConsentViewModel (SEC-03)", () => {
 
     expect(mockBuildOidcConsentForm).toHaveBeenCalledWith(
       mockSearchParamsRef.current,
-      "valid-jwt-token",
       "approve"
     );
     expect(result.current.formParams.decision).toBe("approve");

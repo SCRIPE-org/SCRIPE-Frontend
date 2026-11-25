@@ -91,12 +91,15 @@ export interface IProfileRepository {
   removeAvatar(): Promise<void>;
 
   // Password
-  changePassword(data: ChangePasswordRequest): Promise<void>;
+  changePassword(
+    data: ChangePasswordRequest,
+    sudoToken?: string
+  ): Promise<ChangePasswordSessionResult | void>;
 
   // Sessions
   getSessions(): Promise<ActiveSession[]>;
-  revokeSession(tokenId: string): Promise<void>;
-  revokeAllSessions(): Promise<{ revokedCount: number }>;
+  revokeSession(tokenId: string, sudoToken?: string): Promise<void>;
+  revokeAllSessions(sudoToken?: string): Promise<{ revokedCount: number }>;
 
   // 2FA Management
   enable2FA(): Promise<Enable2FAResult>;
@@ -128,8 +131,12 @@ export interface ForceChangePasswordResult {
   accessToken?: string;
   expiresAt?: string;
   mustChangePassword?: boolean;
+  requireMfaEnrollment?: boolean;
   defaultRedirectPath?: string | null;
   subscriptionStatus?: string | null;
   gracePhase?: string | null;
   editionName?: string | null;
 }
+
+/** Rotated session tokens returned when self-service password change succeeds. */
+export type ChangePasswordSessionResult = ForceChangePasswordResult;

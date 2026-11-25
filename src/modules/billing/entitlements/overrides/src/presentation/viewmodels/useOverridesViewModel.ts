@@ -12,6 +12,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { useSessionAuthorizationSync } from "@core/hooks/use-session-authorization-sync";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useState, useCallback, useMemo } from "react";
 import { parseLocalizedNumber } from "@core/utils/number-parser";
@@ -25,6 +26,7 @@ const ITEMS_PER_PAGE = 10;
 export function useOverridesViewModel(tenantId: string) {
   const { overrideRepository } = entitlementsContainer;
   const queryClient = useQueryClient();
+  const syncSessionAuthorization = useSessionAuthorizationSync();
   const { success, error: showError } = useEnhancedToast();
   const { t } = useI18n();
 
@@ -105,13 +107,14 @@ export function useOverridesViewModel(tenantId: string) {
   );
 
   // ─── Invalidation helper ───────────────────────────
-  const invalidate = useCallback(() => {
+  const invalidate = useCallback(async () => {
     queryClient.invalidateQueries({ queryKey: overridesKey });
     queryClient.invalidateQueries({ queryKey: resolvedKey });
     queryClient.invalidateQueries({ queryKey: ["tenant-subscriptions", tenantId] });
     queryClient.invalidateQueries({ queryKey: ["tenants"] });
     queryClient.invalidateQueries({ queryKey: ["tenant", tenantId] });
-  }, [queryClient, overridesKey, resolvedKey, tenantId]);
+    await syncSessionAuthorization(tenantId);
+  }, [queryClient, overridesKey, resolvedKey, syncSessionAuthorization, tenantId]);
 
   // ─── Set override mutation ─────────────────────────
   const setOverrideMutation = useMutation({
@@ -120,8 +123,8 @@ export function useOverridesViewModel(tenantId: string) {
         value: params.value,
         reason: params.reason,
       }),
-    onSuccess: () => {
-      invalidate();
+    onSuccess: async () => {
+      await invalidate();
       success({
         title: t("entitlements.overrides.overrideSet"),
         description: t("entitlements.overrides.overrideSetDesc"),
@@ -139,8 +142,8 @@ export function useOverridesViewModel(tenantId: string) {
     onMutate: (featureId) => {
       setPendingRemoveFeatureIds((prev) => new Set(prev).add(featureId));
     },
-    onSuccess: () => {
-      invalidate();
+    onSuccess: async () => {
+      await invalidate();
       success({
         title: t("entitlements.overrides.overrideRemoved"),
         description: t("entitlements.overrides.overrideRemovedDesc"),

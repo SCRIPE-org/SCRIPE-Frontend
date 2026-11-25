@@ -61,6 +61,7 @@ export function TenantDeleteDialog({
       onConfirm={handleConfirm}
       isLoading={isDeleting || isLoading}
       disableConfirm={isConfirmDisabled}
+      preventAutoClose={true}
     >
       {isLoading ? (
         <div className="flex items-center justify-center py-4">

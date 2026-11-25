@@ -21,6 +21,7 @@ import {
 } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
+import { Alert, AlertDescription } from "@core/ui/alert";
 import { Skeleton } from "@core/ui/skeleton";
 import { SectionInfoPopover } from "./SectionInfoPopover";
 import { SudoFactorPanels } from "./SudoFactorPanels";
@@ -132,7 +133,8 @@ export function SudoVerificationModal() {
     <Dialog open={modalOpen} onOpenChange={(nextOpen) => (!nextOpen ? closeModal() : undefined)}>
       <DialogContent
         data-testid="sudo-verification-modal"
-        className="sm:max-w-[460px] border-nx-line bg-nx-surface text-nx-ink p-6"
+        overlayClassName="z-sudo-overlay"
+        className="z-sudo-modal sm:max-w-[460px] border-nx-line bg-nx-surface text-nx-ink p-6"
       >
         <DialogHeader className="space-y-2">
           <div className="flex items-start justify-between gap-2">
@@ -145,7 +147,10 @@ export function SudoVerificationModal() {
                   <DialogTitle className="text-base font-bold text-nx-ink truncate">
                     {t("profile.sudo.modalTitle")}
                   </DialogTitle>
-                  <SectionInfoPopover i18nPrefix="profile.infoPopover.biometricSudo" />
+                  <SectionInfoPopover
+                    i18nPrefix="profile.infoPopover.biometricSudo"
+                    contentClassName="z-sudo-popover"
+                  />
                 </div>
                 <Badge
                   variant="outline"
@@ -171,10 +176,16 @@ export function SudoVerificationModal() {
             <Skeleton className="h-28 w-full rounded-nx-lg" />
           </div>
         ) : allowedFactors.length === 0 ? (
-          <div className="my-3 rounded-nx-lg border border-warning/40 bg-warning/10 p-4 text-xs text-warning flex items-start gap-2.5">
-            <ShieldAlert className="h-4 w-4 shrink-0 mt-0.5" aria-hidden="true" />
-            <span>{t("profile.sudo.noPasskeyEnrolledHint")}</span>
-          </div>
+          <Alert variant="warning" className="my-3">
+            <ShieldAlert className="h-4 w-4 shrink-0" aria-hidden="true" />
+            <AlertDescription className="text-xs">
+              {t(
+                mandatoryFactorPolicy === "TwoFactorRequired"
+                  ? "profile.sudo.noTwoFactorEnrolledHint"
+                  : "profile.sudo.noPasskeyEnrolledHint"
+              )}
+            </AlertDescription>
+          </Alert>
         ) : (
           <SudoFactorPanels
             allowedFactors={allowedFactors}

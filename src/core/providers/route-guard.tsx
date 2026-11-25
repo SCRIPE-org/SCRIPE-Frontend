@@ -54,8 +54,14 @@ import {
   NavigationErrorRecovery,
 } from "@core/components/tenant-context";
 import { secureTokenService } from "@core/common/secure-token-service";
+import {
+  detectPrincipalDivergence,
+  getActivePrincipalKey,
+  setActivePrincipalKey,
+  syncActivePrincipalKey,
+} from "@core/common/active-principal";
 import { appLogger } from "@core/common/logger";
-import { authBroadcast } from "@core/common/broadcast-auth";
+import { authBroadcast, type AuthBroadcastScope } from "@core/common/broadcast-auth";
 import { isSafeRedirectTarget, buildPostAuthEntryUrl } from "@core/common/redirect-safety";
 
 interface RouteGuardProps {
@@ -76,6 +82,7 @@ type RedirectReason =
   | "login"
   | "pending_payment"
   | "must_change_password"
+  | "require_mfa_enrollment"
   | "shell_pbac_denied"
   | "menu_pbac_denied"
   | "nav_denied";
@@ -100,6 +107,7 @@ interface ResolveRouteAccessParams {
   hasToken: boolean;
   subscriptionStatus: string | null;
   mustChangePassword: boolean;
+  requireMfaEnrollment?: boolean;
   routesError: string | null;
   canAccessPage: (path: string) => boolean;
   isNavSyncedForContext: (expectedKey?: string | null) => boolean;
@@ -107,18 +115,18 @@ interface ResolveRouteAccessParams {
   hasRouteAccess: (path: string) => boolean;
 }
 
-const STANDARD_AUTH_PAGES = new Set([
-  "/login",
-  "/signup",
-  "/forgot-password",
-  "/reset-password",
-]);
+const STANDARD_AUTH_PAGES = new Set(["/login", "/signup"]);
+
+const MFA_ENROLL_ALLOWED_ROUTES = new Set(["/account/security", "/logout", "/change-password"]);
 
 const ALL_AUTH_PAGES = new Set([
   ...STANDARD_AUTH_PAGES,
+  "/forgot-password",
+  "/reset-password",
   "/magic-link",
   "/qr-approve",
   "/sso/callback",
+  "/sso/continue",
   "/sso/saml/callback",
 ]);
 
@@ -142,6 +150,7 @@ function buildLoginRedirectUrl(normalizedPath: string): string {
   if (
     !normalizedPath ||
     normalizedPath === "/" ||
+    normalizedPath === "/logout" ||
     normalizedPath === "/not-authorized" ||
     ALL_AUTH_PAGES.has(normalizedPath)
   ) {
@@ -334,6 +343,7 @@ function resolveRouteAccessSync({
   hasToken,
   subscriptionStatus,
   mustChangePassword,
+  requireMfaEnrollment = false,
   routesError,
   canAccessPage,
   isNavSyncedForContext,
@@ -351,6 +361,11 @@ function resolveRouteAccessSync({
   // 0b. Identity swap / impersonation transition in progress -> hold loading until reload completes
   if (isAuthTransitioning) {
     return { kind: "settled", outcome: { kind: "loading" } };
+  }
+
+  // 0c. Explicit logout lifecycle path must never stall behind compliance or PBAC walls
+  if (normalizedPath === "/logout") {
+    return { kind: "settled", outcome: { kind: "allow" } };
   }
 
   // 1. Authenticated user landing on standard auth pages -> safe redirect or dashboard
@@ -401,6 +416,11 @@ function resolveRouteAccessSync({
   // 7b. Forced password change wall
   if (mustChangePassword && normalizedPath !== "/change-password") {
     return { kind: "redirect", reason: "must_change_password" };
+  }
+
+  // 7b2. Mandatory MFA enrollment wall (runs after mcp=true so forced rotation completes first)
+  if (requireMfaEnrollment && !MFA_ENROLL_ALLOWED_ROUTES.has(normalizedPath)) {
+    return { kind: "redirect", reason: "require_mfa_enrollment" };
   }
 
   // 7c. Shell-authenticated routes (non-module & Account World routes)
@@ -497,6 +517,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
   const setSubscriptionInfo = useAppStore((state) => state.setSubscriptionInfo);
   const subscriptionStatus = useAppStore((state) => state.subscriptionStatus);
   const mustChangePassword = useAppStore((state) => state.mustChangePassword);
+  const requireMfaEnrollment = useAppStore((state) => state.requireMfaEnrollment);
   const username = useAppStore((state) => state.user?.username ?? "");
 
   const { activeTenantId } = useAdminContext();
@@ -551,6 +572,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
     isAuthenticated ? "1" : "0",
     subscriptionStatus ?? "",
     mustChangePassword ? "1" : "0",
+    requireMfaEnrollment ? "1" : "0",
     routesLoaded ? "1" : "0",
     routesContextKey ?? "",
     routesError ?? "",
@@ -590,17 +612,85 @@ export function RouteGuard({ children }: RouteGuardProps) {
     hasRedirected.current = false;
   }, [normalizedPath, contextKey]);
 
-  // Cross-tab token refresh and in-memory token store coordination
+  // Cross-tab token refresh, login isolation, and in-memory token store coordination
   useEffect(() => {
-    authBroadcast.onTokenRefreshed(() => {
-      appLogger.debug("[RouteGuard] Observed cross-tab token refresh — re-checking access");
-      setCheckTrigger((prev) => prev + 1);
-    });
-    if (typeof secureTokenService.subscribe === "function") {
-      return secureTokenService.subscribe(() => {
-        setCheckTrigger((prev) => prev + 1);
+    const handlePrincipalDivergence = (incomingScope?: AuthBroadcastScope) => {
+      const { diverged, persistedKey } = detectPrincipalDivergence({
+        storeUser: useAppStore.getState().user,
+        incoming: incomingScope,
       });
+      if (!diverged) return;
+
+      appLogger.warn("[RouteGuard] Cross-tab principal divergence detected — re-synchronizing tab");
+      secureTokenService.clearTokens();
+      useNavigationStore.getState().reset();
+      useSudoStore.getState().reset();
+      usePatOneTimeSecretStore.getState().clearPendingReceipt();
+      latestDepsRef.current.queryClient.clear();
+
+      if (persistedKey) {
+        setActivePrincipalKey(persistedKey);
+        const persistApi = (useAppStore as unknown as { persist?: { rehydrate?: () => unknown } })
+          .persist;
+        if (typeof persistApi?.rehydrate === "function") {
+          void persistApi.rehydrate();
+        }
+      } else {
+        forceLogout();
+      }
+      setCheckTrigger((prev) => prev + 1);
+    };
+
+    const unsubTokenRefresh =
+      typeof authBroadcast.onTokenRefreshed === "function"
+        ? authBroadcast.onTokenRefreshed(() => {
+            appLogger.debug("[RouteGuard] Observed cross-tab token refresh — re-checking access");
+            setCheckTrigger((prev) => prev + 1);
+          })
+        : undefined;
+    const unsubLoginSuccess =
+      typeof authBroadcast.onLoginSuccess === "function"
+        ? authBroadcast.onLoginSuccess((scope) => {
+            handlePrincipalDivergence(scope);
+          })
+        : undefined;
+    const handleVisibilityOrFocus = () => {
+      if (typeof document !== "undefined" && document.visibilityState === "hidden") return;
+      handlePrincipalDivergence();
+    };
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === STORAGE_KEYS.APP_STORE) {
+        handlePrincipalDivergence();
+      }
+    };
+
+    if (typeof window !== "undefined") {
+      window.addEventListener("focus", handleVisibilityOrFocus);
+      window.addEventListener("storage", handleStorage);
     }
+    if (typeof document !== "undefined") {
+      document.addEventListener("visibilitychange", handleVisibilityOrFocus);
+    }
+
+    const unsubTokenStore =
+      typeof secureTokenService.subscribe === "function"
+        ? secureTokenService.subscribe(() => {
+            setCheckTrigger((prev) => prev + 1);
+          })
+        : undefined;
+
+    return () => {
+      if (typeof unsubTokenRefresh === "function") unsubTokenRefresh();
+      if (typeof unsubLoginSuccess === "function") unsubLoginSuccess();
+      if (typeof unsubTokenStore === "function") unsubTokenStore();
+      if (typeof window !== "undefined") {
+        window.removeEventListener("focus", handleVisibilityOrFocus);
+        window.removeEventListener("storage", handleStorage);
+      }
+      if (typeof document !== "undefined") {
+        document.removeEventListener("visibilitychange", handleVisibilityOrFocus);
+      }
+    };
   }, []);
 
   const tokenExpired =
@@ -627,6 +717,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
           hasToken,
           subscriptionStatus,
           mustChangePassword,
+          requireMfaEnrollment,
           routesError,
           canAccessPage,
           isNavSyncedForContext,
@@ -680,6 +771,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
                 : null;
             const targetPath = buildPostAuthEntryUrl({
               mustChangePassword: appState.mustChangePassword,
+              requireMfaEnrollment: appState.requireMfaEnrollment,
               subscriptionStatus: appState.subscriptionStatus,
               redirect: redirectParam,
             });
@@ -703,6 +795,10 @@ export function RouteGuard({ children }: RouteGuardProps) {
           case "must_change_password":
             appLogger.debug("[RouteGuard] Must change password → /change-password");
             navRouter.replace("/change-password");
+            return;
+          case "require_mfa_enrollment":
+            appLogger.debug("[RouteGuard] Mandatory MFA enrollment → /account/security");
+            navRouter.replace("/account/security?mfa_enroll=true");
             return;
           case "shell_pbac_denied":
             navRouter.push("/not-authorized");
@@ -746,12 +842,19 @@ export function RouteGuard({ children }: RouteGuardProps) {
               refreshData.gracePhase ?? null,
               refreshData.editionName ?? null
             );
-            useAppStore
-              .getState()
-              .setMustChangePassword(refreshData.mustChangePassword ?? false);
+            const appStoreState = useAppStore.getState();
+            appStoreState.setMustChangePassword(refreshData.mustChangePassword ?? false);
+            appStoreState.setRequireMfaEnrollment?.(refreshData.requireMfaEnrollment ?? false);
 
             const user = await authRepo.getCurrentPrincipal();
             if (user && user.id) {
+              if (!getActivePrincipalKey()) {
+                syncActivePrincipalKey({
+                  principalType: "admin",
+                  tenantId: user.tenantId ?? null,
+                  principalId: String(user.id),
+                });
+              }
               const resolvedPermissions = (user.permissions ?? []) as any[];
               const resolvedRoles = user.roles ?? [];
               commitAuth(user, resolvedPermissions, resolvedRoles);
@@ -798,6 +901,13 @@ export function RouteGuard({ children }: RouteGuardProps) {
           const user = await authRepo.getCurrentPrincipal();
           if (user && user.id) {
             appLogger.debug("[RouteGuard] Session restored");
+            if (!getActivePrincipalKey()) {
+              syncActivePrincipalKey({
+                principalType: "admin",
+                tenantId: user.tenantId ?? null,
+                principalId: String(user.id),
+              });
+            }
             const resolvedPermissions = (user.permissions ?? []) as any[];
             const resolvedRoles = user.roles ?? [];
             commitAuth(user, resolvedPermissions, resolvedRoles);

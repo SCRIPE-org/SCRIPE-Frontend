@@ -8,7 +8,7 @@
 "use client";
 
 import { useCallback } from "react";
-import { getAuthContainer } from "@modules/auth/di";
+import { useServices } from "@core/providers/service-provider";
 import type { PageState, SetupStep } from "./useAccountSetupViewModel";
 import {
   collectPasswordValidationErrors,
@@ -44,6 +44,8 @@ export interface UseAccountSetupActionsParams {
   isAttributesValid: boolean;
   activationFailedMessage: string;
   activationUnexpectedMessage: string;
+  avatarInvalidTypeMessage?: string;
+  avatarTooLargeMessage?: string;
 }
 
 /**
@@ -51,6 +53,7 @@ export interface UseAccountSetupActionsParams {
  * and final account activation submission.
  */
 export function useAccountSetupActions(params: UseAccountSetupActionsParams) {
+  const { accountSetupRepository } = useServices();
   const {
     token,
     currentStep,
@@ -77,17 +80,19 @@ export function useAccountSetupActions(params: UseAccountSetupActionsParams) {
     isAttributesValid,
     activationFailedMessage,
     activationUnexpectedMessage,
+    avatarInvalidTypeMessage = "Please select a valid image file (PNG, JPG, WEBP).",
+    avatarTooLargeMessage = "Image size must be less than 2MB.",
   } = params;
 
   const handleAvatarUpload = useCallback(
     (file: File) => {
       setAvatarError(null);
       if (!file.type.startsWith("image/")) {
-        setAvatarError("Please select a valid image file (PNG, JPG, WEBP).");
+        setAvatarError(avatarInvalidTypeMessage);
         return;
       }
       if (file.size > 2 * 1024 * 1024) {
-        setAvatarError("Image size must be less than 2MB.");
+        setAvatarError(avatarTooLargeMessage);
         return;
       }
       const reader = new FileReader();
@@ -96,7 +101,7 @@ export function useAccountSetupActions(params: UseAccountSetupActionsParams) {
       };
       reader.readAsDataURL(file);
     },
-    [setAvatarError, setProfileImageUrl]
+    [avatarInvalidTypeMessage, avatarTooLargeMessage, setAvatarError, setProfileImageUrl]
   );
 
   const removeAvatar = useCallback(() => {
@@ -130,7 +135,7 @@ export function useAccountSetupActions(params: UseAccountSetupActionsParams) {
 
     setPageState("activating");
     try {
-      const result = await getAuthContainer().accountSetupRepository.activateAccount({
+      const result = await accountSetupRepository.activateAccount({
         token,
         password,
         confirmPassword,
@@ -154,6 +159,7 @@ export function useAccountSetupActions(params: UseAccountSetupActionsParams) {
       setErrorMessage(extractAccountSetupApiError(err, activationUnexpectedMessage));
     }
   }, [
+    accountSetupRepository,
     activationFailedMessage,
     activationUnexpectedMessage,
     confirmPassword,

@@ -70,6 +70,7 @@ export function LoginView() {
   const sso = useSsoProviders({
     tenantId,
     mode: branding?.identityProviderMode ?? "inherit",
+    staySignedIn: vm.formData.staySignedIn,
     enabled: !isTenantLoading && (!isTenantExpected || isResolved),
   });
 

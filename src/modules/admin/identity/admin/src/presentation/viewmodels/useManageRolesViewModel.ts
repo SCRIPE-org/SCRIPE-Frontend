@@ -5,6 +5,12 @@ import { useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { usePermission } from "@core/hooks/use-permission";
+import { useAppStore } from "@core/store/useAppStore";
+import { isSudoCancelledError } from "@core/store/useSudoStore";
+import { useOptionalNavigation } from "@core/providers/navigation-provider";
+import { syncCurrentSessionAuthorization } from "@core/hooks/use-authorization-sync";
+import { SYSTEM_PERMISSIONS, isPlatformSuperAdminUser } from "@core/common/types/permissions";
 import { identityContainer } from "@modules/identity/di";
 import { resolveBilingualLabel } from "@core/common/utils";
 import type { GenericSelectOption } from "@core/crud/components/generic-select";
@@ -38,6 +44,17 @@ export function useManageRolesViewModel({
   const { t, language } = useI18n();
   const toast = useEnhancedToast();
   const queryClient = useQueryClient();
+  const nav = useOptionalNavigation();
+  const user = useAppStore((s) => s.user);
+  const userTenantId = user?.tenantId ?? null;
+  const isPlatformSuperAdmin = isPlatformSuperAdminUser(user);
+  const canViewTenants = usePermission(SYSTEM_PERMISSIONS.TENANTS_VIEW);
+  const useCrossTenantRolesEndpoint = Boolean(
+    scopeTenantId &&
+      (isPlatformSuperAdmin || (scopeTenantId !== userTenantId && canViewTenants))
+  );
+  const useCurrentTenantRolesEndpoint =
+    !scopeTenantId || (!useCrossTenantRolesEndpoint && scopeTenantId === userTenantId);
   const { roleRepository, adminRepository } = identityContainer;
 
   const mapRoleOption = (role: {
@@ -59,9 +76,12 @@ export function useManageRolesViewModel({
   // Fetch available roles (first page — default browse list before the admin
   // types a search query)
   const { data: rolesData, isLoading: isLoadingRoles } = useQuery({
-    queryKey: ["roles-for-manage", scopeTenantId],
+    queryKey: [
+      "roles-for-manage",
+      useCurrentTenantRolesEndpoint ? "current-tenant" : scopeTenantId,
+    ],
     queryFn: () =>
-      scopeTenantId
+      !useCurrentTenantRolesEndpoint && scopeTenantId
         ? roleRepository.getAll({
             page: 1,
             pageSize: 100,
@@ -116,15 +136,16 @@ export function useManageRolesViewModel({
       queryFn: async () => {
         const found = await Promise.all(
           missingRoleCodes.map(async (code) => {
-            const page = scopeTenantId
-              ? await roleRepository.getAll({
-                  page: 1,
-                  pageSize: 5,
-                  tenantId: scopeTenantId,
-                  search: code,
-                  strict: true,
-                })
-              : await roleRepository.getCurrentTenantRoles({ page: 1, pageSize: 5, search: code });
+            const page =
+              !useCurrentTenantRolesEndpoint && scopeTenantId
+                ? await roleRepository.getAll({
+                    page: 1,
+                    pageSize: 5,
+                    tenantId: scopeTenantId,
+                    search: code,
+                    strict: true,
+                  })
+                : await roleRepository.getCurrentTenantRoles({ page: 1, pageSize: 5, search: code });
             return page.items.find((r) => r.code === code) ?? null;
           })
         );
@@ -169,16 +190,18 @@ export function useManageRolesViewModel({
     // deliberately keep or remove) any role, not just the first 100.
     searchRoles: async (query: string): Promise<GenericSelectOption[]> => {
       try {
-        const page = scopeTenantId
-          ? await roleRepository.getAll({
-              page: 1,
-              pageSize: 50,
-              tenantId: scopeTenantId,
-              search: query,
-              strict: true,
-            })
-          : await roleRepository.getCurrentTenantRoles({ page: 1, pageSize: 50, search: query });
-        return page.items.map(mapRoleOption);
+        const page =
+          !useCurrentTenantRolesEndpoint && scopeTenantId
+            ? await roleRepository.getAll({
+                page: 1,
+                pageSize: 50,
+                tenantId: scopeTenantId,
+                search: query,
+                strict: true,
+              })
+            : await roleRepository.getCurrentTenantRoles({ page: 1, pageSize: 50, search: query });
+        const sorted = [...page.items].sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0));
+        return sorted.map(mapRoleOption);
       } catch {
         return [];
       }
@@ -193,8 +216,24 @@ export function useManageRolesViewModel({
         toast.success({ title: t("admin.role.syncSuccess") });
         queryClient.invalidateQueries({ queryKey: ["admin-roles", adminId] });
         queryClient.invalidateQueries({ queryKey: ["admins"] });
+        try {
+          await syncCurrentSessionAuthorization({
+            queryClient,
+            refreshNavigation: nav?.refreshNavigation,
+            targetTenantId: scopeTenantId || null,
+          });
+        } catch {
+          // Non-fatal: role assignment succeeded even if background auth refresh fails
+        }
         onOpenChange(false);
       } catch (error: any) {
+        if (isSudoCancelledError(error)) {
+          toast.info?.({
+            title: t("profile.sudo.cancelledTitle"),
+            description: t("profile.sudo.cancelledDescription"),
+          });
+          return;
+        }
         toast.error({ title: error?.message || t("common.error") });
       }
     },

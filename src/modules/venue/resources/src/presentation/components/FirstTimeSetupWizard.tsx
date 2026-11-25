@@ -24,6 +24,7 @@ import {
   FileCheck,
   RotateCcw,
 } from "lucide-react";
+import { resolveTenantScopedStorageKey } from "@core/common/session-cleanup-registry";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { Facility } from "@modules/venue";
 import type {
@@ -117,7 +118,7 @@ export function FirstTimeSetupWizard({
   const [finished, setFinished] = useState(false);
   const [partialResults, setPartialResults] = useState<CourtCreationResult[]>([]);
 
-  const DRAFT_STORAGE_KEY = "scripe_venue_wizard_draft";
+  const DRAFT_STORAGE_KEY = resolveTenantScopedStorageKey("scripe_venue_wizard_draft");
 
   // Restore draft from sessionStorage on mount (preserving resource IDs across browser refresh)
   useEffect(() => {

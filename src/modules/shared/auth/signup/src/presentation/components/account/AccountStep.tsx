@@ -9,10 +9,9 @@ import { Input } from "@core/ui/input";
 import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
 import { Checkbox } from "@core/ui/checkbox";
-import { PasswordInput } from "@core/ui/password-input";
-import { accountSchema } from "../../schemas/signupSchemas";
+import { buildAccountSchema } from "../../schemas/signupSchemas";
 import type { SignupWizardViewModel } from "../../viewmodels/useSignupWizard";
-import { PasswordStrengthMeter } from "./PasswordStrengthMeter";
+import { PasswordWithPolicyField } from "@core/ui/password-policy-field";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // AccountStep — the account phase (F5). Three core fields (full name, work
@@ -41,7 +40,16 @@ export function AccountStep({ wizard }: AccountStepProps) {
   const { t, direction } = useI18n();
   const { tokens } = useSignupTheme();
 
-  const { wizardData, updateField, updatePassword, passwordStrength, selectedPlan } = wizard;
+  const {
+    wizardData,
+    updateField,
+    updatePassword,
+    passwordPolicy,
+    isPasswordPolicyLoading,
+    passwordPolicyError,
+    retryPasswordPolicy,
+    selectedPlan,
+  } = wizard;
 
   // Per-field validation messages (i18n keys from the schema). Cleared on edit.
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<FieldKey, string>>>({});
@@ -58,7 +66,7 @@ export function AccountStep({ wizard }: AccountStepProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const result = accountSchema.safeParse({
+    const result = buildAccountSchema(passwordPolicy, t).safeParse({
       fullName: wizardData.fullName,
       email: wizardData.email,
       password: wizardData.password,
@@ -182,50 +190,34 @@ export function AccountStep({ wizard }: AccountStepProps) {
           )}
         </div>
 
-        {/* ── Password ── */}
-        <div className="flex flex-col gap-1.5">
-          <Label
-            htmlFor="signup-password"
-            className="text-[0.8125rem] font-medium"
-            style={{ color: tokens.inkMuted }}
-          >
-            {t("signup.account.password")}
-          </Label>
-          <PasswordInput
-            id="signup-password"
-            autoComplete="new-password"
-            placeholder={t("signup.account.passwordPlaceholder")}
-            value={wizardData.password}
-            onChange={(e) => {
-              updatePassword(e.target.value);
-              clearFieldError("password");
-            }}
-            aria-invalid={!!fieldErrors.password}
-            aria-describedby={
-              fieldErrors.password
-                ? "signup-password-error"
-                : wizardData.password.length > 0
-                  ? "signup-password-strength"
-                  : undefined
-            }
-            className="h-11"
-            style={inputStyle}
-          />
-          {fieldErrors.password ? (
-            <p
-              id="signup-password-error"
-              role="alert"
-              className="text-[0.75rem] font-medium"
-              style={errorTextStyle}
-            >
-              {t(fieldErrors.password)}
-            </p>
-          ) : (
-            wizardData.password.length > 0 && (
-              <PasswordStrengthMeter id="signup-password-strength" score={passwordStrength} />
-            )
-          )}
-        </div>
+        {/* ── Policy-driven Password ── */}
+        <PasswordWithPolicyField
+          id="signup-password"
+          label={t("signup.account.password")}
+          labelClassName="text-[0.8125rem] font-medium text-nx-ink-2"
+          className="h-11"
+          style={inputStyle}
+          value={wizardData.password}
+          onValueChange={(value) => {
+            updatePassword(value);
+            clearFieldError("password");
+          }}
+          policy={passwordPolicy}
+          policyLoading={isPasswordPolicyLoading}
+          policyError={passwordPolicyError}
+          onRetryPolicy={retryPasswordPolicy}
+          error={fieldErrors.password}
+          surface="signup"
+          alwaysShowChecklist={
+            wizardData.password.length > 0 ||
+            isPasswordPolicyLoading ||
+            Boolean(passwordPolicyError)
+          }
+          placeholder={t("signup.account.passwordPlaceholder")}
+          autoComplete="new-password"
+          t={t}
+          required
+        />
 
         {/* ── Terms ── */}
         <div className="flex flex-col gap-1.5">

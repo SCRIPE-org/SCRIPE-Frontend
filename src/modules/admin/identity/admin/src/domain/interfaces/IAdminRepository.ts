@@ -1,3 +1,4 @@
+import type { PasswordPolicyModel } from "@core/common/password-policy";
 import type { Admin } from "../entities/Admin";
 import type {
   CreateAdminRequest,
@@ -170,4 +171,9 @@ export interface IAdminRepository {
    * Resend the account setup email to an unactivated admin
    */
   resendSetupEmail(adminId: string): Promise<void>;
+
+  /**
+   * Fetch effective backend password policy for system or target tenant
+   */
+  getPasswordPolicy(tenantId?: string): Promise<PasswordPolicyModel>;
 }

@@ -21,35 +21,25 @@ import {
   hasPermission,
   hasAnyPermission,
   hasAllPermissions,
+  isPlatformSuperAdminUser,
+  isTenantSuperAdminUser,
   type PermissionCode,
 } from "@core/common/types/permissions";
-
-type SessionUser = ReturnType<typeof useAppStore.getState>["user"];
-
-function isPlatformSuperAdmin(user: SessionUser, permissions: PermissionCode[]): boolean {
-  const hasSuperAdminFlag = user !== null && "isSuperAdmin" in user && user.isSuperAdmin === true;
-
-  return (
-    hasSuperAdminFlag ||
-    user?.isProtected === true ||
-    user?.username === "superadmin" ||
-    permissions.includes("*")
-  );
-}
 
 /**
  * Check if current user has a specific permission
  * Returns true if no permission is required (undefined/empty)
  */
 export function usePermission(requiredPermission?: PermissionCode): boolean {
-  const permissions = useAppStore((state) => state.permissions);
+  const permissions = useAppStore((state) => state.permissions) ?? [];
+  const roles = useAppStore((state) => state.roles) ?? [];
   const user = useAppStore((state) => state.user);
 
   // No permission required = always allowed
   if (!requiredPermission) return true;
 
-  // Platform superadmin bypass
-  if (isPlatformSuperAdmin(user, permissions)) {
+  // Platform superadmin bypass (strictly requires !user?.tenantId)
+  if (isPlatformSuperAdminUser(user, permissions, roles)) {
     return true;
   }
 
@@ -62,10 +52,13 @@ export function usePermission(requiredPermission?: PermissionCode): boolean {
  * Useful when checking multiple permissions in a component
  */
 export function usePermissions() {
-  const permissions = useAppStore((state) => state.permissions);
+  const permissions = useAppStore((state) => state.permissions) ?? [];
+  const roles = useAppStore((state) => state.roles) ?? [];
   const user = useAppStore((state) => state.user);
 
-  const isSuperAdmin = isPlatformSuperAdmin(user, permissions);
+  const isPlatformSuperAdmin = isPlatformSuperAdminUser(user, permissions, roles);
+  const isTenantSuperAdmin = isTenantSuperAdminUser(user, roles);
+  const isSuperAdmin = isPlatformSuperAdmin;
 
   return {
     /**
@@ -106,6 +99,9 @@ export function usePermissions() {
      * Check if user is authenticated
      */
     isAuthenticated: !!user,
+    isPlatformSuperAdmin,
+    isTenantSuperAdmin,
+    isSuperAdmin,
   };
 }
 

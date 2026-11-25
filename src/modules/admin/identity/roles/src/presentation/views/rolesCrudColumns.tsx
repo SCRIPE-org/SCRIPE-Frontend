@@ -4,6 +4,7 @@
 
 import type { CrudColumn } from "@core/crud/components/generic-crud-view";
 import { Badge } from "@core/ui/badge";
+import { Lock } from "lucide-react";
 import type { Role } from "../../domain/entities/Role";
 
 /**
@@ -23,13 +24,28 @@ export function getRolesCrudColumns(
       label: t("roles.name"),
       sortable: true,
       className: "font-medium",
-      render: (_value: unknown, role: Role) => role.getLocalizedName(language),
+      render: (_value: unknown, role: Role) => (
+        <div className="flex flex-wrap items-center gap-1.5">
+          <span>{role.getLocalizedName(language)}</span>
+          {role.isPermissionLocked && (
+            <Badge
+              variant="secondary"
+              data-testid="role-locked-badge"
+              className="gap-1 shrink-0 text-[11px] font-medium"
+            >
+              <Lock className="h-3 w-3" aria-hidden="true" />
+              {t("roles.lockedBadge")}
+            </Badge>
+          )}
+        </div>
+      ),
     },
     {
       key: "code",
       label: t("roles.code"),
       sortable: true,
       className: "font-mono text-xs text-nx-ink-3",
+      render: (_value: unknown, role: Role) => <bdi dir="ltr">{role.code}</bdi>,
     },
     {
       key: "description",

@@ -13,6 +13,7 @@ import {
 import { ScrollArea } from "@core/ui/scroll-area";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
+import { useSudoStore } from "@core/store/useSudoStore";
 import { cn } from "@core/common/utils";
 
 interface GenericModalProps {
@@ -110,7 +111,7 @@ function GenericModalInner({
   // with literal colours and shadows. They are gone: every modalStyle keeps
   // its geometry and inherits the one surface.
   const getModalClasses = () => {
-    const baseClasses = "p-0 overflow-visible flex flex-col";
+    const baseClasses = "p-0 overflow-hidden flex flex-col";
 
     if (surface === "SlideOverDrawer") {
       return cn(baseClasses, "w-full h-[95dvh] max-w-md sm:max-w-lg md:max-w-xl max-h-none");
@@ -162,8 +163,19 @@ function GenericModalInner({
     }
   };
 
+  const handleOpenChange = React.useCallback(
+    (nextOpen: boolean) => {
+      // Keep parent form/modal mounted with user's edits while step-up Sudo modal is open.
+      if (!nextOpen && useSudoStore.getState().modalOpen) {
+        return;
+      }
+      onOpenChange(nextOpen);
+    },
+    [onOpenChange]
+  );
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange} modal={false}>
+    <Dialog open={open} onOpenChange={handleOpenChange} modal={false}>
       {/* modal={false} is deliberate: Radix's modal mode traps focus inside
           the panel, which breaks the body-portaled searchable-select and
           date-picker dropdowns (their search inputs live outside the trap).
@@ -183,6 +195,16 @@ function GenericModalInner({
       <DialogContent
         variant={isDrawerSurface ? "drawer" : "default"}
         className={cn(getModalClasses(), getSizeClasses())}
+        onPointerDownOutside={(e) => {
+          if (useSudoStore.getState().modalOpen) {
+            e.preventDefault();
+          }
+        }}
+        onInteractOutside={(e) => {
+          if (useSudoStore.getState().modalOpen) {
+            e.preventDefault();
+          }
+        }}
       >
         {showHeader && (
           <DialogHeader
@@ -201,11 +223,13 @@ function GenericModalInner({
           </DialogHeader>
         )}
 
-        <ScrollArea className="flex-1 min-h-0">
-          <div className={cn(sectionPaddingClasses, "pe-4", contentClassName)}>
-            {formKey ? <div key={formKey}>{children}</div> : children}
-          </div>
-        </ScrollArea>
+        <div className="min-h-0 flex-1 overflow-hidden">
+          <ScrollArea className="h-full">
+            <div className={cn(sectionPaddingClasses, "pe-4", contentClassName)}>
+              {formKey ? <div key={formKey}>{children}</div> : children}
+            </div>
+          </ScrollArea>
+        </div>
       </DialogContent>
     </Dialog>
   );

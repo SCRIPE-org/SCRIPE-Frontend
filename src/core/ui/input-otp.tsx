@@ -21,7 +21,7 @@ const InputOTP = React.forwardRef<
     // from the container: every slot takes the raised slab and ink-3 ink.
     // Dedicated tokens, not a 50% wash over the whole group.
     containerClassName={cn(
-      "flex items-center gap-2",
+      "flex max-w-full items-center gap-2 overflow-hidden",
       "has-[input:disabled]:cursor-not-allowed",
       "[&:has(input:disabled)_[data-otp-slot]]:border-nx-line [&:has(input:disabled)_[data-otp-slot]]:bg-nx-raised [&:has(input:disabled)_[data-otp-slot]]:text-nx-ink-3 [&:has(input:disabled)_[data-otp-slot]]:shadow-none",
       containerClassName

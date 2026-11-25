@@ -1,5 +1,5 @@
 import React from "react";
-import { renderHook } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { I18nProvider, useI18n } from "../i18n-provider";
 import { en as coreEn } from "@core/locales/en";
@@ -154,5 +154,28 @@ describe("I18nProvider — security, fallback interpolation & Phase C locales", 
     }
 
     expect(warnSpy).not.toHaveBeenCalled();
+  });
+
+  it("appends '; Secure' to scr_lang cookie when running over HTTPS (CK-04)", () => {
+    const cookieSpy = vi.spyOn(document, "cookie", "set");
+    const originalLocation = window.location;
+    Object.defineProperty(window, "location", {
+      configurable: true,
+      value: { ...originalLocation, protocol: "https:" },
+    });
+
+    try {
+      const { result } = renderHook(() => useI18n(), { wrapper: enWrapper });
+      act(() => {
+        result.current.setLanguage("ar");
+      });
+      const writes = cookieSpy.mock.calls.map(([val]) => String(val));
+      expect(writes.some((w) => w.includes("scr_lang=ar") && w.includes("; Secure"))).toBe(true);
+    } finally {
+      Object.defineProperty(window, "location", {
+        configurable: true,
+        value: originalLocation,
+      });
+    }
   });
 });

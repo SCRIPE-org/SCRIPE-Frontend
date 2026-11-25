@@ -17,8 +17,11 @@ export interface TenantSettings {
   // Security - Password
   passwordMinLength: number;
   passwordRequireUppercase: boolean;
+  passwordRequireLowercase: boolean;
   passwordRequireNumber: boolean;
   passwordRequireSpecial: boolean;
+  passwordHistoryCount: number;
+  checkBreachedPasswords: boolean;
   passwordExpiryDays: number | null; // null = no expiry
 
   // Security - Login
@@ -71,8 +74,11 @@ export const DEFAULT_TENANT_SETTINGS: TenantSettings = {
   maxSubTenants: -1,
   passwordMinLength: 8,
   passwordRequireUppercase: true,
+  passwordRequireLowercase: false,
   passwordRequireNumber: true,
   passwordRequireSpecial: false,
+  passwordHistoryCount: 5,
+  checkBreachedPasswords: true,
   passwordExpiryDays: null,
   loginLockoutThreshold: 5,
   loginLockoutMinutes: 15,

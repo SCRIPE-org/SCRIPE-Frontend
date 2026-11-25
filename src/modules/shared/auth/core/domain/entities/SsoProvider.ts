@@ -76,10 +76,16 @@ export interface SsoWorkspaceListItem {
   isPasswordVerified: boolean;
 }
 
-/** Domain result returned by OIDC/OAuth2/SAML callback completion. */
+/** Domain result returned by OIDC/OAuth2/SAML callback or unified handoff completion. */
 export interface SsoCallbackResult {
-  type?: "admin" | "user";
+  purpose?: "login" | "link";
+  protocol?: string | null;
+  returnOrigin?: string | null;
+  returnPath?: string | null;
+  type?: "admin" | "user" | "unknown";
   linked?: boolean;
+  handoffCode?: string | null;
+  handoffState?: string | null;
   accessToken?: string;
   refreshToken?: string;
   expiresAt?: string;
@@ -92,6 +98,7 @@ export interface SsoCallbackResult {
   twoFactorPendingToken?: string | null;
   staySignedIn?: boolean;
   mustChangePassword?: boolean;
+  requireMfaEnrollment?: boolean;
   requiresWorkspaceSelection?: boolean;
   availableWorkspaces?: SsoWorkspaceListItem[];
   token?: string;

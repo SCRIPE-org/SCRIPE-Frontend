@@ -4,22 +4,26 @@
  * Complies with the 'use' prefix naming convention for viewmodels directory.
  */
 
+import type { PasswordPolicyModel } from "@core/common/password-policy";
 import type { FieldOption } from "@core/ui/forms/generic-form";
 import type { Admin } from "../../domain/entities/Admin";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 
+export interface AdminPasswordPolicyConfig {
+  passwordPolicy: PasswordPolicyModel | null;
+  isLoading: boolean;
+  error: string | null;
+  onRetry: () => void;
+}
+
 /**
  * Hook to retrieve field configurations for admin forms.
- *
- * @param t Localizer function.
- * @param handleRoleSearch Async search function for roles.
- * @param handleGroupSearch Async search function for user groups.
- * @returns An object containing create/edit fields and initial values.
  */
 export function useAdminFieldsConfig(
   t: (key: string) => string,
   handleRoleSearch: (query: string) => Promise<FieldOption[]>,
-  handleGroupSearch: (query: string) => Promise<FieldOption[]>
+  handleGroupSearch: (query: string) => Promise<FieldOption[]>,
+  policyConfig?: AdminPasswordPolicyConfig
 ) {
   const createFields = [
     {
@@ -68,6 +72,10 @@ export function useAdminFieldsConfig(
       required: (values: Record<string, unknown>) => values.sendSetupEmail === false,
       autoComplete: "new-password",
       isVisible: (values: Record<string, unknown>) => values.sendSetupEmail === false,
+      passwordPolicy: policyConfig ? policyConfig.passwordPolicy : undefined,
+      passwordPolicyLoading: policyConfig?.isLoading,
+      passwordPolicyError: policyConfig?.error,
+      onRetryPasswordPolicy: policyConfig?.onRetry,
     },
     {
       name: "mustChangePassword",
@@ -97,7 +105,7 @@ export function useAdminFieldsConfig(
     {
       name: "email",
       label: t("admin.email"),
-      type: "text" as const,
+      type: "email" as const,
       placeholder: t("admin.emailPlaceholder"),
       required: (values: Record<string, unknown>) => values.sendSetupEmail !== false,
     },
@@ -131,7 +139,7 @@ export function useAdminFieldsConfig(
     {
       name: "email",
       label: t("admin.email"),
-      type: "text" as const,
+      type: "email" as const,
       placeholder: t("admin.emailPlaceholder"),
     },
     {

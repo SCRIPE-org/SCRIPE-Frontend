@@ -37,6 +37,8 @@ export interface SectionInfoPopoverProps {
   testId?: string;
   /** Optional trigger className override. */
   className?: string;
+  /** Optional content className override (e.g. z-sudo-popover when rendered inside Sudo modal). */
+  contentClassName?: string;
 }
 
 /** Accessible `(i)` contextual help popover for security, compliance, and workstation sections. */
@@ -50,6 +52,7 @@ export function SectionInfoPopover({
   side = "bottom",
   testId,
   className,
+  contentClassName,
 }: SectionInfoPopoverProps) {
   const { t } = useI18n();
 
@@ -79,7 +82,10 @@ export function SectionInfoPopover({
       <PopoverContent
         align={align}
         side={side}
-        className="w-80 sm:w-96 p-4 space-y-3 text-xs border-nx-line bg-nx-popover text-nx-ink"
+        className={cn(
+          "w-80 sm:w-96 p-4 space-y-3 text-xs border-nx-line bg-nx-popover text-nx-ink",
+          contentClassName
+        )}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center gap-2 pb-2 border-b border-nx-line">

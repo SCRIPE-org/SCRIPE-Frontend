@@ -1,6 +1,7 @@
 "use client";
 
 import { useI18n } from "@core/providers/i18n-provider";
+import { sanitizeHttpUrl } from "@core/common/sanitize";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
@@ -118,19 +119,23 @@ export function RegulationCard({ regulation, onEdit }: RegulationCardProps) {
         </div>
       </CardContent>
 
-      {regulation.referenceUrl && (
-        <div className="border-t border-nx-line px-6 py-3 text-end">
-          <a
-            href={regulation.referenceUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center rounded-nx-sm text-xs font-medium text-nx-accent transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
-          >
-            {t("compliance.regulations.viewOfficialDocs")}
-            <ExternalLink className="ms-1 h-3 w-3 shrink-0" aria-hidden="true" />
-          </a>
-        </div>
-      )}
+      {(() => {
+        const safeReferenceUrl = sanitizeHttpUrl(regulation.referenceUrl);
+        if (!safeReferenceUrl) return null;
+        return (
+          <div className="border-t border-nx-line px-6 py-3 text-end">
+            <a
+              href={safeReferenceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center rounded-nx-sm text-xs font-medium text-nx-accent transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
+            >
+              {t("compliance.regulations.viewOfficialDocs")}
+              <ExternalLink className="ms-1 h-3 w-3 shrink-0" aria-hidden="true" />
+            </a>
+          </div>
+        );
+      })()}
     </Card>
   );
 }

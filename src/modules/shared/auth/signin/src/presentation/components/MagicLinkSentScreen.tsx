@@ -155,9 +155,8 @@ export function MagicLinkSentScreen({ email, onBack, onResend, isRTL }: MagicLin
           className="flex items-center justify-center gap-1.5 py-2 text-[13px] font-medium transition-colors"
           style={{ color: "var(--sx-text-mute, hsl(var(--muted-foreground)))" }}
         >
-          {isRTL ? null : <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />}
+          <ArrowLeft className="h-3.5 w-3.5 rtl:rotate-180" aria-hidden="true" />
           {t("auth.magicLink.backToLogin")}
-          {isRTL ? <ArrowLeft className="h-3.5 w-3.5 rotate-180" aria-hidden="true" /> : null}
         </Button>
       </div>
     </div>

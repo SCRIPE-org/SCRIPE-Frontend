@@ -20,6 +20,7 @@ const { mockUseParams, mockRouterPush, mockCreate, mockUpdate, mockGetById } = v
 vi.mock("next/navigation", () => ({
   useParams: mockUseParams,
   useRouter: () => ({ push: mockRouterPush }),
+  useSearchParams: () => new URLSearchParams(),
 }));
 
 vi.mock("@core/providers/i18n-provider", () => ({

@@ -17,19 +17,27 @@ export interface SsoProviderDto {
 
 /**
  * Raw API DTO returned when initiating an OIDC/OAuth2 challenge.
+ * Under Central OIDC callback mode (`EnableCentralOidcGetCallback`), `codeVerifier`
+ * is kept server-side and omitted from this response (`SEC-FED-01`).
  */
 export interface SsoChallengeDto {
   authorizationUrl: string;
-  codeVerifier: string;
-  state: string;
+  codeVerifier?: string | null;
+  state?: string | null;
 }
 
 /**
- * Raw API DTO returned by OIDC/SAML callback endpoints.
+ * Raw API DTO returned by OIDC/SAML callback or `/api/v1/auth/sso/handoff` endpoints.
  */
 export interface SsoCallbackResultDto {
-  type?: "admin" | "user";
+  purpose?: "login" | "link";
+  protocol?: string | null;
+  returnOrigin?: string | null;
+  returnPath?: string | null;
+  type?: "admin" | "user" | "unknown";
   linked?: boolean;
+  handoffCode?: string | null;
+  handoffState?: string | null;
   accessToken?: string;
   refreshToken?: string;
   expiresAt?: string;
@@ -42,6 +50,7 @@ export interface SsoCallbackResultDto {
   twoFactorPendingToken?: string | null;
   staySignedIn?: boolean;
   mustChangePassword?: boolean;
+  requireMfaEnrollment?: boolean;
   requiresWorkspaceSelection?: boolean;
   availableWorkspaces?: {
     tenantId: string;

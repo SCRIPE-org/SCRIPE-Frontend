@@ -1,22 +1,23 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Mail, CheckCircle } from "lucide-react";
-import type { useForgotPasswordViewModel } from "../viewmodels/useForgotPasswordViewModel";
+import type { UsePasswordRecoveryViewModelReturn } from "../viewmodels/usePasswordRecoveryViewModel";
 
 interface SuccessStepProps {
-  vm: ReturnType<typeof useForgotPasswordViewModel>;
+  vm: UsePasswordRecoveryViewModelReturn;
 }
 
 /**
- * Presentation UI component rendering the success step.
- * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ * Shared completion step for both magic-link dispatch confirmation and password reset success.
+ * Preserves validated context (`_tenant`, `redirect`, `email`, `reset=success`) and ensures
+ * any previous session purge runs before returning to `/login`.
  */
 export function SuccessStep({ vm }: SuccessStepProps) {
   const { t } = useI18n();
+  const isMagicLinkSent = vm.successReason === "magic-link-sent";
 
   return (
     <div className="sx-pop flex flex-col items-center gap-6 text-center">
@@ -27,37 +28,41 @@ export function SuccessStep({ vm }: SuccessStepProps) {
           border: "1px solid hsl(var(--success) / 0.25)",
         }}
       >
-        {vm.method === "magic-link" ? (
-          <Mail className="h-7 w-7 text-success" aria-hidden="true" />
+        {isMagicLinkSent ? (
+          <Mail className="h-7 w-7 text-nx-success" aria-hidden="true" />
         ) : (
-          <CheckCircle className="h-7 w-7 text-success" aria-hidden="true" />
+          <CheckCircle className="h-7 w-7 text-nx-success" aria-hidden="true" />
         )}
       </div>
       <div className="space-y-1.5">
-        <h2 className="text-xl font-semibold tracking-tight" style={{ color: "var(--sx-text)" }}>
-          {vm.method === "magic-link" ? t("auth.magicLinkSentTitle") : t("auth.resetSuccessTitle")}
-        </h2>
+        <h1 className="text-xl font-semibold tracking-tight" style={{ color: "var(--sx-text)" }}>
+          {isMagicLinkSent ? t("auth.magicLinkSentTitle") : t("auth.resetSuccessTitle")}
+        </h1>
         <p className="text-[13px] leading-relaxed" style={{ color: "var(--sx-text-mute)" }}>
-          {vm.method === "magic-link"
+          {isMagicLinkSent
             ? t("auth.magicLinkSentSubtitle").replace("{{email}}", vm.email)
             : t("auth.resetSuccessSubtitle")}
         </p>
       </div>
       <div className="flex w-full flex-col gap-2.5">
-        <Link href="/login" className="block">
-          <Button className="h-12 w-full rounded-xl text-[15px] font-semibold text-nx-on-fill transition-all active:scale-[0.985]">
-            {vm.method === "magic-link" ? t("auth.backToLogin") : t("auth.goToLogin")}
-          </Button>
-        </Link>
         <Button
           type="button"
-          variant="ghost"
-          onClick={vm.restart}
-          className="h-11 w-full rounded-xl text-[13px] font-medium transition-colors"
-          style={{ color: "var(--sx-text-mute)" }}
+          onClick={() => void vm.goToLogin()}
+          className="h-12 w-full rounded-xl text-[15px] font-semibold text-nx-on-fill transition-all active:scale-[0.985]"
         >
-          {t("auth.tryAnotherEmail")}
+          {isMagicLinkSent ? t("auth.backToLogin") : t("auth.goToLogin")}
         </Button>
+        {vm.mode === "forgot" && (
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={vm.restart}
+            className="h-11 w-full rounded-xl text-[13px] font-medium transition-colors"
+            style={{ color: "var(--sx-text-mute)" }}
+          >
+            {t("auth.tryAnotherEmail")}
+          </Button>
+        )}
       </div>
     </div>
   );

@@ -14,6 +14,7 @@ import { authBroadcast } from "@core/common/broadcast-auth";
 import { STORAGE_KEYS } from "../config/storage-keys";
 import { DownloadInterceptedError, isExternalAbort } from "../errors/download-intercepted";
 import { translateCore } from "@core/common/i18n-outside-react";
+import { isExternalCustomDomain } from "@core/common/origin-routing";
 import { useSudoStore } from "@core/store/useSudoStore";
 
 /**
@@ -97,6 +98,7 @@ if (typeof window !== "undefined") {
 export function buildRequestSecurityHeaders(options?: {
   tenantContextId?: string | null;
   isMutating?: boolean;
+  url?: string;
 }): Record<string, string> {
   const headers: Record<string, string> = {
     "Accept-Language": cachedLanguage,
@@ -116,9 +118,11 @@ export function buildRequestSecurityHeaders(options?: {
     }
   }
 
-  const sudoToken = useSudoStore.getState().getValidSudoToken();
-  if (sudoToken) {
-    headers["X-Sudo-Token"] = sudoToken;
+  if (!String(options?.url ?? "").includes("/auth/sudo/")) {
+    const sudoToken = useSudoStore.getState().getValidSudoToken();
+    if (sudoToken) {
+      headers["X-Sudo-Token"] = sudoToken;
+    }
   }
 
   return headers;
@@ -189,7 +193,7 @@ export class ApiService implements IApiService {
         Accept: "application/json",
         "ngrok-skip-browser-warning": "true",
       },
-      withCredentials: true, // equivalent to credentials: 'include'
+      withCredentials: !isExternalCustomDomain(), // omit 3rd-party cookies on external custom domains
     });
 
     // Public instance (no auth interceptors)
@@ -200,10 +204,17 @@ export class ApiService implements IApiService {
         Accept: "application/json",
         "ngrok-skip-browser-warning": "true",
       },
-      withCredentials: true,
+      withCredentials: !isExternalCustomDomain(),
     });
 
     this.setupInterceptors();
+  }
+
+  private resolveRequestWithCredentials(url?: string): boolean {
+    if (!isExternalCustomDomain()) {
+      return true;
+    }
+    return Boolean(url && url.startsWith("/api/auth/session/"));
   }
 
   /**
@@ -213,6 +224,7 @@ export class ApiService implements IApiService {
     // Request interceptor - add auth token and tenant context
     this.axiosInstance.interceptors.request.use(
       (config: InternalAxiosRequestConfig) => {
+        config.withCredentials = this.resolveRequestWithCredentials(config.url);
         const token = this.getAuthToken();
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
@@ -225,8 +237,12 @@ export class ApiService implements IApiService {
         const securityHeaders = buildRequestSecurityHeaders({
           tenantContextId: this.tenantContextId,
           isMutating,
+          url: config.url,
         });
         for (const [headerName, headerValue] of Object.entries(securityHeaders)) {
+          if (headerName === "X-Sudo-Token" && config.headers?.["X-Sudo-Token"]) {
+            continue;
+          }
           config.headers[headerName] = headerValue;
         }
         if (this.tenantContextId) {
@@ -395,7 +411,10 @@ export class ApiService implements IApiService {
           if (
             (data.errorCode === "Identity.SudoRequired" ||
               data.errorCode === "Identity.SudoExpired" ||
-              data.errorCode === "Identity.SudoSessionMismatch") &&
+              data.errorCode === "Identity.SudoSessionMismatch" ||
+              data.errorCode === "Identity.SudoRevokedOrExpired" ||
+              data.errorCode === "Identity.SudoPolicyDowngradeRefused" ||
+              data.errorCode === "Identity.SudoTokenInvalid") &&
             requestConfig &&
             !requestConfig._sudoRetry &&
             !String(requestConfig.url ?? "").includes("/auth/sudo/")
@@ -481,6 +500,7 @@ export class ApiService implements IApiService {
 
     // Public instance - log requests and add Accept-Language
     this.axiosPublic.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+      config.withCredentials = this.resolveRequestWithCredentials(config.url);
       // P1.5: Use cached language instead of reading localStorage per request
       config.headers["Accept-Language"] = cachedLanguage;
 
@@ -996,7 +1016,7 @@ export class ApiService implements IApiService {
     const response = await this.put<T>(endpoint, data, signal);
 
     // If 204 No Content, fetch updated data
-    if (response === null) {
+    if (response == null || response === "") {
       appLogger.api("204 response, fetching updated data...");
       const refreshUrl = refreshEndpoint || endpoint;
       return this.get<T>(refreshUrl, undefined, signal);

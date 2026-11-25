@@ -70,8 +70,12 @@ describe("Checkbox, Input, Textarea, and OtpInputField Phase C contracts", () =>
 
   it("renders OtpInputField nexus and glass slots with >=3:1 borders and reduced-motion guards", () => {
     const { container, rerender } = render(<OtpInputField value="12" onChange={vi.fn()} />);
+    const otpContainer = container.querySelector("[data-input-otp-container]") as HTMLElement | null;
+    expect(otpContainer?.className ?? "").toContain("overflow-hidden");
+    expect(otpContainer?.className ?? "").toContain("max-w-full");
     const slots = container.querySelectorAll("[data-otp-slot]");
     expect(slots).toHaveLength(6);
+    expect(slots[0].className).toContain("w-9");
     expect(slots[0].className).toContain("bg-nx-accent-wash");
     expect(slots[3].className).toContain("border-nx-line-hi");
     expect(slots[3].className).toContain("motion-reduce:transition-none");

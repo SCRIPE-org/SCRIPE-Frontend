@@ -113,4 +113,29 @@ describe("RoleInfoCard — human-readable landing target formatting", () => {
     expect(screen.queryByText("menu:retired-slug")).not.toBeInTheDocument();
     expect(screen.getByText("roles.landingTargetUnavailablePage")).toBeInTheDocument();
   });
+
+  it("clamps permission coverage progress bar to 100 even if selectedCount exceeds totalCount", () => {
+    render(
+      <RoleInfoCard
+        role={
+          {
+            getLocalizedName: () => "Director",
+            code: "DIRECTOR",
+            getLocalizedDescription: () => "",
+            priority: 10,
+            defaultLandingTarget: null,
+            isLandingEnforced: false,
+            hasGroups: false,
+            getLocalizedGroups: () => [],
+          } as never
+        }
+        isLoading={false}
+        selectedCount={90}
+        totalCount={10}
+      />
+    );
+
+    const progressbar = screen.getByRole("progressbar");
+    expect(progressbar).toHaveAttribute("aria-valuenow", "100");
+  });
 });

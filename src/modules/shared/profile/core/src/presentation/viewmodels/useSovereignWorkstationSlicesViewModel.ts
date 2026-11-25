@@ -6,6 +6,7 @@
  */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { container } from "@modules/profile/di";
+import { useAppStore } from "@core/store/useAppStore";
 import type {
   SovereignNotificationsSlice,
   SovereignPreferencesSlice,
@@ -16,9 +17,11 @@ import { sovereignAccountKeys } from "../utils/sovereignAccountKeys";
 /** Queries and updates workstation visual and ergonomics preferences. */
 export function useSovereignPreferencesSlice() {
   const qc = useQueryClient();
+  const requireMfaEnrollment = useAppStore((s) => s.requireMfaEnrollment);
   const query = useQuery({
     queryKey: sovereignAccountKeys.preferences(),
     queryFn: () => container.sovereignAccountRepository.getPreferences(),
+    enabled: !requireMfaEnrollment,
   });
   const updateMutation = useMutation({
     mutationFn: (data: Partial<SovereignPreferencesSlice>) =>
@@ -56,9 +59,11 @@ export function useAccountPreferencesSliceViewModel() {
 /** Queries notification routing rules and exposes read/test/delete alert mutations. */
 export function useSovereignNotificationsSlice() {
   const qc = useQueryClient();
+  const requireMfaEnrollment = useAppStore((s) => s.requireMfaEnrollment);
   const query = useQuery({
     queryKey: sovereignAccountKeys.notifications(),
     queryFn: () => container.sovereignAccountRepository.getNotifications(),
+    enabled: !requireMfaEnrollment,
   });
   const updateMutation = useMutation({
     mutationFn: (data: Partial<SovereignNotificationsSlice>) =>
@@ -133,11 +138,13 @@ export function useAccountNotificationsSliceViewModel() {
 }
 
 /** Queries tenant edition entitlements and submits upgrade or role-access requests. */
-export function useSovereignPlanSlice() {
+export function useSovereignPlanSlice(options?: { enabled?: boolean }) {
   const qc = useQueryClient();
+  const requireMfaEnrollment = useAppStore((s) => s.requireMfaEnrollment);
   const query = useQuery({
     queryKey: sovereignAccountKeys.plan(),
     queryFn: () => container.sovereignAccountRepository.getPlan(),
+    enabled: !requireMfaEnrollment && (options?.enabled ?? true),
   });
   const requestMutation = useMutation({
     mutationFn: ({ type, code, notes }: { type: string; code: string; notes?: string }) =>
@@ -148,8 +155,9 @@ export function useSovereignPlanSlice() {
 }
 
 /** Presentation ViewModel exposing active plan quotas and feature upgrade requests. */
-export function useAccountPlanSliceViewModel() {
-  const { data, isLoading, isError, error, refetch, requestMutation } = useSovereignPlanSlice();
+export function useAccountPlanSliceViewModel(options?: { enabled?: boolean }) {
+  const { data, isLoading, isError, error, refetch, requestMutation } =
+    useSovereignPlanSlice(options);
   return {
     plan: data,
     isLoadingPlan: isLoading,
@@ -165,9 +173,11 @@ export function useAccountPlanSliceViewModel() {
 /** Queries linked SSO providers and personal access tokens with CRUD mutations. */
 export function useSovereignIntegrationsSlice() {
   const qc = useQueryClient();
+  const requireMfaEnrollment = useAppStore((s) => s.requireMfaEnrollment);
   const query = useQuery({
     queryKey: sovereignAccountKeys.integrations(),
     queryFn: () => container.sovereignAccountRepository.getIntegrations(),
+    enabled: !requireMfaEnrollment,
   });
   const createMutation = useMutation({
     mutationFn: (

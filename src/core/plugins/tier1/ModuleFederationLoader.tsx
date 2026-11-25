@@ -5,6 +5,10 @@ import { Skeleton } from "@core/ui/skeleton";
 import { ErrorMessage } from "@core/ui/error-message";
 import { useI18n } from "@core/providers/i18n-provider";
 import { buildRemoteEntryUrl } from "./federation-config";
+import {
+  isSafeFederationIdentifier,
+  validateExternalPluginOriginUrl,
+} from "@core/common/postmessage-security";
 import { appLogger } from "@/core/common/logger";
 
 interface ModuleFederationLoaderProps {
@@ -38,19 +42,37 @@ export function ModuleFederationLoader({
   // log where it belongs.
   const [hasError, setHasError] = useState(false);
 
-  useEffect(() => {
-    const remoteEntryUrl = buildRemoteEntryUrl(baseUrl, pluginKey);
-    const remoteScope = scope ?? pluginKey.replace(/-/g, "_");
+  let validatedConfig: { remoteEntryUrl: string; remoteScope: string } | null = null;
+  const remoteScopeCandidate = scope ?? pluginKey.replace(/-/g, "_");
+  if (
+    isSafeFederationIdentifier(remoteScopeCandidate) &&
+    exposedModule.startsWith("./") &&
+    !exposedModule.includes("..")
+  ) {
+    try {
+      validatedConfig = {
+        remoteEntryUrl: buildRemoteEntryUrl(baseUrl, pluginKey),
+        remoteScope: remoteScopeCandidate,
+      };
+    } catch {
+      validatedConfig = null;
+    }
+  }
 
+  const remoteEntryUrl = validatedConfig?.remoteEntryUrl ?? null;
+  const remoteScope = validatedConfig?.remoteScope ?? null;
+
+  useEffect(() => {
+    if (!remoteEntryUrl || !remoteScope) return;
     loadFederatedModule(remoteEntryUrl, remoteScope, exposedModule)
       .then((Component) => setPluginComponent(() => Component))
       .catch((err) => {
         appLogger.error(`[PluginLoader] Failed to load Tier 1 plugin "${pluginKey}"`, err);
         setHasError(true);
       });
-  }, [pluginKey, baseUrl, scope, exposedModule]);
+  }, [pluginKey, exposedModule, remoteEntryUrl, remoteScope]);
 
-  if (hasError) {
+  if (!validatedConfig || hasError) {
     return (
       <ErrorMessage size="sm" message={t("errors.plugin.loadFailed", { plugin: pluginKey })} />
     );
@@ -103,17 +125,24 @@ async function loadFederatedModule(
 
 function loadScript(url: string): Promise<void> {
   return new Promise((resolve, reject) => {
-    const existing = document.querySelector(`script[src="${url}"]`);
+    const parsed = validateExternalPluginOriginUrl(url);
+    if (!parsed) {
+      reject(new Error(`Rejected unsafe plugin script URL: ${url}`));
+      return;
+    }
+    const safeSrc = parsed.toString();
+    const existing = Array.from(document.scripts).some((s) => s.src === safeSrc);
     if (existing) {
       resolve();
       return;
     }
     const script = document.createElement("script");
-    script.src = url;
+    script.src = safeSrc;
     script.type = "text/javascript";
     script.async = true;
+    script.crossOrigin = "anonymous";
     script.onload = () => resolve();
-    script.onerror = () => reject(new Error(`Failed to load script: ${url}`));
+    script.onerror = () => reject(new Error(`Failed to load script: ${safeSrc}`));
     document.head.appendChild(script);
   });
 }

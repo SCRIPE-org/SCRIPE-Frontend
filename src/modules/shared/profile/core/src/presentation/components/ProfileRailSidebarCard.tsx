@@ -7,6 +7,7 @@
  * extracted from `ProfileRailLayout`.
  */
 import { useI18n } from "@core/providers/i18n-provider";
+import { useAppStore } from "@core/store/useAppStore";
 import { Avatar, AvatarFallback, AvatarImage } from "@core/ui/avatar";
 import { Badge } from "@core/ui/badge";
 import { Card } from "@core/ui/card";
@@ -128,21 +129,29 @@ export function ProfileRailIdentityCard({
   onSwitchAcademy,
 }: ProfileRailIdentityCardProps) {
   const { t } = useI18n();
-  const fullName = profile
-    ? `${profile.firstName ?? ""} ${profile.lastName ?? ""}`.trim() || profile.username || ""
-    : "";
-  const initials = profile
-    ? `${profile.firstName?.[0] || ""}${profile.lastName?.[0] || ""}`.toUpperCase() ||
-      profile.username?.slice(0, 2).toUpperCase() ||
+  const authUser = useAppStore((s) => s.user);
+  const identitySource = profile ?? authUser;
+  const fullName = identitySource
+    ? `${identitySource.firstName ?? ""} ${identitySource.lastName ?? ""}`.trim() ||
+      identitySource.username ||
+      identitySource.email ||
       ""
     : "";
+  const initials = identitySource
+    ? `${identitySource.firstName?.[0] || ""}${identitySource.lastName?.[0] || ""}`.toUpperCase() ||
+      identitySource.username?.slice(0, 2).toUpperCase() ||
+      identitySource.email?.slice(0, 2).toUpperCase() ||
+      ""
+    : "";
+  const avatarUrl = profile?.profileImageUrl ?? authUser?.profileImageUrl ?? null;
+  const username = profile?.username ?? authUser?.username ?? null;
 
   return (
     <Card className="rounded-xl border border-nx-line bg-nx-surface p-4 hover:border-nx-line-hi transition-colors">
       <div className="flex items-center gap-3.5">
-        {profile ? (
+        {identitySource ? (
           <Avatar className="h-12 w-12 border border-nx-line shrink-0">
-            {profile.profileImageUrl && <AvatarImage src={profile.profileImageUrl} alt={fullName} />}
+            {avatarUrl && <AvatarImage src={avatarUrl} alt={fullName} />}
             <AvatarFallback className="bg-nx-accent-wash text-nx-accent font-bold text-sm">
               {initials || <User className="h-5 w-5" aria-hidden="true" />}
             </AvatarFallback>
@@ -151,14 +160,14 @@ export function ProfileRailIdentityCard({
           <Skeleton shape="circle" className="h-12 w-12 shrink-0" />
         )}
         <div className="min-w-0 flex-1">
-          {profile ? (
+          {identitySource ? (
             <h3 className="font-bold text-nx-ink text-sm truncate">{fullName}</h3>
           ) : (
             <Skeleton shape="text" className="h-4 w-28" />
           )}
-          {profile?.username && (
+          {username && (
             <p className="text-xs text-nx-ink-3 truncate font-mono">
-              <bdi dir="ltr">@{profile.username}</bdi>
+              <bdi dir="ltr">@{username}</bdi>
             </p>
           )}
           <div className="mt-1 flex items-center gap-1.5">

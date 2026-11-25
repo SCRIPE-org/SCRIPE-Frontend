@@ -20,6 +20,7 @@ import { GenericModal } from "@core/crud/components/generic-modal";
 import { GenericSelect, type GenericSelectOption } from "@core/crud/components/generic-select";
 import { Users } from "lucide-react";
 import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
+import { useSudoStore } from "@core/store/useSudoStore";
 import { useAssignToGroupViewModel } from "../viewmodels/useAssignToGroupViewModel";
 
 interface AssignToGroupDialogProps {
@@ -92,17 +93,20 @@ export function AssignToGroupDialog({
     });
   }, [open, tenantId, useMyTenant, currentUserTenantId]);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (mode === "admin") {
       const targetAdminIds = adminIds ?? (adminId ? [adminId] : []);
-      vm.addMembers(targetAdminIds, selectedGroupIds);
+      await vm.addMembers(targetAdminIds, selectedGroupIds);
     } else {
       const targetRoleIds = roleIds ?? (roleId ? [roleId] : []);
-      vm.addRoles(targetRoleIds, selectedGroupIds);
+      await vm.addRoles(targetRoleIds, selectedGroupIds);
     }
   };
 
   const handleClose = (v: boolean) => {
+    if (!v && useSudoStore.getState().modalOpen) {
+      return;
+    }
     if (!v) setSelectedGroupIds([]);
     onOpenChange(v);
   };

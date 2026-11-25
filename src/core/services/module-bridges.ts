@@ -64,3 +64,20 @@ export async function saveTenantDisplayPrefs(preferencesJson: string): Promise<v
   const { customizationContainer } = await import("@modules/customization/di");
   await customizationContainer.customizationService.saveTenantDisplayPrefs(preferencesJson);
 }
+
+/**
+ * Resolves the auth repository lazily through a dynamic module bridge so ViewModels
+ * can refresh the current principal without violating cross-module static import rules.
+ *
+ * @returns Auth repository exposing `getCurrentPrincipal`, or `null` in isolated test harnesses.
+ */
+export async function getAuthRepository(): Promise<
+  import("@core/hooks/use-authorization-sync").PrincipalRefreshRepository | null
+> {
+  try {
+    const { authContainer } = await import("@modules/auth/di");
+    return authContainer?.authRepository ?? null;
+  } catch {
+    return null;
+  }
+}

@@ -19,8 +19,11 @@
  * @module auth/data
  */
 import { secureTokenService } from "@core/common/secure-token-service";
+import { clearActivePrincipalKey } from "@core/common/active-principal";
+import { mapPasswordPolicyDto, type PasswordPolicyModel } from "@core/common/password-policy";
 import { authBroadcast } from "@core/common/broadcast-auth";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
+import { useAppStore } from "@core/store/useAppStore";
 import { LoginRequest, LoginResponse } from "../../domain/entities/Auth";
 import { User } from "../../domain/entities/User";
 import type {
@@ -34,7 +37,11 @@ import { LoginRequestModel, type UserProfileJson } from "../models/AuthModel";
 import { getBrowserDeviceInfo } from "../utils/browser-device-info";
 import { Verify2FARequestModel } from "../models/TwoFactorModels";
 import type { IAuthService } from "../../domain/interfaces/IAuthService";
-import type { IAuthRepository, LoginResult } from "../../domain/interfaces/IAuthRepository";
+import type {
+  IAuthRepository,
+  LoginResult,
+  Verify2FAOptions,
+} from "../../domain/interfaces/IAuthRepository";
 import { WorkspaceInfo } from "../../domain/entities/WorkspaceInfo";
 import { Result } from "@core/common/types/result";
 import {
@@ -123,6 +130,7 @@ export class AuthRepository implements IAuthRepository {
       return {
         user,
         mustChangePassword: responseModel.mustChangePassword ?? false,
+        requireMfaEnrollment: responseModel.requireMfaEnrollment ?? false,
         subscriptionStatus: responseModel.subscriptionStatus ?? null,
         gracePhase: responseModel.gracePhase ?? null,
         editionName: responseModel.editionName ?? null,
@@ -133,7 +141,8 @@ export class AuthRepository implements IAuthRepository {
   }
 
   /**
-   * Verify 2FA code during login (supports both password-based and passwordless pending-token flows).
+   * Verify 2FA code during login (supports both password-based and passwordless pending-token flows,
+   * including post-MFA cross-origin handoff bridging back to verified custom domains).
    */
   async verify2FA(
     identifier: string,
@@ -141,7 +150,8 @@ export class AuthRepository implements IAuthRepository {
     code: string,
     tenantId?: string,
     twoFactorPendingToken?: string | null,
-    staySignedIn: boolean = false
+    staySignedIn: boolean = false,
+    options?: Verify2FAOptions
   ): Promise<LoginResult> {
     const requestModel = new Verify2FARequestModel(
       identifier,
@@ -149,11 +159,32 @@ export class AuthRepository implements IAuthRepository {
       code,
       tenantId,
       twoFactorPendingToken ?? null,
-      staySignedIn
+      staySignedIn,
+      options?.returnOrigin ?? null,
+      options?.returnPath ?? null,
+      options?.principalType ?? "admin"
     );
     const responseModel = await this.service.verify2FA(requestModel);
 
     appLogger.auth("2FA verification successful");
+
+    if (responseModel.handoffCode && responseModel.handoffState && responseModel.returnOrigin) {
+      return {
+        user: AuthMapper.userFromUnknown(responseModel.userProfile) ?? (null as unknown as User),
+        mustChangePassword: responseModel.mustChangePassword ?? false,
+        requireMfaEnrollment: responseModel.requireMfaEnrollment ?? false,
+        subscriptionStatus: responseModel.subscriptionStatus ?? null,
+        gracePhase: responseModel.gracePhase ?? null,
+        editionName: responseModel.editionName ?? null,
+        defaultRedirectPath: responseModel.returnPath ?? responseModel.defaultRedirectPath ?? "/",
+        handoff: {
+          code: responseModel.handoffCode,
+          state: responseModel.handoffState,
+          returnOrigin: responseModel.returnOrigin,
+          returnPath: responseModel.returnPath ?? null,
+        },
+      };
+    }
 
     if (responseModel.accessToken) {
       secureTokenService.setAccessToken(responseModel.accessToken);
@@ -169,6 +200,7 @@ export class AuthRepository implements IAuthRepository {
       return {
         user,
         mustChangePassword: responseModel.mustChangePassword ?? false,
+        requireMfaEnrollment: responseModel.requireMfaEnrollment ?? false,
         subscriptionStatus: responseModel.subscriptionStatus ?? null,
         gracePhase: responseModel.gracePhase ?? null,
         editionName: responseModel.editionName ?? null,
@@ -178,14 +210,24 @@ export class AuthRepository implements IAuthRepository {
     throw new Error("2FA verification failed: No access token received.");
   }
 
-  async logout(): Promise<void> {
+  async logout(logoutScope: "app" | "central" = "app"): Promise<void> {
+    const appState = useAppStore.getState();
+    const scope = {
+      origin: typeof window !== "undefined" ? window.location.origin : undefined,
+      tenantId: appState.user?.tenantId ?? null,
+      tenantCode: appState.tenantCode ?? null,
+      principalId: appState.user?.id ? String(appState.user.id) : null,
+      principalType: "admin" as const,
+      logoutScope,
+    };
     try {
-      await this.service.logout();
+      await this.service.logout(logoutScope);
     } catch (error) {
       appLogger.warn("Logout API call failed, clearing tokens locally:", error);
     } finally {
+      clearActivePrincipalKey();
       clearAllLocalStorage();
-      authBroadcast.broadcastLogout();
+      authBroadcast.broadcastLogout(scope);
     }
   }
 
@@ -227,7 +269,14 @@ export class AuthRepository implements IAuthRepository {
 
         if (responseModel.isSuccessful) {
           secureTokenService.setAccessToken(responseModel.accessToken);
-          authBroadcast.broadcastTokenRefreshed(responseModel.accessToken);
+          const appState = useAppStore.getState();
+          authBroadcast.broadcastTokenRefreshed(responseModel.accessToken, undefined, {
+            origin: typeof window !== "undefined" ? window.location.origin : undefined,
+            tenantId: appState.user?.tenantId ?? null,
+            tenantCode: appState.tenantCode ?? null,
+            principalId: appState.user?.id ? String(appState.user.id) : null,
+            principalType: "admin",
+          });
           const loginResponse = AuthMapper.loginResponseFromModel(responseModel);
           return Result.ok(loginResponse);
         }
@@ -290,24 +339,17 @@ export class AuthRepository implements IAuthRepository {
 
   buildOidcConsentForm(
     searchParams: URLSearchParams,
-    accessToken: string,
     decision: "approve" | "deny" = "approve"
   ): { action: string; params: Record<string, string> } {
-    return this.impersonation.buildOidcConsentForm(searchParams, accessToken, decision);
+    return this.impersonation.buildOidcConsentForm(searchParams, decision);
+  }
+
+  buildOidcAuthorizeUrl(searchParams: URLSearchParams): string {
+    return this.impersonation.buildOidcAuthorizeUrl(searchParams);
   }
 
   buildOidcLogoutUrl(searchParams: URLSearchParams): string {
     return this.impersonation.buildOidcLogoutUrl(searchParams);
-  }
-
-  async linkExternalLogin(data: {
-    identityProviderId: string;
-    providerName: string;
-    providerKey: string;
-    email: string;
-    displayName?: string;
-  }): Promise<void> {
-    return this.impersonation.linkExternalLogin(data);
   }
 
   // ── Passkey / WebAuthn authentication (delegated) ─────────────────────────
@@ -366,6 +408,7 @@ export class AuthRepository implements IAuthRepository {
         (raw.availableWorkspaces as import("../../domain/types/AuthTypes").LoginResponseModel["availableWorkspaces"]) ??
         null,
       mustChangePassword: raw.mustChangePassword ?? false,
+      requireMfaEnrollment: raw.requireMfaEnrollment ?? false,
       subscriptionStatus: raw.subscriptionStatus ?? null,
       gracePhase: raw.gracePhase ?? null,
       editionName: raw.editionName ?? null,
@@ -410,6 +453,19 @@ export class AuthRepository implements IAuthRepository {
   }
 
   // ── Magic Link ───────────────────────────────────────────────────────────
+  async getPasswordPolicy(params?: {
+    tenantId?: string | null;
+    tenantCode?: string | null;
+    isPublic?: boolean;
+  }): Promise<PasswordPolicyModel> {
+    const dto = await this.service.getPasswordPolicy(params);
+    return mapPasswordPolicyDto(dto);
+  }
+
+  async requestMagicLink(email: string, tenantId?: string): Promise<{ sent: boolean }> {
+    return this.service.requestMagicLink(email, tenantId);
+  }
+
   async verifyMagicLink(
     token: string,
     tenantId?: string,
@@ -475,6 +531,7 @@ export class AuthRepository implements IAuthRepository {
         requiresWorkspaceSelection: false,
         availableWorkspaces: null,
         mustChangePassword: responseModel.mustChangePassword ?? false,
+        requireMfaEnrollment: responseModel.requireMfaEnrollment ?? false,
         subscriptionStatus: responseModel.subscriptionStatus ?? null,
         gracePhase: responseModel.gracePhase ?? null,
         editionName: responseModel.editionName ?? null,

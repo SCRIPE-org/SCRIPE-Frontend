@@ -142,6 +142,7 @@ export function useQrSignInViewModel(
             gracePhase: result.gracePhase ?? null,
             editionName: result.editionName ?? null,
             mustChangePassword: Boolean(result.mustChangePassword),
+            requireMfaEnrollment: Boolean(result.requireMfaEnrollment),
           });
           return;
         }

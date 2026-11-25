@@ -15,8 +15,11 @@ import { useI18n } from "@core/providers/i18n-provider";
 export interface TenantSecurityFormValues {
   passwordMinLength: number;
   passwordRequireUppercase: boolean;
+  passwordRequireLowercase?: boolean;
   passwordRequireNumber: boolean;
   passwordRequireSpecial: boolean;
+  passwordHistoryCount?: number;
+  checkBreachedPasswords?: boolean;
   passwordExpiryDays: number | null;
   loginLockoutThreshold: number;
   loginLockoutMinutes: number;
@@ -101,6 +104,23 @@ export function TenantSettingsSecurityFields({
             }}
           />
         </div>
+        <div className="space-y-2">
+          <Label htmlFor="dialog-password-history-count">{t("tenant.passwordHistoryCount")}</Label>
+          <Input
+            id="dialog-password-history-count"
+            type="number"
+            min={0}
+            max={24}
+            value={formData.passwordHistoryCount ?? 5}
+            onChange={(e) => {
+              const parsed = parseInt(e.target.value, 10);
+              if (!Number.isNaN(parsed)) {
+                onPatch({ passwordHistoryCount: Math.min(24, Math.max(0, parsed)) });
+              }
+            }}
+          />
+          <p className="text-xs text-nx-ink-2">{t("tenant.passwordHistoryHelp")}</p>
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
@@ -111,6 +131,14 @@ export function TenantSettingsSecurityFields({
             onCheckedChange={(c) => onPatch({ passwordRequireUppercase: c })}
           />
           <Label htmlFor="dialog-require-uppercase">{t("tenant.requireUppercase")}</Label>
+        </div>
+        <div className="flex items-center gap-2">
+          <Switch
+            id="dialog-require-lowercase"
+            checked={Boolean(formData.passwordRequireLowercase)}
+            onCheckedChange={(c) => onPatch({ passwordRequireLowercase: c })}
+          />
+          <Label htmlFor="dialog-require-lowercase">{t("tenant.requireLowercase")}</Label>
         </div>
         <div className="flex items-center gap-2">
           <Switch
@@ -127,6 +155,14 @@ export function TenantSettingsSecurityFields({
             onCheckedChange={(c) => onPatch({ passwordRequireSpecial: c })}
           />
           <Label htmlFor="dialog-require-special">{t("tenant.requireSpecial")}</Label>
+        </div>
+        <div className="flex items-center gap-2">
+          <Switch
+            id="dialog-check-breached"
+            checked={formData.checkBreachedPasswords !== false}
+            onCheckedChange={(c) => onPatch({ checkBreachedPasswords: c })}
+          />
+          <Label htmlFor="dialog-check-breached">{t("tenant.checkBreachedPasswords")}</Label>
         </div>
         <div className="flex items-center gap-2">
           <Switch

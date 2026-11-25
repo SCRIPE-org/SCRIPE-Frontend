@@ -5,7 +5,7 @@
  * Auth is part of the Identity backend module.
  * Uses NEXT_PUBLIC_IDENTITY_API_URL with fallback to NEXT_PUBLIC_API_URL.
  */
-import { getBaseApiService, getModuleApiService } from "@core/services/api-factory";
+import { configureApiAuthHandlers, getModuleApiService } from "@core/services/api-factory";
 import { useAppStore } from "@core/store/useAppStore";
 import { authBroadcast } from "@core/common/broadcast-auth";
 import { queryClient } from "@core/query-client";
@@ -82,25 +82,25 @@ function createContainer(): AuthContainer {
     new PasswordResetService(publicApiService)
   );
   const accountSetupRepository = new AccountSetupRepository(
-    new AccountSetupService(apiService)
+    new AccountSetupService(publicApiService)
   );
   const signupRepository = new SignupRepository(new SignupService(publicApiService));
   const passkeyRepository = new PasskeyRepository(new PasskeyService(apiService));
 
-  const baseApi = getBaseApiService();
-  baseApi.setRefreshHandler(async () => {
-    const result = await authRepository.refreshToken();
-    if (result.kind === "err") {
-      authRepository.clearTokens();
-      return null;
-    }
-    return result.value.accessToken;
-  });
-
-  baseApi.setLogoutHandler(() => {
-    clearAllLocalStorage();
-    useAppStore.getState().logout();
-    queryClient.clear();
+  configureApiAuthHandlers({
+    onRefresh: async () => {
+      const result = await authRepository.refreshToken();
+      if (result.kind === "err") {
+        authRepository.clearTokens();
+        return null;
+      }
+      return result.value.accessToken;
+    },
+    onLogout: () => {
+      clearAllLocalStorage();
+      useAppStore.getState().logout();
+      queryClient.clear();
+    },
   });
 
   authBroadcast.onLogout(() => {

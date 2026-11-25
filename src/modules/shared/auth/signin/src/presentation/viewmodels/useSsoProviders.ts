@@ -19,6 +19,7 @@ export type {
 interface UseSsoProvidersOptions {
   tenantId?: string | null;
   mode?: string;
+  staySignedIn?: boolean;
   /** When false (e.g. tenant resolution still loading or failed), suppresses fetching so platform providers never leak onto tenant login pages. */
   enabled?: boolean;
 }
@@ -46,7 +47,7 @@ function resolveDiscoveryErrorKey(err: unknown): string {
  * React hook/ViewModel orchestrating SSO provider discovery and login initiation.
  */
 export function useSsoProviders(options: UseSsoProvidersOptions = {}) {
-  const { tenantId, mode = "inherit", enabled = true } = options;
+  const { tenantId, mode = "inherit", staySignedIn = false, enabled = true } = options;
   const [retryCount, setRetryCount] = useState(0);
   const requestKey = enabled ? `${tenantId ?? ""}:${mode}:${retryCount}` : null;
   const [fetched, setFetched] = useState<{
@@ -90,14 +91,24 @@ export function useSsoProviders(options: UseSsoProvidersOptions = {}) {
     setRetryCount((prev) => prev + 1);
   }, []);
 
-  const initiateSsoLogin = useCallback(async (providerId: string, protocol?: string) => {
-    setError(null);
-    try {
-      await getAuthContainer().ssoRepository.initiateLogin(providerId, protocol);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to start SSO login");
-    }
-  }, []);
+  const initiateSsoLogin = useCallback(
+    async (providerId: string, protocol?: string) => {
+      setError(null);
+      try {
+        if (tenantId || staySignedIn) {
+          await getAuthContainer().ssoRepository.initiateLogin(providerId, protocol, {
+            targetTenantId: tenantId ?? undefined,
+            staySignedIn,
+          });
+        } else {
+          await getAuthContainer().ssoRepository.initiateLogin(providerId, protocol);
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to start SSO login");
+      }
+    },
+    [tenantId, staySignedIn]
+  );
 
   const isMatched = Boolean(requestKey && fetched.key === requestKey);
   const providers = isMatched ? fetched.providers : [];

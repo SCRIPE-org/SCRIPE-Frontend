@@ -53,8 +53,8 @@ export function OrphanedExternalLoginTile({
               {t("profile.security.ssoProviderDisabledBadge")}
             </Badge>
           </div>
-          <p className="text-[11px] font-mono text-nx-ink truncate">
-            {login.email || login.displayName || login.providerKey}
+          <p className="text-[11px] font-mono text-nx-ink truncate" dir="ltr">
+            <bdi>{login.email || login.displayName || login.providerKey}</bdi>
           </p>
           <p className="text-[10px] text-nx-ink-3">
             {t("profile.security.ssoProviderDisabledDesc")}
@@ -78,8 +78,12 @@ export function OrphanedExternalLoginTile({
               disabled={isUnlinking}
               data-testid={`confirm-unlink-orphaned-${login.id}`}
               onClick={async () => {
-                await onDisconnect(login.id);
-                setConfirmUnlink(false);
+                try {
+                  await onDisconnect(login.id);
+                  setConfirmUnlink(false);
+                } catch {
+                  // Errors & Sudo cancellations handled safely by ViewModel mutation callbacks
+                }
               }}
               className="h-7 text-[10px] px-2 font-semibold"
             >

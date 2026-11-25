@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { secureTokenService } from "@core/common/secure-token-service";
-import { getSafeRedirectPath } from "@core/common/redirect-safety";
+import { buildPostAuthEntryUrl, getSafeRedirectPath } from "@core/common/redirect-safety";
 import { useAppStore } from "@core/store/useAppStore";
 import { User } from "@modules/auth/core/domain/entities/User";
 import { authContainer } from "@modules/auth/di";
@@ -47,6 +47,8 @@ export function useFinalizeViewModel() {
 
   const setAuth = useAppStore((s) => s.setAuth);
   const setSubscriptionInfo = useAppStore((s) => s.setSubscriptionInfo);
+  const setMustChangePassword = useAppStore((s) => s.setMustChangePassword);
+  const setRequireMfaEnrollment = useAppStore((s) => s.setRequireMfaEnrollment);
   const setDefaultRedirectPath = useAppStore((s) => s.setDefaultRedirectPath);
   const setTenantCode = useAppStore((s) => s.setTenantCode);
 
@@ -84,12 +86,19 @@ export function useFinalizeViewModel() {
             adminTypeName: "",
           });
 
-        const safeRedirectPath = getSafeRedirectPath(result.redirectUrl, "/");
+        const requireMfa = Boolean(result.requireMfaEnrollment);
+        const safeRedirectPath = buildPostAuthEntryUrl({
+          mustChangePassword: false,
+          requireMfaEnrollment: requireMfa,
+          redirect: result.redirectUrl,
+        });
         setAuth(user, user.permissions ?? [], [], true);
         if (result.tenantCode) setTenantCode(result.tenantCode);
         setSubscriptionInfo(null, null, null);
-        setDefaultRedirectPath(safeRedirectPath);
-        queryClient.invalidateQueries();
+        setMustChangePassword(false);
+        setRequireMfaEnrollment?.(requireMfa);
+        setDefaultRedirectPath(getSafeRedirectPath(result.redirectUrl, "/"));
+        if (!requireMfa) queryClient.invalidateQueries();
 
         try {
           sessionStorage.removeItem(STORAGE_KEYS.SIGNUP_REF);
@@ -122,6 +131,8 @@ export function useFinalizeViewModel() {
       setAuth,
       setTenantCode,
       setSubscriptionInfo,
+      setMustChangePassword,
+      setRequireMfaEnrollment,
       setDefaultRedirectPath,
     ]
   );
@@ -279,12 +290,5 @@ export function useFinalizeViewModel() {
     router.push("/signup?change-plan=1");
   }, [router]);
 
-  return {
-    phase,
-    error,
-    supportReference,
-    startNewSignup,
-    goToLogin,
-    changePlan,
-  };
+  return { phase, error, supportReference, startNewSignup, goToLogin, changePlan };
 }

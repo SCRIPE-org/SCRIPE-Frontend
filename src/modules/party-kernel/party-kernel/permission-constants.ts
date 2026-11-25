@@ -15,18 +15,25 @@ export const PARTY_KERNEL_PERMISSIONS = {
   PARTY_CREATE: "parties.create",
   PARTY_UPDATE: "parties.update",
   PARTY_DELETE: "parties.delete",
+  PARTY_AUDIT: "parties.audit",
+  PARTY_IMPORT: "parties.import",
+  PARTY_EXPORT: "parties.export",
 
   // ── Party People ────────────────────────────────────────
   PARTY_PERSON_VIEW: "party-people.view",
   PARTY_PERSON_CREATE: "party-people.create",
   PARTY_PERSON_UPDATE: "party-people.update",
   PARTY_PERSON_DELETE: "party-people.delete",
+  PARTY_PERSON_IMPORT: "party-people.import",
+  PARTY_PERSON_EXPORT: "party-people.export",
 
   // ── Party Organizations ─────────────────────────────────
   PARTY_ORGANIZATION_VIEW: "party-organizations.view",
   PARTY_ORGANIZATION_CREATE: "party-organizations.create",
   PARTY_ORGANIZATION_UPDATE: "party-organizations.update",
   PARTY_ORGANIZATION_DELETE: "party-organizations.delete",
+  PARTY_ORGANIZATION_IMPORT: "party-organizations.import",
+  PARTY_ORGANIZATION_EXPORT: "party-organizations.export",
 
   // ── Party Roles ─────────────────────────────────────────
   PARTY_ROLE_VIEW: "party-roles.view",
@@ -45,6 +52,8 @@ export const PARTY_KERNEL_PERMISSIONS = {
   CONTACT_POINT_CREATE: "contact-points.create",
   CONTACT_POINT_UPDATE: "contact-points.update",
   CONTACT_POINT_DELETE: "contact-points.delete",
+  CONTACT_POINT_IMPORT: "contact-points.import",
+  CONTACT_POINT_EXPORT: "contact-points.export",
 
   // ── Merge Candidates ────────────────────────────────────
   MERGE_CANDIDATE_VIEW: "merge-candidates.view",

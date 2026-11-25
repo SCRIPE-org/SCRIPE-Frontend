@@ -9,6 +9,11 @@ import { Popover, PopoverContent, PopoverTrigger } from "@core/ui/popover";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@core/ui/form";
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@core/common/utils";
+import {
+  sanitizeCssDeclarationValue,
+  sanitizeEmailHref,
+  sanitizeHtml,
+} from "@core/common/sanitize";
 import { Share2 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 
@@ -171,11 +176,13 @@ export function SocialBlock({ onInsert }: SocialBlockProps) {
     const cells = enabledEntries
       .map((entry) => {
         const platform = platformOf(entry.platformId);
-        const bgColor = circleColor(platform);
+        const safeUrl = sanitizeHtml(sanitizeEmailHref(entry.url) ?? "#");
+        const safeLabel = sanitizeHtml(platform.label);
+        const bgColor = sanitizeCssDeclarationValue(circleColor(platform)) || "#334155";
         const borderRadius = shape === "circle" ? "50%" : "6px";
         const iconUri = buildSvgDataUri(platform.svgPath);
 
-        return `<td style="padding:0 4px;"><a href="${entry.url}" target="_blank" rel="noopener noreferrer" title="${platform.label}" style="display:inline-block;width:36px;height:36px;border-radius:${borderRadius};background-color:${bgColor};text-align:center;line-height:36px;text-decoration:none;"><img src="${iconUri}" alt="${platform.label}" width="20" height="20" style="vertical-align:middle;border:0;"/></a></td>`;
+        return `<td style="padding:0 4px;"><a href="${safeUrl}" target="_blank" rel="noopener noreferrer" title="${safeLabel}" style="display:inline-block;width:36px;height:36px;border-radius:${borderRadius};background-color:${bgColor};text-align:center;line-height:36px;text-decoration:none;"><img src="${iconUri}" alt="${safeLabel}" width="20" height="20" style="vertical-align:middle;border:0;"/></a></td>`;
       })
       .join("");
 

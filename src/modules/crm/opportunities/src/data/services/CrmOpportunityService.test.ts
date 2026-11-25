@@ -32,6 +32,72 @@ describe("CrmOpportunityService - Lifecycle & Mapper", () => {
     expect(result.items).toEqual([]);
   });
 
+  it("updateOpportunity omits currencyCode and dealKind when not supplied so restricted fields are never sent", async () => {
+    mockApi.put.mockResolvedValueOnce({ success: true, data: { id: "opp-7" } });
+
+    await service.updateOpportunity({
+      opportunityId: "opp-7",
+      title: "Renewal",
+      estimatedAmount: 1000,
+      expectedRowVersion: "rv-1",
+      idempotencyKey: "idem-update-1",
+    });
+
+    const payload = mockApi.put.mock.calls[0][1] as Record<string, unknown>;
+    expect(payload).not.toHaveProperty("currencyCode");
+    expect(payload).not.toHaveProperty("dealKind");
+    expect(payload).toMatchObject({ title: "Renewal", estimatedAmount: 1000, expectedRowVersion: "rv-1" });
+  });
+
+  it("updateOpportunity forwards explicit currencyCode and dealKind unchanged", async () => {
+    mockApi.put.mockResolvedValueOnce({ success: true, data: { id: "opp-7" } });
+
+    await service.updateOpportunity({
+      opportunityId: "opp-7",
+      title: "Renewal",
+      estimatedAmount: 1000,
+      currencyCode: "USD",
+      dealKind: "Renewal",
+      expectedRowVersion: "rv-1",
+      idempotencyKey: "idem-update-2",
+    });
+
+    expect(mockApi.put.mock.calls[0][1]).toMatchObject({ currencyCode: "USD", dealKind: "Renewal" });
+  });
+
+  it("closeOpportunity omits dealKind when not supplied so existing dealKind is preserved and FLS is not tripped", async () => {
+    mockApi.post.mockResolvedValueOnce({ success: true, data: { id: "opp-7" } });
+
+    await service.closeOpportunity({
+      opportunityId: "opp-7",
+      outcome: "Won",
+      expectedRowVersion: "rv-1",
+      idempotencyKey: "idem-close-1",
+    });
+
+    const payload = mockApi.post.mock.calls[0][1] as Record<string, unknown>;
+    expect(payload).not.toHaveProperty("dealKind");
+    expect(payload).toMatchObject({ outcome: "Won", expectedRowVersion: "rv-1" });
+  });
+
+  it("closeOpportunity forwards explicit dealKind unchanged", async () => {
+    mockApi.post.mockResolvedValueOnce({ success: true, data: { id: "opp-7" } });
+
+    await service.closeOpportunity({
+      opportunityId: "opp-7",
+      outcome: "Won",
+      dealKind: "Expansion",
+      expectedRowVersion: "rv-1",
+      idempotencyKey: "idem-close-2",
+    });
+
+    expect(mockApi.post.mock.calls[0][1]).toMatchObject({
+      outcome: "Won",
+      dealKind: "Expansion",
+      expectedRowVersion: "rv-1",
+    });
+  });
+
   it("moveStage posts transition payload with idempotency headers and maps entity via CrmOpportunityMapper", async () => {
     mockApi.post.mockResolvedValueOnce({
       success: true,

@@ -15,11 +15,13 @@ import type {
   PersonalAccessTokenSummary,
 } from "../entities/SovereignAccountEntities";
 
+/** Payload for dispatching an email or username change verification OTP. */
 export interface SendEmailVerificationPayload {
   targetEmail?: string;
   mode?: "email" | "username";
 }
 
+/** Response returned after requesting an identity verification OTP. */
 export interface SendEmailVerificationResponse {
   sent?: boolean;
   success?: boolean;
@@ -28,6 +30,7 @@ export interface SendEmailVerificationResponse {
   retryAfterSeconds?: number | null;
 }
 
+/** Payload for requesting emergency break-glass privileged access elevation. */
 export interface RequestBreakGlassPayload {
   incidentTicketId: string;
   justification: string;
@@ -43,7 +46,10 @@ export interface ISovereignAccountRepository {
     payload?: SendEmailVerificationPayload
   ): Promise<SendEmailVerificationResponse>;
   exportAccountData(): Promise<Record<string, unknown>>;
-  deactivateAccount(data?: { sudoCode?: string }): Promise<{ deactivated?: boolean; message?: string }>;
+  deactivateAccount(data?: {
+    sudoCode?: string;
+    sudoToken?: string;
+  }): Promise<{ deactivated?: boolean; message?: string }>;
   getSecurity(): Promise<SovereignSecuritySlice>;
   updateSecurityPosture(data: {
     trustedCidrs?: string[];
@@ -76,7 +82,12 @@ export interface ISovereignAccountRepository {
   markAllNotificationsAsRead(): Promise<void>;
   deleteNotification(id: string): Promise<void>;
   getPlan(): Promise<SovereignPlanSlice>;
-  submitPlanRequest(requestType: string, targetCode: string, notes?: string): Promise<void>;
+  submitPlanRequest(
+    requestType: string,
+    targetCode: string,
+    notes?: string,
+    sudoToken?: string
+  ): Promise<void>;
   getIntegrations(): Promise<SovereignIntegrationsSlice>;
   createIntegrationItem(data: {
     itemKind: "pat" | "sso";

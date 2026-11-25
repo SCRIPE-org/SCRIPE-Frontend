@@ -56,9 +56,9 @@ export function useDataExchangeToolbarViewModel({
 
   const canViewJobs = hasPermission(DATA_TRANSFER_PERMISSIONS.DATATRANSFER_JOBS_VIEW);
   const canManageJobs = hasPermission(DATA_TRANSFER_PERMISSIONS.DATATRANSFER_JOBS_MANAGE);
-  const canExecuteMultiSheet =
-    hasPermission(DATA_TRANSFER_PERMISSIONS.DATATRANSFER_MIGRATIONS_EXECUTE) ||
-    hasPermission("datatransfer.migration.execute");
+  const canExecuteMultiSheet = hasPermission(
+    DATA_TRANSFER_PERMISSIONS.DATATRANSFER_MIGRATIONS_EXECUTE
+  );
 
   const [descriptorEntry, setDescriptorEntry] = useState<{
     tenantId: string | null;

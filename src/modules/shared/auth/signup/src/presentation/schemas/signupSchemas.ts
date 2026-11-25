@@ -12,7 +12,11 @@
 
 import { z } from "zod";
 import {
-  PASSWORD_MIN_LENGTH,
+  createPolicyPasswordSchema,
+  type PasswordPolicyModel,
+  type TranslatePasswordPolicyFn,
+} from "@core/common/password-policy";
+import {
   SUBDOMAIN_REGEX,
   SUBDOMAIN_MIN_LENGTH,
 } from "../../domain/constants/signupConstants";
@@ -20,27 +24,34 @@ import {
 // ─── Account step schema ──────────────────────────────────────────────────────
 
 /**
- * Exported constant defining parameters and fields for account schema configurations.
+ * Builds a policy-driven account validation schema for the signup Account step.
+ * Password rules come strictly from the resolved backend `PasswordPolicyModel`.
  */
-export const accountSchema = z.object({
-  fullName: z.string().min(2, "signup.errors.fullNameMin").max(100, "signup.errors.fullNameMax"),
-  email: z.string().email("signup.errors.emailInvalid").min(1, "signup.errors.emailRequired"),
-  password: z
-    .string()
-    .min(PASSWORD_MIN_LENGTH, "signup.errors.passwordMinLength")
-    .regex(/[A-Z]/, "signup.errors.passwordUppercase")
-    .regex(/[a-z]/, "signup.errors.passwordLowercase")
-    .regex(/\d/, "signup.errors.passwordNumber"),
-  acceptTerms: z.literal(true, {
-    message: "signup.errors.termsRequired",
-  }),
-  marketingOptIn: z.boolean().optional().default(false),
-});
+export function buildAccountSchema(
+  policy: PasswordPolicyModel | null | undefined,
+  t: TranslatePasswordPolicyFn
+) {
+  return z.object({
+    fullName: z.string().min(2, "signup.errors.fullNameMin").max(100, "signup.errors.fullNameMax"),
+    email: z.string().email("signup.errors.emailInvalid").min(1, "signup.errors.emailRequired"),
+    password: createPolicyPasswordSchema(policy, t),
+    acceptTerms: z.literal(true, {
+      message: "signup.errors.termsRequired",
+    }),
+    marketingOptIn: z.boolean().optional().default(false),
+  });
+}
 
 /**
- * Exported type defining parameters and fields for account form values configurations.
+ * Legacy static field shape retained only for type inference of non-password form inputs.
  */
-export type AccountFormValues = z.infer<typeof accountSchema>;
+export type AccountFormValues = {
+  fullName: string;
+  email: string;
+  password: string;
+  acceptTerms: true;
+  marketingOptIn?: boolean;
+};
 
 // ─── Workspace step schema ────────────────────────────────────────────────────
 

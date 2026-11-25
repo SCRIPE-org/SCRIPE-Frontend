@@ -13,6 +13,7 @@ import {
   DialogTitle,
 } from "@core/ui/dialog";
 import { toast } from "@core/ui/sileo-toast";
+import { isSudoCancelledError } from "../../utils/sudoElevation";
 import { Loader2 } from "lucide-react";
 
 /**
@@ -70,6 +71,7 @@ export function DisableTwoFactorModal({
       resetForm();
       onOpenChange(false);
     } catch (err) {
+      if (isSudoCancelledError(err)) return;
       setLocalError(err instanceof Error ? err.message : t("profile.security.twoFactor.disable.failed"));
     }
   };
@@ -96,6 +98,7 @@ export function DisableTwoFactorModal({
               <Input
                 id="disable-2fa-password"
                 type="password"
+                dir="ltr"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder={t("profile.security.backupCodes.disablePasswordPlaceholder")}
@@ -109,7 +112,9 @@ export function DisableTwoFactorModal({
               </Label>
               <Input
                 id="disable-2fa-code"
+                dir="ltr"
                 inputMode="numeric"
+                autoComplete="one-time-code"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
                 placeholder="000000"

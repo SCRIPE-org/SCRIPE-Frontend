@@ -6,8 +6,12 @@
  */
 import type { IApiService } from "@core/interfaces/api.interface";
 import { buildUrl } from "@/core/config/api-endpoints/_shared";
-import { useAppStore } from "@core/store/useAppStore";
+import { isExternalCustomDomain } from "@core/common/origin-routing";
+import { mapPasswordPolicyDto, type PasswordPolicyModel } from "@core/common/password-policy";
+import { postCustomDomainSessionRelay } from "@core/services/custom-domain-relay-client";
 import { PROFILE_ENDPOINTS } from "../services/profile.endpoints";
+import { ProfileService } from "../services/ProfileService";
+import type { IProfileService } from "../../domain/interfaces/IProfileService";
 import type {
   ISecurityRepository,
   PasskeyRegistrationBeginResponse,
@@ -24,6 +28,7 @@ import type { WorkstationSession } from "../../domain/entities/WorkstationSessio
 import type { SecurityAuditEntry } from "../../domain/entities/SecurityAuditEntry";
 import type {
   ChangePasswordRequest,
+  ChangePasswordSessionResult,
   Enable2FAResult,
 } from "../../domain/interfaces/IProfileRepository";
 import {
@@ -43,7 +48,14 @@ import {
  * HTTP-backed repository implementing passkey vault, Sudo elevation, sessions, 2FA, and audit trail operations.
  */
 export class SecurityRepository implements ISecurityRepository {
-  constructor(private readonly api: IApiService) {}
+  private readonly profileService: IProfileService;
+
+  constructor(
+    private readonly api: IApiService,
+    profileService?: IProfileService
+  ) {
+    this.profileService = profileService ?? new ProfileService(api);
+  }
 
   async listPasskeys(): Promise<PasskeyCredential[]> {
     const dtos = await this.api.get<PasskeyListDto[]>(PROFILE_ENDPOINTS.PASSKEYS.LIST);
@@ -117,11 +129,23 @@ export class SecurityRepository implements ISecurityRepository {
     };
   }
 
-  async removePasskey(id: string): Promise<void> {
+  async removePasskey(id: string, sudoToken?: string): Promise<void> {
+    if (sudoToken) {
+      await this.api.delete(PROFILE_ENDPOINTS.PASSKEYS.DELETE(id), undefined, {
+        headers: { "X-Sudo-Token": sudoToken },
+      });
+      return;
+    }
     await this.api.delete(PROFILE_ENDPOINTS.PASSKEYS.DELETE(id));
   }
 
-  async renamePasskey(id: string, newName: string): Promise<void> {
+  async renamePasskey(id: string, newName: string, sudoToken?: string): Promise<void> {
+    if (sudoToken) {
+      await this.api.patch(PROFILE_ENDPOINTS.PASSKEYS.RENAME(id), { newName }, undefined, {
+        headers: { "X-Sudo-Token": sudoToken },
+      });
+      return;
+    }
     await this.api.patch(PROFILE_ENDPOINTS.PASSKEYS.RENAME(id), { newName });
   }
 
@@ -168,11 +192,34 @@ export class SecurityRepository implements ISecurityRepository {
     return mapWorkstationSessions(dtos);
   }
 
-  async revokeSession(tokenId: string): Promise<void> {
+  async revokeSession(tokenId: string, sudoToken?: string): Promise<void> {
+    if (sudoToken) {
+      await this.api.delete(PROFILE_ENDPOINTS.REVOKE_SESSION(tokenId), undefined, {
+        headers: { "X-Sudo-Token": sudoToken },
+      });
+      return;
+    }
     await this.api.delete(PROFILE_ENDPOINTS.REVOKE_SESSION(tokenId));
   }
 
-  async revokeAllOtherSessions(): Promise<{ revokedCount: number }> {
+  async revokeAllOtherSessions(sudoToken?: string): Promise<{ revokedCount: number }> {
+    if (isExternalCustomDomain()) {
+      return postCustomDomainSessionRelay<{ revokedCount: number }>(
+        "/api/auth/session/establish",
+        {
+          mode: "revoke-other-sessions",
+        },
+        { includeAuth: true, sudoToken }
+      );
+    }
+    if (sudoToken) {
+      return this.api.post<{ revokedCount: number }>(
+        PROFILE_ENDPOINTS.REVOKE_ALL_SESSIONS,
+        {},
+        undefined,
+        { headers: { "X-Sudo-Token": sudoToken } }
+      );
+    }
     return this.api.post<{ revokedCount: number }>(PROFILE_ENDPOINTS.REVOKE_ALL_SESSIONS, {});
   }
 
@@ -203,14 +250,23 @@ export class SecurityRepository implements ISecurityRepository {
     return res.backupCodes;
   }
 
-  async changePassword(data: ChangePasswordRequest): Promise<void> {
-    const adminId = useAppStore.getState().user?.id;
-    if (!adminId) throw new Error("User not authenticated");
-    await this.api.post(PROFILE_ENDPOINTS.CHANGE_PASSWORD(adminId), {
-      currentPassword: data.currentPassword,
-      newPassword: data.newPassword,
-      twoFactorCode: data.twoFactorCode,
-    });
+  async getPasswordPolicy(): Promise<PasswordPolicyModel> {
+    const dto = await this.profileService.getPasswordPolicy();
+    return mapPasswordPolicyDto(dto);
+  }
+
+  async changePassword(
+    data: ChangePasswordRequest,
+    sudoToken?: string
+  ): Promise<ChangePasswordSessionResult | void> {
+    return this.profileService.changePassword(
+      {
+        currentPassword: data.currentPassword,
+        newPassword: data.newPassword,
+        twoFactorCode: data.twoFactorCode,
+      },
+      sudoToken
+    );
   }
 
   async getAuditTrail(page: number = 1, pageSize: number = 50): Promise<SecurityAuditEntry[]> {

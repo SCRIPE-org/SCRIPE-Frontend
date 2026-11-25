@@ -26,6 +26,7 @@ interface LoginResponseLike {
   isSuccessful: boolean;
   accessToken: string;
   mustChangePassword?: boolean;
+  requireMfaEnrollment?: boolean;
   subscriptionStatus?: string | null;
   gracePhase?: string | null;
   editionName?: string | null;
@@ -76,6 +77,8 @@ export class AuthMapper {
     return new LoginResponse({
       success: json.success || false,
       accessToken: json.accessToken || "",
+      mustChangePassword: json.mustChangePassword,
+      requireMfaEnrollment: json.requireMfaEnrollment,
     });
   }
 
@@ -87,6 +90,7 @@ export class AuthMapper {
       success: model.isSuccessful,
       accessToken: model.accessToken,
       mustChangePassword: model.mustChangePassword,
+      requireMfaEnrollment: model.requireMfaEnrollment,
       subscriptionStatus: model.subscriptionStatus,
       gracePhase: model.gracePhase,
       editionName: model.editionName,
@@ -126,6 +130,9 @@ export class AuthMapper {
       tenantId: r.tenantId ?? undefined,
       tenantName: r.tenantName ?? undefined,
       expiresAt: r.expiresAt ?? undefined,
+      isTenantSuperAdmin:
+        typeof r.isTenantSuperAdmin === "boolean" ? r.isTenantSuperAdmin : undefined,
+      priority: typeof r.priority === "number" ? r.priority : undefined,
       inheritedPermissions: (r.inheritedPermissions || []) as PermissionCode[],
     }));
 
@@ -143,6 +150,10 @@ export class AuthMapper {
       permissions: data.permissions || [],
       isProtected: data.isProtected ?? false,
       isSuperAdmin: Boolean(data.isSuperAdmin),
+      isTenantSuperAdmin:
+        typeof (data as any).isTenantSuperAdmin === "boolean"
+          ? (data as any).isTenantSuperAdmin
+          : undefined,
       tenantId: data.tenantId ?? null,
       restrictedFields: data.restrictedFields ?? undefined,
     });

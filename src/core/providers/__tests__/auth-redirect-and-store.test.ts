@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { useAppStore } from "@core/store/useAppStore";
 import {
   buildPostAuthEntryUrl,
@@ -117,5 +117,98 @@ describe("useAppStore.setAuth empty array preservation", () => {
     expect(useAppStore.getState().permissions).toEqual([]);
     expect(useAppStore.getState().roles).toEqual([]);
     expect(useAppStore.getState().restrictedFields).toEqual({});
+  });
+});
+
+describe("redirect-safety identity microservice origin & auth-state hint cookie Security", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    vi.restoreAllMocks();
+  });
+
+  it("permits allow-listed OIDC/SAML resume paths on NEXT_PUBLIC_IDENTITY_API_URL origin while rejecting untrusted origins", () => {
+    vi.stubEnv("NEXT_PUBLIC_API_URL", "https://api.example.com/api");
+    vi.stubEnv("NEXT_PUBLIC_IDENTITY_API_URL", "https://id.example.com/identity");
+
+    expect(isSafeRedirectTarget("https://id.example.com/connect/authorize?client_id=web")).toBe(true);
+    expect(isSafeRedirectTarget("https://api.example.com/api/v1/auth/saml/sso?RelayState=x")).toBe(true);
+    expect(isSafeRedirectTarget("https://id.example.com/arbitrary-open-redirect")).toBe(false);
+    expect(isSafeRedirectTarget("https://evil.example.com/connect/authorize")).toBe(false);
+  });
+
+  it("writes scr_auth_state hint cookie with Secure attribute when running over HTTPS", () => {
+    const cookieWrites: string[] = [];
+    const cookieDesc = Object.getOwnPropertyDescriptor(Document.prototype, "cookie")!;
+    vi.spyOn(document, "cookie", "set").mockImplementation((val: string) => {
+      cookieWrites.push(val);
+    });
+    const originalProtocol = window.location.protocol;
+    Object.defineProperty(window, "location", {
+      configurable: true,
+      value: { ...window.location, protocol: "https:" },
+    });
+
+    try {
+      useAppStore.getState().beginSessionTransition();
+      useAppStore.getState().logout();
+    } finally {
+      Object.defineProperty(window, "location", {
+        configurable: true,
+        value: { ...window.location, protocol: originalProtocol },
+      });
+      if (cookieDesc.set) {
+        Object.defineProperty(document, "cookie", cookieDesc);
+      }
+    }
+
+    expect(cookieWrites.some((c) => c.includes("scr_auth_state=true") && c.includes("; Secure"))).toBe(true);
+    expect(cookieWrites.some((c) => c.includes("max-age=0") && c.includes("; Secure"))).toBe(true);
+  });
+
+  it("orders buildPostAuthEntryUrl walls as mcp -> mfa_enroll -> PendingPayment -> redirect and clears requireMfaEnrollment on logout", () => {
+    expect(
+      buildPostAuthEntryUrl({
+        mustChangePassword: true,
+        requireMfaEnrollment: true,
+        subscriptionStatus: "PendingPayment",
+        redirect: "/crm",
+      })
+    ).toBe("/change-password");
+
+    expect(
+      buildPostAuthEntryUrl({
+        mustChangePassword: false,
+        requireMfaEnrollment: true,
+        subscriptionStatus: "PendingPayment",
+        redirect: "/crm",
+      })
+    ).toBe("/account/security?mfa_enroll=true");
+
+    expect(
+      buildPostAuthEntryUrl({
+        mustChangePassword: false,
+        requireMfaEnrollment: false,
+        subscriptionStatus: "PendingPayment",
+        redirect: "/crm",
+      })
+    ).toBe("/activate-workspace");
+
+    expect(
+      buildPostAuthEntryUrl({
+        mustChangePassword: false,
+        requireMfaEnrollment: false,
+        subscriptionStatus: "Active",
+        redirect: "/crm?view=board",
+      })
+    ).toBe("/?redirect=%2Fcrm%3Fview%3Dboard");
+
+    useAppStore.getState().setRequireMfaEnrollment(true);
+    expect(useAppStore.getState().requireMfaEnrollment).toBe(true);
+    useAppStore.getState().beginSessionTransition();
+    expect(useAppStore.getState().requireMfaEnrollment).toBe(false);
+
+    useAppStore.getState().setRequireMfaEnrollment(true);
+    useAppStore.getState().logout();
+    expect(useAppStore.getState().requireMfaEnrollment).toBe(false);
   });
 });

@@ -5,12 +5,49 @@ import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Badge } from "@core/ui/badge";
-import { ShieldCheck, KeyRound, Fingerprint } from "lucide-react";
+import { ShieldCheck, KeyRound, Fingerprint, CheckCircle2 } from "lucide-react";
 
 /** Step-up credential verification mode supported during identity change. */
 export type IdentityStepUpMethod = "totp" | "passkey" | "password";
 
 const ALL_METHODS: IdentityStepUpMethod[] = ["totp", "passkey", "password"];
+
+/** Renders the 3-step visual progress indicator bar for identity change verification. */
+export function IdentityChangeStepProgress({ step }: { step: 1 | 2 | 3 }) {
+  const { t } = useI18n();
+  const steps = [
+    { num: 1, label: t("profile.identityModal.step1Short") },
+    { num: 2, label: t("profile.identityModal.step2Short") },
+    { num: 3, label: t("profile.identityModal.step3Short") },
+  ];
+  return (
+    <div className="grid grid-cols-3 gap-2 py-2" data-testid="identity-modal-steps">
+      {steps.map((item) => {
+        const active = step === item.num;
+        const completed = step > item.num;
+        return (
+          <div
+            key={item.num}
+            className={`flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-[11px] font-semibold transition-colors ${
+              active
+                ? "border-nx-accent bg-nx-accent-wash text-nx-ink"
+                : completed
+                  ? "border-success/40 bg-success/10 text-success"
+                  : "border-nx-line bg-nx-ground text-nx-ink-3"
+            }`}
+          >
+            {completed ? (
+              <CheckCircle2 className="h-3.5 w-3.5 shrink-0" style={{ minWidth: 14, minHeight: 14 }} />
+            ) : (
+              <span className="font-mono text-[10px]">{item.num}.</span>
+            )}
+            <span className="truncate">{item.label}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 
 /** Props for {@link IdentityChangeStep1}. */
 export interface IdentityChangeStep1Props {
@@ -157,6 +194,7 @@ export function IdentityChangeStep2({
           id="identity-new-value-input"
           data-testid="identity-new-value-input"
           type={isEmail ? "email" : "text"}
+          dir="ltr"
           value={newValue}
           onChange={(e) => onNewValueChange(e.target.value)}
           placeholder={
@@ -218,6 +256,9 @@ export function IdentityChangeStep3({
         <Input
           id="identity-otp-input"
           data-testid="identity-otp-input"
+          inputMode="numeric"
+          autoComplete="one-time-code"
+          dir="ltr"
           maxLength={6}
           value={otpCode}
           onChange={(e) => onOtpCodeChange(e.target.value)}

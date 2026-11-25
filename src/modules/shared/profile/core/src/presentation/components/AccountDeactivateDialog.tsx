@@ -29,23 +29,19 @@ export interface AccountDeactivateDialogProps {
   primaryOrgName: string;
   /** Controlled username confirmation text. */
   confirmUsername: string;
-  /** Controlled 6-digit sudo verification code. */
-  sudoCode: string;
   /** True while deactivation request is in flight. */
   isSubmitting?: boolean;
   /** Validation or server error message from the last deactivation attempt. */
   error?: string | null;
   /** Updates username confirmation input. */
   onConfirmUsernameChange: (value: string) => void;
-  /** Updates 6-digit sudo verification input. */
-  onSudoCodeChange: (value: string) => void;
-  /** Confirms and triggers account deactivation. */
+  /** Confirms and triggers step-up Sudo verification + account deactivation. */
   onConfirmDeactivate: () => Promise<void>;
 }
 
 /**
  * Guardrailed account deactivation confirmation dialog requiring username confirmation
- * and step-up sudo code, blocked automatically for sole primary organization owners.
+ * (with step-up Sudo verification driven by workspace policy), blocked for sole owners.
  */
 export function AccountDeactivateDialog({
   open,
@@ -54,11 +50,9 @@ export function AccountDeactivateDialog({
   isSolePrimaryOwner,
   primaryOrgName,
   confirmUsername,
-  sudoCode,
   isSubmitting = false,
   error,
   onConfirmUsernameChange,
-  onSudoCodeChange,
   onConfirmDeactivate,
 }: AccountDeactivateDialogProps) {
   const { t } = useI18n();
@@ -105,24 +99,9 @@ export function AccountDeactivateDialog({
               id="deactivate-confirm-username"
               data-testid="deactivate-confirm-username-input"
               value={confirmUsername}
+              disabled={isSubmitting}
               onChange={(e) => onConfirmUsernameChange(e.target.value)}
               placeholder={username}
-              className="font-mono text-xs"
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <Label htmlFor="deactivate-sudo-code" className="text-xs font-semibold text-nx-ink">
-              {t("profile.lifecycle.sudoCodeLabel")}
-            </Label>
-            <Input
-              id="deactivate-sudo-code"
-              data-testid="deactivate-sudo-code-input"
-              value={sudoCode}
-              disabled={isSubmitting}
-              onChange={(e) => onSudoCodeChange(e.target.value)}
-              placeholder="000000"
-              maxLength={6}
               className="font-mono text-xs"
             />
           </div>
@@ -150,12 +129,7 @@ export function AccountDeactivateDialog({
             size="sm"
             data-testid="confirm-deactivate-account-btn"
             loading={isSubmitting}
-            disabled={
-              isSubmitting ||
-              isSolePrimaryOwner ||
-              confirmUsername !== username ||
-              sudoCode.trim().length < 6
-            }
+            disabled={isSubmitting || isSolePrimaryOwner || confirmUsername !== username}
             onClick={() => void onConfirmDeactivate()}
             className="bg-destructive text-nx-on-fill font-semibold"
           >

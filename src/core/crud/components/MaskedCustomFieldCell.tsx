@@ -6,7 +6,11 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
 import { useAppStore } from "@core/store/useAppStore";
-import { hasPermission, CUSTOM_FIELDS_PERMISSIONS } from "@core/common/types/permissions";
+import {
+  hasPermission,
+  isPlatformSuperAdminUser,
+  CUSTOM_FIELDS_PERMISSIONS,
+} from "@core/common/types/permissions";
 import { getCustomFieldsExtension, type CustomFieldValueTypeName } from "../customFieldsExtension";
 
 export interface MaskedCustomFieldCellProps {
@@ -42,16 +46,7 @@ export function MaskedCustomFieldCell({
   const roles = useAppStore((state) => state.roles);
   const user = useAppStore((state) => state.user);
 
-  const isSuperAdmin = Boolean(
-    !user?.tenantId &&
-    (permissions.includes("*") ||
-      roles.some(
-        (r) => r.roleCode === "SYSTEM_SUPER_ADMIN" || r.roleName === "System Super Admin"
-      ) ||
-      user?.isProtected === true ||
-      (user as any)?.isSuperAdmin === true ||
-      user?.adminTypeName?.toLowerCase() === "system super admin")
-  );
+  const isSuperAdmin = isPlatformSuperAdminUser(user, permissions, roles);
 
   const isAuthorized = Boolean(
     isSuperAdmin || hasPermission(permissions, CUSTOM_FIELDS_PERMISSIONS.VIEW_SENSITIVE)

@@ -46,18 +46,26 @@ export function TwoFactorWizardModal({
   const [copiedKey, setCopiedKey] = useState(false);
   const [copiedBackupCodes, setCopiedBackupCodes] = useState(false);
 
-  const handleCopyKey = () => {
+  const handleCopyKey = async () => {
     if (!setupData?.manualEntryKey) return;
-    navigator.clipboard.writeText(setupData.manualEntryKey);
-    setCopiedKey(true);
-    setTimeout(() => setCopiedKey(false), 2000);
+    try {
+      await navigator.clipboard.writeText(setupData.manualEntryKey);
+      setCopiedKey(true);
+      setTimeout(() => setCopiedKey(false), 2000);
+    } catch {
+      /* ignore clipboard unavailability in restricted contexts */
+    }
   };
 
-  const handleCopyBackupCodes = () => {
+  const handleCopyBackupCodes = async () => {
     if (!setupData?.backupCodes) return;
-    navigator.clipboard.writeText(setupData.backupCodes.join("\n"));
-    setCopiedBackupCodes(true);
-    setTimeout(() => setCopiedBackupCodes(false), 2000);
+    try {
+      await navigator.clipboard.writeText(setupData.backupCodes.join("\n"));
+      setCopiedBackupCodes(true);
+      setTimeout(() => setCopiedBackupCodes(false), 2000);
+    } catch {
+      /* ignore clipboard unavailability in restricted contexts */
+    }
   };
 
   const handleDownloadBackupCodes = () => {
@@ -96,7 +104,14 @@ export function TwoFactorWizardModal({
   if (!setupData) return null;
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open && !isConfirming) {
+          handleClose();
+        }
+      }}
+    >
       <DialogContent className="sm:max-w-[480px] bg-nx-surface border-nx-line p-6">
         {currentStep === "SCAN" && (
           <TwoFactorScanStep

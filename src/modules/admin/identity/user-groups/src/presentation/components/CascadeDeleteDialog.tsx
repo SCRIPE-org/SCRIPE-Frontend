@@ -1,12 +1,13 @@
 "use client";
 
+import { useState } from "react";
+import { useSudoStore } from "@core/store/useSudoStore";
 import { Button } from "@core/ui/button";
 import { GenericModal } from "@core/crud/components/generic-modal";
 import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
 import { AlertTriangle } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Checkbox } from "@core/ui/checkbox";
-import { useState } from "react";
 import { Label } from "@core/ui/label";
 
 interface CascadeDeleteDialogProps {
@@ -34,12 +35,19 @@ export function CascadeDeleteDialog({
 }: CascadeDeleteDialogProps) {
   const { t } = useI18n();
   const [cascadeAdmins, setCascadeAdmins] = useState(false);
+  const [prevOpen, setPrevOpen] = useState(open);
+
+  if (open !== prevOpen) {
+    setPrevOpen(open);
+    if (!open) setCascadeAdmins(false);
+  }
 
   const handleConfirm = () => {
     onConfirm(cascadeAdmins);
   };
 
   const handleClose = (v: boolean) => {
+    if (!v && useSudoStore.getState().modalOpen) return;
     if (!v) setCascadeAdmins(false);
     onOpenChange(v);
   };

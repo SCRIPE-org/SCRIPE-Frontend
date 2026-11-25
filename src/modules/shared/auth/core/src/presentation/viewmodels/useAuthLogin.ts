@@ -56,6 +56,7 @@ export function useAuthLogin() {
         gracePhase,
         editionName,
         mustChangePassword,
+        requireMfaEnrollment,
         defaultRedirectPath,
       } = result;
 
@@ -65,8 +66,9 @@ export function useAuthLogin() {
       // 2. Store subscription status for payment wall / grace banner
       setSubscriptionInfo(subscriptionStatus, gracePhase, editionName);
 
-      // 2b. Store must-change-password flag for route guard enforcement
+      // 2b. Store must-change-password and MFA enrollment gates for route guard enforcement
       useAppStore.getState().setMustChangePassword(mustChangePassword ?? false);
+      useAppStore.getState().setRequireMfaEnrollment(requireMfaEnrollment ?? false);
 
       // 2c. Store backend-provided redirect path — authoritative, not guessed
       setDefaultRedirectPath(defaultRedirectPath ?? "/");
@@ -76,12 +78,8 @@ export function useAuthLogin() {
         useAppStore.getState().setTenantCode(variables.tenantCode);
       }
 
-      // 4. Skip navigation & data fetch if user must change password first
-      // They'll be redirected to /change-password immediately — no need to load menus
-      if (!mustChangePassword) {
-        // v2: NavigationProvider's TanStack queries fire automatically when
-        // isAuthenticated becomes true — no explicit refresh call needed here.
-        // Just invalidate cached queries to ensure fresh data on protected pages.
+      // 4. Skip navigation & data fetch if user must change password or enroll 2FA first
+      if (!mustChangePassword && !requireMfaEnrollment) {
         queryClient.invalidateQueries();
       }
     },

@@ -9,6 +9,7 @@ import { Card } from "@core/ui/card";
 import { Checkbox } from "@core/ui/checkbox";
 import { Label } from "@core/ui/label";
 import { useCrmWorkflowsStore } from "@modules/crm";
+import { useCrmTenantScope } from "@modules/crm/shared";
 import type { CrmOpportunity } from "../../domain/entities/OpportunityEntity";
 
 interface PlaybookStepItem {
@@ -45,9 +46,11 @@ export function OpportunityStagePlaybookCard({
   onAcademyCohort,
 }: OpportunityStagePlaybookCardProps) {
   const { t } = useI18n();
+  const { tenantId, userId } = useCrmTenantScope();
   const activeDealWorkflow = useCrmWorkflowsStore((s) => s.getActiveWorkflow("deal"));
   const activeStage = activeDealWorkflow?.stages.find((s) => s.stageKey === opp.stageKey);
-  const storageKey = `scripe-crm-playbook:${opp.id}:${opp.stageKey}`;
+  const canPersistPlaybook = Boolean(userId && userId !== "anon");
+  const storageKey = `scripe-crm-playbook:${tenantId}:${userId}:${opp.id}:${opp.stageKey}`;
 
   const [checkedSteps, setCheckedSteps] = useState<Record<string, boolean>>(() =>
     readStoredPlaybookIds(storageKey)
@@ -90,7 +93,7 @@ export function OpportunityStagePlaybookCard({
   const toggleStep = (stepId: string, nextValue: boolean) => {
     setCheckedSteps((prev) => {
       const updated = { ...prev, [stepId]: nextValue };
-      if (typeof window !== "undefined") {
+      if (canPersistPlaybook && typeof window !== "undefined") {
         try {
           window.localStorage.setItem(storageKey, JSON.stringify(updated));
         } catch {

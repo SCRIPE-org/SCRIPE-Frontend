@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
-import DOMPurify from "dompurify";
+import { sanitizeEmailHtml } from "@core/common/sanitize";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
@@ -86,56 +86,7 @@ export function PreviewDialog({
   const [canvasTheme, setCanvasTheme] = useState<CanvasTheme>("dark");
 
   const sanitizedBody = useMemo(
-    () =>
-      result?.body
-        ? DOMPurify.sanitize(result.body, {
-            ALLOWED_TAGS: [
-              "h1",
-              "h2",
-              "h3",
-              "h4",
-              "h5",
-              "h6",
-              "p",
-              "br",
-              "hr",
-              "span",
-              "div",
-              "strong",
-              "b",
-              "em",
-              "i",
-              "u",
-              "s",
-              "ul",
-              "ol",
-              "li",
-              "table",
-              "thead",
-              "tbody",
-              "tr",
-              "th",
-              "td",
-              "a",
-              "img",
-              "blockquote",
-              "pre",
-              "code",
-            ],
-            ALLOWED_ATTR: [
-              "href",
-              "src",
-              "alt",
-              "class",
-              "style",
-              "target",
-              "rel",
-              "width",
-              "height",
-            ],
-            ALLOW_DATA_ATTR: false,
-          })
-        : "",
+    () => (result?.body ? sanitizeEmailHtml(result.body) : ""),
     [result]
   );
 

@@ -15,6 +15,13 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { oauthAppKeys } from "./useOAuthAppsViewModel";
 
+function isSudoCancelledError(error: unknown): boolean {
+  return (
+    error instanceof Error &&
+    /sudo verification was cancelled|sudo session (locked|reset)/i.test(error.message)
+  );
+}
+
 // ─── Form State ──────────────────────────────────────────────────
 /**
  * Interface defining property specifications, keys types, and structural contract rules for o auth app form state.
@@ -267,6 +274,7 @@ export function useOAuthAppDetailViewModel(appId?: string) {
       }
     },
     onError: (err: Error) => {
+      if (isSudoCancelledError(err)) return;
       toastError({
         title: t("common.error"),
         description: err.message,
@@ -289,6 +297,7 @@ export function useOAuthAppDetailViewModel(appId?: string) {
       });
     },
     onError: (err: Error) => {
+      if (isSudoCancelledError(err)) return;
       toastError({
         title: t("common.error"),
         description: err.message,
@@ -308,6 +317,7 @@ export function useOAuthAppDetailViewModel(appId?: string) {
       router.push("/settings/oauth-apps");
     },
     onError: (err: Error) => {
+      if (isSudoCancelledError(err)) return;
       toastError({
         title: t("common.error"),
         description: err.message,

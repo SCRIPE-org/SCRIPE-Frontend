@@ -3,6 +3,9 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { useLoginViewModel } from "../viewmodels/use-login-viewmodel";
 
 let mockRedirectQuery: string | null = null;
+let mockEmailQuery: string | null = null;
+let mockResetQuery: string | null = null;
+let mockTenantQuery: string | null = null;
 
 // Mocks
 const {
@@ -56,7 +59,13 @@ vi.mock("next/navigation", () => ({
     push: vi.fn(),
   }),
   useSearchParams: () => ({
-    get: (key: string) => (key === "redirect" ? mockRedirectQuery : null),
+    get: (key: string) => {
+      if (key === "redirect") return mockRedirectQuery;
+      if (key === "email") return mockEmailQuery;
+      if (key === "reset") return mockResetQuery;
+      if (key === "_tenant") return mockTenantQuery;
+      return null;
+    },
   }),
 }));
 
@@ -133,6 +142,9 @@ describe("useLoginViewModel", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockRedirectQuery = null;
+    mockEmailQuery = null;
+    mockResetQuery = null;
+    mockTenantQuery = null;
     mockAppState.isAuthenticated = false;
     mockAppState.mustChangePassword = false;
     mockAppState.subscriptionStatus = "Active";
@@ -274,5 +286,28 @@ describe("useLoginViewModel", () => {
 
     expect(result.current.error).toBe("Invalid credentials");
     expect(result.current.isRedirecting).toBe(false);
+  });
+
+  it("prefills ?email=, exposes ?reset=success banner flag, and preserves context on forgotPasswordHref", () => {
+    mockEmailQuery = "admin@ahly.club";
+    mockResetQuery = "success";
+    mockTenantQuery = "ahly";
+    mockRedirectQuery = "/crm/leads";
+
+    const { result } = renderHook(() => useLoginViewModel());
+
+    expect(result.current.formData.identifier).toBe("admin@ahly.club");
+    expect(result.current.isPasswordResetSuccess).toBe(true);
+    expect(result.current.forgotPasswordHref).toBe(
+      "/forgot-password?email=admin%40ahly.club&_tenant=AHLY&redirect=%2Fcrm%2Fleads"
+    );
+
+    act(() => {
+      result.current.updateField("identifier", "coach@ahly.club");
+    });
+
+    expect(result.current.forgotPasswordHref).toBe(
+      "/forgot-password?email=coach%40ahly.club&_tenant=AHLY&redirect=%2Fcrm%2Fleads"
+    );
   });
 });

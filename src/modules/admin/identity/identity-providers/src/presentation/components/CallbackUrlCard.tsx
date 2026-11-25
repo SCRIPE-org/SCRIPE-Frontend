@@ -1,9 +1,9 @@
 /**
  * Callback URL Card
  *
- * Displays exact OIDC/OAuth2 redirect URIs and SAML ACS URLs derived from
- * `NEXT_PUBLIC_API_URL` (default `http://localhost:5035/api`), and shows a clear
- * informative note during Create mode before a provider ID exists.
+ * Displays canonical central OIDC/OAuth2 redirect URIs and SAML ACS URLs derived from
+ * `NEXT_PUBLIC_API_URL` (defaulting to `https://api.scripe.org/api` whenever unset or relative),
+ * and shows a clear informative note for SAML during Create mode before a provider ID exists.
  */
 "use client";
 
@@ -22,46 +22,40 @@ interface Props {
   providerId?: string;
 }
 
-const DEFAULT_API_URL = "http://localhost:5035/api";
-const DEFAULT_APP_ORIGIN = "http://localhost:3000";
-
-function resolveFrontendOrigin(): string {
-  if (typeof window !== "undefined" && window.location?.origin) {
-    return window.location.origin.replace(/\/+$/, "");
-  }
-  return (process.env.NEXT_PUBLIC_APP_URL || DEFAULT_APP_ORIGIN).replace(/\/+$/, "");
-}
+const CANONICAL_CENTRAL_API_URL = "https://api.scripe.org/api";
 
 function resolveApiOrigin(): string {
-  const configured = (process.env.NEXT_PUBLIC_API_URL || DEFAULT_API_URL).trim();
-  const normalized = (configured || DEFAULT_API_URL).replace(/\/+$/, "");
-  if (normalized.startsWith("/")) {
-    return `${resolveFrontendOrigin()}${normalized}`;
+  const configured = (process.env.NEXT_PUBLIC_API_URL || "").trim().replace(/\/+$/, "");
+  if (/^https?:\/\//i.test(configured)) {
+    return configured;
   }
-  return normalized;
+  return CANONICAL_CENTRAL_API_URL;
 }
 
 /**
- * Displays copyable OIDC/OAuth2 redirect URIs and SAML Assertion Consumer Service URLs.
+ * Displays copyable central OIDC/OAuth2 redirect URIs and SAML Assertion Consumer Service URLs.
  */
 export function CallbackUrlCard({ protocol, providerId }: Props) {
   const { t } = useI18n();
   const { success } = useEnhancedToast();
   const [copiedType, setCopiedType] = useState<"standard" | "saml" | null>(null);
 
-  const origin = resolveFrontendOrigin();
   const apiOrigin = resolveApiOrigin();
-  const standardCallback = `${origin}/sso/callback`;
+  const standardCallback = `${apiOrigin}/v1/auth/oidc/callback`;
   const samlCallback = providerId ? `${apiOrigin}/v1/auth/saml/acs/${providerId}` : null;
 
-  const handleCopy = (text: string, type: "standard" | "saml") => {
-    void navigator.clipboard.writeText(text);
-    setCopiedType(type);
-    success({
-      title: t("identityProviders.copiedTitle"),
-      description: t("identityProviders.callbackCopiedDesc"),
-    });
-    setTimeout(() => setCopiedType(null), 2000);
+  const handleCopy = async (text: string, type: "standard" | "saml") => {
+    try {
+      await navigator.clipboard?.writeText(text);
+      setCopiedType(type);
+      success({
+        title: t("identityProviders.copiedTitle"),
+        description: t("identityProviders.callbackCopiedDesc"),
+      });
+      setTimeout(() => setCopiedType(null), 2000);
+    } catch {
+      // Clipboard API unavailable in restricted contexts
+    }
   };
 
   const isSaml = protocol === "saml";
@@ -87,6 +81,7 @@ export function CallbackUrlCard({ protocol, providerId }: Props) {
               <Input
                 type="text"
                 readOnly
+                dir="ltr"
                 value={standardCallback}
                 data-testid="standard-callback-url-input"
                 className="flex-1 select-all bg-nx-raised font-mono text-xs"
@@ -95,7 +90,7 @@ export function CallbackUrlCard({ protocol, providerId }: Props) {
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={() => handleCopy(standardCallback, "standard")}
+                onClick={() => void handleCopy(standardCallback, "standard")}
                 className="h-8 w-8 p-0"
                 aria-label={t("common.copy")}
               >
@@ -118,6 +113,7 @@ export function CallbackUrlCard({ protocol, providerId }: Props) {
               <Input
                 type="text"
                 readOnly
+                dir="ltr"
                 value={samlCallback}
                 data-testid="saml-acs-url-input"
                 className="flex-1 select-all bg-nx-raised font-mono text-xs"
@@ -126,7 +122,7 @@ export function CallbackUrlCard({ protocol, providerId }: Props) {
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={() => handleCopy(samlCallback, "saml")}
+                onClick={() => void handleCopy(samlCallback, "saml")}
                 className="h-8 w-8 p-0"
                 aria-label={t("common.copy")}
               >

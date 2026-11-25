@@ -26,6 +26,10 @@ import type {
 } from "../../domain/entities/TenantIdentityProvider";
 import { buildTenantIdpToggleUpdatePayload } from "../utils/tenantIdentityProvider.helpers";
 
+function isSudoCancelledError(err: unknown): boolean {
+  return err instanceof Error && /sudo verification was cancelled|sudo session (locked|reset)/i.test(err.message);
+}
+
 /** TanStack Query key factory for tenant-scoped identity providers. */
 export const tenantIdpKeys = {
   all: (tenantId: string) => ["tenant-identity-providers", tenantId] as const,
@@ -120,11 +124,8 @@ export function useTenantIdentityProvidersViewModel(
         setEditingProvider(detail);
         setDialogOpen(true);
       } catch (err) {
-        toast({
-          title: t("common.error"),
-          description: err instanceof Error ? err.message : t("tenant.idpLoadError"),
-          variant: "destructive",
-        });
+        if (isSudoCancelledError(err)) return;
+        toast({ title: t("common.error"), description: err instanceof Error ? err.message : t("tenant.idpLoadError"), variant: "destructive" });
       } finally {
         setIsLoadingDetail(false);
       }
@@ -146,6 +147,7 @@ export function useTenantIdentityProvidersViewModel(
       closeDialog();
     },
     onError: (err: Error) => {
+      if (isSudoCancelledError(err)) return;
       toast({ title: t("common.error"), description: err.message, variant: "destructive" });
     },
   });
@@ -159,6 +161,7 @@ export function useTenantIdentityProvidersViewModel(
       closeDialog();
     },
     onError: (err: Error) => {
+      if (isSudoCancelledError(err)) return;
       toast({ title: t("common.error"), description: err.message, variant: "destructive" });
     },
   });
@@ -211,11 +214,9 @@ export function useTenantIdentityProvidersViewModel(
         invalidateList();
       } catch (err) {
         if (previous) queryClient.setQueryData(listQueryKey, previous);
-        toast({
-          title: t("common.error"),
-          description: err instanceof Error ? err.message : t("tenant.idpToggleFailed"),
-          variant: "destructive",
-        });
+        if (!isSudoCancelledError(err)) {
+          toast({ title: t("common.error"), description: err instanceof Error ? err.message : t("tenant.idpToggleFailed"), variant: "destructive" });
+        }
       } finally {
         setTogglingId(null);
       }
@@ -238,12 +239,11 @@ export function useTenantIdentityProvidersViewModel(
           variant: result.isSuccess ? "default" : "destructive",
         });
       } catch (err) {
-        const message = err instanceof Error ? err.message : t("tenant.idpTestFailedTitle");
-        setTestResults((prev) => ({
-          ...prev,
-          [id]: { isSuccess: false, message, discoveredIssuer: null, discoveredEndpoints: [] },
-        }));
-        toast({ title: t("tenant.idpTestFailedTitle"), description: message, variant: "destructive" });
+        if (!isSudoCancelledError(err)) {
+          const message = err instanceof Error ? err.message : t("tenant.idpTestFailedTitle");
+          setTestResults((prev) => ({ ...prev, [id]: { isSuccess: false, message, discoveredIssuer: null, discoveredEndpoints: [] } }));
+          toast({ title: t("tenant.idpTestFailedTitle"), description: message, variant: "destructive" });
+        }
       } finally {
         setTestingId(null);
       }
@@ -260,6 +260,7 @@ export function useTenantIdentityProvidersViewModel(
       invalidateList();
     },
     onError: (err: Error) => {
+      if (isSudoCancelledError(err)) return;
       toast({ title: t("common.error"), description: err.message, variant: "destructive" });
     },
   });

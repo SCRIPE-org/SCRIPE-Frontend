@@ -100,12 +100,12 @@ export function DesktopHeading({ companyName }: { companyName: string }) {
       className="mb-10 hidden w-full text-center lg:block lg:text-start"
       style={{ maxWidth: "var(--login-form-width, 380px)" }}
     >
-      <h2
+      <h1
         className="login-heading tracking-tight text-[var(--login-text,var(--nx-ink))]"
         style={{ fontSize: "var(--login-size-headline, 30px)" }}
       >
         {formatBidiCompanyName(companyName)}
-      </h2>
+      </h1>
       <p
         className="mt-2 text-[var(--login-text-muted,var(--nx-ink-2))]"
         style={{ fontSize: "var(--login-size-subtitle, 0.9375rem)" }}

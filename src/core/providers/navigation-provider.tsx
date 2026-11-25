@@ -110,6 +110,7 @@ function isSessionActiveForNavFetch(): boolean {
     appState.isAuthenticated &&
       !appState.isAuthTransitioning &&
       !appState.mustChangePassword &&
+      !appState.requireMfaEnrollment &&
       hasLiveAccessToken()
   );
 }
@@ -142,6 +143,7 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   const { navigationRepository } = useServices();
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
   const mustChangePassword = useAppStore((s) => s.mustChangePassword);
+  const requireMfaEnrollment = useAppStore((s) => s.requireMfaEnrollment);
   const hasHydrated = useAppStore((s) => s._hasHydrated);
   const { activeTenantId } = useAdminContext();
   const tenantId = activeTenantId;
@@ -183,7 +185,12 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   }, []);
 
   const isReady =
-    hasHydrated && isAuthenticated && !isAuthTransitioning && !mustChangePassword && hasToken;
+    hasHydrated &&
+    isAuthenticated &&
+    !isAuthTransitioning &&
+    !mustChangePassword &&
+    !requireMfaEnrollment &&
+    hasToken;
 
   // ── Cross-context cache invalidation guard ────────────────────────────────
   // If the rehydrated store was for a different user/tenant, reset it first.

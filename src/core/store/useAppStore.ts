@@ -3,6 +3,13 @@ import { persist } from "zustand/middleware";
 import { User } from "@modules/auth/core/domain/entities/User";
 import { PermissionCode, AdminRole } from "@core/common/types/permissions";
 import { secureTokenService } from "@core/common/secure-token-service";
+import { clearActivePrincipalKey, syncActivePrincipalKey } from "@core/common/active-principal";
+import {
+  purgeDynamicBrowserCaches,
+  runSessionCleanupCallbacks,
+  sweepScopedSessionStorageOnLogout,
+  writeAuthStateHintCookie,
+} from "@core/common/session-cleanup-registry";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { useSudoStore } from "@core/store/useSudoStore";
 import { usePatOneTimeSecretStore } from "@core/store/usePatOneTimeSecretStore";
@@ -48,6 +55,10 @@ interface AppState {
   mustChangePassword: boolean;
   setMustChangePassword: (must: boolean) => void;
 
+  // Mandatory MFA enrollment (mfa_enroll=true enforced after MustChangePassword)
+  requireMfaEnrollment: boolean;
+  setRequireMfaEnrollment: (require: boolean) => void;
+
   // Post-login redirect path from backend
   defaultRedirectPath: string;
   setDefaultRedirectPath: (path: string) => void;
@@ -81,9 +92,7 @@ export const useAppStore = create<AppState>()(
       setUser: (user) => set({ user, isAuthenticated: !!user, isAuthTransitioning: false }),
       // ... existing code in setAuth ...
       setAuth: (user, permissions, roles, isFreshLogin = false) => {
-        if (typeof document !== "undefined") {
-          document.cookie = `${STORAGE_KEYS.scr_auth_state}=true; path=/; max-age=2592000; samesite=Lax`;
-        }
+        writeAuthStateHintCookie(true);
         // Mark this as a fresh login session — DashboardLayout uses this to
         // show the welcome loader instead of a plain shimmer. sessionStorage
         // survives the redirect to /dashboard but resets on browser close.
@@ -92,6 +101,13 @@ export const useAppStore = create<AppState>()(
             sessionStorage.setItem(STORAGE_KEYS.JUST_LOGGED_IN, "1");
           } catch {
             /* ignore */
+          }
+          if (user?.id) {
+            syncActivePrincipalKey({
+              principalType: "admin",
+              tenantId: user.tenantId ?? null,
+              principalId: String(user.id),
+            });
           }
         }
         set(() => {
@@ -122,11 +138,11 @@ export const useAppStore = create<AppState>()(
         });
       },
       beginSessionTransition: () => {
-        if (typeof document !== "undefined") {
-          document.cookie = `${STORAGE_KEYS.scr_auth_state}=true; path=/; max-age=2592000; samesite=Lax`;
-        }
+        writeAuthStateHintCookie(true);
+        clearActivePrincipalKey();
         useSudoStore.getState().reset();
         usePatOneTimeSecretStore.getState().clearPendingReceipt();
+        runSessionCleanupCallbacks();
         set({
           user: null,
           isAuthenticated: true,
@@ -139,13 +155,13 @@ export const useAppStore = create<AppState>()(
           gracePhase: null,
           editionName: null,
           mustChangePassword: false,
+          requireMfaEnrollment: false,
           defaultRedirectPath: "/",
         });
       },
       logout: () => {
-        if (typeof document !== "undefined") {
-          document.cookie = `${STORAGE_KEYS.scr_auth_state}=; path=/; max-age=0; samesite=Lax`;
-        }
+        writeAuthStateHintCookie(false);
+        clearActivePrincipalKey();
         // Also clear tokens, sudo elevation, and ephemeral PAT secrets when logging out from store
         secureTokenService.clearTokens();
         useSudoStore.getState().reset();
@@ -162,8 +178,12 @@ export const useAppStore = create<AppState>()(
           gracePhase: null,
           editionName: null,
           mustChangePassword: false,
+          requireMfaEnrollment: false,
           defaultRedirectPath: "/",
         });
+        runSessionCleanupCallbacks();
+        sweepScopedSessionStorageOnLogout();
+        purgeDynamicBrowserCaches();
       },
 
       // Subscription State
@@ -176,6 +196,10 @@ export const useAppStore = create<AppState>()(
       // Must Change Password
       mustChangePassword: false,
       setMustChangePassword: (must) => set({ mustChangePassword: must }),
+
+      // Mandatory MFA enrollment
+      requireMfaEnrollment: false,
+      setRequireMfaEnrollment: (require) => set({ requireMfaEnrollment: require }),
 
       // Ephemeral in-memory redirect fallback (never persisted to localStorage)
       defaultRedirectPath: "/",
@@ -205,6 +229,7 @@ export const useAppStore = create<AppState>()(
         gracePhase: state.gracePhase,
         editionName: state.editionName,
         mustChangePassword: state.mustChangePassword,
+        requireMfaEnrollment: state.requireMfaEnrollment,
       }),
       merge: (persistedState, currentState) => {
         const persisted = { ...((persistedState as Partial<AppState> | null) ?? {}) };

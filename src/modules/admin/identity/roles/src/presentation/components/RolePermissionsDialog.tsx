@@ -18,7 +18,8 @@
 "use client";
 
 import { useMemo } from "react";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@core/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@core/ui/dialog";
+import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Badge } from "@core/ui/badge";
@@ -26,14 +27,17 @@ import { Progress } from "@core/ui/progress";
 import { ScrollArea } from "@core/ui/scroll-area";
 import { EmptyState } from "@core/ui/empty-state";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useModuleLocales } from "@core/hooks/use-module-locales";
+import { useSudoStore } from "@core/store/useSudoStore";
 import { resolveBilingualLabel } from "@core/common/utils";
-import { Search, SearchX, Shield, ShieldCheck, KeyRound, Users } from "lucide-react";
+import { Search, SearchX, Shield, KeyRound, Lock, Users } from "lucide-react";
 import type { Role } from "../../domain/entities/Role";
 import { useRolePermissionsDialog } from "../viewmodels/useRolePermissionsDialog";
 import type { Permission } from "@modules/identity/permissions";
 import { PermissionModuleMatrix } from "./PermissionModuleMatrix";
 import { PermissionTreeSkeleton } from "./PermissionTreeSkeleton";
 import { BulkScopeMenu } from "./BulkScopeMenu";
+import { RolePermissionsDialogFooter } from "./RolePermissionsDialogFooter";
 
 /**
  * Interface defining property specifications, keys types, and structural contract rules for role permissions dialog props.
@@ -54,27 +58,32 @@ export interface RolePermissionsDialogProps {
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function RolePermissionsDialog(props: RolePermissionsDialogProps) {
+  useModuleLocales(() => import("../../../locales"), "roles");
   const { open, onOpenChange, role } = props;
   const { t, language } = useI18n();
   const vm = useRolePermissionsDialog(props);
-
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen && useSudoStore.getState().modalOpen) return;
+    onOpenChange(nextOpen);
+  };
   const moduleCount = vm.groupedModules.length;
   const hasSearch = vm.search.trim().length > 0;
   const controlsDisabled = vm.isLoading || moduleCount === 0;
-  const pct = vm.totalCount > 0 ? (vm.selectedCount / vm.totalCount) * 100 : 0;
-
-  // The matrix reads a Set of codes; the ViewModel owns a Map of assignments.
-  // Derive, never duplicate.
+  const pct = Math.min(100, Math.max(0, vm.totalCount > 0 ? (vm.selectedCount / vm.totalCount) * 100 : 0));
   const assignments = vm.assignments;
   const selectedCodes = useMemo(() => new Set(assignments.keys()), [assignments]);
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      {/* The subject line is a row of elements, not a paragraph, so it cannot be
-          a DialogDescription — point the description association at it instead. */}
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
-        className="flex h-[85vh] max-w-3xl flex-col gap-0 p-0"
+        className="flex h-[90dvh] w-[calc(100%-1.5rem)] max-w-3xl flex-col gap-0 p-0 sm:h-[85dvh]"
         aria-describedby="role-permissions-subject"
+        onInteractOutside={(e) => {
+          if (useSudoStore.getState().modalOpen) e.preventDefault();
+        }}
+        onPointerDownOutside={(e) => {
+          if (useSudoStore.getState().modalOpen) e.preventDefault();
+        }}
       >
         {/* ── Header: who this is about. The inline-end padding reserves the
              lane the DialogContent close button occupies (end-4, 16px). ── */}
@@ -88,7 +97,7 @@ export function RolePermissionsDialog(props: RolePermissionsDialogProps) {
             </span>
             <div className="min-w-0 flex-1">
               <DialogTitle className="truncate text-base">
-                {t("role.managePermissions")}
+                {t("roles.managePermissions")}
               </DialogTitle>
               {/* A div, not DialogDescription — a <p> cannot legally hold this row. */}
               <div
@@ -99,8 +108,18 @@ export function RolePermissionsDialog(props: RolePermissionsDialogProps) {
                   {resolveBilingualLabel(role?.nameEn ?? "", role?.nameAr ?? "", language)}
                 </span>
                 <Badge variant="secondary" className="shrink-0 font-mono text-[11px]">
-                  {role?.code}
+                  <bdi dir="ltr">{role?.code}</bdi>
                 </Badge>
+                {(vm.isPermissionLocked || role?.isPermissionLocked) && (
+                  <Badge
+                    variant="secondary"
+                    data-testid="role-locked-badge"
+                    className="gap-1 shrink-0 text-[11px]"
+                  >
+                    <Lock className="h-3 w-3" aria-hidden="true" />
+                    {t("roles.lockedBadge")}
+                  </Badge>
+                )}
                 {vm.adminCount > 0 && (
                   <Badge
                     variant="warning"
@@ -154,7 +173,16 @@ export function RolePermissionsDialog(props: RolePermissionsDialogProps) {
                   vm.setBulkScopeValue(val);
                   if (val) vm.bulkUpdateScope(val);
                 }}
-                disabled={controlsDisabled || vm.selectedCount === 0}
+                allowAllTenants={vm.allowAllTenants}
+                disabled={controlsDisabled || vm.selectedCount === 0 || vm.isReadOnly}
+                disabledReason={
+                  vm.isReadOnly
+                    ? vm.lockReason ||
+                      (vm.isPermissionLocked
+                        ? t("roles.permissionLockedTitle")
+                        : t("roles.readOnlyPermissionsHint"))
+                    : undefined
+                }
               />
               <Button
                 id="role-permissions-expand-all"
@@ -179,6 +207,26 @@ export function RolePermissionsDialog(props: RolePermissionsDialogProps) {
             </div>
           </div>
         </div>
+
+        {/* ── Read-only / Edition-Locked Alert ── */}
+        {vm.isReadOnly && (
+          <div className="shrink-0 px-6 pt-3">
+            <Alert variant="info" data-testid="role-permission-lock-alert">
+              <Lock className="h-4 w-4" aria-hidden="true" />
+              <AlertTitle>
+                {vm.isPermissionLocked
+                  ? t("roles.permissionLockedTitle")
+                  : t("roles.readOnlyPermissionsTitle")}
+              </AlertTitle>
+              <AlertDescription className="text-xs leading-relaxed text-nx-ink">
+                {vm.lockReason ||
+                  (vm.isPermissionLocked
+                    ? t("roles.permissionLockedDescription")
+                    : t("roles.readOnlyPermissionsHint"))}
+              </AlertDescription>
+            </Alert>
+          </div>
+        )}
 
         {/* ── The permission matrix — identical renderer to the role detail page ── */}
         <div className="min-h-0 flex-1 overflow-hidden">
@@ -216,6 +264,8 @@ export function RolePermissionsDialog(props: RolePermissionsDialogProps) {
                     isExpanded={vm.isModuleExpanded(moduleGroup.module)}
                     selectedPermissionCodes={selectedCodes}
                     assignments={vm.assignments}
+                    disabled={vm.isReadOnly}
+                    allowAllTenants={vm.allowAllTenants}
                     onToggleModule={() => vm.toggleModule(moduleGroup.module)}
                     onTogglePermission={vm.toggle}
                     // The matrix speaks in Permission objects; the ViewModel in codes.
@@ -230,39 +280,15 @@ export function RolePermissionsDialog(props: RolePermissionsDialogProps) {
           </ScrollArea>
         </div>
 
-        {/* ── Footer ── */}
-        <DialogFooter className="shrink-0 border-t border-nx-line px-6 py-4">
-          <div className="flex w-full items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <p className="text-sm tabular-nums text-nx-ink-2">
-                {vm.selectedCount} {t("common.selected")}
-              </p>
-              {vm.isDirty && (
-                <div className="flex items-center gap-1.5 text-xs font-medium">
-                  {vm.changesCount.added > 0 && (
-                    <Badge variant="success">
-                      +{vm.changesCount.added} {t("common.add") || "added"}
-                    </Badge>
-                  )}
-                  {vm.changesCount.removed > 0 && (
-                    <Badge variant="warning">
-                      -{vm.changesCount.removed} {t("common.delete") || "removed"}
-                    </Badge>
-                  )}
-                </div>
-              )}
-            </div>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" onClick={() => onOpenChange(false)}>
-                {t("common.cancel")}
-              </Button>
-              <Button onClick={vm.save} loading={vm.isSaving} className="min-w-[7rem]">
-                {!vm.isSaving && <ShieldCheck className="me-2 h-4 w-4" aria-hidden="true" />}
-                {t("common.save")}
-              </Button>
-            </div>
-          </div>
-        </DialogFooter>
+        <RolePermissionsDialogFooter
+          selectedCount={vm.selectedCount}
+          isDirty={vm.isDirty}
+          changesCount={vm.changesCount}
+          isSaving={vm.isSaving}
+          isReadOnly={vm.isReadOnly}
+          onCancel={() => onOpenChange(false)}
+          onSave={vm.save}
+        />
       </DialogContent>
     </Dialog>
   );

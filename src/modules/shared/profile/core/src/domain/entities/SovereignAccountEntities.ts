@@ -155,6 +155,9 @@ export interface SovereignSecuritySlice {
   isSsoFeatureEnabled?: boolean;
   isSecurityPageEnabled?: boolean;
   backupCodesRemaining: number;
+  passwordLastChangedUtc?: string | null;
+  isPasswordExpired?: boolean;
+  daysUntilPasswordExpiry?: number | null;
   passkeyCount: number;
   hardwareKeyCount: number;
   securityPostureScore: number;
@@ -165,6 +168,7 @@ export interface SovereignSecuritySlice {
   currentClientIp?: string | null;
   isCurrentIpAllowed: boolean;
   availableSsoProviders: AvailableSsoProvider[];
+  passwordPolicy?: import("@core/common/password-policy").PasswordPolicyModel | null;
   rowVersion?: string;
 }
 

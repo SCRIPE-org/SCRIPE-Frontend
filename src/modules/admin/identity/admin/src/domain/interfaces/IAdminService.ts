@@ -7,6 +7,7 @@
  *
  * @module admin/domain
  */
+import type { PasswordPolicyDto } from "@core/common/password-policy";
 import type {
   AdminModel,
   AdminRoleJson,
@@ -182,4 +183,9 @@ export interface IAdminService {
    * Resend the account setup email to an unactivated admin
    */
   resendSetupEmail(adminId: string): Promise<void>;
+
+  /**
+   * Fetch effective backend password policy for system or target tenant
+   */
+  getPasswordPolicy(tenantId?: string): Promise<PasswordPolicyDto>;
 }

@@ -1,4 +1,5 @@
 import { V1 } from "@/core/config/api-endpoints/_shared";
+import { AUTH_ENDPOINTS } from "@core/config/api-endpoints/auth.endpoints";
 
 /**
  * Documentation for module export
@@ -30,4 +31,5 @@ export const ADMIN_ENDPOINTS = {
   TRANSFER_PROTECTION: `${V1}/Admins/transfer-protection`,
   SYNC_ROLES: (id: string) => `${V1}/Admins/${id}/roles/sync`,
   RESEND_SETUP_EMAIL: `${V1}/account-setup/resend`,
+  PASSWORD_POLICY: AUTH_ENDPOINTS.AUTH.PASSWORD_POLICY,
 } as const;

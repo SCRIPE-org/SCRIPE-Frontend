@@ -5,6 +5,7 @@
 
 import type { PlatformAccount } from "../../domain/entities/PlatformStripeDashboard";
 import { useI18n } from "@core/providers/i18n-provider";
+import { sanitizeHttpUrl } from "@core/common/sanitize";
 import { Badge } from "@core/ui/badge";
 import { StripeMark } from "@core/ui/brand-icons";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
@@ -147,25 +148,30 @@ export function AccountHeroCard({ account }: AccountHeroCardProps) {
                   copyable={account.supportPhone}
                 />
               )}
-              {account.supportUrl && (
-                <DetailRow
-                  icon={Globe}
-                  label={t("entitlements.platformStripe.supportUrl")}
-                  value={
-                    <a
-                      href={account.supportUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="rounded-nx-sm text-nx-accent underline-offset-4 hover:underline focus-visible:shadow-nx-focus focus-visible:outline-none"
-                    >
-                      {account.supportUrl}
-                      <span className="sr-only">
-                        {t("entitlements.platformStripe.opensInNewTab")}
-                      </span>
-                    </a>
-                  }
-                />
-              )}
+              {account.supportUrl &&
+                (() => {
+                  const safeSupportUrl = sanitizeHttpUrl(account.supportUrl);
+                  if (!safeSupportUrl) return null;
+                  return (
+                    <DetailRow
+                      icon={Globe}
+                      label={t("entitlements.platformStripe.supportUrl")}
+                      value={
+                        <a
+                          href={safeSupportUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="rounded-nx-sm text-nx-accent underline-offset-4 hover:underline focus-visible:shadow-nx-focus focus-visible:outline-none"
+                        >
+                          {account.supportUrl}
+                          <span className="sr-only">
+                            {t("entitlements.platformStripe.opensInNewTab")}
+                          </span>
+                        </a>
+                      }
+                    />
+                  );
+                })()}
             </div>
           </CardContent>
         </Card>

@@ -6,6 +6,7 @@
  *
  * @module auth/core/domain
  */
+import type { PasswordPolicyDto } from "@core/common/password-policy";
 import type { LoginRequestModel, LoginResponseModel } from "../types/AuthTypes";
 import type {
   DiscoverWorkspacesResponseDto,
@@ -19,7 +20,7 @@ import type {
 export interface IAuthService {
   login(request: LoginRequestModel): Promise<LoginResponseModel>;
   verify2FA(request: Verify2FARequestModel): Promise<Verify2FAResponseModel>;
-  logout(): Promise<void>;
+  logout(logoutScope?: "app" | "central"): Promise<void>;
   refreshToken(): Promise<LoginResponseModel>;
   getCurrentPrincipal<T>(): Promise<T>;
   discoverWorkspaces(email: string): Promise<DiscoverWorkspacesResponseDto>;
@@ -27,18 +28,10 @@ export interface IAuthService {
   stopImpersonation(): Promise<LoginResponseModel>;
   buildOidcConsentForm(
     searchParams: URLSearchParams,
-    accessToken: string,
     decision?: "approve" | "deny"
   ): { action: string; params: Record<string, string> };
+  buildOidcAuthorizeUrl(searchParams: URLSearchParams): string;
   buildOidcLogoutUrl(searchParams: URLSearchParams): string;
-  /** Link an external SSO account to the current admin profile */
-  linkExternalLogin(data: {
-    identityProviderId: string;
-    providerName: string;
-    providerKey: string;
-    email: string;
-    displayName?: string;
-  }): Promise<void>;
 
   /** Request a passwordless magic-link sign-in email (enumeration-safe, always resolves). */
   requestMagicLink(email: string, tenantId?: string): Promise<{ sent: boolean }>;
@@ -96,6 +89,7 @@ export interface IAuthService {
       lockedUntil?: string | null;
     }> | null;
     mustChangePassword?: boolean;
+    requireMfaEnrollment?: boolean;
     subscriptionStatus?: string | null;
     gracePhase?: string | null;
     editionName?: string | null;
@@ -122,7 +116,15 @@ export interface IAuthService {
     gracePhase?: string | null;
     editionName?: string | null;
     mustChangePassword?: boolean;
+    requireMfaEnrollment?: boolean;
   }>;
+
+  /** Fetch the effective password policy for an optional tenantId/tenantCode or the signed-in admin's tenant. */
+  getPasswordPolicy(params?: {
+    tenantId?: string | null;
+    tenantCode?: string | null;
+    isPublic?: boolean;
+  }): Promise<PasswordPolicyDto>;
 
   /** Approve a QR sign-in session from the mobile device. */
   approveQrSignIn(sessionToken: string, deviceInfo?: string): Promise<void>;

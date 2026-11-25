@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { getAuthContainer } from "@modules/auth/di";
+import { isPlatformDomain } from "@core/common/origin-routing";
 import type { TenantBranding } from "../../../domain/entities/TenantBranding";
 
 /**
@@ -25,40 +26,12 @@ export interface TenantResolutionResult {
   isNotFound: boolean;
 }
 
-const DEV_DOMAINS = ["localhost", "127.0.0.1", "0.0.0.0", "[::1]"];
-
 /**
- * Detect whether the current hostname is the platform domain.
- *
- * Platform domain → skip tenant resolution API call.
- * Tenant subdomain (e.g. ahly.localhost or seif.admin.scripe.org) → must resolve.
- *
- * Detection sources (in order):
- *  1. Bare dev domains (localhost, 127.0.0.1, 0.0.0.0, [::1]) — NOT *.localhost subdomains!
- *  2. NEXT_PUBLIC_APP_URL environment variable (e.g. https://admin.scripe.org)
- *
- * Uses `process.env.NEXT_PUBLIC_APP_URL` directly — Next.js inlines
- * NEXT_PUBLIC_* values at build time, which is more reliable than
- * importing the `env` module in client components.
+ * Detect whether the current hostname is the platform or central auth domain.
+ * Re-exported from `@core/common/origin-routing` (handles dev domains,
+ * `NEXT_PUBLIC_APP_URL`, and `NEXT_PUBLIC_AUTH_URL`).
  */
-export function isPlatformDomain(hostname: string): boolean {
-  const normalized = hostname.toLowerCase().trim();
-  // 1. Bare dev domains — always platform (*.localhost is a tenant subdomain, NOT platform)
-  if (DEV_DOMAINS.includes(normalized)) return true;
-
-  // 2. Production: compare against NEXT_PUBLIC_APP_URL
-  const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? "").trim();
-  if (appUrl) {
-    try {
-      const platformHost = new URL(appUrl).hostname.toLowerCase();
-      if (normalized === platformHost) return true;
-    } catch {
-      // Invalid URL — fall through
-    }
-  }
-
-  return false;
-}
+export { isPlatformDomain };
 
 function isNotFoundError(err: unknown): boolean {
   if (!err || typeof err !== "object") return false;

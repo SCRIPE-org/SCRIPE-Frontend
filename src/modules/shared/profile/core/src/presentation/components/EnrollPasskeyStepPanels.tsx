@@ -161,7 +161,14 @@ export function EnrollPasskeyNameStep({
   const { t } = useI18n();
 
   return (
-    <>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (!isEnrolling && deviceName.trim()) {
+          onActivate();
+        }
+      }}
+    >
       <div className="space-y-4 py-4">
         <div className="space-y-1.5">
           <Label htmlFor="passkey-name" className="text-xs font-semibold text-nx-ink">
@@ -173,6 +180,7 @@ export function EnrollPasskeyNameStep({
             value={deviceName}
             onChange={(e) => onDeviceNameChange(e.target.value)}
             placeholder={t("profile.passkeys.namePlaceholder")}
+            maxLength={200}
             className="text-xs h-9 bg-nx-raised border-nx-line text-nx-ink"
             disabled={isEnrolling}
             autoFocus
@@ -220,13 +228,13 @@ export function EnrollPasskeyNameStep({
       </div>
 
       <DialogFooter className="gap-2 sm:gap-0">
-        <Button variant="outline" size="sm" onClick={onBack} disabled={isEnrolling} className="text-xs">
+        <Button type="button" variant="outline" size="sm" onClick={onBack} disabled={isEnrolling} className="text-xs">
           {t("profile.common.back")}
         </Button>
         <Button
+          type="submit"
           size="sm"
           data-testid="passkey-activate-btn"
-          onClick={onActivate}
           disabled={isEnrolling || !deviceName.trim()}
           className="text-xs font-semibold gap-1.5 bg-nx-accent-fill text-nx-on-fill"
         >
@@ -243,6 +251,6 @@ export function EnrollPasskeyNameStep({
           )}
         </Button>
       </DialogFooter>
-    </>
+    </form>
   );
 }

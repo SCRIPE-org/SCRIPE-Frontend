@@ -17,10 +17,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@core/ui/dialog";
+import { Alert, AlertDescription } from "@core/ui/alert";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
-import { ShieldAlert, AlertTriangle, Loader2 } from "lucide-react";
+import { isSudoCancelledError } from "../utils/sudoElevation";
+import { AlertCircle, ShieldAlert, AlertTriangle, Loader2 } from "lucide-react";
 
 /** Props for {@link EmergencyLockdownDialog}. */
 interface EmergencyLockdownDialogProps {
@@ -39,23 +41,47 @@ export function EmergencyLockdownDialog({
 }: EmergencyLockdownDialogProps) {
   const { t } = useI18n();
   const [confirmKeyword, setConfirmKeyword] = useState("");
+  const [lockdownError, setLockdownError] = useState<string | null>(null);
   const requiredKeyword = "LOCKDOWN";
 
   const handleExecute = async () => {
-    if (confirmKeyword !== requiredKeyword) return;
+    if (confirmKeyword !== requiredKeyword || isLockingDown) return;
+    setLockdownError(null);
     try {
       await onConfirmLockdown();
-    } catch {}
+    } catch (err: unknown) {
+      if (isSudoCancelledError(err)) return;
+      setLockdownError(
+        err instanceof Error && err.message ? err.message : t("profile.common.error")
+      );
+    }
   };
 
   const handleClose = () => {
+    if (isLockingDown) return;
     setConfirmKeyword("");
+    setLockdownError(null);
     onClose();
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[460px] bg-nx-surface border-destructive/50 p-6">
+    <Dialog
+      open={isOpen}
+      onOpenChange={(nextOpen) => {
+        if (!nextOpen && !isLockingDown) {
+          handleClose();
+        }
+      }}
+    >
+      <DialogContent
+        onEscapeKeyDown={(e) => {
+          if (isLockingDown) e.preventDefault();
+        }}
+        onPointerDownOutside={(e) => {
+          if (isLockingDown) e.preventDefault();
+        }}
+        className="sm:max-w-[460px] bg-nx-surface border-destructive/50 p-6"
+      >
         <DialogHeader>
           <div className="flex items-center gap-2 mb-1">
             <div className="h-9 w-9 rounded-lg bg-destructive/15 text-destructive flex items-center justify-center shrink-0">
@@ -87,13 +113,24 @@ export function EmergencyLockdownDialog({
             </Label>
             <Input
               id="lockdown-confirm"
+              dir="ltr"
               value={confirmKeyword}
-              onChange={(e) => setConfirmKeyword(e.target.value)}
+              onChange={(e) => {
+                setConfirmKeyword(e.target.value);
+                if (lockdownError) setLockdownError(null);
+              }}
               placeholder={requiredKeyword}
               className="font-mono text-xs uppercase bg-nx-surface border-nx-line text-nx-ink"
               disabled={isLockingDown}
             />
           </div>
+
+          {lockdownError && (
+            <Alert variant="destructive" data-testid="lockdown-error-alert" role="alert">
+              <AlertCircle className="h-4 w-4" aria-hidden="true" />
+              <AlertDescription className="text-xs">{lockdownError}</AlertDescription>
+            </Alert>
+          )}
         </div>
 
         <DialogFooter className="gap-2 sm:gap-0">

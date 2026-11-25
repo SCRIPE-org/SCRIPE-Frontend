@@ -17,6 +17,7 @@ import { useEffect, useRef, useCallback, useState } from "react";
 import { LayoutDashboard, Monitor, Tablet, Smartphone, RefreshCw } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@/core/common/utils";
+import { isTrustedSameOriginIframeMessage } from "@core/common/postmessage-security";
 import { Button } from "@core/ui/button";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import type { DashboardThemeSettings } from "../../domain/entities/StudioDraft";
@@ -58,6 +59,7 @@ export function DashboardLayoutPreview({ settings }: Props) {
   // ── Listen for DASHBOARD_PREVIEW_READY from iframe ──
   useEffect(() => {
     const handler = (event: MessageEvent) => {
+      if (!isTrustedSameOriginIframeMessage(event, iframeRef.current)) return;
       if (event.data?.type === "DASHBOARD_PREVIEW_READY") {
         setIsReady(true);
         // Flush any pending settings

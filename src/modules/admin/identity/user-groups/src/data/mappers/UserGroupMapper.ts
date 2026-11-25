@@ -31,6 +31,7 @@ const UserGroupModelSchema = z.object({
   roleCount: z.number().int().optional().default(0),
   createdAt: isoDateString().optional(),
   modifiedAt: isoDateString().optional().nullable(),
+  rowVersion: z.string().optional().nullable(),
   members: z.array(z.unknown()).optional(),
   roles: z.array(z.unknown()).optional(),
   restrictions: z.array(z.unknown()).optional(),
@@ -57,6 +58,7 @@ export class UserGroupMapper {
       roleCount: validated.roleCount,
       createdAt: validated.createdAt ?? "",
       modifiedAt: validated.modifiedAt ?? undefined,
+      rowVersion: validated.rowVersion ?? undefined,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       members: validated.members as any,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

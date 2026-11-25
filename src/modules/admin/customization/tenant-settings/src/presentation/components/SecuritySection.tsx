@@ -38,7 +38,7 @@ export function SecuritySection({ settings, updateField }: SecuritySectionProps)
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Password Settings */}
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-3">
           <div className="space-y-2">
             <Label htmlFor="passwordMinLength">{t("tenantSettings.passwordMinLength")}</Label>
             <Input
@@ -53,6 +53,23 @@ export function SecuritySection({ settings, updateField }: SecuritySectionProps)
               }}
             />
             <p className="text-xs text-nx-ink-3">{t("tenantSettings.passwordMinLengthHelp")}</p>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="passwordHistoryCount">{t("tenantSettings.passwordHistoryCount")}</Label>
+            <Input
+              id="passwordHistoryCount"
+              type="number"
+              min={0}
+              max={24}
+              value={settings.passwordHistoryCount}
+              onChange={(e) => {
+                const parsed = parseInt(e.target.value, 10);
+                if (!Number.isNaN(parsed)) {
+                  updateField("passwordHistoryCount", Math.min(24, Math.max(0, parsed)));
+                }
+              }}
+            />
+            <p className="text-xs text-nx-ink-3">{t("tenantSettings.passwordHistoryCountHelp")}</p>
           </div>
           <div className="space-y-2">
             <Label htmlFor="passwordExpiryDays">{t("tenantSettings.passwordExpiryDays")}</Label>
@@ -71,7 +88,7 @@ export function SecuritySection({ settings, updateField }: SecuritySectionProps)
         </div>
 
         {/* Password Requirements */}
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           <div className="flex items-center justify-between rounded-nx-md border border-nx-line p-3">
             <div>
               <Label htmlFor="requireUppercase">
@@ -85,6 +102,21 @@ export function SecuritySection({ settings, updateField }: SecuritySectionProps)
               id="requireUppercase"
               checked={settings.passwordRequireUppercase}
               onCheckedChange={(checked) => updateField("passwordRequireUppercase", checked)}
+            />
+          </div>
+          <div className="flex items-center justify-between rounded-nx-md border border-nx-line p-3">
+            <div>
+              <Label htmlFor="requireLowercase">
+                {t("tenantSettings.passwordRequireLowercase")}
+              </Label>
+              <p className="text-xs text-nx-ink-3">
+                {t("tenantSettings.passwordRequireLowercaseHelp")}
+              </p>
+            </div>
+            <Switch
+              id="requireLowercase"
+              checked={settings.passwordRequireLowercase}
+              onCheckedChange={(checked) => updateField("passwordRequireLowercase", checked)}
             />
           </div>
           <div className="flex items-center justify-between rounded-nx-md border border-nx-line p-3">
@@ -111,6 +143,21 @@ export function SecuritySection({ settings, updateField }: SecuritySectionProps)
               id="requireSpecial"
               checked={settings.passwordRequireSpecial}
               onCheckedChange={(checked) => updateField("passwordRequireSpecial", checked)}
+            />
+          </div>
+          <div className="flex items-center justify-between rounded-nx-md border border-nx-line p-3">
+            <div>
+              <Label htmlFor="checkBreachedPasswords">
+                {t("tenantSettings.checkBreachedPasswords")}
+              </Label>
+              <p className="text-xs text-nx-ink-3">
+                {t("tenantSettings.checkBreachedPasswordsHelp")}
+              </p>
+            </div>
+            <Switch
+              id="checkBreachedPasswords"
+              checked={settings.checkBreachedPasswords}
+              onCheckedChange={(checked) => updateField("checkBreachedPasswords", checked)}
             />
           </div>
         </div>

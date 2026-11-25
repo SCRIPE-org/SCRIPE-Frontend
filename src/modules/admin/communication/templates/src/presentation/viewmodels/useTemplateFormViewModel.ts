@@ -8,7 +8,7 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
 import { communicationContainer } from "@modules/communication/di";
@@ -21,11 +21,11 @@ import type {
 } from "../../domain/entities/MessageTemplateRequests";
 import type { PlaceholderField } from "../components/PlaceholderSchemaBuilder";
 import type { DesignVariables } from "../components/DesignVariablesPanel";
-import { DEFAULT_DESIGN } from "../components/DesignVariablesPanel";
 import {
   MESSAGE_TEMPLATE_ENTITY_TYPE_KEY,
   type TemplateFormMode,
   type TemplateFormValues,
+  buildInitialTemplateFormValues,
   mergeDesignForSave,
   parseTemplateSchema,
   parseTemplateDesign,
@@ -48,6 +48,7 @@ const QUERY_KEY = ["message-templates"];
 export function useTemplateFormViewModel() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { t } = useI18n();
   const queryClient = useQueryClient();
   const { success, error: toastError } = useEnhancedToast();
@@ -56,7 +57,6 @@ export function useTemplateFormViewModel() {
   const templateId = params?.id as string | undefined;
   const mode: TemplateFormMode = templateId ? "edit" : "create";
 
-  // ─── Custom Fields ───────────────────────────────────────
   const {
     customFieldValues,
     updateCustomFieldValue,
@@ -66,19 +66,9 @@ export function useTemplateFormViewModel() {
     refetchCustomFields,
   } = useTemplateCustomFields(mode, templateId, t);
 
-  // ─── Form State ──────────────────────────────────────────
-  const [form, setForm] = useState<TemplateFormValues>({
-    key: "",
-    channel: "Email",
-    language: "en",
-    subject: "",
-    body: "",
-    description: "",
-    isActive: true,
-    category: "",
-    placeholderSchema: [],
-    designVariables: { ...DEFAULT_DESIGN },
-  });
+  const [form, setForm] = useState<TemplateFormValues>(() =>
+    buildInitialTemplateFormValues(mode, searchParams)
+  );
 
   // ─── Fetch template for edit mode ────────────────────────
   const {
@@ -139,23 +129,19 @@ export function useTemplateFormViewModel() {
     setForm((prev) => ({ ...prev, designVariables: vars }));
   }, []);
 
-  // ─── Create Mutation ─────────────────────────────────────
+  // ───Mutations ────────────────────────────────────────────
   const createMutation = useMutation({
     mutationFn: (data: CreateMessageTemplateRequest) => repo.create(data),
-    onError: () => {
-      toastError({ title: t("messaging.templates.createError") });
-    },
+    onError: (err: Error) =>
+      toastError({ title: t("messaging.templates.createError"), description: err?.message || undefined }),
   });
 
-  // ─── Update Mutation ─────────────────────────────────────
   const updateMutation = useMutation({
     mutationFn: (data: UpdateMessageTemplateRequest) => repo.update(templateId!, data),
-    onError: () => {
-      toastError({ title: t("messaging.templates.updateError") });
-    },
+    onError: (err: Error) =>
+      toastError({ title: t("messaging.templates.updateError"), description: err?.message || undefined }),
   });
 
-  // ─── Reset Design Mutation ───────────────────────────────
   const resetDesignMutation = useMutation({
     mutationFn: () => repo.resetDesign(templateId!),
     onSuccess: async () => {
@@ -164,9 +150,8 @@ export function useTemplateFormViewModel() {
       queryClient.invalidateQueries({ queryKey: QUERY_KEY });
       success({ title: t("messaging.templates.resetDesignSuccess") });
     },
-    onError: () => {
-      toastError({ title: t("messaging.templates.resetDesignError") });
-    },
+    onError: (err: Error) =>
+      toastError({ title: t("messaging.templates.resetDesignError"), description: err?.message || undefined }),
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);

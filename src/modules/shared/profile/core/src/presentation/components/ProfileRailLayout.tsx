@@ -9,6 +9,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useAppStore } from "@core/store/useAppStore";
 import { cn } from "@core/common/utils";
 import type { AdminProfile } from "../../domain/entities/AdminProfile";
 import type {
@@ -43,7 +44,11 @@ export function ProfileRailLayout({
 }: ProfileRailLayoutProps) {
   const { t } = useI18n();
   const pathname = usePathname();
-  const isPlatformAdmin = principalContext?.principalKind === "PlatformAdmin";
+  const authUser = useAppStore((s) => s.user);
+  const tenantCode = useAppStore((s) => s.tenantCode);
+  const isPlatformAdmin = principalContext
+    ? principalContext.principalKind === "PlatformAdmin"
+    : Boolean(authUser && !authUser.tenantId && !tenantCode);
   const categories = buildProfileRailCategories(t, isPlatformAdmin, featureFlags);
 
   const isItemActive = (itemHref: string) =>
@@ -66,7 +71,7 @@ export function ProfileRailLayout({
   return (
     <div className="flex flex-col lg:flex-row gap-6 items-start min-w-0 w-full">
       <aside className="w-full lg:w-64 xl:w-72 shrink-0 space-y-4 lg:sticky lg:top-[calc(4.5rem+var(--tenant-banner-height,0px))] min-w-0">
-        {isLoading && !profile ? (
+        {isLoading && !profile && !authUser ? (
           <ProfileRailSidebarSkeleton />
         ) : (
           <>

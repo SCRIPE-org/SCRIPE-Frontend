@@ -35,22 +35,28 @@ export function useAdminTransferViewModel() {
     hasTenantSelected: boolean
   ): Promise<GenericSelectOption[]> => {
     try {
-      const searchTenantId = isSystemTenantSelected ? undefined : targetTenantId;
       if (!hasTenantSelected) return [];
 
-      const result = searchTenantId
+      const result = isSystemTenantSelected
         ? await identityContainer.roleRepository.getAll({
             search: query,
             page: 1,
             pageSize: 20,
-            tenantId: searchTenantId,
             strict: true,
           })
-        : await identityContainer.roleRepository.getCurrentTenantRoles({
-            search: query,
-            page: 1,
-            pageSize: 20,
-          });
+        : targetTenantId
+          ? await identityContainer.roleRepository.getAll({
+              search: query,
+              page: 1,
+              pageSize: 20,
+              tenantId: targetTenantId,
+              strict: true,
+            })
+          : await identityContainer.roleRepository.getCurrentTenantRoles({
+              search: query,
+              page: 1,
+              pageSize: 20,
+            });
 
       return result.items.map((role) => ({
         value: role.id,

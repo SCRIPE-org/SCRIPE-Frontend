@@ -1,3 +1,4 @@
+import { mapPasswordPolicyDto } from "@core/common/password-policy";
 import type { TenantBranding } from "../../domain/entities/TenantBranding";
 import { TenantBranding as TenantBrandingEntity } from "../../domain/entities/TenantBranding";
 import type { TenantBrandingModel } from "../models/TenantBrandingModel";
@@ -21,6 +22,7 @@ export class TenantBrandingMapper {
       slotConfigJson: model.slotConfigJson ?? null,
       dashboardThemeJson: model.dashboardThemeJson ?? null,
       isSafeMode: model.isSafeMode ?? false,
+      passwordPolicy: model.passwordPolicy ? mapPasswordPolicyDto(model.passwordPolicy) : null,
     });
   }
 }

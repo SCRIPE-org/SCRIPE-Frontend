@@ -16,6 +16,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import type { TestConnectionResult } from "../../domain/entities/IdentityProvider";
 import { identityProviderKeys } from "./useIdentityProvidersViewModel";
+import { isSudoCancelledError } from "../utils/sudoCancellation";
 
 // ─── Form State ──────────────────────────────────────────────────
 /**
@@ -254,6 +255,7 @@ export function useIdentityProviderDetailViewModel(providerId?: string) {
       }
     },
     onError: (err: Error) => {
+      if (isSudoCancelledError(err)) return;
       if (!isCreateMode && providerId && isConcurrencyConflict(err)) {
         setInitializedForId(undefined);
         void queryClient.invalidateQueries({ queryKey: identityProviderKeys.detail(providerId) });
@@ -292,6 +294,7 @@ export function useIdentityProviderDetailViewModel(providerId?: string) {
       }
     },
     onError: (err: Error) => {
+      if (isSudoCancelledError(err)) return;
       setLastTestResult(null);
       setTestError(err.message);
       toastError({
@@ -313,6 +316,7 @@ export function useIdentityProviderDetailViewModel(providerId?: string) {
       router.push("/settings/identity-providers");
     },
     onError: (err: Error) => {
+      if (isSudoCancelledError(err)) return;
       toastError({
         title: t("common.error"),
         description: err.message,

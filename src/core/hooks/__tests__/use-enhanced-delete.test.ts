@@ -1,5 +1,6 @@
 import { act, renderHook } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { SudoCancelledError } from "@core/store/useSudoStore";
 import { useEnhancedDelete } from "../use-enhanced-delete";
 
 // Stage-4 ErrorHandling.md finding F2: executeDelete's catch block used to
@@ -9,15 +10,17 @@ import { useEnhancedDelete } from "../use-enhanced-delete";
 // the same module boundary use-permission.test.ts mocks its store, so these
 // tests assert exactly what executeDelete passes to operationError without
 // depending on the toast dispatch/render pipeline.
-const { mockOperationError, mockOperationSuccess } = vi.hoisted(() => ({
+const { mockOperationError, mockOperationSuccess, mockToastInfo } = vi.hoisted(() => ({
   mockOperationError: vi.fn(),
   mockOperationSuccess: vi.fn(),
+  mockToastInfo: vi.fn(),
 }));
 
 vi.mock("../use-enhanced-toast", () => ({
   useEnhancedToast: () => ({
     operationError: mockOperationError,
     operationSuccess: mockOperationSuccess,
+    info: mockToastInfo,
   }),
 }));
 
@@ -25,6 +28,7 @@ describe("useEnhancedDelete — error surfacing on delete failure", () => {
   beforeEach(() => {
     mockOperationError.mockClear();
     mockOperationSuccess.mockClear();
+    mockToastInfo.mockClear();
   });
 
   it("surfaces the real backend error message (response.data.message) instead of a generic fallback", async () => {
@@ -114,5 +118,39 @@ describe("useEnhancedDelete — error surfacing on delete failure", () => {
     });
 
     expect(onError).toHaveBeenCalledWith(backendError);
+  });
+
+  it("keeps showConfirmation open and retains deleteAction/deleteOptions for retry on SudoCancelledError", async () => {
+    const { result } = renderHook(() => useEnhancedDelete());
+    const deleteFn = vi
+      .fn()
+      .mockRejectedValueOnce(new SudoCancelledError("Sudo verification was cancelled."))
+      .mockResolvedValueOnce(undefined);
+
+    await act(async () => {
+      await result.current.confirmDelete(deleteFn, {
+        itemType: "Role",
+        itemName: "Coach",
+        confirmTitle: "Delete Coach",
+      });
+    });
+
+    await act(async () => {
+      await result.current.executeDelete();
+    });
+
+    expect(result.current.showConfirmation).toBe(true);
+    expect(result.current.deleteOptions.confirmTitle).toBe("Delete Coach");
+    expect(mockOperationError).not.toHaveBeenCalled();
+    expect(mockToastInfo).toHaveBeenCalled();
+
+    // Retry using the retained deleteAction succeeds cleanly and closes confirmation
+    await act(async () => {
+      await result.current.executeDelete();
+    });
+
+    expect(deleteFn).toHaveBeenCalledTimes(2);
+    expect(result.current.showConfirmation).toBe(false);
+    expect(mockOperationSuccess).toHaveBeenCalledWith("Delete", "Coach");
   });
 });

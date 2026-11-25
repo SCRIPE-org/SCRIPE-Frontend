@@ -70,6 +70,10 @@ export const ar = {
       medium: "متوسطة",
       strong: "قوية",
       securityNotice: "تم تشفير بيانات الاعتماد الخاصة بك وانتهت صلاحية رابط التفعيل لمرة واحدة.",
+      administrator: "مدير النظام",
+      assignedRole: "الدور المُعيَّن",
+      requiredField: "هذا الحقل مطلوب",
+      passwordMaxLength: "يجب ألا تتجاوز كلمة المرور {{max}} حرفاً",
     },
   },
 };

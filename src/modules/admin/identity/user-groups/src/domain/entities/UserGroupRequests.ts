@@ -23,6 +23,7 @@ export interface UpdateUserGroupRequest {
   descriptionAr?: string;
   roleIds: string[];
   isActive: boolean;
+  rowVersion?: string | null;
 }
 
 /**
@@ -39,6 +40,7 @@ export interface AddMembersRequest {
  */
 export interface SetGroupRolesRequest {
   roleIds: string[];
+  rowVersion?: string | null;
 }
 
 /**
@@ -56,6 +58,7 @@ export interface GroupRestrictionDto {
  */
 export interface SetGroupRestrictionsRequest {
   restrictions: GroupRestrictionDto[];
+  rowVersion?: string | null;
 }
 
 /**

@@ -22,8 +22,11 @@ export interface TenantSettingsModel {
   // Security - Password
   passwordMinLength: number;
   passwordRequireUppercase: boolean;
+  passwordRequireLowercase?: boolean;
   passwordRequireNumber: boolean;
   passwordRequireSpecial: boolean;
+  passwordHistoryCount?: number;
+  checkBreachedPasswords?: boolean;
   passwordExpiryDays: number | null;
 
   // Security - Login
@@ -75,8 +78,11 @@ export interface UpdateTenantSettingsRequest {
   maxSubTenants?: number;
   passwordMinLength?: number;
   passwordRequireUppercase?: boolean;
+  passwordRequireLowercase?: boolean;
   passwordRequireNumber?: boolean;
   passwordRequireSpecial?: boolean;
+  passwordHistoryCount?: number;
+  checkBreachedPasswords?: boolean;
   passwordExpiryDays?: number | null;
   loginLockoutThreshold?: number;
   loginLockoutMinutes?: number;

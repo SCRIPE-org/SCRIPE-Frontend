@@ -22,6 +22,7 @@ export interface UserData {
   permissions?: string[];
   isProtected?: boolean;
   isSuperAdmin?: boolean;
+  isTenantSuperAdmin?: boolean;
   tenantId?: string | null;
   restrictedFields?: Record<string, string[]> | string[];
 }
@@ -40,6 +41,7 @@ export class User {
   public readonly permissions?: string[];
   public readonly isProtected: boolean;
   public readonly isSuperAdmin?: boolean;
+  public readonly isTenantSuperAdmin?: boolean;
   public readonly tenantId?: string | null;
   public readonly restrictedFields?: Record<string, string[]> | string[];
 
@@ -57,6 +59,7 @@ export class User {
     this.permissions = data.permissions;
     this.isProtected = data.isProtected ?? false;
     this.isSuperAdmin = data.isSuperAdmin;
+    this.isTenantSuperAdmin = data.isTenantSuperAdmin;
     this.tenantId = data.tenantId ?? null;
     this.restrictedFields = data.restrictedFields;
   }

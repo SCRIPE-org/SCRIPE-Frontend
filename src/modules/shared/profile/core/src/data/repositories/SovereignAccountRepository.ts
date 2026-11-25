@@ -68,34 +68,25 @@ interface IntegrationSecretResponse {
 export class SovereignAccountRepository implements ISovereignAccountRepository {
   constructor(private readonly api: IApiService) {}
 
+  private postWithOptionalSudo<T>(url: string, body: unknown, sudoToken?: string): Promise<T> {
+    return sudoToken
+      ? this.api.post<T>(url, body, undefined, { headers: { "X-Sudo-Token": sudoToken } })
+      : this.api.post<T>(url, body);
+  }
   async getContext(): Promise<SovereignAccountContext> {
     return mapAccountContext(await this.api.get<unknown>(PROFILE_ENDPOINTS.ACCOUNT.CONTEXT));
   }
-
   async getDossier(): Promise<SovereignDossierSlice> {
     return mapDossierSlice(await this.api.get<unknown>(PROFILE_ENDPOINTS.ACCOUNT.DOSSIER));
   }
-
-  async sendEmailVerification(
-    payload?: SendEmailVerificationPayload
-  ): Promise<SendEmailVerificationResponse> {
-    return this.api.post<SendEmailVerificationResponse>(
-      PROFILE_ENDPOINTS.ACCOUNT.SEND_EMAIL_VERIFICATION,
-      payload ?? {}
-    );
+  async sendEmailVerification(payload?: SendEmailVerificationPayload): Promise<SendEmailVerificationResponse> {
+    return this.api.post<SendEmailVerificationResponse>(PROFILE_ENDPOINTS.ACCOUNT.SEND_EMAIL_VERIFICATION, payload ?? {});
   }
-
   async exportAccountData(): Promise<Record<string, unknown>> {
     return this.api.post<Record<string, unknown>>(PROFILE_ENDPOINTS.ACCOUNT.EXPORT_DOSSIER, {});
   }
-
-  async deactivateAccount(data?: {
-    sudoCode?: string;
-  }): Promise<{ deactivated?: boolean; message?: string }> {
-    return this.api.post<{ deactivated?: boolean; message?: string }>(
-      PROFILE_ENDPOINTS.ACCOUNT.DEACTIVATE_ACCOUNT,
-      data?.sudoCode ? { sudoCode: data.sudoCode } : {}
-    );
+  async deactivateAccount(data?: { sudoCode?: string; sudoToken?: string }): Promise<{ deactivated?: boolean; message?: string }> {
+    return this.postWithOptionalSudo(PROFILE_ENDPOINTS.ACCOUNT.DEACTIVATE_ACCOUNT, data?.sudoCode ? { sudoCode: data.sudoCode } : {}, data?.sudoToken);
   }
 
   async getSecurity(): Promise<SovereignSecuritySlice> {
@@ -213,12 +204,17 @@ export class SovereignAccountRepository implements ISovereignAccountRepository {
     return mapPlanSlice(await this.api.get<unknown>(PROFILE_ENDPOINTS.ACCOUNT.PLAN));
   }
 
-  async submitPlanRequest(requestType: string, targetCode: string, notes: string = ""): Promise<void> {
-    await this.api.post(PROFILE_ENDPOINTS.ACCOUNT.PLAN_REQUEST, {
-      actionType: requestType,
-      targetCode,
-      notes,
-    });
+  async submitPlanRequest(
+    requestType: string,
+    targetCode: string,
+    notes: string = "",
+    sudoToken?: string
+  ): Promise<void> {
+    await this.postWithOptionalSudo(
+      PROFILE_ENDPOINTS.ACCOUNT.PLAN_REQUEST,
+      { actionType: requestType, targetCode, notes },
+      sudoToken
+    );
   }
 
   async getIntegrations(): Promise<SovereignIntegrationsSlice> {

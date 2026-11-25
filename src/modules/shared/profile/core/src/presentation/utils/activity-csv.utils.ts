@@ -4,6 +4,7 @@
  * Pure RFC-4180 escaping, CSV document builder, and browser download helper
  * for the SOC2 Account Activity Console.
  */
+import { sanitizeCsvCell } from "@core/common/sanitize";
 import type { SovereignAuditEntry } from "../../domain/entities/SovereignAccountEntities";
 
 /**
@@ -37,11 +38,10 @@ function isCsvEntrySuccess(entry: SovereignAuditEntry): boolean {
 }
 
 /**
- * RFC-4180 escapes a cell value for safe CSV serialization.
+ * Neutralizes formula prefixes and RFC-4180 escapes a cell value for safe CSV serialization.
  */
 export function escapeCsvCell(value: unknown): string {
-  const text = value === null || value === undefined ? "" : String(value);
-  return `"${text.replace(/"/g, '""')}"`;
+  return sanitizeCsvCell(value);
 }
 
 /**

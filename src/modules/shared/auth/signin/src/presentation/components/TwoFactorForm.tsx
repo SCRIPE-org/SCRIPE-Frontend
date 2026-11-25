@@ -6,7 +6,7 @@ import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { ShieldCheck, KeyRound, ArrowLeft, ArrowRight } from "lucide-react";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@core/ui/input-otp";
+import { OtpInputField } from "@core/ui/otp-input-field";
 
 interface TwoFactorFormProps {
   twoFactorCode: string;
@@ -108,48 +108,15 @@ export function TwoFactorForm({
         </div>
       ) : (
         <div className="flex flex-col items-center gap-3" dir="ltr">
-          <InputOTP
-            maxLength={6}
+          <OtpInputField
+            id="two-factor-code"
             value={twoFactorCode}
             onChange={setTwoFactorCode}
-            disabled={isVerifying2FA}
             onComplete={handleVerify2FA}
-          >
-            <InputOTPGroup className="gap-2">
-              {[0, 1, 2].map((i) => (
-                <InputOTPSlot
-                  key={i}
-                  index={i}
-                  className="h-14 w-11 rounded-xl border text-xl font-semibold shadow-none transition-all"
-                  style={{
-                    background: "var(--sx-chip-bg, rgba(255,255,255,.03))",
-                    borderColor: "var(--sx-chip-border, rgba(255,255,255,.08))",
-                    color: "var(--sx-text, hsl(var(--foreground)))",
-                  }}
-                />
-              ))}
-            </InputOTPGroup>
-            <span
-              className="mx-2 text-xl font-light"
-              style={{ color: "var(--sx-text-faint, hsl(var(--muted-foreground)/0.4))" }}
-            >
-              –
-            </span>
-            <InputOTPGroup className="gap-2">
-              {[3, 4, 5].map((i) => (
-                <InputOTPSlot
-                  key={i}
-                  index={i}
-                  className="h-14 w-11 rounded-xl border text-xl font-semibold shadow-none transition-all"
-                  style={{
-                    background: "var(--sx-chip-bg, rgba(255,255,255,.03))",
-                    borderColor: "var(--sx-chip-border, rgba(255,255,255,.08))",
-                    color: "var(--sx-text, hsl(var(--foreground)))",
-                  }}
-                />
-              ))}
-            </InputOTPGroup>
-          </InputOTP>
+            variant="vault"
+            disabled={isVerifying2FA}
+            aria-invalid={Boolean(error)}
+          />
           <p
             className="text-[12px]"
             style={{ color: "var(--sx-text-faint, hsl(var(--muted-foreground)/0.5))" }}

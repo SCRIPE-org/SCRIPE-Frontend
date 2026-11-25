@@ -17,6 +17,7 @@ import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
 import { Switch } from "@core/ui/switch";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useSudoStore } from "@core/store/useSudoStore";
 
 /**
  * Properties for configuring the TenantEditDialog.
@@ -65,9 +66,21 @@ export function TenantEditDialog({
 }: TenantEditDialogProps) {
   const { t } = useI18n();
 
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen && useSudoStore.getState().modalOpen) return;
+    onOpenChange(nextOpen);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogContent
+        onInteractOutside={(e) => {
+          if (useSudoStore.getState().modalOpen) e.preventDefault();
+        }}
+        onPointerDownOutside={(e) => {
+          if (useSudoStore.getState().modalOpen) e.preventDefault();
+        }}
+      >
         <DialogHeader>
           <DialogTitle>{t("tenant.editTenant")}</DialogTitle>
           <DialogDescription>{t("tenant.editDialogDescription")}</DialogDescription>

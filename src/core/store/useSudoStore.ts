@@ -1,5 +1,42 @@
 import { create } from "zustand";
 
+export const SUDO_CANCELLED_ERROR_CODE = "SUDO_CANCELLED" as const;
+
+/**
+ * Typed cancellation error rejected into pending sudo elevation waiters when the
+ * user cancels the prompt or locks/resets the sudo session mid-challenge.
+ */
+export class SudoCancelledError extends Error {
+  readonly code = SUDO_CANCELLED_ERROR_CODE;
+
+  constructor(message = "Sudo verification was cancelled.") {
+    super(message);
+    this.name = "SudoCancelledError";
+  }
+}
+
+const LEGACY_SUDO_CANCELLED_MESSAGES = new Set([
+  "Sudo verification was cancelled.",
+  "Sudo session locked.",
+  "Sudo session reset.",
+]);
+
+/**
+ * Returns true when `error` represents an intentional user/session cancellation of
+ * a step-up sudo challenge so callers suppress spurious error toasts or banners.
+ */
+export function isSudoCancelledError(error: unknown): boolean {
+  if (!error) return false;
+  if (error instanceof SudoCancelledError) return true;
+  if (typeof error === "object") {
+    const code = (error as { code?: unknown }).code;
+    if (code === SUDO_CANCELLED_ERROR_CODE) return true;
+    const msg = (error as { message?: unknown }).message;
+    if (typeof msg === "string" && LEGACY_SUDO_CANCELLED_MESSAGES.has(msg)) return true;
+  }
+  return false;
+}
+
 export type SudoFactorMethod = "passkey" | "totp" | "password";
 export type MandatorySudoPolicy =
   | "PasskeyRequired"
@@ -163,7 +200,7 @@ export const useSudoStore = create<SudoState>((set, get) => ({
       error: null,
     });
     for (const waiter of waiters) {
-      waiter.reject(new Error("Sudo session locked."));
+      waiter.reject(new SudoCancelledError("Sudo session locked."));
     }
   },
 
@@ -182,7 +219,7 @@ export const useSudoStore = create<SudoState>((set, get) => ({
       error: null,
     });
     for (const waiter of waiters) {
-      waiter.reject(new Error("Sudo verification was cancelled."));
+      waiter.reject(new SudoCancelledError("Sudo verification was cancelled."));
     }
   },
 
@@ -251,7 +288,7 @@ export const useSudoStore = create<SudoState>((set, get) => ({
       error: null,
     });
     for (const waiter of waiters) {
-      waiter.reject(new Error("Sudo session reset."));
+      waiter.reject(new SudoCancelledError("Sudo session reset."));
     }
   },
 }));

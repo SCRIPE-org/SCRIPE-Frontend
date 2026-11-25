@@ -97,3 +97,11 @@ export function useServices() {
   }
   return context;
 }
+
+/**
+ * Safe variant of `useServices()` for hooks/viewmodels that may execute inside
+ * isolated unit tests mounted without a `ServiceProvider`.
+ */
+export function useOptionalServices(): Services | null {
+  return useContext(ServiceContext);
+}

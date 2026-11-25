@@ -1,10 +1,14 @@
 "use client";
 
-import { useRef, useEffect, useCallback, useState } from "react";
+import { useRef, useEffect, useCallback, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { PluginBridge } from "./PluginBridge";
 import type { PluginToHostMessage } from "./types";
+import {
+  isSafeInternalRoutePath,
+  validateExternalPluginOriginUrl,
+} from "@core/common/postmessage-security";
 import { Skeleton } from "@core/ui/skeleton";
 import { EmptyState } from "@core/ui/empty-state";
 import { ErrorMessage } from "@core/ui/error-message";
@@ -33,18 +37,34 @@ export function PluginFrame({
   const { t } = useI18n();
   const { success, error, info } = useEnhancedToast();
 
+  const safeFrameSrc = useMemo(() => {
+    if (!frontendUrl) return null;
+    const parsed = validateExternalPluginOriginUrl(frontendUrl, { allowSameOrigin: false });
+    if (!parsed) return null;
+    parsed.searchParams.set("installationId", installationId);
+    return parsed.toString();
+  }, [frontendUrl, installationId]);
+
   const handleMessage = useCallback(
     (message: PluginToHostMessage) => {
       switch (message.type) {
         case "READY":
           setIsReady(true);
           break;
-        case "RESIZE":
-          setHeight(Math.max(200, message.payload.height));
+        case "RESIZE": {
+          const rawHeight = message.payload.height;
+          if (Number.isFinite(rawHeight)) {
+            setHeight(Math.min(4000, Math.max(200, Math.round(rawHeight))));
+          }
           break;
-        case "NAVIGATE_REQUEST":
-          router.push(message.payload.path);
+        }
+        case "NAVIGATE_REQUEST": {
+          const safePath = isSafeInternalRoutePath(message.payload.path);
+          if (safePath) {
+            router.push(safePath);
+          }
           break;
+        }
         case "TOAST":
           const { variant, title, message: msg } = message.payload;
           if (variant === "success") success({ title, description: msg });
@@ -57,15 +77,15 @@ export function PluginFrame({
   );
 
   useEffect(() => {
-    if (!frontendUrl) return;
-    const bridge = new PluginBridge(frontendUrl, iframeRef);
+    if (!safeFrameSrc) return;
+    const bridge = new PluginBridge(safeFrameSrc, iframeRef);
     bridge.mount();
     const unsub = bridge.onMessage(handleMessage);
     return () => {
       bridge.unmount();
       unsub();
     };
-  }, [frontendUrl, handleMessage]);
+  }, [safeFrameSrc, handleMessage]);
 
   if (!frontendUrl) {
     // A configuration gap, not a crash — nothing the viewer can retry.
@@ -76,6 +96,10 @@ export function PluginFrame({
         description={t("errors.plugin.missingUrlHint")}
       />
     );
+  }
+
+  if (!safeFrameSrc) {
+    return <ErrorMessage size="sm" message={t("errors.plugin.frameFailed")} />;
   }
 
   return (
@@ -105,7 +129,7 @@ export function PluginFrame({
       */}
       <iframe
         ref={iframeRef}
-        src={`${frontendUrl}?installationId=${installationId}`}
+        src={safeFrameSrc}
         title={t("errors.plugin.frameTitle", { plugin: pluginKey })}
         sandbox="allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-storage-access-by-user-activation"
         className="w-full rounded-nx-lg border-0"

@@ -12,6 +12,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import { getTenantRepository } from "@core/services/module-bridges";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { useSessionAuthorizationSync } from "@core/hooks/use-session-authorization-sync";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useState, useCallback, useEffect, useMemo } from "react";
 import { parseLocalizedNumber } from "@core/utils/number-parser";
@@ -24,6 +25,7 @@ import type { EditionPromotionData } from "@modules/entitlements/core";
 export function useSubscriptionsViewModel(tenantId: string) {
   const { subscriptionRepository, editionRepository, billingRepository } = entitlementsContainer;
   const queryClient = useQueryClient();
+  const syncSessionAuthorization = useSessionAuthorizationSync();
   const { success, error: showError } = useEnhancedToast();
   const { t } = useI18n();
 
@@ -98,14 +100,15 @@ export function useSubscriptionsViewModel(tenantId: string) {
     !isInternalTenant && activeSubscription ? (activeSubscription.totalAmount ?? 0) === 0 : false;
 
   // ─── Invalidation helper ────────────────────────────
-  const invalidate = useCallback(() => {
+  const invalidate = useCallback(async () => {
     queryClient.invalidateQueries({ queryKey });
     // Cross-invalidate: refresh tenant detail page and subscription card
     queryClient.invalidateQueries({ queryKey: ["tenant-subscriptions", tenantId] });
     queryClient.invalidateQueries({ queryKey: ["tenant", tenantId] });
     queryClient.invalidateQueries({ queryKey: ["tenant-entitlements", tenantId] });
     queryClient.invalidateQueries({ queryKey: ["tenants"] });
-  }, [queryClient, queryKey, tenantId]);
+    await syncSessionAuthorization(tenantId);
+  }, [queryClient, queryKey, syncSessionAuthorization, tenantId]);
 
   // ─── Reset form ─────────────────────────────────────
   const resetForm = useCallback(() => {
@@ -159,8 +162,8 @@ export function useSubscriptionsViewModel(tenantId: string) {
   ) =>
     useMutation({
       mutationFn,
-      onSuccess: () => {
-        invalidate();
+      onSuccess: async () => {
+        await invalidate();
         success({ title: t(successKey), description: t(descKey) });
         onDone?.();
         resetForm();

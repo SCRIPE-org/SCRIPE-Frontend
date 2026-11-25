@@ -34,6 +34,10 @@ import { getActiveTenantContextId, getModuleApiService } from "@core/services/ap
 import { buildRequestSecurityHeaders } from "@core/services/api.service";
 import { secureTokenService } from "@core/common/secure-token-service";
 import { appLogger } from "@core/common/logger";
+import {
+  consumeDeferredAdminSettingsFlush,
+  stageDeferredAdminSettingsFlush,
+} from "./admin-settings-deferred-flush";
 
 // ── Constants ──
 const DEBOUNCE_MS = 2000;
@@ -90,6 +94,7 @@ export function useAdminSettingsSync() {
   // syncing preferences while mcp=true is a guaranteed rejection (confirmed live).
   // The admin is about to be logged out and redirected anyway once they change it.
   const mustChangePassword = useAppStore((s) => s.mustChangePassword);
+  const requireMfaEnrollment = useAppStore((s) => s.requireMfaEnrollment);
 
   const [hasToken, setHasToken] = useState(() => secureTokenService.hasToken());
 
@@ -125,7 +130,7 @@ export function useAdminSettingsSync() {
 
   // ── Load admin settings from server (with deferred flush check) ──
   const loadAdminSettings = useCallback(async () => {
-    if (!isAuthenticated || !hasToken || mustChangePassword) return;
+    if (!isAuthenticated || !hasToken || mustChangePassword || requireMfaEnrollment) return;
 
     // Pre-flight: if there are NO cached settings (first login or post-logout),
     // show the transition shimmer BEFORE the API call starts. This prevents the
@@ -138,8 +143,8 @@ export function useAdminSettingsSync() {
     try {
       const api = getModuleApiService("IDENTITY");
 
-      // Edge Case 5: Check for deferred flush from a previous session
-      const pendingFlush = localStorage.getItem(STORAGE_KEYS.PENDING_SETTINGS_FLUSH);
+      // Edge Case 5: Check for principal+tenant-bound deferred flush from a previous session (LS-01)
+      const pendingFlush = consumeDeferredAdminSettingsFlush();
       if (pendingFlush) {
         try {
           await api.put<void>(SAVE_ENDPOINT, {
@@ -147,10 +152,7 @@ export function useAdminSettingsSync() {
           });
           appLogger.info("Deferred settings flush successful — cleared PENDING_SETTINGS_FLUSH");
         } catch (flushErr) {
-          appLogger.warn("Deferred flush failed, will retry next login", flushErr);
-        } finally {
-          // Always clear, even on failure — prevents infinite retry loops
-          localStorage.removeItem(STORAGE_KEYS.PENDING_SETTINGS_FLUSH);
+          appLogger.warn("Deferred flush failed", flushErr);
         }
       }
 
@@ -187,12 +189,12 @@ export function useAdminSettingsSync() {
         setIsTransitioning(false);
       }
     }
-  }, [isAuthenticated, mustChangePassword]);
+  }, [isAuthenticated, mustChangePassword, requireMfaEnrollment]);
 
   // ── Save settings to server (debounced) ──
   const saveToServer = useCallback(
     async (payload: string) => {
-      if (!isAuthenticated || mustChangePassword) return;
+      if (!isAuthenticated || mustChangePassword || requireMfaEnrollment) return;
 
       // Edge Case 4: Payload size guard
       const payloadSize = new Blob([payload]).size;
@@ -300,7 +302,7 @@ export function useAdminSettingsSync() {
         }
       }
     },
-    [isAuthenticated, mustChangePassword]
+    [isAuthenticated, mustChangePassword, requireMfaEnrollment]
   );
 
   // ── Listen for SettingsProvider changes ──
@@ -363,11 +365,7 @@ export function useAdminSettingsSync() {
       } satisfies AdminSettingsPayload);
       const url = resolveAdminSettingsSaveUrl();
       if (!url) {
-        try {
-          localStorage.setItem(STORAGE_KEYS.PENDING_SETTINGS_FLUSH, latestPayload.current);
-        } catch {
-          // Non-fatal: storage quota or private mode
-        }
+        stageDeferredAdminSettingsFlush(latestPayload.current);
         return;
       }
 
@@ -393,13 +391,12 @@ export function useAdminSettingsSync() {
             keepalive: true,
           });
         } catch {
-          // fetch with keepalive failed — fall through to deferred flush
-          localStorage.setItem(STORAGE_KEYS.PENDING_SETTINGS_FLUSH, latestPayload.current);
+          // fetch with keepalive failed — fall through to principal-bound deferred flush
+          stageDeferredAdminSettingsFlush(latestPayload.current);
         }
       } else {
-        // JWT is missing/expired — store payload for deferred flush on next login.
-        // The loadAdminSettings() effect checks for this key before fetching.
-        localStorage.setItem(STORAGE_KEYS.PENDING_SETTINGS_FLUSH, latestPayload.current);
+        // JWT is missing/expired — store principal+tenant-bound payload for deferred flush on next login.
+        stageDeferredAdminSettingsFlush(latestPayload.current);
         appLogger.warn(
           "beforeunload: JWT expired — payload stored for deferred flush on next login"
         );

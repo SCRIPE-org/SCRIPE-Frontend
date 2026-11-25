@@ -8,26 +8,32 @@ export const CRM_PERMISSIONS = {
   // ── Overview (1) ────────────────────────────────────────────────
   OVERVIEW_READ: "crm.overview.read",
 
-  // ── Leads (5) ──────────────────────────────────────────────────
+  // ── Leads ──────────────────────────────────────────────────────
   LEADS_READ: "crm.leads.read",
   LEADS_CREATE: "crm.leads.create",
   LEADS_UPDATE: "crm.leads.update",
   LEADS_QUALIFY: "crm.leads.qualify",
   LEADS_VIEW: "crm.leads.view",
+  LEADS_IMPORT: "crm.leads.import",
+  LEADS_EXPORT: "crm.leads.export",
 
-  // ── Accounts (4) ───────────────────────────────────────────────
+  // ── Accounts ───────────────────────────────────────────────────
   ACCOUNTS_READ: "crm.accounts.read",
   ACCOUNTS_CREATE: "crm.accounts.create",
   ACCOUNTS_UPDATE: "crm.accounts.update",
   ACCOUNTS_VIEW: "crm.accounts.view",
+  ACCOUNTS_IMPORT: "crm.accounts.import",
+  ACCOUNTS_EXPORT: "crm.accounts.export",
 
-  // ── Contacts (4) ───────────────────────────────────────────────
+  // ── Contacts ───────────────────────────────────────────────────
   CONTACTS_READ: "crm.contacts.read",
   CONTACTS_CREATE: "crm.contacts.create",
   CONTACTS_UPDATE: "crm.contacts.update",
   CONTACTS_VIEW: "crm.contacts.view",
+  CONTACTS_IMPORT: "crm.contacts.import",
+  CONTACTS_EXPORT: "crm.contacts.export",
 
-  // ── Opportunities / Deals (8) ──────────────────────────────────
+  // ── Opportunities / Deals ──────────────────────────────────────
   OPPORTUNITIES_READ: "crm.opportunities.read",
   OPPORTUNITIES_CREATE: "crm.opportunities.create",
   OPPORTUNITIES_UPDATE: "crm.opportunities.update",
@@ -36,14 +42,19 @@ export const CRM_PERMISSIONS = {
   OPPORTUNITIES_STAGE_OVERRIDE: "crm.opportunities.stage.override",
   OPPORTUNITIES_REOPEN: "crm.opportunities.reopen",
   OPPORTUNITIES_VIEW: "crm.opportunities.view",
+  OPPORTUNITIES_IMPORT: "crm.opportunities.import",
+  OPPORTUNITIES_EXPORT: "crm.opportunities.export",
 
-  // ── Administration & Records (1) ───────────────────────────────
+  // ── Administration & Records ───────────────────────────────────
   RECORDS_ASSIGN: "crm.records.assign",
 
-  // ── Activities (3) ─────────────────────────────────────────────
+  // ── Activities ─────────────────────────────────────────────────
   ACTIVITIES_READ: "crm.activities.read",
+  ACTIVITIES_VIEW: "crm.activities.view",
   ACTIVITIES_CREATE: "crm.activities.create",
   ACTIVITIES_FOLLOWUP: "crm.activities.followup",
+  ACTIVITIES_IMPORT: "crm.activities.import",
+  ACTIVITIES_EXPORT: "crm.activities.export",
 
   // ── Communications (1) ─────────────────────────────────────────
   COMMUNICATIONS_SEND: "crm.communications.send",

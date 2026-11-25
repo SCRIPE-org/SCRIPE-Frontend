@@ -11,6 +11,13 @@
  *    NAVIGATION_CACHE, etc.) have been removed since those keys no longer exist.
  */
 import { secureTokenService } from "@core/common/secure-token-service";
+import { clearActivePrincipalKey } from "@core/common/active-principal";
+import {
+  purgeDynamicBrowserCaches,
+  runSessionCleanupCallbacks,
+  sweepScopedSessionStorageOnLogout,
+  writeAuthStateHintCookie,
+} from "@core/common/session-cleanup-registry";
 import { STORAGE_KEYS, AUTH_STORAGE_KEYS_TO_CLEAR } from "@core/config/storage-keys";
 import { appLogger } from "@core/common/logger";
 import { useAppStore } from "@core/store/useAppStore";
@@ -56,6 +63,8 @@ export function clearAllLocalStorage(): void {
   localStorage.removeItem("scr_admin_prefs_version");
 
   // Clear SecureTokenService tokens (in-memory + legacy localStorage keys)
+  writeAuthStateHintCookie(false);
+  clearActivePrincipalKey();
   secureTokenService.clearTokens();
   useSudoStore.getState().reset();
   usePatOneTimeSecretStore.getState().clearPendingReceipt();
@@ -69,9 +78,12 @@ export function clearAllLocalStorage(): void {
   sessionStorage.removeItem(STORAGE_KEYS.tenant_context);
   sessionStorage.removeItem("scr_tenant_breadcrumbs");
 
-  // Purge Data Exchange entity/descriptor caches and scoped background jobs
+  // Purge Data Exchange entity/descriptor caches, scoped jobs, module memory caches, and SW dynamic caches
   clearAllDataExchangeCaches();
   useDataExchangeJobsStore.getState().reset();
+  runSessionCleanupCallbacks();
+  sweepScopedSessionStorageOnLogout();
+  purgeDynamicBrowserCaches();
 
   appLogger.auth(
     "[auth-storage-cleanup] Auth data, settings, and cache cleared (drill-down state cleared)"
@@ -92,6 +104,7 @@ export function clearAllLocalStorage(): void {
  */
 export function clearSessionOnLoginMount(): void {
   if (typeof window === "undefined") return;
+  clearActivePrincipalKey();
   sessionStorage.removeItem(STORAGE_KEYS.IMPERSONATING);
   sessionStorage.removeItem(STORAGE_KEYS.admin_backup_token);
   sessionStorage.removeItem(STORAGE_KEYS.tenant_context);
@@ -118,9 +131,11 @@ export function clearSessionOnLoginMount(): void {
   // (possibly impersonated) session bleeding into the next login.
   clearNavigationCaches();
 
-  // Purge Data Exchange caches & scoped jobs store on login mount
+  // Purge Data Exchange caches, scoped jobs store, and tab-scoped artifacts on login mount
   clearAllDataExchangeCaches();
   useDataExchangeJobsStore.getState().reset();
+  runSessionCleanupCallbacks();
+  sweepScopedSessionStorageOnLogout();
 
   appLogger.auth(
     "[auth-storage-cleanup] Login page mounted: stale flags, tokens, auth state, and navigation cache cleared"

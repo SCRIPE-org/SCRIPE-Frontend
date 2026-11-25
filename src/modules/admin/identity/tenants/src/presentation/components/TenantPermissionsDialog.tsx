@@ -13,6 +13,7 @@
 "use client";
 
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@core/ui/dialog";
+import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@core/ui/accordion";
 import { Button } from "@core/ui/button";
 import { Checkbox } from "@core/ui/checkbox";
@@ -21,7 +22,9 @@ import { ScrollArea } from "@core/ui/scroll-area";
 import { Badge } from "@core/ui/badge";
 import { Separator } from "@core/ui/separator";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useSudoStore } from "@core/store/useSudoStore";
 import {
+  AlertTriangle,
   Search,
   Shield,
   ShieldCheck,
@@ -61,10 +64,22 @@ export function TenantPermissionsDialog(props: TenantPermissionsDialogProps) {
   const vm = useTenantPermissionsDialog(props);
 
   const moduleCount = vm.groupedModules.length;
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen && useSudoStore.getState().modalOpen) return;
+    onOpenChange(nextOpen);
+  };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="flex h-[85vh] max-w-2xl flex-col gap-0 p-0">
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogContent
+        className="flex h-[85vh] max-w-2xl flex-col gap-0 p-0"
+        onInteractOutside={(e) => {
+          if (useSudoStore.getState().modalOpen) e.preventDefault();
+        }}
+        onPointerDownOutside={(e) => {
+          if (useSudoStore.getState().modalOpen) e.preventDefault();
+        }}
+      >
         {/* Header */}
         <DialogHeader className="shrink-0 border-b border-nx-line bg-gradient-to-r from-nx-accent-wash to-transparent px-6 py-4">
           <div className="flex items-center gap-3">
@@ -154,6 +169,17 @@ export function TenantPermissionsDialog(props: TenantPermissionsDialogProps) {
             <div className="px-6 py-4">
               {vm.isLoading ? (
                 <LoadingState />
+              ) : vm.hasQueryError ? (
+                <Alert variant="destructive">
+                  <AlertTriangle className="h-4 w-4" aria-hidden="true" />
+                  <AlertTitle>{t("common.error")}</AlertTitle>
+                  <AlertDescription className="space-y-3">
+                    <p>{vm.queryErrorMessage || t("tenant.permissionsLoadError")}</p>
+                    <Button variant="outline" size="sm" onClick={vm.retryQueries}>
+                      {t("common.tryAgain")}
+                    </Button>
+                  </AlertDescription>
+                </Alert>
               ) : moduleCount === 0 ? (
                 <EmptyState />
               ) : (
@@ -183,7 +209,12 @@ export function TenantPermissionsDialog(props: TenantPermissionsDialogProps) {
               <Button variant="outline" onClick={() => onOpenChange(false)}>
                 {t("common.cancel")}
               </Button>
-              <Button onClick={vm.save} loading={vm.isSaving} className="min-w-[100px]">
+              <Button
+                onClick={vm.save}
+                loading={vm.isSaving}
+                disabled={vm.hasQueryError || vm.isLoading || vm.isSaving}
+                className="min-w-[100px]"
+              >
                 {!vm.isSaving && <ShieldCheck className="me-2 h-4 w-4" aria-hidden="true" />}
                 {t("common.save")}
               </Button>

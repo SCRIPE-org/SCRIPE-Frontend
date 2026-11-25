@@ -3,12 +3,13 @@
 import React from "react";
 import { Label } from "@core/ui/label";
 import { Button } from "@core/ui/button";
-import { ArrowRight, Building2, Mail, User, XCircle } from "lucide-react";
+import { ArrowRight, Building2, Check, Mail, User, XCircle } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
+import { cn } from "@core/common/utils";
+import { DEFAULT_PASSWORD_MAX_LENGTH } from "@core/common/password-policy";
 import { InfoRow } from "../InfoRow";
-import { PasswordField } from "../PasswordField";
-import { PasswordStrengthMeter } from "../PasswordStrengthMeter";
-import { PasswordCheck } from "../PasswordCheck";
+import { PasswordWithPolicyField } from "@core/ui/password-policy-field";
+import { PasswordInput } from "@core/ui/password-input";
 import type { useAccountSetupViewModel } from "../../viewmodels/useAccountSetupViewModel";
 
 /**
@@ -45,75 +46,57 @@ export function SetupStep1Security({ vm }: SetupStep1SecurityProps) {
         />
       </div>
 
-      {/* Password Field */}
-      <div className="space-y-2">
-        <Label htmlFor="setup-password">{t("auth.password")}</Label>
-        <PasswordField
-          id="setup-password"
-          value={vm.password}
-          show={vm.showPassword}
-          placeholder={t("auth.accountSetup.passwordPlaceholder")}
-          onChange={vm.setPassword}
-          onToggle={() => vm.setShowPassword(!vm.showPassword)}
-          autoFocus
-        />
-      </div>
-
-      {/* Live Strength Meter */}
-      {vm.password.length > 0 && (
-        <PasswordStrengthMeter score={vm.passwordScore} entropyBits={vm.passwordEntropy} />
-      )}
-
-      {/* Password Requirements Checklist */}
-      {vm.password.length > 0 && (
-        <div className="grid grid-cols-2 gap-2 rounded-lg border border-nx-line bg-nx-raised p-3 text-xs">
-          <PasswordCheck
-            label={t("auth.accountSetup.passwordMinLengthShort", {
-              min: vm.tokenData?.passwordMinLength ?? 8,
-            })}
-            ok={vm.passwordChecks.minLength}
-          />
-          {vm.tokenData?.passwordRequireUppercase !== false && (
-            <PasswordCheck
-              label={t("auth.accountSetup.passwordUpperShort")}
-              ok={vm.passwordChecks.hasUpper}
-            />
-          )}
-          <PasswordCheck
-            label={t("auth.accountSetup.passwordLowerShort")}
-            ok={vm.passwordChecks.hasLower}
-          />
-          {vm.tokenData?.passwordRequireNumber !== false && (
-            <PasswordCheck
-              label={t("auth.accountSetup.passwordNumberShort")}
-              ok={vm.passwordChecks.hasNumber}
-            />
-          )}
-          {vm.tokenData?.passwordRequireSpecial === true && (
-            <PasswordCheck
-              label={t("auth.accountSetup.passwordSpecialShort")}
-              ok={vm.passwordChecks.hasSpecial}
-            />
-          )}
-        </div>
-      )}
+      {/* Policy-Driven Password Field + Live Checklist */}
+      <PasswordWithPolicyField
+        id="setup-password"
+        label={t("auth.password")}
+        value={vm.password}
+        onValueChange={vm.setPassword}
+        policy={vm.passwordPolicy}
+        policyLoading={vm.isPasswordPolicyLoading}
+        policyError={vm.passwordPolicyError}
+        onRetryPolicy={vm.retryPasswordPolicy}
+        placeholder={t("auth.accountSetup.passwordPlaceholder")}
+        surface="nexus"
+        alwaysShowChecklist={vm.password.length > 0 || vm.isPasswordPolicyLoading || Boolean(vm.passwordPolicyError)}
+        t={t}
+        autoFocus
+        required
+      />
 
       {/* Confirm Password Field */}
       <div className="space-y-2">
         <Label htmlFor="setup-confirm">{t("auth.confirmPassword")}</Label>
-        <PasswordField
+        <PasswordInput
           id="setup-confirm"
           value={vm.confirmPassword}
-          show={vm.showConfirm}
+          onChange={(e) => vm.setConfirmPassword(e.target.value)}
           placeholder={t("auth.confirmPasswordPlaceholder")}
-          onChange={vm.setConfirmPassword}
-          onToggle={() => vm.setShowConfirm(!vm.showConfirm)}
+          autoComplete="new-password"
+          maxLength={vm.passwordPolicy?.maxLength ?? DEFAULT_PASSWORD_MAX_LENGTH}
         />
         {vm.confirmPassword.length > 0 && (
-          <PasswordCheck
-            label={t("auth.accountSetup.passwordsMatch")}
-            ok={vm.passwordChecks.matches}
-          />
+          <div className="flex min-w-0 items-center gap-1.5">
+            {vm.passwordChecks.matches ? (
+              <Check
+                className="h-3.5 w-3.5 shrink-0 stroke-[2.5] text-nx-success"
+                aria-hidden="true"
+              />
+            ) : (
+              <div
+                className="mx-1 h-1.5 w-1.5 shrink-0 rounded-full bg-nx-line-hi"
+                aria-hidden="true"
+              />
+            )}
+            <span
+              className={cn(
+                "truncate text-xs transition-colors",
+                vm.passwordChecks.matches ? "font-medium text-nx-ink" : "text-nx-ink-2"
+              )}
+            >
+              {t("auth.accountSetup.passwordsMatch")}
+            </span>
+          </div>
         )}
       </div>
 

@@ -9,7 +9,7 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { usePermission, usePermissions } from "@core/hooks/use-permission";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { saveTenantDisplayPrefs } from "@core/services/module-bridges";
-import { CUSTOMIZATION_PERMISSIONS } from "@modules/customization/permission-constants";
+import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { identityContainer } from "@modules/admin/identity/di";
 import { useOverviewViewModel } from "./useOverviewViewModel";
 import { usePresentationMode } from "./usePresentationMode";
@@ -78,9 +78,9 @@ export function useTenantOverviewViewModel() {
   // Dashboard Workspace Layout & Customization State
   // ══════════════════════════════════════════════════════════
 
-  const canUpdateCustomization = usePermission(CUSTOMIZATION_PERMISSIONS.DASHBOARD_BUILDER_UPDATE);
-  // Tenant Admins in their own tenant context have customization rights
-  const canCustomize = canUpdateCustomization || !isImpersonating;
+  const canUpdateCustomization = usePermission(SYSTEM_PERMISSIONS.TENANT_SETTINGS_UPDATE);
+  // Require both explicit permission (`tenant_settings.update`) and active non-impersonated context
+  const canCustomize = canUpdateCustomization && !isImpersonating;
 
   const [layout, setLayout] = useState<TenantOverviewLayout>(() => {
     if (typeof window !== "undefined") {

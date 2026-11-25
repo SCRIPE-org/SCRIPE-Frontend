@@ -158,29 +158,29 @@ export class UserGroupService {
   }
 
   async bulkActivate(ids: string[], cascadeAdmins?: boolean): Promise<number> {
-    const response = await this.api.post<{ affectedRows?: number } | number>(
+    const response = await this.api.post<{ affectedRows?: number } | number | null>(
       USER_GROUPS_ENDPOINTS.BULK.ACTIVATE,
       { ids, cascadeAdmins }
     );
     if (typeof response === "number") return response;
-    return response.affectedRows ?? ids.length;
+    return response?.affectedRows ?? ids.length;
   }
 
   async bulkDeactivate(ids: string[], cascadeAdmins?: boolean): Promise<number> {
-    const response = await this.api.post<{ affectedRows?: number } | number>(
+    const response = await this.api.post<{ affectedRows?: number } | number | null>(
       USER_GROUPS_ENDPOINTS.BULK.DEACTIVATE,
       { ids, cascadeAdmins }
     );
     if (typeof response === "number") return response;
-    return response.affectedRows ?? ids.length;
+    return response?.affectedRows ?? ids.length;
   }
 
   async bulkDelete(ids: string[], cascadeAdmins?: boolean): Promise<number> {
-    const response = await this.api.post<{ affectedRows?: number } | number>(
+    const response = await this.api.post<{ affectedRows?: number } | number | null>(
       USER_GROUPS_ENDPOINTS.BULK.DELETE,
       { ids, cascadeAdmins }
     );
     if (typeof response === "number") return response;
-    return response.affectedRows ?? ids.length;
+    return response?.affectedRows ?? ids.length;
   }
 }

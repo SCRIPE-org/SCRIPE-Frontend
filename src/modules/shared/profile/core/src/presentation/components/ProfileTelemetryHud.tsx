@@ -8,13 +8,18 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useAdminContext } from "@core/hooks/useAdminContext";
+import { useAppStore } from "@core/store/useAppStore";
 import { useSudoStore } from "@core/store/useSudoStore";
 import { Card } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
 import { Switch } from "@core/ui/switch";
 import { Building2, ShieldCheck } from "lucide-react";
 import type { AdminProfile } from "../../domain/entities/AdminProfile";
-import type { SovereignAccountContext } from "../../domain/entities/SovereignAccountEntities";
+import type {
+  SovereignAccountContext,
+  SovereignSecuritySlice,
+} from "../../domain/entities/SovereignAccountEntities";
 import { ProfileTelemetryHudSkeleton } from "./AccountSkeletons";
 import {
   ProfilePostureChecklistDialog,
@@ -28,6 +33,10 @@ export interface ProfileTelemetryHudProps {
   profile?: AdminProfile | null;
   /** Sovereign account context containing tenant, staff code, posture score, and session counts. */
   accountContext?: SovereignAccountContext | null;
+  /** Sovereign security slice fallback (accessible during mandatory MFA enrollment). */
+  security?: Partial<
+    Pick<SovereignSecuritySlice, "securityPostureScore" | "postureChecklist" | "isTwoFactorEnabled">
+  > | null;
   /** Live active session count override from workstation fleet slice. */
   activeSessionCount?: number;
   /** Toggles operational availability status on the backend profile. */
@@ -46,6 +55,7 @@ export interface ProfileTelemetryHudProps {
 export function ProfileTelemetryHud({
   profile,
   accountContext,
+  security,
   activeSessionCount,
   onToggleAvailability,
   onOpenSudoGate,
@@ -56,6 +66,8 @@ export function ProfileTelemetryHud({
   const { t } = useI18n();
   const router = useRouter();
   const [checklistOpen, setChecklistOpen] = useState(false);
+  const authUser = useAppStore((s) => s.user);
+  const { isPlatform, isTenant, activeTenantName } = useAdminContext();
 
   const storeSudoActive = useSudoStore((s) => s.isActive);
   const sudoExpiresAtUtc = useSudoStore((s) => s.expiresAtUtc);
@@ -87,26 +99,40 @@ export function ProfileTelemetryHud({
     };
   }, [effectiveSudoActive, sudoExpiresAtUtc]);
 
-  if (isLoading && !profile && !accountContext) {
+  if (isLoading && !profile && !accountContext && !security && !authUser) {
     return <ProfileTelemetryHudSkeleton />;
   }
 
-  const checklistItems = buildPostureChecklistItems(accountContext, profile, t);
+  const checklistItems = buildPostureChecklistItems(accountContext, profile, t, security);
   const principalContext = accountContext?.principalContext;
-  const isPlatformAdmin = principalContext?.principalKind === "PlatformAdmin";
+  const isPlatformAdmin = principalContext
+    ? principalContext.principalKind === "PlatformAdmin"
+    : isPlatform && Boolean(authUser);
 
   const isAvailable =
     accountContext?.isAvailableForOperations ?? profile?.isAvailableForOperations ?? true;
-  const securityScore = accountContext?.securityPostureScore ?? profile?.securityScore ?? 0;
+  const securityScore =
+    accountContext?.securityPostureScore ??
+    security?.securityPostureScore ??
+    profile?.securityScore ??
+    0;
+  const rawSessionCount = activeSessionCount ?? accountContext?.activeSessionsCount ?? 0;
   const resolvedSessionCount =
-    activeSessionCount ?? accountContext?.activeSessionsCount ?? 0;
+    rawSessionCount > 0
+      ? rawSessionCount
+      : authUser || profile || accountContext || security
+        ? 1
+        : 1;
 
   const primaryOrgTitle = isPlatformAdmin
     ? principalContext?.controlPlaneLabel || t("profile.hud.globalControlPlane")
     : principalContext?.activeTenantName ||
       accountContext?.clubAffiliation ||
       profile?.clubAffiliation ||
-      t("profile.hud.noOrganizationScoped");
+      activeTenantName ||
+      (isTenant
+        ? t("chrome.section.organization", { defaultValue: "Organization" })
+        : t("profile.hud.noOrganizationScoped"));
 
   const secondaryBadgeText = isPlatformAdmin
     ? t("profile.hud.soleRootGuard")

@@ -6,13 +6,17 @@
  */
 import type { IApiService } from "@core/interfaces/api.interface";
 import { buildUrl } from "@/core/config/api-endpoints/_shared";
-import { useAppStore } from "@core/store/useAppStore";
+import { isExternalCustomDomain } from "@core/common/origin-routing";
 import { secureTokenService } from "@core/common/secure-token-service";
+import { postCustomDomainSessionRelay } from "@core/services/custom-domain-relay-client";
 import { PROFILE_ENDPOINTS } from "../services/profile.endpoints";
+import { ProfileService } from "../services/ProfileService";
+import type { IProfileService } from "../../domain/interfaces/IProfileService";
 import type {
   IProfileRepository,
   UpdateProfileRequest,
   ChangePasswordRequest,
+  ChangePasswordSessionResult,
   InitiateExternalLoginLinkRequest,
   InitiateExternalLoginLinkResponse,
   ForceChangePasswordRequest,
@@ -37,7 +41,14 @@ import type { ExternalLogin } from "../../domain/entities/ExternalLogin";
  * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export class ProfileRepository implements IProfileRepository {
-  constructor(private readonly api: IApiService) {}
+  private readonly profileService: IProfileService;
+
+  constructor(
+    private readonly api: IApiService,
+    profileService?: IProfileService
+  ) {
+    this.profileService = profileService ?? new ProfileService(api);
+  }
 
   // ── Profile ──────────────────────────────────────────
 
@@ -70,17 +81,18 @@ export class ProfileRepository implements IProfileRepository {
 
   // ── Password ─────────────────────────────────────────
 
-  async changePassword(data: ChangePasswordRequest): Promise<void> {
-    // Get the current admin's ID from the store — the backend endpoint requires it.
-    // POST /v1/admins/{id}/change-password is the correct route.
-    const adminId = useAppStore.getState().user?.id;
-    if (!adminId) throw new Error("User not authenticated");
-
-    await this.api.post(PROFILE_ENDPOINTS.CHANGE_PASSWORD(adminId), {
-      currentPassword: data.currentPassword,
-      newPassword: data.newPassword,
-      twoFactorCode: data.twoFactorCode,
-    });
+  async changePassword(
+    data: ChangePasswordRequest,
+    sudoToken?: string
+  ): Promise<ChangePasswordSessionResult | void> {
+    return this.profileService.changePassword(
+      {
+        currentPassword: data.currentPassword,
+        newPassword: data.newPassword,
+        twoFactorCode: data.twoFactorCode,
+      },
+      sudoToken
+    );
   }
 
   // ── Sessions ─────────────────────────────────────────
@@ -90,11 +102,34 @@ export class ProfileRepository implements IProfileRepository {
     return ProfileMapper.toActiveSessions(dtos);
   }
 
-  async revokeSession(tokenId: string): Promise<void> {
+  async revokeSession(tokenId: string, sudoToken?: string): Promise<void> {
+    if (sudoToken) {
+      await this.api.delete(PROFILE_ENDPOINTS.REVOKE_SESSION(tokenId), undefined, {
+        headers: { "X-Sudo-Token": sudoToken },
+      });
+      return;
+    }
     await this.api.delete(PROFILE_ENDPOINTS.REVOKE_SESSION(tokenId));
   }
 
-  async revokeAllSessions(): Promise<{ revokedCount: number }> {
+  async revokeAllSessions(sudoToken?: string): Promise<{ revokedCount: number }> {
+    if (isExternalCustomDomain()) {
+      return postCustomDomainSessionRelay<{ revokedCount: number }>(
+        "/api/auth/session/establish",
+        {
+          mode: "revoke-other-sessions",
+        },
+        { includeAuth: true, sudoToken }
+      );
+    }
+    if (sudoToken) {
+      return await this.api.post<{ revokedCount: number }>(
+        PROFILE_ENDPOINTS.REVOKE_ALL_SESSIONS,
+        {},
+        undefined,
+        { headers: { "X-Sudo-Token": sudoToken } }
+      );
+    }
     return await this.api.post<{ revokedCount: number }>(PROFILE_ENDPOINTS.REVOKE_ALL_SESSIONS);
   }
 
@@ -180,10 +215,18 @@ export class ProfileRepository implements IProfileRepository {
   }
 
   async forceChangePassword(data: ForceChangePasswordRequest): Promise<ForceChangePasswordResult> {
-    const result = await this.api.post<ForceChangePasswordResult>(
-      PROFILE_ENDPOINTS.FORCE_CHANGE_PASSWORD,
-      data
-    );
+    const result = isExternalCustomDomain()
+      ? await postCustomDomainSessionRelay<ForceChangePasswordResult>(
+          "/api/auth/session/establish",
+          {
+            mode: "force-change-password",
+            ...data,
+          }
+        )
+      : await this.api.post<ForceChangePasswordResult>(
+          PROFILE_ENDPOINTS.FORCE_CHANGE_PASSWORD,
+          data
+        );
     if (result?.accessToken) {
       secureTokenService.setAccessToken(result.accessToken);
     }

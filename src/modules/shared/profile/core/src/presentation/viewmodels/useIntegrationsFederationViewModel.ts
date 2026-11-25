@@ -3,13 +3,12 @@
 /**
  * useIntegrationsFederationViewModel
  *
- * ViewModel for SSO Federation & Developer Personal Access Tokens (PATs).
- * Coordinates external IdP connections and Sudo-protected Personal Access Tokens
+ * ViewModel for Developer Personal Access Tokens (PATs).
+ * Coordinates Sudo-protected Personal Access Tokens
  * (`GET/POST/DELETE /api/v1/account/integrations`, `POST /api/v1/account/integrations/pats/{id}/roll`).
  */
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { useAppStore } from "@core/store/useAppStore";
-import { container } from "@modules/profile/di";
 import {
   sovereignAccountKeys,
   useAccountIntegrationsSliceViewModel,
@@ -50,16 +49,14 @@ export interface PersonalAccessToken {
   tokenHash?: string;
 }
 
-/** React Query key factory for external SSO logins and personal access token queries. */
+/** React Query key factory for personal access token queries. */
 export const integrationsKeys = {
   all: ["profile", "integrations"] as const,
-  externalLogins: () => [...integrationsKeys.all, "external-logins"] as const,
   tokens: () => [...integrationsKeys.all, "tokens"] as const,
 };
 
-/** ViewModel coordinating external SSO bindings and Personal Access Token issuance/rotation. */
+/** ViewModel coordinating Personal Access Token issuance, scope selection, and rotation. */
 export function useIntegrationsFederationViewModel() {
-  const profileRepo = container.profileRepository;
   const queryClient = useQueryClient();
   const {
     integrations,
@@ -99,24 +96,6 @@ export function useIntegrationsFederationViewModel() {
   );
 
   const availableScopes = integrations?.availableScopes ?? [];
-
-  const {
-    data: externalLogins = [],
-    isLoading: isLoadingLogins,
-    error: loginsError,
-    refetch: refetchLogins,
-  } = useQuery({
-    queryKey: integrationsKeys.externalLogins(),
-    queryFn: () => profileRepo.getExternalLogins(),
-    staleTime: 60 * 1000,
-  });
-
-  const unlinkMutation = useMutation({
-    mutationFn: (id: string) => profileRepo.unlinkExternalLogin(id),
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: integrationsKeys.externalLogins() });
-    },
-  });
 
   const generateToken = async ({
     name,
@@ -197,13 +176,6 @@ export function useIntegrationsFederationViewModel() {
   };
 
   return {
-    externalLogins,
-    isLoadingLogins,
-    loginsError: loginsError?.message ?? null,
-    refetchLogins,
-    unlinkExternalLogin: unlinkMutation.mutateAsync,
-    isUnlinking: unlinkMutation.isPending,
-
     // PATs, Scope Catalog, Quota & Rate-Limit Telemetry
     personalTokens,
     availableScopes,

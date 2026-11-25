@@ -85,7 +85,7 @@ export const en = {
       unsupportedAccountType: "This account type is not supported for admin login.",
       noLinkedAccount: "Account Not Linked",
       noLinkedAccountDesc:
-        "No admin account is linked to this external identity. Please sign in with your credentials first, then link your external account in Profile †’ Security settings.",
+        "No admin account is linked to this external identity. Please sign in with your credentials first, then link your external account in Profile → Security settings.",
       loginSuccess: "Sign-In Successful",
       redirecting: "Redirecting to dashboard...",
       backToLogin: "Back to Sign In",
@@ -96,6 +96,24 @@ export const en = {
       discoveryRateLimited:
         "Too many provider lookup requests. Please wait a moment and try again, or sign in with your credentials.",
       retryProviders: "Retry",
+      errors: {
+        accountLocked:
+          "Your account is temporarily locked. Please wait before trying again or contact an administrator.",
+        accountDeactivated:
+          "This account has been deactivated. Contact your organization administrator for assistance.",
+        subjectMismatch: "This sign-in identity does not match the expected linked SSO account.",
+        linkedElsewhere: "This external SSO identity is already linked to another account.",
+        accessDenied: "Sign-in was cancelled or denied by your identity provider.",
+        invalidCredentials: "Your external credentials could not be verified. Please try again.",
+        invalidProvider: "This sign-in provider is unavailable or misconfigured.",
+        stateExpired: "Your sign-in session expired. Please start signing in again.",
+        csrfMismatch:
+          "Your sign-in session could not be verified for this browser tab. Please start signing in again.",
+        originMismatch:
+          "Sign-in handoff origin verification failed. Please start signing in again from your workspace.",
+        temporarilyUnavailable:
+          "Your identity provider is temporarily unavailable. Please try again shortly.",
+      },
     },
     forgotPassword: "Forgot Password?",
     forgotPasswordDesc: "Enter your email and we'll send you instructions to reset your password.",
@@ -175,6 +193,23 @@ export const en = {
     resetSuccessTitle: "Password updated!",
     resetSuccessSubtitle:
       "Your password has been reset. You can now sign in with your new credentials.",
+    resetPasswordBannerTitle: "Password updated",
+    resetPasswordBannerDesc: "Sign in with your new password to continue.",
+    rateLimitedRetryAfter: "Too many requests. Please wait {{seconds}}s and try again.",
+    rateLimited: "Too many requests. Please wait a moment and try again.",
+    recoveryNetworkError:
+      "Unable to reach the server. Please check your connection and try again.",
+    recoveryPolicyLoadError: "Unable to load workspace password requirements.",
+    recoveryActiveSessionTitle: "Active session detected",
+    recoveryActiveSessionDesc:
+      "You are currently signed in as {{email}}. To reset your password safely, sign out of your current session first.",
+    recoveryActiveSessionDescAnonymous:
+      "You are currently signed in. To reset your password safely, sign out of your current session first.",
+    recoverySignOutAndContinue: "Sign out and continue",
+    recoverySigningOut: "Signing out…",
+    recoveryReturnToDashboard: "Return to dashboard",
+    recoverySigningOutNotice:
+      "Completing this password reset will sign out your current session on this browser.",
     signInHeading: "Sign In",
     signInSubheading: "Welcome back. Sign in to continue.",
     signingIn: "Signing in…",
@@ -242,9 +277,12 @@ export const en = {
       availableWorkspaces: "Available workspaces",
     },
     accountSetup: {
-      activationRequiredTitle: "Account Setup Required",
+      activationRequiredTitle: "Complete Your Account Setup",
       activationRequiredDesc:
-        "Your account is not active yet. A setup link was automatically sent to your email address.",
+        "Check your inbox for your setup link to finish setting up your account.",
+      resendAvailableIn: "Resend available in {{seconds}}s",
+      didNotReceiveEmail: "Didn't receive the email?",
+      resendEmailAction: "Resend email",
       missingToken: "No setup token provided. Please use the link from your email.",
       invalidToken: "This setup link is invalid or has expired.",
       validationFailed: "Failed to validate setup token. The link may have expired.",

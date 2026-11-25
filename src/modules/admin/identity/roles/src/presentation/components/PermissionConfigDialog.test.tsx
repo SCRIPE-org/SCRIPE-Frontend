@@ -143,7 +143,7 @@ describe("PermissionConfigDialog — restricted fields", () => {
     // `custom-fields.view` present by default; one case removes it deliberately.
     useAppStore.setState({ permissions: ["custom-fields.view"] as never });
   });
-  afterEach(() => useAppStore.setState({ permissions: [] as never }));
+  afterEach(() => useAppStore.setState({ permissions: [] as never, user: null }));
 
   it("offers the entity type's custom-field keys as suggestions", async () => {
     setupContainer([definition("salary"), definition("nickname")]);
@@ -251,5 +251,232 @@ describe("PermissionConfigDialog — restricted fields", () => {
     await waitFor(() => {
       expect(document.querySelector("#permission-restricted-field-options")).not.toBeNull();
     });
+  });
+});
+
+describe("PermissionConfigDialog — dotted resources and scope boundaries", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    Element.prototype.scrollIntoView ??= vi.fn();
+    useAppStore.setState({ permissions: ["custom-fields.view"] as never, user: null });
+  });
+  afterEach(() => useAppStore.setState({ permissions: [] as never, user: null }));
+
+  it("extracts dotted resource crm.opportunities from crm.opportunities.read when resource prop is omitted", async () => {
+    setupContainer([definition("estimatedAmount")]);
+
+    const { rerender } = render(
+      <PermissionConfigDialog
+        open={false}
+        onOpenChange={() => {}}
+        permission={{
+          id: "perm-opp-read",
+          code: "crm.opportunities.read",
+          displayName: "View Opportunities",
+        }}
+        onSave={vi.fn()}
+      />,
+      { wrapper }
+    );
+    rerender(
+      <PermissionConfigDialog
+        open={true}
+        onOpenChange={() => {}}
+        permission={{
+          id: "perm-opp-read",
+          code: "crm.opportunities.read",
+          displayName: "View Opportunities",
+        }}
+        onSave={vi.fn()}
+      />
+    );
+
+    expect(vi.mocked(useRestrictableCustomFieldKeys)).toHaveBeenCalledWith(
+      "crm.opportunities",
+      expect.objectContaining({ enabled: true })
+    );
+    expect(screen.getByTestId("permission-config-resource-badge")).toHaveTextContent(
+      "crm.opportunities"
+    );
+    await waitFor(() => {
+      const opts = document.querySelectorAll("#permission-restricted-field-options option");
+      expect([...opts].map((o) => o.getAttribute("value"))).toContain("estimatedAmount");
+    });
+  });
+
+  it("extracts parent resource crm.opportunities for known compound action crm.opportunities.stage.override", () => {
+    setupContainer([]);
+
+    const { rerender } = render(
+      <PermissionConfigDialog
+        open={false}
+        onOpenChange={() => {}}
+        permission={{
+          id: "perm-opp-override",
+          code: "crm.opportunities.stage.override",
+          displayName: "Override Stage",
+        }}
+        onSave={vi.fn()}
+      />,
+      { wrapper }
+    );
+    rerender(
+      <PermissionConfigDialog
+        open={true}
+        onOpenChange={() => {}}
+        permission={{
+          id: "perm-opp-override",
+          code: "crm.opportunities.stage.override",
+          displayName: "Override Stage",
+        }}
+        onSave={vi.fn()}
+      />
+    );
+
+    expect(vi.mocked(useRestrictableCustomFieldKeys)).toHaveBeenCalledWith(
+      "crm.opportunities",
+      expect.any(Object)
+    );
+  });
+
+  it("prefers explicit permission.resource over code parsing when provided", () => {
+    setupContainer([]);
+
+    const { rerender } = render(
+      <PermissionConfigDialog
+        open={false}
+        onOpenChange={() => {}}
+        permission={{
+          id: "perm-fin",
+          code: "finance.payments.export",
+          displayName: "Export Payments",
+          resource: "finance.payments",
+        }}
+        onSave={vi.fn()}
+      />,
+      { wrapper }
+    );
+    rerender(
+      <PermissionConfigDialog
+        open={true}
+        onOpenChange={() => {}}
+        permission={{
+          id: "perm-fin",
+          code: "finance.payments.export",
+          displayName: "Export Payments",
+          resource: "finance.payments",
+        }}
+        onSave={vi.fn()}
+      />
+    );
+
+    expect(vi.mocked(useRestrictableCustomFieldKeys)).toHaveBeenCalledWith(
+      "finance.payments",
+      expect.any(Object)
+    );
+    expect(screen.getByTestId("permission-config-resource-badge")).toHaveTextContent(
+      "finance.payments"
+    );
+  });
+
+  it("hides All Tenants option when allowAllTenants is false and blocks saving stale all_tenants until changed", async () => {
+    setupContainer([]);
+    const onSave = vi.fn();
+
+    const { rerender } = render(
+      <PermissionConfigDialog
+        open={false}
+        onOpenChange={() => {}}
+        permission={{ id: "perm-1", code: "crm.opportunities.read", displayName: "View" }}
+        currentAssignment={{ permissionId: "perm-1", scopeOverride: "all_tenants" }}
+        allowAllTenants={false}
+        onSave={onSave}
+      />,
+      { wrapper }
+    );
+    rerender(
+      <PermissionConfigDialog
+        open={true}
+        onOpenChange={() => {}}
+        permission={{ id: "perm-1", code: "crm.opportunities.read", displayName: "View" }}
+        currentAssignment={{ permissionId: "perm-1", scopeOverride: "all_tenants" }}
+        allowAllTenants={false}
+        onSave={onSave}
+      />
+    );
+
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      translate("role.scopeAllTenantsRestricted")
+    );
+    const saveButton = screen.getByRole("button", { name: translate("common.save") });
+    expect(saveButton).toBeDisabled();
+
+    const combobox = screen.getByRole("combobox", { name: translate("role.scopeOverride") });
+    fireEvent.click(combobox);
+
+    await waitFor(() => {
+      expect(screen.getByText(translate("role.scopeOwnTenant"))).toBeInTheDocument();
+    });
+    expect(screen.queryByText(translate("role.scopeAllTenants"))).toBeNull();
+
+    fireEvent.click(screen.getByText(translate("role.scopeOwnTenant")));
+
+    await waitFor(() => {
+      expect(screen.queryByRole("alert")).toBeNull();
+    });
+    expect(saveButton).toBeEnabled();
+
+    fireEvent.click(saveButton);
+    expect(onSave).toHaveBeenCalledWith({
+      permissionId: "perm-1",
+      scopeOverride: "own_tenant",
+      restrictedFields: undefined,
+    });
+  });
+
+  it("commits comma-separated restricted fields, auto-commits uncommitted draft on Save, and blocks Save if a required draft is typed", async () => {
+    setupContainer([definition("salary", false), definition("email", true)]);
+    const { onSave } = renderDialog({ permissionId: "perm-1", restrictedFields: ["salary"] });
+
+    const input = screen.getByLabelText(translate("role.restrictedFields"));
+    // Typing a required key in the draft input triggers warning AND disables Save immediately
+    fireEvent.change(input, { target: { value: "phone, Email" } });
+
+    const alert = await screen.findByRole("alert");
+    expect(alert).toHaveTextContent("Email");
+    const saveButton = screen.getByRole("button", { name: translate("common.save") });
+    expect(saveButton).toBeDisabled();
+
+    // Switching to optional comma-separated draft commits everything synchronously on Save without pressing +
+    fireEvent.change(input, { target: { value: "phone, Salary, taxId" } });
+    await waitFor(() => {
+      expect(screen.queryByRole("alert")).toBeNull();
+    });
+    expect(saveButton).toBeEnabled();
+
+    fireEvent.click(saveButton);
+    expect(onSave).toHaveBeenCalledWith({
+      permissionId: "perm-1",
+      scopeOverride: undefined,
+      restrictedFields: ["salary", "phone", "taxId"],
+    });
+  });
+
+  it("hides All Tenants option automatically when authenticated user belongs to a tenant", async () => {
+    setupContainer([]);
+    useAppStore.setState({
+      permissions: ["custom-fields.view"] as never,
+      user: { id: "u-tenant", username: "tenant.admin", tenantId: "t-scripe" } as never,
+    });
+
+    renderDialog();
+
+    const combobox = screen.getByRole("combobox", { name: translate("role.scopeOverride") });
+    fireEvent.click(combobox);
+
+    await waitFor(() => {
+      expect(screen.getByText(translate("role.scopeOwnTenant"))).toBeInTheDocument();
+    });
+    expect(screen.queryByText(translate("role.scopeAllTenants"))).toBeNull();
   });
 });

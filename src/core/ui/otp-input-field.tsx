@@ -22,6 +22,7 @@ interface OtpInputFieldProps {
   variant?: "nexus" | "vault" | "glass";
   id?: string;
   disabled?: boolean;
+  onComplete?: (value: string) => void;
   "aria-invalid"?: boolean | "true" | "false";
 }
 
@@ -33,6 +34,7 @@ export function OtpInputField({
   variant = "nexus",
   id = "otp-field",
   disabled = false,
+  onComplete,
   "aria-invalid": ariaInvalid,
 }: OtpInputFieldProps) {
   const isInvalid = ariaInvalid === true || ariaInvalid === "true";
@@ -42,17 +44,18 @@ export function OtpInputField({
       maxLength={length}
       value={value}
       onChange={onChange}
+      onComplete={onComplete}
       pattern="[0-9]*"
       inputMode="numeric"
       id={id}
       autoFocus={autoFocus}
       disabled={disabled}
       aria-invalid={isInvalid ? true : undefined}
-      containerClassName="justify-center w-full"
+      containerClassName="justify-center w-full max-w-full overflow-hidden p-1"
       dir="ltr"
     >
       {/* OTP digit runs stay dir="ltr" in every locale (see input-otp.tsx). */}
-      <div className="flex items-center justify-center gap-2" dir="ltr">
+      <div className="flex items-center justify-center gap-1 sm:gap-2" dir="ltr">
         {Array.from({ length }).map((_, i) => {
           const ch = value[i];
 
@@ -61,7 +64,7 @@ export function OtpInputField({
               // Auth-shell opt-in — fixed Signal Lime, literals by design.
               return {
                 className:
-                  "w-[46px] h-[56px] rounded-xl text-center text-[22px] font-semibold font-mono outline-none transition-[border-color,background-color,box-shadow] duration-200 motion-reduce:transition-none border-none ring-0 ring-offset-0 ring-transparent focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none",
+                  "h-12 w-9 rounded-xl text-center text-lg font-semibold font-mono outline-none transition-[border-color,background-color,box-shadow] duration-200 motion-reduce:transition-none border-none ring-0 ring-offset-0 ring-transparent focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none sm:h-[56px] sm:w-[46px] sm:text-[22px]",
                 style: {
                   background: ch ? "rgba(198,255,0,0.1)" : "rgba(255,255,255,0.03)",
                   border: `1.5px solid ${ch ? "rgba(198,255,0,0.5)" : "rgba(255,255,255,0.42)"}`,
@@ -77,7 +80,7 @@ export function OtpInputField({
               // Auth-shell opt-in — the reset flow's --sx- palette.
               return {
                 className:
-                  "w-[46px] h-[56px] rounded-xl text-center text-[22px] font-semibold font-mono outline-none transition-[border-color,background-color,box-shadow] duration-200 motion-reduce:transition-none border ring-0 ring-offset-0 ring-transparent focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none",
+                  "h-12 w-9 rounded-xl text-center text-lg font-semibold font-mono outline-none transition-[border-color,background-color,box-shadow] duration-200 motion-reduce:transition-none border ring-0 ring-offset-0 ring-transparent focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none sm:h-[56px] sm:w-[46px] sm:text-[22px]",
                 style: {
                   background: ch ? "var(--sx-accent-soft)" : "var(--sx-chip-bg)",
                   borderColor: ch ? "var(--sx-accent-soft-border)" : "var(--sx-chip-border)",
@@ -92,7 +95,7 @@ export function OtpInputField({
             // hairline; filled slots take the accent wash; invalid outranks idle.
             return {
               className: cn(
-                "h-14 w-11 rounded-nx-control border text-center font-mono text-xl font-semibold tabular-nums transition-[background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+                "h-12 w-9 rounded-nx-control border text-center font-mono text-lg font-semibold tabular-nums transition-[background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none sm:h-14 sm:w-11 sm:text-xl",
                 isInvalid && !disabled
                   ? "border-nx-danger bg-nx-ground text-nx-ink"
                   : ch

@@ -194,4 +194,45 @@ describe("Passkey Sign-In Contract & Components", () => {
     fireEvent.click(passkeyChip);
     expect(onSwitchToPasskey).toHaveBeenCalledTimes(1);
   });
+
+  it("PasskeyPrompt routes hybrid Requires2FA verification directly to onTwoFactorRequired without invoking onSuccess (FE-HIGH-05)", async () => {
+    mockBeginPasskeyAuth.mockResolvedValueOnce({
+      challenge: "passkey-2fa-chal",
+      challengeToken: "chal-tok-2fa",
+    });
+    mockAssertPasskey.mockResolvedValueOnce({
+      credentialIdBase64: "cred-id",
+      clientDataJsonBase64: "cd-json",
+      authenticatorDataBase64: "auth-data",
+      signatureBase64: "sig",
+      userHandleBase64: null,
+      clientExtensionResults: {},
+    });
+    mockVerifyPasskeyAuth.mockResolvedValueOnce({
+      accessToken: "",
+      refreshToken: "",
+      requires2FA: true,
+      twoFactorPendingToken: "pending-2fa-from-passkey",
+      staySignedIn: true,
+    });
+
+    const onSuccess = vi.fn();
+    const onTwoFactorRequired = vi.fn();
+    render(
+      <PasskeyPrompt
+        onSuccess={onSuccess}
+        onTwoFactorRequired={onTwoFactorRequired}
+        onBack={vi.fn()}
+        isRTL={false}
+        tenantId="tenant-1"
+      />
+    );
+
+    fireEvent.click(screen.getByTestId("passkey-authenticate-btn"));
+
+    await waitFor(() => {
+      expect(onTwoFactorRequired).toHaveBeenCalledWith("pending-2fa-from-passkey", true);
+    });
+    expect(onSuccess).not.toHaveBeenCalled();
+  });
 });

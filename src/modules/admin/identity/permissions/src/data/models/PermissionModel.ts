@@ -22,6 +22,7 @@ export interface PermissionJson {
   nameAr?: string;
   category: string;
   displayOrder: number;
+  platformOnly?: boolean;
 }
 
 /** Backend response for a single category within a module group */
@@ -51,7 +52,8 @@ export class PermissionModel {
     public readonly descriptionEn?: string,
     public readonly descriptionAr?: string,
     public readonly nameEn?: string,
-    public readonly nameAr?: string
+    public readonly nameAr?: string,
+    public readonly platformOnly?: boolean
   ) {}
 
   /**
@@ -70,7 +72,8 @@ export class PermissionModel {
       json.descriptionEn,
       json.descriptionAr,
       json.nameEn,
-      json.nameAr
+      json.nameAr,
+      json.platformOnly
     );
   }
 
@@ -90,6 +93,7 @@ export class PermissionModel {
       descriptionAr: this.descriptionAr,
       nameEn: this.nameEn,
       nameAr: this.nameAr,
+      ...(this.platformOnly !== undefined ? { platformOnly: this.platformOnly } : {}),
     };
   }
 }

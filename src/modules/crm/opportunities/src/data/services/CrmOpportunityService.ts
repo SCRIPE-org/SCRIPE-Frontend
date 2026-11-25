@@ -66,11 +66,21 @@ export class CrmOpportunityService implements ICrmOpportunityService {
     return this.unwrap(response);
   }
 
-  /** Updates core commercial fields on an existing Opportunity via idempotent PUT. */
+  /**
+   * Updates core commercial fields on an existing Opportunity via idempotent PUT.
+   *
+   * The backend treats this as a partial update: any field that is omitted is left untouched,
+   * while any field that is SENT is checked against the caller's restricted-field policy
+   * (`crm.opportunities`). Defaults must therefore never be injected for `currencyCode` or
+   * `dealKind` — silently sending `"SAR"` / `"NewBusiness"` would both overwrite stored values
+   * and be refused with `FieldRestricted` for users who cannot write those fields.
+   */
   async updateOpportunity(input: UpdateOpportunityInput): Promise<CrmOpportunity> {
     const payload = {
-      title: input.title, estimatedAmount: input.estimatedAmount, currencyCode: input.currencyCode ?? "SAR",
-      targetCloseDate: input.targetCloseDate, dealKind: input.dealKind ?? "NewBusiness",
+      title: input.title, estimatedAmount: input.estimatedAmount,
+      ...(input.currencyCode !== undefined ? { currencyCode: input.currencyCode } : {}),
+      targetCloseDate: input.targetCloseDate,
+      ...(input.dealKind !== undefined ? { dealKind: input.dealKind } : {}),
       accountId: input.accountId, partyId: input.partyId, expectedRowVersion: input.expectedRowVersion ?? "",
     };
     const response = await this.api.put<ApiSuccessResponse<CrmOpportunity> | CrmOpportunity>(
@@ -123,10 +133,18 @@ export class CrmOpportunityService implements ICrmOpportunityService {
     return this.unwrap(response);
   }
 
-  /** Closes an Opportunity as Won or Lost with rationale and approval metadata. */
+  /**
+   * Closes an Opportunity as Won or Lost with rationale and approval metadata.
+   *
+   * Matches `updateOpportunity` FLS partial-update semantics: `dealKind` is omitted when
+   * not supplied so restricted callers do not hit `FieldRestricted` refusals and stored
+   * `Expansion`/`Renewal`/`Services` classifications are preserved on close.
+   */
   async closeOpportunity(input: CloseOpportunityInput): Promise<CrmOpportunity> {
     const payload = {
-      outcome: input.outcome, dealKind: input.dealKind ?? "NewBusiness", hqOutcomeKind: input.hqOutcomeKind,
+      outcome: input.outcome,
+      ...(input.dealKind !== undefined ? { dealKind: input.dealKind } : {}),
+      hqOutcomeKind: input.hqOutcomeKind,
       targetExistingTenantId: input.targetExistingTenantId, lossReasonCode: input.lossReasonCode,
       competitorName: input.competitorName, closeNotes: input.closeNotes,
       approvalEvidenceRef: input.approvalEvidenceRef, expectedRowVersion: input.expectedRowVersion ?? "",

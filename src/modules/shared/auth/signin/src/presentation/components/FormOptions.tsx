@@ -8,6 +8,7 @@ interface FormOptionsProps {
   staySignedIn: boolean;
   onStaySignedInChange: (val: boolean) => void;
   disabled: boolean;
+  forgotPasswordHref?: string;
   t: (key: string) => string;
 }
 
@@ -15,7 +16,13 @@ interface FormOptionsProps {
  * Presentation UI component rendering the form options.
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
-export function FormOptions({ staySignedIn, onStaySignedInChange, disabled, t }: FormOptionsProps) {
+export function FormOptions({
+  staySignedIn,
+  onStaySignedInChange,
+  disabled,
+  forgotPasswordHref,
+  t,
+}: FormOptionsProps) {
   const staySignedInId = "stay-signed-in";
 
   return (
@@ -42,7 +49,7 @@ export function FormOptions({ staySignedIn, onStaySignedInChange, disabled, t }:
         </Label>
       </div>
       <Link
-        href="/forgot-password"
+        href={forgotPasswordHref || "/forgot-password"}
         className="text-[12px] font-medium transition-colors hover:opacity-80"
         style={{ color: "var(--sx-accent-text, hsl(var(--primary)))" }}
         tabIndex={0}

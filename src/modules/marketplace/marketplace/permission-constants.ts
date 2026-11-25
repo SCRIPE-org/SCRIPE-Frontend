@@ -25,6 +25,7 @@ export const MARKETPLACE_PERMISSIONS = {
   // ── App Reviews ────────────────────────────────────────
   APP_REVIEWS_VIEW: "appreviews.view",
   APP_REVIEWS_CREATE: "appreviews.create",
+  APP_REVIEWS_UPDATE: "appreviews.update",
   APP_REVIEWS_DELETE: "appreviews.delete",
 
   // ── Financials ─────────────────────────────────────────

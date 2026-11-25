@@ -37,10 +37,11 @@
  *   Case 3b CloudflareOriginVerificationMiddleware -> { error: "forbidden", message } — an `error`
  *           field that is NOT a tenant-context code and no `errorCode`, so it lands in Case 3.
  */
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import type { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from "axios";
 import { ApiService } from "../api.service";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
+import { useSudoStore } from "@core/store/useSudoStore";
 // Read-only import of the consumer whose shipped UI state the Case 2 defect made unreachable.
 // Asserting through the real classifier — instead of re-implementing its `details` lookup here — is
 // the only way this file can prove the actual user-visible consequence rather than restating the
@@ -340,6 +341,85 @@ describe("ApiService 403 handling", () => {
       // Baseline for the fix: this is the behaviour Case 2 now matches.
       expect(rejection.details).toBe(body);
       expect(location.href).toBe("http://localhost/dashboard");
+    });
+  });
+
+  describe("Sudo step-up challenge codes", () => {
+    const sudoForceChallengeCodes = [
+      "Identity.SudoRevokedOrExpired",
+      "Identity.SudoPolicyDowngradeRefused",
+      "Identity.SudoTokenInvalid",
+    ] as const;
+
+    let originalRequestElevation: ReturnType<typeof useSudoStore.getState>["requestElevation"];
+
+    beforeEach(() => {
+      originalRequestElevation = useSudoStore.getState().requestElevation;
+    });
+
+    afterEach(() => {
+      useSudoStore.setState({ requestElevation: originalRequestElevation });
+    });
+
+    for (const errorCode of sudoForceChallengeCodes) {
+      it(`requests forced Sudo step-up elevation and preserves error details for ${errorCode}`, async () => {
+        const mockRequestElevation = vi.fn().mockRejectedValue(new Error("User cancelled sudo"));
+        useSudoStore.setState({ requestElevation: mockRequestElevation });
+
+        const body = {
+          statusCode: 403,
+          errorCode,
+          message: "Elevated Sudo verification is required.",
+        };
+        const err = forbiddenError(body);
+        err.config = { headers: {} } as InternalAxiosRequestConfig;
+
+        const rejection = await rejectionOf(handler, err);
+
+        expect(mockRequestElevation).toHaveBeenCalledTimes(1);
+        expect(mockRequestElevation).toHaveBeenCalledWith(
+          expect.objectContaining({ forceChallenge: true })
+        );
+        expect((rejection as Error & { details?: unknown; status?: number }).details).toBe(body);
+        expect((rejection as Error & { details?: unknown; status?: number }).status).toBe(403);
+        expect(location.href).toBe("http://localhost/dashboard");
+      });
+    }
+
+    it("attaches active in-memory X-Sudo-Token in the request interceptor except on /auth/sudo/ endpoints", async () => {
+      const instance = (service as unknown as { axiosInstance: AxiosInstance }).axiosInstance;
+      const reqHandlers = (
+        instance.interceptors.request as unknown as {
+          handlers: Array<{
+            fulfilled?: (cfg: InternalAxiosRequestConfig) => InternalAxiosRequestConfig;
+          } | null>;
+        }
+      ).handlers;
+      const fulfilled = reqHandlers.find((entry) => typeof entry?.fulfilled === "function")
+        ?.fulfilled;
+      expect(fulfilled).toBeDefined();
+
+      useSudoStore.getState().markVerified({
+        sudoToken: "sudo-jwt-active-123",
+        expiresAtUtc: new Date(Date.now() + 600_000).toISOString(),
+        methodUsed: "passkey",
+      });
+
+      const normalCfg = fulfilled!({
+        url: "/v1/account/sessions",
+        headers: {},
+      } as unknown as InternalAxiosRequestConfig);
+      expect((normalCfg.headers as Record<string, string>)["X-Sudo-Token"]).toBe(
+        "sudo-jwt-active-123"
+      );
+
+      const sudoEndpointCfg = fulfilled!({
+        url: "/v1/auth/sudo/status",
+        headers: {},
+      } as unknown as InternalAxiosRequestConfig);
+      expect((sudoEndpointCfg.headers as Record<string, string>)["X-Sudo-Token"]).toBeUndefined();
+
+      useSudoStore.getState().reset();
     });
   });
 });

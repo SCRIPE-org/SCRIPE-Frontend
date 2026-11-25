@@ -14,6 +14,7 @@ import type { AccountColleagueOption } from "../../../domain/entities/SovereignA
 import { ColleaguePickerField } from "./ColleaguePickerField";
 import { DelegationScopeChecklistField } from "./DelegationScopeChecklistField";
 import { DelegationWindowPickerField } from "./DelegationWindowPickerField";
+import { isSudoCancelledError } from "../../utils/sudoElevation";
 import { Check, Loader2 } from "lucide-react";
 
 /**
@@ -139,6 +140,7 @@ export function GrantDelegationModal({
       resetForm();
       onOpenChange(false);
     } catch (err: unknown) {
+      if (isSudoCancelledError(err)) return;
       setGrantError(err instanceof Error ? err.message : t("profile.common.error"));
     }
   };

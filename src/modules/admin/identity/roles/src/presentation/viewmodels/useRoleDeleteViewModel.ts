@@ -2,6 +2,8 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useAppStore } from "@core/store/useAppStore";
+import { usePermissions } from "@core/hooks/use-permission";
 import { identityContainer } from "@modules/identity/di";
 
 interface UseRoleDeleteViewModelProps {
@@ -16,6 +18,8 @@ interface UseRoleDeleteViewModelProps {
  */
 export function useRoleDeleteViewModel({ roleId, tenantId, open }: UseRoleDeleteViewModelProps) {
   const { t, language } = useI18n();
+  const userTenantId = useAppStore((s) => s.user?.tenantId);
+  const { isPlatformSuperAdmin } = usePermissions();
 
   // Fetch admin count for this role
   const { data: adminCount = 0, isLoading: isLoadingCount } = useQuery({
@@ -27,16 +31,25 @@ export function useRoleDeleteViewModel({ roleId, tenantId, open }: UseRoleDelete
     enabled: open && !!roleId,
   });
 
-  // Fetch other roles in the same tenant for fallback selection
+  // Fetch other roles in the same tenant for fallback selection (sorted ascending by priority: 0 = highest)
+  const useCurrentTenantEndpoint = !isPlatformSuperAdmin && (!tenantId || tenantId === userTenantId);
   const { data: availableRoles = [], isLoading: isLoadingRoles } = useQuery({
-    queryKey: ["roles-for-fallback", tenantId, roleId],
+    queryKey: ["roles-for-fallback", tenantId, roleId, useCurrentTenantEndpoint],
     queryFn: async () => {
-      const result = await identityContainer.roleRepository.getAll({
-        page: 1,
-        pageSize: 100,
-        tenantId: tenantId,
-      });
-      return result.items.filter((r) => r.id !== roleId);
+      const result = useCurrentTenantEndpoint
+        ? await identityContainer.roleRepository.getCurrentTenantRoles({
+            page: 1,
+            pageSize: 100,
+          })
+        : await identityContainer.roleRepository.getAll({
+            page: 1,
+            pageSize: 100,
+            tenantId,
+            strict: Boolean(tenantId),
+          });
+      return result.items
+        .filter((r) => r.id !== roleId)
+        .sort((a, b) => (a.priority ?? Number.MAX_SAFE_INTEGER) - (b.priority ?? Number.MAX_SAFE_INTEGER));
     },
     enabled: open && !!roleId && adminCount > 0,
   });

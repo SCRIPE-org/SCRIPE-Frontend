@@ -1,26 +1,19 @@
 "use client";
 
 import React from "react";
-import { Input } from "@core/ui/input";
+import {
+  DEFAULT_PASSWORD_MAX_LENGTH,
+  type PasswordPolicyModel,
+} from "@core/common/password-policy";
+import { PasswordInput } from "@core/ui/password-input";
+import { PasswordWithPolicyField } from "@core/ui/password-policy-field";
 import { Label } from "@core/ui/label";
 import { Button } from "@core/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { cn } from "@core/common/utils";
-import {
-  PasswordStrengthChecklist,
-  type PasswordStrengthRulesState,
-} from "./PasswordStrengthChecklist";
-import {
-  Eye,
-  EyeOff,
-  ShieldAlert,
-  LogOut,
-  AlertCircle,
-  LockKeyhole,
-  UserCheck,
-} from "lucide-react";
+import { ShieldAlert, LogOut, AlertCircle, LockKeyhole, UserCheck } from "lucide-react";
 
 /**
  * Props for ForceChangePasswordCardSection.
@@ -32,13 +25,12 @@ export interface ForceChangePasswordCardSectionProps {
   onNewPasswordChange: (value: string) => void;
   confirmPassword: string;
   onConfirmPasswordChange: (value: string) => void;
-  showNew: boolean;
-  onToggleShowNew: () => void;
-  showConfirm: boolean;
-  onToggleShowConfirm: () => void;
+  policy: PasswordPolicyModel | null | undefined;
+  isPolicyLoading: boolean;
+  policyError: string | null;
+  onRetryPolicy: () => void;
   isSubmitting: boolean;
   submitError: string | null;
-  rules: PasswordStrengthRulesState;
   showMismatch: boolean;
   canSubmit: boolean;
   onSubmit: (e: React.FormEvent) => void;
@@ -46,7 +38,7 @@ export interface ForceChangePasswordCardSectionProps {
 }
 
 /**
- * Focused password rotation card displaying the 5-rule strength checklist,
+ * Focused password rotation card displaying the backend policy-driven strength checklist,
  * confirm input, error alert, and alternate account sign-out trigger.
  */
 export function ForceChangePasswordCardSection({
@@ -56,13 +48,12 @@ export function ForceChangePasswordCardSection({
   onNewPasswordChange,
   confirmPassword,
   onConfirmPasswordChange,
-  showNew,
-  onToggleShowNew,
-  showConfirm,
-  onToggleShowConfirm,
+  policy,
+  isPolicyLoading,
+  policyError,
+  onRetryPolicy,
   isSubmitting,
   submitError,
-  rules,
   showMismatch,
   canSubmit,
   onSubmit,
@@ -112,82 +103,42 @@ export function ForceChangePasswordCardSection({
         )}
 
         <form onSubmit={onSubmit} className="space-y-4">
-          <div className="space-y-1.5">
-            <Label htmlFor="force-new-password" className="text-xs font-semibold text-nx-ink">
-              {t("profile.security.newPassword")}
-            </Label>
-            <div className="relative">
-              <Input
-                id="force-new-password"
-                data-testid="force-new-password"
-                type={showNew ? "text" : "password"}
-                autoComplete="new-password"
-                value={newPassword}
-                onChange={(e) => onNewPasswordChange(e.target.value)}
-                disabled={isSubmitting}
-                className="pe-10 bg-nx-raised border-nx-line text-nx-ink"
-                required
-              />
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                onClick={onToggleShowNew}
-                aria-label={
-                  showNew ? t("profile.security.hidePassword") : t("profile.security.showPassword")
-                }
-                className="absolute inset-y-0 end-0 h-full w-9 text-nx-ink-3 hover:text-nx-ink hover:bg-transparent"
-              >
-                {showNew ? (
-                  <EyeOff className="h-4 w-4" aria-hidden="true" />
-                ) : (
-                  <Eye className="h-4 w-4" aria-hidden="true" />
-                )}
-              </Button>
-            </div>
-          </div>
-
-          <PasswordStrengthChecklist t={t} rules={rules} />
+          <PasswordWithPolicyField
+            id="force-new-password"
+            data-testid="force-new-password"
+            label={t("profile.security.newPassword")}
+            value={newPassword}
+            onValueChange={onNewPasswordChange}
+            policy={policy}
+            policyLoading={isPolicyLoading}
+            policyError={policyError}
+            onRetryPolicy={onRetryPolicy}
+            disabled={isSubmitting}
+            autoComplete="new-password"
+            surface="nexus"
+            t={t}
+            required
+          />
 
           <div className="space-y-1.5">
             <Label htmlFor="force-confirm-password" className="text-xs font-semibold text-nx-ink">
               {t("profile.security.confirmPassword")}
             </Label>
-            <div className="relative">
-              <Input
-                id="force-confirm-password"
-                data-testid="force-confirm-password"
-                type={showConfirm ? "text" : "password"}
-                autoComplete="new-password"
-                value={confirmPassword}
-                onChange={(e) => onConfirmPasswordChange(e.target.value)}
-                disabled={isSubmitting}
-                aria-invalid={showMismatch}
-                className={cn(
-                  "pe-10 bg-nx-raised border-nx-line text-nx-ink",
-                  showMismatch && "border-destructive focus-visible:ring-destructive/40"
-                )}
-                required
-              />
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                onClick={onToggleShowConfirm}
-                aria-label={
-                  showConfirm
-                    ? t("profile.security.hidePassword")
-                    : t("profile.security.showPassword")
-                }
-                className="absolute inset-y-0 end-0 h-full w-9 text-nx-ink-3 hover:text-nx-ink hover:bg-transparent"
-              >
-                {showConfirm ? (
-                  <EyeOff className="h-4 w-4" aria-hidden="true" />
-                ) : (
-                  <Eye className="h-4 w-4" aria-hidden="true" />
-                )}
-              </Button>
-            </div>
+            <PasswordInput
+              id="force-confirm-password"
+              data-testid="force-confirm-password"
+              autoComplete="new-password"
+              value={confirmPassword}
+              onChange={(e) => onConfirmPasswordChange(e.target.value)}
+              disabled={isSubmitting}
+              maxLength={policy?.maxLength ?? DEFAULT_PASSWORD_MAX_LENGTH}
+              aria-invalid={showMismatch}
+              className={cn(
+                "bg-nx-raised border-nx-line text-nx-ink",
+                showMismatch && "border-destructive focus-visible:ring-destructive/40"
+              )}
+              required
+            />
             {showMismatch && (
               <output className="block text-xs text-destructive">
                 {t("profile.security.passwordMismatch")}

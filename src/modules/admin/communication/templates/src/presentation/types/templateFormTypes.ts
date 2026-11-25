@@ -44,6 +44,38 @@ export interface TemplateFormValues {
 }
 
 /**
+ * Builds the initial template form state, hydrating URL search params when in create mode.
+ *
+ * @param mode - Current form operating mode ("create" | "edit").
+ * @param searchParams - URL search parameters (used for "Use as Template" and "Import Template").
+ * @returns Initialized template form state.
+ */
+export function buildInitialTemplateFormValues(
+  mode: TemplateFormMode,
+  searchParams?: { get(name: string): string | null } | null
+): TemplateFormValues {
+  const channelParam = searchParams?.get("channel");
+  const initialChannel: TemplateFormValues["channel"] =
+    channelParam === "SMS" || channelParam === "Push" || channelParam === "Email"
+      ? channelParam
+      : "Email";
+
+  return {
+    key: mode === "create" ? (searchParams?.get("key") ?? "") : "",
+    channel: mode === "create" ? initialChannel : "Email",
+    language: mode === "create" ? searchParams?.get("language") || "en" : "en",
+    subject: mode === "create" ? (searchParams?.get("subject") ?? "") : "",
+    body: mode === "create" ? (searchParams?.get("body") ?? "") : "",
+    description: mode === "create" ? (searchParams?.get("description") ?? "") : "",
+    isActive: true,
+    category:
+      mode === "create" ? ((searchParams?.get("category") ?? "") as TemplateCategory | "") : "",
+    placeholderSchema: [],
+    designVariables: { ...DEFAULT_DESIGN },
+  };
+}
+
+/**
  * Merges current design variables with raw persisted design variables for saving.
  * Only writes back the keys the record already had plus the ones modified during this session.
  *

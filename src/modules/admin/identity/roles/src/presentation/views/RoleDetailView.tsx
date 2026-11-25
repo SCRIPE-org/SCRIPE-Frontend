@@ -6,6 +6,7 @@
  */
 "use client";
 
+import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useRoleDetailViewModel } from "../viewmodels/useRoleDetailViewModel";
 import {
   RoleInfoCard,
@@ -32,6 +33,7 @@ export interface RoleDetailViewProps {
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export default function RoleDetailView({ roleId }: RoleDetailViewProps) {
+  useModuleLocales(() => import("../../../locales"), "roles");
   const vm = useRoleDetailViewModel(roleId);
 
   return (

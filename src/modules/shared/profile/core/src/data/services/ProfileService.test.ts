@@ -50,6 +50,7 @@
 
 import { describe, it, expect, vi } from "vitest";
 import { ProfileService } from "./ProfileService";
+import { ProfileRepository } from "../repositories/ProfileRepository";
 import { SecurityRepository } from "../repositories/SecurityRepository";
 import type { IApiService } from "@core/interfaces/api.interface";
 import { PROFILE_ENDPOINTS } from "./profile.endpoints";
@@ -81,12 +82,18 @@ describe("ProfileService — no call site targets the dead /v1/profile/* or lega
     expect(PROFILE_ENDPOINTS.UPDATE_DOSSIER).toBe("/v1/account/dossier");
   });
 
-  it("uploadAvatar() POSTs /v1/account/dossier/avatar, not /v1/profile/avatar", async () => {
-    const api = mockApiService();
-    const file = new File(["x"], "a.png");
-    await new ProfileService(api).uploadAvatar(file);
-    expect((api.post as ReturnType<typeof vi.fn>).mock.calls[0][0]).toBe(PROFILE_ENDPOINTS.AVATAR);
+  it("ProfileRepository.uploadAvatar() POSTs FormData field 'image' to /v1/account/dossier/avatar", async () => {
+    const api = mockApiService({
+      post: vi.fn().mockResolvedValue({ imageUrl: "https://cdn.scripe.test/avatar.png" }),
+    });
+    const file = new File(["x"], "a.png", { type: "image/png" });
+    const res = await new ProfileRepository(api).uploadAvatar(file);
+    const [endpoint, formData] = (api.post as ReturnType<typeof vi.fn>).mock.calls[0];
+    expect(endpoint).toBe(PROFILE_ENDPOINTS.AVATAR);
     expect(PROFILE_ENDPOINTS.AVATAR).toBe("/v1/account/dossier/avatar");
+    expect((formData as FormData).get("image")).toBe(file);
+    expect((formData as FormData).get("file")).toBeNull();
+    expect(res).toEqual({ profileImageUrl: "https://cdn.scripe.test/avatar.png" });
   });
 
   it("removeAvatar() DELETEs /v1/account/dossier/avatar, not /v1/profile/avatar", async () => {
@@ -95,12 +102,29 @@ describe("ProfileService — no call site targets the dead /v1/profile/* or lega
     expect(api.delete).toHaveBeenCalledWith(PROFILE_ENDPOINTS.AVATAR);
   });
 
-  it("changePassword() resolves the current admin id via DOSSIER then POSTs /v1/admins/{id}/change-password", async () => {
-    const api = mockApiService({ get: vi.fn().mockResolvedValue({ id: "admin-123" }) });
+  it("changePassword() resolves adminId (or legacy id fallback) via DOSSIER then POSTs /v1/admins/{id}/change-password", async () => {
     const data = { currentPassword: "old", newPassword: "new" };
-    await new ProfileService(api).changePassword(data);
-    expect(api.get).toHaveBeenCalledWith(PROFILE_ENDPOINTS.DOSSIER);
-    expect(api.post).toHaveBeenCalledWith(PROFILE_ENDPOINTS.CHANGE_PASSWORD("admin-123"), data);
+
+    const apiWithAdminId = mockApiService({
+      get: vi.fn().mockResolvedValue({ adminId: "admin-123" }),
+    });
+    await new ProfileService(apiWithAdminId).changePassword(data);
+    expect(apiWithAdminId.get).toHaveBeenCalledWith(PROFILE_ENDPOINTS.DOSSIER);
+    expect(apiWithAdminId.post).toHaveBeenCalledWith(PROFILE_ENDPOINTS.CHANGE_PASSWORD("admin-123"), data);
+
+    const apiWithLegacyId = mockApiService({
+      get: vi.fn().mockResolvedValue({ id: "admin-legacy" }),
+    });
+    await new ProfileService(apiWithLegacyId).changePassword(data);
+    expect(apiWithLegacyId.post).toHaveBeenCalledWith(PROFILE_ENDPOINTS.CHANGE_PASSWORD("admin-legacy"), data);
+
+    const apiMissingId = mockApiService({
+      get: vi.fn().mockResolvedValue({}),
+    });
+    await expect(new ProfileService(apiMissingId).changePassword(data)).rejects.toThrow(
+      "Unable to resolve administrator identifier"
+    );
+    expect(apiMissingId.post).not.toHaveBeenCalled();
   });
 
   it("getSessions() GETs /v1/auth/admin/sessions, not /v1/profile/sessions", async () => {
