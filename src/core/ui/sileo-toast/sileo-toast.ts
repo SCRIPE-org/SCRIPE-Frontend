@@ -521,6 +521,7 @@ function operationSuccess(operation: string, itemName?: string): ToastResponse {
   const title = translateCore("common.operationToast.successTitle", { operation });
   const description = itemName
     ? translateCore("common.operationToast.successWithItem", {
+        operation,
         item: itemName,
         operationLower: operation.toLowerCase(),
       })

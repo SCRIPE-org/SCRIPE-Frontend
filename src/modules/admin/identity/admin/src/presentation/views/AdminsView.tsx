@@ -401,7 +401,11 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
             // Only show for admins who haven't activated their account yet
             show: (item: Admin) => item.needsAccountSetup,
             confirmTitle: tFn("admin.resendSetupEmail"),
-            confirmDescription: tFn("admin.resendSetupEmailDesc"),
+            confirmDescription: (item: Admin) => {
+              const label = item.displayName || item.username;
+              const target = item.email ? `${label} (${item.email})` : label;
+              return tFn("admin.resendSetupEmailDesc", { name: target });
+            },
             confirmVariant: "default" as const,
             confirmButtonText: tFn("common.send"),
           },
