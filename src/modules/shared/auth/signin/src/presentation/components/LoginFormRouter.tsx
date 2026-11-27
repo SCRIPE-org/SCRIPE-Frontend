@@ -8,6 +8,7 @@ import type { useLoginViewModel } from "../viewmodels/use-login-viewmodel";
 import type { useSsoProviders } from "../viewmodels/useSsoProviders";
 import { CredentialsForm } from "./CredentialsForm";
 import { CredentialsFormFooter } from "./CredentialsFormFooter";
+import { SsoOnlyCredentialsPanel } from "./SsoOnlyCredentialsPanel";
 import { MagicLinkRequestForm } from "./MagicLinkRequestForm";
 import { MagicLinkSentScreen } from "./MagicLinkSentScreen";
 import { PostCredentialWorkspaceSelector } from "./PostCredentialWorkspaceSelector";
@@ -32,6 +33,10 @@ interface LoginFormRouterProps {
   safeModeActive: boolean;
   /** True when rendered on the platform login surface (no tenant scope). */
   isPlatformMode?: boolean;
+  /** Tenant authentication enforcement mode resolved from workspace branding. */
+  authenticationMode?: "Hybrid" | "SsoOnly";
+  /** Whether eligible owners can use break-glass local sign-in when SsoOnly is enforced. */
+  allowOwnerBreakGlassLocalLogin?: boolean;
 }
 
 /**
@@ -55,6 +60,8 @@ export function LoginFormRouter({
   isRTL,
   safeModeActive,
   isPlatformMode = false,
+  authenticationMode = "Hybrid",
+  allowOwnerBreakGlassLocalLogin = true,
 }: LoginFormRouterProps) {
   const { t } = useI18n();
   const { completeTokenLogin } = useTokenLogin({
@@ -108,6 +115,34 @@ export function LoginFormRouter({
           onResend={vm.resendMagicLink}
           isRTL={isRTL}
         />
+      ) : vm.loginStep === "credentials" && authenticationMode === "SsoOnly" && !isPlatformMode ? (
+        <>
+          <SsoOnlyCredentialsPanel
+            formData={vm.formData}
+            showPassword={vm.showPassword}
+            isLoading={vm.isLoading}
+            isFormValid={vm.isFormValid}
+            error={vm.error}
+            shakeKey={vm.shakeKey}
+            isRTL={isRTL}
+            errorAnnounce={a11y.errorAnnounce}
+            allowOwnerBreakGlassLocalLogin={allowOwnerBreakGlassLocalLogin}
+            isBreakGlassExpanded={vm.isBreakGlassExpanded}
+            onToggleBreakGlass={vm.toggleBreakGlass}
+            updateField={vm.updateField}
+            togglePasswordVisibility={vm.togglePasswordVisibility}
+            handleBreakGlassLogin={() =>
+              vm.handleLogin(tenantId ?? undefined, { breakGlass: true })
+            }
+            providers={sso.providers}
+            isProvidersLoading={sso.isLoading}
+            ssoError={sso.error}
+            discoveryError={sso.discoveryError}
+            onRetryProviders={sso.retryProviders}
+            onProviderClick={sso.initiateSsoLogin}
+          />
+          <CredentialsFormFooter isPlatformMode={isPlatformMode} arrow={isRTL ? "←" : "→"} t={t} />
+        </>
       ) : vm.loginStep === "credentials" ? (
         <>
           <CredentialsForm

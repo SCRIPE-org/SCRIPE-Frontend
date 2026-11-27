@@ -3,7 +3,7 @@
  * Represents the configuration settings for a tenant
  */
 
-import type { IdentityProviderMode } from "../types/SettingsTypes";
+import type { IdentityProviderMode, TenantAuthenticationMode } from "../types/SettingsTypes";
 
 /**
  * Domain entity representing tenant-level quotas, security policies, IdP governance, audit, and branding settings.
@@ -31,6 +31,8 @@ export interface TenantSettings {
 
   // Identity Provider Governance
   identityProviderMode: IdentityProviderMode;
+  authenticationMode: TenantAuthenticationMode;
+  allowOwnerBreakGlassLocalLogin: boolean;
 
   // Audit
   auditEnabled: boolean;
@@ -84,6 +86,8 @@ export const DEFAULT_TENANT_SETTINGS: TenantSettings = {
   loginLockoutMinutes: 15,
   require2FA: false,
   identityProviderMode: "inherit",
+  authenticationMode: "Hybrid",
+  allowOwnerBreakGlassLocalLogin: true,
   auditEnabled: true,
   auditRetentionDays: 90,
   logoUrl: null,

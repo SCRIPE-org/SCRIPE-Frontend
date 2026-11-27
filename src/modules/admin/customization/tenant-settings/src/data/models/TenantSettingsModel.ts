@@ -7,6 +7,8 @@
  */
 export type {
   IdentityProviderMode,
+  TenantAuthenticationMode,
   TenantSettingsModel,
   UpdateTenantSettingsRequest,
 } from "../../domain/types/SettingsTypes";
+export { normalizeTenantAuthenticationMode } from "../../domain/types/SettingsTypes";

@@ -1,7 +1,8 @@
 import type { TenantSettings } from "../../domain/entities/TenantSettings";
-import type {
-  TenantSettingsModel,
-  UpdateTenantSettingsRequest,
+import {
+  normalizeTenantAuthenticationMode,
+  type TenantSettingsModel,
+  type UpdateTenantSettingsRequest,
 } from "../models/TenantSettingsModel";
 
 /**
@@ -29,6 +30,8 @@ export const TenantSettingsMapper = {
       loginLockoutMinutes: model.loginLockoutMinutes,
       require2FA: model.require2FA,
       identityProviderMode: model.identityProviderMode === "custom" ? "custom" : "inherit",
+      authenticationMode: normalizeTenantAuthenticationMode(model.authenticationMode),
+      allowOwnerBreakGlassLocalLogin: model.allowOwnerBreakGlassLocalLogin ?? true,
       auditEnabled: model.auditEnabled,
       auditRetentionDays: model.auditRetentionDays,
       logoUrl: model.logoUrl,
@@ -76,6 +79,8 @@ export const TenantSettingsMapper = {
       loginLockoutMinutes: entity.loginLockoutMinutes,
       require2FA: entity.require2FA,
       identityProviderMode: entity.identityProviderMode,
+      authenticationMode: entity.authenticationMode,
+      allowOwnerBreakGlassLocalLogin: entity.allowOwnerBreakGlassLocalLogin,
       auditEnabled: entity.auditEnabled,
       auditRetentionDays: entity.auditRetentionDays,
       logoUrl: entity.logoUrl,

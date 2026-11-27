@@ -56,6 +56,13 @@ export function isVercelTelemetryEnabled(): boolean {
 }
 
 /**
+ * Determine whether the current deployment is a Vercel Preview environment (`VERCEL_ENV=preview`).
+ */
+export function isVercelPreviewEnvironment(): boolean {
+  return process.env.VERCEL_ENV === "preview";
+}
+
+/**
  * Return true strictly for same-origin Customization Studio iframe preview routes.
  */
 export function isFrameablePreviewPath(pathname: string): boolean {
@@ -126,6 +133,7 @@ export function buildPageCsp(options: {
   const { nonce, isDev, allowSelfFraming, isHttps = false } = options;
   const { httpOrigins, wsOrigins } = resolveConfiguredBackendOrigins(isDev);
   const telemetryEnabled = isVercelTelemetryEnabled();
+  const isPreview = isVercelPreviewEnvironment();
 
   const extraHttp = httpOrigins.length > 0 ? ` ${httpOrigins.join(" ")}` : "";
   const extraWs = wsOrigins.length > 0 ? ` ${wsOrigins.join(" ")}` : "";
@@ -133,16 +141,19 @@ export function buildPageCsp(options: {
   const telemetryConnect = telemetryEnabled
     ? " https://va.vercel-scripts.com https://vitals.vercel-insights.com"
     : "";
+  const previewScript = isPreview ? " https://vercel.live" : "";
+  const previewConnect = isPreview ? " https://vercel.live wss://ws-us3.pusher.com" : "";
+  const previewFrame = isPreview ? " https://vercel.live" : "";
 
   const directives = [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}'${telemetryScript}${isDev ? " 'unsafe-eval'" : ""}`,
+    `script-src 'self' 'nonce-${nonce}'${telemetryScript}${previewScript}${isDev ? " 'unsafe-eval'" : ""}`,
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' data: https://fonts.gstatic.com",
     `img-src 'self' data: blob: https:${extraHttp}`,
     `media-src 'self' blob: https:${extraHttp}`,
-    `connect-src 'self'${extraHttp}${extraWs}${telemetryConnect}`,
-    `frame-src 'self' https:${extraHttp}`,
+    `connect-src 'self'${extraHttp}${extraWs}${telemetryConnect}${previewConnect}`,
+    `frame-src 'self' https:${extraHttp}${previewFrame}`,
     `frame-ancestors ${allowSelfFraming ? "'self'" : "'none'"}`,
     "object-src 'none'",
     "base-uri 'self'",

@@ -1,5 +1,4 @@
 import { V1 } from "@/core/config/api-endpoints/_shared";
-import { AUTH_ENDPOINTS } from "@core/config/api-endpoints/auth.endpoints";
 
 /**
  * Documentation for module export
@@ -17,7 +16,7 @@ export const ADMIN_ENDPOINTS = {
   ROLES: (id: string) => `${V1}/Admins/${id}/roles`,
   REMOVE_ROLE: (adminId: string, roleId: string) => `${V1}/Admins/${adminId}/roles/${roleId}`,
   RESET_PASSWORD: (id: string) => `${V1}/Admins/${id}/reset-password`,
-  MANUAL_SETUP: (id: string) => `${V1}/Admins/${id}/manual-setup`,
+  RESET_MFA: (id: string) => `${V1}/Admins/${id}/reset-mfa`,
   CHANGE_PASSWORD: (id: string) => `${V1}/Admins/${id}/change-password`,
   BULK: {
     ACTIVATE: `${V1}/Admins/bulk/activate`,
@@ -31,5 +30,4 @@ export const ADMIN_ENDPOINTS = {
   TRANSFER_PROTECTION: `${V1}/Admins/transfer-protection`,
   SYNC_ROLES: (id: string) => `${V1}/Admins/${id}/roles/sync`,
   RESEND_SETUP_EMAIL: `${V1}/account-setup/resend`,
-  PASSWORD_POLICY: AUTH_ENDPOINTS.AUTH.PASSWORD_POLICY,
 } as const;

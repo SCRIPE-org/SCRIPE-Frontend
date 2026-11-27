@@ -18,6 +18,7 @@ interface SsoProviderButtonsProps {
   discoveryError?: string | null;
   onRetryProviders?: () => void;
   onProviderClick: (providerId: string, protocol?: string) => void;
+  hideDivider?: boolean;
 }
 
 /**
@@ -31,6 +32,7 @@ export function SsoProviderButtons({
   discoveryError = null,
   onRetryProviders,
   onProviderClick,
+  hideDivider = false,
 }: SsoProviderButtonsProps) {
   const { t } = useI18n();
 
@@ -48,25 +50,27 @@ export function SsoProviderButtons({
 
   return (
     <div className="mt-1 w-full min-w-0">
-      <div className="my-1 flex items-center gap-3" style={{ margin: "4px 0" }}>
-        <div
-          className="h-px flex-1"
-          style={{ background: "var(--sx-divider, hsl(var(--border)))" }}
-        />
-        <span
-          className="shrink-0 text-[11px] font-medium uppercase tracking-[0.15em]"
-          style={{
-            color: "var(--sx-text-faint, hsl(var(--muted-foreground)/0.5))",
-            fontFamily: "var(--font-mono, ui-monospace, monospace)",
-          }}
-        >
-          {t("auth.sso.orContinueWith")}
-        </span>
-        <div
-          className="h-px flex-1"
-          style={{ background: "var(--sx-divider, hsl(var(--border)))" }}
-        />
-      </div>
+      {!hideDivider && (
+        <div className="my-1 flex items-center gap-3" style={{ margin: "4px 0" }}>
+          <div
+            className="h-px flex-1"
+            style={{ background: "var(--sx-divider, hsl(var(--border)))" }}
+          />
+          <span
+            className="shrink-0 text-[11px] font-medium uppercase tracking-[0.15em]"
+            style={{
+              color: "var(--sx-text-faint, hsl(var(--muted-foreground)/0.5))",
+              fontFamily: "var(--font-mono, ui-monospace, monospace)",
+            }}
+          >
+            {t("auth.sso.orContinueWith")}
+          </span>
+          <div
+            className="h-px flex-1"
+            style={{ background: "var(--sx-divider, hsl(var(--border)))" }}
+          />
+        </div>
+      )}
 
       {error && (
         <div

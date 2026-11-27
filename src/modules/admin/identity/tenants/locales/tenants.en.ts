@@ -118,6 +118,20 @@ export const en = {
     identityProviderModeCustom: "Custom Organization Only",
     identityProviderModeCustomDesc:
       "Hide platform-wide global providers and allow only identity providers configured specifically for this organization.",
+    authenticationMode: "Authentication Mode",
+    authenticationModeHybrid: "Hybrid (Local Password + SSO)",
+    authenticationModeHybridDesc:
+      "Allow administrators and users to sign in with either local passwords or configured SSO identity providers.",
+    authenticationModeSsoOnly: "SSO Only (Federated Required)",
+    authenticationModeSsoOnlyDesc:
+      "Require federated Single Sign-On for all sign-ins. Standard local password login and self-service password recovery are disabled.",
+    authenticationModeSsoOnlyWarning:
+      "Enabling SSO Only disables standard local password login and self-service password recovery. At least one active enabled SSO identity provider must be configured before saving.",
+    allowOwnerBreakGlassLocalLogin: "Allow Owner Break-Glass Local Sign-In",
+    allowOwnerBreakGlassLocalLoginDesc:
+      "Permits eligible workspace owners to use an audited emergency local sign-in fallback if your SSO provider is unreachable.",
+    breakGlassEnabled: "Owner emergency break-glass local sign-in: Enabled",
+    breakGlassDisabled: "Owner emergency break-glass local sign-in: Disabled",
     platformManaged: "Platform Managed",
     auditReadOnlyNotice:
       "Audit settings are managed by the platform administrator and cannot be modified by self-tenant admins.",

@@ -11,17 +11,31 @@
  *
  * @module core/services
  */
-import type { IApiService } from "@core/interfaces/api.interface";
+import type { IApiService, MutationRequestOptions } from "@core/interfaces/api.interface";
 import type { IPublicApiService } from "@core/interfaces/public-api.interface";
 
 export class PublicApiService implements IPublicApiService {
   constructor(private readonly api: IApiService) {}
 
-  get<T>(endpoint: string, params?: Record<string, unknown>, signal?: AbortSignal): Promise<T> {
-    return this.api.getPublic<T>(endpoint, params, signal);
+  get<T>(
+    endpoint: string,
+    params?: Record<string, unknown>,
+    signal?: AbortSignal,
+    options?: MutationRequestOptions
+  ): Promise<T> {
+    return options
+      ? this.api.getPublic<T>(endpoint, params, signal, options)
+      : this.api.getPublic<T>(endpoint, params, signal);
   }
 
-  post<T>(endpoint: string, data?: unknown, signal?: AbortSignal): Promise<T> {
-    return this.api.postPublic<T>(endpoint, data, signal);
+  post<T>(
+    endpoint: string,
+    data?: unknown,
+    signal?: AbortSignal,
+    options?: MutationRequestOptions
+  ): Promise<T> {
+    return options
+      ? this.api.postPublic<T>(endpoint, data, signal, options)
+      : this.api.postPublic<T>(endpoint, data, signal);
   }
 }

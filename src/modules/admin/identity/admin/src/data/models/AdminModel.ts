@@ -80,17 +80,29 @@ export interface AdminListResponseJson {
  */
 export interface CreateAdminJson {
   username: string;
-  password?: string;
   firstName?: string;
   lastName?: string;
   phoneNumber?: string;
-  email?: string;
+  email: string;
   notes?: string;
   tenantId?: string;
   roleIds?: string[];
   userGroupIds?: string[];
-  sendSetupEmail?: boolean;
-  mustChangePassword?: boolean;
+}
+
+/**
+ * Reset password request JSON
+ */
+export interface ResetPasswordJson {
+  reason?: string;
+}
+
+/**
+ * Reset MFA request JSON
+ */
+export interface ResetAdminMfaJson {
+  reason?: string;
+  revokePasskeys: boolean;
 }
 
 /**
@@ -253,23 +265,19 @@ export class AdminModel {
 export class CreateAdminModel {
   constructor(
     public readonly username: string,
-    public readonly password?: string,
+    public readonly email: string,
     public readonly firstName?: string,
     public readonly lastName?: string,
     public readonly phoneNumber?: string,
-    public readonly email?: string,
     public readonly notes?: string,
     public readonly tenantId?: string,
     public readonly roleIds?: string[],
-    public readonly userGroupIds?: string[],
-    public readonly sendSetupEmail?: boolean,
-    public readonly mustChangePassword?: boolean
+    public readonly userGroupIds?: string[]
   ) {}
 
   toJson(): CreateAdminJson {
     return {
       username: this.username,
-      password: this.password,
       firstName: this.firstName,
       lastName: this.lastName,
       phoneNumber: this.phoneNumber,
@@ -278,8 +286,6 @@ export class CreateAdminModel {
       tenantId: this.tenantId,
       roleIds: this.roleIds,
       userGroupIds: this.userGroupIds,
-      sendSetupEmail: this.sendSetupEmail,
-      mustChangePassword: this.mustChangePassword,
     };
   }
 }

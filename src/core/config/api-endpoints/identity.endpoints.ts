@@ -14,6 +14,7 @@ export const IDENTITY_ENDPOINTS = {
     ROLES: (id: string) => `${V1}/admins/${id}/roles`,
     REMOVE_ROLE: (adminId: string, roleId: string) => `${V1}/admins/${adminId}/roles/${roleId}`,
     RESET_PASSWORD: (id: string) => `${V1}/admins/${id}/reset-password`,
+    RESET_MFA: (id: string) => `${V1}/admins/${id}/reset-mfa`,
     CHANGE_PASSWORD: (id: string) => `${V1}/admins/${id}/change-password`,
     BULK: {
       ACTIVATE: `${V1}/admins/bulk/activate`,

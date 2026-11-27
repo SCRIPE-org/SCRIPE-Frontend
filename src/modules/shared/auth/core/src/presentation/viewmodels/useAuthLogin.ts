@@ -31,6 +31,7 @@ export function useAuthLogin() {
       tenantCode,
       isPlatformAdmin,
       staySignedIn,
+      breakGlass,
     }: {
       identifier: string;
       password: string;
@@ -38,6 +39,7 @@ export function useAuthLogin() {
       tenantCode?: string;
       isPlatformAdmin?: boolean;
       staySignedIn?: boolean;
+      breakGlass?: boolean;
     }) => {
       // Construct domain entity — repository handles mapping to API model
       const request = new LoginRequest({
@@ -46,6 +48,7 @@ export function useAuthLogin() {
         tenantId,
         isPlatformAdmin,
         staySignedIn,
+        breakGlass,
       });
       return authRepository.login(request);
     },

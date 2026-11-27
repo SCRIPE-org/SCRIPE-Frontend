@@ -45,6 +45,7 @@ export function useLoginViewModel() {
   const [accountNotActivatedMessage, setAccountNotActivatedMessage] = useState("");
   const [cooldownSeconds, setCooldownSeconds] = useState(0);
   const [isPasswordResetSuccess, setIsPasswordResetSuccess] = useState(queryResetSuccess);
+  const [isBreakGlassExpanded, setIsBreakGlassExpanded] = useState(false);
   const appliedQueryErrorRef = useRef<string | null>(null);
 
   const tenantIdRef = useRef<string | undefined>(undefined);
@@ -125,7 +126,7 @@ export function useLoginViewModel() {
   });
 
   const handleLogin = useCallback(
-    async (tenantIdOverride?: string) => {
+    async (tenantIdOverride?: string, options?: { breakGlass?: boolean }) => {
       const validationResults = validateForm(formData, VALIDATION_SETS.LOGIN_FORM);
       if (!isFormValid(validationResults)) {
         const firstError = Object.values(validationResults).find((r) => !r.isValid);
@@ -144,6 +145,7 @@ export function useLoginViewModel() {
           tenantId: resolvedTenantId,
           tenantCode: resolveDevTenantCode(),
           staySignedIn: formData.staySignedIn,
+          ...(options?.breakGlass ? { breakGlass: true } : {}),
         });
         redirect.schedulePostLoginRedirect();
       } catch (err: unknown) {
@@ -183,6 +185,11 @@ export function useLoginViewModel() {
 
   const togglePasswordVisibility = useCallback(() => {
     setShowPassword((prev) => !prev);
+  }, []);
+
+  const toggleBreakGlass = useCallback(() => {
+    setIsBreakGlassExpanded((prev) => !prev);
+    setError("");
   }, []);
 
   const goBackToCredentials = useCallback(() => {
@@ -231,6 +238,9 @@ export function useLoginViewModel() {
     accountNotActivatedMessage,
     cooldownSeconds,
     isPasswordResetSuccess,
+    isBreakGlassExpanded,
+    toggleBreakGlass,
+    setIsBreakGlassExpanded,
     forgotPasswordHref,
     resendSetupEmail: () => handleLogin(tenantId ?? undefined),
     isAuthenticated: isTrulyAuthenticated,

@@ -5,26 +5,20 @@
  */
 
 /**
- * Create admin request
- * Supports two modes:
- * 1. Email invitation (sendSetupEmail=true, default): password not needed, email required
- * 2. Manual password (sendSetupEmail=false): password required, optional mustChangePassword
+ * Create admin request (strictly email-invitation-only).
+ * Creators never choose, see, or assign another administrator's password;
+ * the invitee establishes their own credentials via the single-use setup link.
  */
 export interface CreateAdminRequest {
   username: string;
-  password?: string;
   firstName?: string;
   lastName?: string;
   phoneNumber?: string;
-  email?: string;
+  email: string;
   notes?: string;
   roleIds?: string[]; // Optional - at least one role OR group required
   userGroupIds?: string[]; // Optional - at least one role OR group required
   tenantId?: string;
-  /** When true (default), sends email invitation. When false, uses provided password. */
-  sendSetupEmail?: boolean;
-  /** Only valid when sendSetupEmail=false. Forces password change on first login. */
-  mustChangePassword?: boolean;
 }
 
 /**
@@ -50,10 +44,18 @@ export interface AssignRoleRequest {
 }
 
 /**
- * Reset password request
+ * Reset password request — dispatches a single-use email recovery link with an optional audit reason.
  */
 export interface ResetPasswordRequest {
-  newPassword: string;
+  reason?: string;
+}
+
+/**
+ * Reset MFA request — disables TOTP/backup codes, optionally revokes passkeys, and forces re-enrollment.
+ */
+export interface ResetAdminMfaRequest {
+  reason?: string;
+  revokePasskeys: boolean;
 }
 
 /**

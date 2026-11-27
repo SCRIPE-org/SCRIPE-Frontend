@@ -3,6 +3,14 @@ import type { TenantBranding } from "../../domain/entities/TenantBranding";
 import { TenantBranding as TenantBrandingEntity } from "../../domain/entities/TenantBranding";
 import type { TenantBrandingModel } from "../models/TenantBrandingModel";
 
+function parseAuthenticationMode(value: unknown): "Hybrid" | "SsoOnly" {
+  if (typeof value === "string") {
+    return value.trim().toLowerCase() === "ssoonly" || value.trim() === "1" ? "SsoOnly" : "Hybrid";
+  }
+  if (value === 1) return "SsoOnly";
+  return "Hybrid";
+}
+
 export class TenantBrandingMapper {
   static toDomain(model: TenantBrandingModel): TenantBranding {
     return new TenantBrandingEntity({
@@ -16,6 +24,8 @@ export class TenantBrandingMapper {
       loginHeadline: model.loginHeadline ?? null,
       loginSubtitle: model.loginSubtitle ?? null,
       identityProviderMode: model.identityProviderMode ?? "inherit",
+      authenticationMode: parseAuthenticationMode(model.authenticationMode),
+      allowOwnerBreakGlassLocalLogin: model.allowOwnerBreakGlassLocalLogin ?? true,
       status: model.status ?? null,
       statusReason: model.statusReason ?? null,
       loginBrandingJson: model.loginBrandingJson ?? null,

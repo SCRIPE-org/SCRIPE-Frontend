@@ -11,6 +11,8 @@ export interface TenantBrandingData {
   loginHeadline: string | null;
   loginSubtitle: string | null;
   identityProviderMode: string;
+  authenticationMode: "Hybrid" | "SsoOnly";
+  allowOwnerBreakGlassLocalLogin: boolean;
   status: string | null;
   statusReason: string | null;
   loginBrandingJson: string | null;
@@ -52,6 +54,15 @@ export class TenantBranding {
   }
   get identityProviderMode() {
     return this.data.identityProviderMode;
+  }
+  get authenticationMode(): "Hybrid" | "SsoOnly" {
+    return this.data.authenticationMode ?? "Hybrid";
+  }
+  get allowOwnerBreakGlassLocalLogin(): boolean {
+    return this.data.allowOwnerBreakGlassLocalLogin ?? true;
+  }
+  get isSsoOnly(): boolean {
+    return this.authenticationMode === "SsoOnly";
   }
   get status() {
     return this.data.status;

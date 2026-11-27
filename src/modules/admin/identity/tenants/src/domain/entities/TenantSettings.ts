@@ -47,6 +47,24 @@ export interface TenantSecuritySettings {
   require2FA: boolean;
   /** Identity provider resolution mode for this tenant */
   identityProviderMode: "inherit" | "custom";
+  /** Authentication enforcement mode (Hybrid local + SSO vs SsoOnly) */
+  authenticationMode: "Hybrid" | "SsoOnly";
+  /** Whether eligible workspace owners can use audited break-glass local sign-in under SsoOnly */
+  allowOwnerBreakGlassLocalLogin: boolean;
+}
+
+/**
+ * Normalizes backend string or numeric enum values for TenantAuthenticationMode.
+ */
+export function normalizeTenantAuthenticationMode(value: unknown): "Hybrid" | "SsoOnly" {
+  if (value === 1 || value === "1") return "SsoOnly";
+  if (typeof value === "string") {
+    const normalized = value.trim().toLowerCase();
+    if (normalized === "ssoonly" || normalized === "sso_only" || normalized === "sso-only") {
+      return "SsoOnly";
+    }
+  }
+  return "Hybrid";
 }
 
 /**
@@ -144,6 +162,8 @@ export const DEFAULT_TENANT_SETTINGS: TenantSettings = {
     loginLockoutMinutes: 15,
     require2FA: false,
     identityProviderMode: "inherit",
+    authenticationMode: "Hybrid",
+    allowOwnerBreakGlassLocalLogin: true,
   },
   audit: {
     auditRetentionDays: 90,

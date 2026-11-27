@@ -4,26 +4,18 @@
  * Complies with the 'use' prefix naming convention for viewmodels directory.
  */
 
-import type { PasswordPolicyModel } from "@core/common/password-policy";
 import type { FieldOption } from "@core/ui/forms/generic-form";
 import type { Admin } from "../../domain/entities/Admin";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 
-export interface AdminPasswordPolicyConfig {
-  passwordPolicy: PasswordPolicyModel | null;
-  isLoading: boolean;
-  error: string | null;
-  onRetry: () => void;
-}
-
 /**
  * Hook to retrieve field configurations for admin forms.
+ * Admin creation is strictly email-invitation-only; no local password fields are exposed.
  */
 export function useAdminFieldsConfig(
   t: (key: string) => string,
   handleRoleSearch: (query: string) => Promise<FieldOption[]>,
-  handleGroupSearch: (query: string) => Promise<FieldOption[]>,
-  policyConfig?: AdminPasswordPolicyConfig
+  handleGroupSearch: (query: string) => Promise<FieldOption[]>
 ) {
   const createFields = [
     {
@@ -59,32 +51,6 @@ export function useAdminFieldsConfig(
       autoComplete: "off",
     },
     {
-      name: "sendSetupEmail",
-      label: t("admin.sendSetupEmail"),
-      type: "switch" as const,
-      description: t("admin.sendSetupEmailDescription"),
-    },
-    {
-      name: "password",
-      label: t("admin.password"),
-      type: "password" as const,
-      placeholder: t("admin.passwordPlaceholder"),
-      required: (values: Record<string, unknown>) => values.sendSetupEmail === false,
-      autoComplete: "new-password",
-      isVisible: (values: Record<string, unknown>) => values.sendSetupEmail === false,
-      passwordPolicy: policyConfig ? policyConfig.passwordPolicy : undefined,
-      passwordPolicyLoading: policyConfig?.isLoading,
-      passwordPolicyError: policyConfig?.error,
-      onRetryPasswordPolicy: policyConfig?.onRetry,
-    },
-    {
-      name: "mustChangePassword",
-      label: t("admin.mustChangePassword"),
-      type: "switch" as const,
-      description: t("admin.mustChangePasswordDescription"),
-      isVisible: (values: Record<string, unknown>) => values.sendSetupEmail === false,
-    },
-    {
       name: "firstName",
       label: t("admin.firstName"),
       type: "text" as const,
@@ -107,7 +73,7 @@ export function useAdminFieldsConfig(
       label: t("admin.email"),
       type: "email" as const,
       placeholder: t("admin.emailPlaceholder"),
-      required: (values: Record<string, unknown>) => values.sendSetupEmail !== false,
+      required: true,
     },
     {
       name: "notes",
@@ -161,15 +127,11 @@ export function useAdminFieldsConfig(
     roleIds: [] as string[],
     userGroupIds: [] as string[],
     username: "",
-    password: "",
     firstName: "",
     lastName: "",
     phoneNumber: "",
     email: "",
     notes: "",
-    sendSetupEmail: true,
-    mustChangePassword: false,
-    deferCustomFieldsToSetup: false,
   };
 
   const editInitialValues = (admin: Admin) => ({
