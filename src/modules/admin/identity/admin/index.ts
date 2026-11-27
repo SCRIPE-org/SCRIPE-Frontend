@@ -15,6 +15,8 @@ export type {
   CreateAdminRequest,
   UpdateAdminRequest,
   AssignRoleRequest,
+  ResetPasswordRequest,
+  ResetAdminMfaRequest,
 } from "./src/domain/entities/AdminRequests";
 
 // Interfaces

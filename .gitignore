@@ -45,6 +45,8 @@ storybook-static
 
 /playwright-report
 /test-results
+e2e/helpers/.auth-storage-state.json
+**/.auth-storage-state*.json
 .vscode/
 
 .ua/

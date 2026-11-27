@@ -21,7 +21,11 @@ import { identityContainer } from "@modules/identity/di";
 import { qk } from "@core/common/query-keys";
 import { useCoreImpersonation } from "@core/hooks/use-auth-bridge";
 import type { FieldOption } from "@core/ui/forms/generic-form";
-import type { AssignRoleRequest, TransferAdminRequest } from "../../domain/entities/AdminRequests";
+import type {
+  AssignRoleRequest,
+  ResetAdminMfaRequest,
+  TransferAdminRequest,
+} from "../../domain/entities/AdminRequests";
 import type { Admin } from "../../domain/entities/Admin";
 import { resolveBilingualLabel } from "@core/common/utils";
 
@@ -161,39 +165,30 @@ export function useAdminOperations(params: AdminOperationsParams) {
     onError: handleMutationError,
   });
 
-  // Reset password mutation
+  // Reset password link mutation — dispatches a single-use recovery email and revokes active sessions
   const resetPasswordMutation = useMutation({
-    mutationFn: ({ adminId, newPassword }: { adminId: string; newPassword: string }) =>
-      adminRepository.resetPassword(adminId, newPassword),
+    mutationFn: ({ adminId, reason }: { adminId: string; reason?: string }) =>
+      adminRepository.resetPassword(adminId, reason),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: qk.admins.all });
       success({
-        title: t("admin.passwordReset"),
-        description: t("admin.passwordResetDesc"),
+        title: t("admin.passwordResetLinkSent"),
+        description: t("admin.passwordResetLinkSentDesc"),
       });
     },
     onError: handleMutationError,
   });
 
-  // Manual account setup mutation — sets a password directly for an email-invited admin
-  // who hasn't activated yet, as an alternative to resending the setup email.
-  const manualSetupMutation = useMutation({
-    mutationFn: ({
-      adminId,
-      newPassword,
-      confirmPassword,
-      mustChangePassword,
-    }: {
-      adminId: string;
-      newPassword: string;
-      confirmPassword: string;
-      mustChangePassword: boolean;
-    }) => adminRepository.manualSetup(adminId, newPassword, confirmPassword, mustChangePassword),
+  // Reset MFA mutation — disables TOTP/backup codes, optionally revokes passkeys, revokes sessions,
+  // and forces MFA re-enrollment on next login.
+  const resetMfaMutation = useMutation({
+    mutationFn: ({ adminId, request }: { adminId: string; request: ResetAdminMfaRequest }) =>
+      adminRepository.resetMfa(adminId, request),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: qk.admins.all });
       success({
-        title: t("admin.manualSetupSuccess"),
-        description: t("admin.manualSetupSuccessDesc"),
+        title: t("admin.mfaResetSuccess"),
+        description: t("admin.mfaResetSuccessDesc"),
       });
     },
     onError: handleMutationError,
@@ -344,9 +339,15 @@ export function useAdminOperations(params: AdminOperationsParams) {
   );
 
   const handleResetPassword = useCallback(
-    (adminId: string, newPassword: string) =>
-      resetPasswordMutation.mutateAsync({ adminId, newPassword }),
+    (adminId: string, reason?: string) =>
+      resetPasswordMutation.mutateAsync({ adminId, reason }),
     [resetPasswordMutation]
+  );
+
+  const handleResetMfa = useCallback(
+    (adminId: string, request: ResetAdminMfaRequest) =>
+      resetMfaMutation.mutateAsync({ adminId, request }),
+    [resetMfaMutation]
   );
 
   const handleRoleSearch = useCallback(
@@ -447,24 +448,13 @@ export function useAdminOperations(params: AdminOperationsParams) {
     handleAssignRole,
     handleRemoveRole,
     handleResetPassword,
+    handleResetMfa,
     handleImpersonate: (id: string) => startImpersonation(id),
     handleTransfer: (id: string, request: TransferAdminRequest) =>
       transferMutation.mutateAsync({ id, request }),
     handleTransferProtection: (targetAdminId: string) =>
       transferProtectionMutation.mutateAsync({ targetAdminId }),
     handleResendSetupEmail: (adminId: string) => resendSetupEmailMutation.mutateAsync({ adminId }),
-    handleManualSetup: (
-      adminId: string,
-      newPassword: string,
-      confirmPassword: string,
-      mustChangePassword: boolean
-    ) =>
-      manualSetupMutation.mutateAsync({
-        adminId,
-        newPassword,
-        confirmPassword,
-        mustChangePassword,
-      }),
     handleBulkActivate: (ids: string[]) => bulkActivateMutation.mutateAsync(ids),
     handleBulkDeactivate: (ids: string[]) => bulkDeactivateMutation.mutateAsync(ids),
     handleBulkDelete: (ids: string[]) => bulkDeleteMutation.mutateAsync(ids),
@@ -473,11 +463,11 @@ export function useAdminOperations(params: AdminOperationsParams) {
     isAssigningRole: assignRoleMutation.isPending,
     isRemovingRole: removeRoleMutation.isPending,
     isResettingPassword: resetPasswordMutation.isPending,
+    isResettingMfa: resetMfaMutation.isPending,
     isImpersonating: isImpersonationLoading,
     isTransferring: transferMutation.isPending,
     isTransferringProtection: transferProtectionMutation.isPending,
     isResendingSetupEmail: resendSetupEmailMutation.isPending,
-    isManualSettingUp: manualSetupMutation.isPending,
     handleRoleSearch,
     handleGroupSearch,
     t,

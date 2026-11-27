@@ -3,6 +3,10 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { AccountSetupMapper } from "../../data/mappers/AccountSetupMapper";
+import { AccountSetupService } from "../../data/services/AccountSetupService";
+import { ACCOUNT_SETUP_ENDPOINTS } from "../../data/services/account-setup.endpoints";
+import { AUTH_ENDPOINTS } from "@core/config/api-endpoints/auth.endpoints";
+import type { IPublicApiService } from "@core/interfaces/public-api.interface";
 import { LaunchCelebrationCard } from "../components/LaunchCelebrationCard";
 import { SetupAccountView } from "../views/SetupAccountView";
 import { SetupTokenInfo } from "../../domain/entities";
@@ -155,5 +159,73 @@ describe("Account setup security, mapper policy & URL hygiene", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /auth.accountSetup.enterWorkspace/i }));
     expect(mockPush).toHaveBeenCalledWith("/login?email=admin%40ahly.test&_tenant=ahly");
+  });
+
+  it("prioritizes #token= over ?token= when both are present and strips both via replaceState (SETUP-QUERY-TOK-01)", async () => {
+    window.history.replaceState(
+      {},
+      "",
+      "/setup-account?token=legacy-query-tok&_tenant=SCRIPE#token=preferred-hash-tok&step=1"
+    );
+    mockValidateToken.mockResolvedValue(
+      new SetupTokenInfo({
+        isValid: true,
+        email: "ops@club.test",
+        adminUsername: "ops",
+        tenantName: "Club",
+        tenantCode: "SCRIPE",
+        passwordMinLength: 12,
+      })
+    );
+    mockGetCustomFields.mockResolvedValue([]);
+
+    render(<SetupAccountView />);
+
+    await waitFor(() => {
+      expect(mockValidateToken).toHaveBeenCalledWith("preferred-hash-tok");
+    });
+    expect(window.location.search).toBe("?_tenant=SCRIPE");
+    expect(window.location.hash).toBe("#step=1");
+  });
+
+  it("sends setup token exclusively via X-Setup-Token header and never in query string (PWD-05 / SETUP-QUERY-TOK-01)", async () => {
+    const publicApi: IPublicApiService = {
+      get: vi.fn().mockResolvedValue({}),
+      post: vi.fn().mockResolvedValue({ success: true }),
+    };
+    const service = new AccountSetupService(publicApi);
+
+    await service.validateToken("hdr-secret-tok");
+    expect(publicApi.get).toHaveBeenNthCalledWith(
+      1,
+      ACCOUNT_SETUP_ENDPOINTS.VALIDATE_TOKEN,
+      undefined,
+      undefined,
+      { headers: { "X-Setup-Token": "hdr-secret-tok" } }
+    );
+    expect(ACCOUNT_SETUP_ENDPOINTS.VALIDATE_TOKEN).not.toContain("token=");
+    expect(AUTH_ENDPOINTS.ACCOUNT_SETUP.VALIDATE_TOKEN).not.toContain("token=");
+
+    await service.getCustomFields("hdr-secret-tok");
+    expect(publicApi.get).toHaveBeenNthCalledWith(
+      2,
+      ACCOUNT_SETUP_ENDPOINTS.CUSTOM_FIELDS,
+      undefined,
+      undefined,
+      { headers: { "X-Setup-Token": "hdr-secret-tok" } }
+    );
+    expect(ACCOUNT_SETUP_ENDPOINTS.CUSTOM_FIELDS).not.toContain("token=");
+
+    await service.activateAccount({
+      token: "hdr-secret-tok",
+      password: "StrongPassword123!",
+      confirmPassword: "StrongPassword123!",
+    });
+    expect(publicApi.post).toHaveBeenCalledWith(
+      ACCOUNT_SETUP_ENDPOINTS.ACTIVATE,
+      expect.objectContaining({ token: "hdr-secret-tok" }),
+      undefined,
+      { headers: { "X-Setup-Token": "hdr-secret-tok" } }
+    );
   });
 });

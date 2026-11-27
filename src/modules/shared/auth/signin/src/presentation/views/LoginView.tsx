@@ -165,6 +165,8 @@ export function LoginView() {
       isRTL={isRTL}
       safeModeActive={safeModeActive}
       isPlatformMode={isPlatformMode}
+      authenticationMode={branding?.authenticationMode ?? "Hybrid"}
+      allowOwnerBreakGlassLocalLogin={branding?.allowOwnerBreakGlassLocalLogin ?? true}
     />
   );
 

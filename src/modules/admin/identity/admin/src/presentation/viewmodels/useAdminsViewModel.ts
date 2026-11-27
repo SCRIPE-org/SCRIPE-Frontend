@@ -8,7 +8,6 @@
 "use client";
 
 import { useCallback, useMemo, useRef } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { identityContainer } from "@modules/identity/di";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
@@ -31,8 +30,6 @@ interface AdminsViewModelOptions {
   tenantId?: string;
   /** If true, uses /admins/current-tenant endpoint */
   useMyTenant?: boolean;
-  /** Optional target admin tenant ID for scoped reset/setup password policy resolution */
-  actionTenantId?: string | null;
 }
 
 /**
@@ -44,7 +41,7 @@ interface AdminsViewModelOptions {
  * @returns State properties, mutation handles, and dialog configurations.
  */
 export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
-  const { tenantId: propTenantId, useMyTenant, actionTenantId } = options;
+  const { tenantId: propTenantId, useMyTenant } = options;
   const contextTenantId = useCurrentTenantId();
 
   // Priority: propTenantId -> useMyTenant (undefined triggers current-tenant) -> contextTenantId
@@ -54,7 +51,7 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
   const { adminRepository } = identityContainer;
   const { t } = useI18n();
   const { success: toastSuccess, info: toastInfo } = useEnhancedToast();
-  const lastCreatedFeedbackRef = useRef<{ sendSetupEmail: boolean; email?: string } | null>(null);
+  const lastCreatedFeedbackRef = useRef<{ email?: string } | null>(null);
 
   const queryKey: string[] = useMemo(() => {
     return tenantId
@@ -93,7 +90,6 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
               ? await adminRepository.createInCurrentTenant(data)
               : await adminRepository.create(data);
           lastCreatedFeedbackRef.current = {
-            sendSetupEmail: data.sendSetupEmail !== false,
             email: data.email?.trim() || undefined,
           };
           return { id } as unknown as Admin;
@@ -143,18 +139,11 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
     baseVm.setIsCreateModalOpen(false);
     const feedback = lastCreatedFeedbackRef.current;
     lastCreatedFeedbackRef.current = null;
-    if (feedback?.sendSetupEmail) {
-      toastSuccess({
-        title: t("admin.created"),
-        description: feedback.email
-          ? t("admin.createdSetupEmailSentDesc", { email: feedback.email })
-          : t("admin.createdDesc"),
-      });
-      return;
-    }
     toastSuccess({
       title: t("admin.created"),
-      description: t("admin.createdManualSetupDesc"),
+      description: feedback?.email
+        ? t("admin.createdSetupEmailSentDesc", { email: feedback.email })
+        : t("admin.createdDesc"),
     });
   }, [baseVm, toastSuccess, t]);
 
@@ -175,72 +164,11 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
     refreshItems: vm.refreshItems,
   });
 
-  // ============ Effective Password Policy ============
-  const {
-    data: passwordPolicy = null,
-    isLoading: isPasswordPolicyLoading,
-    isError: isPasswordPolicyError,
-    refetch: refetchPasswordPolicy,
-  } = useQuery({
-    queryKey: ["admins", "password-policy", tenantId ?? (useMyTenant ? "current" : "system")],
-    queryFn: () => adminRepository.getPasswordPolicy(tenantId),
-    staleTime: 5 * 60 * 1000,
-    retry: false,
-  });
-
-  const passwordPolicyError = isPasswordPolicyError
-    ? t("common.passwordPolicy.loadFailed")
-    : null;
-  const retryPasswordPolicy = useCallback(() => {
-    void refetchPasswordPolicy();
-  }, [refetchPasswordPolicy]);
-
-  const resolvedActionTenantId = actionTenantId ?? tenantId;
-  const needsDistinctActionPolicy = Boolean(
-    resolvedActionTenantId && resolvedActionTenantId !== tenantId
-  );
-
-  const {
-    data: distinctActionPolicy = null,
-    isLoading: isDistinctActionPolicyLoading,
-    isError: isDistinctActionPolicyError,
-    refetch: refetchDistinctActionPolicy,
-  } = useQuery({
-    queryKey: ["admins", "password-policy", resolvedActionTenantId ?? "system"],
-    queryFn: () => adminRepository.getPasswordPolicy(resolvedActionTenantId),
-    enabled: needsDistinctActionPolicy,
-    staleTime: 5 * 60 * 1000,
-    retry: false,
-  });
-
-  const dialogPasswordPolicy = needsDistinctActionPolicy ? distinctActionPolicy : passwordPolicy;
-  const isDialogPasswordPolicyLoading = needsDistinctActionPolicy
-    ? isDistinctActionPolicyLoading
-    : isPasswordPolicyLoading;
-  const dialogPasswordPolicyError = needsDistinctActionPolicy
-    ? isDistinctActionPolicyError
-      ? t("common.passwordPolicy.loadFailed")
-      : null
-    : passwordPolicyError;
-  const retryDialogPasswordPolicy = useCallback(() => {
-    if (needsDistinctActionPolicy) {
-      void refetchDistinctActionPolicy();
-      return;
-    }
-    void refetchPasswordPolicy();
-  }, [needsDistinctActionPolicy, refetchDistinctActionPolicy, refetchPasswordPolicy]);
-
   // ============ Config Fields & Values ============
   const fieldsConfig = useAdminFieldsConfig(
     t,
     operations.handleRoleSearch,
-    operations.handleGroupSearch,
-    {
-      passwordPolicy,
-      isLoading: isPasswordPolicyLoading,
-      error: passwordPolicyError,
-      onRetry: retryPasswordPolicy,
-    }
+    operations.handleGroupSearch
   );
 
   // ============ Config Base ============
@@ -267,14 +195,6 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
   return {
     vm,
     getConfigBase,
-    passwordPolicy,
-    isPasswordPolicyLoading,
-    passwordPolicyError,
-    retryPasswordPolicy,
-    dialogPasswordPolicy,
-    isDialogPasswordPolicyLoading,
-    dialogPasswordPolicyError,
-    retryDialogPasswordPolicy,
     ...operations,
   };
 }

@@ -346,21 +346,10 @@ export function EmailPreviewDialog({
                   {resolvedBody.includes("<") ? (
                     <iframe
                       srcDoc={previewSrcDoc}
-                      sandbox="allow-same-origin"
+                      sandbox=""
                       className="w-full border-0"
-                      style={{ minHeight: "200px", height: "400px" }}
+                      style={{ minHeight: "200px", height: "480px" }}
                       title={t("messaging.email.previewTitle")}
-                      onLoad={(e) => {
-                        const iframe = e.currentTarget;
-                        try {
-                          const body = iframe.contentDocument?.body;
-                          if (body) {
-                            iframe.style.height = `${Math.min(body.scrollHeight + 32, 600)}px`;
-                          }
-                        } catch {
-                          /* sandbox restriction */
-                        }
-                      }}
                     />
                   ) : (
                     <pre

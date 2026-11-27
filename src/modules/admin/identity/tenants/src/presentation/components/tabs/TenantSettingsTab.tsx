@@ -19,6 +19,7 @@ import { Skeleton } from "@core/ui/skeleton";
 import { cn } from "@core/common/utils";
 import { Shield, ClipboardList, Pencil, Lock, Check, X, Timer, KeyRound } from "lucide-react";
 import { useTenantSettingsViewModel } from "@modules/identity/tenants/src/presentation/viewmodels/useTenantSettingsViewModel";
+import { normalizeTenantAuthenticationMode } from "../../../domain/entities/TenantSettings";
 import { TenantSettingsEditDialog } from "../TenantSettingsEditDialog";
 import { TenantSettingsBrandingCard } from "./TenantSettingsBrandingCard";
 
@@ -63,6 +64,8 @@ export function TenantSettingsTab({ tenantId }: TenantSettingsTabProps) {
   if (!settings) return null;
 
   const isCustomIdpMode = settings.identityProviderMode === "custom";
+  const isSsoOnlyMode = normalizeTenantAuthenticationMode(settings.authenticationMode) === "SsoOnly";
+  const allowBreakGlass = settings.allowOwnerBreakGlassLocalLogin !== false;
 
   return (
     <div className="space-y-4" dir={direction}>
@@ -160,6 +163,38 @@ export function TenantSettingsTab({ tenantId }: TenantSettingsTabProps) {
             {isCustomIdpMode
               ? t("tenant.identityProviderModeCustom")
               : t("tenant.identityProviderModeInherit")}
+          </Badge>
+        </div>
+
+        {/* Authentication Mode Row (Hybrid vs SsoOnly + Owner Break-Glass) */}
+        <div className="mt-3 flex flex-col gap-2 rounded-nx-md border border-nx-line bg-nx-raised p-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-sm font-medium text-nx-ink">{t("tenant.authenticationMode")}</p>
+            <p className="text-xs text-nx-ink-2">
+              {isSsoOnlyMode
+                ? t("tenant.authenticationModeSsoOnlyDesc")
+                : t("tenant.authenticationModeHybridDesc")}
+            </p>
+            {isSsoOnlyMode && (
+              <p className="mt-1 text-xs font-medium text-nx-ink-2">
+                {allowBreakGlass
+                  ? t("tenant.breakGlassEnabled")
+                  : t("tenant.breakGlassDisabled")}
+              </p>
+            )}
+          </div>
+          <Badge
+            variant="outline"
+            className={cn(
+              "shrink-0",
+              isSsoOnlyMode
+                ? "border-warning-strong/40 bg-warning/15 text-nx-warning-strong"
+                : "border-nx-accent/40 bg-nx-accent-wash text-nx-accent"
+            )}
+          >
+            {isSsoOnlyMode
+              ? t("tenant.authenticationModeSsoOnly")
+              : t("tenant.authenticationModeHybrid")}
           </Badge>
         </div>
 

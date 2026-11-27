@@ -74,7 +74,12 @@ function isPrivateOrLoopbackIp(ip: string): boolean {
 }
 
 function resolveClientIp(request: NextRequest): string {
-  for (const singleHeader of ["cf-connecting-ip", "x-vercel-forwarded-for", "x-real-ip"]) {
+  const trustCf = process.env.SCRIPE_TRUST_CF_CONNECTING_IP === "true";
+  const singleHeaders = trustCf
+    ? ["x-vercel-forwarded-for", "x-real-ip", "cf-connecting-ip"]
+    : ["x-vercel-forwarded-for", "x-real-ip"];
+
+  for (const singleHeader of singleHeaders) {
     const val = request.headers.get(singleHeader)?.split(",")[0]?.trim();
     if (val && VALID_IP_RE.test(val)) {
       return val;

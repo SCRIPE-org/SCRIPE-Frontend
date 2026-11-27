@@ -5,11 +5,17 @@
  */
 "use client";
 
+import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { Switch } from "@core/ui/switch";
 import { useI18n } from "@core/providers/i18n-provider";
+import {
+  normalizeTenantAuthenticationMode,
+  type TenantAuthenticationMode,
+} from "@modules/customization/tenant-settings/src/domain/types/SettingsTypes";
+import { AlertTriangle } from "lucide-react";
 
 /** Security & SSO governance subset edited in the Security tab. */
 export interface TenantSecurityFormValues {
@@ -25,6 +31,8 @@ export interface TenantSecurityFormValues {
   loginLockoutMinutes: number;
   require2FA: boolean;
   identityProviderMode?: "inherit" | "custom";
+  authenticationMode?: TenantAuthenticationMode;
+  allowOwnerBreakGlassLocalLogin?: boolean;
 }
 
 interface TenantSettingsSecurityFieldsProps {
@@ -43,6 +51,10 @@ export function TenantSettingsSecurityFields({
   const { t } = useI18n();
   const currentIdpMode: "inherit" | "custom" =
     formData.identityProviderMode === "custom" ? "custom" : "inherit";
+  const currentAuthMode: TenantAuthenticationMode = normalizeTenantAuthenticationMode(
+    formData.authenticationMode
+  );
+  const allowBreakGlass = formData.allowOwnerBreakGlassLocalLogin !== false;
 
   return (
     <div className="space-y-4 py-4">
@@ -197,6 +209,64 @@ export function TenantSettingsSecurityFields({
             ? t("tenant.identityProviderModeCustomDesc")
             : t("tenant.identityProviderModeInheritDesc")}
         </p>
+      </div>
+
+      <div className="space-y-3 rounded-nx-md border border-nx-line bg-nx-raised p-4">
+        <div className="space-y-1.5">
+          <Label htmlFor="dialog-auth-mode" className="text-sm font-semibold text-nx-ink">
+            {t("tenant.authenticationMode")}
+          </Label>
+          <Select
+            value={currentAuthMode}
+            onValueChange={(value) =>
+              onPatch({ authenticationMode: normalizeTenantAuthenticationMode(value) })
+            }
+          >
+            <SelectTrigger id="dialog-auth-mode" className="bg-nx-surface">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Hybrid">{t("tenant.authenticationModeHybrid")}</SelectItem>
+              <SelectItem value="SsoOnly">{t("tenant.authenticationModeSsoOnly")}</SelectItem>
+            </SelectContent>
+          </Select>
+          <p className="text-xs text-nx-ink-2">
+            {currentAuthMode === "SsoOnly"
+              ? t("tenant.authenticationModeSsoOnlyDesc")
+              : t("tenant.authenticationModeHybridDesc")}
+          </p>
+        </div>
+
+        {currentAuthMode === "SsoOnly" && (
+          <>
+            <Alert variant="warning">
+              <AlertTriangle aria-hidden="true" />
+              <AlertTitle>{t("tenant.authenticationModeSsoOnly")}</AlertTitle>
+              <AlertDescription>{t("tenant.authenticationModeSsoOnlyWarning")}</AlertDescription>
+            </Alert>
+
+            <div className="flex items-center justify-between gap-4 rounded-nx-md border border-nx-line bg-nx-surface p-3">
+              <div className="space-y-0.5">
+                <Label
+                  htmlFor="dialog-allow-owner-break-glass"
+                  className="cursor-pointer text-sm font-medium text-nx-ink"
+                >
+                  {t("tenant.allowOwnerBreakGlassLocalLogin")}
+                </Label>
+                <p className="text-xs text-nx-ink-2">
+                  {t("tenant.allowOwnerBreakGlassLocalLoginDesc")}
+                </p>
+              </div>
+              <Switch
+                id="dialog-allow-owner-break-glass"
+                checked={allowBreakGlass}
+                onCheckedChange={(checked) =>
+                  onPatch({ allowOwnerBreakGlassLocalLogin: checked })
+                }
+              />
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

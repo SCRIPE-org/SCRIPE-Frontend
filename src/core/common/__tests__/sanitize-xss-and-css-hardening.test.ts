@@ -49,6 +49,23 @@ describe("Area B — CSS, HTML, URI & CSV XSS/injection hardening", () => {
 
     const valid = "body { color: #111827; background-image: url('/brand/hero.png'); }";
     expect(sanitizeCss(valid)).toContain("url('/brand/hero.png')");
+
+    const trackingUrlCss = "body { background-image: url('https://evil.example/track.png'); }";
+    expect(sanitizeCss(trackingUrlCss)).toContain("background-image: none");
+
+    const approvedMediaCss =
+      "body { background-image: url('https://media.scripe.org/tenants/bg.png'); }";
+    expect(sanitizeCss(approvedMediaCss)).toContain("url('https://media.scripe.org/tenants/bg.png')");
+
+    const apiFilesCss = "body { background-image: url('/api/files/logo-1.webp'); }";
+    expect(sanitizeCss(apiFilesCss)).toContain("url('/api/files/logo-1.webp')");
+
+    const rasterDataCss =
+      "body { background-image: url('data:image/png;base64,iVBORw0KGgo='); }";
+    expect(sanitizeCss(rasterDataCss)).toContain("url('data:image/png;base64,iVBORw0KGgo=')");
+
+    const arbitraryPathCss = "body { background-image: url('/arbitrary/track.png'); }";
+    expect(sanitizeCss(arbitraryPathCss)).toContain("background-image: none");
   });
 
   it("sanitizes rich & email HTML fail-closed with safe URIs and mandatory rel=noopener noreferrer", () => {
@@ -138,6 +155,31 @@ describe("Area B — CSS, HTML, URI & CSV XSS/injection hardening", () => {
     });
     expect(validImgCss).toContain("url('https://cdn.scripe.org/bg.webp')");
     expect(validImgCss).toContain("rgba(15,23,42,0.4)");
+
+    const unapprovedTrackingBg = buildSafePerPageBgCss("signup", {
+      inheritBackground: false,
+      bgType: "image",
+      bgImageUrl: "https://evil.example/track.png",
+    });
+    expect(unapprovedTrackingBg).toBe("");
+
+    vi.stubEnv("NEXT_PUBLIC_MEDIA_URL", "https://assets.club.example/media");
+    const configuredMediaBg = buildSafePerPageBgCss("signup", {
+      inheritBackground: false,
+      bgType: "image",
+      bgImageUrl: "https://assets.club.example/bg.webp",
+    });
+    expect(configuredMediaBg).toContain("url('https://assets.club.example/bg.webp')");
+    vi.unstubAllEnvs();
+
+    vi.stubEnv("NODE_ENV", "production");
+    const prodLocalhostBg = buildSafePerPageBgCss("signup", {
+      inheritBackground: false,
+      bgType: "image",
+      bgImageUrl: "http://localhost:5035/api/files/bg.png",
+    });
+    expect(prodLocalhostBg).toBe("");
+    vi.unstubAllEnvs();
 
     const previewHtml = composePreviewDocument({
       debouncedBody: "<p>Hi</p><script>alert(1)</script>",

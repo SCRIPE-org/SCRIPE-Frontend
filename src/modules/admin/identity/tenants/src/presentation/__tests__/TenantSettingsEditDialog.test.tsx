@@ -2,6 +2,8 @@ import React from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { TenantSettingsEditDialog } from "../components/TenantSettingsEditDialog";
+import { en as tenantsEn } from "../../../locales/tenants.en";
+import { ar as tenantsAr } from "../../../locales/tenants.ar";
 
 type TenantSettingsModel = React.ComponentProps<typeof TenantSettingsEditDialog>["settings"];
 
@@ -40,6 +42,12 @@ vi.mock("@core/ui/select", () => ({
       >
         select-inherit
       </button>
+      <button type="button" data-testid="select-sso-only" onClick={() => onValueChange("SsoOnly")}>
+        select-sso-only
+      </button>
+      <button type="button" data-testid="select-hybrid" onClick={() => onValueChange("Hybrid")}>
+        select-hybrid
+      </button>
       {children}
     </div>
   ),
@@ -67,6 +75,8 @@ function buildSettings(overrides?: Partial<TenantSettingsModel>): TenantSettings
     loginLockoutMinutes: 15,
     require2FA: false,
     identityProviderMode: "inherit",
+    authenticationMode: "Hybrid",
+    allowOwnerBreakGlassLocalLogin: true,
     auditEnabled: true,
     auditRetentionDays: 90,
     logoUrl: null,
@@ -115,7 +125,7 @@ describe("TenantSettingsEditDialog (BAM-03, SEC-07)", () => {
     expect(screen.getByText("tenant.identityProviderMode")).toBeInTheDocument();
     expect(screen.getByText("tenant.identityProviderModeInheritDesc")).toBeInTheDocument();
 
-    fireEvent.click(screen.getByTestId("select-custom-idp"));
+    fireEvent.click(screen.getAllByTestId("select-custom-idp")[0]);
     expect(screen.getByText("tenant.identityProviderModeCustomDesc")).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "common.save" }));
@@ -217,5 +227,48 @@ describe("TenantSettingsEditDialog (BAM-03, SEC-07)", () => {
         checkBreachedPasswords: false,
       })
     );
+  });
+
+  it("PWD-03: renders authenticationMode selector, shows SsoOnly warning + allowOwnerBreakGlassLocalLogin toggle, and persists both", () => {
+    const onSave = vi.fn();
+    render(
+      <TenantSettingsEditDialog
+        open={true}
+        onOpenChange={vi.fn()}
+        initialSection="security"
+        settings={buildSettings({
+          authenticationMode: "Hybrid",
+          allowOwnerBreakGlassLocalLogin: true,
+        })}
+        onSave={onSave}
+        isSaving={false}
+      />
+    );
+
+    expect(screen.getByText("tenant.authenticationMode")).toBeInTheDocument();
+    expect(screen.getByText("tenant.authenticationModeHybridDesc")).toBeInTheDocument();
+    expect(document.getElementById("dialog-allow-owner-break-glass")).toBeNull();
+
+    // Switch to SsoOnly
+    fireEvent.click(screen.getAllByTestId("select-sso-only")[1]);
+
+    expect(screen.getByText("tenant.authenticationModeSsoOnlyWarning")).toBeInTheDocument();
+    const breakGlassSwitch = document.getElementById("dialog-allow-owner-break-glass")!;
+    expect(breakGlassSwitch).toBeInTheDocument();
+
+    // Toggle off break-glass
+    fireEvent.click(breakGlassSwitch);
+    fireEvent.click(screen.getByRole("button", { name: "common.save" }));
+
+    expect(onSave).toHaveBeenCalledWith(
+      expect.objectContaining({
+        authenticationMode: "SsoOnly",
+        allowOwnerBreakGlassLocalLogin: false,
+      })
+    );
+  });
+
+  it("EN and AR tenants locales maintain complete key parity", () => {
+    expect(Object.keys(tenantsEn.tenant).sort()).toEqual(Object.keys(tenantsAr.tenant).sort());
   });
 });

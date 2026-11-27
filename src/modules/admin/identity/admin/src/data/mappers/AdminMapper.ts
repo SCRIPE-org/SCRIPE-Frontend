@@ -156,17 +156,14 @@ export class AdminMapper {
   static toCreateModel(request: CreateAdminRequest): CreateAdminModel {
     return new CreateAdminModel(
       request.username,
-      request.password,
+      request.email,
       request.firstName,
       request.lastName,
       request.phoneNumber,
-      request.email,
       request.notes,
       request.tenantId,
       request.roleIds,
-      request.userGroupIds,
-      request.sendSetupEmail,
-      request.mustChangePassword
+      request.userGroupIds
     );
   }
 

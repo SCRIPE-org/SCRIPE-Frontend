@@ -23,6 +23,8 @@ export interface LoginRequestData {
    * platform admin (TenantId = null) rather than re-running CASE B discovery.
    */
   isPlatformAdmin?: boolean;
+  /** Explicit break-glass emergency local sign-in flag for eligible workspace owners under SsoOnly. */
+  breakGlass?: boolean;
 }
 
 export interface LoginResponseData {
@@ -47,6 +49,7 @@ export class LoginRequest {
   public readonly deviceInfo?: string;
   public readonly isPlatformAdmin: boolean;
   public readonly staySignedIn: boolean;
+  public readonly breakGlass: boolean;
 
   constructor(data: LoginRequestData) {
     this.identifier = data.identifier;
@@ -54,6 +57,7 @@ export class LoginRequest {
     this.tenantId = data.tenantId;
     this.isPlatformAdmin = data.isPlatformAdmin ?? false;
     this.staySignedIn = data.staySignedIn ?? false;
+    this.breakGlass = data.breakGlass ?? false;
     this.deviceInfo = data.deviceInfo;
   }
 

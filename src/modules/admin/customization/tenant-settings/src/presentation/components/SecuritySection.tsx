@@ -7,14 +7,18 @@
 "use client";
 import { useI18n } from "@core/providers/i18n-provider";
 
+import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Switch } from "@core/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
-import { Shield, KeyRound } from "lucide-react";
+import { Shield, KeyRound, AlertTriangle } from "lucide-react";
 import type { TenantSettings } from "../../domain/entities/TenantSettings";
-import type { IdentityProviderMode } from "../../domain/types/SettingsTypes";
+import {
+  normalizeTenantAuthenticationMode,
+  type IdentityProviderMode,
+} from "../../domain/types/SettingsTypes";
 
 interface SecuritySectionProps {
   settings: TenantSettings;
@@ -239,6 +243,70 @@ export function SecuritySection({ settings, updateField }: SecuritySectionProps)
               ? t("tenantSettings.identityProviderModeCustomDesc")
               : t("tenantSettings.identityProviderModeInheritDesc")}
           </p>
+        </div>
+
+        {/* Authentication Mode (Hybrid vs SsoOnly) */}
+        <div className="space-y-3 rounded-nx-md border border-nx-line bg-nx-raised p-4">
+          <div className="flex items-center gap-2">
+            <Shield className="h-4 w-4 text-nx-accent" aria-hidden="true" />
+            <Label htmlFor="authenticationMode" className="text-sm font-semibold text-nx-ink">
+              {t("tenantSettings.authenticationMode")}
+            </Label>
+          </div>
+          <p className="text-xs text-nx-ink-2">{t("tenantSettings.authenticationModeHelp")}</p>
+          <Select
+            value={normalizeTenantAuthenticationMode(settings.authenticationMode)}
+            onValueChange={(value) =>
+              updateField("authenticationMode", normalizeTenantAuthenticationMode(value))
+            }
+          >
+            <SelectTrigger id="authenticationMode" className="max-w-md bg-nx-surface">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Hybrid">
+                {t("tenantSettings.authenticationModeHybrid")}
+              </SelectItem>
+              <SelectItem value="SsoOnly">
+                {t("tenantSettings.authenticationModeSsoOnly")}
+              </SelectItem>
+            </SelectContent>
+          </Select>
+          <p className="text-xs text-nx-ink-3">
+            {normalizeTenantAuthenticationMode(settings.authenticationMode) === "SsoOnly"
+              ? t("tenantSettings.authenticationModeSsoOnlyDesc")
+              : t("tenantSettings.authenticationModeHybridDesc")}
+          </p>
+
+          {normalizeTenantAuthenticationMode(settings.authenticationMode) === "SsoOnly" && (
+            <>
+              <Alert variant="warning">
+                <AlertTriangle aria-hidden="true" />
+                <AlertTitle>{t("tenantSettings.authenticationModeSsoOnly")}</AlertTitle>
+                <AlertDescription>
+                  {t("tenantSettings.authenticationModeSsoOnlyWarning")}
+                </AlertDescription>
+              </Alert>
+
+              <div className="flex items-center justify-between gap-4 rounded-nx-md border border-nx-line bg-nx-surface p-3">
+                <div>
+                  <Label htmlFor="allowOwnerBreakGlassLocalLogin">
+                    {t("tenantSettings.allowOwnerBreakGlassLocalLogin")}
+                  </Label>
+                  <p className="text-xs text-nx-ink-3">
+                    {t("tenantSettings.allowOwnerBreakGlassLocalLoginDesc")}
+                  </p>
+                </div>
+                <Switch
+                  id="allowOwnerBreakGlassLocalLogin"
+                  checked={settings.allowOwnerBreakGlassLocalLogin !== false}
+                  onCheckedChange={(checked) =>
+                    updateField("allowOwnerBreakGlassLocalLogin", checked)
+                  }
+                />
+              </div>
+            </>
+          )}
         </div>
       </CardContent>
     </Card>

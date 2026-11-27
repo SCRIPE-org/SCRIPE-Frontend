@@ -9,24 +9,18 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
 import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
 import { Switch } from "@core/ui/switch";
 import { Badge } from "@core/ui/badge";
-import { PasswordInput } from "@core/ui/password-input";
-import { PasswordWithPolicyField } from "@core/ui/password-policy-field";
-import {
-  DEFAULT_PASSWORD_MAX_LENGTH,
-  evaluatePasswordPolicy,
-  findFirstPolicyViolation,
-  type PasswordPolicyModel,
-} from "@core/common/password-policy";
+import { Textarea } from "@core/ui/textarea";
 import { GenericModal } from "@core/crud/components/generic-modal";
 import { GenericSelect } from "@core/crud/components/generic-select";
 import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { EmptyState } from "@core/ui/empty-state";
-import { Shield, Trash2, Building2 } from "lucide-react";
+import { Shield, Trash2, Building2, MailCheck, AlertTriangle } from "lucide-react";
 import type { Admin, AdminRoleData } from "../../domain/entities/Admin";
 import type { AssignRoleRequest } from "../../domain/entities/AdminRequests";
 import { useAdminRolesViewModel } from "../viewmodels/useAdminRolesViewModel";
@@ -310,25 +304,20 @@ export function ViewRolesDialog({
   );
 }
 
-// ========== Reset Password Dialog ==========
+// ========== Send Password Reset Link Dialog ==========
 
-// This one is simple enough to keep self-contained or could be moved to VM too.
-// For consistency, we'll keep state local as it doesn't fetch data, but use GenericModal.
 interface ResetPasswordDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   admin: Admin | null;
-  onResetPassword: (newPassword: string) => Promise<void>;
+  onResetPassword: (reason?: string) => Promise<void>;
   isLoading: boolean;
-  passwordPolicy?: PasswordPolicyModel | null;
-  isPasswordPolicyLoading?: boolean;
-  passwordPolicyError?: string | null;
-  onRetryPasswordPolicy?: () => void;
 }
 
 /**
- * Presentation UI component rendering the reset password dialog.
- * Strictly enforces the tenant/system `PasswordPolicyModel` (zero hardcoded default passwords).
+ * Presentation UI component rendering the "Send Password Reset Link" confirmation dialog.
+ * Administrators never set, view, or generate another user's password; this triggers
+ * a time-limited, single-use email recovery link and revokes all active sessions.
  */
 export function ResetPasswordDialog({
   open,
@@ -336,44 +325,35 @@ export function ResetPasswordDialog({
   admin,
   onResetPassword,
   isLoading,
-  passwordPolicy = null,
-  isPasswordPolicyLoading = false,
-  passwordPolicyError = null,
-  onRetryPasswordPolicy,
 }: ResetPasswordDialogProps) {
   const { t } = useI18n();
-  const [password, setPassword] = useState("");
+  const [reason, setReason] = useState("");
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  // Reset form when opening
   const [prevOpen, setPrevOpen] = useState(open);
   if (open !== prevOpen) {
     setPrevOpen(open);
     if (open) {
-      setPassword("");
+      setReason("");
       setSubmitError(null);
     }
   }
 
-  const evaluation = evaluatePasswordPolicy(password, passwordPolicy);
-  const isValid = Boolean(passwordPolicy) && evaluation.allMet;
+  const trimmedReason = reason.trim();
+  const isReasonTooLong = trimmedReason.length > 500;
+  const hasEmail = Boolean(admin?.email && admin.email.trim().length > 0);
 
   const handleSubmit = async () => {
-    if (!passwordPolicy) {
-      setSubmitError(t("common.passwordPolicy.loadFailed"));
-      return;
-    }
-    const violation = findFirstPolicyViolation(password, passwordPolicy);
-    if (violation) {
-      setSubmitError(t(violation.key, violation.params));
+    if (isReasonTooLong) {
+      setSubmitError(t("admin.validation.reasonMax"));
       return;
     }
     setSubmitError(null);
     try {
-      await onResetPassword(password);
+      await onResetPassword(trimmedReason || undefined);
       onOpenChange(false);
     } catch {
-      // Keep dialog open so the operator can fix policy/history rejections without re-entering context
+      // Keep dialog open on error or Sudo step-up cancellation (handled by caller mutation)
     }
   };
 
@@ -381,39 +361,51 @@ export function ResetPasswordDialog({
     <GenericModal
       open={open}
       onOpenChange={onOpenChange}
-      title={t("admin.resetPassword")}
-      description={`${t("admin.resetPasswordDescription")} ${admin?.displayName || ""}`}
-      size="sm"
+      title={t("admin.sendPasswordResetLink")}
+      description={`${t("admin.sendPasswordResetLinkDesc")} ${admin?.displayName || admin?.username || ""}`}
+      size="md"
     >
       <div className="space-y-4 py-2">
         {submitError && (
-          <div
-            role="alert"
-            className="rounded-nx-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive"
-          >
-            {submitError}
-          </div>
+          <Alert variant="destructive">
+            <AlertTriangle aria-hidden="true" />
+            <AlertDescription>{submitError}</AlertDescription>
+          </Alert>
         )}
 
-        <PasswordWithPolicyField
-          id="admin-reset-password"
-          label={`${t("admin.writePassword")} *`}
-          value={password}
-          onValueChange={(val) => {
-            setPassword(val);
-            setSubmitError(null);
-          }}
-          policy={passwordPolicy}
-          policyLoading={isPasswordPolicyLoading}
-          policyError={passwordPolicyError}
-          onRetryPolicy={onRetryPasswordPolicy}
-          surface="nexus"
-          alwaysShowChecklist={true}
-          autoComplete="new-password"
-          placeholder={t("admin.writePassword")}
-          t={t}
-          required
-        />
+        <Alert variant="warning">
+          <MailCheck aria-hidden="true" />
+          <AlertTitle>{t("admin.sendPasswordResetLinkImpactTitle")}</AlertTitle>
+          <AlertDescription className="space-y-1.5">
+            <p>{t("admin.sendPasswordResetLinkImpactDesc")}</p>
+            {hasEmail ? (
+              <p className="font-medium text-nx-ink">
+                {t("admin.sendPasswordResetLinkTargetEmail", { email: admin?.email ?? "" })}
+              </p>
+            ) : (
+              <p className="font-medium text-destructive">
+                {t("admin.sendPasswordResetLinkNoEmailWarning")}
+              </p>
+            )}
+          </AlertDescription>
+        </Alert>
+
+        <div className="space-y-2">
+          <Label htmlFor="admin-reset-password-reason">{t("admin.auditReasonLabel")}</Label>
+          <Textarea
+            id="admin-reset-password-reason"
+            value={reason}
+            onChange={(e) => {
+              setReason(e.target.value);
+              setSubmitError(null);
+            }}
+            maxLength={500}
+            rows={3}
+            disabled={isLoading}
+            placeholder={t("admin.auditReasonPlaceholder")}
+          />
+          <p className="text-xs text-nx-ink-3">{t("admin.auditReasonHint")}</p>
+        </div>
 
         <div className="flex justify-end gap-2 pt-2">
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
@@ -422,170 +414,10 @@ export function ResetPasswordDialog({
           <Button
             onClick={handleSubmit}
             loading={isLoading}
-            disabled={!isValid || isLoading}
+            disabled={isLoading || isReasonTooLong || !hasEmail}
             variant="destructive"
           >
-            {t("admin.resetPassword")}
-          </Button>
-        </div>
-      </div>
-    </GenericModal>
-  );
-}
-
-// ========== Manual Setup Dialog ==========
-
-interface ManualSetupDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  admin: Admin | null;
-  onManualSetup: (
-    newPassword: string,
-    confirmPassword: string,
-    mustChangePassword: boolean
-  ) => Promise<void>;
-  isLoading: boolean;
-  passwordPolicy?: PasswordPolicyModel | null;
-  isPasswordPolicyLoading?: boolean;
-  passwordPolicyError?: string | null;
-  onRetryPasswordPolicy?: () => void;
-}
-
-/**
- * Presentation UI component rendering the manual account setup dialog.
- * Enforces tenant/system `PasswordPolicyModel` directly when activating an invited admin manually.
- */
-export function ManualSetupDialog({
-  open,
-  onOpenChange,
-  admin,
-  onManualSetup,
-  isLoading,
-  passwordPolicy = null,
-  isPasswordPolicyLoading = false,
-  passwordPolicyError = null,
-  onRetryPasswordPolicy,
-}: ManualSetupDialogProps) {
-  const { t } = useI18n();
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [mustChangePassword, setMustChangePassword] = useState(true);
-  const [submitError, setSubmitError] = useState<string | null>(null);
-
-  // Reset form when opening
-  const [prevOpen, setPrevOpen] = useState(open);
-  if (open !== prevOpen) {
-    setPrevOpen(open);
-    if (open) {
-      setPassword("");
-      setConfirmPassword("");
-      setMustChangePassword(true);
-      setSubmitError(null);
-    }
-  }
-
-  const passwordsMatch = password.length > 0 && password === confirmPassword;
-  const maxLength = passwordPolicy?.maxLength ?? DEFAULT_PASSWORD_MAX_LENGTH;
-
-  const handleSubmit = async () => {
-    if (!passwordPolicy) {
-      setSubmitError(t("common.passwordPolicy.loadFailed"));
-      return;
-    }
-    const violation = findFirstPolicyViolation(password, passwordPolicy);
-    if (violation) {
-      setSubmitError(t(violation.key, violation.params));
-      return;
-    }
-    if (password !== confirmPassword) {
-      setSubmitError(t("admin.passwordsDoNotMatch"));
-      return;
-    }
-    setSubmitError(null);
-    try {
-      await onManualSetup(password, confirmPassword, mustChangePassword);
-      onOpenChange(false);
-    } catch {
-      // Mutation's onError already toasts the server-side reason — keep dialog open for correction
-    }
-  };
-
-  return (
-    <GenericModal
-      open={open}
-      onOpenChange={onOpenChange}
-      title={t("admin.manualSetup")}
-      description={`${t("admin.manualSetupDesc")} ${admin?.displayName || ""}`}
-      size="sm"
-    >
-      <div className="space-y-4 py-2">
-        {submitError && (
-          <div
-            role="alert"
-            className="rounded-nx-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive"
-          >
-            {submitError}
-          </div>
-        )}
-
-        <PasswordWithPolicyField
-          id="manualSetupPassword"
-          label={`${t("admin.setPasswordLabel")} *`}
-          value={password}
-          onValueChange={(val) => {
-            setPassword(val);
-            setSubmitError(null);
-          }}
-          policy={passwordPolicy}
-          policyLoading={isPasswordPolicyLoading}
-          policyError={passwordPolicyError}
-          onRetryPolicy={onRetryPasswordPolicy}
-          surface="nexus"
-          alwaysShowChecklist={true}
-          autoComplete="new-password"
-          placeholder={t("admin.writePassword")}
-          t={t}
-          required
-        />
-
-        <div className="space-y-2">
-          <Label htmlFor="manualSetupConfirmPassword">{t("admin.confirmPassword")} *</Label>
-          <PasswordInput
-            id="manualSetupConfirmPassword"
-            autoComplete="new-password"
-            value={confirmPassword}
-            onChange={(e) => {
-              setConfirmPassword(e.target.value);
-              setSubmitError(null);
-            }}
-            maxLength={maxLength}
-            placeholder={t("admin.confirmPassword")}
-          />
-          {confirmPassword.length > 0 && !passwordsMatch && (
-            <p className="text-xs text-destructive">{t("admin.passwordsDoNotMatch")}</p>
-          )}
-        </div>
-
-        <div className="flex items-center justify-between rounded-nx-lg border border-nx-line bg-nx-raised p-3">
-          <div className="space-y-0.5">
-            <Label htmlFor="mustChangePassword" className="cursor-pointer text-sm font-medium">
-              {t("admin.mustChangePassword")}
-            </Label>
-            <p className="text-xs text-nx-ink-3">{t("admin.mustChangePasswordDescription")}</p>
-          </div>
-          <Switch
-            id="mustChangePassword"
-            checked={mustChangePassword}
-            onCheckedChange={setMustChangePassword}
-          />
-        </div>
-
-        <div className="flex justify-end gap-2 pt-2">
-          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
-            {t("common.cancel")}
-          </Button>
-          <Button onClick={handleSubmit} loading={isLoading}>
-            {t("admin.manualSetup")}
+            {t("admin.sendPasswordResetLinkCta")}
           </Button>
         </div>
       </div>

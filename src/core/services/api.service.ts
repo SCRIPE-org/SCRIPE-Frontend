@@ -941,9 +941,13 @@ export class ApiService implements IApiService {
   async getPublic<T>(
     endpoint: string,
     params?: Record<string, unknown>,
-    signal?: AbortSignal
+    signal?: AbortSignal,
+    options?: MutationRequestOptions
   ): Promise<T> {
-    const response = await this.axiosPublic.get(endpoint, this.buildConfig(signal, params));
+    const response = await this.axiosPublic.get(
+      endpoint,
+      this.buildConfig(signal, params, options)
+    );
     return this.unwrap<T>(response.data);
   }
 

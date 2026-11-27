@@ -46,6 +46,20 @@ export const en = {
     identityProviderModeCustom: "Custom Organization Only",
     identityProviderModeCustomDesc:
       "Hide platform-wide global providers and allow only identity providers configured specifically for your organization.",
+    authenticationMode: "Authentication Mode",
+    authenticationModeHelp:
+      "Controls whether standard local password sign-in is permitted alongside federated SSO.",
+    authenticationModeHybrid: "Hybrid (Local Password + SSO)",
+    authenticationModeHybridDesc:
+      "Users and administrators can sign in using local passwords or configured SSO identity providers.",
+    authenticationModeSsoOnly: "SSO Only (Federated Required)",
+    authenticationModeSsoOnlyDesc:
+      "Standard local password login and self-service password recovery are disabled; federated SSO is required.",
+    authenticationModeSsoOnlyWarning:
+      "Enabling SSO Only disables standard local password login and self-service password recovery. Ensure at least one active SSO provider is enabled before saving.",
+    allowOwnerBreakGlassLocalLogin: "Allow Owner Break-Glass Local Sign-In",
+    allowOwnerBreakGlassLocalLoginDesc:
+      "Permits eligible workspace owners to use an audited emergency local sign-in fallback if your SSO provider is unreachable.",
     platformManaged: "Platform Managed",
     quotasReadOnlyNotice:
       "Resource quotas are managed by the platform administrator and are read-only for organization admins.",

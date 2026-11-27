@@ -115,6 +115,20 @@ export const en = {
           "Your identity provider is temporarily unavailable. Please try again shortly.",
       },
     },
+    ssoOnly: {
+      title: "Single Sign-On Required",
+      subtitle:
+        "This workspace requires federated Single Sign-On. Choose your organization identity provider below to sign in.",
+      noProvidersWarning:
+        "No active Single Sign-On identity providers are currently available for this workspace.",
+      breakGlassToggle: "Workspace Owner Emergency Break-Glass Sign-In",
+      breakGlassWarningTitle: "Audited Emergency Access",
+      breakGlassWarningDesc:
+        "Break-glass local sign-in is strictly reserved for eligible workspace owners during SSO outages. Every attempt is permanently logged.",
+      breakGlassSubmit: "Break-Glass Sign In",
+      localDisabledNotice:
+        "Local password sign-in is disabled by your workspace security policy.",
+    },
     forgotPassword: "Forgot Password?",
     forgotPasswordDesc: "Enter your email and we'll send you instructions to reset your password.",
     email: "Email",

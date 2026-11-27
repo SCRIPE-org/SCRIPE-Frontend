@@ -11,6 +11,8 @@ export interface TenantBrandingModel {
   loginHeadline?: string | null;
   loginSubtitle?: string | null;
   identityProviderMode?: string | null;
+  authenticationMode?: "Hybrid" | "SsoOnly" | string | number | null;
+  allowOwnerBreakGlassLocalLogin?: boolean | null;
   status?: string | null;
   statusReason?: string | null;
   loginBrandingJson?: string | null;
