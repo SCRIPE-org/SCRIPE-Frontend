@@ -9,7 +9,6 @@
  * - Repository uses Mapper to convert to Entities
  * - ViewModel uses Repository, works with Entities
  */
-import { mapPasswordPolicyDto, type PasswordPolicyModel } from "@core/common/password-policy";
 import type { IAdminRepository, AdminListParams } from "../../domain/interfaces/IAdminRepository";
 import type { IAdminService } from "../../domain/interfaces/IAdminService";
 import { Admin, type AdminRoleData } from "../../domain/entities/Admin";
@@ -18,6 +17,7 @@ import type {
   CreateAdminRequest,
   UpdateAdminRequest,
   AssignRoleRequest,
+  ResetAdminMfaRequest,
   BulkAdminsFilterRequest,
   TransferAdminRequest,
   TransferProtectionRequest,
@@ -129,17 +129,15 @@ export class AdminRepository implements IAdminRepository {
     return AdminMapper.toRoleDataList(roles);
   }
 
-  async resetPassword(id: string, newPassword: string): Promise<void> {
-    await this.service.resetPassword(id, newPassword);
+  async resetPassword(id: string, reason?: string): Promise<void> {
+    await this.service.resetPassword(id, reason);
   }
 
-  async manualSetup(
-    id: string,
-    newPassword: string,
-    confirmPassword: string,
-    mustChangePassword: boolean
-  ): Promise<void> {
-    await this.service.manualSetup(id, newPassword, confirmPassword, mustChangePassword);
+  async resetMfa(id: string, request: ResetAdminMfaRequest): Promise<void> {
+    await this.service.resetMfa(id, {
+      reason: request.reason,
+      revokePasskeys: request.revokePasskeys,
+    });
   }
 
   async changePassword(id: string, currentPassword: string, newPassword: string): Promise<void> {
@@ -183,10 +181,5 @@ export class AdminRepository implements IAdminRepository {
 
   async resendSetupEmail(adminId: string): Promise<void> {
     return this.service.resendSetupEmail(adminId);
-  }
-
-  async getPasswordPolicy(tenantId?: string): Promise<PasswordPolicyModel> {
-    const dto = await this.service.getPasswordPolicy(tenantId);
-    return mapPasswordPolicyDto(dto);
   }
 }

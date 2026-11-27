@@ -52,7 +52,8 @@ export interface IApiService {
   getPublic<T>(
     endpoint: string,
     params?: Record<string, unknown>,
-    signal?: AbortSignal
+    signal?: AbortSignal,
+    options?: MutationRequestOptions
   ): Promise<T>;
 
   /**

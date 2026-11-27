@@ -38,25 +38,19 @@ export function SetupAccountView() {
   const { t } = useI18n();
   const searchParams = useSearchParams();
   const queryToken = searchParams.get("token") || "";
-  const [token, setToken] = useState(queryToken);
-  const [isResolvingToken, setIsResolvingToken] = useState(!queryToken);
+  const [token, setToken] = useState("");
+  const [isResolvingToken, setIsResolvingToken] = useState(true);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
     const url = new URL(window.location.href);
-    let resolved = queryToken;
+    let hashToken = "";
     let mutated = false;
-    if (url.searchParams.has("token")) {
-      url.searchParams.delete("token");
-      mutated = true;
-    }
+
     if (url.hash) {
       const hashStr = url.hash.startsWith("#") ? url.hash.slice(1) : url.hash;
       const hashParams = new URLSearchParams(hashStr);
-      const hashToken = hashParams.get("token") || "";
-      if (!resolved && hashToken) {
-        resolved = hashToken;
-      }
+      hashToken = hashParams.get("token") || "";
       if (hashParams.has("token")) {
         hashParams.delete("token");
         const remainingHash = hashParams.toString();
@@ -64,9 +58,18 @@ export function SetupAccountView() {
         mutated = true;
       }
     }
+
+    const legacyQueryToken = url.searchParams.get("token") || queryToken;
+    if (url.searchParams.has("token")) {
+      url.searchParams.delete("token");
+      mutated = true;
+    }
+
     if (mutated) {
       window.history.replaceState({}, document.title, `${url.pathname}${url.search}${url.hash}`);
     }
+
+    const resolved = hashToken || legacyQueryToken;
     setToken((prev) => resolved || prev);
     setIsResolvingToken(false);
   }, [queryToken]);

@@ -9,6 +9,8 @@ export type {
   CreateAdminJson,
   UpdateAdminJson,
   AssignRoleJson,
+  ResetPasswordJson,
+  ResetAdminMfaJson,
   BulkAdminsFilterJson,
   TransferAdminJson,
   SyncRoleAssignmentJson,

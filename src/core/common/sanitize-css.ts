@@ -112,15 +112,71 @@ export function sanitizeEmailHref(url: string | null | undefined): string | null
   }
 }
 
+const APPROVED_CSS_ASSET_ORIGINS = new Set([
+  "https://media.scripe.org",
+  "https://cdn.scripe.org",
+  "https://api.scripe.org",
+]);
+
+function getApprovedCssAssetOrigins(): Set<string> {
+  const origins = new Set(APPROVED_CSS_ASSET_ORIGINS);
+  for (const candidate of [process.env.NEXT_PUBLIC_API_URL, process.env.NEXT_PUBLIC_MEDIA_URL]) {
+    if (!candidate) continue;
+    try {
+      const parsed = new URL(candidate.trim());
+      if (parsed.protocol === "http:" || parsed.protocol === "https:") {
+        origins.add(parsed.origin);
+      }
+    } catch {
+      // Ignore malformed env URL
+    }
+  }
+  return origins;
+}
+
+function isDevLocalhostUrl(parsed: URL): boolean {
+  if (process.env.NODE_ENV === "production") return false;
+  return (
+    parsed.hostname === "localhost" ||
+    parsed.hostname === "127.0.0.1" ||
+    parsed.hostname === "[::1]"
+  );
+}
+
 /**
- * Validate CSS `url(...)` assets (`https:`, `http:`, `/path`, or safe raster base64).
+ * Validate CSS `url(...)` assets strictly against approved SCRIPE media/API origins,
+ * same-origin root-relative `/brand/...` or `/api/files/...` paths, dev localhost,
+ * or safe raster base64 data URIs.
  */
 export function sanitizeCssAssetUrl(raw: unknown): string | null {
   if (typeof raw !== "string") return null;
   const trimmed = stripAsciiControlChars(raw).trim();
-  if (!trimmed || /[\s"'()\\;{}<>]/.test(trimmed)) return null;
+  if (!trimmed) return null;
   if (SAFE_RASTER_DATA_IMAGE_RE.test(trimmed)) return trimmed;
-  return sanitizeHttpUrl(trimmed, { allowRelative: true });
+  if (/[\s"'()\\;{}<>]/.test(trimmed)) return null;
+
+  if (trimmed.startsWith("/")) {
+    if (trimmed.startsWith("//") || trimmed.startsWith("/\\")) return null;
+    if (/(?:^|\/)\.\.(?:\/|$)/.test(trimmed)) return null;
+    if (trimmed.startsWith("/brand/") || trimmed.startsWith("/api/files/")) {
+      return trimmed;
+    }
+    return null;
+  }
+
+  const normalized = sanitizeHttpUrl(trimmed, { allowRelative: false });
+  if (!normalized) return null;
+
+  try {
+    const parsed = new URL(normalized);
+    if (parsed.username || parsed.password) return null;
+    if (getApprovedCssAssetOrigins().has(parsed.origin) || isDevLocalhostUrl(parsed)) {
+      return normalized;
+    }
+    return null;
+  } catch {
+    return null;
+  }
 }
 
 /**

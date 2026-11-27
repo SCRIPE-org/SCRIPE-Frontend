@@ -7,13 +7,13 @@
  *
  * @module admin/domain
  */
-import type { PasswordPolicyDto } from "@core/common/password-policy";
 import type {
   AdminModel,
   AdminRoleJson,
   CreateAdminJson,
   UpdateAdminJson,
   AssignRoleJson,
+  ResetAdminMfaJson,
   BulkAdminsFilterJson,
   TransferAdminJson,
   SyncRoleAssignmentJson,
@@ -120,19 +120,14 @@ export interface IAdminService {
   getRoles(adminId: string): Promise<AdminRoleJson[]>;
 
   /**
-   * Reset admin's password
+   * Dispatch a single-use password reset link email to the admin and revoke active sessions
    */
-  resetPassword(id: string, newPassword: string): Promise<void>;
+  resetPassword(id: string, reason?: string): Promise<void>;
 
   /**
-   * Manually complete account setup for an email-invited admin who hasn't activated yet
+   * Reset an admin's MFA factors (TOTP/backup codes, optionally passkeys) and force re-enrollment
    */
-  manualSetup(
-    id: string,
-    newPassword: string,
-    confirmPassword: string,
-    mustChangePassword: boolean
-  ): Promise<void>;
+  resetMfa(id: string, json: ResetAdminMfaJson): Promise<void>;
 
   /**
    * Change admin's own password
@@ -183,9 +178,4 @@ export interface IAdminService {
    * Resend the account setup email to an unactivated admin
    */
   resendSetupEmail(adminId: string): Promise<void>;
-
-  /**
-   * Fetch effective backend password policy for system or target tenant
-   */
-  getPasswordPolicy(tenantId?: string): Promise<PasswordPolicyDto>;
 }

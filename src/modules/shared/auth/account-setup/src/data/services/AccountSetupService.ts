@@ -34,17 +34,28 @@ export class AccountSetupService implements IAccountSetupService {
 
   async validateToken(token: string): Promise<ValidateTokenResponse> {
     return this.api.get<ValidateTokenResponse>(
-      ACCOUNT_SETUP_ENDPOINTS.VALIDATE_TOKEN(token)
+      ACCOUNT_SETUP_ENDPOINTS.VALIDATE_TOKEN,
+      undefined,
+      undefined,
+      { headers: { "X-Setup-Token": token } }
     );
   }
 
   async getCustomFields(token: string): Promise<SetupCustomFieldDto[]> {
     return this.api.get<SetupCustomFieldDto[]>(
-      ACCOUNT_SETUP_ENDPOINTS.CUSTOM_FIELDS(token)
+      ACCOUNT_SETUP_ENDPOINTS.CUSTOM_FIELDS,
+      undefined,
+      undefined,
+      { headers: { "X-Setup-Token": token } }
     );
   }
 
   async activateAccount(request: ActivateAccountRequest): Promise<ActivateAccountResponse> {
-    return this.api.post<ActivateAccountResponse>(ACCOUNT_SETUP_ENDPOINTS.ACTIVATE, request);
+    return this.api.post<ActivateAccountResponse>(
+      ACCOUNT_SETUP_ENDPOINTS.ACTIVATE,
+      request,
+      undefined,
+      { headers: { "X-Setup-Token": request.token } }
+    );
   }
 }

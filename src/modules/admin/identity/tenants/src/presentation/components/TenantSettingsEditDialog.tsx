@@ -16,9 +16,10 @@ import { Label } from "@core/ui/label";
 import { Switch } from "@core/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import { useI18n } from "@core/providers/i18n-provider";
-import type {
-  TenantSettingsModel,
-  UpdateTenantSettingsRequest,
+import {
+  normalizeTenantAuthenticationMode,
+  type TenantSettingsModel,
+  type UpdateTenantSettingsRequest,
 } from "@modules/customization/tenant-settings/src/domain/types/SettingsTypes";
 import { TenantSettingsSecurityFields } from "./TenantSettingsSecurityFields";
 import { TenantSettingsBrandingFields } from "./TenantSettingsBrandingFields";
@@ -58,6 +59,8 @@ export function TenantSettingsEditDialog({
   const [formData, setFormData] = useState<TenantSettingsModel>({
     ...settings,
     identityProviderMode: settings.identityProviderMode === "custom" ? "custom" : "inherit",
+    authenticationMode: normalizeTenantAuthenticationMode(settings.authenticationMode),
+    allowOwnerBreakGlassLocalLogin: settings.allowOwnerBreakGlassLocalLogin !== false,
   });
 
   const [prevOpen, setPrevOpen] = useState(open);
@@ -73,6 +76,8 @@ export function TenantSettingsEditDialog({
       setFormData({
         ...settings,
         identityProviderMode: settings.identityProviderMode === "custom" ? "custom" : "inherit",
+        authenticationMode: normalizeTenantAuthenticationMode(settings.authenticationMode),
+        allowOwnerBreakGlassLocalLogin: settings.allowOwnerBreakGlassLocalLogin !== false,
       });
       if (initialSection) {
         setActiveTab(
@@ -103,6 +108,9 @@ export function TenantSettingsEditDialog({
       request.require2FA = formData.require2FA;
       request.identityProviderMode =
         formData.identityProviderMode === "custom" ? "custom" : "inherit";
+      request.authenticationMode = normalizeTenantAuthenticationMode(formData.authenticationMode);
+      request.allowOwnerBreakGlassLocalLogin =
+        formData.allowOwnerBreakGlassLocalLogin !== false;
     } else if (activeTab === "audit" && canEditPlatformManagedFields) {
       request.auditRetentionDays = formData.auditRetentionDays;
       request.auditEnabled = formData.auditEnabled;

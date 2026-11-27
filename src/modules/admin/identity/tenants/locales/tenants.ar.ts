@@ -146,6 +146,20 @@ export const ar = {
     identityProviderModeCustom: "موفرو المنظمة المخصصون فقط",
     identityProviderModeCustomDesc:
       "إخفاء موفري المنصة العامين والسماح فقط بموفري الهوية المهيئين خصيصاً لهذه المنظمة.",
+    authenticationMode: "وضع المصادقة",
+    authenticationModeHybrid: "هجين (كلمة مرور محلية + SSO)",
+    authenticationModeHybridDesc:
+      "السماح للمشرفين والمستخدمين بتسجيل الدخول باستخدام كلمات المرور المحلية أو موفري الدخول الموحد (SSO).",
+    authenticationModeSsoOnly: "الدخول الموحد فقط (SSO Only)",
+    authenticationModeSsoOnlyDesc:
+      "فرض الدخول الموحد (SSO) لجميع عمليات تسجيل الدخول. يتم تعطيل الدخول المحلي بكلمة المرور واستعادة كلمة المرور الذاتية.",
+    authenticationModeSsoOnlyWarning:
+      "تفعيل وضع SSO Only يعطّل تسجيل الدخول المحلي بكلمة المرور واستعادة كلمة المرور الذاتية. يجب وجود موفر SSO نشط ومفعّل واحد على الأقل قبل الحفظ.",
+    allowOwnerBreakGlassLocalLogin: "السماح بالدخول الطارئ للمالك محلياً (Break-Glass)",
+    allowOwnerBreakGlassLocalLoginDesc:
+      "يسمح لمالكي مساحة العمل المؤهلين باستخدام دخول محلي طارئ مُدقَّق في حال تعذّر الوصول إلى موفر SSO.",
+    breakGlassEnabled: "الدخول المحلي الطارئ للمالك (Break-Glass): مفعّل",
+    breakGlassDisabled: "الدخول المحلي الطارئ للمالك (Break-Glass): معطّل",
     platformManaged: "تدار بواسطة المنصة",
     auditReadOnlyNotice:
       "تُدار إعدادات التدقيق بواسطة مدير المنصة ولا يمكن تعديلها من قبل مشرف المنظمة لنفسه.",

@@ -33,10 +33,10 @@ import {
   Crown,
   Users,
   Mail,
-  KeyRound,
 } from "lucide-react";
 import { formatUtc } from "@core/common/utils";
-import { ResetPasswordDialog, ManualSetupDialog } from "../components/AdminRoleDialogs";
+import { ResetPasswordDialog } from "../components/AdminRoleDialogs";
+import { ResetAdminMfaDialog } from "../components/ResetAdminMfaDialog";
 import { ManageRolesDialog } from "../components/ManageRolesDialog";
 import { AdminTransferDialog } from "../components/AdminTransferDialog";
 import { AssignToGroupDialog } from "@modules/identity/core";
@@ -71,10 +71,12 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
     handleAssignRole,
     handleRemoveRole,
     handleResetPassword,
+    handleResetMfa,
     handleImpersonate,
     isAssigningRole,
     isRemovingRole,
     isResettingPassword,
+    isResettingMfa,
     isImpersonating,
     handleTransfer,
     isTransferring,
@@ -85,23 +87,16 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
     handleBulkDelete,
     handleResendSetupEmail,
     isResendingSetupEmail,
-    handleManualSetup,
-    isManualSettingUp,
-    dialogPasswordPolicy,
-    isDialogPasswordPolicyLoading,
-    dialogPasswordPolicyError,
-    retryDialogPasswordPolicy,
   } = useAdminsViewModel({
     useMyTenant: !isPlatformSuperAdmin,
     tenantId,
-    actionTenantId: selectedAdminForAction?.tenantId ?? tenantId,
   });
 
   const configBase = getConfigBase();
 
   const [manageRolesDialogOpen, setManageRolesDialogOpen] = useState(false);
   const [resetPasswordDialogOpen, setResetPasswordDialogOpen] = useState(false);
-  const [manualSetupDialogOpen, setManualSetupDialogOpen] = useState(false);
+  const [resetMfaDialogOpen, setResetMfaDialogOpen] = useState(false);
   const [assignToGroupDialogOpen, setAssignToGroupDialogOpen] = useState(false);
   const [transferDialogOpen, setTransferDialogOpen] = useState(false);
 
@@ -120,35 +115,30 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
     setResetPasswordDialogOpen(true);
   }, []);
 
+  const handleOpenResetMfa = useCallback((admin: Admin) => {
+    setSelectedAdminForAction(admin);
+    setResetMfaDialogOpen(true);
+  }, []);
+
   const handleOpenAssignToGroup = useCallback((admin: Admin) => {
     setSelectedAdminForAction(admin);
     setAssignToGroupDialogOpen(true);
   }, []);
 
-  const handleOpenManualSetup = useCallback((admin: Admin) => {
-    setSelectedAdminForAction(admin);
-    setManualSetupDialogOpen(true);
-  }, []);
-
   const onResetPasswordSubmit = useCallback(
-    async (newPassword: string) => {
+    async (reason?: string) => {
       if (!selectedAdminForAction) return;
-      await handleResetPassword(selectedAdminForAction.id, newPassword);
+      await handleResetPassword(selectedAdminForAction.id, reason);
     },
     [handleResetPassword, selectedAdminForAction]
   );
 
-  const onManualSetupSubmit = useCallback(
-    async (newPassword: string, confirmPassword: string, mustChangePassword: boolean) => {
+  const onResetMfaSubmit = useCallback(
+    async (request: import("../../domain/entities/AdminRequests").ResetAdminMfaRequest) => {
       if (!selectedAdminForAction) return;
-      await handleManualSetup(
-        selectedAdminForAction.id,
-        newPassword,
-        confirmPassword,
-        mustChangePassword
-      );
+      await handleResetMfa(selectedAdminForAction.id, request);
     },
-    [handleManualSetup, selectedAdminForAction]
+    [handleResetMfa, selectedAdminForAction]
   );
 
   // Configuration for the generic view
@@ -375,12 +365,22 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
               !item.hasGuardianProtection || currentUser?.id === item.id || !!tenantId,
           },
           {
-            label: tFn("admin.resetPassword"),
+            label: tFn("admin.sendPasswordResetLink"),
             onClick: (item: Admin) => handleOpenResetPassword(item),
             variant: "ghost" as const,
             className: "text-warning hover:text-warning/90",
             icon: <Settings className="h-4 w-4" aria-hidden="true" />,
             requiredPermission: SYSTEM_PERMISSIONS.ADMINS_RESET_PASSWORD,
+            show: (item: Admin) =>
+              !item.hasGuardianProtection || currentUser?.id === item.id || !!tenantId,
+          },
+          {
+            label: tFn("admin.resetMfa"),
+            onClick: (item: Admin) => handleOpenResetMfa(item),
+            variant: "ghost" as const,
+            className: "text-warning hover:text-warning/90",
+            icon: <ShieldAlert className="h-4 w-4" aria-hidden="true" />,
+            requiredPermission: SYSTEM_PERMISSIONS.ADMINS_UPDATE,
             show: (item: Admin) =>
               !item.hasGuardianProtection || currentUser?.id === item.id || !!tenantId,
           },
@@ -398,22 +398,12 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
             variant: "ghost" as const,
             icon: <Mail className="h-4 w-4" aria-hidden="true" />,
             requiredPermission: SYSTEM_PERMISSIONS.ADMINS_UPDATE,
-            // Only show for protected admins who haven't activated their account yet
+            // Only show for admins who haven't activated their account yet
             show: (item: Admin) => item.needsAccountSetup,
             confirmTitle: tFn("admin.resendSetupEmail"),
             confirmDescription: tFn("admin.resendSetupEmailDesc"),
             confirmVariant: "default" as const,
             confirmButtonText: tFn("common.send"),
-          },
-          {
-            label: tFn("admin.manualSetup"),
-            onClick: (item: Admin) => handleOpenManualSetup(item),
-            variant: "ghost" as const,
-            icon: <KeyRound className="h-4 w-4" aria-hidden="true" />,
-            requiredPermission: SYSTEM_PERMISSIONS.ADMINS_RESET_PASSWORD,
-            // Only for admins who haven't activated their account yet — an alternative
-            // to resending the setup email.
-            show: (item: Admin) => item.needsAccountSetup,
           },
           {
             label: tFn("common.delete"),
@@ -476,8 +466,8 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
       handleToggleActive,
       handleOpenManageRoles,
       handleOpenResetPassword,
+      handleOpenResetMfa,
       handleOpenAssignToGroup,
-      handleOpenManualSetup,
       handleResendSetupEmail,
       handleImpersonate,
       handleOpenTransfer,
@@ -524,22 +514,14 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
         admin={selectedAdminForAction}
         onResetPassword={onResetPasswordSubmit}
         isLoading={isResettingPassword}
-        passwordPolicy={dialogPasswordPolicy}
-        isPasswordPolicyLoading={isDialogPasswordPolicyLoading}
-        passwordPolicyError={dialogPasswordPolicyError}
-        onRetryPasswordPolicy={retryDialogPasswordPolicy}
       />
 
-      <ManualSetupDialog
-        open={manualSetupDialogOpen}
-        onOpenChange={setManualSetupDialogOpen}
+      <ResetAdminMfaDialog
+        open={resetMfaDialogOpen}
+        onOpenChange={setResetMfaDialogOpen}
         admin={selectedAdminForAction}
-        onManualSetup={onManualSetupSubmit}
-        isLoading={isManualSettingUp}
-        passwordPolicy={dialogPasswordPolicy}
-        isPasswordPolicyLoading={isDialogPasswordPolicyLoading}
-        passwordPolicyError={dialogPasswordPolicyError}
-        onRetryPasswordPolicy={retryDialogPasswordPolicy}
+        onResetMfa={onResetMfaSubmit}
+        isLoading={isResettingMfa}
       />
 
       <AdminTransferDialog

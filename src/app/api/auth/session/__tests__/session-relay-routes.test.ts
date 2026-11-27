@@ -652,4 +652,104 @@ describe("Custom-domain 3-route session micro-relay (/api/auth/session/*)", () =
     expect(logoutRes.status).toBe(200);
     expect(requests[4].headers.Authorization).toBe("Bearer current-jwt-1");
   });
+
+  it("prioritizes x-vercel-forwarded-for and ignores spoofed cf-connecting-ip unless SCRIPE_TRUST_CF_CONNECTING_IP=true (BFF-IP-SPOOF-01)", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    const capturedIps: string[] = [];
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (_url: string | URL | Request, init?: RequestInit) => {
+        const hdrs = (init?.headers ?? {}) as Record<string, string>;
+        capturedIps.push(hdrs["X-Scripe-Session-Relay-Client-Ip"] ?? "");
+        return new Response(JSON.stringify({ accessToken: "jwt-ip", type: "admin" }), {
+          status: 200,
+          headers: {
+            "content-type": "application/json",
+            "x-scripe-relay-refresh-token": "rtok-ip",
+            "x-scripe-relay-principal-type": "admin",
+          },
+        });
+      })
+    );
+
+    // 1. Untrusted cf-connecting-ip cannot override x-vercel-forwarded-for
+    const res1 = await establishPost(
+      buildJsonPostRequest(
+        "https://portal.club.com/api/auth/session/establish",
+        { code: "c1", state: "s1" },
+        {
+          host: "portal.club.com",
+          origin: "https://portal.club.com",
+          "cf-connecting-ip": "198.51.100.200",
+          "x-vercel-forwarded-for": "203.0.113.10",
+          "x-real-ip": "203.0.113.11",
+          "x-forwarded-for": "203.0.113.12",
+        }
+      )
+    );
+    expect(res1.status).toBe(200);
+    expect(capturedIps[0]).toBe("203.0.113.10");
+
+    // 2. Untrusted cf-connecting-ip alone is ignored and falls back to x-real-ip / x-forwarded-for / 127.0.0.1
+    const res2 = await establishPost(
+      buildJsonPostRequest(
+        "https://portal.club.com/api/auth/session/establish",
+        { code: "c2", state: "s2" },
+        {
+          host: "portal.club.com",
+          origin: "https://portal.club.com",
+          "cf-connecting-ip": "198.51.100.200",
+          "x-real-ip": "203.0.113.11",
+        }
+      )
+    );
+    expect(res2.status).toBe(200);
+    expect(capturedIps[1]).toBe("203.0.113.11");
+
+    const res3 = await establishPost(
+      buildJsonPostRequest(
+        "https://portal.club.com/api/auth/session/establish",
+        { code: "c3", state: "s3" },
+        {
+          host: "portal.club.com",
+          origin: "https://portal.club.com",
+          "cf-connecting-ip": "198.51.100.200",
+        }
+      )
+    );
+    expect(res3.status).toBe(200);
+    expect(capturedIps[2]).toBe("127.0.0.1");
+
+    // 3. Even when SCRIPE_TRUST_CF_CONNECTING_IP=true, x-vercel-forwarded-for still wins over cf-connecting-ip
+    vi.stubEnv("SCRIPE_TRUST_CF_CONNECTING_IP", "true");
+    const res4 = await establishPost(
+      buildJsonPostRequest(
+        "https://portal.club.com/api/auth/session/establish",
+        { code: "c4", state: "s4" },
+        {
+          host: "portal.club.com",
+          origin: "https://portal.club.com",
+          "cf-connecting-ip": "198.51.100.200",
+          "x-vercel-forwarded-for": "203.0.113.10",
+        }
+      )
+    );
+    expect(res4.status).toBe(200);
+    expect(capturedIps[3]).toBe("203.0.113.10");
+
+    // 4. When SCRIPE_TRUST_CF_CONNECTING_IP=true and no x-vercel-forwarded-for/x-real-ip, cf-connecting-ip is honored
+    const res5 = await establishPost(
+      buildJsonPostRequest(
+        "https://portal.club.com/api/auth/session/establish",
+        { code: "c5", state: "s5" },
+        {
+          host: "portal.club.com",
+          origin: "https://portal.club.com",
+          "cf-connecting-ip": "198.51.100.200",
+        }
+      )
+    );
+    expect(res5.status).toBe(200);
+    expect(capturedIps[4]).toBe("198.51.100.200");
+  });
 });

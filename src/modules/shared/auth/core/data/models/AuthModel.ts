@@ -26,6 +26,8 @@ export interface LoginRequestJson {
   staySignedIn?: boolean;
   /** Signals explicit platform admin workspace selection — prevents discovery loop */
   isPlatformAdmin?: boolean;
+  /** Explicit break-glass emergency local login flag for eligible workspace owners under SsoOnly */
+  breakGlass?: boolean;
 }
 
 export interface UserProfileJson {
@@ -118,7 +120,8 @@ export class LoginRequestModel {
     public readonly tenantId?: string,
     public readonly deviceInfo?: string,
     public readonly isPlatformAdmin: boolean = false,
-    public readonly staySignedIn: boolean = false
+    public readonly staySignedIn: boolean = false,
+    public readonly breakGlass: boolean = false
   ) {}
 
   static fromJson(json: LoginRequestJson): LoginRequestModel {
@@ -128,7 +131,8 @@ export class LoginRequestModel {
       json.tenantId,
       json.deviceInfo,
       json.isPlatformAdmin ?? false,
-      json.staySignedIn ?? false
+      json.staySignedIn ?? false,
+      json.breakGlass ?? false
     );
   }
 
@@ -140,6 +144,7 @@ export class LoginRequestModel {
       deviceInfo: this.deviceInfo,
       staySignedIn: this.staySignedIn || undefined,
       isPlatformAdmin: this.isPlatformAdmin || undefined, // omit when false to keep payload lean
+      breakGlass: this.breakGlass || undefined,
     };
   }
 }

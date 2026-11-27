@@ -7,7 +7,6 @@
  * @module admin/data
  */
 import type { IApiService } from "@core/interfaces/api.interface";
-import type { PasswordPolicyDto } from "@core/common/password-policy";
 import { buildUrl } from "@/core/config/api-endpoints/_shared";
 import {
   AdminModel,
@@ -17,6 +16,7 @@ import {
   type CreateAdminJson,
   type UpdateAdminJson,
   type AssignRoleJson,
+  type ResetAdminMfaJson,
   type BulkAdminsFilterJson,
 } from "../models/AdminModel";
 import type {
@@ -144,20 +144,19 @@ export class AdminService implements IAdminService {
     return this.api.get<AdminRoleJson[]>(ADMIN_ENDPOINTS.ROLES(adminId));
   }
 
-  async resetPassword(id: string, newPassword: string): Promise<void> {
-    await this.api.post(ADMIN_ENDPOINTS.RESET_PASSWORD(id), { newPassword });
+  async resetPassword(id: string, reason?: string): Promise<void> {
+    const trimmedReason = reason?.trim();
+    await this.api.post(
+      ADMIN_ENDPOINTS.RESET_PASSWORD(id),
+      trimmedReason ? { reason: trimmedReason } : {}
+    );
   }
 
-  async manualSetup(
-    id: string,
-    newPassword: string,
-    confirmPassword: string,
-    mustChangePassword: boolean
-  ): Promise<void> {
-    await this.api.post(ADMIN_ENDPOINTS.MANUAL_SETUP(id), {
-      newPassword,
-      confirmPassword,
-      mustChangePassword,
+  async resetMfa(id: string, json: ResetAdminMfaJson): Promise<void> {
+    const trimmedReason = json.reason?.trim();
+    await this.api.post(ADMIN_ENDPOINTS.RESET_MFA(id), {
+      ...(trimmedReason ? { reason: trimmedReason } : {}),
+      revokePasskeys: json.revokePasskeys,
     });
   }
 
@@ -205,10 +204,5 @@ export class AdminService implements IAdminService {
 
   async resendSetupEmail(adminId: string): Promise<void> {
     await this.api.post(ADMIN_ENDPOINTS.RESEND_SETUP_EMAIL, { adminId });
-  }
-
-  async getPasswordPolicy(tenantId?: string): Promise<PasswordPolicyDto> {
-    const url = buildUrl(ADMIN_ENDPOINTS.PASSWORD_POLICY, { tenantId });
-    return this.api.get<PasswordPolicyDto>(url);
   }
 }

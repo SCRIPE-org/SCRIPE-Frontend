@@ -1,0 +1,31 @@
+# SCRIPE Gitleaks Configuration
+# Extends official Gitleaks default ruleset with Go RE2-compatible SCRIPE token patterns
+# and narrow mock-token allowlists.
+
+title = "SCRIPE Gitleaks Configuration"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "scripe-personal-access-token"
+description = "SCRIPE Personal Access Token (scr_pat_)"
+regex = '''\bscr_pat_[A-Za-z0-9_-]{20,}\b'''
+keywords = ["scr_pat_"]
+
+[[rules.allowlists]]
+description = "Ignore synthetic test, mock, and example scr_pat_ placeholders"
+regexes = [
+  '''scr_pat_(?:example|test|mock|placeholder|xxxx)[A-Za-z0-9_-]*''',
+]
+
+[allowlist]
+description = "Targeted allowlist for generated doc exports and explicit mock placeholder tokens"
+paths = [
+  '''docs-export/.*''',
+  '''.*\.example(\..+)?$''',
+]
+regexes = [
+  '''impersonation_refresh_token_here.*''',
+  '''original_restored_refresh_token.*''',
+]

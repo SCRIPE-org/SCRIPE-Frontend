@@ -10,6 +10,20 @@
 /** Governs whether a tenant inherits platform identity providers or uses custom tenant IdPs only. */
 export type IdentityProviderMode = "inherit" | "custom";
 
+/** Governs whether local password sign-in remains allowed (Hybrid) or federated SSO is enforced (SsoOnly). */
+export type TenantAuthenticationMode = "Hybrid" | "SsoOnly";
+
+/**
+ * Normalizes backend `TenantAuthenticationMode` enum values (string or numeric) into `"Hybrid" | "SsoOnly"`.
+ */
+export function normalizeTenantAuthenticationMode(value: unknown): TenantAuthenticationMode {
+  if (typeof value === "string") {
+    return value.trim().toLowerCase() === "ssoonly" || value.trim() === "1" ? "SsoOnly" : "Hybrid";
+  }
+  if (value === 1) return "SsoOnly";
+  return "Hybrid";
+}
+
 /**
  * Raw API model shape for tenant security, quota, audit, and branding settings.
  */
@@ -36,6 +50,8 @@ export interface TenantSettingsModel {
 
   // Identity Provider Governance
   identityProviderMode?: IdentityProviderMode;
+  authenticationMode?: TenantAuthenticationMode;
+  allowOwnerBreakGlassLocalLogin?: boolean;
 
   // Audit
   auditEnabled: boolean;
@@ -88,6 +104,8 @@ export interface UpdateTenantSettingsRequest {
   loginLockoutMinutes?: number;
   require2FA?: boolean;
   identityProviderMode?: IdentityProviderMode;
+  authenticationMode?: TenantAuthenticationMode;
+  allowOwnerBreakGlassLocalLogin?: boolean;
   auditEnabled?: boolean;
   auditRetentionDays?: number;
   logoUrl?: string | null;

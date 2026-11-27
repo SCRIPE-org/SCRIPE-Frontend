@@ -11,6 +11,7 @@ import { Admin } from "../../domain/entities/Admin";
 import { AdminModel } from "../../data/models/AdminModel";
 import { AdminMapper } from "../../data/mappers/AdminMapper";
 import { useAdminFieldsConfig } from "../viewmodels/useAdminFieldsConfig";
+import { buildCreateAdminSchema } from "../schemas/AdminSchema";
 import { en as adminEn } from "../../../locales/admin.en";
 import { ar as adminAr } from "../../../locales/admin.ar";
 
@@ -31,7 +32,8 @@ const {
     update: vi.fn(),
     delete: vi.fn(),
     resendSetupEmail: vi.fn(),
-    getPasswordPolicy: vi.fn().mockResolvedValue(null),
+    resetPassword: vi.fn(),
+    resetMfa: vi.fn(),
   },
   mockRoleRepo: {
     getAll: vi.fn(),
@@ -124,7 +126,10 @@ vi.mock("@core/crud/components/generic-crud-view", () => ({
 
 vi.mock("../components/AdminRoleDialogs", () => ({
   ResetPasswordDialog: () => null,
-  ManualSetupDialog: () => null,
+}));
+
+vi.mock("../components/ResetAdminMfaDialog", () => ({
+  ResetAdminMfaDialog: () => null,
 }));
 
 vi.mock("../components/ManageRolesDialog", () => ({
@@ -184,23 +189,34 @@ describe("Admin onboarding setup email, status badges, resend error handling & l
     });
   });
 
-  it("useAdminFieldsConfig uses type='email' for create and edit email fields and requires email only when sendSetupEmail !== false", () => {
-    const { createFields, editFields } = useAdminFieldsConfig(
+  it("useAdminFieldsConfig and buildCreateAdminSchema enforce email-invitation-only admin creation with zero local password fields", () => {
+    const { createFields, editFields, createInitialValues } = useAdminFieldsConfig(
       (k) => k,
       async () => [],
       async () => []
     );
+
+    expect(createFields.some((f) => f.name === "password")).toBe(false);
+    expect(createFields.some((f) => f.name === "sendSetupEmail")).toBe(false);
+    expect(createFields.some((f) => f.name === "mustChangePassword")).toBe(false);
+    expect("password" in createInitialValues).toBe(false);
+    expect("sendSetupEmail" in createInitialValues).toBe(false);
+    expect("mustChangePassword" in createInitialValues).toBe(false);
 
     const createEmailField = createFields.find((f) => f.name === "email");
     const editEmailField = editFields.find((f) => f.name === "email");
 
     expect(createEmailField?.type).toBe("email");
     expect(editEmailField?.type).toBe("email");
-    expect(typeof createEmailField?.required).toBe("function");
-    const reqFn = createEmailField?.required as (values: Record<string, unknown>) => boolean;
-    expect(reqFn({ sendSetupEmail: true })).toBe(true);
-    expect(reqFn({})).toBe(true);
-    expect(reqFn({ sendSetupEmail: false })).toBe(false);
+    expect(createEmailField?.required).toBe(true);
+
+    const schema = buildCreateAdminSchema((k) => k);
+    expect(
+      schema.safeParse({ username: "ops_admin", email: "" }).success
+    ).toBe(false);
+    expect(
+      schema.safeParse({ username: "ops_admin", email: "ops@ahly.club" }).success
+    ).toBe(true);
   });
 
   it("AdminMapper and Admin entity accurately track isAccountActivated, needsAccountSetup, and mustChangePassword", () => {
@@ -236,7 +252,7 @@ describe("Admin onboarding setup email, status badges, resend error handling & l
     expect(activatedEntity.mustChangePassword).toBe(true);
   });
 
-  it("useAdminsViewModel emits mode-aware Create Admin toast differentiating setup email invitation vs manual password", async () => {
+  it("useAdminsViewModel emits invitation-only Create Admin toast with target email", async () => {
     mockAdminRepo.create.mockResolvedValue("enc-admin-id-1");
     const wrapper = createWrapper();
     const { result } = renderHook(() => useAdminsViewModel({ tenantId: "tenant-1" }), { wrapper });
@@ -245,7 +261,6 @@ describe("Admin onboarding setup email, status badges, resend error handling & l
       await result.current.vm.createItem({
         username: "new_invited_admin",
         email: "new.admin@scripe.io",
-        sendSetupEmail: true,
         roleIds: ["role-1"],
       });
     });
@@ -260,26 +275,6 @@ describe("Admin onboarding setup email, status badges, resend error handling & l
     expect(mockSuccessToast).toHaveBeenCalledWith({
       title: "admin.created",
       description: "admin.createdSetupEmailSentDesc:new.admin@scripe.io",
-    });
-
-    mockSuccessToast.mockClear();
-
-    await act(async () => {
-      await result.current.vm.createItem({
-        username: "manual_admin",
-        password: "StrongPassword!123",
-        sendSetupEmail: false,
-        roleIds: ["role-1"],
-      });
-    });
-
-    act(() => {
-      result.current.vm.confirmCreateSuccess();
-    });
-
-    expect(mockSuccessToast).toHaveBeenCalledWith({
-      title: "admin.created",
-      description: "admin.createdManualSetupDesc",
     });
   });
 
@@ -349,8 +344,14 @@ describe("Admin onboarding setup email, status badges, resend error handling & l
     expect(mockErrorToast).not.toHaveBeenCalled();
   });
 
-  it("admin.en.ts and admin.ar.ts maintain full key parity and contain zero raw '* Desc' placeholder strings", () => {
+  it("admin.en.ts and admin.ar.ts maintain full key parity, remove manual-setup keys, and contain zero raw '* Desc' placeholders", () => {
     expect(Object.keys(adminEn.admin).sort()).toEqual(Object.keys(adminAr.admin).sort());
+    expect(Object.keys(adminEn.admin.validation).sort()).toEqual(
+      Object.keys(adminAr.admin.validation).sort()
+    );
+    expect("manualSetup" in adminEn.admin).toBe(false);
+    expect("sendSetupEmail" in adminEn.admin).toBe(false);
+    expect("createdManualSetupDesc" in adminEn.admin).toBe(false);
     expect(adminEn.admin.setupEmailResentDesc).not.toContain("Desc");
     expect(adminEn.admin.createdDesc).not.toContain("Desc");
     expect(adminEn.admin.updatedDesc).not.toContain("Desc");
