@@ -436,7 +436,7 @@ export const en = {
     },
     operationToast: {
       successTitle: "{operation} Successful",
-      successWithItem: "{item} has been {operationLower} successfully.",
+      successWithItem: "{operation} completed successfully for {item}.",
       successGeneric: "Operation completed successfully.",
       errorTitle: "{operation} Failed",
       errorWithItem: "Failed to {operationLower} {item}.",

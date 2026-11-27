@@ -4,6 +4,7 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
 import { GenericCrudView } from "./generic-crud-view";
 import { CrudSplitPaneSection } from "../views/CrudSplitPaneSection";
+import { getActiveToasts, toast as sileoToast } from "@core/ui/sileo-toast";
 
 vi.mock("@core/providers/permission-provider", () => ({
   usePermissions: () => ({
@@ -177,5 +178,122 @@ describe("GenericCrudView & CrudSplitPaneSection error recovery, view modes & CS
     expect(Object.prototype.hasOwnProperty.call(payload, "__proto__")).toBe(false);
     expect(Object.prototype.hasOwnProperty.call(payload, "constructor")).toBe(false);
     expect(Object.prototype.hasOwnProperty.call(payload, "prototype")).toBe(false);
+  });
+
+  it("executes confirmed custom row action with dynamic description without emitting a Delete toast", async () => {
+    sileoToast.clear();
+    const resendAction = vi.fn().mockResolvedValue(undefined);
+    const deleteService = vi.fn().mockResolvedValue(undefined);
+    const refreshItems = vi.fn().mockResolvedValue(undefined);
+
+    try {
+      render(
+        <GenericCrudView<{ id: string; name: string; email: string }>
+          title="Administrators"
+          viewModel={
+            makeViewModel({
+              items: [{ id: "adm-1", name: "Remon Ezzat", email: "rezoezzat@gmail.com" }],
+              refreshItems,
+            }) as any
+          }
+          columns={[{ key: "name", label: "Name" }]}
+          config={{
+            titleKey: "admin.title",
+            subtitleKey: "admin.description",
+            columns: [{ key: "name", label: "Name" }],
+            viewModes: ["CardGrid"],
+            deleteService,
+            getActions: () => [
+              {
+                label: "Resend Setup Email",
+                onClick: resendAction,
+                confirmTitle: "Resend Setup Email",
+                confirmDescription: (item) =>
+                  `Resend account setup email to ${item.name} (${item.email})?`,
+                confirmVariant: "default",
+                confirmButtonText: "Send",
+              },
+            ],
+          }}
+        />
+      );
+
+      fireEvent.click(screen.getByRole("button", { name: /resend setup email/i }));
+
+      expect(
+        await screen.findByText(
+          "Resend account setup email to Remon Ezzat (rezoezzat@gmail.com)?"
+        )
+      ).toBeInTheDocument();
+
+      fireEvent.click(screen.getByRole("button", { name: /^send$/i }));
+
+      await waitFor(() => {
+        expect(resendAction).toHaveBeenCalledTimes(1);
+        expect(refreshItems).toHaveBeenCalledTimes(1);
+      });
+
+      expect(resendAction).toHaveBeenCalledWith({
+        id: "adm-1",
+        name: "Remon Ezzat",
+        email: "rezoezzat@gmail.com",
+      });
+      expect(deleteService).not.toHaveBeenCalled();
+      expect(getActiveToasts()).toEqual([]);
+    } finally {
+      sileoToast.clear();
+    }
+  });
+
+  it("executes real delete action and emits single Delete Successful toast with grammatical description", async () => {
+    sileoToast.clear();
+    const deleteService = vi.fn().mockResolvedValue(undefined);
+    const refreshItems = vi.fn().mockResolvedValue(undefined);
+
+    try {
+      render(
+        <GenericCrudView<{ id: string; name: string }>
+          title="Administrators"
+          viewModel={
+            makeViewModel({
+              items: [{ id: "adm-1", name: "Remon Ezzat" }],
+              refreshItems,
+            }) as any
+          }
+          columns={[{ key: "name", label: "Name" }]}
+          config={{
+            titleKey: "admin.title",
+            subtitleKey: "admin.description",
+            columns: [{ key: "name", label: "Name" }],
+            viewModes: ["CardGrid"],
+            deleteService,
+            getActions: (_vm, _t, handleDeleteFn) => [
+              {
+                label: "Delete",
+                onClick: (item) => handleDeleteFn?.(item),
+                variant: "destructive",
+              },
+            ],
+          }}
+        />
+      );
+
+      fireEvent.click(screen.getByRole("button", { name: /^delete$/i }));
+
+      const deleteButtons = await screen.findAllByRole("button", { name: /^delete$/i });
+      fireEvent.click(deleteButtons[deleteButtons.length - 1]);
+
+      await waitFor(() => {
+        expect(deleteService).toHaveBeenCalledWith("adm-1");
+        expect(refreshItems).toHaveBeenCalledTimes(1);
+      });
+
+      const activeToasts = getActiveToasts();
+      expect(activeToasts).toHaveLength(1);
+      expect(activeToasts[0].title).toBe("Delete Successful");
+      expect(activeToasts[0].description).toBe("Delete completed successfully for Remon Ezzat.");
+    } finally {
+      sileoToast.clear();
+    }
   });
 });

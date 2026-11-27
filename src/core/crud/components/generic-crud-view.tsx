@@ -48,8 +48,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@core/ui/tooltip";
-import { useEnhancedDelete } from "@core/hooks/use-enhanced-delete";
+import { useConfirmedAction } from "@core/hooks/use-confirmed-action";
+import { extractDeleteErrorMessage } from "@core/hooks/use-enhanced-delete";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { isSudoCancelledError } from "@core/store/useSudoStore";
 import { useSettings } from "@core/providers/settings-provider";
 import { cn } from "@core/common/utils";
 import type { PaginationInfo } from "@core/common/pagination";
@@ -168,8 +170,8 @@ export interface CrudAction<TItem = any> {
   requiredPermission?: PermissionCode;
   /** Confirmation dialog title (if confirmation needed) */
   confirmTitle?: string;
-  /** Confirmation dialog description (supports {name} placeholder) */
-  confirmDescription?: string;
+  /** Confirmation dialog description (supports {name} placeholder or item formatter) */
+  confirmDescription?: string | ((item: TItem) => string);
   /** Confirmation dialog variant: destructive (red/trash), warning, info, or default (green/check) */
   confirmVariant?: "destructive" | "warning" | "info" | "default";
   /** Custom confirm button text (e.g. 'Confirm', 'Transfer', 'Restore') */
@@ -544,9 +546,9 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
   const { t } = useCrudI18n();
   const { hasPermission } = usePermissions();
 
-  // Enhanced delete system for professional confirmation dialogs
-  const deleteSystem = useEnhancedDelete();
-  const { operationSuccess, operationError } = useEnhancedToast();
+  // Generic confirmation dialog lifecycle (toast ownership stays with each caller/handler)
+  const actionConfirmation = useConfirmedAction();
+  const { operationSuccess, operationError, info: toastInfo } = useEnhancedToast();
 
   const getViewModeLabel = useCallback(
     (mode: CrudViewMode): string => {
@@ -568,7 +570,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
     [t]
   );
 
-  // Enhanced delete handler with professional confirmation dialog
+  // Delete handler with confirmation dialog and delete-specific toast feedback
   const handleDelete = useCallback(
     async (item: T) => {
       const itemDisplayName = config?.getItemDisplayName
@@ -577,27 +579,40 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
       const itemType = config?.itemTypeKey ? t(config.itemTypeKey) : t("common.item");
       const id = typeof item === "string" ? item : (item as any).id;
 
-      await deleteSystem.confirmDelete(
+      actionConfirmation.requestConfirmation(
         async () => {
-          // Use the direct delete service from config
           if (config?.deleteService) {
             await config.deleteService(id);
-            // Refresh the data after successful delete
             await viewModel.refreshItems();
-            // Success message will be shown by the enhanced delete system
           } else {
             throw new Error("Delete service not configured");
           }
         },
         {
-          itemName: itemDisplayName,
-          itemType: itemType,
-          confirmTitle: t("common.confirmDelete"),
-          confirmDescription: t("crud.confirm.deleteItem", { name: itemDisplayName }),
+          title: t("common.confirmDelete"),
+          description: t("crud.confirm.deleteItem", { name: itemDisplayName }),
+          variant: "destructive",
+          onSuccess: () => {
+            operationSuccess("Delete", itemDisplayName);
+          },
+          onError: (error) => {
+            if (isSudoCancelledError(error)) {
+              toastInfo?.({
+                title: t("profile.sudo.cancelledTitle"),
+                description: t("profile.sudo.cancelledDescription"),
+              });
+              return;
+            }
+            operationError(
+              "Delete",
+              itemDisplayName,
+              extractDeleteErrorMessage(error, undefined, itemType)
+            );
+          },
         }
       );
     },
-    [deleteSystem, viewModel, config, t]
+    [actionConfirmation, viewModel, config, t, operationSuccess, operationError, toastInfo]
   );
 
   // Generic bulk action handler
@@ -610,16 +625,15 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
       };
 
       if (action.requiresConfirmation || action.confirmTitle || action.confirmDescription) {
-        await deleteSystem.confirmDelete(execute, {
-          itemName: t("crud.confirm.selectionLabel", { count: selectedIds.length }),
-          itemType: config?.itemTypeKey ? t(config.itemTypeKey) : t("common.items"),
-          confirmTitle: action.confirmTitle || action.label,
-          confirmDescription:
+        actionConfirmation.requestConfirmation(execute, {
+          title: action.confirmTitle || action.label,
+          description:
             action.confirmDescription ||
             t("crud.confirm.bulkAction", {
               action: action.label.toLowerCase(),
               count: selectedIds.length,
             }),
+          variant: action.variant === "destructive" ? "destructive" : "default",
         });
       } else {
         try {
@@ -629,7 +643,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
         }
       }
     },
-    [deleteSystem, viewModel, config, t]
+    [actionConfirmation, viewModel, t]
   );
 
   // Generic custom action handler
@@ -641,13 +655,12 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
       };
 
       if (action.confirmTitle || action.confirmDescription) {
-        await deleteSystem.confirmDelete(execute, {
-          itemName: t("crud.confirm.allItems"),
-          itemType: config?.itemTypeKey ? t(config.itemTypeKey) : t("common.items"),
-          confirmTitle: action.confirmTitle || action.label,
-          confirmDescription:
+        actionConfirmation.requestConfirmation(execute, {
+          title: action.confirmTitle || action.label,
+          description:
             action.confirmDescription ||
             t("crud.confirm.globalAction", { action: action.label.toLowerCase() }),
+          variant: action.variant === "destructive" ? "destructive" : "default",
         });
       } else {
         try {
@@ -657,28 +670,30 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
         }
       }
     },
-    [deleteSystem, viewModel, config, t]
+    [actionConfirmation, viewModel, t]
   );
 
   // Generic individual action handler
   const handleIndividualAction = useCallback(
     async (action: any, item: any) => {
-      // If action has confirmTitle, it needs confirmation
+      // If action has confirmTitle or confirmDescription, it needs confirmation
       if (action.confirmTitle || action.confirmDescription) {
         const itemDisplayName = config?.getItemDisplayName
           ? config.getItemDisplayName(item)
           : item.name || item.id;
-        await deleteSystem.confirmDelete(
+        const resolvedDescription =
+          typeof action.confirmDescription === "function"
+            ? action.confirmDescription(item)
+            : action.confirmDescription?.replace(/\{\{?name\}?\}/g, itemDisplayName);
+        actionConfirmation.requestConfirmation(
           async () => {
             await action.onClick(item);
             await viewModel.refreshItems();
           },
           {
-            itemName: itemDisplayName,
-            itemType: config?.itemTypeKey ? t(config.itemTypeKey) : t("common.item"),
-            confirmTitle: action.confirmTitle || action.label,
-            confirmDescription:
-              action.confirmDescription?.replace("{name}", itemDisplayName) ||
+            title: action.confirmTitle || action.label,
+            description:
+              resolvedDescription ||
               t("crud.confirm.itemAction", {
                 action: action.label.toLowerCase(),
                 name: itemDisplayName,
@@ -697,7 +712,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
         }
       }
     },
-    [deleteSystem, viewModel, config, t]
+    [actionConfirmation, viewModel, config, t]
   );
 
   // Handle create button click
@@ -2042,28 +2057,27 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
         </DialogContent>
       </Dialog>
 
-      {/* Professional confirmation dialog for delete and action operations */}
+      {/* Professional confirmation dialog for delete and confirmed action operations */}
       <ConfirmationDialog
-        open={deleteSystem.showConfirmation}
+        open={actionConfirmation.isOpen}
         onOpenChange={(nextOpen) => {
           if (!nextOpen) {
-            deleteSystem.cancelDelete();
+            actionConfirmation.cancel();
           }
         }}
-        title={deleteSystem.deleteOptions.confirmTitle || t("common.confirmDelete")}
-        description={deleteSystem.deleteOptions.confirmDescription || t("common.deleteWarning")}
+        title={actionConfirmation.options.title || t("common.confirmAction")}
+        description={actionConfirmation.options.description || t("common.deleteWarning")}
         confirmText={
-          deleteSystem.deleteOptions.confirmButtonText ||
-          (deleteSystem.deleteOptions.variant === "destructive" ||
-          !deleteSystem.deleteOptions.variant
+          actionConfirmation.options.confirmButtonText ||
+          (actionConfirmation.options.variant === "destructive"
             ? t("common.delete")
             : t("common.confirm"))
         }
         cancelText={t("common.cancel")}
-        onConfirm={deleteSystem.executeDelete}
-        onCancel={deleteSystem.cancelDelete}
-        variant={deleteSystem.deleteOptions.variant || "destructive"}
-        isLoading={deleteSystem.isDeleting}
+        onConfirm={actionConfirmation.execute}
+        onCancel={actionConfirmation.cancel}
+        variant={actionConfirmation.options.variant || "default"}
+        isLoading={actionConfirmation.isPending}
         preventAutoClose={true}
       />
     </div>
