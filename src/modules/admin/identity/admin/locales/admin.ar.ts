@@ -15,7 +15,7 @@ export const ar = {
     targetTenant: "المنظمة المستهدفة",
     targetTenantPlaceholder: "أدخل المنظمة المستهدفة",
     resendSetupEmail: "إعادة إرسال بريد الإعداد",
-    resendSetupEmailDesc: "إعادة إرسال بريد الإعداد إلى",
+    resendSetupEmailDesc: "هل تريد إعادة إرسال بريد الإعداد إلى {name}؟",
     validation: {
       usernameMin: "يجب أن يتكون اسم المستخدم من 3 أحرف على الأقل",
       usernameMax: "يجب ألا يتجاوز اسم المستخدم 100 حرف",

@@ -61,6 +61,13 @@ describe("translateCore", () => {
     expect(translateCore("common.operationToast.successTitle", { operation: "Delete" })).toBe(
       "Delete Successful"
     );
+    expect(
+      translateCore("common.operationToast.successWithItem", {
+        operation: "Delete",
+        item: "Remon Ezzat",
+        operationLower: "delete",
+      })
+    ).toBe("Delete completed successfully for Remon Ezzat.");
   });
 
   it("interpolates {{param}} placeholders", () => {

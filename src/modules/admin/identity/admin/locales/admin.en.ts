@@ -13,7 +13,7 @@ export const en = {
     targetTenant: "Target Tenant",
     targetTenantPlaceholder: "Enter Target Tenant",
     resendSetupEmail: "Resend Setup Email",
-    resendSetupEmailDesc: "Resend setup email to",
+    resendSetupEmailDesc: "Resend account setup email to {name}?",
     validation: {
       usernameMin: "Username must be at least 3 characters",
       usernameMax: "Username must be at most 100 characters",
